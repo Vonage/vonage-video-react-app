@@ -1,24 +1,11 @@
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import { createElement, type CSSProperties } from 'react';
+import { ComponentProps, createElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type VividIconProps = {
   name: string;
   customSize?: -6 | -5 | -4 | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5;
-  /**
-   * Use `style` instead. Tailwind classes cannot reach Vivid's internal shadow DOM,
-   * so color set via `className` will be silently overridden by MUI and never applied.
-   * @deprecated
-   */
-  className?: string;
-  /**
-   * Use `style` instead. MUI `sx` is being removed from this codebase.
-   * VividIcon accepts `style` directly — pass CSS vars there.
-   * @deprecated
-   */
-  sx?: never;
-  style?: CSSProperties;
-} & Record<string, unknown>;
+} & ComponentProps<'div'>;
 
 const VividIcon = ({ name, customSize, className, ...props }: VividIconProps) => {
   return createElement('vwc-icon', {

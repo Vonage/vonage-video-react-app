@@ -1,29 +1,17 @@
-import { type ComponentProps, Fragment, ReactElement, useMemo } from 'react';
+import { type ComponentProps, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getFormattedDate, getFormattedTime } from '../../../utils/dateTime';
-
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-
-import Separator from '@components/Separator';
-import VividIcon from '@ui/components/VividIcon';
+import { Tooltip, CircularProgress } from '@mui/material';
+import { VividIcon } from '@ui/components';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
-import { useArchives, UseArchivesProps } from '@core/hooks';
+import { useArchives, type UseArchivesProps } from '@core/hooks';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
-import i18n from '../../../i18n';
+import { twMerge } from 'tailwind-merge';
 import type { SingleArchiveResponse } from '@vonage/video';
 
-export type ArchiveListProps = ComponentProps<'div'> & {
+export type ArchiveListProps = ComponentProps<'ul'> & {
   queryOptions?: UseArchivesProps['queryOptions'];
 };
 
@@ -43,125 +31,125 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
     queryOptions,
   });
 
-  const { t } = useTranslation();
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation();
 
   const archives = useMemo(() => {
-    return (data?.items ?? []).map((archive) => {
-      return createArchiveFromServer(i18n.language, archive);
-    });
-  }, [data]);
-
-  if (error) {
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <VividIcon name="warning-line" customSize={-4} style={{ color: 'var(--vera-warning)' }} />
-        <Typography variant="h6" className="text-vera-text-tertiary">
-          {t('archiveList.error.text')}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (archives.length === 0) {
-    return (
-      <>
-        <div className="mb-4 flex items-center gap-3" data-testid="archive-list-empty">
-          <VividIcon
-            name="video-active-line"
-            customSize={-4}
-            style={{ color: 'var(--vera-secondary)' }}
-          />
-          <Typography variant="body1" className="text-vera-text-secondary">
-            {t('archiveList.empty')}
-          </Typography>
-        </div>
-        <Separator width="100%" />
-      </>
-    );
-  }
+    return (data?.items ?? []).map((archive) => ({
+      ...archive,
+      createdAtFormatted: `${getFormattedDate(language, archive.createdAt)} ${getFormattedTime(language, archive.createdAt)}`,
+    }));
+  }, [data, language]);
 
   return (
-    <div
-      className={classNames(
-        'ArchiveList',
-        'w-full max-h-47.5 overflow-y-auto overflow-x-hidden',
+    <ul className={twMerge('ArchiveList', 'overflow-y-auto', className)} {...props}>
+      {!!error && (
+        <ListElement data-testid="archive-list-error">
+          <VividIcon name="warning-line" customSize={-4} className="text-vera-warning" />
+          <p className="text-left">{t('archiveList.error.text')}</p>
+        </ListElement>
+      )}
+
+      {!error && !archives.length && (
+        <ListElement data-testid="archive-list-empty">
+          <VividIcon name="video-active-line" customSize={-4} className="text-vera-secondary" />
+          <p className="text-left">{t('archiveList.empty')}</p>
+        </ListElement>
+      )}
+
+      {archives.map((archive, index) => {
+        const isArchivePending = isPending(archive.status);
+        return (
+          <ListElement key={archive.id} data-testid={`archive-list-item-${archive.id}`}>
+            <VividIcon name="video-active-line" customSize={-4} />
+
+            <div className="flex flex-col">
+              <p
+                data-testid={`archive-list-item-title-${index}`}
+                className={classNames(
+                  {
+                    pending: isArchivePending,
+                  },
+                  'text-left'
+                )}
+              >
+                {isArchivePending
+                  ? t('archiveList.loading')
+                  : t('archiveList.archive.index', {
+                      index: archives.length - index,
+                    })}
+              </p>
+
+              <p className="text-vera-text-tertiary text-vera-caption">
+                {isArchivePending && t('archiveList.loading.subtitle')}
+
+                {archive.status === 'available' && (
+                  <>
+                    {archive.duration && formatDuration(archive.duration)}
+                    {archive.size && ` • ${formatFileSize(archive.size)}`}
+                    {` • ${t('archiveList.archive.createdAt', {
+                      createdAt: archive.createdAtFormatted,
+                    })}`}
+                  </>
+                )}
+              </p>
+            </div>
+
+            <ArchiveStatus {...archive} />
+          </ListElement>
+        );
+      })}
+    </ul>
+  );
+};
+
+function ListElement({ children, className, ...props }: ComponentProps<'li'>) {
+  return (
+    <li
+      className={twMerge(
+        'flex items-center gap-4 py-3 not-last:border-b border-vera-border',
         className
       )}
       {...props}
     >
-      <List sx={{ pt: 0 }}>
-        {archives.map((archive, index) => (
-          <Fragment key={archive.id}>
-            <ListItem
-              disableGutters
-              sx={{
-                px: 0,
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 1,
-              }}
-              data-testid={`archive-list-item-${archive.id}`}
-            >
-              <ListItemIcon sx={{ minWidth: '45px', mt: '4px' }}>
-                <VividIcon
-                  name="video-active-line"
-                  customSize={-4}
-                  style={{ color: 'var(--vera-secondary)' }}
-                />
-              </ListItemIcon>
-
-              <Box sx={{ flex: 1 }}>
-                <ListItemText
-                  primary={
-                    <Typography
-                      variant="body1"
-                      data-testid={`archive-list-item-title-${index}`}
-                      className={classNames({
-                        pending: archive.status === 'pending',
-                      })}
-                    >
-                      {archive.status === 'pending'
-                        ? t('archiveList.loading')
-                        : t('archiveList.archive.index', {
-                            index: archives.length - index,
-                          })}
-                    </Typography>
-                  }
-                  secondary={
-                    (archive.status === 'available' || archive.status === 'pending') && (
-                      <Typography variant="caption" className="text-vera-text-tertiary">
-                        {archive.status === 'pending' ? (
-                          t('archiveList.loading.subtitle')
-                        ) : (
-                          <>
-                            {archive.duration && formatDuration(archive.duration)}
-                            {archive.size && ` • ${formatFileSize(archive.size)}`}
-                            {` • ${t('archiveList.archive.createdAt', {
-                              createdAt: archive.createdAtFormatted,
-                            })}`}
-                          </>
-                        )}
-                      </Typography>
-                    )
-                  }
-                />
-              </Box>
-
-              <Box sx={{ mt: '4px' }}>
-                <ArchiveStatusContent url={archive.url!} status={archive.status} />
-              </Box>
-            </ListItem>
-
-            <Separator width="100%" />
-          </Fragment>
-        ))}
-      </List>
-    </div>
+      {children}
+    </li>
   );
-};
+}
 
-function ArchiveErrorIcon() {
+function ArchiveStatus({ status, url }: SingleArchiveResponse) {
   const { t } = useTranslation();
+
+  if (status === 'available' && url) {
+    return (
+      <a
+        href={url}
+        className="flex items-center gap-2 text-vera-text-primary cursor-pointer"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <VividIcon
+          name="download-line"
+          customSize={-6}
+          data-testid="archive-download-button"
+          className="text-vera-text-primary -mt-1"
+        />
+        <p className="text-vera-caption">{t('archiveList.download')}</p>
+      </a>
+    );
+  }
+
+  if (isPending(status)) {
+    return (
+      <CircularProgress
+        size={20}
+        data-testid="archive-loading-spinner"
+        className="text-vera-primary"
+      />
+    );
+  }
 
   return (
     <Tooltip title={t('archiveList.error.tooltip')}>
@@ -169,86 +157,14 @@ function ArchiveErrorIcon() {
         name="warning-line"
         customSize={-6}
         data-testid="archive-error-icon"
-        style={{ color: 'var(--vera-warning)' }}
+        className="text-vera-warning"
       />
     </Tooltip>
   );
 }
 
-function ArchivingLoadingIcon() {
-  return (
-    <CircularProgress
-      size={20}
-      data-testid="archive-loading-spinner"
-      className="text-vera-primary"
-    />
-  );
-}
-
-function ArchiveStatusContent({ status, url }: { status: string; url: string | null }) {
-  const { t } = useTranslation();
-
-  if (status === 'available') {
-    return (
-      <Link href={url ?? undefined} target="_blank" sx={{ textDecoration: 'none' }}>
-        <div className="flex items-center gap-1">
-          <IconButton size="small">
-            <VividIcon
-              name="download-line"
-              customSize={-6}
-              data-testid="archive-download-button"
-              style={{ color: 'var(--vera-text-primary)' }}
-            />
-          </IconButton>
-          <Typography variant="caption" className="text-vera-text-primary">
-            {t('archiveList.download')}
-          </Typography>
-        </div>
-      </Link>
-    );
-  }
-
-  if (status === 'pending') {
-    return <ArchivingLoadingIcon />;
-  }
-
-  return <ArchiveErrorIcon />;
+function isPending(status: string) {
+  return ['started', 'stopped', 'uploaded', 'paused'].includes(status);
 }
 
 export default ArchiveList;
-
-/**
- * Modifies an archive retrieved from the server to be easily consumable.
- * @param {string} locale - current locale
- * @param {ServerArchive} serverArchive - The archive to be modified.
- * @returns {Archive} The modified archive.
- */
-function createArchiveFromServer(locale: string, serverArchive: SingleArchiveResponse) {
-  return {
-    id: serverArchive.id,
-    url: serverArchive.url,
-    status: getArchiveStatus(serverArchive.status),
-    createdAt: serverArchive.createdAt,
-    createdAtFormatted: getDateString(locale, serverArchive.createdAt),
-    duration: serverArchive.duration,
-    size: serverArchive.size,
-  };
-}
-
-function getDateString(locale: string, timestamp: number) {
-  return `${getFormattedDate(locale, timestamp)} ${getFormattedTime(locale, timestamp)}`;
-}
-
-function getArchiveStatus(status: SingleArchiveResponse['status']) {
-  switch (status) {
-    case 'available':
-      return 'available';
-    case 'started':
-    case 'stopped':
-    case 'uploaded':
-    case 'paused':
-      return 'pending';
-    default:
-      return 'failed';
-  }
-}

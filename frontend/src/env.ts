@@ -64,7 +64,6 @@ export class Env implements IEnvironmentVariables {
   public ENABLE_REPORT_ISSUE!: boolean;
   public I18N_FALLBACK_LANGUAGE!: Lang;
   public I18N_SUPPORTED_LANGUAGES!: Lang[];
-
   public ALLOW_BACKGROUND_EFFECTS!: boolean;
   public ALLOW_CAMERA_CONTROL!: boolean;
   public ALLOW_VIDEO_ON_JOIN!: boolean;

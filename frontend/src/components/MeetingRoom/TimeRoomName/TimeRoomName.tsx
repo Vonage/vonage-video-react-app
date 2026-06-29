@@ -1,7 +1,8 @@
-import { ReactElement } from 'react';
-import useDateTime from '../../../hooks/useDateTime';
-import useSessionContext from '../../../hooks/useSessionContext';
-import Box from '@mui/material/Box';
+import { ReactElement, useRef } from 'react';
+import { useMountEffect, useStableRef } from '@web/hooks';
+import { useTranslation } from 'react-i18next';
+import { getFormattedTime } from '@utils/dateTime';
+import useSessionContext from '@hooks/useSessionContext';
 
 /**
  *  TimeRoomName Component
@@ -10,22 +11,32 @@ import Box from '@mui/material/Box';
  * @returns {ReactElement} - The Time and Room Name component.
  */
 const TimeRoomName = (): ReactElement => {
-  const { time } = useDateTime();
+  const { i18n } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
+
   const { sessionDetails } = useSessionContext();
+  const roomNameRef = useStableRef(sessionDetails?.roomName);
+
+  useMountEffect(() => {
+    const intervalId = setInterval(() => {
+      const time = getFormattedTime(i18n.language);
+
+      ref.current!.textContent = `${time} | ${roomNameRef?.current}`;
+    }, 1_000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  });
 
   return (
-    <Box
-      className="text-vera-accent"
-      sx={{
-        ml: 1,
-        mt: 1,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      }}
+    <div
+      ref={ref}
+      data-testid="time-room-name"
+      className="text-vera-accent ml-0.5 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap"
     >
-      {time} | {sessionDetails?.roomName}
-    </Box>
+      {getFormattedTime(i18n.language)} | {roomNameRef.current}
+    </div>
   );
 };
 
