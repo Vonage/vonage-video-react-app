@@ -1,4 +1,4 @@
-import mediaDevicesStore from '../devicesStore';
+import mediaDevicesStore from '../mediaDevicesStore';
 import organizeMediaDevicesByKind from '../helpers/organizeMediaDevicesByKind';
 
 /**

@@ -1,6 +1,6 @@
 import type { Prettify } from '@common/types';
 
-import mediaDevicesStore from './devicesStore';
+import mediaDevicesStore from './mediaDevicesStore';
 
 import { useMediaDeviceInfo, useMediaDevices, useDeviceId } from './hooks';
 import { mediaDevicesMap$ } from './observables';

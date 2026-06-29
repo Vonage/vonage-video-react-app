@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { MediaDeviceInfoJSON } from '@web/types';
 import { makeApplicationErrorMapper } from '@core/errors';

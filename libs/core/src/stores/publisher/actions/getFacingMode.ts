@@ -1,8 +1,8 @@
 import type { Publisher } from '@vonage/client-sdk-video';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { isMobile } from '@web/platform';
 import { ErrorCode, makeApplicationErrorMapper } from '@core/errors';
-import { frontFacingKeywords, rearFacingKeywords } from '@core/stores/devices/constants';
+import { frontFacingKeywords, rearFacingKeywords } from '@core/stores/mediaDevices/constants';
 import { FacingMode } from '@common/types';
 
 /**

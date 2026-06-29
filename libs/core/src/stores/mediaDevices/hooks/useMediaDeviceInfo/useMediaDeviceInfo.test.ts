@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { makeMediaDeviceInfos } from '@web-test/fixtures';
-import mediaDevices$ from '../../devices$';
+import mediaDevices$ from '../../mediaDevices$';
 import useMediaDeviceInfo from './useMediaDeviceInfo';
 
 const devices = makeMediaDeviceInfos();

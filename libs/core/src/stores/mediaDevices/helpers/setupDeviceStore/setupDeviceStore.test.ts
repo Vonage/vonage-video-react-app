@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import setupDeviceStore from '.';
 import { waitFor } from '@testing-library/dom';
-import mediaDevices$ from '../../devices$';
+import mediaDevices$ from '../../mediaDevices$';
 import { setupPartialMock } from '@common-test/helpers';
 import { SPY_MARK } from '@common/types';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';

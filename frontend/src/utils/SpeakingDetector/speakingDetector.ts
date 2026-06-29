@@ -1,4 +1,4 @@
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { EventEmitter } from 'events';
 
 export type SpeakingDetectorOptions = {

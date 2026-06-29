@@ -1,3 +1,3 @@
 export type * from './types';
 export * from './constants';
-export { default } from './devices$';
+export { default } from './mediaDevices$';

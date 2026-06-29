@@ -20,7 +20,6 @@ const TimeRoomName = (): ReactElement => {
   useMountEffect(() => {
     const intervalId = setInterval(() => {
       const time = getFormattedTime(i18n.language);
-
       ref.current!.textContent = `${time} | ${roomNameRef?.current}`;
     }, 1_000);
 

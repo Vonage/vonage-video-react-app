@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vites
 import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import localStorageMock from '@utils/mockData/localStorageMock';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';

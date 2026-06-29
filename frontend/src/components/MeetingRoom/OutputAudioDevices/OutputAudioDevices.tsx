@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import { isSinkIdSupported } from '@web/platform';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { Tooltip } from '@mui/material';
 import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';

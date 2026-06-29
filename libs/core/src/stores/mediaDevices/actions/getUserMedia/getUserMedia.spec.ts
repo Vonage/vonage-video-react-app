@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import getUserMedia from '.';
-import mediaDevices$ from '../../devices$';
+import mediaDevices$ from '../../mediaDevices$';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevicesEnvelop } from '@core/interceptors';
 

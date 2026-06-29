@@ -1,4 +1,4 @@
-import mediaDevices$ from '../devicesStore';
+import mediaDevices$ from '../mediaDevicesStore';
 
 /**
  * Returns the selected device ID for the given media device kind.

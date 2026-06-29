@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import mediaDevices$ from './devices$';
+import mediaDevices$ from './mediaDevices$';
 import { vi, it, expect, describe, beforeEach } from 'vitest';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevicesEnvelop } from '@core/interceptors';

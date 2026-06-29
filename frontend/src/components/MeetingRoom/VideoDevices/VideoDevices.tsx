@@ -4,7 +4,7 @@ import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { makeApplicationErrorMapper } from '@core/errors';

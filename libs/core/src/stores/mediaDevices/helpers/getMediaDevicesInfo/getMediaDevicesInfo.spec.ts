@@ -7,7 +7,7 @@ import {
   rearCameraId,
   setupWindowNavigatorMock,
 } from '@web-test/fixtures';
-import mediaDevices$ from '../../devices$';
+import mediaDevices$ from '../../mediaDevices$';
 import getMediaDevicesInfo$ from '.';
 
 vi.mock('@web/platform', async (importOriginal) => {

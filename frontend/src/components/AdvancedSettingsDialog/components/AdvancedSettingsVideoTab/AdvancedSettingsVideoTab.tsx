@@ -12,6 +12,13 @@ import { Resolution } from '@common/types';
 
 const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
 
+const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(Resolution).map(
+  (value) => ({
+    value: value,
+    label: value,
+  })
+);
+
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
   const bitrateMode = advancedSettings$.use.select(({ bitrateMode }) => bitrateMode);
@@ -65,13 +72,6 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   ).map((supportedFrameRate) => ({
     value: supportedFrameRate,
     label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
-  }));
-
-  const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(
-    Resolution
-  ).map((value) => ({
-    value: value,
-    label: value,
   }));
 
   return (

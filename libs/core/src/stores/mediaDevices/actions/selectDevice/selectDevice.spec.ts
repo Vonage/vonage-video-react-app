@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import selectDevice from '.';
-import mediaDevices$ from '../../devices$';
+import mediaDevices$ from '../../mediaDevices$';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 
 const devices = makeMediaDeviceInfos();
