@@ -6,7 +6,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import Publisher from '../../Publisher';
 import ScreenSharePublisher from '../ScreenSharePublisher';
 import Subscriber from '../../Subscriber';
-import HiddenParticipantsTile from '../../HiddenParticipantsTile/HiddenParticipantsTile';
+import HiddenParticipantsTile from '../HiddenParticipantsTile/HiddenParticipantsTile';
 import useElementDimensions from '../../../hooks/useElementDimensions';
 import getSubscribersToDisplay from '../../../utils/helpers/getSubscribersToDisplay/getSubscribersToDisplay';
 import useSubscribersInDisplayOrder from '../../../hooks/useSubscribersInDisplayOrder';
