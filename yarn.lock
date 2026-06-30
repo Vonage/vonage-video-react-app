@@ -5114,15 +5114,6 @@
     "@vonage/users" "1.12.1"
     "@vonage/voice" "1.19.1"
 
-"@vonage/jwt@1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@vonage/jwt/-/jwt-1.11.0.tgz#491b82cd34d292fc180536fc3da9e5d86bad47fb"
-  integrity sha512-P9KM6QYBBkW8ruC+HeOxFGVQh123KCqgVuGyWjp+VjD64WikYAfT73N5isP4rQob0umpMDjGKNOIAYsVAaRdnA==
-  dependencies:
-    debug "^4.3.4"
-    jsonwebtoken "^9.0.2"
-    uuid "^9.0.1"
-
 "@vonage/jwt@1.12.1":
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/@vonage/jwt/-/jwt-1.12.1.tgz#507d880f409eb169970337515bf74ea41321d341"
@@ -5136,6 +5127,15 @@
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/@vonage/jwt/-/jwt-1.13.0.tgz#75a9446b11bd0b3820cc3404a3cfae5203df58ab"
   integrity sha512-LmmsW4u8LaxnMIeO94k0RLCZ5y7J2hBV4uf3lqp9GaU2SRq115kOJFynulXyFDpAFHfLd8aO7P5c/BMGNvHvrw==
+  dependencies:
+    debug "4.4.3"
+    jsonwebtoken "9.0.3"
+    uuid "13.0.0"
+
+"@vonage/jwt@1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@vonage/jwt/-/jwt-1.14.0.tgz#b01bd4046d5f24a74fc7c2d9bc66f6f39c20d679"
+  integrity sha512-7TuSjNy0jE86YeRMQYB5ZjR4hlr885IsPo0YapVeOQ1QiB3KeSHa8z1+0Y2575SWk7riN0FMYVNSYm3RBoVuZQ==
   dependencies:
     debug "4.4.3"
     jsonwebtoken "9.0.3"
@@ -7005,13 +7005,6 @@ debug@4.3.4:
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
   dependencies:
     ms "2.1.2"
-
-debug@4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.0.tgz#2b3f2aea2ffeb776477460267377dc8710faba8a"
-  integrity sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==
-  dependencies:
-    ms "^2.1.3"
 
 debug@4.4.1:
   version "4.4.1"
@@ -10380,7 +10373,7 @@ jsonwebtoken@9.0.2:
     ms "^2.1.1"
     semver "^7.5.4"
 
-jsonwebtoken@9.0.3, jsonwebtoken@^9.0.0, jsonwebtoken@^9.0.2:
+jsonwebtoken@9.0.3, jsonwebtoken@^9.0.0:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-9.0.3.tgz#6cd57ab01e9b0ac07cb847d53d3c9b6ee31f7ae2"
   integrity sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==
@@ -10759,10 +10752,10 @@ lodash.snakecase@4.1.1:
   resolved "https://registry.yarnpkg.com/lodash.snakecase/-/lodash.snakecase-4.1.1.tgz#39d714a35357147837aefd64b5dcbb16becd8f8d"
   integrity sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==
 
-lodash@4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
-  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
+lodash@4.18.1:
+  version "4.18.1"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.18.1.tgz#ff2b66c1f6326d59513de2407bf881439812771c"
+  integrity sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==
 
 lodash@^4.17.11, lodash@~4.17.23:
   version "4.17.23"
@@ -11646,15 +11639,15 @@ opentok-token@1.1.1:
     nonce "^1.0.3"
     unix-timestamp "^0.1.2"
 
-opentok@2.22.0:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/opentok/-/opentok-2.22.0.tgz#d29075211d7a6bc2125da7a5691308e2fa1ec1cb"
-  integrity sha512-mrEmZt9pUvNGpU0aTjsjb4a2KbLJ+PMWh3f4sm/Rt0CWe1dBTUnvHcqRPQiOiYPAA/SXqv+lktmPdXcVYCbtMQ==
+opentok@2.23.2:
+  version "2.23.2"
+  resolved "https://registry.yarnpkg.com/opentok/-/opentok-2.23.2.tgz#85537f65da3244bd869e3e02f98ef2e21fdd88a5"
+  integrity sha512-l1rZg8GJFGVeS9AbQtGf3OC2MwR1gFUVXeWeyzCL4C4kmB4c5g7w8K1I4oOhSLlAzRREcLuoD9PgkC0Gh99WBw==
   dependencies:
-    "@vonage/jwt" "1.11.0"
-    debug "4.4.0"
-    jsonwebtoken "9.0.2"
-    lodash "4.17.21"
+    "@vonage/jwt" "1.14.0"
+    debug "4.4.3"
+    jsonwebtoken "9.0.3"
+    lodash "4.18.1"
     node-fetch "2.7.0"
     opentok-token "1.1.1"
     uuid "11.0.5"
@@ -14216,7 +14209,7 @@ uuid@13.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
   integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
 
-uuid@9.0.1, uuid@^9.0.1:
+uuid@9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
   integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==

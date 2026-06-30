@@ -189,7 +189,7 @@
     "jsonwebtoken": "9.0.3",
     "motion": "12.38.0",
     "normalize-range": "0.1.2",
-    "opentok": "2.22.0",
+    "opentok": "2.23.2",
     "opentok-jwt": "0.1.5",
     "opentok-layout-js": "5.5.0",
     "opentok-solutions-logging": "1.1.5",
