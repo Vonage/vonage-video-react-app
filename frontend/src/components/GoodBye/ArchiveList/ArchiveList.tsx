@@ -44,7 +44,7 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
   }, [data, language]);
 
   return (
-    <ul className={twMerge('ArchiveList', 'overflow-y-auto', className)} {...props}>
+    <ul className={twMerge('ArchiveList', 'max-h-47.5 overflow-y-auto', className)} {...props}>
       {!!error && (
         <ListElement data-testid="archive-list-error">
           <VividIcon name="warning-line" customSize={-4} className="text-vera-warning" />
