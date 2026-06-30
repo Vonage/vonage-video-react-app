@@ -75,6 +75,7 @@ const usePublisherOptions = ({
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       videoFilter,
       videoSource,
+      publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
     };
 
     return options;
