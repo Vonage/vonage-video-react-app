@@ -79,6 +79,7 @@ describe('usePublisherOptions', () => {
         name: '',
         initials: '',
         publishCaptions: true,
+        publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
       });
     });
   });
@@ -152,6 +153,7 @@ describe('usePublisherOptions', () => {
         name: 'Foo Bar',
         initials: 'FB',
         publishCaptions: true,
+        publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
       });
     });
   });
