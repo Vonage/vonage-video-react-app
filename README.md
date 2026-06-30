@@ -213,7 +213,7 @@ Storybook is available for developing and testing UI components in isolation.
 To run Storybook for the frontend:
 
 ```bash
-yarn storybook:frontend
+yarn storybook frontend
 ```
 
 This will start the Storybook dev server at [http://localhost:6006](http://localhost:6006).
@@ -223,7 +223,7 @@ This will start the Storybook dev server at [http://localhost:6006](http://local
 To run Storybook for the ui:
 
 ```bash
-yarn storybook:ui
+yarn storybook ui
 ```
 
 This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).

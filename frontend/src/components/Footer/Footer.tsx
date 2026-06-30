@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import FooterLinks from '@components/FooterLinks';
+import FooterLinks from '@components/Footer/components/FooterLinks';
 
 /**
  * Footer Component

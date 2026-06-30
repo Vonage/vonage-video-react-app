@@ -195,7 +195,7 @@
     "opentok-solutions-logging": "1.1.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-global-state-hooks": "15.0.15",
+    "react-global-state-hooks": "15.0.17",
     "react-i18next": "15.7.4",
     "react-router-dom": "7.17.0",
     "react-syntax-highlighter": "16.1.1",

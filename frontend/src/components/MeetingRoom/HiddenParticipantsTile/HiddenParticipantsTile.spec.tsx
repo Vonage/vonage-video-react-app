@@ -6,7 +6,7 @@ import { Subscriber } from '@vonage/client-sdk-video';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SubscriberWrapper } from '@app-types/session';
 import HiddenParticipantsTile from './index';
-import { env } from '../../env';
+import { env } from '../../../env';
 
 describe('HiddenParticipantsTile', () => {
   const box = { height: 100, width: 100, top: 0, left: 0 };

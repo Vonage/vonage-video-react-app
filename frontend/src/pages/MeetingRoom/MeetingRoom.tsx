@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
+import { AdvancedSettingsDialog } from '@components/AdvancedSettingsDialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';

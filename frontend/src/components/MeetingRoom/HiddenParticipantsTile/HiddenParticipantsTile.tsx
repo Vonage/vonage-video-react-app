@@ -4,10 +4,10 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '@app-types/session';
 import getBoxStyle from '@utils/helpers/getBoxStyle';
 import useSessionContext from '@hooks/useSessionContext';
-import AvatarInitials from '../AvatarInitials';
+import AvatarInitials from '../../AvatarInitials';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ButtonBase from '@mui/material/ButtonBase';
-import { env } from '../../env';
+import { env } from '../../../env';
 
 export type HiddenParticipantsTileProps = {
   box: Box;
