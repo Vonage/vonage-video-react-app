@@ -6,7 +6,7 @@ import useRoomShareUrl from '../../../hooks/useRoomShareUrl';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import usePublisherContext from '@hooks/usePublisherContext';
 import RecordingIndicator from '../RecordingIndicator';
 import useDistinctLabelMediaDevices from '@ui/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices';

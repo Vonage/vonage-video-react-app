@@ -9,6 +9,7 @@ import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { handleClientApplicationError } from '@ui/helpers';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
+import { Resolution } from '@common/types';
 
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@hooks/usePreviewPublisherContext');
@@ -129,7 +130,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       );
 
       await act(async () => {
-        await result.current.handleResolutionChange('640x480');
+        await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
       });
 
       await waitFor(() => {
@@ -149,7 +150,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       );
 
       await act(async () => {
-        await result.current.handleResolutionChange('640x480');
+        await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
       });
 
       await waitFor(() => {

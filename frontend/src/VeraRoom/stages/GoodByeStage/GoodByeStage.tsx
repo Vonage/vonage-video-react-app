@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
  */
 const GoodByeStage: FC = () => {
   const { t } = useTranslation();
-  const { archives, header, caption } = useGoodByePage();
+  const { header, caption } = useGoodByePage();
 
   return (
     <PageLayoutEmbed>
@@ -38,7 +38,7 @@ const GoodByeStage: FC = () => {
             <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-6">
               {t('archiveList.label')}
             </p>
-            <ArchiveList archives={archives} />
+            <ArchiveList />
           </Card>
         </div>
       </PageLayoutEmbed.Right>

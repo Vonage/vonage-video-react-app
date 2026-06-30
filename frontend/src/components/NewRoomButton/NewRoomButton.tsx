@@ -2,7 +2,7 @@ import Button from '@mui/material/Button';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 
 export type NewRoomButtonProps = {
   handleNewRoom: () => void;

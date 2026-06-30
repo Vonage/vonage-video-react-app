@@ -5,6 +5,7 @@ import applyAdvancedSettingsToPublisher, {
   applyFrameRate,
   applyResolution,
 } from './applyAdvancedSettingsToPublisher';
+import { Resolution } from '@common/types';
 
 const createMockPublisher = () =>
   ({
@@ -25,7 +26,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
   });
 
   it('returns early for resolution when publisher is null', async () => {
-    await expect(applyResolution(null, '640x480')).resolves.toBeUndefined();
+    await expect(applyResolution(null, Resolution.VGA_LANDSCAPE)).resolves.toBeUndefined();
   });
 
   it('returns early for bitrate when publisher is null', async () => {
@@ -35,9 +36,9 @@ describe('applyAdvancedSettingsToPublisher', () => {
   it('applies parsed resolution dimensions', async () => {
     const publisher = createMockPublisher();
 
-    await applyResolution(publisher, '1280x720');
+    await applyResolution(publisher, Resolution.VGA_LANDSCAPE);
 
-    expect(publisher.setPreferredResolution).toHaveBeenCalledWith({ width: 1280, height: 720 });
+    expect(publisher.setPreferredResolution).toHaveBeenCalledWith({ width: 640, height: 480 });
   });
 
   it('uses the preset bitrate method for non-custom bitrate modes', async () => {
@@ -57,7 +58,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
 
     await applyAdvancedSettingsToPublisher(publisher, {
       frameRate: 15,
-      resolution: '640x480',
+      resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
     });
@@ -78,7 +79,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
 
     await applyAdvancedSettingsToPublisher(publisher, {
       frameRate: 15,
-      resolution: '640x480',
+      resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'custom',
       customVideoBitrate: 750_000,
     });
@@ -97,7 +98,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
 
     await applyAdvancedSettingsToPublisher(publisher, {
       frameRate: 15,
-      resolution: '640x480',
+      resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
     });

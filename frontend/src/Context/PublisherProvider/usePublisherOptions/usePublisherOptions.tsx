@@ -7,7 +7,7 @@ import {
 } from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import { useDeviceId } from '@core/stores/devices/hooks';
+import { useDeviceId } from '@core/stores/mediaDevices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
