@@ -1,0 +1,14 @@
+docs/CONFIGURATION.md
+  h_737cf808c1c597 179,189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "7efe7af4098d423532be230de6a6d482d3a97bfc",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
