@@ -1,0 +1,20 @@
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_6029769cf9ac60 4-5,9,11,14,35-36,40-44,47-53,55-60,62-93,95-104,108,110-112,117-118,120,122,125,127-129,132-133,137,139-140,144-149,151,160,166-167
+libs/ui/src/components/VividIcon/VividIcon.tsx
+  h_6029769cf9ac60 2,8
+frontend/src/components/MeetingRoom/TimeRoomName/TimeRoomName.tsx
+  h_6029769cf9ac60 1-5,14-16,18-30,33-36,38-39
+frontend/src/components/MeetingRoom/TimeRoomName/TimeRoomName.test.tsx
+  h_6029769cf9ac60 1-7,9-46,49-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "2b2691079a5d077f7f6d5c7a3d1aa97a566357e1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
