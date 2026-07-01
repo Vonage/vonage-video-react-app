@@ -1,6 +1,6 @@
 # Configuration
 
-This document covers all environment variables, feature flags, theming, and Storybook usage for the Vonage Video API Reference App.
+This document covers the environment variables, feature flags, theming, and Storybook usage for the Vonage Video API Reference App.
 
 ## Environment Configuration
 
@@ -145,6 +145,7 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
+| `DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Enable device selection globally |
 | `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors in the waiting room |
 | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors inside the meeting room |
 
@@ -178,6 +179,7 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 | `ENABLE_REPORT_ISSUE` | `boolean` | `false` | `true` \| `false` | Show the in-call issue reporting tool |
 | `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `boolean` | `true` | `true` \| `false` | Show the Advanced Settings panel inside the meeting room |
 | `SHOW_VIDEO_STATS` | `boolean` | `false` | `true` \| `false` | Show overlay video stats on the waiting room |
+| `NOTIFICATION_DURATION_MS` | `number` | `4000` | Positive integer, in milliseconds | Duration in-app notifications are displayed before auto-dismissing |
 | `AVOID_FETCHING_APP_CONFIG` | `boolean` | `true` | `true` \| `false` | Skip fetching remote app configuration on startup |
 
 ---
@@ -187,6 +189,7 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
 | `DEFAULT_RESOLUTION` | `string` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Format: `widthxheight` in pixels |
+| `PUBLISHER_MAX_RESOLUTION` | `string` | `1920x1080` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Maximum resolution the publisher is allowed to use |
 | `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `number` | `5000` | Positive integer, in bps | Minimum selectable custom video bitrate in the Advanced Settings dialog |
 | `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `number` | `10000000` | Positive integer, in bps | Maximum selectable custom video bitrate in the Advanced Settings dialog |
 | `SUPPORTED_FRAME_RATES` | `string-list` | `30\|15\|7\|1` | Pipe-separated positive integers, in fps | Frame rate options shown in the Advanced Settings video tab |
