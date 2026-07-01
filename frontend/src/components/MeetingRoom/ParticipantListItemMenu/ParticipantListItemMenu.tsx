@@ -7,7 +7,7 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import MenuList from '@mui/material/MenuList';
 import Paper from '@mui/material/Paper';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 
 export type ParticipantListItemMenuProps = {
   participantName: string;

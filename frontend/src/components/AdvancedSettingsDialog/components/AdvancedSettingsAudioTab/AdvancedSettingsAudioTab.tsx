@@ -2,8 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import SelectField from '@ui/SelectField';
-import SwitchField from '@ui/SwitchField';
+import { SelectField, SwitchField } from '@ui/components';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
 
 const {

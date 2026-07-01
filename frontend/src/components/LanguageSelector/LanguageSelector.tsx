@@ -7,16 +7,18 @@ import Select from '@mui/material/Select';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { LanguageOption, LanguageSelectorProps } from './LanguageSelector.types';
 import useIsSmallViewport from '../../hooks/useIsSmallViewport';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { env } from '../../env';
+import { assertLang, Lang } from '@common/schemas';
+import { isNil } from '@common/assertions';
 
 const languageOptions: LanguageOption[] = [
-  { code: 'en', name: 'English', flag: 'flag-united-kingdom' },
-  { code: 'en-US', name: 'English (US)', flag: 'flag-united-states' },
-  { code: 'de', name: 'Deutsch', flag: 'flag-germany' },
-  { code: 'it', name: 'Italiano', flag: 'flag-italy' },
-  { code: 'es', name: 'Español', flag: 'flag-spain' },
-  { code: 'es-MX', name: 'Español (México)', flag: 'flag-mexico' },
+  { code: Lang.EN, name: 'English', flag: 'flag-united-kingdom' },
+  { code: Lang.EN_US, name: 'English (US)', flag: 'flag-united-states' },
+  { code: Lang.DE, name: 'Deutsch', flag: 'flag-germany' },
+  { code: Lang.IT, name: 'Italiano', flag: 'flag-italy' },
+  { code: Lang.ES, name: 'Español', flag: 'flag-spain' },
+  { code: Lang.ES_MX, name: 'Español (México)', flag: 'flag-mexico' },
 ];
 
 const ChevronIcon = ({ className, ...props }: { className?: string } & Record<string, unknown>) => (
@@ -69,10 +71,13 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
         displayEmpty
         className="bg-transparent! *:border-none!"
         renderValue={(value) => {
-          const selectedOption = supportedLanguages.find((option) => option.code === value);
-          if (!selectedOption) {
-            return value;
-          }
+          assertLang(value);
+
+          const selectedOption = supportedLanguages.find((option) => {
+            return option.code === value;
+          });
+
+          if (isNil(selectedOption)) return value;
 
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

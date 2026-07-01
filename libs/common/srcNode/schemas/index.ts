@@ -5,7 +5,6 @@ export * from './LayoutType.schema';
 export * from './ArchiveOutputMode.schema';
 export * from './MediaMode.schema';
 export * from './ArchiveMode';
-export * from './Resolution.schema';
 export * from './StreamMode.schema';
 export * from './ArchiveLayout.schema';
 export * from './TranscriptionProperties.schema';

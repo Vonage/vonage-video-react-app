@@ -17,6 +17,7 @@ export { default as isSessionIdLike } from './isSessionIdLike';
 export { default as assertSessionId } from './assertSessionId';
 export { default as isValidSessionId } from './isValidSessionId';
 export { default as isValidSessionKey } from './isValidSessionKey';
+export { default as isEmptyString } from './isEmptyString';
 export { default as isNumber } from './isNumber';
 export { default as isNumericString } from './isNumericString';
 export { default as assertNumericString } from './assertNumericString';

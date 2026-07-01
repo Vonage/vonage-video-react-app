@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import useDistinctLabelMediaDevices from '.';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevicesEnvelop } from '@core/interceptors';
 

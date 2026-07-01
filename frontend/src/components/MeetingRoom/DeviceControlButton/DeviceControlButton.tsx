@@ -8,7 +8,7 @@ import MutedAlert from '../../MutedAlert';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 import { env } from '../../../env';

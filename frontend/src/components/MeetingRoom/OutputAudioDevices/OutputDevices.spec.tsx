@@ -10,7 +10,7 @@ import { ReactElement } from 'react';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { env } from '../../../env';
 import OutputAudioDevices from './OutputAudioDevices';
 

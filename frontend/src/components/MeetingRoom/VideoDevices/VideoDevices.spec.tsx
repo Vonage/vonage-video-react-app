@@ -5,7 +5,7 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtures';
 import VideoDevices from './VideoDevices';
 import type { AnyFunction } from 'react-global-state-hooks';
-import mediaDevices$ from '@core/stores/devices/devices$';
+import mediaDevices$ from '@core/stores/mediaDevices';
 
 const someDevices = makeMediaDeviceInfos();
 

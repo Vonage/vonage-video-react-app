@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Tooltip from '@mui/material/Tooltip';
 import Link from '@mui/material/Link';
 import IconButton from '@mui/material/IconButton';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 
 /**
  * GHRepoButton Component

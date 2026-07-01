@@ -4,7 +4,7 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import { SUPPORTED_BROWSERS } from '../../../utils/constants';
 import SupportedBrowserListItem from '../SupportedBrowserListItem';
-import Card from '@ui/Card';
+import Card from '@ui/components/Card';
 
 /**
  * SupportedBrowsers Component

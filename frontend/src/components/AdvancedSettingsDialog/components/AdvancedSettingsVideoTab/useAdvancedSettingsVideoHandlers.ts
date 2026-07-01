@@ -13,9 +13,9 @@ import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
-  AdvancedSettingsResolution,
 } from '../../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE } from '../../types/types';
+import { Resolution } from '@common/types';
 
 const { setBitrateMode, setCustomVideoBitrate, setFrameRate, setResolution } =
   advancedSettings$.actions;
@@ -27,7 +27,7 @@ type UseAdvancedSettingsVideoHandlersArgs = {
 
 type UseAdvancedSettingsVideoHandlers = {
   handleFrameRateChange: (value: AdvancedSettingsFrameRate) => Promise<void>;
-  handleResolutionChange: (value: AdvancedSettingsResolution) => Promise<void>;
+  handleResolutionChange: (value: Resolution) => Promise<void>;
   handleBitrateModeChange: (value: AdvancedSettingsBitrateMode) => Promise<void>;
   handleCustomVideoBitrateChange: (value: AdvancedSettingsCustomVideoBitrate) => Promise<void>;
 };
@@ -49,7 +49,7 @@ const useAdvancedSettingsVideoHandlers = ({
     }
   };
 
-  const handleResolutionChange = async (value: AdvancedSettingsResolution) => {
+  const handleResolutionChange = async (value: Resolution) => {
     try {
       await applyResolution(publisher, value);
       setResolution(value);
