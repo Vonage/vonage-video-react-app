@@ -4,15 +4,9 @@ This document covers all environment variables, feature flags, theming, and Stor
 
 ## Environment Configuration
 
-The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`vcrBuild.env.sh`](../vcrBuild.env.sh), which is the single place for all frontend configuration.
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`env.sh`](../env.sh).
 
-Create the backend configuration file by running:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Then open it in a text editor and fill in the values described below.
+For initial setup instructions (creating `.env` files, obtaining credentials), see [Getting Started](./GETTING_STARTED.md).
 
 ---
 
@@ -78,77 +72,124 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 ---
 
-### Frontend
+### Frontend (`env.sh`)
 
-Frontend settings control which features are visible, what language the app uses, and how the video room behaves by default. **All frontend configuration lives in a single file: [`vcrBuild.env.sh`](../vcrBuild.env.sh).**
+Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.
 
-This file is loaded automatically whenever the app is built or deployed. To change a setting, open [`vcrBuild.env.sh`](../vcrBuild.env.sh), update the relevant `export` line, and restart or rebuild:
+All frontend configuration lives in [`env.sh`](../env.sh). To change a setting, update the relevant `export` line and restart the app or trigger a new build.
 
 ```bash
-# vcrBuild.env.sh
+# env.sh
 export ALLOW_CHAT=false
 export DEFAULT_LAYOUT_MODE='grid'
 export I18N_SUPPORTED_LANGUAGES='en|es'
 ```
 
-> **Note:** After editing [`vcrBuild.env.sh`](../vcrBuild.env.sh) you need to restart the app (`yarn dev`) or trigger a new build for the changes to take effect.
+> **Note:** Changes to [`env.sh`](../env.sh) are applied at build time. Restart `yarn dev` locally or create a new build/deployment for the changes to take effect.
+
+#### Value types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `boolean` | Enables or disables a feature or behavior. | `true`, `false` |
+| `number` | Numeric value. The description explains the expected unit. | `5000`, `10000000` |
+| `string` | Single text value, usually selected from a fixed set. | `grid` |
+| `string-list` | Pipe-separated list of values. | `en\|es\|it` |
+
+---
 
 #### Network
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `API_URL` | `http://localhost:3345` (local) / `window.location.origin` (production) | URL of the backend API server |
-| `TUNNEL_DOMAIN` | — | ngrok (or similar) domain used when testing across devices. See [Getting Started](./GETTING_STARTED.md) for multi-device testing setup |
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `API_URL` | `string` | `http://localhost:3345` locally, `window.location.origin` in production | Valid URL | URL of the backend API server |
+| `TUNNEL_DOMAIN` | `string` | Not set | Domain name | Public tunnel domain used when testing across devices. See [Getting Started](./GETTING_STARTED.md) |
+
+---
 
 #### Internationalisation
 
-| Variable | Default | Accepted values | Description |
-|----------|---------|-----------------|-------------|
-| `I18N_FALLBACK_LANGUAGE` | `en` | `en` \| `en-US` \| `es` \| `es-MX` \| `it` | Language used when the user's locale is not supported |
-| `I18N_SUPPORTED_LANGUAGES` | `en` | Pipe-separated list, e.g. `en\|es\|it` | Languages offered in the UI |
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `I18N_FALLBACK_LANGUAGE` | `string` | `en` | `en` \| `en-US` \| `es` \| `es-MX` \| `it` | Language used when the user's locale is not supported |
+| `I18N_SUPPORTED_LANGUAGES` | `string-list` | `en` | Pipe-separated list, for example `en\|es\|it` | Languages offered in the UI |
 
-#### Feature flags
+---
 
-All feature flags are **boolean** (`true` / `false`).
+#### Join experience
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ALLOW_BACKGROUND_EFFECTS` | `true` | Enable virtual background and blur effects |
-| `ALLOW_CAMERA_CONTROL` | `true` | Show the camera on/off toggle |
-| `ALLOW_VIDEO_ON_JOIN` | `true` | Start with camera enabled when joining |
-| `ALLOW_ADVANCED_NOISE_SUPPRESSION` | `true` | Enable the advanced noise-suppression toggle |
-| `ALLOW_AUDIO_ON_JOIN` | `true` | Start with microphone enabled when joining |
-| `ALLOW_MICROPHONE_CONTROL` | `true` | Show the microphone on/off toggle |
-| `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `true` | Show device selectors in the waiting room |
-| `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `true` | Show device selectors inside the meeting room |
-| `ALLOW_ARCHIVING` | `true` | Enable meeting recording (archiving) |
-| `ALLOW_CAPTIONS` | `true` | Enable live captions |
-| `ALLOW_CHAT` | `true` | Enable the in-call group chat |
-| `ALLOW_EMOJIS` | `true` | Enable emoji reactions |
-| `ALLOW_SCREEN_SHARE` | `true` | Enable screen sharing |
-| `SHOW_PARTICIPANT_LIST` | `true` | Show the participant list panel |
-| `ENABLE_REPORT_ISSUE` | `false` | Show the in-call issue reporting tool |
-| `BYPASS_WAITING_ROOM` | `false` | Skip the waiting room and join directly |
-| `AVOID_FETCHING_APP_CONFIG` | `true` | Skip fetching remote app configuration on startup |
-| `WAITING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel in the waiting room |
-| `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `true` | Show the Advanced Settings panel inside the meeting room |
-| `DEFAULT_RESOLUTION` | `1920x1080` | Default video resolution for the publisher |
-| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Minimum custom video bitrate available in Advanced Settings (bps) |
-| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Maximum custom video bitrate available in Advanced Settings (bps) |
-| `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | Frame rate options available in the Advanced Settings video tab |
-| `SHOW_VIDEO_STATS` | `false` | Show overlay video stats on the waiting room |
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `BYPASS_WAITING_ROOM` | `boolean` | `false` | `true` \| `false` | Skip the waiting room and join directly |
+| `ALLOW_AUDIO_ON_JOIN` | `boolean` | `true` | `true` \| `false` | Start with microphone enabled when joining |
+| `ALLOW_VIDEO_ON_JOIN` | `boolean` | `true` | `true` \| `false` | Start with camera enabled when joining |
+| `DEFAULT_LAYOUT_MODE` | `string` | `active-speaker` | `active-speaker` \| `grid` | Default in-room layout when a participant joins |
 
-#### Display defaults
+> **Note:** `DEFAULT_LAYOUT_MODE`, `ALLOW_AUDIO_ON_JOIN`, and `ALLOW_VIDEO_ON_JOIN` require the participant to rejoin the room to apply updated values.
 
-| Variable | Default | Accepted values | Description |
-|----------|---------|-----------------|-------------|
-| `DEFAULT_RESOLUTION` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Default outgoing video resolution |
-| `DEFAULT_LAYOUT_MODE` | `active-speaker` | `active-speaker` \| `grid` | Default in-room layout when a participant joins |
-| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `5000` | Positive integer (bps) | Minimum selectable custom video bitrate in the Advanced Settings dialog |
-| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `10000000` | Positive integer (bps) | Maximum selectable custom video bitrate in the Advanced Settings dialog |
-| `SUPPORTED_FRAME_RATES` | `30\|15\|7\|1` | `\|`-separated positive integers (fps) | Frame rate options shown in the Advanced Settings video tab |
+---
 
-> **Note:** `DEFAULT_LAYOUT_MODE` and `ALLOW_AUDIO_ON_JOIN` / `ALLOW_VIDEO_ON_JOIN` require the participant to **rejoin the room** to take effect after being changed.
+#### Audio and video controls
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `ALLOW_CAMERA_CONTROL` | `boolean` | `true` | `true` \| `false` | Show the camera on/off toggle |
+| `ALLOW_MICROPHONE_CONTROL` | `boolean` | `true` | `true` \| `false` | Show the microphone on/off toggle |
+| `ALLOW_BACKGROUND_EFFECTS` | `boolean` | `true` | `true` \| `false` | Enable virtual background and blur effects |
+| `ALLOW_ADVANCED_NOISE_SUPPRESSION` | `boolean` | `true` | `true` \| `false` | Enable the advanced noise-suppression toggle |
+| `WAITING_ROOM_ALLOW_ADVANCED_SETTINGS` | `boolean` | `true` | `true` \| `false` | Show the Advanced Settings panel in the waiting room |
+
+---
+
+#### Device selection
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors in the waiting room |
+| `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors inside the meeting room |
+
+---
+
+#### In-call collaboration
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `ALLOW_CAPTIONS` | `boolean` | `true` | `true` \| `false` | Enable live captions |
+| `ALLOW_CHAT` | `boolean` | `true` | `true` \| `false` | Enable the in-call group chat |
+| `ALLOW_EMOJIS` | `boolean` | `true` | `true` \| `false` | Enable emoji reactions |
+| `ALLOW_SCREEN_SHARE` | `boolean` | `true` | `true` \| `false` | Enable screen sharing |
+
+---
+
+#### Archiving
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `ALLOW_ARCHIVING` | `boolean` | `true` | `true` \| `false` | Enable meeting recording |
+| `ARCHIVES_REFRESH_INTERVAL_MS` | `number` | `5000` | Positive integer, in milliseconds | Interval for refreshing archived meeting recordings |
+
+---
+
+#### Meeting room UI
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `SHOW_PARTICIPANT_LIST` | `boolean` | `true` | `true` \| `false` | Show the participant list panel |
+| `ENABLE_REPORT_ISSUE` | `boolean` | `false` | `true` \| `false` | Show the in-call issue reporting tool |
+| `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `boolean` | `true` | `true` \| `false` | Show the Advanced Settings panel inside the meeting room |
+| `SHOW_VIDEO_STATS` | `boolean` | `false` | `true` \| `false` | Show overlay video stats on the waiting room |
+| `AVOID_FETCHING_APP_CONFIG` | `boolean` | `true` | `true` \| `false` | Skip fetching remote app configuration on startup |
+
+---
+
+#### Video quality defaults
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `DEFAULT_RESOLUTION` | `string` | `1280x720` | `1920x1080` \| `1280x960` \| `1280x720` \| `640x480` \| `640x360` \| `320x240` \| `320x180` | Format: `widthxheight` in pixels |
+| `MIN_CUSTOM_VIDEO_BITRATE_BPS` | `number` | `5000` | Positive integer, in bps | Minimum selectable custom video bitrate in the Advanced Settings dialog |
+| `MAX_CUSTOM_VIDEO_BITRATE_BPS` | `number` | `10000000` | Positive integer, in bps | Maximum selectable custom video bitrate in the Advanced Settings dialog |
+| `SUPPORTED_FRAME_RATES` | `string-list` | `30\|15\|7\|1` | Pipe-separated positive integers, in fps | Frame rate options shown in the Advanced Settings video tab |
 
 ---
 
@@ -166,27 +207,3 @@ yarn sync:theme-tokens
 ```
 
 This command always regenerates `designTokens.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `designTokens.json` when present, creates root `designTokens.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
-
----
-
-## Storybook
-
-Storybook is available for developing and testing UI components in isolation.
-
-To run Storybook for the frontend:
-
-```bash
-yarn storybook frontend
-```
-
-This will start the Storybook dev server at [http://localhost:6006](http://localhost:6006).
-
----
-
-To run Storybook for the UI library:
-
-```bash
-yarn storybook ui
-```
-
-This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).

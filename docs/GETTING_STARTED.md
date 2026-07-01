@@ -54,7 +54,7 @@ Then, open **backend/.env** and fill in the required configuration:
 - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
 - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
 
-Frontend feature flags and display settings are configured in [`vcrBuild.env.sh`](../vcrBuild.env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Configuration](./CONFIGURATION.md) for the full list of available options.
+Frontend feature flags and display settings are configured in [`env.sh`](../env.sh). The defaults work out of the box — edit that file only when you need to customise behaviour. See [Configuration](./CONFIGURATION.md) for the full list of available options.
 
 ### Start in Development Mode
 
@@ -116,7 +116,7 @@ To test the video API across multiple devices on your local network, you can use
     <img src="./assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
     </details>
 
-5. **Copy the domains** from both outputs and update [`vcrBuild.env.sh`](../vcrBuild.env.sh):
+5. **Copy the domains** from both outputs and update [`env.sh`](../env.sh):
 
     ```bash
     export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
@@ -128,6 +128,30 @@ To test the video API across multiple devices on your local network, you can use
 6. **Open the provided frontend Forwarding URL** in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
 
 Enjoy testing!
+
+---
+
+## Storybook
+
+Storybook is available for developing and testing UI components in isolation.
+
+To run Storybook for the frontend:
+
+```bash
+yarn storybook frontend
+```
+
+This will start the Storybook dev server at [http://localhost:6006](http://localhost:6006).
+
+---
+
+To run Storybook for the UI library:
+
+```bash
+yarn storybook ui
+```
+
+This will start the Storybook dev server at [http://localhost:6007](http://localhost:6007).
 
 ---
 

@@ -2,16 +2,40 @@
 
 <img src="https://developer.nexmo.com/assets/images/Vonage_Nexmo.svg" height="48px" alt="Nexmo is now known as Vonage" />
 
-An open-source video conferencing reference application for the [Vonage Video API](https://developer.vonage.com/en/video/client-sdks/web/overview) using the React framework. It demonstrates best practices for integrating video calling, recording, screen sharing, reactions, and more into your application.
+## Welcome to Vonage
+
+If you're new to Vonage, you can [sign up for a Vonage API account](https://dashboard.vonage.com/?utm_source=DEV_REL&utm_medium=github&utm_campaign=vonage-video-react-app) and get some free credit to get you started.
+
+## What is it?
+
+The Vonage Video API Reference App for React is an open-source video conferencing reference application for the [Vonage Video API](https://developer.vonage.com/en/video/client-sdks/web/overview) using the React framework.
+
+The Reference App demonstrates the best practices for integrating the [Vonage Video API](https://developer.vonage.com/en/video/client-sdks/web/overview) with your application for various use cases, from one-to-one and multi-participant video calling to recording, screen sharing, reactions, and more.
+
+## Why use it?
+
+The Vonage Video API Reference App for React provides developers an easy-to-setup way to get started with using our APIs with React.
+
+The application is open-source, so you can not only get started quickly, but easily extend it with features needed for your use case. Any features already implemented in the Reference App use best practices for scalability and security.
+
+As a commercial open-source project, you can also count on a solid information security architecture. While no packaged solution can guarantee absolute security, the transparency that comes with open-source software, combined with the proactive and responsive open-source community and vendors, provides significant advantages in addressing information security challenges compared to closed-source alternatives.
 
 ## Cross-Platform Support
 
-The Vonage Video API Reference App is also available for other platforms:
+Looking to build on other platforms? The Vonage Video API Reference App is also available for:
 
 - **iOS**: [vonage-video-ios-app](https://github.com/Vonage/vonage-video-ios-app)
 - **Android**: [vonage-video-android-app](https://github.com/Vonage/vonage-video-android-app)
 
-These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms.
+These reference apps share the same backend infrastructure and demonstrate consistent best practices across all platforms, making it easy to build unified video experiences for your users.
+
+## Project Architecture
+
+The project uses an Nx workspace to manage the frontend and backend applications.
+
+![Vonage Video API Reference App Architecture Diagram](./docs/assets/project-architecture.svg)
+
+For details on the workspace structure, libraries, and module boundaries, see [Architecture](./docs/ARCHITECTURE.md).
 
 ## SDK Compatibility & Requirements
 
@@ -89,6 +113,10 @@ This application provides features for common conferencing use cases, such as:
   - <details>
  <summary>Advanced settings panel available in both the waiting room and meeting room, allowing fine-grained control over video, audio and metrics</summary>
  </details>
+
+## Running Locally
+
+See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
 
 ## Documentation
 
