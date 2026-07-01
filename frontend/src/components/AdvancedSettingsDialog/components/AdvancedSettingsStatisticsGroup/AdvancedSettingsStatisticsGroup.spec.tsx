@@ -19,4 +19,38 @@ describe('AdvancedSettingsStatisticsGroup', () => {
     expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
     expect(screen.getByText(/bytes received/i)).toBeInTheDocument();
   });
+
+  it('renders network items when provided', () => {
+    render(
+      <AdvancedSettingsStatisticsGroup
+        title="Subscriber"
+        audioItems={[]}
+        videoItems={[]}
+        networkItems={[{ label: 'Network condition', value: 'Good' }]}
+        defaultExpanded
+      />
+    );
+
+    expect(screen.getByRole('heading', { name: /network/i })).toBeInTheDocument();
+    expect(screen.getByText(/network condition/i)).toBeInTheDocument();
+    expect(screen.getByText(/good/i)).toBeInTheDocument();
+  });
+
+  it('renders disabled message instead of network items when networkDisabledMessage is provided', () => {
+    const disabledMessage = 'Network condition stats require both audio fallbacks enabled.';
+
+    render(
+      <AdvancedSettingsStatisticsGroup
+        title="Subscriber"
+        audioItems={[{ label: 'Packets received', value: '100' }]}
+        videoItems={[]}
+        networkItems={[]}
+        networkDisabledMessage={disabledMessage}
+        defaultExpanded
+      />
+    );
+
+    expect(screen.getByText(disabledMessage)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /network/i })).not.toBeInTheDocument();
+  });
 });
