@@ -11,4 +11,4 @@ export { default as NetworkConditionValue, networkConditionValue } from './Netwo
 export {
   default as NetworkConditionReasonValue,
   networkConditionReasonValue,
-} from './NetworkConditionReason/NetworkConditionReason';
+} from './NetworkConditionReasonValue';

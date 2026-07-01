@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { networkConditionReasonValue } from './';
+import { networkConditionReasonValue } from '.';
 
 describe('NetworkConditionReasonValue', () => {
   it('returns em-dash for null network condition reason', () => {
