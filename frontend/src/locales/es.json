@@ -73,6 +73,7 @@
   "advancedSettings.statistics.sections.audio": "Audio",
   "advancedSettings.statistics.sections.video": "Vídeo",
   "advancedSettings.statistics.sections.network": "Red",
+  "advancedSettings.statistics.sections.networkDisabled": "Las estadísticas de condición de red requieren que Publisher y Subscriber audio fallback estén habilitados en la pestaña de Audio. Si se han activado recientemente, los cambios se aplicarán en la siguiente llamada o tras refrescar.",
   "advancedSettings.statistics.metrics.resolution": "Resolución",
   "advancedSettings.statistics.metrics.frameRate": "Frecuencia de cuadros",
   "advancedSettings.statistics.metrics.decodedFrameRate": "Frecuencia de cuadros decodificada",

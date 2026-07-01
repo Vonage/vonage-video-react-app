@@ -73,6 +73,7 @@
   "advancedSettings.statistics.sections.audio": "Audio",
   "advancedSettings.statistics.sections.video": "Video",
   "advancedSettings.statistics.sections.network": "Rete",
+  "advancedSettings.statistics.sections.networkDisabled": "Le statistiche sulla condizione della rete richiedono che Publisher e Subscriber audio fallback siano abilitati nella scheda Audio. Se abilitati di recente, le modifiche avranno effetto alla prossima chiamata o dopo un aggiornamento.",
   "advancedSettings.statistics.metrics.packetsSent": "Pacchetti inviati",
   "advancedSettings.statistics.metrics.packetsLostSent": "Pacchetti persi (invio)",
   "advancedSettings.statistics.metrics.bytesSent": "Byte inviati",

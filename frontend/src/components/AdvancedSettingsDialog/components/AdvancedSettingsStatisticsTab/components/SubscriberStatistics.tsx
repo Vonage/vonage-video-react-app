@@ -3,6 +3,7 @@ import { useSubscriberStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsStatisticsGroup } from '../../AdvancedSettingsStatisticsGroup';
 import { Subscriber } from '@vonage/client-sdk-video';
+import advancedSettings$ from '@Context/AdvancedSettings';
 
 interface SubscriberStatisticsProps {
   subscriber: Subscriber;
@@ -12,6 +13,16 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
   const { t } = useTranslation();
 
   const { data } = useSubscriberStats({ subscriber });
+
+  const publisherAudioFallbackEnabled = advancedSettings$.use.select(
+    ({ publisherAudioFallbackEnabled }) => publisherAudioFallbackEnabled
+  );
+  const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
+    ({ subscriberAudioFallbackEnabled }) => subscriberAudioFallbackEnabled
+  );
+
+  const isNetworkConditionAvailable =
+    publisherAudioFallbackEnabled && subscriberAudioFallbackEnabled;
 
   const subscriberStatisticsGroups = useMemo(() => {
     if (!data) {
@@ -95,18 +106,24 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
           value: data.remotePublisherConnectionEstimatedBandwidthBps,
         },
       ],
-      networkItems: [
-        {
-          label: t('advancedSettings.statistics.metrics.networkCondition'),
-          value: data.network.score,
-        },
-        {
-          label: t('advancedSettings.statistics.metrics.networkConditionReason'),
-          value: data.network.reason,
-        },
-      ],
+      networkItems: isNetworkConditionAvailable
+        ? [
+            {
+              label: t('advancedSettings.statistics.metrics.networkCondition'),
+              value: data.network.score,
+            },
+            {
+              label: t('advancedSettings.statistics.metrics.networkConditionReason'),
+              value: data.network.reason,
+            },
+          ]
+        : [],
     };
-  }, [data, t]);
+  }, [data, t, isNetworkConditionAvailable]);
+
+  const networkDisabledMessage = isNetworkConditionAvailable
+    ? undefined
+    : t('advancedSettings.statistics.sections.networkDisabled');
 
   return (
     <AdvancedSettingsStatisticsGroup
@@ -115,6 +132,7 @@ const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactE
       audioItems={subscriberStatisticsGroups.audioItems}
       videoItems={subscriberStatisticsGroups.videoItems}
       networkItems={subscriberStatisticsGroups.networkItems}
+      networkDisabledMessage={networkDisabledMessage}
     />
   );
 };
