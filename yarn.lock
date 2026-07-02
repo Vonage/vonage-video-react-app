@@ -5289,10 +5289,10 @@
     "@vonage/server-client" "1.18.1"
     "@vonage/vetch" "1.9.1"
 
-"@vonage/vivid@^5.22.0":
-  version "5.22.0"
-  resolved "https://registry.yarnpkg.com/@vonage/vivid/-/vivid-5.22.0.tgz#4946cab3805c23d92b60f9e0b3424df01b25a961"
-  integrity sha512-oFWaXPqVqnQF5xA4hlINNzGIIvImEfUnZMGdU5zX7GuPDpyQHJmveaW6YSLVYTkToXZqtvwE4aIbv4Ua4PSXNA==
+"@vonage/vivid@^5.23.0":
+  version "5.23.0"
+  resolved "https://registry.yarnpkg.com/@vonage/vivid/-/vivid-5.23.0.tgz#235cb76b5905e31c95e9bc06ca0062ed9682a606"
+  integrity sha512-YgtZkMiu1/0lLTe57ehSaIZzbz7syfkJqoJb6UmshxaWaPTvvXDJlig5LV3N+SaHIs8kXerfu4u8h4MxRGXjGA==
   dependencies:
     "@floating-ui/dom" "^1.7.6"
     "@microsoft/fast-element" "^2.10.4"
