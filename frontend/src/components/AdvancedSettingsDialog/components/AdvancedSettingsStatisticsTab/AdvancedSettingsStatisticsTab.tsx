@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import usePublisherContext from '@hooks/usePublisherContext';
-import SwitchField from '@ui/SwitchField';
+import { SwitchField } from '@ui/components';
 import PublisherStatistics from './components/PublisherStatistics';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import SubscriberStatistics from './components/SubscriberStatistics';

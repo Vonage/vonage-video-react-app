@@ -62,12 +62,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1'"
+        "command": "bash -c 'source ../env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1'"
       },
       "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }],
       "configurations": {
         "coverage": {
-          "command": "bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"
+          "command": "bash -c 'source ../env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"
         }
       }
     },

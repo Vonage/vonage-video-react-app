@@ -1,143 +1,73 @@
 import { z } from 'zod';
 import { LAYOUT_MODES, type LayoutMode } from './types/session';
+import {
+  assertNumericString,
+  assertString,
+  isEmptyString,
+  isNil,
+  isNumericString,
+} from '@common/assertions';
+import { assertLang, Lang, LangSchema, Resolution, ResolutionSchema } from '@common/schemas';
+import { tryCatch } from '@common/execution';
 
-declare const __APP_ENV__: Record<string, string | undefined>;
+type IEnvironmentVariables = z.infer<typeof EnvironmentVariablesSchema>;
 
-export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
-
-export const RESOLUTIONS = [
-  '1920x1080',
-  '1280x960',
-  '1280x720',
-  '640x480',
-  '640x360',
-  '320x240',
-  '320x180',
-] as const;
-
-export type Resolution = (typeof RESOLUTIONS)[number];
-
-export type Mode = 'development' | 'production' | 'test';
-
-export type EnvArg = {
-  [key: string]: unknown;
+type IEnvironmentVariablesArgs = {
+  [K in keyof IEnvironmentVariables]?: unknown;
 };
 
-const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'] as const satisfies readonly Lang[];
-const langEnum = z.enum([...langValues] as [Lang, ...Lang[]]);
+const EnvironmentVariablesSchema = z.object({
+  I18N_FALLBACK_LANGUAGE: langField({ name: 'I18N_FALLBACK_LANGUAGE', default: Lang.EN }),
+  I18N_SUPPORTED_LANGUAGES: langListField({ default: [Lang.EN] }),
+  ENABLE_REPORT_ISSUE: boolean({ default: false }),
+  ALLOW_BACKGROUND_EFFECTS: boolean({ default: true }),
+  ALLOW_CAMERA_CONTROL: boolean({ default: true }),
+  ALLOW_VIDEO_ON_JOIN: boolean({ default: true }),
+  DEFAULT_RESOLUTION: ResolutionSchema.default(Resolution.HD_LANDSCAPE),
+  PUBLISHER_MAX_RESOLUTION: ResolutionSchema.default(Resolution.FHD_LANDSCAPE),
+  NOTIFICATION_DURATION_MS: integer({ default: 4_000 }),
+  MIN_CUSTOM_VIDEO_BITRATE_BPS: integer({ default: 5_000 }),
+  MAX_CUSTOM_VIDEO_BITRATE_BPS: integer({ default: 10_000_000 }),
+  SUPPORTED_FRAME_RATES: intListField([30, 15, 7, 1]),
+  ALLOW_ADVANCED_NOISE_SUPPRESSION: boolean({ default: true }),
+  ALLOW_AUDIO_ON_JOIN: boolean({ default: true }),
+  ALLOW_MICROPHONE_CONTROL: boolean({ default: true }),
+  MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean({ default: false }),
+  WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean({ default: false }),
+  WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
+  ALLOW_ARCHIVING: boolean({ default: true }),
+  ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
+  ALLOW_CAPTIONS: boolean({ default: true }),
+  ALLOW_CHAT: boolean({ default: true }),
+  MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
+  ALLOW_EMOJIS: boolean({ default: true }),
+  ALLOW_SCREEN_SHARE: boolean({ default: true }),
+  DEFAULT_LAYOUT_MODE: z.preprocess(
+    (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
+    z.enum([...LAYOUT_MODES] as [LayoutMode, ...LayoutMode[]])
+  ),
+  SHOW_PARTICIPANT_LIST: boolean({ default: true }),
+  SHOW_VIDEO_STATS: boolean({ default: false }),
+  BYPASS_WAITING_ROOM: boolean({ default: false }),
+  API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
+  TUNNEL_DOMAIN: stringField({ optional: true }),
+  MODE: z.preprocess(
+    (v) => v ?? 'development',
+    z.enum(['development', 'production', 'test'] as const)
+  ),
+  VONAGE_VIDEO_HOST: stringField({ optional: true }),
+});
 
-const boolField = (defaultValue: boolean) =>
-  z.preprocess((val) => {
-    if (val === undefined || val === null || val === '') return defaultValue;
-    if (typeof val === 'boolean') return val;
-    if (val === 'true') return true;
-    if (val === 'false') return false;
-    return val;
-  }, z.boolean());
-
-const positiveIntField = (defaultValue: number) =>
-  z.preprocess(
-    (val) => (val === undefined || val === null || val === '' ? defaultValue : Number(val)),
-    z.number().int().positive()
-  );
-
-const intListField = (fallback: number[]) =>
-  z.preprocess((val) => {
-    if (!val) return fallback;
-    if (typeof val !== 'string') throw new Error('Expected pipe-separated integer list');
-    return val.split('|').map((v) => {
-      const n = Number(v.trim());
-      if (!Number.isInteger(n) || n <= 0) throw new Error(`Invalid integer value in list: ${v}`);
-      return n;
-    });
-  }, z.array(z.number().int().positive()));
-
-const optionalStringField = z.preprocess(
-  (val) => (val === undefined || val === null || val === '' ? undefined : val),
-  z.string().optional()
-);
-
-const langListField = (fallback: Lang) =>
-  z.preprocess((val) => {
-    if (!val) return [fallback];
-    if (typeof val !== 'string') throw new Error('Invalid I18N_SUPPORTED_LANGUAGES');
-    return val.split('|').map((l) => {
-      const lang = l.trim();
-      if (!langValues.includes(lang as Lang))
-        throw new Error(`Invalid supported language: ${lang}`);
-      return lang;
-    });
-  }, z.array(langEnum));
-
-const envSchema = z
-  .object({
-    I18N_FALLBACK_LANGUAGE: z.preprocess(
-      (v) => (v === undefined || v === null || v === '' ? 'en' : v),
-      langEnum
-    ),
-    I18N_SUPPORTED_LANGUAGES: z.union([z.string(), z.null(), z.undefined()]).optional(),
-    ENABLE_REPORT_ISSUE: boolField(false),
-    ALLOW_BACKGROUND_EFFECTS: boolField(true),
-    ALLOW_CAMERA_CONTROL: boolField(true),
-    ALLOW_VIDEO_ON_JOIN: boolField(true),
-    DEFAULT_RESOLUTION: z.preprocess(
-      (v) => (v === undefined || v === null || v === '' ? undefined : v),
-      z.enum([...RESOLUTIONS] as [Resolution, ...Resolution[]]).optional()
-    ),
-    PUBLISHER_MAX_RESOLUTION: z.preprocess(
-      (v) => (v === undefined || v === null || v === '' ? '1920x1080' : v),
-      z.enum([...RESOLUTIONS] as [Resolution, ...Resolution[]])
-    ),
-    NOTIFICATION_DURATION_MS: positiveIntField(4_000),
-    MIN_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(5_000),
-    MAX_CUSTOM_VIDEO_BITRATE_BPS: positiveIntField(10_000_000),
-    SUPPORTED_FRAME_RATES: intListField([30, 15, 7, 1]),
-    ALLOW_ADVANCED_NOISE_SUPPRESSION: boolField(true),
-    ALLOW_AUDIO_ON_JOIN: boolField(true),
-    ALLOW_MICROPHONE_CONTROL: boolField(true),
-    MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
-    WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolField(false),
-    WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolField(true),
-    ALLOW_ARCHIVING: boolField(true),
-    ALLOW_CAPTIONS: boolField(true),
-    ALLOW_CHAT: boolField(true),
-    MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolField(true),
-    ALLOW_EMOJIS: boolField(true),
-    ALLOW_SCREEN_SHARE: boolField(true),
-    DEFAULT_LAYOUT_MODE: z.preprocess(
-      (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
-      z.enum([...LAYOUT_MODES] as [LayoutMode, ...LayoutMode[]])
-    ),
-    SHOW_PARTICIPANT_LIST: boolField(true),
-    SHOW_VIDEO_STATS: boolField(false),
-    BYPASS_WAITING_ROOM: boolField(false),
-    API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
-    TUNNEL_DOMAIN: optionalStringField,
-    AVOID_FETCHING_APP_CONFIG: boolField(true),
-    MODE: z.preprocess(
-      (v) => v ?? 'development',
-      z.enum(['development', 'production', 'test'] as const)
-    ),
-    VONAGE_VIDEO_HOST: optionalStringField,
-  })
-  .transform(({ I18N_FALLBACK_LANGUAGE, I18N_SUPPORTED_LANGUAGES, ...rest }) => ({
-    ...rest,
-    I18N_FALLBACK_LANGUAGE,
-    I18N_SUPPORTED_LANGUAGES: langListField(I18N_FALLBACK_LANGUAGE).parse(I18N_SUPPORTED_LANGUAGES),
-  }));
-
-export class Env {
-  private raw: Partial<EnvArg>;
-  private initialRaw: Partial<EnvArg>;
+export class Env implements IEnvironmentVariables {
+  private initial: Partial<IEnvironmentVariables>;
 
   public ENABLE_REPORT_ISSUE!: boolean;
   public I18N_FALLBACK_LANGUAGE!: Lang;
   public I18N_SUPPORTED_LANGUAGES!: Lang[];
-
   public ALLOW_BACKGROUND_EFFECTS!: boolean;
   public ALLOW_CAMERA_CONTROL!: boolean;
   public ALLOW_VIDEO_ON_JOIN!: boolean;
-  public DEFAULT_RESOLUTION!: Resolution | undefined;
+  public DEFAULT_RESOLUTION!: Resolution;
   public PUBLISHER_MAX_RESOLUTION!: Resolution;
   public NOTIFICATION_DURATION_MS!: number;
   public MIN_CUSTOM_VIDEO_BITRATE_BPS!: number;
@@ -160,35 +90,33 @@ export class Env {
   public SHOW_VIDEO_STATS!: boolean;
   public BYPASS_WAITING_ROOM!: boolean;
   public API_URL!: string;
-  public TUNNEL_DOMAIN!: string | undefined;
-  public AVOID_FETCHING_APP_CONFIG!: boolean;
+  public TUNNEL_DOMAIN!: string | null;
   public MODE!: Mode;
-  public VONAGE_VIDEO_HOST!: string | undefined;
+  public VONAGE_VIDEO_HOST!: string | null;
+  public ARCHIVES_REFRESH_INTERVAL_MS!: number;
 
-  constructor(env: Record<string, unknown>) {
-    this.raw = { ...env };
-    this.initialRaw = { ...env };
-
-    const parsed = envSchema.parse(env);
+  constructor(env: IEnvironmentVariablesArgs) {
+    const parsed = EnvironmentVariablesSchema.parse(env);
     Object.assign(this, parsed);
 
     this.setApiUrl(parsed.API_URL);
+
+    this.initial = Object.keys(parsed).reduce(
+      (acc, key) => {
+        acc[key] = parsed[key as keyof IEnvironmentVariables];
+        return acc;
+      },
+      {} as Record<string, unknown>
+    );
   }
 
   /**
    * Partially updates the environment variables at runtime.
    * Useful for testing different configurations without reloading the page.
-   * @param {Partial<EnvArg>} partial - An object containing the env variables to update.
+   * @param {Partial<IEnvironmentVariables>} partial - An object containing the env variables to update.
    */
-  partialUpdate(partial: Partial<EnvArg>) {
-    this.raw = {
-      ...this.raw,
-      ...partial,
-    };
-    const next = new Env(this.raw);
-    const savedInitialRaw = this.initialRaw;
-    Object.assign(this, next);
-    this.initialRaw = savedInitialRaw;
+  partialUpdate(partial: Partial<IEnvironmentVariables>) {
+    Object.assign(this, partial);
   }
 
   /**
@@ -196,9 +124,7 @@ export class Env {
    * Useful for cleaning up after tests that call partialUpdate.
    */
   reset() {
-    const next = new Env(this.initialRaw);
-    this.raw = { ...this.initialRaw };
-    Object.assign(this, next);
+    Object.assign(this, this.initial);
   }
 
   /**
@@ -228,20 +154,91 @@ export class Env {
    * @param {unknown} value - Raw language string, e.g. "en|es|it".
    */
   setSupportedLanguages(value: unknown) {
-    this.I18N_SUPPORTED_LANGUAGES = langListField(this.I18N_FALLBACK_LANGUAGE).parse(value);
+    this.I18N_SUPPORTED_LANGUAGES = langListField({ default: [Lang.EN] }).parse(value);
   }
 }
 
-let env: Env;
-let envInitError: Error | null = null;
+type Mode = 'development' | 'production' | 'test';
 
-try {
-  env = new Env(__APP_ENV__);
-} catch (error) {
-  envInitError = error instanceof Error ? error : new Error(String(error));
-  // Provide a safe shell so that callers that import `env` at module level
-  // don't throw a second time on property access before EnvGuard re-throws.
-  env = {} as Env;
+function boolean(args: { default: boolean }) {
+  return z.preprocess(
+    (val) => (isNil(val) ? args.default : val === 'true' || val === true),
+    z.boolean()
+  );
 }
 
+function integer(args: { default: number }) {
+  return z.preprocess((val) => (isNumericString(val) ? Number(val) : args.default), z.number());
+}
+
+function intListField(fallback: number[]) {
+  return z.preprocess((val) => {
+    if (isNil(val)) return fallback;
+
+    assertString(val, 'Expected pipe-separated integer list');
+
+    return val.split('|').map((v) => {
+      assertNumericString(v, `Expected integer but got "${v}"`);
+      return Number(v);
+    });
+  }, z.array(z.number().int().positive()));
+}
+
+function langField(args: { name: string; default: Lang }) {
+  return z
+    .preprocess((value): Lang => {
+      assertString(value, `Invalid ${args.name}, expected a string but got ${typeof value}`);
+
+      const lang = value.trim();
+      assertLang(lang);
+
+      return lang;
+    }, LangSchema)
+    .default(args.default);
+}
+
+function langListField(args: { default: Lang[] }) {
+  const fieldName = 'I18N_SUPPORTED_LANGUAGES';
+  const lang = langField({ name: fieldName, default: Lang.EN });
+  const langs = z.array(lang);
+
+  return z
+    .preprocess((value): Lang[] => {
+      if (isNil(value)) return args.default;
+
+      assertString(
+        value,
+        `Invalid ${fieldName}, expected a pipe-separated string but got ${typeof value}`
+      );
+
+      return value.split('|').map((item) => lang.parse(item));
+    }, langs)
+    .default(args.default);
+}
+
+function stringField(args: { default?: string; optional: boolean }) {
+  if (args.optional)
+    return z.preprocess((val) => {
+      if (!val) return null;
+      assertString(val, 'Expected a string');
+      return val.trim();
+    }, z.string().nullable());
+
+  return z
+    .string()
+    .trim()
+    .refine((val) => !isEmptyString(val), {
+      message: 'String cannot be empty',
+    });
+}
+
+declare const __APP_ENV__: Record<string, string | undefined>;
+
+const { env, envInitError } = (() => {
+  const { result: env, error: envInitError } = tryCatch(() => new Env(__APP_ENV__), {} as Env);
+  return { env, envInitError };
+})();
+
 export { env, envInitError };
+
+export default env;

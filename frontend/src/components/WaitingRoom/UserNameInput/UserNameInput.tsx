@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Card from '@ui/Card';
+import Card from '@ui/components/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import isValidUserName from '@utils/isValidUserName';

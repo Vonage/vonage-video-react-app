@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import { mediaDevices$ } from '@core/stores';
-import SwitchField from '@ui/SwitchField';
+import { SwitchField } from '@ui/components';
 import DropdownSeparator from '../DropdownSeparator';
 import SoundTest from '../../SoundTest';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import { env } from '../../../env';
 

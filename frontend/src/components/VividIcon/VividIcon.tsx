@@ -1,3 +1,3 @@
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 
 export default VividIcon;
