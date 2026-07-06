@@ -5541,6 +5541,11 @@
     js-yaml "^3.10.0"
     tslib "^2.4.0"
 
+"@zip.js/zip.js@^2.8.26":
+  version "2.8.26"
+  resolved "https://registry.yarnpkg.com/@zip.js/zip.js/-/zip.js-2.8.26.tgz#826a819f673e8284d0de785551ac37e9972ee794"
+  integrity sha512-RQ4h9F6DOiHxpdocUDrOl6xBM+yOtz+LkUol47AVWcfebGBDpZ7w7Xvz9PS24JgXvLGiXXzSAfdCdVy1tPlaFA==
+
 "@zkochan/js-yaml@0.0.7":
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/@zkochan/js-yaml/-/js-yaml-0.0.7.tgz#4b0cb785220d7c28ce0ec4d0804deb5d821eae89"
@@ -7321,6 +7326,18 @@ easy-cancelable-promise@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/easy-cancelable-promise/-/easy-cancelable-promise-2.0.1.tgz#38aa20d82613387bb04eafe2850f219c24488793"
   integrity sha512-z9nWwEMh3oGkCO2KNlTRxJFyQRJDLvu7sdDr0dka8lR69a43z3l1zJMS8nGEgWThIethC9EScF0XIzYkDDWDEw==
+
+easy-cancelable-promise@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/easy-cancelable-promise/-/easy-cancelable-promise-1.0.3.tgz#1e8bc14b506f614a145abdffcc25f62133912278"
+  integrity sha512-hPwcwLjDWis8c7xzOYzG1ThuZPIA34VtGCSWIS1G1+rh6oODz3oL5N3rf5FrDBm6p5xe02ismgj6zt/hp4PsjQ==
+
+easy-web-worker@^7.0.5:
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/easy-web-worker/-/easy-web-worker-7.0.5.tgz#a0818ae66c398d14e5e4f6c57090edae80ab40a9"
+  integrity sha512-r5i2Uam47/HOY0uaCJdrHjaHAWvwiqaTt3nphvI/bv19ddyu5EtY4j+S7dMT1QRqLPv2u/R+18BJZsQONdZeoQ==
+  dependencies:
+    easy-cancelable-promise "^1.0.3"
 
 ecdsa-sig-formatter@1.0.11:
   version "1.0.11"

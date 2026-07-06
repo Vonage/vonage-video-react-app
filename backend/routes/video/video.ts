@@ -10,6 +10,8 @@ import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
+import axios from 'axios';
+import { pipeline } from 'node:stream/promises';
 
 const videoRouter = Router();
 
@@ -174,6 +176,43 @@ videoRouter.post('/hooks/session', async (req: Request, res: Response) => {
 });
 
 // #endregion ------------------------------------------------------------------------
+
+videoRouter.get('/zip', async (_req, res) => {
+  const githubZipUrl = 'https://api.github.com/repos/Vonage/vonage-video-react-app/zipball/main';
+
+  try {
+    const { headers, ...response } = await assertResult(
+      () =>
+        axios.get(githubZipUrl, {
+          responseType: 'stream',
+          headers: {
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'User-Agent': 'vera-prebuilds',
+          },
+        }),
+      makeInternalErrorHandler('Failed to fetch ZIP from GitHub')
+    );
+
+    // change name
+    res.setHeader('Content-Type', headers['content-type'] as string);
+    res.setHeader('Content-Disposition', headers['content-disposition'] as string);
+    res.setHeader('content-length', headers['content-length'] as string);
+    res.setHeader('etag', headers.etag as string);
+    res.setHeader('cache-control', headers['cache-control'] as string);
+
+    await pipeline(response.data, res);
+  } catch (err) {
+    const error = makeInternalErrorHandler('Failed to fetch ZIP from GitHub')(err);
+
+    if (res.headersSent) {
+      res.destroy(error);
+      return;
+    }
+
+    throw error;
+  }
+});
 
 videoRouter.use(videoHandler);
 
