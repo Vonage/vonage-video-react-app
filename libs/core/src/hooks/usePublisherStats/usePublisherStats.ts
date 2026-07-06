@@ -11,6 +11,8 @@ import {
   OptionalValue,
   PacketLossValue,
   ResolutionValue,
+  NetworkConditionValue,
+  NetworkConditionReasonValue,
 } from '@core/metrics';
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
@@ -29,6 +31,10 @@ export type PublisherInspectorStatistics = {
   frameRate: OptionalValue<FrameRateValue>;
   bitrateBps: OptionalValue<BitrateValue>;
   packetLossRatio: OptionalValue<PacketLossValue>;
+  network: {
+    score: OptionalValue<NetworkConditionValue>;
+    reason: OptionalValue<NetworkConditionReasonValue>;
+  };
   audio: OutgoingTrackTotals;
   video: OutgoingTrackTotals;
   connectionEstimatedBandwidthBps: OptionalValue<BitrateValue>;
@@ -112,6 +118,18 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
         frameRate: optionalValue(FrameRateValue, frameRate, { fallback: '-' }),
         bitrateBps: optionalValue(BitrateValue, bitrateBps, { fallback: '-' }),
         packetLossRatio: optionalValue(PacketLossValue, packetLossRatio, { fallback: '-' }),
+        network: {
+          score: optionalValue(
+            NetworkConditionValue,
+            stats?.mediaLink?.transport?.networkCondition,
+            { fallback: '-' }
+          ),
+          reason: optionalValue(
+            NetworkConditionReasonValue,
+            stats?.mediaLink?.transport?.networkConditionReason,
+            { fallback: '-' }
+          ),
+        },
         audio: audioTotals,
         video: videoTotals,
         connectionEstimatedBandwidthBps: optionalValue(

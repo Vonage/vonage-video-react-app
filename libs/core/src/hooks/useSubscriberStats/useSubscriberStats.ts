@@ -9,6 +9,8 @@ import {
   OptionalValue,
   optionalValue,
   PacketLossValue,
+  NetworkConditionValue,
+  NetworkConditionReasonValue,
 } from '@core/metrics';
 import type { Subscriber, SubscriberStats } from '@vonage/client-sdk-video';
 
@@ -24,6 +26,10 @@ export type SubscriberInspectorStatistics = {
   id?: string;
   title?: string;
   audio: IncomingTrackTotals;
+  network: {
+    score: OptionalValue<NetworkConditionValue>;
+    reason: OptionalValue<NetworkConditionReasonValue>;
+  };
   video: IncomingTrackTotals & {
     resolution: OptionalValue<ResolutionValue>;
     codec: string | null;
@@ -87,6 +93,19 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
         id: subscriber.id,
         title: subscriber.stream?.name ?? subscriber.id,
         audio,
+
+        network: {
+          score: optionalValue(
+            NetworkConditionValue,
+            stats?.mediaLink?.transport?.networkCondition,
+            { fallback: '-' }
+          ),
+          reason: optionalValue(
+            NetworkConditionReasonValue,
+            stats?.mediaLink?.transport?.networkConditionReason,
+            { fallback: '-' }
+          ),
+        },
         video: {
           ...video,
           resolution: optionalValue(ResolutionValue, stats.video),

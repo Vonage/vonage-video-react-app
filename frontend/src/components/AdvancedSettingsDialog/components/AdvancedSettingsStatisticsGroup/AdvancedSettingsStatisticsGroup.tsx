@@ -14,6 +14,8 @@ type AdvancedSettingsStatisticsGroupProps = {
   title: string;
   audioItems: AdvancedSettingsStatisticItem[];
   videoItems: AdvancedSettingsStatisticItem[];
+  networkItems: AdvancedSettingsStatisticItem[];
+  networkDisabledMessage?: string;
   defaultExpanded?: boolean;
 };
 
@@ -21,10 +23,16 @@ const AdvancedSettingsStatisticsGroup = ({
   title,
   audioItems,
   videoItems,
+  networkItems,
+  networkDisabledMessage,
   defaultExpanded = false,
 }: AdvancedSettingsStatisticsGroupProps): ReactElement => {
   const { t } = useTranslation();
-  const hasStatistics = audioItems.length > 0 || videoItems.length > 0;
+  const hasStatistics =
+    audioItems.length > 0 ||
+    videoItems.length > 0 ||
+    networkItems.length > 0 ||
+    !!networkDisabledMessage;
 
   const formattedAudioItems = useMemo(
     () =>
@@ -42,6 +50,15 @@ const AdvancedSettingsStatisticsGroup = ({
         value: value.toString(),
       })),
     [videoItems]
+  );
+
+  const formattedNetworkItems = useMemo(
+    () =>
+      networkItems.map(({ label, value }) => ({
+        label,
+        value: value.toString(),
+      })),
+    [networkItems]
   );
 
   return (
@@ -72,6 +89,24 @@ const AdvancedSettingsStatisticsGroup = ({
                 title={t('advancedSettings.statistics.sections.video')}
                 items={formattedVideoItems}
               />
+            )}
+
+            {networkItems.length > 0 && (
+              <LabeledValueList
+                title={t('advancedSettings.statistics.sections.network')}
+                items={formattedNetworkItems}
+              />
+            )}
+
+            {networkDisabledMessage && (
+              <div className="flex flex-col gap-2">
+                <span className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+                  {t('advancedSettings.statistics.sections.network')}
+                </span>
+                <p className="rounded-vera-medium border border-vera-warning bg-vera-warning/10 px-3 py-2 font-vera-plain text-vera-caption text-vera-warning">
+                  {networkDisabledMessage}
+                </p>
+              </div>
             )}
           </div>
         )}
