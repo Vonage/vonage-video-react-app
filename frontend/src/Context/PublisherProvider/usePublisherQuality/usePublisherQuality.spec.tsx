@@ -58,4 +58,27 @@ describe('usePublisherQuality', () => {
     void act(() => mockPublisher.emit('videoDisableWarning'));
     await waitFor(() => expect(result.current).toBe('poor'));
   });
+
+  it('removes listeners from the previous publisher when the publisher is re-created', () => {
+    const oldPublisher = new EventEmitter();
+    const newPublisher = new EventEmitter();
+
+    const { rerender } = renderHook(
+      (publisher: EventEmitter) => usePublisherQuality(publisher as unknown as Publisher),
+      { initialProps: oldPublisher }
+    );
+
+    // Publisher re-created (reconnect/recovery, device change).
+    rerender(newPublisher);
+
+    // The old publisher must no longer be observed — otherwise its listeners leak.
+    expect(oldPublisher.listenerCount('videoDisabled')).toBe(0);
+
+    // A stale event from the old publisher must not inflate the shared fallback counter.
+    const audioFallbacksBefore = mockUserContext.user.issues.audioFallbacks;
+    act(() => {
+      oldPublisher.emit('videoDisabled');
+    });
+    expect(mockUserContext.user.issues.audioFallbacks).toBe(audioFallbacksBefore);
+  });
 });
