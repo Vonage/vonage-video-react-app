@@ -108,13 +108,13 @@ sessionRouter.post(
       const newCaptionCount = await sessionService.incrementCaptionsUserCount({ sessionKey });
 
       if (newCaptionCount === 1) {
-        const { result: captionsId, error } = await tryCatch(async () => {
+        const { result: captionsId, error, didFail } = await tryCatch(async () => {
           const { captionsId } = await videoClient.enableCaptions({ sessionKey });
           await sessionService.setCaptionsId({ sessionId, captionsId });
           return captionsId;
         });
 
-        if (error) {
+        if (didFail) {
           // Roll back the increment so a transient failure can't wedge captions for the
           // whole room: otherwise the count stays >= 1 and the "=== 1" enable branch
           // (the only path that actually calls enableCaptions) never runs again.
