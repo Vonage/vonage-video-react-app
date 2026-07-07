@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
@@ -54,6 +54,15 @@ const useScreenShare = (): UseScreenShareType => {
   const handleStreamCreated = useCallback(() => {
     unpublishScreenshare();
   }, [unpublishScreenshare]);
+
+  // The toggleShareScreen else-branch only removes the screenshareStreamCreated listener when
+  // the user stops sharing via the button. If the component unmounts while sharing, the
+  // listener on vonageVideoClient would leak (and stack duplicates on remount + re-share).
+  useEffect(() => {
+    return () => {
+      vonageVideoClient?.off('screenshareStreamCreated', handleStreamCreated);
+    };
+  }, [vonageVideoClient, handleStreamCreated]);
 
   // Using useCallback to memoize the function to avoid unnecessary re-renders
   const toggleShareScreen = useCallback(async () => {
