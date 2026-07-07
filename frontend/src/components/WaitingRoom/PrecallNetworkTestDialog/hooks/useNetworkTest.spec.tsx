@@ -146,6 +146,21 @@ describe('useNetworkTest', () => {
     });
   });
 
+  it('stops the network test when the quality test errors (no leaked camera/mic)', async () => {
+    const { result } = render(() => useNetworkTest());
+    const mockError = new Error('Network test failed');
+    mockError.name = 'NetworkError';
+    mockNetworkTest.testQuality.mockRejectedValue(mockError);
+
+    await act(async () => {
+      await expect(result.current.testQuality('test-room')).rejects.toThrow('Network test failed');
+    });
+
+    // On the error path the test must be stopped too — otherwise its OT session and
+    // publisher (camera/mic) keep running in the background.
+    expect(mockNetworkTest.stop).toHaveBeenCalled();
+  });
+
   /**
    * TODO: We need to find a way of tell vitest that the unhandled reject is actually expected here.
    */
