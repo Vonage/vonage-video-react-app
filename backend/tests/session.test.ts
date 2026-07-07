@@ -231,6 +231,18 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(sessionKey).toEqual(expect.any(String));
         });
 
+        it('responds with an error status instead of crashing when a hook payload is malformed', async () => {
+          // A malformed body fails the Zod schema; the async handler must respond, not
+          // rethrow (which in Express 4 would be an unhandled rejection that crashes the
+          // process and leaves the request hanging).
+          const response = await request(server)
+            .post('/v2/hooks/archive')
+            .set('Content-Type', 'application/json')
+            .send({});
+
+          expect(response.statusCode).toBeGreaterThanOrEqual(400);
+        });
+
         it('handles non-actionable and actionable captions events', async () => {
           await sessionService.setCaptionsId({
             sessionId: validSessionId,

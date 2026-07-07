@@ -93,7 +93,10 @@ videoRouter.post('/hooks/captions', async (req: Request, res: Response) => {
 
     res.status(200).send();
   } catch (error) {
-    throw makeInternalErrorHandler('Failed to process captions event')(error);
+    // Respond instead of rethrowing: this is an async Express 4 handler, so a throw here
+    // becomes an unhandled rejection (no error middleware catches it) and crashes the process.
+    const applicationError = makeInternalErrorHandler('Failed to process captions event')(error);
+    res.status(applicationError.statusCode).json(applicationError);
   }
 });
 
@@ -131,7 +134,10 @@ videoRouter.post('/hooks/archive', async (req: Request, res: Response) => {
 
     res.status(200).send();
   } catch (error) {
-    throw makeInternalErrorHandler('Failed to process archive event')(error);
+    // Respond instead of rethrowing (async Express 4 handler — a throw would be an
+    // unhandled rejection that crashes the process).
+    const applicationError = makeInternalErrorHandler('Failed to process archive event')(error);
+    res.status(applicationError.statusCode).json(applicationError);
   }
 });
 
@@ -169,7 +175,10 @@ videoRouter.post('/hooks/session', async (req: Request, res: Response) => {
 
     res.status(200).send();
   } catch (error) {
-    throw makeInternalErrorHandler('Failed to process session event')(error);
+    // Respond instead of rethrowing (async Express 4 handler — a throw would be an
+    // unhandled rejection that crashes the process).
+    const applicationError = makeInternalErrorHandler('Failed to process session event')(error);
+    res.status(applicationError.statusCode).json(applicationError);
   }
 });
 
