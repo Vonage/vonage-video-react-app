@@ -29,7 +29,31 @@ app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
-app.use(cors({ origin: true, credentials: true }));
+
+// Restrict credentialed CORS to an explicit allowlist instead of reflecting any origin.
+// Reflecting `origin: true` with credentials lets any site make authenticated cross-origin
+// requests. Configure CORS_ALLOWED_ORIGINS (comma-separated) with the origins that embed
+// <vera-room> against a remote API; when unset, only same-origin / non-browser requests
+// (no Origin header) are allowed.
+const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      // Deny by not echoing the origin (no Access-Control-Allow-Origin header) rather than
+      // throwing, so the browser blocks the response without a 500.
+      callback(null, false);
+    },
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 
 // Trust only the immediate reverse proxy.
