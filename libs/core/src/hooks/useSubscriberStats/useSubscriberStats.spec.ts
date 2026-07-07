@@ -8,8 +8,22 @@ import { composeProviders } from '@web/helpers';
 import { StrictMode } from 'react';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { wait } from '@common/execution';
+import { runtime$ } from '@core/stores';
 
 describe('useSubscriberStats', () => {
+  it('keys the query by subscriber id under a dedicated namespace, not the archives namespace', () => {
+    const subscriber = makeSubscriber({ audio: {}, video: {}, mediaLink: {} } as SubscriberStats);
+    const useQuerySpy = vi.spyOn(runtime$, 'useQuery');
+
+    renderHook(() => useSubscriberStats({ subscriber }));
+
+    const queryKey = (useQuerySpy.mock.calls[0]?.[0] as { queryKey: unknown } | undefined)
+      ?.queryKey;
+    expect(queryKey).toEqual(['subscriberStats', subscriber.id]);
+
+    useQuerySpy.mockRestore();
+  });
+
   it('returns null when subscriber is null or getStats returns error', async () => {
     expect.assertions(2);
 

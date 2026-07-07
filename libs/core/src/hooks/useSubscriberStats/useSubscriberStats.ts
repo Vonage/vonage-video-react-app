@@ -54,7 +54,7 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
   subscriber,
 }: useSubscriberStatsProps<Selected>) => {
   return runtime$.useQuery({
-    queryKey: ['archives', subscriber],
+    queryKey: ['subscriberStats', subscriber?.id],
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!subscriber) {
