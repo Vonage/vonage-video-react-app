@@ -75,6 +75,57 @@ describe('blockCallsForArgs', () => {
     expect(fn).toHaveBeenCalledTimes(5);
   });
 
+  it('a waiter does not release a later owner lock (mutual exclusion holds for 3+ concurrent calls)', async () => {
+    // Orchestrate the interleaving A(owner) -> B(waiter) -> [A done] -> B runs ->
+    // D(new owner) -> [B done] -> E. With the bug, B's trailing cleanup deletes D's
+    // lock, so E starts running concurrently with the still-in-flight D — two owners
+    // at once. With the fix, E must wait for D.
+    const gates: Record<string, PromiseWithResolvers<null>> = {};
+    ['A', 'B', 'D', 'E'].forEach((id) => {
+      gates[id] = Promise.withResolvers<null>();
+    });
+
+    const started: string[] = [];
+    const fn = jest
+      .fn<(key: string, id: string) => Promise<string>>()
+      .mockImplementation(async (_key: string, id: string) => {
+        started.push(id);
+        await gates[id].promise;
+        return id;
+      });
+
+    const blockedFn = blockCallsForArgs(fn);
+    const key = 'room';
+
+    const promiseA = blockedFn(key, 'A'); // owner
+    const promiseB = blockedFn(key, 'B'); // waiter on A
+    await delay(0);
+
+    // A finishes -> B wakes and enters fn; the key lock is momentarily free.
+    gates.A.resolve(null);
+    await promiseA;
+    await delay(0);
+
+    // A new owner D arrives while B is still inside fn.
+    const promiseD = blockedFn(key, 'D');
+    await delay(0);
+
+    // B finishes -> with the bug this deletes D's lock.
+    gates.B.resolve(null);
+    await promiseB;
+    await delay(0);
+
+    // E arrives. It must observe D's lock and wait, not become a second owner.
+    const promiseE = blockedFn(key, 'E');
+    await delay(0);
+
+    expect(started).not.toContain('E');
+
+    gates.D.resolve(null);
+    gates.E.resolve(null);
+    await Promise.all([promiseD, promiseE]);
+  });
+
   it('does not block calls for other keys', async () => {
     const fn1Promise = Promise.withResolvers();
     const fn = jest
