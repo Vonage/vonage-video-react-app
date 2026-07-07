@@ -156,6 +156,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
             subscriberOptions,
             (error) => {
               if (error) {
+                // Tear down this failed attempt before the retry creates a new
+                // Subscriber, otherwise the orphaned one keeps decoding and emitting
+                // audioLevelUpdated for the same stream until session disconnect.
+                if (subscriber) {
+                  this.clientSession.unsubscribe(subscriber);
+                }
                 reject(error);
                 return;
               }
@@ -195,11 +201,16 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       if (isRecoverableError) {
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+        // Drop the stale bookkeeping so getActiveStreams()/hasStream() don't over-report it.
+        this.streams.delete(streamId);
         return;
       }
 
       // Only emit subscriptionError for critical errors
       console.error('[SUBSCRIBER] Critical subscription error:', syncError);
+      // The subscribe never succeeded, so remove the stream to avoid a ghost entry that
+      // makes handleSubscriberDestroyed take the resubscribe path for a dead stream.
+      this.streams.delete(streamId);
       this.handleSubscriptionError(syncError);
     }
   };

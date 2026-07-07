@@ -55,6 +55,7 @@ describe('VonageVideoClient', () => {
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
       subscribe: mockSubscribe,
+      unsubscribe: vi.fn(),
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
       publish: mockPublish,
@@ -226,6 +227,83 @@ describe('VonageVideoClient', () => {
       expect(nullSubscriber.listenerCount('videoElementCreated')).toBe(0);
       expect(nullSubscriber.listenerCount('destroyed')).toBe(0);
       expect(nullSubscriber.listenerCount('audioLevelUpdated')).toBe(0);
+    });
+  });
+
+  describe('subscribe failure cleanup', () => {
+    it('unsubscribes a failed subscribe attempt before retrying (no leaked duplicate subscribers)', async () => {
+      const streamId = 'flaky-stream';
+      await vonageVideoClient?.connect();
+
+      const failedSubscriber = Object.assign(new EventEmitter(), {
+        id: 'failed',
+      }) as unknown as TestSubscriber;
+      const okSubscriber = Object.assign(new EventEmitter(), {
+        id: 'ok',
+      }) as unknown as TestSubscriber;
+
+      let attempt = 0;
+      vi.spyOn(vonageVideoClient!.clientSession, 'subscribe').mockImplementation(
+        (_a, _b, _c, callback) => {
+          attempt += 1;
+          if (attempt === 1) {
+            // First attempt fails after the subscriber object already exists.
+            queueMicrotask(() =>
+              (callback as unknown as (error: unknown) => void)({
+                name: 'OT_UNEXPECTED',
+                message: 'transient subscribe failure',
+              })
+            );
+            return failedSubscriber;
+          }
+          queueMicrotask(() => callback!());
+          return okSubscriber;
+        }
+      );
+
+      const unsubscribeSpy = vi.spyOn(vonageVideoClient!.clientSession, 'unsubscribe');
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+      });
+
+      // Allow the 200ms retry delay plus the succeeding retry to run.
+      await wait(300);
+
+      // The orphaned first subscriber must be torn down, not left decoding.
+      expect(unsubscribeSpy).toHaveBeenCalledWith(failedSubscriber);
+    });
+
+    it('removes the stream from bookkeeping when subscribe fails critically (no ghost stream)', async () => {
+      const streamId = 'ghost-stream';
+      await vonageVideoClient?.connect();
+
+      const subscriber = Object.assign(new EventEmitter(), {
+        id: 'sub',
+      }) as unknown as TestSubscriber;
+
+      // Every attempt fails with a non-recoverable error → exhausts retries → critical path.
+      vi.spyOn(vonageVideoClient!.clientSession, 'subscribe').mockImplementation(
+        (_a, _b, _c, callback) => {
+          queueMicrotask(() =>
+            (callback as unknown as (error: unknown) => void)({
+              name: 'OT_UNEXPECTED',
+              message: 'critical subscribe failure',
+            })
+          );
+          return subscriber;
+        }
+      );
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+      });
+
+      // 3 attempts with 200ms between each, plus the error handling.
+      await wait(600);
+
+      // A stream that never subscribed must not linger and trigger spurious resubscribe.
+      expect(vonageVideoClient?.hasStream(streamId)).toBe(false);
     });
   });
 
