@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
+import tryCatch from '@common/execution/tryCatch';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
 
@@ -113,8 +114,17 @@ const useScreenShare = (): UseScreenShareType => {
           onScreenShareStopped();
         });
 
-        // Publishing the screen sharing stream
-        await publish(screenSharingPubRef.current);
+        // Publishing the screen sharing stream. Guard against publish failures
+        // (permission denied, network) so we don't leave the UI in a "sharing" state
+        // with nothing actually published.
+        const screenSharingPublisher = screenSharingPubRef.current;
+        if (!screenSharingPublisher) return;
+
+        const { didFail } = await tryCatch(() => publish(screenSharingPublisher));
+        if (didFail) {
+          onScreenShareStopped();
+          return;
+        }
 
         vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
       } else if (screenSharingPubRef.current) {
