@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import bridge$ from '../../stores/bridge';
 import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
@@ -29,9 +29,10 @@ import { PageLayoutEmbed } from '@ui';
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
+  const { roomIdentifier = '' } = useParams<{ roomIdentifier: string }>();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
-  const missingRoomIdentifier = !sessionIdentifier;
+  const missingRoomIdentifier = !roomIdentifier;
   const canRedirect = missingRoomIdentifier && !!sessionIdentifier;
   const isConfigError = missingRoomIdentifier && !sessionIdentifier;
 
