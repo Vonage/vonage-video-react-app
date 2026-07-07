@@ -197,15 +197,19 @@ describe('SessionProvider', () => {
       useEffect(() => {
         if (joinRoom) void joinRoom({ sessionKey: validSessionKey });
       }, [joinRoom]);
-      capturedArrays.push(subscriberWrappers);
+      // Capture committed values in an effect (not during render) so concurrent/StrictMode
+      // re-renders can't record aborted or duplicate references.
+      useEffect(() => {
+        capturedArrays.push(subscriberWrappers);
+      }, [subscriberWrappers]);
       return (
         <div>
           <span data-testid="connected">{String(connected)}</span>
-          <span data-testid="subscriberWrappers">
+          <div data-testid="subscriberWrappers">
             {subscriberWrappers.map((wrapper) => (
               <div key={wrapper.id}>{wrapper.id}</div>
             ))}
-          </span>
+          </div>
         </div>
       );
     };
