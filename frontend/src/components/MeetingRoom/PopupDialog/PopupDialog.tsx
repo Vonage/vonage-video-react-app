@@ -18,6 +18,12 @@ export type DialogProps = {
   handleClose: () => void;
   handleActionClick: () => void;
   actionText: DialogTexts;
+  /**
+   * When true, the dialog cannot be dismissed via backdrop click or Escape;
+   * only the explicit action buttons close it. Use for mandatory prompts (e.g.
+   * recording consent) where an accidental dismissal must not count as a choice.
+   */
+  disableDismiss?: boolean;
 };
 
 /**
@@ -37,11 +43,20 @@ const PopupDialog = ({
   handleClose,
   handleActionClick,
   actionText,
+  disableDismiss = false,
 }: DialogProps): ReactElement => {
   return (
     <Dialog
       open={isOpen}
-      onClose={handleClose}
+      onClose={(_event, reason) => {
+        // For mandatory prompts, ignore the implicit dismiss gestures (backdrop click / Escape)
+        // so an accidental dismissal is not treated as an explicit choice.
+        const isDismissGesture = reason === 'backdropClick' || reason === 'escapeKeyDown';
+        if (disableDismiss && isDismissGesture) {
+          return;
+        }
+        handleClose();
+      }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
