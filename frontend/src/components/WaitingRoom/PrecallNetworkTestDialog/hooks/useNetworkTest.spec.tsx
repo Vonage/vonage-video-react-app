@@ -144,19 +144,7 @@ describe('useNetworkTest', () => {
       message: 'Network test failed',
       name: 'NetworkError',
     });
-  });
-
-  it('stops the network test when the quality test errors (no leaked camera/mic)', async () => {
-    const { result } = render(() => useNetworkTest());
-    const mockError = new Error('Network test failed');
-    mockError.name = 'NetworkError';
-    mockNetworkTest.testQuality.mockRejectedValue(mockError);
-
-    await act(async () => {
-      await expect(result.current.testQuality('test-room')).rejects.toThrow('Network test failed');
-    });
-
-    // On the error path the test must be stopped too — otherwise its OT session and
+    // On the error path the test must also be stopped — otherwise its OT session and
     // publisher (camera/mic) keep running in the background.
     expect(mockNetworkTest.stop).toHaveBeenCalled();
   });
