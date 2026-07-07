@@ -36,6 +36,25 @@ describe('helmetMiddleware', () => {
     expect(helmetHandlerMock).toHaveBeenCalledWith(req, res, next);
   });
 
+  it('does not allow data: in script-src (XSS bypass) while keeping it where the SDK needs it', async () => {
+    process.env.NODE_ENV = 'production';
+
+    await import('./helmetMiddleware');
+
+    const config = helmetMock.mock.calls[0][0] as {
+      contentSecurityPolicy: { directives: Record<string, string[]> };
+    };
+    const directives = config.contentSecurityPolicy.directives;
+
+    // data: in script-src allows <script src="data:text/javascript,...">, negating CSP.
+    expect(directives['script-src']).not.toContain('data:');
+    expect(directives['script-src']).toContain("'self'");
+    // The SDK's data: usage is a fallback Worker (worker-src) and inline images (img-src),
+    // not scripts — those must keep data:.
+    expect(directives['worker-src']).toContain('data:');
+    expect(directives['img-src']).toContain('data:');
+  });
+
   it('should disable contentSecurityPolicy in development', async () => {
     process.env.NODE_ENV = 'development';
 
