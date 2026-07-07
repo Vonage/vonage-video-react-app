@@ -1,0 +1,55 @@
+name: Verify Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to verify (e.g. 1.3.0)"
+        required: true
+      repo:
+        description: "Repo to verify"
+        required: true
+        default: "Vonage/vonage-video-react-app"
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    # Skip if triggered by push with no inputs
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check release tag exists
+        run: |
+          TAG=$(gh release view "${{ inputs.version }}" \
+            --repo "${{ inputs.repo }}" \
+            --json tagName -q '.tagName')
+          echo "✅ Tag found: $TAG"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check main branch matches tag
+        run: |
+          TAG_OBJ_SHA=$(gh api repos/${{ inputs.repo }}/git/refs/tags/${{ inputs.version }} \
+            -q '.object.sha')
+          TAG_TYPE=$(gh api repos/${{ inputs.repo }}/git/refs/tags/${{ inputs.version }} \
+            -q '.object.type')
+
+          if [ "$TAG_TYPE" == "tag" ]; then
+            TAG_SHA=$(gh api repos/${{ inputs.repo }}/git/tags/$TAG_OBJ_SHA \
+              -q '.object.sha')
+          else
+            TAG_SHA=$TAG_OBJ_SHA
+          fi
+
+          MAIN_SHA=$(gh api repos/${{ inputs.repo }}/commits/main \
+            -q '.sha')
+
+          if [ "$TAG_SHA" != "$MAIN_SHA" ]; then
+            echo "❌ main ($MAIN_SHA) does not match tag ($TAG_SHA)"
+            exit 1
+          fi
+          echo "✅ main branch matches tag ${{ inputs.version }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
