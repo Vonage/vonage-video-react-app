@@ -33,6 +33,10 @@ const useSyncPublisherDevices = (
               }
 
               if (hasDevices('videoinput')) return;
+              // Stop publishing on the SDK, not just the UI state — otherwise the
+              // publisher keeps transmitting and a reconnected camera resumes video
+              // while the toolbar shows it as off.
+              void attempt(() => publisherRef.current?.publishVideo(false));
               args.setIsVideoEnabled?.(false);
             },
             {
@@ -54,6 +58,10 @@ const useSyncPublisherDevices = (
               }
 
               if (hasDevices('audioinput')) return;
+              // Stop publishing on the SDK, not just the UI state — otherwise the
+              // publisher keeps transmitting and a reconnected mic resumes audio
+              // while the toolbar shows it as muted.
+              void attempt(() => publisherRef.current?.publishAudio(false));
               args.setIsAudioEnabled?.(false);
             },
             {
