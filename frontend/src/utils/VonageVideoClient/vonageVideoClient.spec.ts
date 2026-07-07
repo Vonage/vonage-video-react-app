@@ -305,6 +305,37 @@ describe('VonageVideoClient', () => {
       // A stream that never subscribed must not linger and trigger spurious resubscribe.
       expect(vonageVideoClient?.hasStream(streamId)).toBe(false);
     });
+
+    it('removes the stream from bookkeeping when subscribe fails with a recoverable error', async () => {
+      const streamId = 'recoverable-stream';
+      await vonageVideoClient?.connect();
+
+      const subscriber = Object.assign(new EventEmitter(), {
+        id: 'sub',
+      }) as unknown as TestSubscriber;
+
+      // A recoverable error (stream destroyed before subscribe completed) → the catch
+      // takes the recoverable early-return, which must still drop the stale bookkeeping.
+      vi.spyOn(vonageVideoClient!.clientSession, 'subscribe').mockImplementation(
+        (_a, _b, _c, callback) => {
+          queueMicrotask(() =>
+            (callback as unknown as (error: unknown) => void)({
+              name: 'OT_STREAM_DESTROYED',
+              message: 'stream was destroyed',
+            })
+          );
+          return subscriber;
+        }
+      );
+
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+      });
+
+      await wait(600);
+
+      expect(vonageVideoClient?.hasStream(streamId)).toBe(false);
+    });
   });
 
   it('disconnect should disconnect from the session and cleanup', async () => {
