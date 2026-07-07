@@ -231,17 +231,24 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(sessionKey).toEqual(expect.any(String));
         });
 
-        it('responds with an error status instead of crashing when a hook payload is malformed', async () => {
-          // A malformed body fails the Zod schema; the async handler must respond, not
-          // rethrow (which in Express 4 would be an unhandled rejection that crashes the
-          // process and leaves the request hanging).
-          const response = await request(server)
-            .post('/v2/hooks/archive')
-            .set('Content-Type', 'application/json')
-            .send({});
+        it.each(['/v2/hooks/archive', '/v2/hooks/captions', '/v2/hooks/session'])(
+          'responds with a safe error status instead of crashing when %s gets a malformed payload',
+          async (route) => {
+            // A malformed body fails the Zod schema; the async handler must respond, not
+            // rethrow (which in Express 4 would be an unhandled rejection that crashes the
+            // process and leaves the request hanging).
+            const response = await request(server)
+              .post(route)
+              .set('Content-Type', 'application/json')
+              .send({});
 
-          expect(response.statusCode).toBeGreaterThanOrEqual(400);
-        });
+            expect(response.statusCode).toBeGreaterThanOrEqual(400);
+            // The response goes through exportSafely(), so internal error internals
+            // (captured request config/headers) must not leak to clients.
+            expect(response.body).not.toHaveProperty('configHeaders');
+            expect(response.body).not.toHaveProperty('config');
+          }
+        );
 
         it('handles non-actionable and actionable captions events', async () => {
           await sessionService.setCaptionsId({
