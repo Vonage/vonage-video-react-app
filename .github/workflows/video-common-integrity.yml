@@ -1,0 +1,29 @@
+name: video-common validation
+
+on:
+  push:
+    paths:
+      - 'libs/common/**'
+  pull_request:
+    paths:
+      - 'libs/common/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --ignore-scripts --frozen-lockfile
+
+      - name: Build
+        run: npx nx run common:build
+
+      - name: Hash check
+        run: npx nx run common:hash:check

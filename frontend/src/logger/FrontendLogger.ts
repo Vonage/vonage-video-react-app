@@ -1,4 +1,4 @@
-import { LoggerBase, type LoggerProviderConfig } from '@common/logger';
+import { Logger, type LoggerProviderConfig } from '@common/logger';
 import type { ErrorInfo } from 'react-dom/client';
 
 export type FrontendLoggerProviderConfig = LoggerProviderConfig & {
@@ -11,7 +11,7 @@ export type FrontendLoggerProviderConfig = LoggerProviderConfig & {
  * FrontendLogger extends LoggerBase with React error callbacks (onCaughtError, onUncaughtError, onRecoverableError).
  * Logs are sent via the configured provider (e.g. backend → Gollum); not to the console.
  */
-export class FrontendLogger extends LoggerBase {
+export class FrontendLogger extends Logger {
   public onCaughtError = (error: unknown, errorInfo: { componentStack?: string }) => {
     this.reportError(error, {
       type: 'caught',

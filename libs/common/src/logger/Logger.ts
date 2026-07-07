@@ -56,7 +56,7 @@ export type LogContext = {
 /**
  * Logger base class for error reporting and event logging.
  */
-export class LoggerBase implements LoggerProviderConfig {
+class Logger implements LoggerProviderConfig {
   private readonly context: LogContext = {};
   /**
    * Indicates whether the lack of a logger provider or one of its features has been acknowledged.
@@ -232,7 +232,7 @@ export class LoggerBase implements LoggerProviderConfig {
   public group<T extends Record<string, unknown>>(groupName: string, context?: T) {
     const groupId = crypto.randomUUID();
 
-    return Object.assign(new LoggerBase(), this, {
+    return Object.assign(new Logger(), this, {
       reportError: (error: unknown, extra = {}) =>
         this.reportError(error, {
           groupId,
@@ -247,7 +247,7 @@ export class LoggerBase implements LoggerProviderConfig {
           context,
           extra,
         }),
-    }) as Omit<LoggerBase, 'group' | 'setup'>;
+    }) as Omit<Logger, 'group' | 'setup'>;
   }
 
   /**
@@ -283,4 +283,4 @@ export class LoggerBase implements LoggerProviderConfig {
   }
 }
 
-export default new LoggerBase();
+export default Logger;

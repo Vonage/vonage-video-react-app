@@ -1,0 +1,59 @@
+name: video-common publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Release channel
+        required: true
+        type: choice
+        options:
+          - latest
+          - beta
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          registry-url: https://npm.pkg.github.com
+          scope: '@vonage'
+
+      - name: Install dependencies
+        run: yarn install --ignore-scripts --frozen-lockfile
+
+      - name: Check registry
+        id: registry-check
+        run: |
+          npx nx run common:registry:compare
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_config_registry: https://npm.pkg.github.com
+
+      - name: Skip if already published
+        if: steps.registry-check.outputs.exit_code == '0'
+        run: echo "Version already published with matching hash — skipping."
+
+      - name: Fail on version collision
+        if: steps.registry-check.outputs.exit_code == '1'
+        run: |
+          echo "Version collision detected — same version exists with different content. Bump the version."
+          exit 1
+
+      - name: Publish
+        if: steps.registry-check.outputs.exit_code == '2'
+        run: npx tsx libs/common/scripts/publishPackage.ts ${{ github.event.inputs.channel }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_config_registry: https://npm.pkg.github.com
