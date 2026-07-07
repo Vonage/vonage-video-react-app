@@ -63,22 +63,29 @@ describe('usePublisherQuality', () => {
     const oldPublisher = new EventEmitter();
     const newPublisher = new EventEmitter();
 
+    // Reset the shared counter so this test does not depend on other tests' order.
+    mockUserContext.user.issues.audioFallbacks = 0;
+
     const { rerender } = renderHook(
       (publisher: EventEmitter) => usePublisherQuality(publisher as unknown as Publisher),
       { initialProps: oldPublisher }
     );
 
+    // The initial effect must actually attach the listener (otherwise the removal
+    // assertion below would pass vacuously).
+    expect(oldPublisher.listenerCount('videoDisabled')).toBe(1);
+
     // Publisher re-created (reconnect/recovery, device change).
     rerender(newPublisher);
 
-    // The old publisher must no longer be observed — otherwise its listeners leak.
+    // The old publisher is no longer observed and the new one is now observed.
     expect(oldPublisher.listenerCount('videoDisabled')).toBe(0);
+    expect(newPublisher.listenerCount('videoDisabled')).toBe(1);
 
     // A stale event from the old publisher must not inflate the shared fallback counter.
-    const audioFallbacksBefore = mockUserContext.user.issues.audioFallbacks;
     act(() => {
       oldPublisher.emit('videoDisabled');
     });
-    expect(mockUserContext.user.issues.audioFallbacks).toBe(audioFallbacksBefore);
+    expect(mockUserContext.user.issues.audioFallbacks).toBe(0);
   });
 });
