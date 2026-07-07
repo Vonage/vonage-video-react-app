@@ -64,3 +64,6 @@ vcr-dev.yml
 
 /frontend/distRoom
 room.zip
+libs/common/tarball/
+graph.json
+.kiro/specs
