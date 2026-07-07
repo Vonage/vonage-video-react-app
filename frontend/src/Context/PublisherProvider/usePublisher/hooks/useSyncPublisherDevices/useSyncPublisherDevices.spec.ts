@@ -48,4 +48,27 @@ describe('useSyncPublisherDevices', () => {
     expect(publisher.publishAudio).toHaveBeenCalledWith(false);
     expect(setIsAudioEnabled).toHaveBeenCalledWith(false);
   });
+
+  it('stops publishing video (not only the UI state) when the last camera disappears', async () => {
+    const publisher = {
+      getVideoSource: () => ({ deviceId: 'old-track-id' }),
+      setVideoSource: vi.fn().mockResolvedValue(undefined),
+      publishVideo: vi.fn(),
+    } as unknown as Publisher;
+
+    const publisherRef = { current: publisher };
+    const setIsVideoEnabled = vi.fn();
+
+    // Only the video subscription is registered (no setIsAudioEnabled passed).
+    renderHook(() => useSyncPublisherDevices(publisherRef, { setIsVideoEnabled }));
+
+    const videoListener = subscribeMock.mock.calls[0]?.[1] as (
+      input: string | undefined
+    ) => Promise<void>;
+
+    await videoListener('new-device-id');
+
+    expect(publisher.publishVideo).toHaveBeenCalledWith(false);
+    expect(setIsVideoEnabled).toHaveBeenCalledWith(false);
+  });
 });
