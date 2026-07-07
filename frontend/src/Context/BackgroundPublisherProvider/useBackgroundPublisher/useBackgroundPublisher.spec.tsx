@@ -160,6 +160,50 @@ describe('useBackgroundPublisher', () => {
     });
   });
 
+  describe('deleteCustomImage', () => {
+    it('clears the background when the applied custom image is deleted, instead of re-applying the selected one', async () => {
+      const dataUrl = 'data:image/png;base64,AAAA';
+
+      const publisher = Object.assign(new EventEmitter(), {
+        getAudioSource: () => defaultAudioDevice,
+        getVideoSource: () => defaultVideoDevice,
+        applyVideoFilter: vi.fn(),
+        clearVideoFilter: vi.fn(),
+        // The currently-applied filter IS the custom image we are about to delete.
+        getVideoFilter: () => ({ type: 'backgroundReplacement', backgroundImgUrl: dataUrl }),
+      }) as unknown as Publisher;
+
+      mockedHasMediaProcessorSupport.mockReturnValue(true);
+      mockedInitPublisher.mockReturnValue(publisher);
+
+      const { result } = render({
+        hookInitialValue: {
+          customImages: [{ id: 'img1', dataUrl }],
+          // A different background is selected; the bug would re-apply this instead of clearing.
+          backgroundSelected: 'bg1.jpg',
+        },
+      });
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+      (publisher.applyVideoFilter as Mock).mockClear();
+      (publisher.clearVideoFilter as Mock).mockClear();
+
+      await act(async () => {
+        result.current.deleteCustomImage('img1');
+        await Promise.resolve();
+      });
+
+      await waitFor(() => {
+        expect(publisher.clearVideoFilter).toHaveBeenCalled();
+      });
+      expect(publisher.applyVideoFilter).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'backgroundReplacement' })
+      );
+    });
+  });
+
   describe('on accessDenied', () => {
     const mockQuery = vi.fn();
     let mockedPermissionStatus: { onchange: null | (() => void); state: string };
@@ -235,6 +279,7 @@ type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
   backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
+  hookInitialValue?: Parameters<typeof useBackgroundPublisher>[0];
 };
 
 function render({
@@ -242,6 +287,7 @@ function render({
   sessionContext,
   publisherContext,
   backgroundPublisherContext,
+  hookInitialValue,
 }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
     [
@@ -262,7 +308,7 @@ function render({
 
   return {
     ...context,
-    ...renderHookBase(() => useBackgroundPublisher(), {
+    ...renderHookBase(() => useBackgroundPublisher(hookInitialValue), {
       wrapper,
     }),
   };
