@@ -1,7 +1,7 @@
 // loads environment variables from .env file
 import './helpers/config';
 
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -27,6 +27,26 @@ const app: Express = express();
 
 app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
+
+// Parse the unauthenticated /feedback endpoint with a small limit BEFORE the global 20mb
+// parser. body-parser skips re-parsing once req._body is set, so this scoped limit caps the
+// base64-attachment -> Buffer -> form-data memory amplification (a DoS vector) before the
+// handler ever runs. Reject oversized bodies with a clean 413 instead of the generic 500.
+app.use('/feedback', express.json({ limit: '2mb' }));
+app.use('/feedback', (error: unknown, _req: Request, res: Response, next: NextFunction) => {
+  const isPayloadTooLarge =
+    !!error &&
+    typeof error === 'object' &&
+    (error as { type?: string }).type === 'entity.too.large';
+
+  if (isPayloadTooLarge) {
+    res.status(413).json({ message: 'Feedback payload too large.' });
+    return;
+  }
+
+  next(error);
+});
+
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cors({ origin: true, credentials: true }));
