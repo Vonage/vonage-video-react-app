@@ -114,6 +114,28 @@ describe('SpeakingDetector', () => {
     expect(speakingDetector.stream).toBeNull();
   });
 
+  it('closes the AudioContext and rethrows when getUserMedia rejects', async () => {
+    const audioContextCloseSpy = vi.fn();
+    global.AudioContext = vi.fn(() => ({
+      createMediaStreamSource: mockCreateMediaStreamSource,
+      createAnalyser: vi.fn(() => mockAnalyser),
+      close: audioContextCloseSpy,
+    })) as unknown as typeof global.AudioContext;
+
+    vi.spyOn(mediaDevices$.actions, 'getUserMedia').mockRejectedValue(
+      new Error('permission denied')
+    );
+
+    const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
+
+    await expect(speakingDetector.turnSpeakingDetectorOn()).rejects.toThrow(
+      'error starting speaking detector'
+    );
+
+    // The AudioContext created before the failed getUserMedia must be closed, not leaked.
+    expect(audioContextCloseSpy).toHaveBeenCalled();
+  });
+
   it('should clean up resources and emit isSpeakingWhileMutedOff when turning detector off', async () => {
     const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
 
