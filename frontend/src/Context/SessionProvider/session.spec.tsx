@@ -189,6 +189,63 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub2'));
   });
 
+  it('moving the active speaker to the top must not mutate the previous subscriberWrappers array', async () => {
+    const capturedArrays: SubscriberWrapper[][] = [];
+
+    const CaptureComponent = () => {
+      const { joinRoom, connected, subscriberWrappers } = useSessionContext();
+      useEffect(() => {
+        if (joinRoom) void joinRoom({ sessionKey: validSessionKey });
+      }, [joinRoom]);
+      capturedArrays.push(subscriberWrappers);
+      return (
+        <div>
+          <span data-testid="connected">{String(connected)}</span>
+          <span data-testid="subscriberWrappers">
+            {subscriberWrappers.map((wrapper) => (
+              <div key={wrapper.id}>{wrapper.id}</div>
+            ))}
+          </span>
+        </div>
+      );
+    };
+
+    const { getByTestId } = render(<CaptureComponent />);
+    await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('true'));
+
+    act(() => {
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub1',
+      } as unknown as SubscriberWrapper);
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub2',
+      } as unknown as SubscriberWrapper);
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub3',
+      } as unknown as SubscriberWrapper);
+    });
+
+    await waitFor(() => expect(getByTestId('subscriberWrappers').children.length).toBe(3));
+
+    // The array currently held in state (which the reorder updater receives as `prev`).
+    const arrayBeforeReorder = capturedArrays[capturedArrays.length - 1];
+    const orderBeforeReorder = arrayBeforeReorder.map((wrapper) => wrapper.id);
+
+    void act(() =>
+      activeSpeakerTracker.emit('activeSpeakerChanged', {
+        previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
+        newActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0.4 },
+      })
+    );
+
+    await waitFor(() =>
+      expect(getByTestId('subscriberWrappers').children[0]).toHaveTextContent('sub1')
+    );
+
+    // The reorder must produce a new array; the previous one must be left untouched.
+    expect(arrayBeforeReorder.map((wrapper) => wrapper.id)).toEqual(orderBeforeReorder);
+  });
+
   describe('publish', () => {
     it('should call publish on VonageVideoClient when connected', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
