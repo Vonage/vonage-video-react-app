@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import throttle from '@common/execution/throttle';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
@@ -38,6 +38,18 @@ export type EmojiWrapper = {
  */
 const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
   const [emojiQueue, setEmojiQueue] = useState<EmojiWrapper[]>([]);
+
+  // Track the emoji auto-dismiss timers so they can be cleared on unmount — otherwise a
+  // pending timer would call setEmojiQueue after the component is gone.
+  const displayTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  useEffect(() => {
+    const timers = displayTimersRef.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
 
   /**
    * Sends an emoji to all participants in the room.
@@ -116,9 +128,11 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
         };
         setEmojiQueue((previousEmojiQueue) => [...previousEmojiQueue, emojiWrapper]);
 
-        setTimeout(() => {
+        const timer = setTimeout(() => {
+          displayTimersRef.current.delete(timer);
           setEmojiQueue((previousEmojiQueue) => previousEmojiQueue.slice(1));
         }, EMOJI_DISPLAY_DURATION);
+        displayTimersRef.current.add(timer);
       }
     },
     [getSenderName]

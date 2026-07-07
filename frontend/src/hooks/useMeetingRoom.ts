@@ -96,6 +96,8 @@ const useMeetingRoom = () => {
     /**
      * [TODO]: Reconcile sessionKey if necessary. This is needed for legacy support where the url contains only a room name.
      */
+    let cancelled = false;
+
     const resolveAndJoin = async () => {
       const resolvedSessionKey = await (async () => {
         if (sessionKeyStatus === 'valid') return sessionKey;
@@ -110,12 +112,17 @@ const useMeetingRoom = () => {
         return session.sessionKey;
       })();
 
+      // The user may have navigated away while createSession was in flight — don't join
+      // on a stale/unmounted context.
+      if (cancelled) return;
+
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
     void resolveAndJoin();
 
     return () => {
+      cancelled = true;
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
