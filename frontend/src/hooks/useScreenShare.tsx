@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import tryCatch from '@common/execution/tryCatch';
+import attempt from '@common/execution/attempt';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
 
@@ -122,6 +123,10 @@ const useScreenShare = (): UseScreenShareType => {
 
         const { didFail } = await tryCatch(() => publish(screenSharingPublisher));
         if (didFail) {
+          // Destroy the publisher too — onScreenShareStopped only nulls the ref, so the
+          // screen capture (and the browser's screen-share indicator) would otherwise keep
+          // running with no handle left to stop it.
+          void attempt(() => screenSharingPublisher.destroy());
           onScreenShareStopped();
           return;
         }
