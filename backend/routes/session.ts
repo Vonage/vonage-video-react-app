@@ -62,6 +62,16 @@ sessionRouter.post(
       const { archiveId, room: roomName } = req.params;
       const sessionKey = await getSessionKeyFromRoomName({ roomName });
 
+      // Ensure the archive belongs to this room's session before stopping it — otherwise a
+      // caller who knows any room name could stop an archive from another room by its id.
+      const { items } = await videoClient.searchArchives({ sessionKey });
+      const archiveBelongsToRoom = items.some((archive) => archive.id === archiveId);
+
+      if (!archiveBelongsToRoom) {
+        res.status(404).json({ message: 'Archive not found for this room.' });
+        return;
+      }
+
       const archiveResponse = await videoClient.stopArchive({ sessionKey, archiveId });
 
       res.json({
@@ -129,6 +139,15 @@ sessionRouter.post(
       const { room: roomName, captionsId } = req.params;
       const sessionKey = await getSessionKeyFromRoomName({ roomName });
       const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
+
+      // Only the captions actually associated with this room's session may be disabled —
+      // don't trust the captionsId from the URL (it could target another room's captions).
+      const storedCaptionsId = await sessionService.getCaptionsId({ sessionId });
+
+      if (!storedCaptionsId || storedCaptionsId !== captionsId) {
+        res.status(404).json({ message: 'Captions not found for this room.' });
+        return;
+      }
 
       const captionsUserCount = await sessionService.decrementCaptionsUserCount({ sessionKey });
 
