@@ -147,7 +147,10 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
     if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
-      const device = deviceAccess.camera ? 'Microphone' : 'Camera';
+      // Pick the label from the device that is actually denied (=== false). The previous
+      // `deviceAccess.camera ? 'Microphone' : 'Camera'` mislabelled a mic-only denial as
+      // "Camera" because `camera` is `undefined` (unknown), not `true`, in that case.
+      const device = deviceAccess.microphone === false ? 'Microphone' : 'Camera';
       const accessDeniedError = {
         header: t('publishingErrors.accessDenied.title', { device }),
         caption: t('publishingErrors.accessDenied.message', { device: device.toLowerCase() }),

@@ -439,12 +439,11 @@ describe('usePublisher', () => {
       });
 
       await waitFor(() => {
-        // NOTE: Due to a bug in the implementation, when microphone is denied,
-        // the error message says "Camera access is denied" (the ternary is backwards)
+        // A microphone denial must name the microphone, not the camera.
         expect(result.current.publishingError).toEqual({
-          header: 'Camera access is denied',
+          header: 'Microphone access is denied',
           caption:
-            "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
+            "It seems your browser is blocked from accessing your microphone. Reset the permission state through your browser's UI.",
         });
         expect(destroySpy).toHaveBeenCalled();
         expect(result.current.publisher).toBeNull();
