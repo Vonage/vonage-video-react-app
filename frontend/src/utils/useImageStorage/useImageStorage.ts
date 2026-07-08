@@ -2,10 +2,16 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getStorageItem, setStorageItem, STORAGE_KEYS } from '../storage';
 import { MAX_LOCAL_STORAGE_BYTES } from '../constants';
+import createImageThumbnail from '../createImageThumbnail/createImageThumbnail';
 
 export type StoredImage = {
   id: string;
   dataUrl: string;
+  /**
+   * Downscaled preview used for gallery thumbnails. Optional because images persisted by earlier
+   * app versions predate this field; readers fall back to `dataUrl` when it is absent.
+   */
+  thumbnailDataUrl?: string;
 };
 
 /**
@@ -42,7 +48,11 @@ const useImageStorage = () => {
    */
   const saveImagesToStorage = (images: StoredImage[]): boolean => {
     try {
-      const totalSize = images.reduce((acc, img) => acc + estimateSizeInBytes(img.dataUrl), 0);
+      const totalSize = images.reduce(
+        (acc, img) =>
+          acc + estimateSizeInBytes(img.dataUrl) + estimateSizeInBytes(img.thumbnailDataUrl ?? ''),
+        0
+      );
       if (totalSize > MAX_LOCAL_STORAGE_BYTES) {
         setStorageError(t('imageStorage.imagesExceedSize'));
         return false;
@@ -57,11 +67,11 @@ const useImageStorage = () => {
   };
 
   /**
-   * Adds an image to storage.
+   * Adds an image to storage, generating a downscaled preview thumbnail alongside the full image.
    * @param {string} dataUrl - The data URL of the image to add.
-   * @returns {StoredImage | null} The added image object, or null if duplicate or error.
+   * @returns {Promise<StoredImage | null>} The added image object, or null if duplicate or error.
    */
-  const addImageToStorage = (dataUrl: string): StoredImage | null => {
+  const addImageToStorage = async (dataUrl: string): Promise<StoredImage | null> => {
     const images = getImagesFromStorage();
 
     const isDuplicate = images.some((img) => img.dataUrl === dataUrl);
@@ -80,9 +90,12 @@ const useImageStorage = () => {
       return Array.from(array, (n) => n.toString(16)).join('');
     };
 
+    const thumbnailDataUrl = await createImageThumbnail(dataUrl);
+
     const newImage: StoredImage = {
       id: generateId(),
       dataUrl,
+      thumbnailDataUrl,
     };
     images.push(newImage);
     const success = saveImagesToStorage(images);
@@ -102,9 +115,9 @@ const useImageStorage = () => {
   const handleImageFromFile = (file: File): Promise<StoredImage | null> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         const dataUrl = reader.result as string;
-        const newImage = addImageToStorage(dataUrl);
+        const newImage = await addImageToStorage(dataUrl);
         if (newImage) {
           resolve(newImage);
         } else {
@@ -142,7 +155,7 @@ const useImageStorage = () => {
 
       const img = new Image();
       img.crossOrigin = 'Anonymous';
-      img.onload = () => {
+      img.onload = async () => {
         try {
           const canvas = document.createElement('canvas');
           canvas.width = img.width;
@@ -150,7 +163,7 @@ const useImageStorage = () => {
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0);
           const dataUrl = canvas.toDataURL('image/png');
-          const newImage = addImageToStorage(dataUrl);
+          const newImage = await addImageToStorage(dataUrl);
           if (newImage) {
             resolve(newImage);
           } else {

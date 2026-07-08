@@ -221,8 +221,8 @@ const useBackgroundPublisher = (
    * @returns {void}
    */
   const addCustomImage = useCallback(
-    (dataUrl: string) => {
-      addImageToStorage(dataUrl);
+    async (dataUrl: string) => {
+      await addImageToStorage(dataUrl);
       setCustomImages(getImagesFromStorage());
     },
     [getImagesFromStorage, addImageToStorage]
@@ -283,7 +283,9 @@ const useBackgroundPublisher = (
    */
   const handleAddCustomImage = useCallback(
     (dataUrl: string) => {
-      addCustomImage(dataUrl);
+      // Persist + refresh the gallery list in the background; the full-size image is applied
+      // immediately below so the effect is visible without waiting on thumbnail generation.
+      void addCustomImage(dataUrl);
       handleBackgroundChange(dataUrl);
     },
     [addCustomImage, handleBackgroundChange]

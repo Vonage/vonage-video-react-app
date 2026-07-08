@@ -135,6 +135,19 @@ export const BACKGROUNDS_PATH = '/background';
 export const BACKGROUND_THUMBNAILS_PATH = '/background/thumbnails';
 
 /**
+ * @constant {number} BACKGROUND_THUMBNAIL_MAX_DIMENSION - The maximum length (in pixels) of the
+ * longest side when generating a downscaled preview for a user-uploaded custom background.
+ * Mirrors the 400px used for the built-in preset thumbnails so custom and preset previews match.
+ */
+export const BACKGROUND_THUMBNAIL_MAX_DIMENSION = 400;
+
+/**
+ * @constant {number} BACKGROUND_THUMBNAIL_QUALITY - The JPEG quality (0-1) used when encoding a
+ * downscaled custom-background thumbnail. 0.8 keeps previews visually crisp while staying small.
+ */
+export const BACKGROUND_THUMBNAIL_QUALITY = 0.8;
+
+/**
  * @constant {number} MAX_SIZE_MB - The maximum file size (in megabytes) allowed for image uploads.
  * Used to validate image uploads in components like AddBackgroundEffectLayout.
  */
