@@ -88,6 +88,7 @@ const SelectableOption = ({
                 src={image}
                 title={title}
                 alt={title}
+                loading="lazy"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
