@@ -1,0 +1,24 @@
+.github/workflows/check-release.yml
+  s_434e3be08957d1::t_25ba5419df3762 25-26,31-32,36,38,42,48,55,58-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ba14b1a957dae336406b98e890061bd6c958581b",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_434e3be08957d1": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9c7a6e76-55ca-4e52-890e-328be8f665df",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
