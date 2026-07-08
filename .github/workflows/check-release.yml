@@ -22,34 +22,38 @@ jobs:
 
       - name: Check release tag exists
         run: |
-          TAG=$(gh release view "${{ inputs.version }}" \
-            --repo "${{ inputs.repo }}" \
+          TAG=$(gh release view "$INPUT_VERSION" \
+            --repo "$INPUT_REPO" \
             --json tagName -q '.tagName')
           echo "✅ Tag found: $TAG"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_REPO: ${{ inputs.repo }}
 
       - name: Check main branch matches tag
         run: |
-          TAG_OBJ_SHA=$(gh api repos/${{ inputs.repo }}/git/refs/tags/${{ inputs.version }} \
+          TAG_OBJ_SHA=$(gh api "repos/$INPUT_REPO/git/refs/tags/$INPUT_VERSION" \
             -q '.object.sha')
-          TAG_TYPE=$(gh api repos/${{ inputs.repo }}/git/refs/tags/${{ inputs.version }} \
+          TAG_TYPE=$(gh api "repos/$INPUT_REPO/git/refs/tags/$INPUT_VERSION" \
             -q '.object.type')
 
           if [ "$TAG_TYPE" == "tag" ]; then
-            TAG_SHA=$(gh api repos/${{ inputs.repo }}/git/tags/$TAG_OBJ_SHA \
+            TAG_SHA=$(gh api "repos/$INPUT_REPO/git/tags/$TAG_OBJ_SHA" \
               -q '.object.sha')
           else
             TAG_SHA=$TAG_OBJ_SHA
           fi
 
-          MAIN_SHA=$(gh api repos/${{ inputs.repo }}/commits/main \
+          MAIN_SHA=$(gh api "repos/$INPUT_REPO/commits/main" \
             -q '.sha')
 
           if [ "$TAG_SHA" != "$MAIN_SHA" ]; then
             echo "❌ main ($MAIN_SHA) does not match tag ($TAG_SHA)"
             exit 1
           fi
-          echo "✅ main branch matches tag ${{ inputs.version }}"
+          echo "✅ main branch matches tag $INPUT_VERSION"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_REPO: ${{ inputs.repo }}
