@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to verify (e.g. 1.3.0)"
+        description: 'Version to verify (e.g. 1.3.0)'
         required: true
       repo:
-        description: "Repo to verify"
+        description: 'Repo to verify'
         required: true
-        default: "Vonage/vonage-video-react-app"
+        default: 'Vonage/vonage-video-react-app'
 
 jobs:
   verify-release:
