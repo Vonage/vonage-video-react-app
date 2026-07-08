@@ -87,8 +87,9 @@ describe('blockCallsForArgs', () => {
 
     const started: string[] = [];
     const fn = jest
-      .fn<(key: string, id: string) => Promise<string>>()
-      .mockImplementation(async (_key: string, id: string) => {
+      .fn<(key: string, ...args: unknown[]) => Promise<string>>()
+      .mockImplementation(async (_key: string, ...args: unknown[]) => {
+        const id = args[0] as string;
         started.push(id);
         await gates[id].promise;
         return id;
