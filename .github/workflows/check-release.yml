@@ -11,11 +11,12 @@ on:
         required: true
         default: 'Vonage/vonage-video-react-app'
 
+permissions:
+  contents: read
+
 jobs:
   verify-release:
     runs-on: ubuntu-latest
-    # Skip if triggered by push with no inputs
-    if: github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
