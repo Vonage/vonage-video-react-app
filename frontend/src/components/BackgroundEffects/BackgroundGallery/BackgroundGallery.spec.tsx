@@ -15,7 +15,12 @@ import { mediaDevices$ } from '@core/stores';
 const mockDevices = makeMediaDeviceInfos();
 
 const customImages = [
-  { id: 'custom1', dataUrl: 'data:image/png;base64,custom1' },
+  {
+    id: 'custom1',
+    dataUrl: 'data:image/png;base64,custom1',
+    thumbnailDataUrl: 'data:image/jpeg;base64,custom1-thumb',
+  },
+  // custom2 has no thumbnailDataUrl to represent an image stored by an earlier app version.
   { id: 'custom2', dataUrl: 'data:image/png;base64,custom2' },
 ];
 
@@ -95,6 +100,31 @@ describe('BackgroundGallery', () => {
       // /background/plane.jpg (~170KB), and defer offscreen loads.
       expect(previewImage?.getAttribute('src')).toBe('/background/thumbnails/plane.jpg');
       expect(previewImage?.getAttribute('loading')).toBe('lazy');
+    });
+  });
+
+  it('previews a custom image with its downscaled thumbnail, not the full-size upload', async () => {
+    render(<BackgroundGallery />);
+
+    await waitFor(() => {
+      const customOption = screen.getByTestId('background-custom1');
+      const previewImage = customOption.querySelector('img');
+
+      // The grid preview must render the small generated thumbnail, not the full-size
+      // uploaded image (which is only applied to the SDK when the background is selected).
+      expect(previewImage?.getAttribute('src')).toBe('data:image/jpeg;base64,custom1-thumb');
+      expect(previewImage?.getAttribute('loading')).toBe('lazy');
+    });
+  });
+
+  it('falls back to the full image for custom images stored without a thumbnail', async () => {
+    render(<BackgroundGallery />);
+
+    await waitFor(() => {
+      const customOption = screen.getByTestId('background-custom2');
+      const previewImage = customOption.querySelector('img');
+
+      expect(previewImage?.getAttribute('src')).toBe('data:image/png;base64,custom2');
     });
   });
 

@@ -37,8 +37,11 @@ const BackgroundGallery = (): ReactElement => {
 
   return (
     <>
-      {customImages.map(({ id, dataUrl }) => {
+      {customImages.map(({ id, dataUrl, thumbnailDataUrl }) => {
         const isSelected = backgroundSelected === dataUrl;
+        // Preview the lightweight thumbnail; fall back to the full image for entries stored by
+        // earlier app versions. Selection below still applies the full-size dataUrl via the SDK.
+        const previewImage = thumbnailDataUrl ?? dataUrl;
         return (
           <Box
             key={id}
@@ -52,7 +55,7 @@ const BackgroundGallery = (): ReactElement => {
               title={t('backgroundEffects.yourBackground')}
               isSelected={isSelected}
               onClick={() => handleBackgroundChange(dataUrl)}
-              image={dataUrl}
+              image={previewImage}
             >
               <Tooltip
                 title={
