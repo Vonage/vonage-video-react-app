@@ -500,6 +500,73 @@ For quick development deployments directly from your local machine, you can use 
 
 This will deploy using your local development configuration and code, making it quick to test changes in a cloud environment.
 
+---
+
+### Production Deployment
+
+For production deployments, use the [`vcr.yml`](vcr.yml) manifest file:
+
+1. **Configure your application ID**:
+
+   Open `vcr.yml` and update the `application-id` field with your Vonage application ID.
+
+2. **Set up secret references**:
+
+   Secrets (e.g. `VONAGE_APP_ID`, `VONAGE_PRIVATE_KEY`) are stored securely in VCR. Create them via the VCR CLI:
+
+   ```bash
+   vcr secret create <secret-name> --value "<secret-value>"
+   ```
+
+3. **Build and deploy**:
+
+   ```bash
+   # Build the application
+   yarn build
+
+   # Deploy to VCR
+   vcr deploy backend/dist -f vcr.yml
+   ```
+
+   The build script automatically copies `vcr-gha.yml` to `backend/dist/vcr-gha.yml` as required by VCR.
+
+4. **Access your deployed instance**:
+
+   After deployment, the VCR CLI outputs the instance URL:
+
+   ```
+   Instance host address: https://neru-<hash>-<project>-<instance>.<region>.runtime.vonage.cloud
+   ```
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| [`vcr.yml`](vcr.yml) | Production deployment manifest — defines instance name, runtime, region, environment variables, and secret references |
+| [`vcr-dev.yml`](vcr-dev.yml) | Development deployment manifest — used by `yarn vcr:dev` for quick local testing |
+| [`vcr-gha.yml`](vcr-gha.yml) | GHA-compatible manifest — automatically copied during build |
+| [`vcr.yml.example`](vcr.yml.example) | Template — copy this to create a new config file |
+| [`vcrBuild.env.sh`](vcrBuild.env.sh) | Frontend feature flags and build-time environment variables |
+| [`.vcrignore`](.vcrignore) | Files to exclude from VCR uploads |
+
+### Customising Deployment
+
+You can override values from the manifest using CLI flags:
+
+```bash
+vcr deploy backend/dist \
+  -f vcr.yml \
+  -n vera-dev \
+  -i <your-app-id> \
+  -r nodejs22
+```
+
+Remove a VCR deployment:
+
+```bash
+vcr deploy backend/dist --rm
+```
+
 ## Testing
 
 ### Integration Tests
