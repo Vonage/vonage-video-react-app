@@ -1,7 +1,60 @@
-import { expect } from '@playwright/test';
+import { expect, type BrowserContext, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
+
+type OpenMeetingWithThreeParticipantsArgs = {
+  pageOne: Page;
+  context: BrowserContext;
+  browserName: string;
+};
+
+const getLayoutScreenshotOptions = (page: Page) => ({
+  mask: [
+    page.locator('.video__element'),
+    page.locator('[data-testid="app-version"]'),
+    page.locator('.timestamp'),
+  ],
+  maxDiffPixelRatio: 0.01,
+  fullPage: true,
+});
+
+async function openMeetingWithThreeParticipantsAndAssertVisibility({
+  pageOne,
+  context,
+  browserName,
+}: OpenMeetingWithThreeParticipantsArgs): Promise<void> {
+  const roomName = crypto.randomBytes(5).toString('hex');
+
+  await openMeetingRoomWithSettings({
+    page: pageOne,
+    username: 'User One',
+    roomName,
+  });
+  await waitUntilReady(pageOne, browserName);
+
+  await expect(pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
+
+  const pageTwo = await context.newPage();
+  await openMeetingRoomWithSettings({
+    page: pageTwo,
+    username: 'User Two',
+    roomName,
+  });
+  await waitUntilReady(pageTwo, browserName);
+
+  const pageThree = await context.newPage();
+  await openMeetingRoomWithSettings({
+    page: pageThree,
+    username: 'User Three',
+    roomName,
+  });
+  await waitUntilReady(pageThree, browserName);
+
+  await pageOne.waitForSelector('.subscriber', { state: 'visible' });
+  await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible();
+  await expect(pageOne.locator('.subscriber').getByText('User Three')).toBeVisible();
+}
 
 test('should redirect to the waiting room if not bypassed', async ({ page: pageOne }) => {
   const roomName = crypto.randomBytes(5).toString('hex');
@@ -45,6 +98,65 @@ test('should publish and subscribe with 3 participants', async ({
       { timeout: 10000 }
     )
     .toBe(3);
+});
+
+test('should display appropriate layout when layout button is clicked on Mobile', async ({
+  page: pageOne,
+  context,
+  browserName,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Mobile only layout test');
+  await openMeetingWithThreeParticipantsAndAssertVisibility({ pageOne, context, browserName });
+
+  await expect(pageOne).toHaveScreenshot(
+    'layout-active-speaker-default.png',
+    getLayoutScreenshotOptions(pageOne)
+  );
+
+  await pageOne.getByTestId('hidden-toolbar-items').click();
+
+  await expect(pageOne.getByTestId('layout-button')).toBeVisible();
+  await pageOne.getByTestId('layout-button').click();
+
+  await expect(pageOne).toHaveScreenshot(
+    'layout-active-speaker-first-click.png',
+    getLayoutScreenshotOptions(pageOne)
+  );
+
+  await pageOne.getByTestId('hidden-toolbar-items').click();
+
+  await expect(pageOne.getByTestId('layout-button')).toBeVisible();
+  await pageOne.getByTestId('layout-button').click();
+
+  await expect(pageOne).toHaveScreenshot(
+    'layout-active-speaker-back-to-default.png',
+    getLayoutScreenshotOptions(pageOne)
+  );
+});
+
+test('should display appropriate layout when layout button is clicked on Desktop', async ({
+  page: pageOne,
+  context,
+  browserName,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Desktop-only layout test');
+  await openMeetingWithThreeParticipantsAndAssertVisibility({ pageOne, context, browserName });
+
+  await expect(pageOne.getByTestId('layout-button')).toBeVisible();
+
+  await expect(pageOne).toHaveScreenshot(
+    'layout-active-speaker-default.png',
+    getLayoutScreenshotOptions(pageOne)
+  );
+
+  await pageOne.getByTestId('layout-button').click();
+
+  await expect(pageOne).toHaveScreenshot(
+    'layout-active-speaker-first-click.png',
+    getLayoutScreenshotOptions(pageOne)
+  );
 });
 
 test('should display username on publisher and subscribers', async ({
