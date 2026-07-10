@@ -456,13 +456,13 @@ Enjoy testing!
 
 ## Deployment to Vonage Cloud Runtime
 
-You can deploy the application to Vonage Cloud Runtime (VCR) for testing in a cloud environment. See the [VCR overview](https://developer.vonage.com/en/vonage-cloud-runtime/overview) for more information.
+You can deploy the application to Vonage Cloud Runtime (VCR) for testing in a cloud environment. See the [VCR documentation](https://developer.vonage.com/en/vonage-cloud-runtime/overview?source=vonage-cloud-runtime) for more information.
 
 For quick development deployments directly from your local machine, you can use the `vcr:dev` script:
 
 1. **Install the VCR CLI** (if not already installed):
    
-   Follow the installation instructions at https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation
+   Follow the [CLI installation instructions](https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally)
 
 2. **Configure VCR with your credentials**:
 
@@ -512,11 +512,7 @@ For production deployments, use the [`vcr.yml`](vcr.yml) manifest file:
 
 2. **Set up secret references**:
 
-   Secrets (e.g. `VONAGE_APP_ID`, `VONAGE_PRIVATE_KEY`) are stored securely in VCR. Create them via the VCR CLI:
-
-   ```bash
-   vcr secret create <secret-name> --value "<secret-value>"
-   ```
+   Secrets (e.g. `VONAGE_APP_ID`, `VONAGE_PRIVATE_KEY`) are stored securely in VCR. See the [configuration file guide](https://developer.vonage.com/en/vonage-cloud-runtime/guides/manifest) for details.
 
 3. **Build and deploy**:
 
@@ -525,7 +521,7 @@ For production deployments, use the [`vcr.yml`](vcr.yml) manifest file:
    yarn build
 
    # Deploy to VCR
-   vcr deploy backend/dist -f vcr.yml
+   vcr deploy
    ```
 
    The build script automatically copies `vcr-gha.yml` to `backend/dist/vcr-gha.yml` as required by VCR.
@@ -551,20 +547,22 @@ For production deployments, use the [`vcr.yml`](vcr.yml) manifest file:
 
 ### Customising Deployment
 
-You can override values from the manifest using CLI flags:
+You can override values from the manifest using the `--filename` flag:
 
 ```bash
-vcr deploy backend/dist \
-  -f vcr.yml \
-  -n vera-dev \
-  -i <your-app-id> \
-  -r nodejs22
+vcr deploy --filename vcr.yml
+```
+
+To use a different configuration file for production, for example `production.yml`:
+
+```bash
+vcr deploy --filename production.yml
 ```
 
 Remove a VCR deployment:
 
 ```bash
-vcr deploy backend/dist --rm
+vcr instance remove --project-name <project-name> --instance-name <instance-name>
 ```
 
 ## Testing
