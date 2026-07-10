@@ -56,7 +56,7 @@ async function openMeetingWithThreeParticipantsAndAssertVisibility({
   await expect(pageOne.locator('.subscriber').getByText('User Three')).toBeVisible();
 }
 
-test('should display appropriate layout when layout button is clicked on Mobile', async ({
+test('should display appropriate layout when layout button is clicked on Mobile Browser', async ({
   page: pageOne,
   context,
   browserName,
