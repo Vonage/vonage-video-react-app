@@ -1,4 +1,5 @@
-import { SingleArchiveResponse, EnableCaptionResponse } from '@vonage/video';
+import type { SingleArchiveResponse, EnableCaptionResponse } from '@vonage/video';
+import type { CaptionOptions } from '@vonage/video';
 import { Archive } from 'opentok';
 
 export interface VideoService {
@@ -7,6 +8,6 @@ export interface VideoService {
   startArchive(roomName: string, sessionId: string): Promise<Archive | SingleArchiveResponse>;
   stopArchive(archiveId: string): Promise<string>;
   searchArchives(sessionId: string): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
-  enableCaptions(sessionId: string): Promise<EnableCaptionResponse>;
+  enableCaptions(sessionId: string, captionOptions?: CaptionOptions): Promise<EnableCaptionResponse>;
   disableCaptions(captionsId: string): Promise<string>;
 }

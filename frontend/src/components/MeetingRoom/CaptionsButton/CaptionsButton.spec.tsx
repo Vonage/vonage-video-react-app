@@ -12,6 +12,22 @@ import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
 
+let mockI18nLanguage = 'en';
+
+vi.mock('react-i18next', async () => {
+  const actual = await vi.importActual('react-i18next');
+  return {
+    ...(actual as object),
+    useTranslation: () => ({
+      t: (key: string) => key,
+      i18n: {
+        language: mockI18nLanguage,
+        changeLanguage: vi.fn(),
+      },
+    }),
+  };
+});
+
 const mockVideoClient: VideoClient = {
   ensureCaptionsEnabled: vi.fn(),
   disableCaptions: vi.fn(),
@@ -79,6 +95,7 @@ describe('CaptionsButton', () => {
     env.partialUpdate({
       ALLOW_CAPTIONS: true,
     });
+    mockI18nLanguage = 'en';
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
     act(() => screen.getByTestId('captions-button').click());
@@ -86,6 +103,47 @@ describe('CaptionsButton', () => {
     await waitFor(() => {
       expect(mockVideoClient.ensureCaptionsEnabled).toHaveBeenCalledWith({
         sessionKey: mockedSessionKey,
+        captionOptions: {
+          languageCode: 'en-US',
+        },
+      });
+    });
+  });
+
+  it('sets Japanese caption language when i18n language is ja', async () => {
+    env.partialUpdate({
+      ALLOW_CAPTIONS: true,
+    });
+    mockI18nLanguage = 'ja';
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
+
+    act(() => screen.getByTestId('captions-button').click());
+
+    await waitFor(() => {
+      expect(mockVideoClient.ensureCaptionsEnabled).toHaveBeenCalledWith({
+        sessionKey: mockedSessionKey,
+        captionOptions: {
+          languageCode: 'ja-JP',
+        },
+      });
+    });
+  });
+
+  it('sets German caption language when i18n language is de-DE', async () => {
+    env.partialUpdate({
+      ALLOW_CAPTIONS: true,
+    });
+    mockI18nLanguage = 'de-DE';
+    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
+
+    act(() => screen.getByTestId('captions-button').click());
+
+    await waitFor(() => {
+      expect(mockVideoClient.ensureCaptionsEnabled).toHaveBeenCalledWith({
+        sessionKey: mockedSessionKey,
+        captionOptions: {
+          languageCode: 'de-DE',
+        },
       });
     });
   });

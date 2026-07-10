@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import { Dispatch, ReactElement, SetStateAction, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
@@ -20,6 +20,27 @@ export type CaptionsButtonProps = {
   captionsState: CaptionsState;
 };
 
+const captionLanguageMap: Record<string, string> = {
+  en: 'en-US',
+  'en-US': 'en-US',
+  'en-GB': 'en-GB',
+  ja: 'ja-JP',
+  'ja-JP': 'ja-JP',
+  de: 'de-DE',
+  'de-DE': 'de-DE',
+  'de-AT': 'de-DE',
+  'de-CH': 'de-DE',
+  es: 'es-ES',
+  'es-ES': 'es-ES',
+  'es-MX': 'es-MX',
+  it: 'it-IT',
+  'it-IT': 'it-IT',
+};
+
+function getCaptionLanguageCode(lng: string): string {
+  return captionLanguageMap[lng] ?? 'en-US';
+}
+
 /**
  * CaptionsButton Component
  *
@@ -36,7 +57,7 @@ const CaptionsButton = ({
   captionsState,
 }: CaptionsButtonProps): ReactElement | false => {
   const videoClient = runtime$.useVideoClient();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { sessionKey } = useSessionContext();
   const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
     captionsState;
@@ -48,15 +69,24 @@ const CaptionsButton = ({
     }
   };
 
-  const handleCaptionsErrorResponse = (message: string | null) => {
-    setCaptionsErrorResponse(message || t('errors.unknown'));
+  const handleCaptionsErrorResponse = useCallback(
+    (message: string | null) => {
+      setCaptionsErrorResponse(message || t('errors.unknown'));
 
-    setIsUserCaptionsEnabled(false);
-  };
+      setIsUserCaptionsEnabled(false);
+    },
+    [setCaptionsErrorResponse, setIsUserCaptionsEnabled, t]
+  );
 
-  const handleCaptionsEnable = async () => {
+  const handleCaptionsEnable = useCallback(async () => {
     try {
-      await videoClient.ensureCaptionsEnabled({ sessionKey: sessionKey! });
+      const currentLanguage = i18n.language || 'en';
+      const captionLanguage = getCaptionLanguageCode(currentLanguage);
+
+      await videoClient.ensureCaptionsEnabled({
+        sessionKey: sessionKey!,
+        captionOptions: { languageCode: captionLanguage },
+      });
 
       setIsUserCaptionsEnabled(true);
     } catch (error) {
@@ -65,9 +95,9 @@ const CaptionsButton = ({
         handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
-  };
+  }, [videoClient, sessionKey, i18n.language, handleCaptionsErrorResponse, setIsUserCaptionsEnabled]);
 
-  const handleCaptionsDisable = () => {
+  const handleCaptionsDisable = useCallback(() => {
     try {
       setIsUserCaptionsEnabled(false);
     } catch (error) {
@@ -76,20 +106,23 @@ const CaptionsButton = ({
         handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
-  };
+  }, [handleCaptionsErrorResponse, setIsUserCaptionsEnabled]);
 
-  const handleCaptions = async (action: 'enable' | 'disable') => {
-    if (action === 'enable') {
-      await handleCaptionsEnable();
-    } else if (action === 'disable') {
-      handleCaptionsDisable();
-    }
-  };
+  const handleCaptions = useCallback(
+    async (action: 'enable' | 'disable') => {
+      if (action === 'enable') {
+        await handleCaptionsEnable();
+      } else if (action === 'disable') {
+        handleCaptionsDisable();
+      }
+    },
+    [handleCaptionsEnable, handleCaptionsDisable]
+  );
 
-  const handleActionClick = () => {
+  const handleActionClick = useCallback(() => {
     void handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
     handleClose();
-  };
+  }, [handleCaptions, isUserCaptionsEnabled, handleClose]);
 
   return (
     env.ALLOW_CAPTIONS && (
