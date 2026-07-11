@@ -7,6 +7,7 @@ import { ChatMessageType } from '../../../types/chat';
 
 const testMessages: ChatMessageType[] = [
   {
+    id: 'message-1',
     participantName: 'User One',
     timestamp: 1726587657728,
     message: 'Hello all',
