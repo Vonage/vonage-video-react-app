@@ -1,6 +1,7 @@
 import axios from 'axios';
 import OTKAnalytics from 'opentok-solutions-logging';
 import loadConfig from '../helpers/config';
+import redactSensitiveKeys from '../helpers/redactSensitiveKeys';
 import type { ClientLogEvent } from '@common/types';
 
 const { gollumUrl, loggerVerbose } = loadConfig();
@@ -8,6 +9,21 @@ const { gollumUrl, loggerVerbose } = loadConfig();
 const LOG_ACTION_ENTER_MEETING = 'EnterMeeting';
 
 let gollumWarningAcknowledged = false;
+
+/**
+ * Returns a copy of the event with any sensitive keys in its client-supplied payload redacted, so
+ * credentials/PII a client may include never reach the external logging service or stdout.
+ */
+function redactEventPayload(event: ClientLogEvent): ClientLogEvent {
+  if (!event.payload) {
+    return event;
+  }
+
+  return {
+    ...event,
+    payload: redactSensitiveKeys(event.payload) as Record<string, unknown>,
+  };
+}
 
 /**
  * Polyfill for document.cookie required by opentok-solutions-logging in Node.js.
@@ -45,7 +61,7 @@ export async function forwardToGollum(event: ClientLogEvent): Promise<void> {
   }
 
   const body = {
-    ...event,
+    ...redactEventPayload(event),
     serverReceivedTime: Date.now(),
   };
 
@@ -93,7 +109,7 @@ export function logOnConnect(event: ClientLogEvent): void {
  */
 export async function forward(event: ClientLogEvent): Promise<void> {
   if (loggerVerbose) {
-    console.log('[logger]', event.action, event);
+    console.log('[logger]', event.action, redactEventPayload(event));
   }
 
   if (event.action === LOG_ACTION_ENTER_MEETING) {
