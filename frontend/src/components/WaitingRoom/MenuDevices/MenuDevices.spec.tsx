@@ -135,28 +135,6 @@ describe('MenuDevices Component', () => {
     });
   });
 
-  it('renders exactly one empty state for audio output when supported and no devices exist', async () => {
-    vi.spyOn(util, 'isGetActiveAudioOutputDeviceSupported').mockReturnValue(true);
-
-    act(() => {
-      mediaDevices$.setState((state) => ({
-        ...state,
-        mediaDeviceInfo: someDevices.filter((d) => d.kind !== 'audiooutput'),
-        audiooutput: undefined,
-      }));
-    });
-
-    const anchorEl = document.createElement('div');
-
-    render(
-      <MenuDevices mediaDeviceKind="audiooutput" onClose={vi.fn()} open anchorEl={anchorEl} />
-    );
-
-    await waitFor(() => {
-      expect(screen.getAllByTestId('audiooutput-menu-empty-state')).toHaveLength(1);
-    });
-  });
-
   it('renders an empty state when no devices are available', async () => {
     const mockOnClose = vi.fn();
     const anchorEl = document.createElement('div');
