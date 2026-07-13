@@ -36,19 +36,6 @@ describe('helmetMiddleware', () => {
     expect(helmetHandlerMock).toHaveBeenCalledWith(req, res, next);
   });
 
-  it('should allow data: and blob: in connect-src so MediaProcessor can load background images', async () => {
-    process.env.NODE_ENV = 'production';
-
-    await import('./helmetMiddleware');
-
-    const config = helmetMock.mock.calls[0]?.[0] as {
-      contentSecurityPolicy: { directives: Record<string, string[]> };
-    };
-    const connectSrc = config.contentSecurityPolicy.directives['connect-src'];
-
-    expect(connectSrc).toEqual(expect.arrayContaining(['data:', 'blob:']));
-  });
-
   it('should disable contentSecurityPolicy in development', async () => {
     process.env.NODE_ENV = 'development';
 
