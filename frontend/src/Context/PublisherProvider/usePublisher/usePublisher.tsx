@@ -31,6 +31,14 @@ type DeviceAccessStatus = {
   camera: boolean | undefined;
 };
 
+/**
+ * How long (in ms) a sustained streak of publish failures is tolerated while the session appears
+ * "transient" (reconnecting/disconnected/offline) before surfacing a blocking error to the user
+ * regardless. A real incident showed 3 consecutive `Unable to Publish (1500)` failures spanning
+ * ~76s while the session never fully reconnected — see #usePublisher exceptionHandler.
+ */
+const PUBLISHING_TRANSIENT_FAILURE_GRACE_PERIOD_MS = 45_000;
+
 export type PublishingErrorType = {
   header: string;
   caption: string;
@@ -128,6 +136,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const isInitializingPublisherRef = useRef<boolean>(false);
   const reconnectingRef = useRef<boolean>(false);
   const consecutivePublishingFailureCountRef = useRef<number>(0);
+  const firstPublishingFailureAtRef = useRef<number | null>(null);
 
   const {
     publish: sessionPublish,
@@ -202,6 +211,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
     // Successful publish resets transient failure tracking
     consecutivePublishingFailureCountRef.current = 0;
+    firstPublishingFailureAtRef.current = null;
     setPublishingError(null);
   }, []);
 
@@ -440,6 +450,10 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         frontendLogger.log('usePublisher: exception 1500', { code: exceptionEvent.code });
         consecutivePublishingFailureCountRef.current += 1;
 
+        if (firstPublishingFailureAtRef.current === null) {
+          firstPublishingFailureAtRef.current = Date.now();
+        }
+
         const isBrowserOnline = (() => {
           if (typeof navigator === 'undefined') return true;
           return navigator.onLine;
@@ -448,6 +462,16 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         // During network changes, code 1500 is often transient.
         // Try to recover by recreating the publisher; only surface a blocking error after repeated failures.
         const shouldTreatAsTransient = reconnectingRef.current || !connected || !isBrowserOnline;
+
+        // A "transient" state (reconnecting/disconnected/offline) that never resolves is not
+        // actually transient. Without this, a sustained network/session outage can keep
+        // shouldTreatAsTransient true forever, permanently suppressing handlePublishingError and
+        // leaving the user stuck: publishing silently, indefinitely, with no error and no redirect
+        // to the goodbye page. If failures have kept occurring past the grace period, surface the
+        // error regardless of the transient state.
+        const failureDurationMs = Date.now() - firstPublishingFailureAtRef.current;
+        const hasExceededTransientGracePeriod =
+          failureDurationMs >= PUBLISHING_TRANSIENT_FAILURE_GRACE_PERIOD_MS;
 
         const publisherToCleanup = publisherRef.current;
         publisherRef.current = null;
@@ -464,7 +488,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         setStream(null);
 
         const shouldSurfaceBlockingError =
-          shouldTreatAsTransient === false && consecutivePublishingFailureCountRef.current >= 3;
+          consecutivePublishingFailureCountRef.current >= 3 &&
+          (shouldTreatAsTransient === false || hasExceededTransientGracePeriod);
 
         if (shouldSurfaceBlockingError) {
           handlePublishingError();
