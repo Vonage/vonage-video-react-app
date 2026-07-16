@@ -20,13 +20,24 @@ const EMOJI_DISPLAY_DURATION_MILLISECONDS = 5_000;
  * @returns {Promise<void>}
  */
 async function openEmojiGrid({ page, isMobile }: OpenEmojiGridArgs): Promise<void> {
+  await clickEmojiGridButton({ page, isMobile });
+
+  await expect(page.getByTestId('emoji-grid')).toBeVisible();
+}
+
+/**
+ * Clicks the emoji grid toggle button.
+ * On mobile, opens the overflow menu first.
+ * @param {OpenEmojiGridArgs} args - The page and mobile flag.
+ * @returns {Promise<void>}
+ */
+async function clickEmojiGridButton({ page, isMobile }: OpenEmojiGridArgs): Promise<void> {
   if (isMobile) {
     await page.getByTestId('MoreVertIcon').click();
     await page.mouse.move(0, 0);
   }
 
   await page.getByTestId('emoji-grid-button').click();
-  await expect(page.getByTestId('emoji-grid')).toBeVisible();
 }
 
 /**
@@ -64,7 +75,7 @@ test.describe('emoji', () => {
     await expect(emojiButtons).toHaveCount(EXPECTED_EMOJI_COUNT);
 
     // Close the grid by clicking the button again
-    await page.getByTestId('emoji-grid-button').click();
+    await clickEmojiGridButton({ page, isMobile });
     await expect(emojiGrid).not.toBeVisible();
   });
 
