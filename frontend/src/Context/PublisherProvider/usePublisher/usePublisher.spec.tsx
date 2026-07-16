@@ -434,7 +434,9 @@ describe('usePublisher', () => {
       act(() => {
         // @ts-expect-error We simulate user denying microphone permissions in a browser.
         mockPublisher.emit('accessDenied', {
-          message: 'Microphone permission denied during the call',
+          // The SDK's real mid-call revocation message is lowercase — the device match
+          // must be case-insensitive for this to be attributed to the microphone.
+          message: 'microphone permission denied during the call',
         });
       });
 

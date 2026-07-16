@@ -160,7 +160,9 @@ describe('usePreviewPublisher', () => {
     const emitAccessDeniedError = () => {
       // @ts-expect-error We simulate user denying microphone permissions in a browser.
       mockPublisher.emit('accessDenied', {
-        message: 'Microphone permission denied during the call',
+        // The SDK's real mid-call revocation message is lowercase — the device match
+        // must be case-insensitive for this to be attributed to the microphone.
+        message: 'microphone permission denied during the call',
       });
     };
 
@@ -187,12 +189,18 @@ describe('usePreviewPublisher', () => {
 
       expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
 
+      // Isolate the denial handler's own permission query from any queries made during mount.
+      mockQuery.mockClear();
+
       act(() => {
         emitAccessDeniedError();
       });
 
       await waitFor(() => {
         expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+        // The denied device must be identified as the microphone, not the camera fallback.
+        expect(mockQuery).toHaveBeenCalledWith({ name: 'microphone' });
+        expect(mockQuery).not.toHaveBeenCalledWith({ name: 'camera' });
       });
     });
 

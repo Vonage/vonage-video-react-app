@@ -15,6 +15,7 @@ import usePublisherOptions from '../usePublisherOptions';
 import useApplyAdvancedSettings from '../useApplyAdvancedSettings';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
+import getDeniedDevice from '../../../utils/publisher/getDeniedDevice';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../../logger';
 
@@ -239,9 +240,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   }, []);
 
   const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
-    const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-    isInitializingPublisherRef.current = false;
     // We check the first word of the message to see if the microphone or camera was denied access.
+    const deviceDeniedAccess = getDeniedDevice(event.message);
+    isInitializingPublisherRef.current = false;
     setDeviceAccess((prev) => ({
       ...prev,
       [deviceDeniedAccess]: false,

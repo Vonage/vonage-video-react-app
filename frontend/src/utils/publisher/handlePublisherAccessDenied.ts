@@ -1,5 +1,6 @@
 import type { AccessDeniedEvent } from '@Context/PublisherProvider/usePublisher/usePublisher';
 import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
+import getDeniedDevice from './getDeniedDevice';
 
 /**
  * Handles publisher access denied events
@@ -9,7 +10,7 @@ const handlePublisherAccessDenied = async (
   event: AccessDeniedEvent,
   setAccessStatus: (status: string) => void
 ) => {
-  const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
+  const deviceDeniedAccess = getDeniedDevice(event.message);
 
   setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
