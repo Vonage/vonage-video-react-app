@@ -1,0 +1,14 @@
+integration-tests/tests/captions.spec.ts
+  h_9cf21c851a7c99 6,14-15,17,112,115-122,142-143,145-148,150-151,168,171-172,174,182-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "708fafbe12a71288fa419748b5efbeb42c791e1c",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
