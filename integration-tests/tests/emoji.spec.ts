@@ -11,7 +11,10 @@ type OpenEmojiGridArgs = {
 const THUMBS_UP_EMOJI = '👍';
 const CELEBRATION_EMOJI = '🎉';
 const EXPECTED_EMOJI_COUNT = 12;
-const EMOJI_DISPLAY_DURATION_MILLISECONDS = 5_000;
+/** Emoji visibility duration in milliseconds before automatic removal. */
+const EMOJI_DISPLAY_DURATION = 5_000;
+/** Extra milliseconds to allow removal cleanup to complete before asserting disappearance. */
+const EMOJI_REMOVAL_BUFFER = 1_000;
 
 /**
  * Opens the emoji grid on the given page.
@@ -34,6 +37,7 @@ async function openEmojiGrid({ page, isMobile }: OpenEmojiGridArgs): Promise<voi
 async function clickEmojiGridButton({ page, isMobile }: OpenEmojiGridArgs): Promise<void> {
   if (isMobile) {
     await page.getByTestId('MoreVertIcon').click();
+    // Move the pointer to the top-left corner (0,0) so overflow overlays/tooltips do not block the emoji button.
     await page.mouse.move(0, 0);
   }
 
@@ -51,9 +55,9 @@ async function clickEmoji(page: Page, emoji: string): Promise<void> {
 }
 
 test.describe('emoji', () => {
-  const areEmojisEnabled = process.env.ALLOW_EMOJIS !== 'false';
+  const isEmojiEnabled = process.env.ALLOW_EMOJIS !== 'false';
 
-  test.skip(!areEmojisEnabled, 'Skipping emoji tests when emojis are disabled');
+  test.skip(!isEmojiEnabled, 'Skipping emoji tests when emojis are disabled');
 
   test('should open and close the emoji grid when the emoji button is toggled', async ({
     page,
@@ -216,14 +220,12 @@ test.describe('emoji', () => {
 
     const receivedEmoji = secondParticipantPage
       .getByTestId('emoji-string-container')
-      .filter({ hasText: THUMBS_UP_EMOJI })
-      .first();
+      .filter({ hasText: THUMBS_UP_EMOJI });
 
-    await expect(receivedEmoji).toBeVisible();
+    await expect(receivedEmoji.first()).toBeVisible();
 
-    // Wait for the emoji display duration plus a buffer for removal
-    await secondParticipantPage.waitForTimeout(EMOJI_DISPLAY_DURATION_MILLISECONDS + 1_000);
-
-    await expect(secondParticipantPage.getByTestId('emoji-string-container')).toHaveCount(0);
+    await expect(receivedEmoji).toHaveCount(0, {
+      timeout: EMOJI_DISPLAY_DURATION + EMOJI_REMOVAL_BUFFER,
+    });
   });
 });
