@@ -5,6 +5,7 @@ import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import usePreviewPublisher from './usePreviewPublisher';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
@@ -24,6 +25,7 @@ describe('usePreviewPublisher', () => {
   const mockedHasMediaProcessorSupport = vi.fn();
 
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
     setupWindowNavigatorMock({

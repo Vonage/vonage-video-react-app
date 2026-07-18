@@ -8,6 +8,7 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { env } from '../../../env';
 
 describe('MenuMoreOptions', () => {
@@ -15,6 +16,7 @@ describe('MenuMoreOptions', () => {
   const mockAnchorEl = document.createElement('button');
 
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     env.reset();
     mockOnClose.mockReset();
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(true);
