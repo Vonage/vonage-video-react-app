@@ -4,9 +4,9 @@ import {
   Event,
   initPublisher,
   VideoFilter,
-  hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';

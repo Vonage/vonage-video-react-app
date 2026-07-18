@@ -9,7 +9,7 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';

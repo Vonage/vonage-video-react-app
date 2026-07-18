@@ -9,6 +9,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { env } from '../../../env';
 import { Resolution } from '@common/types';
 
@@ -18,6 +19,7 @@ const videoDevice = devices.find((d) => d.kind === 'videoinput')!;
 
 describe('usePublisherOptions', () => {
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     // Setup window.navigator mock first
     setupWindowNavigatorMock({
       mediaDevices: {

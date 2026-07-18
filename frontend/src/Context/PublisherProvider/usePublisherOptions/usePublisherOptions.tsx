@@ -1,10 +1,6 @@
 import { useMemo } from 'react';
-import {
-  PublisherProperties,
-  VideoFilter,
-  AudioFilter,
-  hasMediaProcessorSupport,
-} from '@vonage/client-sdk-video';
+import { PublisherProperties, VideoFilter, AudioFilter } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
 import { useDeviceId } from '@core/stores/mediaDevices/hooks';
