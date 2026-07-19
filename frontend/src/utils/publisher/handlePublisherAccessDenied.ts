@@ -17,10 +17,12 @@ const handlePublisherAccessDenied = async ({
   event,
   setAccessStatus,
   onDeniedDevicesChange,
+  onDeviceReGrant,
 }: {
   event: AccessDeniedEvent;
   setAccessStatus: (status: string) => void;
   onDeniedDevicesChange?: (denied: DeniedDevices) => void;
+  onDeviceReGrant?: (device: DeviceKind) => void;
 }): Promise<void> => {
   setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
 
@@ -51,6 +53,9 @@ const handlePublisherAccessDenied = async ({
           return;
         }
         denied[kind] = false;
+        // Let the caller react to the specific device coming back (e.g. re-acquire it muted, Google
+        // Meet style) before the publisher re-initializes off ACCESS_CHANGED.
+        onDeviceReGrant?.(kind);
         report();
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
       };

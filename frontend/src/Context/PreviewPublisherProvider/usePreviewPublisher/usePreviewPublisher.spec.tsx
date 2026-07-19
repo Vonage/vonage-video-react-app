@@ -98,9 +98,9 @@ describe('usePreviewPublisher', () => {
       );
     });
 
-    it('publishes from the stored intent so a device the user never muted comes back unmuted on re-init', async () => {
-      // No stored mute → intended unmuted/on. This is what makes a re-grant recover to the
-      // default state rather than the device-loss flags that briefly flip enabled off.
+    it('honors the stored intent on a fresh init so a never-muted device starts unmuted', async () => {
+      // No stored mute → intended unmuted/on. A FRESH init (no prior denial) must honor that intent;
+      // only a deny→re-grant cycle forces the recovered device muted (covered separately below).
       localStorage.removeItem('audioSourceEnabled');
       localStorage.removeItem('videoSourceEnabled');
       mockedInitPublisher.mockReturnValue(mockPublisher);
@@ -319,6 +319,146 @@ describe('usePreviewPublisher', () => {
         expect(retry.publishAudio).toBe(false);
         expect(retry.publishVideo).toBe(true);
       });
+    });
+
+    it('re-acquires a re-granted device muted (Google Meet style), even if the intent was on', async () => {
+      // Intent ON for both devices (never manually muted).
+      localStorage.setItem('audioSourceEnabled', 'true');
+      localStorage.removeItem('videoSourceEnabled');
+
+      let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
+      mockQuery.mockImplementation(({ name }: { name: string }) => {
+        const status = {
+          state: name === 'microphone' ? 'denied' : 'granted',
+          onchange: null as null | (() => void),
+        };
+        if (name === 'microphone') {
+          microphoneStatus = status;
+        }
+        return Promise.resolve(status as unknown as PermissionStatus);
+      });
+
+      const capturedOptions: Array<{ publishAudio?: boolean; publishVideo?: boolean }> = [];
+      (initPublisher as unknown as Mock).mockImplementation(
+        (_dependency: unknown, options: { publishAudio?: boolean }) => {
+          capturedOptions.push(options);
+          return mockPublisher;
+        }
+      );
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      act(() => {
+        emitAccessDeniedError();
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+        expect(typeof microphoneStatus?.onchange).toBe('function');
+      });
+
+      // Re-grant the microphone, then re-init in place (the waiting room does destroy+init on
+      // ACCESS_CHANGED; here we stand in for that).
+      capturedOptions.length = 0;
+      act(() => {
+        microphoneStatus!.state = 'granted';
+        microphoneStatus!.onchange?.();
+      });
+      act(() => {
+        // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
+        mockPublisher.emit('destroyed');
+      });
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        const latestOptions = capturedOptions[capturedOptions.length - 1];
+        // The re-granted mic comes back MUTED despite the stored 'on' intent; the untouched camera
+        // stays on.
+        expect(latestOptions.publishAudio).toBe(false);
+        expect(latestOptions.publishVideo).toBe(true);
+      });
+
+      // The mute is persisted (not just transient state) so it survives a whole-publisher rebuild
+      // and carries into the call when the user joins.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+      expect(localStorage.getItem('videoSourceEnabled')).not.toBe('false');
+
+      localStorage.removeItem('audioSourceEnabled');
+    });
+
+    it('keeps the first re-granted device muted when the second device is re-granted next', async () => {
+      // Both devices denied then re-granted one at a time (the normal site-settings flow). The first
+      // recovery must not be silently un-muted when the second device's re-grant rebuilds the whole
+      // publisher.
+      localStorage.setItem('audioSourceEnabled', 'true');
+      localStorage.setItem('videoSourceEnabled', 'true');
+
+      const statuses: Record<string, { state: string; onchange: null | (() => void) }> = {};
+      mockQuery.mockImplementation(({ name }: { name: string }) => {
+        const status = { state: 'denied', onchange: null as null | (() => void) };
+        statuses[name] = status;
+        return Promise.resolve(status as unknown as PermissionStatus);
+      });
+
+      const capturedOptions: Array<{ publishAudio?: boolean; publishVideo?: boolean }> = [];
+      (initPublisher as unknown as Mock).mockImplementation(
+        (_dependency: unknown, options: { publishAudio?: boolean }) => {
+          capturedOptions.push(options);
+          return mockPublisher;
+        }
+      );
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+      act(() => {
+        emitAccessDeniedError();
+      });
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: true });
+      });
+
+      // Re-grant the microphone first, then rebuild.
+      act(() => {
+        statuses.microphone.state = 'granted';
+        statuses.microphone.onchange?.();
+      });
+      act(() => {
+        // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
+        mockPublisher.emit('destroyed');
+      });
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      // Now re-grant the camera and rebuild again.
+      capturedOptions.length = 0;
+      act(() => {
+        statuses.camera.state = 'granted';
+        statuses.camera.onchange?.();
+      });
+      act(() => {
+        // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
+        mockPublisher.emit('destroyed');
+      });
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        const latestOptions = capturedOptions[capturedOptions.length - 1];
+        // The mic stays muted from its own earlier re-grant; the camera is now muted too.
+        expect(latestOptions.publishAudio).toBe(false);
+        expect(latestOptions.publishVideo).toBe(false);
+      });
+
+      localStorage.removeItem('audioSourceEnabled');
+      localStorage.removeItem('videoSourceEnabled');
     });
 
     it('does not throw on older, unsupported browsers', async () => {

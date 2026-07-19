@@ -155,6 +155,19 @@ const usePreviewPublisher = (
         event,
         setAccessStatus,
         onDeniedDevicesChange: setDeniedDevices,
+        // Google Meet re-acquires a re-granted device muted. Persist it like a manual mute rather
+        // than only flipping transient state: storage is what the in-place re-init reads, what
+        // survives a whole-publisher rebuild when the other device is re-granted next, and what the
+        // in-call publisher reads on join — so the device stays off consistently everywhere until
+        // the user turns it back on.
+        onDeviceReGrant: (device) => {
+          setStorageItem(
+            device === 'microphone'
+              ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
+              : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
+            'false'
+          );
+        },
       });
     },
     [setAccessStatus]
@@ -215,6 +228,9 @@ const usePreviewPublisher = (
     // reflect the missing device; re-initializing from them on re-grant would wrongly come back
     // muted. Storage still holds the last manual choice, so a device the user never muted returns
     // unmuted, while one they muted stays muted.
+    // Publish according to the user's persisted intent. A device re-granted after a denial has had
+    // its intent written to 'false' (Google Meet re-acquires it muted), so reading storage here also
+    // brings it back off; a device the user never denied keeps whatever intent it had.
     const intendedAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
     const intendedVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false';
     setIsAudioEnabled(intendedAudioEnabled);

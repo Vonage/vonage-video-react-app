@@ -250,14 +250,17 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
   }, []);
 
-  // Restore the user's persisted intent for a recovered device so it re-publishes unmuted/on —
-  // unless they had manually muted/disabled it. While a device is blocked, useSyncPublisherDevices
-  // flips these flags off to reflect the missing device, which would otherwise leave it muted.
-  const restoreDeviceIntent = useCallback((device: DeviceKind) => {
+  // Google Meet brings a device that was re-granted after a denial back MUTED — the user opts back
+  // in — rather than restoring its prior on/off intent. Flip the enabled flag off so the rebuilt
+  // publisher comes up muted, AND persist the intent to 'false' like a manual mute so it stays off
+  // across a fresh join/reload and can't be silently un-muted when the publisher is later rebuilt.
+  const forceDeviceMuted = useCallback((device: DeviceKind) => {
     if (device === 'microphone') {
-      setIsAudioEnabled(getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false');
+      setIsAudioEnabled(false);
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
     } else {
-      setIsVideoEnabled(getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false');
+      setIsVideoEnabled(false);
+      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'false');
     }
   }, []);
 
@@ -277,7 +280,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         onReGrant: (grantedDevice) => {
           watchedDeniedRef.current.delete(grantedDevice);
           setDeviceAccess((prev) => ({ ...prev, [grantedDevice]: undefined }));
-          restoreDeviceIntent(grantedDevice);
+          forceDeviceMuted(grantedDevice);
 
           // The publisher was created without this device (the SDK acquires tracks at init, so a
           // publishAudio:false publisher has no mic track to enable). Tear it down and let
@@ -297,7 +300,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         },
       });
     },
-    [restoreDeviceIntent]
+    [forceDeviceMuted]
   );
 
   // Clear a device that turned out to be granted — correcting a mis-attributed accessDenied so a

@@ -566,6 +566,58 @@ describe('usePublisher', () => {
       querySpy.mockRestore();
     });
 
+    it('re-acquires a re-granted device muted (Google Meet style), even if it was on before', async () => {
+      // Intent ON for the mic (never manually muted).
+      localStorage.setItem('audioSourceEnabled', 'true');
+      let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) => {
+          const status = {
+            state: name === 'microphone' ? 'denied' : 'granted',
+            onchange: null as null | (() => void),
+          };
+          if (name === 'microphone') {
+            microphoneStatus = status;
+          }
+          return Promise.resolve(status as unknown as PermissionStatus);
+        });
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the microphone mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'microphone permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+        expect(typeof microphoneStatus?.onchange).toBe('function');
+      });
+
+      // Re-grant the microphone.
+      act(() => {
+        microphoneStatus!.state = 'granted';
+        microphoneStatus!.onchange?.();
+      });
+
+      await waitFor(() => {
+        // Comes back MUTED — not restored to the prior 'on' intent.
+        expect(result.current.isAudioEnabled).toBe(false);
+      });
+      // Persisted like a manual mute so it stays off across a fresh join/reload.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+
+      localStorage.removeItem('audioSourceEnabled');
+      querySpy.mockRestore();
+    });
+
     it('should not set publishingError when receiving an accessAllowed event', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
