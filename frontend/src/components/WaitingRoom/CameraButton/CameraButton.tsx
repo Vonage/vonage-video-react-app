@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
+import requestDeviceAccess from '@utils/publisher/requestDeviceAccess';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
 import VividIcon from '@ui/components/VividIcon';
@@ -35,7 +36,15 @@ const CameraButton = (): ReactElement | false => {
       : t('devices.video.camera.state.on');
   })();
 
-  const handleToggleVideo = () => {
+  // A blocked camera can't be toggled, so a click instead re-requests browser access. The prompt
+  // only reappears while the permission is still pending (e.g. a dismissed prompt); after an
+  // explicit block the browser stays silent and the tooltip guides the user to their settings. A
+  // successful grant is recovered in place by the preview publisher's permission watcher.
+  const handleClick = () => {
+    if (isCameraBlocked) {
+      void requestDeviceAccess({ device: 'camera' });
+      return;
+    }
     toggleVideo();
     toggleBackgroundVideoPublisher();
   };
@@ -62,7 +71,7 @@ const CameraButton = (): ReactElement | false => {
         >
           <Tooltip arrow title={title} aria-label={t('devices.video.camera.ariaLabel')}>
             <VideoContainerButton
-              onClick={handleToggleVideo}
+              onClick={handleClick}
               className={classNames(
                 'hover:bg-[color-mix(in_srgb,var(--vera-on-secondary)_60%,transparent)]!',
                 {

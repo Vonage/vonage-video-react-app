@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock, afterEach } from 'vitest';
-import { fireEvent, screen, render as renderBase } from '@testing-library/react';
+import { fireEvent, screen, render as renderBase, waitFor } from '@testing-library/react';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
 import { ReactElement } from 'react';
@@ -171,6 +171,34 @@ describe('DeviceControlButton', () => {
         await screen.findByText('Microphone access is blocked. Allow it in your browser settings.')
       ).toBeInTheDocument();
     });
+
+    it('re-requests browser access instead of toggling when the microphone is blocked', async () => {
+      const toggleAudioMock = vi.fn();
+      const getUserMedia = vi
+        .spyOn(globalThis.navigator.mediaDevices, 'getUserMedia')
+        .mockResolvedValue({ getTracks: () => [] } as unknown as MediaStream);
+      mockUsePublisherContext.mockImplementation(() => ({
+        ...publisherContext,
+        isAudioEnabled: true,
+        toggleAudio: toggleAudioMock,
+        deniedDevices: { microphone: true, camera: false },
+      }));
+
+      render(
+        <DeviceControlButton
+          deviceType="audio"
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+        />
+      );
+
+      screen.getByLabelText('Microphone').click();
+
+      // A blocked mic can't be toggled: the click pokes the browser permission (audio-only) instead.
+      await waitFor(() => {
+        expect(getUserMedia).toHaveBeenCalledWith({ audio: true });
+      });
+      expect(toggleAudioMock).not.toHaveBeenCalled();
+    });
   });
 
   describe('video DeviceControlButton', () => {
@@ -211,6 +239,36 @@ describe('DeviceControlButton', () => {
       expect(
         await screen.findByText('Camera control is disabled in this application')
       ).toBeInTheDocument();
+    });
+
+    it('re-requests browser access instead of toggling when the camera is blocked', async () => {
+      const toggleVideoMock = vi.fn();
+      const getUserMedia = vi
+        .spyOn(globalThis.navigator.mediaDevices, 'getUserMedia')
+        .mockResolvedValue({ getTracks: () => [] } as unknown as MediaStream);
+      mockUsePublisherContext.mockImplementation(() => ({
+        ...publisherContext,
+        isVideoEnabled: true,
+        toggleVideo: toggleVideoMock,
+        deniedDevices: { microphone: false, camera: true },
+      }));
+
+      render(
+        <DeviceControlButton
+          deviceType="video"
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+        />
+      );
+
+      screen.getByLabelText('Camera').click();
+
+      // A blocked camera can't be toggled: the click pokes the browser permission (video-only),
+      // and must not flip either the main or the background publisher's video state.
+      await waitFor(() => {
+        expect(getUserMedia).toHaveBeenCalledWith({ video: true });
+      });
+      expect(toggleVideoMock).not.toHaveBeenCalled();
+      expect(toggleBackgroundVideoPublisherMock).not.toHaveBeenCalled();
     });
   });
 });

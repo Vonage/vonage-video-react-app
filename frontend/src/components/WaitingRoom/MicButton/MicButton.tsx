@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
+import requestDeviceAccess from '@utils/publisher/requestDeviceAccess';
 import VideoContainerButton from '../VideoContainerButton';
 import DevicePermissionBadge from '../../DevicePermissionBadge';
 import { env } from '../../../env';
@@ -33,6 +34,18 @@ const MicButton = (): ReactElement | false => {
       : t('devices.audio.microphone.state.on');
   })();
 
+  // A blocked mic can't be toggled, so a click instead re-requests browser access. The prompt only
+  // reappears while the permission is still pending (e.g. a dismissed prompt); after an explicit
+  // block the browser stays silent and the tooltip guides the user to their settings. A successful
+  // grant is recovered in place by the preview publisher's permission watcher.
+  const handleClick = () => {
+    if (isMicrophoneBlocked) {
+      void requestDeviceAccess({ device: 'microphone' });
+      return;
+    }
+    toggleAudio();
+  };
+
   return (
     env.ALLOW_MICROPHONE_CONTROL && (
       <span className="relative inline-flex">
@@ -56,7 +69,7 @@ const MicButton = (): ReactElement | false => {
         >
           <Tooltip arrow title={title} aria-label={t('devices.audio.microphone.ariaLabel')}>
             <VideoContainerButton
-              onClick={toggleAudio}
+              onClick={handleClick}
               className={classNames(
                 'hover:bg-[color-mix(in_srgb,var(--vera-on-secondary)_60%,transparent)]!',
                 {

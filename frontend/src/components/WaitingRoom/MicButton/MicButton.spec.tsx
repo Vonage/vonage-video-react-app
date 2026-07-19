@@ -102,6 +102,31 @@ describe('MicButton', () => {
     });
   });
 
+  it('re-requests browser access instead of toggling when the microphone is blocked', async () => {
+    const toggleAudioMock = vi.fn();
+    const getUserMedia = vi.spyOn(globalThis.navigator.mediaDevices, 'getUserMedia');
+    render(<MicButton />, {
+      previewPublisherContext: {
+        __onCreated: (context) => {
+          context.isAudioEnabled = true;
+          context.toggleAudio = toggleAudioMock;
+        },
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: false };
+        },
+      },
+    });
+
+    fireEvent.click(screen.getByRole('button'));
+
+    // A blocked mic can't be toggled: the click pokes the browser permission (audio-only) instead,
+    // and must not flip publish state.
+    await waitFor(() => {
+      expect(getUserMedia).toHaveBeenCalledWith({ audio: true });
+    });
+    expect(toggleAudioMock).not.toHaveBeenCalled();
+  });
+
   it('shows the muted icon and a warning badge when the microphone permission is blocked', async () => {
     render(<MicButton />, {
       previewPublisherContext: {

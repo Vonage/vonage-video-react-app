@@ -136,6 +136,36 @@ describe('CameraButton', () => {
     });
   });
 
+  it('re-requests browser access instead of toggling when the camera is blocked', async () => {
+    const previewToggleMock = vi.fn();
+    const backgroundToggleMock = vi.fn();
+    const getUserMedia = vi.spyOn(globalThis.navigator.mediaDevices, 'getUserMedia');
+
+    render(<CameraButton />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: false, camera: true };
+          context.toggleVideo = previewToggleMock;
+        },
+      },
+      backgroundPublisherContext: {
+        __interceptor: (context) => {
+          context.toggleVideo = backgroundToggleMock;
+        },
+      },
+    });
+
+    fireEvent.click(screen.getByRole('button'));
+
+    // A blocked camera can't be toggled: the click pokes the browser permission (video-only)
+    // instead, and must not flip either publisher's video state.
+    await waitFor(() => {
+      expect(getUserMedia).toHaveBeenCalledWith({ video: true });
+    });
+    expect(previewToggleMock).not.toHaveBeenCalled();
+    expect(backgroundToggleMock).not.toHaveBeenCalled();
+  });
+
   it('shows the off icon and a warning badge when the camera permission is blocked', async () => {
     render(<CameraButton />, {
       previewPublisherContext: {
