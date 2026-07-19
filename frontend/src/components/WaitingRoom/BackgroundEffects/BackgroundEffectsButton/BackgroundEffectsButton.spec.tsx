@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import BackgroundEffectsButton from './BackgroundEffectsButton';
 import { env } from '../../../../env';
 
@@ -19,6 +20,7 @@ describe('BackgroundEffectsButton', () => {
   const mockOnClick = vi.fn();
   beforeEach(() => {
     vi.clearAllMocks();
+    resetMediaProcessorSupportCache();
     env.partialUpdate({
       ALLOW_BACKGROUND_EFFECTS: true,
     });

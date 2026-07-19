@@ -15,7 +15,10 @@ import usePublisherOptions from '../usePublisherOptions';
 import useApplyAdvancedSettings from '../useApplyAdvancedSettings';
 import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import getDeniedDevice from '../../../utils/publisher/getDeniedDevice';
+import attempt from '@common/execution/attempt';
+import watchDeviceReGrant from '../../../utils/publisher/watchDeviceReGrant';
+import detectDeniedDevices from '../../../utils/publisher/detectDeniedDevices';
+import type { DeniedDevices, DeviceKind } from '../../../utils/publisher/deviceAccess';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../../logger';
 
@@ -39,6 +42,10 @@ export type PublishingErrorType = {
 
 export type AccessDeniedEvent = Event<'accessDenied', Publisher> & {
   message?: string;
+  // The patched SDK reports which capture device(s) the denial covers — the requested set at
+  // init (a combined getUserMedia can't tell which subset was blocked), or the exact device on a
+  // mid-call revocation. Absent when running against an unpatched SDK build.
+  deniedSources?: DeviceKind[];
 };
 
 export type PublisherContextType = {
@@ -47,6 +54,7 @@ export type PublisherContextType = {
   isForceMuted: boolean;
   isPublishing: boolean;
   publishingError: PublishingErrorType;
+  deniedDevices: DeniedDevices;
   isVideoEnabled: boolean;
   publish: () => Promise<void>;
   publisher: Publisher | null;
@@ -117,7 +125,24 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
   );
 
-  const publisherOptions = usePublisherOptions({ isAudioEnabled, isVideoEnabled });
+  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
+    microphone: undefined,
+    camera: undefined,
+  });
+
+  // Denying a camera/microphone permission mid-call must NOT eject the user to the goodbye page
+  // (Google Meet keeps you in the call). We surface the blocked device via `deniedDevices` so the
+  // toolbar can badge it, and recover the publisher in place when the permission is re-granted.
+  // `publishingError` is reserved for genuine publish/network failures, which still redirect.
+  const deniedDevices: DeniedDevices = {
+    microphone: deviceAccess.microphone === false,
+    camera: deviceAccess.camera === false,
+  };
+
+  // Request only the devices that aren't blocked. The SDK does a single getUserMedia for both
+  // tracks, so requesting a blocked device fails the whole call and would leave a granted camera
+  // dark when only the mic is denied. Requesting just the granted device(s) keeps that camera live.
+  const publisherOptions = usePublisherOptions({ isAudioEnabled, isVideoEnabled, deniedDevices });
 
   const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
 
@@ -129,6 +154,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const isInitializingPublisherRef = useRef<boolean>(false);
   const reconnectingRef = useRef<boolean>(false);
   const consecutivePublishingFailureCountRef = useRef<number>(0);
+  // Devices with an active re-grant watcher, so we never attach two for the same device.
+  const watchedDeniedRef = useRef<Set<DeviceKind>>(new Set());
 
   const {
     publish: sessionPublish,
@@ -136,38 +163,22 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     connected,
     reconnecting,
   } = useSessionContext();
-  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
-    microphone: undefined,
-    camera: undefined,
-  });
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
   useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
   useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
 
-  // If we do not have audio input or video input access, we cannot publish.
-  useEffect(() => {
-    if (deviceAccess?.microphone === false || deviceAccess?.camera === false) {
-      // Pick the label from the device that is actually denied (=== false). The previous
-      // `deviceAccess.camera ? 'Microphone' : 'Camera'` mislabelled a mic-only denial as
-      // "Camera" because `camera` is `undefined` (unknown), not `true`, in that case.
-      const device = deviceAccess.microphone === false ? 'Microphone' : 'Camera';
-      const accessDeniedError = {
-        header: t('publishingErrors.accessDenied.title', { device }),
-        caption: t('publishingErrors.accessDenied.message', { device: device.toLowerCase() }),
-      };
-      setPublishingError(accessDeniedError);
-    }
-  }, [deviceAccess, t]);
-
   reconnectingRef.current = reconnecting === true;
 
   const handleAccessAllowed = useCallback(() => {
     isInitializingPublisherRef.current = false;
-    setDeviceAccess({
-      microphone: true,
-      camera: true,
-    });
+    // Only clear devices that are actually granted now. When just one device was blocked we
+    // re-acquire the other (e.g. camera-only after a mic denial), and that success must not
+    // erase the still-blocked device's badge — its re-grant watcher clears it individually.
+    setDeviceAccess((previous) => ({
+      microphone: previous.microphone === false ? false : true,
+      camera: previous.camera === false ? false : true,
+    }));
   }, []);
 
   const handleDestroyed = useCallback(() => {
@@ -239,20 +250,89 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
   }, []);
 
-  const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
-    // We check the first word of the message to see if the microphone or camera was denied access.
-    const deviceDeniedAccess = getDeniedDevice(event.message);
-    isInitializingPublisherRef.current = false;
-    setDeviceAccess((prev) => ({
-      ...prev,
-      [deviceDeniedAccess]: false,
-    }));
-
-    if (publisherRef.current) {
-      publisherRef.current.destroy();
+  // Restore the user's persisted intent for a recovered device so it re-publishes unmuted/on —
+  // unless they had manually muted/disabled it. While a device is blocked, useSyncPublisherDevices
+  // flips these flags off to reflect the missing device, which would otherwise leave it muted.
+  const restoreDeviceIntent = useCallback((device: DeviceKind) => {
+    if (device === 'microphone') {
+      setIsAudioEnabled(getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false');
+    } else {
+      setIsVideoEnabled(getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false');
     }
-    publisherRef.current = null;
   }, []);
+
+  // Badge a blocked device and (once) watch it for re-grant so we can recover in place (Google
+  // Meet style). Clearing the denied flag on re-grant re-opens the init gate in useMeetingRoom.
+  const markDeviceDenied = useCallback(
+    (device: DeviceKind) => {
+      setDeviceAccess((prev) => ({ ...prev, [device]: false }));
+
+      if (watchedDeniedRef.current.has(device)) {
+        return;
+      }
+      watchedDeniedRef.current.add(device);
+
+      void watchDeviceReGrant({
+        device,
+        onReGrant: (grantedDevice) => {
+          watchedDeniedRef.current.delete(grantedDevice);
+          setDeviceAccess((prev) => ({ ...prev, [grantedDevice]: undefined }));
+          restoreDeviceIntent(grantedDevice);
+
+          // The publisher was created without this device (the SDK acquires tracks at init, so a
+          // publishAudio:false publisher has no mic track to enable). Tear it down and let
+          // useMeetingRoom re-initialize with the now-unblocked request. Recreating cleanly also
+          // avoids useSyncPublisherDevices trying to setAudioSource on a track-less publisher,
+          // which fails and would otherwise trip the goodbye redirect.
+          if (publisherRef.current) {
+            attempt(() => {
+              publisherRef.current?.destroy();
+            });
+            publisherRef.current = null;
+            isPublishingToSessionRef.current = false;
+            isInitializingPublisherRef.current = false;
+            setIsPublishing(false);
+            setStream(null);
+          }
+        },
+      });
+    },
+    [restoreDeviceIntent]
+  );
+
+  // Clear a device that turned out to be granted — correcting a mis-attributed accessDenied so a
+  // still-granted device isn't left badged (which would also block its re-acquisition).
+  const clearDeviceDenied = useCallback((device: DeviceKind) => {
+    watchedDeniedRef.current.delete(device);
+    setDeviceAccess((prev) => (prev[device] === false ? { ...prev, [device]: undefined } : prev));
+  }, []);
+
+  const handleAccessDenied = useCallback(
+    (event: AccessDeniedEvent) => {
+      isInitializingPublisherRef.current = false;
+
+      if (publisherRef.current) {
+        publisherRef.current.destroy();
+      }
+      publisherRef.current = null;
+
+      // The SDK reports the requested device(s), which over-reports when only one was actually
+      // blocked (a combined getUserMedia fails wholesale). Resolve the real state authoritatively:
+      // badge/watch the genuinely blocked device(s) and clear any that are actually granted, so a
+      // still-granted camera keeps its badge off and gets re-acquired (video-only) while the mic
+      // stays blocked.
+      void detectDeniedDevices(event).then((denied) => {
+        (['microphone', 'camera'] as DeviceKind[]).forEach((device) => {
+          if (denied[device]) {
+            markDeviceDenied(device);
+          } else {
+            clearDeviceDenied(device);
+          }
+        });
+      });
+    },
+    [markDeviceDenied, clearDeviceDenied]
+  );
 
   /**
    * Method to unpublish from session and destroy publisher
@@ -411,7 +491,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
    * @returns {void}
    */
   const toggleVideo = () => {
-    if (!publisherRef.current) {
+    // Same as toggleAudio: a blocked camera means there is no video track to (un)mute.
+    if (!publisherRef.current || deniedDevices.camera) {
       return;
     }
     publisherRef.current.publishVideo(!isVideoEnabled);
@@ -426,7 +507,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
    * @returns {void}
    */
   const toggleAudio = () => {
-    if (!publisherRef.current) {
+    // While the mic is blocked the publisher has no audio track to (un)mute; flipping the flag would
+    // falsely show it unmuted and corrupt the persisted audio intent. Ignore until it's re-granted.
+    if (!publisherRef.current || deniedDevices.microphone) {
       return;
     }
 
@@ -494,6 +577,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     isForceMuted,
     isPublishing,
     publishingError,
+    deniedDevices,
     isVideoEnabled,
     publish,
     publisher: publisherRef.current,

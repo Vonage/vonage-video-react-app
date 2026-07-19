@@ -5,6 +5,7 @@ import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import usePreviewPublisher from './usePreviewPublisher';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
@@ -24,6 +25,7 @@ describe('usePreviewPublisher', () => {
   const mockedHasMediaProcessorSupport = vi.fn();
 
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
     setupWindowNavigatorMock({
@@ -37,8 +39,10 @@ describe('usePreviewPublisher', () => {
 
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
-    (initPublisher as Mock).mockImplementation(mockedInitPublisher);
-    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    (initPublisher as unknown as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(
+      mockedHasMediaProcessorSupport
+    );
   });
 
   describe('initLocalPublisher', () => {
@@ -56,7 +60,7 @@ describe('usePreviewPublisher', () => {
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
-      (initPublisher as Mock).mockImplementation((_, _args, callback) => {
+      (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
       });
 
@@ -92,6 +96,41 @@ describe('usePreviewPublisher', () => {
         }),
         expect.any(Function)
       );
+    });
+
+    it('publishes from the stored intent so a device the user never muted comes back unmuted on re-init', async () => {
+      // No stored mute → intended unmuted/on. This is what makes a re-grant recover to the
+      // default state rather than the device-loss flags that briefly flip enabled off.
+      localStorage.removeItem('audioSourceEnabled');
+      localStorage.removeItem('videoSourceEnabled');
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = await render();
+
+      result.current.initLocalPublisher();
+
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({ publishAudio: true, publishVideo: true }),
+        expect.any(Function)
+      );
+    });
+
+    it('re-initializes muted/off when the user had muted the device before (stored intent)', async () => {
+      localStorage.setItem('audioSourceEnabled', 'false');
+      localStorage.setItem('videoSourceEnabled', 'false');
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = await render();
+
+      result.current.initLocalPublisher();
+
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({ publishAudio: false, publishVideo: false }),
+        expect.any(Function)
+      );
+
+      localStorage.removeItem('audioSourceEnabled');
+      localStorage.removeItem('videoSourceEnabled');
     });
   });
 
@@ -200,7 +239,85 @@ describe('usePreviewPublisher', () => {
         expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
         // The denied device must be identified as the microphone, not the camera fallback.
         expect(mockQuery).toHaveBeenCalledWith({ name: 'microphone' });
-        expect(mockQuery).not.toHaveBeenCalledWith({ name: 'camera' });
+        // The blocked device is surfaced so the waiting room can badge it (Google Meet style),
+        // while the (unmentioned) camera is left untouched.
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+      });
+    });
+
+    it('does not flag a still-granted camera when only the microphone is blocked', async () => {
+      // Reproduces a mic-only denial whose SDK message defaults getDeniedDevice() to 'camera'
+      // (the message does not start with "microphone"). The authoritative permission query must
+      // correct that mis-seed so the granted camera is never badged.
+      mockQuery.mockImplementation(({ name }: { name: string }) =>
+        Promise.resolve({
+          onchange: null,
+          state: name === 'microphone' ? 'denied' : 'granted',
+        } as unknown as PermissionStatus)
+      );
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      act(() => {
+        // @ts-expect-error Simulate the SDK reporting a generic denial that mis-seeds to camera.
+        mockPublisher.emit('accessDenied', { message: 'OT_USER_MEDIA_ACCESS_DENIED' });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+      });
+    });
+
+    it('retries with a video-only request when only the microphone is blocked', async () => {
+      // Reproduces mic-blocked / camera-granted. The SDK's combined getUserMedia fails on the mic,
+      // so the first init dies; the publisher must retry requesting only the granted camera so the
+      // preview still comes up (rather than sitting dark) while the mic stays badged.
+      localStorage.removeItem('audioSourceEnabled');
+      localStorage.removeItem('videoSourceEnabled');
+      mockQuery.mockImplementation(({ name }: { name: string }) =>
+        Promise.resolve({
+          onchange: null,
+          state: name === 'microphone' ? 'denied' : 'granted',
+        } as unknown as PermissionStatus)
+      );
+
+      const capturedOptions: Array<{ publishAudio?: boolean; publishVideo?: boolean }> = [];
+      (initPublisher as unknown as Mock).mockImplementation(
+        (
+          _dependency: unknown,
+          options: { publishAudio?: boolean },
+          callback?: (e: Error) => void
+        ) => {
+          capturedOptions.push(options);
+          if (capturedOptions.length === 1) {
+            // Fail the first (combined) attempt asynchronously, as the real SDK does.
+            queueMicrotask(() => {
+              const error = Object.assign(new Error('denied'), {
+                name: 'OT_USER_MEDIA_ACCESS_DENIED',
+              });
+              callback?.(error);
+              // @ts-expect-error We simulate the SDK's accessDenied event for the blocked mic.
+              mockPublisher.emit('accessDenied', { message: 'OT_USER_MEDIA_ACCESS_DENIED' });
+            });
+          }
+          return mockPublisher;
+        }
+      );
+
+      const { result } = await render();
+      act(() => {
+        result.current.initLocalPublisher();
+      });
+
+      await waitFor(() => {
+        expect(capturedOptions.length).toBeGreaterThanOrEqual(2);
+        const retry = capturedOptions[capturedOptions.length - 1];
+        expect(retry.publishAudio).toBe(false);
+        expect(retry.publishVideo).toBe(true);
       });
     });
 

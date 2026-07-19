@@ -101,6 +101,26 @@ describe('MicButton', () => {
       expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
     });
   });
+
+  it('shows the muted icon and a warning badge when the microphone permission is blocked', async () => {
+    render(<MicButton />, {
+      previewPublisherContext: {
+        __onCreated: (context) => {
+          context.isAudioEnabled = true;
+        },
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: false };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      // A blocked mic is presented as muted (never the on icon) with a warning badge, Meet style.
+      expect(screen.getByTestId('vivid-icon-mic-mute-line')).toBeInTheDocument();
+      expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
+      expect(screen.getByTestId('device-permission-badge')).toBeInTheDocument();
+    });
+  });
 });
 
 type RenderOptions = {

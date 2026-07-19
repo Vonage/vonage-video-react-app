@@ -1,6 +1,8 @@
 import { ReactElement, useEffect, useRef } from 'react';
 import { Box } from 'opentok-layout-js';
 import usePublisherContext from '../../hooks/usePublisherContext';
+import useUserContext from '@hooks/useUserContext';
+import getInitials from '@utils/getInitials';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
 import useAudioLevels from '../../hooks/useAudioLevels';
 import AvatarInitials from '../AvatarInitials';
@@ -29,8 +31,10 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     isVideoEnabled,
     publisher,
     isAudioEnabled,
+    deniedDevices,
   } = usePublisherContext();
   const audioLevel = useAudioLevels();
+  const { user } = useUserContext();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -49,9 +53,15 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     }
   }, [element]);
 
-  const initials = publisher?.stream?.initials;
-  const username = publisher?.stream?.name ?? '';
-  const hasVideo = isVideoEnabled && !!element;
+  // Source the name (and thus initials + avatar color) from the user's settings, falling back from
+  // the publisher stream. When both devices are blocked there is no publisher — and so no
+  // stream.initials/name — but the avatar must still show the user's initials, like the waiting room.
+  const username = publisher?.stream?.name || user.defaultSettings.name || '';
+  const initials = getInitials(username);
+  // A blocked camera produces no video, so show the avatar as if video were off — mirroring the
+  // waiting room. Checking `deniedDevices.camera` explicitly (not just a missing element) also
+  // covers a camera revoked mid-call before the publisher tears down.
+  const hasVideo = isVideoEnabled && !!element && !deniedDevices.camera;
   const audioIndicatorStyle: React.CSSProperties = {
     position: 'absolute',
     top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),

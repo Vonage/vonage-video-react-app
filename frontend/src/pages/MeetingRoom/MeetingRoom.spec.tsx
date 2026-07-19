@@ -479,16 +479,20 @@ describe('MeetingRoom', () => {
       rerender(<MeetingRoom />);
     });
 
-    await waitFor(() => {
-      expect(mockedNavigate).toHaveBeenCalledOnce();
-      expect(mockedNavigate).toHaveBeenCalledWith(expect.stringContaining('/goodbye/'), {
-        state: {
-          header: 'Difficulties joining room',
-          caption:
-            "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
-        },
-      });
-    });
+    // The ejection is deferred by a grace period so transient device errors can clear first.
+    await waitFor(
+      () => {
+        expect(mockedNavigate).toHaveBeenCalledOnce();
+        expect(mockedNavigate).toHaveBeenCalledWith(expect.stringContaining('/goodbye/'), {
+          state: {
+            header: 'Difficulties joining room',
+            caption:
+              "We're having trouble connecting you with others in the meeting room. Please check your network and try again.",
+          },
+        });
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('should redirect to waiting room when username is missing', async () => {

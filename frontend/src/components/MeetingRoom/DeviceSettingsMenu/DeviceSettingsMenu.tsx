@@ -1,5 +1,5 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';

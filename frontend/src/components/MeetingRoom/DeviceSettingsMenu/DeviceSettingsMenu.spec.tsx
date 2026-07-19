@@ -20,6 +20,7 @@ import {
 } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 import DeviceSettingsMenuComponent from './DeviceSettingsMenu';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 
 const { mockHasMediaProcessorSupport, mockGetActiveAudioOutputDevice, mockSetAudioOutputDevice } =
   vi.hoisted(() => {
@@ -54,6 +55,7 @@ describe('DeviceSettingsMenu Component', () => {
   let bluetoothSpeakers: MediaDeviceInfoJSON;
 
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     vi.mocked(isSinkIdSupported).mockReturnValue(true);
 
     setupWindowNavigatorMock({

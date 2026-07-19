@@ -10,6 +10,7 @@ import { makeTestProvider } from '@test/providers';
 import { makeMediaDeviceInfos } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { env } from '../../../env';
 
 vi.mock('@hooks/usePublisherContext');
@@ -28,6 +29,7 @@ describe('ReduceNoiseTestSpeakers', () => {
   let publisherContext: PublisherContextType;
 
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     mediaDevices$.reset();
 
     // Mock HTMLMediaElement methods used by SoundTest component

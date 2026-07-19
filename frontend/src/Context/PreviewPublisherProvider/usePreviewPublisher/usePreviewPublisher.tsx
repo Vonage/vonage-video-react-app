@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
-import { initPublisher, hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { initPublisher } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import type { Event, Publisher, PublisherProperties, VideoFilter } from '@vonage/client-sdk-video';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
@@ -9,6 +10,8 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import type { DeniedDevices } from '../../../utils/publisher/deviceAccess';
+import { NO_DENIED_DEVICES } from '../../../utils/publisher/deviceAccess';
 import useStableCallback from '@web/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
@@ -35,6 +38,7 @@ export type PreviewPublisherContextType = {
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
+  deniedDevices: DeniedDevices;
   initLocalPublisher: () => void;
   speechLevel: number;
   isVideoLoading: boolean;
@@ -50,6 +54,7 @@ export type PreviewPublisherInitialValue = Partial<
     | 'speechLevel'
     | 'backgroundFilter'
     | 'accessStatus'
+    | 'deniedDevices'
     | 'publisher'
   >
 >;
@@ -86,6 +91,9 @@ const usePreviewPublisher = (
   >(initialValue?.publisherVideoElement ?? undefined);
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
+  const [deniedDevices, setDeniedDevices] = useState<DeniedDevices>(
+    initialValue?.deniedDevices ?? NO_DENIED_DEVICES
+  );
   const publisherRef = useRef<Publisher | null>(null);
 
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
@@ -107,6 +115,9 @@ const usePreviewPublisher = (
 
   const handlePreviewDestroyed = () => {
     publisherRef.current = null;
+    // `publisher` is exposed from a ref, so clearing the video element state is what forces a
+    // re-render — this lets consumers observe the publisher going away and re-initialize it.
+    setPublisherVideoElement(undefined);
   };
 
   const [isVideoLoading, setIsVideoLoading] = useState(isVideoEnabled);
@@ -135,7 +146,16 @@ const usePreviewPublisher = (
 
   const handleAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
-      await handlePublisherAccessDenied(event, setAccessStatus);
+      // Settle the preview once media access is denied: without a granted camera no
+      // `videoElementCreated` will ever fire, so the room would otherwise stay stuck on the
+      // loading skeleton behind a blocking alert. Settling lets the waiting room render inline
+      // with the affected device badged (Google Meet style).
+      setIsVideoLoading(false);
+      await handlePublisherAccessDenied({
+        event,
+        setAccessStatus,
+        onDeniedDevicesChange: setDeniedDevices,
+      });
     },
     [setAccessStatus]
   );
@@ -172,6 +192,9 @@ const usePreviewPublisher = (
     });
     publisher.on('accessAllowed', () => {
       setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
+      // Don't blanket-clear here: when only one device was blocked we re-acquire the *other* one
+      // (e.g. camera-only after a mic denial), and that success must not erase the still-blocked
+      // device's badge. Each blocked device is cleared individually by its re-grant watcher.
     });
   });
 
@@ -187,16 +210,34 @@ const usePreviewPublisher = (
 
     const { frameRate, codecMode, codecPriority } = advancedSettings$.getState();
 
+    // Publish according to the user's *intent* (persisted on manual toggle), not the current
+    // enabled flags. While a device is blocked, useSyncPublisherDevices flips those flags off to
+    // reflect the missing device; re-initializing from them on re-grant would wrongly come back
+    // muted. Storage still holds the last manual choice, so a device the user never muted returns
+    // unmuted, while one they muted stays muted.
+    const intendedAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
+    const intendedVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false';
+    setIsAudioEnabled(intendedAudioEnabled);
+    setIsVideoEnabled(intendedVideoEnabled);
+
+    // Only request devices that aren't blocked. The SDK does a single getUserMedia for both
+    // tracks, so requesting a blocked device fails the whole call — which would leave a granted
+    // camera dark when only the mic is denied. Requesting just the granted device(s) lets the
+    // camera preview come up while the mic stays badged (Google Meet style).
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       frameRate,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
-      publishAudio: isAudioEnabled,
-      publishVideo: isVideoEnabled,
-      audioSource: audioSourceId,
-      videoSource: videoSourceId,
+      publishAudio: intendedAudioEnabled && !deniedDevices.microphone,
+      publishVideo: intendedVideoEnabled && !deniedDevices.camera,
+      // A blocked device must be excluded from the source, not just from publishAudio/publishVideo:
+      // those only start the track muted, while the SDK still acquires it via getUserMedia. Passing
+      // the blocked device's id would make the single combined getUserMedia fail wholesale, leaving
+      // the granted camera dark. `false` tells the SDK to skip acquiring that track entirely.
+      audioSource: deniedDevices.microphone ? false : audioSourceId,
+      videoSource: deniedDevices.camera ? false : videoSourceId,
     };
 
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
@@ -210,6 +251,18 @@ const usePreviewPublisher = (
 
     addPublisherListeners(publisherRef.current);
   });
+
+  // When exactly one device is blocked, the combined getUserMedia above failed (no publisher) but
+  // the other device is still available. Retry with the reduced request so the granted device —
+  // typically the camera when the mic is blocked — still comes up. When both are blocked there is
+  // nothing to acquire, and when neither is blocked the normal init path already ran.
+  useEffect(() => {
+    const someDenied = deniedDevices.microphone || deniedDevices.camera;
+    const someGranted = !deniedDevices.microphone || !deniedDevices.camera;
+    if (someDenied && someGranted && !publisherRef.current) {
+      initLocalPublisher();
+    }
+  }, [deniedDevices, initLocalPublisher]);
 
   /**
    * Destroys the preview publisher
@@ -231,7 +284,8 @@ const usePreviewPublisher = (
    * @returns {void}
    */
   const toggleVideo = () => {
-    if (!publisherRef.current) {
+    // A blocked camera has no video track to (un)mute; ignore until it's re-granted.
+    if (!publisherRef.current || deniedDevices.camera) {
       return;
     }
 
@@ -253,7 +307,9 @@ const usePreviewPublisher = (
    * @returns {void}
    */
   const toggleAudio = () => {
-    if (!publisherRef.current) {
+    // A blocked mic has no audio track to (un)mute; flipping the flag would falsely show it unmuted
+    // and corrupt the persisted audio intent. Ignore until it's re-granted.
+    if (!publisherRef.current || deniedDevices.microphone) {
       return;
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
@@ -289,6 +345,7 @@ const usePreviewPublisher = (
     changeBackground,
     backgroundFilter,
     accessStatus,
+    deniedDevices,
     speechLevel,
     isVideoLoading,
   };

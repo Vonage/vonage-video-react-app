@@ -81,11 +81,37 @@ describe('getControlButtonTooltip', () => {
       // When video is enabled, the tooltip should prompt to disable it
       expectedTranslation: t('devices.video.disable'),
     },
+    {
+      name: 'microphone is blocked by the browser',
+      options: {
+        isAudio: true,
+        isBlocked: true,
+        allowMicrophoneControl: true,
+        allowCameraControl: true,
+        isAudioEnabled: true,
+        isVideoEnabled: false,
+      },
+      // A browser-blocked device takes precedence over the enable/disable prompt.
+      expectedTranslation: t('devices.audio.microphone.state.blocked'),
+    },
+    {
+      name: 'camera is blocked by the browser',
+      options: {
+        isAudio: false,
+        isBlocked: true,
+        allowMicrophoneControl: true,
+        allowCameraControl: true,
+        isAudioEnabled: false,
+        isVideoEnabled: true,
+      },
+      expectedTranslation: t('devices.video.camera.state.blocked'),
+    },
   ];
 
   testCases.forEach((testCase) => {
     it(`should return correct translation when ${testCase.name}`, () => {
       const result = getControlButtonTooltip({
+        isBlocked: false,
         ...testCase.options,
         t,
       });

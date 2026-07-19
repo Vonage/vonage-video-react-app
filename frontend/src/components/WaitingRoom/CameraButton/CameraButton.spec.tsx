@@ -135,6 +135,23 @@ describe('CameraButton', () => {
       expect(screen.queryByTestId('camera-button-wrapper')).not.toBeInTheDocument();
     });
   });
+
+  it('shows the off icon and a warning badge when the camera permission is blocked', async () => {
+    render(<CameraButton />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: false, camera: true };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      // A blocked camera is presented as off (never the on icon) with a warning badge, Meet style.
+      expect(screen.getByTestId('vivid-icon-video-off-line')).toBeInTheDocument();
+      expect(screen.queryByTestId('vivid-icon-video-line')).not.toBeInTheDocument();
+      expect(screen.getByTestId('device-permission-badge')).toBeInTheDocument();
+    });
+  });
 });
 
 type RenderOptions = {

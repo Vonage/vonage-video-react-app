@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { FocusEvent, MouseEvent, ReactElement } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import MenuItem from '@mui/material/MenuItem';
 import type { MenuItemProps } from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';

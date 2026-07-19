@@ -16,8 +16,14 @@ const useWaitingRoom = () => {
     sessionKeyStatus,
   });
 
-  const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
-    usePreviewPublisherContext();
+  const {
+    initLocalPublisher,
+    publisher,
+    accessStatus,
+    deniedDevices,
+    destroyPublisher,
+    isVideoLoading,
+  } = usePreviewPublisherContext();
 
   const { initBackgroundLocalPublisher, publisher: backgroundPublisher } =
     useBackgroundPublisherContext();
@@ -50,6 +56,18 @@ const useWaitingRoom = () => {
     }
   }, [initBackgroundLocalPublisher, backgroundPublisher]);
 
+  // When the user re-grants a previously denied permission the publisher reports ACCESS_CHANGED.
+  // Drive the re-init explicitly: tear down any existing (dead) publisher and start a fresh one.
+  // Relying on destroy → 'destroyed' → [publisher]-effect is unsafe because after an initial
+  // getUserMedia failure the ref is already null, so destroyPublisher() no-ops and the
+  // [publisher] dep never changes, leaving the room stuck behind the access-changed alert.
+  useEffect(() => {
+    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
+      destroyPublisher();
+      initLocalPublisher();
+    }
+  }, [accessStatus, destroyPublisher, initLocalPublisher]);
+
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
   ) => {
@@ -78,10 +96,14 @@ const useWaitingRoom = () => {
     setOpenVideoInput(false);
   };
 
+  // The room is ready to show inline once device access has *settled* — whether granted
+  // (ACCEPTED) or blocked (REJECTED). Meet-style, a blocked device no longer hides the room
+  // behind a full-screen alert; the preview and controls render with the device badged.
+  const hasSettledAccess =
+    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED ||
+    accessStatus === DEVICE_ACCESS_STATUS.REJECTED;
   const isRoomReady =
-    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION &&
-    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED &&
-    !isVideoLoading;
+    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION && hasSettledAccess && !isVideoLoading;
 
   return {
     anchorEl,
@@ -91,6 +113,7 @@ const useWaitingRoom = () => {
     username,
     setUsername,
     accessStatus,
+    deniedDevices,
     isRoomReady,
     roomName,
     sessionKey,

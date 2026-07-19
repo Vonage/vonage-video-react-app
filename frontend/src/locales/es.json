@@ -321,5 +321,11 @@
   "zoom.current": "Zoom actual",
   "errorPage.title": "Algo salió mal",
   "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste.",
-  "notification.dismiss": "Descartar notificación"
+  "notification.dismiss": "Descartar notificación",
+  "deviceAccessHint.blocked": "El acceso a tu {{device}} está bloqueado. Permítelo en la configuración de tu navegador.",
+  "deviceAccessHint.camera": "cámara",
+  "deviceAccessHint.microphone": "micrófono",
+  "deviceAccessHint.cameraAndMicrophone": "cámara y micrófono",
+  "devices.audio.microphone.state.blocked": "El acceso al micrófono está bloqueado. Permítelo en la configuración de tu navegador.",
+  "devices.video.camera.state.blocked": "El acceso a la cámara está bloqueado. Permítelo en la configuración de tu navegador."
 }

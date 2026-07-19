@@ -6,12 +6,18 @@ import useSessionContext from './useSessionContext';
 import useScreenShare from './useScreenShare';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
+import { hasDeniedDevice } from '../utils/publisher/deviceAccess';
+import type { DeniedDevices } from '../utils/publisher/deviceAccess';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from './useUserContext';
 import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
+
+// Grace period before ejecting to the goodbye page on a publishing error, so transient failures
+// while a device is being (re)acquired can clear before we give up on the call.
+const PUBLISHING_ERROR_REDIRECT_DELAY_MS = 1500;
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -31,6 +37,7 @@ const useMeetingRoom = () => {
     quality,
     initializeLocalPublisher,
     publishingError,
+    deniedDevices,
     isVideoEnabled,
     publisherOptions,
   } = usePublisherContext();
@@ -126,10 +133,15 @@ const useMeetingRoom = () => {
       return;
     }
 
-    if (!publisher) {
+    // Re-initialize unless BOTH devices are blocked (nothing to acquire). When only one is
+    // blocked we still init, requesting just the granted device (publisherOptions already excludes
+    // the blocked one) so e.g. the camera stays live while the mic is blocked — Google Meet style.
+    // Recovering in place needs no reload; the re-grant watcher restores the blocked device later.
+    const allDevicesBlocked = deniedDevices.microphone && deniedDevices.camera;
+    if (!publisher && !allDevicesBlocked) {
       initializeLocalPublisher(publisherOptions);
     }
-  }, [initializeLocalPublisher, publisherOptions, publisher]);
+  }, [initializeLocalPublisher, publisherOptions, publisher, deniedDevices]);
 
   useEffect(() => {
     if (connected && publisher && publish) {
@@ -138,21 +150,19 @@ const useMeetingRoom = () => {
   }, [publisher, publish, connected]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
+    // While the camera is blocked (REJECTED) the background publisher can't acquire it and
+    // retrying would loop. On re-grant the background publisher's accessStatus flips to
+    // ACCESS_CHANGED, re-opening this gate so it recovers in place — no reload.
+    if (!backgroundPublisher && accessStatus !== DEVICE_ACCESS_STATUS.REJECTED) {
       void initBackgroundLocalPublisher();
     }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  useEffect(() => {
-    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
-      window.location.reload();
-    }
-  }, [accessStatus]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, accessStatus]);
 
   useRedirectOnPublisherError({
     publishingError,
     reconnecting,
     sessionKey,
+    deniedDevices,
   });
   useRedirectOnSubscriberError({
     subscriberError: subscriptionError,
@@ -207,15 +217,24 @@ function useRedirectOnPublisherError({
   publishingError,
   reconnecting,
   sessionKey,
+  deniedDevices,
 }: {
   publishingError: PublishingErrorType | null;
   reconnecting: boolean | null;
   sessionKey: string | null;
+  deniedDevices: DeniedDevices;
 }) {
   const navigate = useNavigate();
 
   const maybeRedirect = useEffectEvent(() => {
     if (!publishingError) {
+      return;
+    }
+
+    // A blocked camera/microphone makes publishing fail, but that's recoverable in place (Google
+    // Meet keeps you in the call) — don't eject to the goodbye page. The device is badged and
+    // re-acquired on re-grant; publishingError clears once a track publishes again.
+    if (hasDeniedDevice(deniedDevices)) {
       return;
     }
 
@@ -238,9 +257,22 @@ function useRedirectOnPublisherError({
     });
   });
 
+  // Key the timer off whether an error is *active*, not its object identity: a publisher failing
+  // in a loop re-sets publishingError repeatedly, and depending on the object would keep resetting
+  // the timer and delay a genuine redirect indefinitely.
+  const hasPublishingError = publishingError !== null;
+
   useEffect(() => {
-    maybeRedirect();
-  }, [publishingError, reconnecting]);
+    if (!hasPublishingError) {
+      return;
+    }
+    // Defer the ejection so transient publish failures during device (re)acquisition can resolve
+    // first — e.g. revoking then re-granting a device mid-call briefly fails publishing before the
+    // track re-publishes (handleStreamCreated clears publishingError) or the denial is detected.
+    // A genuinely persistent failure still redirects after the delay.
+    const timer = setTimeout(maybeRedirect, PUBLISHING_ERROR_REDIRECT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [hasPublishingError, reconnecting]);
 }
 
 /**

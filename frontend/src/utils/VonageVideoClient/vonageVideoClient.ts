@@ -467,7 +467,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
-    this.clientSession.disconnect();
+    // The 2.35 SDK returns a promise here; disconnect is fire-and-forget during teardown.
+    void this.clientSession.disconnect();
     this.clientSession = null as unknown as Session;
   };
 
@@ -522,7 +523,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    this.clientSession.signal(data);
+    // The 2.35 SDK returns a promise here; signalling is fire-and-forget.
+    void this.clientSession.signal(data);
   };
 
   /**

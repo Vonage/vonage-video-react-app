@@ -4,9 +4,9 @@ import {
   Event,
   initPublisher,
   VideoFilter,
-  hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -136,7 +136,7 @@ const useBackgroundPublisher = (
 
   const handleBackgroundAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
-      await handlePublisherAccessDenied(event, setAccessStatus);
+      await handlePublisherAccessDenied({ event, setAccessStatus });
     },
     [setAccessStatus]
   );
@@ -186,7 +186,12 @@ const useBackgroundPublisher = (
       videoFilter,
       resolution: env.DEFAULT_RESOLUTION,
       videoSource: mediaDevices$.getState().videoinput,
+      // This is a video-only publisher (background-effects preview). `publishAudio: false` alone
+      // still makes the SDK acquire the default mic via getUserMedia, which fails wholesale when the
+      // mic is blocked and leaves the effects preview with no video. `audioSource: false` skips
+      // acquiring the mic entirely so the camera preview comes up regardless of mic permission.
       publishAudio: false,
+      audioSource: false,
       publishVideo: isVideoEnabled,
     };
 

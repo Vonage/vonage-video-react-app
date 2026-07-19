@@ -33,7 +33,9 @@ describe('useScreenSharing', () => {
       destroy: vi.fn(),
     } as unknown as Partial<Publisher>;
 
-    (initPublisher as ReturnType<typeof vi.fn>).mockReturnValue(mockPublisher as Publisher);
+    (initPublisher as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockPublisher as Publisher
+    );
   });
 
   afterEach(() => {

@@ -16,6 +16,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import DeviceAccessHint from '../DeviceAccessHint';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import VideoStatsOverlay from '../VideoStatsOverlay';
@@ -40,9 +41,17 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
   const { user } = useUserContext();
-  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel, isVideoLoading } =
-    usePreviewPublisherContext();
+  const {
+    publisherVideoElement,
+    isVideoEnabled,
+    isAudioEnabled,
+    speechLevel,
+    isVideoLoading,
+    deniedDevices,
+  } = usePreviewPublisherContext();
   const initials = getInitials(username);
+  // A blocked camera produces no video, so show the avatar placeholder as if video were off.
+  const isVideoVisible = isVideoEnabled && !deniedDevices.camera;
 
   useEffect(() => {
     if (!publisherVideoElement) return;
@@ -64,6 +73,10 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       <div
         ref={containerRef}
         className={classNames(
+          // Reserve the video's 16:9 footprint on the container itself, not only on the appended
+          // <video> child. When a device is blocked there is no child, so without this the tile
+          // would collapse to its content and shrink (the waiting-room Box is `inline-flex`).
+          'w-dvw md:w-146.25 aspect-video',
           'child:mx-auto',
           'child:animate-[fade-in_.6s_linear]',
           'child:-scale-x-100',
@@ -85,6 +98,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
       <VignetteEffect />
 
+      <DeviceAccessHint />
+
       {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && (
         <div className="absolute left-4 top-3 z-10">
           <VideoStatsOverlay />
@@ -96,7 +111,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
-        isVideoEnabled={isVideoEnabled}
+        isVideoEnabled={isVideoVisible}
         isVideoLoading={isVideoLoading}
       />
 

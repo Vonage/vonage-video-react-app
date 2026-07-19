@@ -9,6 +9,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { env } from '../../../env';
 import { Resolution } from '@common/types';
 
@@ -18,6 +19,7 @@ const videoDevice = devices.find((d) => d.kind === 'videoinput')!;
 
 describe('usePublisherOptions', () => {
   beforeEach(() => {
+    resetMediaProcessorSupportCache();
     // Setup window.navigator mock first
     setupWindowNavigatorMock({
       mediaDevices: {
@@ -82,6 +84,43 @@ describe('usePublisherOptions', () => {
         publishCaptions: true,
         publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
       });
+    });
+  });
+
+  it('does not request a blocked device so the combined getUserMedia can still acquire the granted one', async () => {
+    vi.spyOn(OT, 'hasMediaProcessorSupport').mockReturnValue(true);
+
+    // Baseline with nothing blocked (other flags/settings govern the exact values here).
+    const baseline = renderHook(() =>
+      usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true })
+    );
+    await waitFor(() => expect(baseline.result.current).toBeTruthy());
+    const basePublishVideo = baseline.result.current.publishVideo;
+    const basePublishAudio = baseline.result.current.publishAudio;
+
+    const micBlocked = renderHook(() =>
+      usePublisherOptions({
+        isAudioEnabled: true,
+        isVideoEnabled: true,
+        deniedDevices: { microphone: true, camera: false },
+      })
+    );
+    await waitFor(() => {
+      // Mic blocked → never request audio; the granted camera is left exactly as the baseline.
+      expect(micBlocked.result.current.publishAudio).toBe(false);
+      expect(micBlocked.result.current.publishVideo).toBe(basePublishVideo);
+    });
+
+    const cameraBlocked = renderHook(() =>
+      usePublisherOptions({
+        isAudioEnabled: true,
+        isVideoEnabled: true,
+        deniedDevices: { microphone: false, camera: true },
+      })
+    );
+    await waitFor(() => {
+      expect(cameraBlocked.result.current.publishVideo).toBe(false);
+      expect(cameraBlocked.result.current.publishAudio).toBe(basePublishAudio);
     });
   });
 

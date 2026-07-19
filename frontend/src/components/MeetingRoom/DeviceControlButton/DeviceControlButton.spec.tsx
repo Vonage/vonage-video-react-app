@@ -33,6 +33,9 @@ vi.mock('react-i18next', () => ({
         'devices.settings.ariaLabel': enTranslations['devices.settings.ariaLabel'],
         'devices.video.disabled': enTranslations['devices.video.disabled'],
         'devices.audio.disabled': enTranslations['devices.audio.disabled'],
+        'devices.audio.microphone.state.blocked':
+          enTranslations['devices.audio.microphone.state.blocked'],
+        'devices.video.camera.state.blocked': enTranslations['devices.video.camera.state.blocked'],
         'mutedAlert.message.muted': enTranslations['mutedAlert.message.muted'],
       };
       return translations[key] || key;
@@ -63,6 +66,7 @@ describe('DeviceControlButton', () => {
     publisherContext = {
       publisherContext: null,
       isPublishing: true,
+      deniedDevices: { microphone: false, camera: false },
       publish: vi.fn() as () => Promise<void>,
       initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
@@ -139,6 +143,32 @@ describe('DeviceControlButton', () => {
       fireEvent.mouseOver(tooltip);
       expect(
         await screen.findByText('Microphone control is disabled in this application')
+      ).toBeInTheDocument();
+    });
+
+    it('shows the muted icon, a warning badge and a blocked tooltip when the microphone is blocked', async () => {
+      mockUsePublisherContext.mockImplementation(() => ({
+        ...publisherContext,
+        isAudioEnabled: true,
+        deniedDevices: { microphone: true, camera: false },
+      }));
+
+      render(
+        <DeviceControlButton
+          deviceType="audio"
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+        />
+      );
+
+      // Blocked mic shows the muted icon (not the on icon) plus a warning badge, Meet style.
+      expect(screen.getByTestId('MicOffToolbar')).toBeInTheDocument();
+      expect(screen.queryByTestId('MicNoneIcon')).not.toBeInTheDocument();
+      expect(screen.getByTestId('device-permission-badge')).toBeInTheDocument();
+
+      const tooltip = screen.getByLabelText('device settings');
+      fireEvent.mouseOver(tooltip);
+      expect(
+        await screen.findByText('Microphone access is blocked. Allow it in your browser settings.')
       ).toBeInTheDocument();
     });
   });
