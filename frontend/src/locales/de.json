@@ -326,6 +326,8 @@
   "deviceAccessHint.camera": "Kamera",
   "deviceAccessHint.microphone": "Mikrofon",
   "deviceAccessHint.cameraAndMicrophone": "Kamera und Mikrofon",
+  "deviceAccessHint.blockedTitle": "Gerätezugriff blockiert",
+  "deviceAccessHint.reload": "Seite neu laden",
   "devices.audio.microphone.state.blocked": "Mikrofonzugriff ist blockiert. Bitte in den Browsereinstellungen erlauben.",
   "devices.video.camera.state.blocked": "Kamerazugriff ist blockiert. Bitte in den Browsereinstellungen erlauben."
 }

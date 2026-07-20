@@ -5,6 +5,7 @@ import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
 import useUserContext from '../../../hooks/useUserContext';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
+import useDeferredBackgroundEffectsPublisher from '../../../hooks/useDeferredBackgroundEffectsPublisher';
 import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
@@ -53,10 +54,22 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   // A blocked camera produces no video, so show the avatar placeholder as if video were off.
   const isVideoVisible = isVideoEnabled && !deniedDevices.camera;
 
+  // Lazily acquire the effects-preview camera only when the effects panel opens. VideoContainer is
+  // the natural home: it owns the effects entry point and lives inside the backgroundEffectsDialog$
+  // provider, which the waiting-room hook (running above that provider) cannot read.
+  useDeferredBackgroundEffectsPublisher();
+
   useEffect(() => {
     if (!publisherVideoElement) return;
 
     containerRef.current!.appendChild(publisherVideoElement);
+
+    // Detach the element when it changes or the tile unmounts. Without this, a recovery rebuild
+    // (which swaps publisherVideoElement) orphans the old, now-destroyed <video> node in the
+    // container, leaking stale nodes across the rebuild.
+    return () => {
+      publisherVideoElement.remove();
+    };
   }, [publisherVideoElement]);
 
   return (
@@ -127,7 +140,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </div>
           <div className="absolute right-5">
-            <BackgroundEffectsButton onClick={open} />
+            {/* A blocked camera has no feed to preview, so hide the effects entry entirely. */}
+            {!deniedDevices.camera && <BackgroundEffectsButton onClick={open} />}
             {isBackgroundEffectsOpen && (
               <BackgroundEffectsDialog
                 isBackgroundEffectsOpen={true}

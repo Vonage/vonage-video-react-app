@@ -36,8 +36,14 @@ const DeviceControlButton = ({
   toggleBackgroundEffects,
 }: DeviceControlButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled, deniedDevices } =
-    usePublisherContext();
+  const {
+    isVideoEnabled,
+    toggleAudio,
+    toggleVideo,
+    isAudioEnabled,
+    deniedDevices,
+    reacquireDevice,
+  } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
 
   const isAudio = deviceType === 'audio';
@@ -132,9 +138,16 @@ const DeviceControlButton = ({
     // A browser-blocked device has no track to toggle, so a click instead re-requests access. The
     // prompt only reappears while the permission is still pending (e.g. a dismissed prompt); after
     // an explicit block the browser stays silent and the tooltip guides the user to their settings.
-    // A successful grant is recovered in place by the publisher's re-grant watcher (no page reload).
+    // On a successful grant, recover in place: Chrome via the publisher's onchange watcher, Safari
+    // (which never fires onchange) via reacquireDevice, which no-ops on Chrome to avoid a double
+    // rebuild.
     if (isBlocked) {
-      void requestDeviceAccess({ device: isAudio ? 'microphone' : 'camera' });
+      const device = isAudio ? 'microphone' : 'camera';
+      void requestDeviceAccess({ device }).then((outcome) => {
+        if (outcome === 'granted') {
+          reacquireDevice(device);
+        }
+      });
       return;
     }
     if (isAudio) {
@@ -222,6 +235,7 @@ const DeviceControlButton = ({
         isOpen={open}
         handleClose={handleClose}
         setIsOpen={setOpen}
+        isCameraBlocked={isCameraBlocked}
       />
     </>
   );

@@ -10,8 +10,11 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
-import type { DeniedDevices } from '../../../utils/publisher/deviceAccess';
-import { NO_DENIED_DEVICES } from '../../../utils/publisher/deviceAccess';
+import type { DeniedDevices, DeviceKind } from '../../../utils/publisher/deviceAccess';
+import {
+  NO_DENIED_DEVICES,
+  DEVICE_REACQUIRE_FALLBACK_MS,
+} from '../../../utils/publisher/deviceAccess';
 import useStableCallback from '@web/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
@@ -29,16 +32,18 @@ type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher>
 export type PreviewPublisherContextType = {
   isAudioEnabled: boolean;
   isPublishing: boolean;
+  isAcquiring: boolean;
   isVideoEnabled: boolean;
   publisher: Publisher | null;
   publisherVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
-  destroyPublisher: () => void;
+  destroyPublisher: (target?: Publisher | null) => void;
   toggleAudio: () => void;
   toggleVideo: () => void;
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
   deniedDevices: DeniedDevices;
+  reacquireDevice: (device: DeviceKind) => void;
   initLocalPublisher: () => void;
   speechLevel: number;
   isVideoLoading: boolean;
@@ -94,9 +99,19 @@ const usePreviewPublisher = (
   const [deniedDevices, setDeniedDevices] = useState<DeniedDevices>(
     initialValue?.deniedDevices ?? NO_DENIED_DEVICES
   );
+  // Mirror deniedDevices so the delayed reacquire fallback below reads the latest value (not the one
+  // captured in its closure) when it checks whether onchange has already recovered the device.
+  const deniedDevicesRef = useRef(deniedDevices);
+  deniedDevicesRef.current = deniedDevices;
   const publisherRef = useRef<Publisher | null>(null);
 
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
+  // True from the moment a publisher's getUserMedia starts until it settles (accessAllowed /
+  // accessDenied / init error). The recovery path reads this to SERIALIZE rebuilds: tearing a
+  // publisher down while its getUserMedia is still acquiring aborts it (OT_CANCEL) and wedges the SDK
+  // ('Destroyed' cannot transition to 'Failed'). Re-granting a second device must therefore wait for
+  // the in-flight acquire to finish before destroying and rebuilding.
+  const [isAcquiring, setIsAcquiring] = useState<boolean>(false);
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
     user.defaultSettings.backgroundFilter
   );
@@ -151,6 +166,7 @@ const usePreviewPublisher = (
       // loading skeleton behind a blocking alert. Settling lets the waiting room render inline
       // with the affected device badged (Google Meet style).
       setIsVideoLoading(false);
+      setIsAcquiring(false);
       await handlePublisherAccessDenied({
         event,
         setAccessStatus,
@@ -169,6 +185,35 @@ const usePreviewPublisher = (
           );
         },
       });
+    },
+    [setAccessStatus]
+  );
+
+  /**
+   * Recover a device the user just re-granted via the badge click (the click-to-re-prompt getUserMedia
+   * succeeded). Normally re-grant recovery is driven by PermissionStatus.onchange, but that never
+   * fires for camera/microphone in Safari, so the granted device would otherwise stay badged. We
+   * recover after a short grace period and only if the device is still denied — so on Chrome, where
+   * onchange has already recovered it, this is a no-op (no double rebuild). Mirrors the onchange path:
+   * persist the Google-Meet muted intent and re-init in place via ACCESS_CHANGED.
+   * @param {DeviceKind} device - the re-granted device to bring back.
+   * @returns {void}
+   */
+  const reacquireDevice = useCallback(
+    (device: DeviceKind) => {
+      window.setTimeout(() => {
+        if (!deniedDevicesRef.current[device]) {
+          return;
+        }
+        setStorageItem(
+          device === 'microphone'
+            ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
+            : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
+          'false'
+        );
+        setDeniedDevices((previous) => ({ ...previous, [device]: false }));
+        setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+      }, DEVICE_REACQUIRE_FALLBACK_MS);
     },
     [setAccessStatus]
   );
@@ -204,6 +249,7 @@ const usePreviewPublisher = (
       calculateAudioLevel(audioLevel);
     });
     publisher.on('accessAllowed', () => {
+      setIsAcquiring(false);
       setAccessStatus(DEVICE_ACCESS_STATUS.ACCEPTED);
       // Don't blanket-clear here: when only one device was blocked we re-acquire the *other* one
       // (e.g. camera-only after a mic denial), and that success must not erase the still-blocked
@@ -256,9 +302,13 @@ const usePreviewPublisher = (
       videoSource: deniedDevices.camera ? false : videoSourceId,
     };
 
+    // A getUserMedia is now in flight; block the recovery path from tearing this publisher down until
+    // it settles (accessAllowed/accessDenied below, or the init error here).
+    setIsAcquiring(true);
     publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
       if (err instanceof Error) {
         publisherRef.current = null;
+        setIsAcquiring(false);
         if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
           console.error('initPublisher error: ', err);
         }
@@ -272,24 +322,41 @@ const usePreviewPublisher = (
   // the other device is still available. Retry with the reduced request so the granted device —
   // typically the camera when the mic is blocked — still comes up. When both are blocked there is
   // nothing to acquire, and when neither is blocked the normal init path already ran.
+  const lastPreviewAttemptRef = useRef<string | null>(null);
   useEffect(() => {
+    if (publisherRef.current) {
+      lastPreviewAttemptRef.current = null;
+      return;
+    }
     const someDenied = deniedDevices.microphone || deniedDevices.camera;
     const someGranted = !deniedDevices.microphone || !deniedDevices.camera;
-    if (someDenied && someGranted && !publisherRef.current) {
+    // Don't re-request the identical source set that just failed. On Safari every getUserMedia
+    // re-prompts and permissions.query is unreliable, so without this the reduced-request retry would
+    // loop forever. A genuinely different request (a device un-blocked, a source changed) has a new
+    // signature and is still allowed.
+    const attemptSignature = `${deniedDevices.microphone ? 'false' : audioSourceId}|${
+      deniedDevices.camera ? 'false' : videoSourceId
+    }`;
+    if (someDenied && someGranted && lastPreviewAttemptRef.current !== attemptSignature) {
+      lastPreviewAttemptRef.current = attemptSignature;
       initLocalPublisher();
     }
-  }, [deniedDevices, initLocalPublisher]);
+  }, [deniedDevices, initLocalPublisher, audioSourceId, videoSourceId]);
 
   /**
    * Destroys the preview publisher
    * @returns {void}
    */
-  const destroyPublisher = useCallback(() => {
-    if (!publisherRef.current) return;
+  const destroyPublisher = useCallback((target?: Publisher | null) => {
+    // Destroy a specific instance when given one (so a stale [publisher]-effect cleanup tears down the
+    // OLD publisher it was created for, not whatever currently occupies the ref after a recovery
+    // rebuild); otherwise destroy the current publisher.
+    const publisher = target ?? publisherRef.current;
+    if (!publisher) return;
 
     attempt(() => {
       // There is a known race condition in Firefox during navigation where the DOM elements are destroyed before the publisher is destroyed, causing OT to throw an error.
-      publisherRef.current?.destroy();
+      publisher.destroy();
     });
   }, []);
 
@@ -351,6 +418,7 @@ const usePreviewPublisher = (
     isAudioEnabled,
     initLocalPublisher,
     isPublishing,
+    isAcquiring,
     isVideoEnabled,
     destroyPublisher,
 
@@ -362,6 +430,7 @@ const usePreviewPublisher = (
     backgroundFilter,
     accessStatus,
     deniedDevices,
+    reacquireDevice,
     speechLevel,
     isVideoLoading,
   };

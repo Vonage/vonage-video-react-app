@@ -364,6 +364,29 @@ describe('DeviceSettingsMenu Component', () => {
         expect(screen.queryByText('video effects')).not.toBeInTheDocument();
       });
     });
+
+    it('and does not render the video effects option when the camera is blocked', async () => {
+      vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+
+      render(
+        <DeviceSettingsMenuComponent
+          deviceType={deviceType}
+          handleToggle={mockHandleToggle}
+          handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          setIsOpen={mockSetIsOpen}
+          isCameraBlocked
+        />
+      );
+
+      await waitFor(() => {
+        // Supported, but a blocked camera has no feed to preview, so the effects entry stays hidden.
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByText('Video effects')).not.toBeInTheDocument();
+      });
+    });
   });
 });
 

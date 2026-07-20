@@ -39,9 +39,9 @@ const handlePublisherAccessDenied = async ({
         return;
       }
 
-      // The permission query is authoritative when it gives a definitive answer: it corrects a
-      // mis-seed (e.g. a mic-only denial whose message defaulted `getDeniedDevice` to 'camera')
-      // so a still-granted device is never flagged. Only 'prompt'/unavailable keeps the seed.
+      // The permission query is authoritative when it gives a definitive answer: it corrects an
+      // over-seed (a generic init denial seeds BOTH devices) so a still-granted device is never left
+      // flagged. Only 'prompt'/unavailable keeps the seed.
       if (permissionStatus.state === 'denied') {
         denied[kind] = true;
       } else if (permissionStatus.state === 'granted') {

@@ -16,13 +16,6 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-vi.mock('../useBackgroundPublisherContext', () => ({
-  default: () => ({
-    initBackgroundLocalPublisher: vi.fn(),
-    publisher: null,
-  }),
-}));
-
 describe('useWaitingRoom', () => {
   beforeEach(() => {
     vi.clearAllMocks();

@@ -30,15 +30,27 @@ describe('seedDeniedDevices', () => {
     });
   });
 
-  it('falls back to parsing the message when deniedSources is absent (unpatched SDK)', () => {
+  it('seeds just the microphone from a mid-call message that names it (unpatched SDK)', () => {
     expect(
       seedDeniedDevices(makeEvent({ message: 'microphone permission denied during the call' }))
     ).toEqual({ microphone: true, camera: false });
   });
 
-  it('falls back to the camera for a message that names no known device', () => {
+  it('seeds just the camera from a mid-call message that names it (unpatched SDK)', () => {
+    expect(
+      seedDeniedDevices(makeEvent({ message: 'camera permission denied during the call' }))
+    ).toEqual({ microphone: false, camera: true });
+  });
+
+  it('seeds BOTH for the generic init message that names no device (unpatched SDK)', () => {
+    expect(
+      seedDeniedDevices(makeEvent({ message: 'device permission denied while initializing' }))
+    ).toEqual({ microphone: true, camera: true });
+  });
+
+  it('seeds BOTH when the message is absent', () => {
     expect(seedDeniedDevices(makeEvent({ message: undefined }))).toEqual({
-      microphone: false,
+      microphone: true,
       camera: true,
     });
   });

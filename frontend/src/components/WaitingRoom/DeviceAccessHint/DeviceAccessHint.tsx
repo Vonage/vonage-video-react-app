@@ -4,6 +4,8 @@ import VividIcon from '@ui/components/VividIcon';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import { hasDeniedDevice } from '@utils/publisher/deviceAccess';
 import deniedDevicesLabel from '@utils/publisher/deniedDevicesLabel';
+import shouldOfferReloadRecovery from '@utils/publisher/shouldOfferReloadRecovery';
+import DeviceAccessReloadButton from '@components/DeviceAccessReloadButton';
 
 /**
  * DeviceAccessHint Component
@@ -32,6 +34,9 @@ const DeviceAccessHint = (): ReactElement | false => {
     >
       <VividIcon name="warning-line" customSize={-6} style={{ color: 'var(--vera-error)' }} />
       <span>{t('deviceAccessHint.blocked', { device })}</span>
+      {/* Chrome/Edge recover live via a permission onchange watcher once the user re-allows in site
+          settings, so no reload is needed there. Only Safari/Firefox (no onchange) need a reload. */}
+      {shouldOfferReloadRecovery() && <DeviceAccessReloadButton />}
     </div>
   );
 };

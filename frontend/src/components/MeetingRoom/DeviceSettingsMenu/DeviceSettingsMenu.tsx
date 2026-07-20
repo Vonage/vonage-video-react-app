@@ -22,6 +22,7 @@ export type DeviceSettingsMenuProps = {
   anchorRef: RefObject<HTMLInputElement | null>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  isCameraBlocked?: boolean;
 };
 
 /**
@@ -50,10 +51,12 @@ const DeviceSettingsMenu = ({
   anchorRef,
   handleClose,
   setIsOpen,
+  isCameraBlocked = false,
 }: DeviceSettingsMenuProps): ReactElement | false => {
   const isAudio = deviceType === 'audio';
+  // A blocked camera has no feed to preview, so background effects make no sense — hide the entry.
   const shouldDisplayBackgroundEffects =
-    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS;
+    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS && !isCameraBlocked;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();

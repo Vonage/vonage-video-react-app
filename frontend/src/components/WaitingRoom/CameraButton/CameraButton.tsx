@@ -22,7 +22,8 @@ import { env } from '../../../env';
  */
 const CameraButton = (): ReactElement | false => {
   const { t } = useTranslation();
-  const { isVideoEnabled, toggleVideo, deniedDevices } = usePreviewPublisherContext();
+  const { isVideoEnabled, toggleVideo, deniedDevices, reacquireDevice } =
+    usePreviewPublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
 
   const isCameraBlocked = deniedDevices.camera;
@@ -42,7 +43,13 @@ const CameraButton = (): ReactElement | false => {
   // successful grant is recovered in place by the preview publisher's permission watcher.
   const handleClick = () => {
     if (isCameraBlocked) {
-      void requestDeviceAccess({ device: 'camera' });
+      // On a successful re-grant, recover in place. On Chrome the permission onchange watcher does
+      // this; Safari never fires it, so reacquireDevice is the fallback (a no-op on Chrome).
+      void requestDeviceAccess({ device: 'camera' }).then((outcome) => {
+        if (outcome === 'granted') {
+          reacquireDevice('camera');
+        }
+      });
       return;
     }
     toggleVideo();

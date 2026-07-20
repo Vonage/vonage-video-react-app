@@ -67,6 +67,7 @@ describe('DeviceControlButton', () => {
       publisherContext: null,
       isPublishing: true,
       deniedDevices: { microphone: false, camera: false },
+      reacquireDevice: vi.fn(),
       publish: vi.fn() as () => Promise<void>,
       initializeLocalPublisher: vi.fn(() => {
         publisherContext.publisher = mockPublisher;
@@ -198,6 +199,10 @@ describe('DeviceControlButton', () => {
         expect(getUserMedia).toHaveBeenCalledWith({ audio: true });
       });
       expect(toggleAudioMock).not.toHaveBeenCalled();
+      // A successful re-grant recovers in place (the Safari fallback, no-op on Chrome).
+      await waitFor(() => {
+        expect(publisherContext.reacquireDevice).toHaveBeenCalledWith('microphone');
+      });
     });
   });
 
@@ -269,6 +274,9 @@ describe('DeviceControlButton', () => {
       });
       expect(toggleVideoMock).not.toHaveBeenCalled();
       expect(toggleBackgroundVideoPublisherMock).not.toHaveBeenCalled();
+      await waitFor(() => {
+        expect(publisherContext.reacquireDevice).toHaveBeenCalledWith('camera');
+      });
     });
   });
 });

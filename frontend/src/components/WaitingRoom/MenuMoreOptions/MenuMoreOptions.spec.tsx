@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import * as clientSdkVideo from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import { PreviewPublisherContext } from '@Context/PreviewPublisherProvider';
+import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
 import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
@@ -109,6 +111,17 @@ describe('MenuMoreOptions', () => {
     );
   });
 
+  it('should not display video effects option when the camera is blocked', () => {
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />, {
+      cameraBlocked: true,
+    });
+
+    // No camera feed to preview, so the background-effects entry is hidden entirely.
+    expect(screen.queryByText(/video effects/i)).not.toBeInTheDocument();
+    // The other options are unaffected.
+    expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
+  });
+
   it('should not display video effects option when background effects are not allowed', () => {
     env.partialUpdate({ ALLOW_BACKGROUND_EFFECTS: false });
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
@@ -155,10 +168,22 @@ describe('MenuMoreOptions', () => {
   });
 });
 
-function render(ui: ReactElement) {
+function render(ui: ReactElement, { cameraBlocked = false }: { cameraBlocked?: boolean } = {}) {
+  const PreviewWrapper = ({ children }: { children: ReactNode }) => (
+    <PreviewPublisherContext.Provider
+      value={
+        {
+          deniedDevices: { microphone: false, camera: cameraBlocked },
+        } as PreviewPublisherContextType
+      }
+    >
+      {children}
+    </PreviewPublisherContext.Provider>
+  );
   const wrapper = composeProviders(
     backgroundEffectsDialog$.Provider,
-    precallNetworkTestDialog$.Provider
+    precallNetworkTestDialog$.Provider,
+    PreviewWrapper
   );
   return renderBase(ui, { wrapper });
 }

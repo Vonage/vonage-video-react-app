@@ -13,6 +13,7 @@ import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
 import { StrictMode } from 'react';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import { DEVICE_REACQUIRE_FALLBACK_MS } from '@utils/publisher/deviceAccess';
 import mediaDevices$ from '@core/stores/mediaDevices';
 
 vi.mock('@vonage/client-sdk-video');
@@ -478,7 +479,7 @@ describe('usePublisher', () => {
     });
 
     it('does not badge a still-granted camera when the SDK misattributes a mic-only denial', async () => {
-      // The event message defaults getDeniedDevice() to 'camera', but only the mic is truly
+      // The generic init message names no device, so the seed flags BOTH, but only the mic is truly
       // blocked. The authoritative permission query must correct that so the granted camera is
       // never badged (which would also block its re-acquisition).
       const querySpy = vi
@@ -512,13 +513,19 @@ describe('usePublisher', () => {
     it('rebuilds the publisher when a blocked device is re-granted so the device can be re-acquired', async () => {
       // The reduced publisher has no track for the previously-blocked device (the SDK acquires
       // tracks at init), so on re-grant it must be torn down and re-created with the full request.
-      let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
+      let microphoneChangeHandler: (() => void) | undefined;
+      let microphoneStatus: { state: string } | undefined;
       const querySpy = vi
         .spyOn(navigator.permissions, 'query')
         .mockImplementation(({ name }: { name: string }) => {
           const status = {
             state: name === 'microphone' ? 'denied' : 'granted',
-            onchange: null as null | (() => void),
+            addEventListener: (event: string, handler: () => void) => {
+              if (name === 'microphone' && event === 'change') {
+                microphoneChangeHandler = handler;
+              }
+            },
+            removeEventListener: () => {},
           };
           if (name === 'microphone') {
             microphoneStatus = status;
@@ -541,7 +548,7 @@ describe('usePublisher', () => {
 
       await waitFor(() => {
         expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
-        expect(typeof microphoneStatus?.onchange).toBe('function');
+        expect(typeof microphoneChangeHandler).toBe('function');
       });
 
       // Stand in for useMeetingRoom re-initializing the reduced (video-only) publisher.
@@ -553,7 +560,7 @@ describe('usePublisher', () => {
       // Re-grant the microphone.
       act(() => {
         microphoneStatus!.state = 'granted';
-        microphoneStatus!.onchange?.();
+        microphoneChangeHandler?.();
       });
 
       await waitFor(() => {
@@ -569,13 +576,19 @@ describe('usePublisher', () => {
     it('re-acquires a re-granted device muted (Google Meet style), even if it was on before', async () => {
       // Intent ON for the mic (never manually muted).
       localStorage.setItem('audioSourceEnabled', 'true');
-      let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
+      let microphoneChangeHandler: (() => void) | undefined;
+      let microphoneStatus: { state: string } | undefined;
       const querySpy = vi
         .spyOn(navigator.permissions, 'query')
         .mockImplementation(({ name }: { name: string }) => {
           const status = {
             state: name === 'microphone' ? 'denied' : 'granted',
-            onchange: null as null | (() => void),
+            addEventListener: (event: string, handler: () => void) => {
+              if (name === 'microphone' && event === 'change') {
+                microphoneChangeHandler = handler;
+              }
+            },
+            removeEventListener: () => {},
           };
           if (name === 'microphone') {
             microphoneStatus = status;
@@ -598,13 +611,13 @@ describe('usePublisher', () => {
 
       await waitFor(() => {
         expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
-        expect(typeof microphoneStatus?.onchange).toBe('function');
+        expect(typeof microphoneChangeHandler).toBe('function');
       });
 
       // Re-grant the microphone.
       act(() => {
         microphoneStatus!.state = 'granted';
-        microphoneStatus!.onchange?.();
+        microphoneChangeHandler?.();
       });
 
       await waitFor(() => {
@@ -612,6 +625,54 @@ describe('usePublisher', () => {
         expect(result.current.isAudioEnabled).toBe(false);
       });
       // Persisted like a manual mute so it stays off across a fresh join/reload.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+
+      localStorage.removeItem('audioSourceEnabled');
+      querySpy.mockRestore();
+    });
+
+    it('reacquireDevice recovers a still-denied device after the fallback delay (Safari fallback)', async () => {
+      localStorage.setItem('audioSourceEnabled', 'true');
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) =>
+          Promise.resolve({
+            state: name === 'microphone' ? 'denied' : 'granted',
+            onchange: null,
+          } as unknown as PermissionStatus)
+        );
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the microphone mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'microphone permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices.microphone).toBe(true);
+      });
+
+      // Safari never fires PermissionStatus.onchange, so the badge click's successful re-grant
+      // recovers here instead of via the watcher.
+      vi.useFakeTimers();
+      act(() => {
+        result.current.reacquireDevice('microphone');
+      });
+      act(() => {
+        vi.advanceTimersByTime(DEVICE_REACQUIRE_FALLBACK_MS);
+      });
+      vi.useRealTimers();
+
+      // Recovered in place, muted (Meet style) and persisted, without a page reload.
+      expect(result.current.deniedDevices.microphone).toBe(false);
+      expect(result.current.isAudioEnabled).toBe(false);
       expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
 
       localStorage.removeItem('audioSourceEnabled');

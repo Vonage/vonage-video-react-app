@@ -139,13 +139,17 @@ describe('CameraButton', () => {
   it('re-requests browser access instead of toggling when the camera is blocked', async () => {
     const previewToggleMock = vi.fn();
     const backgroundToggleMock = vi.fn();
-    const getUserMedia = vi.spyOn(globalThis.navigator.mediaDevices, 'getUserMedia');
+    const reacquireDeviceMock = vi.fn();
+    const getUserMedia = vi
+      .spyOn(globalThis.navigator.mediaDevices, 'getUserMedia')
+      .mockResolvedValue({ getTracks: () => [] } as unknown as MediaStream);
 
     render(<CameraButton />, {
       previewPublisherContext: {
         __interceptor: (context) => {
           context.deniedDevices = { microphone: false, camera: true };
           context.toggleVideo = previewToggleMock;
+          context.reacquireDevice = reacquireDeviceMock;
         },
       },
       backgroundPublisherContext: {
@@ -164,6 +168,10 @@ describe('CameraButton', () => {
     });
     expect(previewToggleMock).not.toHaveBeenCalled();
     expect(backgroundToggleMock).not.toHaveBeenCalled();
+    // A successful re-grant recovers in place (the Safari fallback, no-op on Chrome).
+    await waitFor(() => {
+      expect(reacquireDeviceMock).toHaveBeenCalledWith('camera');
+    });
   });
 
   it('shows the off icon and a warning badge when the camera permission is blocked', async () => {

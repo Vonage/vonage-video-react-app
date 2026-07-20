@@ -21,7 +21,8 @@ import { env } from '../../../env';
  */
 const MicButton = (): ReactElement | false => {
   const { t } = useTranslation();
-  const { isAudioEnabled, toggleAudio, deniedDevices } = usePreviewPublisherContext();
+  const { isAudioEnabled, toggleAudio, deniedDevices, reacquireDevice } =
+    usePreviewPublisherContext();
 
   const isMicrophoneBlocked = deniedDevices.microphone;
   // A blocked mic has no track, so present it as muted regardless of the user's toggle intent.
@@ -40,7 +41,13 @@ const MicButton = (): ReactElement | false => {
   // grant is recovered in place by the preview publisher's permission watcher.
   const handleClick = () => {
     if (isMicrophoneBlocked) {
-      void requestDeviceAccess({ device: 'microphone' });
+      // On a successful re-grant, recover in place. On Chrome the permission onchange watcher does
+      // this; Safari never fires it, so reacquireDevice is the fallback (a no-op on Chrome).
+      void requestDeviceAccess({ device: 'microphone' }).then((outcome) => {
+        if (outcome === 'granted') {
+          reacquireDevice('microphone');
+        }
+      });
       return;
     }
     toggleAudio();

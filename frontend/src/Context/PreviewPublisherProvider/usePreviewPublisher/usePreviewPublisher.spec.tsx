@@ -4,6 +4,7 @@ import { hasMediaProcessorSupport, initPublisher, Publisher } from '@vonage/clie
 import EventEmitter from 'node:events';
 import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
+import { DEVICE_REACQUIRE_FALLBACK_MS } from '@utils/publisher/deviceAccess';
 import usePreviewPublisher from './usePreviewPublisher';
 import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
@@ -246,9 +247,9 @@ describe('usePreviewPublisher', () => {
     });
 
     it('does not flag a still-granted camera when only the microphone is blocked', async () => {
-      // Reproduces a mic-only denial whose SDK message defaults getDeniedDevice() to 'camera'
-      // (the message does not start with "microphone"). The authoritative permission query must
-      // correct that mis-seed so the granted camera is never badged.
+      // Reproduces a mic-only denial: the generic init message names no device, so the seed flags
+      // BOTH. The authoritative permission query must correct that over-seed so the granted camera
+      // is never badged.
       mockQuery.mockImplementation(({ name }: { name: string }) =>
         Promise.resolve({
           onchange: null,
@@ -461,6 +462,50 @@ describe('usePreviewPublisher', () => {
       localStorage.removeItem('videoSourceEnabled');
     });
 
+    it('reacquireDevice recovers a still-denied device after the fallback delay (Safari fallback)', async () => {
+      localStorage.setItem('audioSourceEnabled', 'true');
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = await render({
+        initialValue: { deniedDevices: { microphone: true, camera: true } },
+      });
+
+      vi.useFakeTimers();
+      act(() => {
+        result.current.reacquireDevice('microphone');
+      });
+      act(() => {
+        vi.advanceTimersByTime(DEVICE_REACQUIRE_FALLBACK_MS);
+      });
+      vi.useRealTimers();
+
+      // Safari never fires onchange, so the click fallback brings the mic back — muted (Meet style)
+      // and persisted — via ACCESS_CHANGED, without a page reload.
+      expect(result.current.deniedDevices.microphone).toBe(false);
+      expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+
+      localStorage.removeItem('audioSourceEnabled');
+    });
+
+    it('reacquireDevice does nothing when the device is no longer denied (dedup with onchange)', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      // No denied devices — stands in for Chrome, where onchange already recovered the device before
+      // the fallback fires.
+      const { result } = await render();
+
+      vi.useFakeTimers();
+      act(() => {
+        result.current.reacquireDevice('microphone');
+      });
+      act(() => {
+        vi.advanceTimersByTime(DEVICE_REACQUIRE_FALLBACK_MS);
+      });
+      vi.useRealTimers();
+
+      expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+      expect(localStorage.getItem('audioSourceEnabled')).not.toBe('false');
+    });
+
     it('does not throw on older, unsupported browsers', async () => {
       mockQuery.mockImplementation(() => {
         return Promise.reject(new Error('Whoops'));
@@ -485,9 +530,10 @@ describe('usePreviewPublisher', () => {
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+  initialValue?: Parameters<typeof usePreviewPublisher>[0];
 };
 
-async function render({ userContext, previewPublisherContext }: RenderOptions = {}) {
+async function render({ userContext, previewPublisherContext, initialValue }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider([providers.user, providers.previewPublisher], {
     userContext,
     previewPublisherContext,
@@ -495,7 +541,7 @@ async function render({ userContext, previewPublisherContext }: RenderOptions = 
 
   const composedWrapper = composeProviders(SuspenseBoundary, wrapper);
 
-  const rendered = await renderAsyncHook(() => usePreviewPublisher(), {
+  const rendered = await renderAsyncHook(() => usePreviewPublisher(initialValue), {
     wrapper: composedWrapper,
   });
 

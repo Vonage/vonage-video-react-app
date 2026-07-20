@@ -6,6 +6,9 @@ import DeviceAccessHint from './DeviceAccessHint';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import shouldOfferReloadRecovery from '@utils/publisher/shouldOfferReloadRecovery';
+
+vi.mock('@utils/publisher/shouldOfferReloadRecovery', () => ({ default: vi.fn() }));
 
 const mockDevices = makeMediaDeviceInfos();
 
@@ -20,6 +23,9 @@ describe('DeviceAccessHint', () => {
 
     const { permissions } = globalThis.navigator;
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
+
+    // Default to a browser where reload is the recovery (Safari/Firefox); Chrome is covered explicitly.
+    vi.mocked(shouldOfferReloadRecovery).mockReturnValue(true);
   });
 
   it('names both devices when the camera and microphone are blocked', async () => {
@@ -36,6 +42,41 @@ describe('DeviceAccessHint', () => {
       expect(hint).toHaveTextContent('Camera and microphone access is blocked');
       expect(hint).toHaveAttribute('role', 'alert');
     });
+  });
+
+  it('offers a reload affordance while a device is blocked on Safari/Firefox', async () => {
+    vi.mocked(shouldOfferReloadRecovery).mockReturnValue(true);
+
+    render(<DeviceAccessHint />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: true };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('device-access-reload-button')).toBeVisible();
+    });
+  });
+
+  it('does NOT offer a reload affordance on Chromium (click-to-reprompt recovers live)', async () => {
+    vi.mocked(shouldOfferReloadRecovery).mockReturnValue(false);
+
+    render(<DeviceAccessHint />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: true };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('device-access-hint')).toHaveTextContent(
+        'Camera and microphone access is blocked'
+      );
+    });
+    expect(screen.queryByTestId('device-access-reload-button')).not.toBeInTheDocument();
   });
 
   it('names only the microphone when only the microphone is blocked', async () => {

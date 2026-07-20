@@ -1,4 +1,4 @@
-import { useEffect, useState, useEffectEvent } from 'react';
+import { useEffect, useRef, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
@@ -19,6 +19,18 @@ import useSessionKeyParam from './useSessionKeyParam';
 // while a device is being (re)acquired can clear before we give up on the call.
 const PUBLISHING_ERROR_REDIRECT_DELAY_MS = 1500;
 
+// Stable key for a publisher device source (a deviceId string, false/null, or a MediaStreamTrack),
+// used to tell whether a re-init would request the identical source set that just failed.
+const sourceKey = (source: unknown): string => {
+  if (typeof source === 'string') {
+    return source;
+  }
+  if (source && typeof source === 'object') {
+    return (source as { id?: string }).id ?? 'track';
+  }
+  return String(source);
+};
+
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
 
@@ -33,6 +45,7 @@ const useMeetingRoom = () => {
   } = useUserContext();
   const {
     publisher,
+    isPublishing,
     publish,
     quality,
     initializeLocalPublisher,
@@ -128,20 +141,43 @@ const useMeetingRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey, hasValidUsername, bypass]);
 
+  // Signature of the device sources of the last auto-init attempt — used to stop the gate below from
+  // re-initializing the identical (still-failing) request in a loop.
+  const lastAttemptedSourcesRef = useRef<string | null>(null);
   useEffect(() => {
     if (!publisherOptions) {
+      return;
+    }
+
+    // Clear the retry guard only once we're actually publishing (a real acquired stream) — NOT while
+    // the publisher object merely exists transiently between initPublisher() and its accessDenied,
+    // which would re-arm the guard mid-denial and let the re-prompt loop resume on Safari.
+    if (isPublishing) {
+      lastAttemptedSourcesRef.current = null;
+    }
+    if (publisher) {
       return;
     }
 
     // Re-initialize unless BOTH devices are blocked (nothing to acquire). When only one is
     // blocked we still init, requesting just the granted device (publisherOptions already excludes
     // the blocked one) so e.g. the camera stays live while the mic is blocked — Google Meet style.
-    // Recovering in place needs no reload; the re-grant watcher restores the blocked device later.
     const allDevicesBlocked = deniedDevices.microphone && deniedDevices.camera;
-    if (!publisher && !allDevicesBlocked) {
+
+    // Don't auto-retry the SAME requested-device set that just failed. On Chrome a denied device
+    // rejects silently, but on Safari every getUserMedia re-prompts AND permissions.query is
+    // unreliable (it can report the device as no longer denied), so this gate would otherwise re-init
+    // the identical request forever — an endless permission prompt. A genuinely different request
+    // (e.g. the video-only retry after a mic denial) has a new signature and is still allowed; the
+    // user re-requests a blocked device via the badge click.
+    const sourceSignature = `${sourceKey(publisherOptions.audioSource)}|${sourceKey(publisherOptions.videoSource)}`;
+    const alreadyAttempted = lastAttemptedSourcesRef.current === sourceSignature;
+
+    if (!allDevicesBlocked && !alreadyAttempted) {
+      lastAttemptedSourcesRef.current = sourceSignature;
       initializeLocalPublisher(publisherOptions);
     }
-  }, [initializeLocalPublisher, publisherOptions, publisher, deniedDevices]);
+  }, [initializeLocalPublisher, publisherOptions, publisher, isPublishing, deniedDevices]);
 
   useEffect(() => {
     if (connected && publisher && publish) {

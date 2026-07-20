@@ -1,7 +1,7 @@
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import type { SxProps } from '@mui/material';
-import { ReactElement, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import useOnMountEffect from '@web/hooks/useMountEffect';
 
@@ -11,6 +11,7 @@ export type PopupAlertProps = {
   closable?: boolean;
   severity: 'warning' | 'error' | 'info';
   timeout?: number;
+  action?: ReactNode;
 };
 
 /**
@@ -29,6 +30,7 @@ const PopupAlert = ({
   message,
   severity,
   timeout,
+  action,
 }: PopupAlertProps): ReactElement | false => {
   const [closed, setClosed] = useState(false);
   const isSmallViewport = useIsSmallViewport();
@@ -77,6 +79,7 @@ const PopupAlert = ({
       >
         <AlertTitle>{title}</AlertTitle>
         {message}
+        {action}
       </Alert>
     )
   );
