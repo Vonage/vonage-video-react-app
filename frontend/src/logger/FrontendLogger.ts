@@ -8,7 +8,7 @@ export type FrontendLoggerProviderConfig = LoggerProviderConfig & {
 };
 
 /**
- * FrontendLogger extends LoggerBase with React error callbacks (onCaughtError, onUncaughtError, onRecoverableError).
+ * FrontendLogger extends Logger with React error callbacks (onCaughtError, onUncaughtError, onRecoverableError).
  * Logs are sent via the configured provider (e.g. backend → Gollum); not to the console.
  */
 export class FrontendLogger extends Logger {

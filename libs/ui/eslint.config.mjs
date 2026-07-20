@@ -21,14 +21,7 @@ export default [
       'tailwindcss/no-custom-classname': [
         'error',
         {
-          whitelist: [
-            'bg-primary-dark',
-            'text-darkGray',
-            'publisher',
-            'subscriber',
-            'screen-subscriber',
-            'bg-notVeryGray-100',
-          ],
+          whitelist: ['publisher', 'subscriber', 'screen-subscriber'],
         },
       ],
     },

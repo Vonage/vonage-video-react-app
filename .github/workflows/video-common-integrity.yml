@@ -1,9 +1,6 @@
 name: video-common validation
 
 on:
-  push:
-    paths:
-      - 'libs/common/**'
   pull_request:
     paths:
       - 'libs/common/**'

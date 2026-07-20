@@ -75,6 +75,8 @@ const externalPackages = scanExternalPackages({
   internalAliases: sourceGroups.map(({ alias }) => alias),
 });
 
+const libraryEntries = createLibraryEntries();
+
 const baseConfig = defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/common',
@@ -88,10 +90,13 @@ const buildConfig = defineConfig({
     react(),
     dts({
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      compilerOptions: {
+        composite: false,
+      },
       entryRoot: __dirname,
       include: sourceGroups.map(({ sourceRoot }) => `${sourceRoot}/**/*`),
       outDir: 'dist',
-      rollupTypes: true,
+      rollupTypes: false,
     }),
     {
       name: 'generate-dist-package',
@@ -104,8 +109,8 @@ const buildConfig = defineConfig({
         const sourcePackageJsonPath = path.join(__dirname, 'package.json');
         const sourcePackageJson = JSON.parse(fs.readFileSync(sourcePackageJsonPath, 'utf-8'));
 
-        // ─── Generate exports from dist/ .js files ───────────────────────
-        const generatedExports = generateExportsFromDist(distDir);
+        // ─── Generate exports from the Rollup entry manifest ─────────────
+        const generatedExports = generateExportsFromEntries(libraryEntries);
 
         // ─── Generate dependency fields from scanned externals ───────────
         const peerDependencies: Record<string, string> = {};
@@ -138,7 +143,8 @@ const buildConfig = defineConfig({
           version: sourcePackageJson.version,
           type: sourcePackageJson.type,
           license: sourcePackageJson.license,
-          types: sourcePackageJson.types,
+          sideEffects: sourcePackageJson.sideEffects,
+          types: generatedExports['.']?.types ?? sourcePackageJson.types,
           main: sourcePackageJson.main,
           module: sourcePackageJson.module,
           exports: generatedExports,
@@ -170,7 +176,7 @@ const buildConfig = defineConfig({
       },
     },
     lib: {
-      entry: createLibraryEntries(),
+      entry: libraryEntries,
       formats: ['es', 'cjs'],
       fileName: (format, entryName) =>
         `${entryName.replaceAll('$', '_')}.${format === 'es' ? 'js' : 'cjs'}`,
@@ -241,7 +247,7 @@ function createEntriesForSourceRoot({
     entries.push([
       joinEntryName({
         publicPrefix,
-        entryPath: domainName,
+        entryPath: path.join(domainName, 'index'),
       }),
       domainIndex,
     ]);
@@ -260,7 +266,7 @@ function createEntriesForSourceRoot({
       entries.push([
         joinEntryName({
           publicPrefix,
-          entryPath: path.join(domainName, childName),
+          entryPath: path.join(domainName, childName, 'index'),
         }),
         childIndex,
       ]);
@@ -355,58 +361,36 @@ type JoinEntryNameParams = {
   entryPath: string;
 };
 
-function generateExportsFromDist(
-  distDir: string
-): Record<string, { import: string; require: string; types: string }> {
-  const exports: Record<string, { import: string; require: string; types: string }> = {};
-  const jsFiles = findFilesRecursively({ directory: distDir, extension: '.js' });
+function generateExportsFromEntries(
+  entries: Record<string, string>
+): Record<string, { types: string; import: string; require: string }> {
+  const exports: Record<string, { types: string; import: string; require: string }> = {};
 
-  for (const jsFile of jsFiles) {
-    const relativePath = path.relative(distDir, jsFile).replaceAll(path.sep, '/');
+  for (const [entryName, sourceFile] of Object.entries(entries).sort(([a], [b]) =>
+    a.localeCompare(b)
+  )) {
+    const normalizedEntryName = entryName.replaceAll(path.sep, '/');
+    const declarationPath = path
+      .relative(__dirname, sourceFile)
+      .replace(/\.(ts|tsx)$/, '.d.ts')
+      .replaceAll(path.sep, '/');
 
-    // Skip chunk files
-    if (relativePath.startsWith('_chunks/')) continue;
-
-    const withoutExtension = relativePath.replace(/\.js$/, '');
     const exportKey = (() => {
-      if (withoutExtension === 'index') return '.';
-      if (withoutExtension.endsWith('/index'))
-        return `./${withoutExtension.replace(/\/index$/, '')}`;
-      return `./${withoutExtension}`;
+      if (normalizedEntryName === 'index') return '.';
+      if (normalizedEntryName.endsWith('/index')) {
+        return `./${normalizedEntryName.replace(/\/index$/, '')}`;
+      }
+      return `./${normalizedEntryName}`;
     })();
 
     exports[exportKey] = {
-      import: `./${relativePath}`,
-      require: `./${withoutExtension}.cjs`,
-      types: `./${withoutExtension}.d.ts`,
+      types: `./${declarationPath}`,
+      import: `./${normalizedEntryName}.js`,
+      require: `./${normalizedEntryName}.cjs`,
     };
   }
 
   return exports;
-}
-
-function findFilesRecursively({
-  directory,
-  extension,
-}: {
-  directory: string;
-  extension: string;
-}): string[] {
-  if (!fs.existsSync(directory)) return [];
-
-  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const fullPath = path.join(directory, entry.name);
-
-    if (entry.isDirectory()) {
-      return findFilesRecursively({ directory: fullPath, extension });
-    }
-
-    if (entry.isFile() && entry.name.endsWith(extension)) {
-      return [fullPath];
-    }
-
-    return [];
-  });
 }
 
 function resolveInstalledVersion({

@@ -34,6 +34,7 @@ jobs:
       - name: Check registry
         id: registry-check
         run: |
+          set +e
           npx nx run common:registry:compare
           echo "exit_code=$?" >> $GITHUB_OUTPUT
         continue-on-error: true

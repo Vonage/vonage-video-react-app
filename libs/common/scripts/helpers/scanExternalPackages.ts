@@ -49,6 +49,10 @@ function walkTsFiles(directory: string): string[] {
       return [];
     }
 
+    if (/\.(spec|test)\.(ts|tsx)$/.test(entry.name)) {
+      return [];
+    }
+
     return [fullPath];
   });
 }
