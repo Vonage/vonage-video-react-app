@@ -112,6 +112,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run integration tests
+        env:
+          PLAYWRIGHT_SNAPSHOT_PLATFORM: darwin
         run: |
           echo "VIDEO_SERVICE_PROVIDER: $VIDEO_SERVICE_PROVIDER"
           Xvfb :99 & export DISPLAY=:99

@@ -1,7 +1,7 @@
 import { expect, type BrowserContext, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
+import { openMeetingRoomWithSettings, waitUntilReady, SCREENSHOT } from './utils';
 
 type OpenMeetingWithThreeParticipantsArgs = {
   pageOne: Page;
@@ -15,7 +15,7 @@ const getLayoutScreenshotOptions = (page: Page) => ({
     page.locator('[data-testid="app-version"]'),
     page.locator('.timestamp'),
   ],
-  maxDiffPixelRatio: 0.01,
+  maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
   fullPage: true,
 });
 
@@ -32,26 +32,41 @@ async function openMeetingWithThreeParticipantsAndAssertVisibility({
     roomName,
   });
   await waitUntilReady(pageOne, browserName);
-
   await expect(pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
 
-  const pageTwo = await context.newPage();
-  await openMeetingRoomWithSettings({
-    page: pageTwo,
-    username: 'User Two',
-    roomName,
-  });
-  await waitUntilReady(pageTwo, browserName);
+  // Once the meeting is ready, the remaining participants can join concurrently.
+  await Promise.all([
+    (async () => {
+      const pageTwo = await context.newPage();
 
-  const pageThree = await context.newPage();
-  await openMeetingRoomWithSettings({
-    page: pageThree,
-    username: 'User Three',
-    roomName,
-  });
-  await waitUntilReady(pageThree, browserName);
+      await openMeetingRoomWithSettings({
+        page: pageTwo,
+        username: 'User Two',
+        roomName,
+      });
 
-  await pageOne.waitForSelector('.subscriber', { state: 'visible' });
+      await waitUntilReady(pageTwo, browserName);
+
+      await expect(pageTwo.getByTestId('publisher-container').getByText('User Two')).toBeVisible();
+    })(),
+
+    (async () => {
+      const pageThree = await context.newPage();
+
+      await openMeetingRoomWithSettings({
+        page: pageThree,
+        username: 'User Three',
+        roomName,
+      });
+
+      await waitUntilReady(pageThree, browserName);
+
+      await expect(
+        pageThree.getByTestId('publisher-container').getByText('User Three')
+      ).toBeVisible();
+    })(),
+  ]);
+
   await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible();
   await expect(pageOne.locator('.subscriber').getByText('User Three')).toBeVisible();
 }
