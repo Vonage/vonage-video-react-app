@@ -139,12 +139,12 @@ const useBackgroundPublisher = (
       await handlePublisherAccessDenied({
         event,
         setAccessStatus,
-        // A camera re-granted after a denial is re-acquired off (Google Meet style), matching the
-        // preview and in-call publishers. Turning the flag off here also feeds the re-init below,
-        // which publishes video according to isVideoEnabled.
+        // A camera re-granted after a denial comes back on (unmuted), matching the preview and in-call
+        // publishers. Turning the flag on here also feeds the re-init below, which publishes video
+        // according to isVideoEnabled.
         onDeviceReGrant: (device) => {
           if (device === 'camera') {
-            setIsVideoEnabled(false);
+            setIsVideoEnabled(true);
           }
         },
       });
@@ -203,7 +203,7 @@ const useBackgroundPublisher = (
       // acquiring the mic entirely so the camera preview comes up regardless of mic permission.
       publishAudio: false,
       audioSource: false,
-      // A camera re-granted after a denial comes back off (onDeviceReGrant flips isVideoEnabled).
+      // A camera re-granted after a denial comes back on (onDeviceReGrant flips isVideoEnabled).
       publishVideo: isVideoEnabled,
     };
 

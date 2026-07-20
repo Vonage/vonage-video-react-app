@@ -18,8 +18,13 @@ import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgrou
 import attempt from '@common/execution/attempt';
 import watchDeviceReGrant from '../../../utils/publisher/watchDeviceReGrant';
 import detectDeniedDevices from '../../../utils/publisher/detectDeniedDevices';
+import queryDevicePermissionState from '../../../utils/publisher/queryDevicePermissionState';
+import waitingRoomDenial$ from '../waitingRoomDenial';
 import type { DeniedDevices, DeviceKind } from '../../../utils/publisher/deviceAccess';
-import { DEVICE_REACQUIRE_FALLBACK_MS } from '../../../utils/publisher/deviceAccess';
+import {
+  DEVICE_REACQUIRE_FALLBACK_MS,
+  NO_DENIED_DEVICES,
+} from '../../../utils/publisher/deviceAccess';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../../logger';
 
@@ -127,10 +132,18 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
   );
 
-  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>({
-    microphone: undefined,
-    camera: undefined,
-  });
+  // Seed from the devices the user denied in the waiting room (handed off via waitingRoomDenial$ on
+  // join) so the in-call publisher's FIRST getUserMedia already excludes them — otherwise joining
+  // would re-request a device the user dismissed in the waiting room and re-prompt them immediately.
+  // Captured once; the mount effect below refines it against the live permission.
+  const carriedWaitingRoomDenialRef = useRef<DeniedDevices | undefined>(undefined);
+  if (!carriedWaitingRoomDenialRef.current) {
+    carriedWaitingRoomDenialRef.current = waitingRoomDenial$.getState();
+  }
+  const [deviceAccess, setDeviceAccess] = useState<DeviceAccessStatus>(() => ({
+    microphone: carriedWaitingRoomDenialRef.current?.microphone ? false : undefined,
+    camera: carriedWaitingRoomDenialRef.current?.camera ? false : undefined,
+  }));
   // Mirror deviceAccess so the delayed reacquire fallback reads the latest value when deciding
   // whether the onchange watcher already recovered the device.
   const deviceAccessRef = useRef(deviceAccess);
@@ -257,22 +270,22 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
   }, []);
 
-  // Google Meet brings a device that was re-granted after a denial back MUTED — the user opts back
-  // in — rather than restoring its prior on/off intent. Flip the enabled flag off so the rebuilt
-  // publisher comes up muted, AND persist the intent to 'false' like a manual mute so it stays off
-  // across a fresh join/reload and can't be silently un-muted when the publisher is later rebuilt.
-  const forceDeviceMuted = useCallback((device: DeviceKind) => {
+  // A device re-granted after a denial comes back ON (unmuted) — the user just re-allowed it, so
+  // recover it live rather than restoring a prior muted intent. Flip the enabled flag on so the
+  // rebuilt publisher comes up publishing, AND persist the intent to 'true' so it stays on across the
+  // publisher rebuild and a fresh join/reload.
+  const enableReGrantedDevice = useCallback((device: DeviceKind) => {
     if (device === 'microphone') {
-      setIsAudioEnabled(false);
-      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'false');
+      setIsAudioEnabled(true);
+      setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, 'true');
     } else {
-      setIsVideoEnabled(false);
-      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'false');
+      setIsVideoEnabled(true);
+      setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, 'true');
     }
   }, []);
 
   // The re-grant recovery shared by the automatic onchange watcher and the manual click-to-re-prompt
-  // fallback: clear the badge, re-apply the Google-Meet muted intent, and tear the publisher down so
+  // fallback: clear the badge, mark the device on (unmuted), and tear the publisher down so
   // useMeetingRoom re-initializes with the now-unblocked request. The publisher was created without
   // this device (the SDK acquires tracks at init, so a publishAudio:false publisher has no mic track
   // to enable), and recreating cleanly avoids useSyncPublisherDevices calling setAudioSource on a
@@ -282,7 +295,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       watchedDeniedRef.current.get(device)?.();
       watchedDeniedRef.current.delete(device);
       setDeviceAccess((prev) => ({ ...prev, [device]: undefined }));
-      forceDeviceMuted(device);
+      enableReGrantedDevice(device);
 
       if (publisherRef.current) {
         attempt(() => {
@@ -295,7 +308,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         setStream(null);
       }
     },
-    [forceDeviceMuted]
+    [enableReGrantedDevice]
   );
 
   // Badge a blocked device and (once) watch it for re-grant so we can recover in place (Google
@@ -350,6 +363,34 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     watchedDeniedRef.current.delete(device);
     setDeviceAccess((prev) => (prev[device] === false ? { ...prev, [device]: undefined } : prev));
   }, []);
+
+  // On join, refine the waiting-room denial we seeded into deviceAccess: check each carried device's
+  // live permission so a device the user allowed between the waiting room and joining is requested
+  // normally (clear the seed), while one still denied keeps its badge and gets a re-grant watcher so
+  // it can recover in place. Runs once — the callbacks are stable.
+  useEffect(() => {
+    // Consume the one-shot hand-off immediately so a denial belongs to exactly the join that wrote
+    // it. Without this it would leak into a later room reached WITHOUT the waiting room (a
+    // bypass-waiting-room deep link), badging a device that was never denied there — and the
+    // refinement below only un-carries a 'granted' device, so a dismissed ('prompt') one would stick.
+    waitingRoomDenial$.setState(NO_DENIED_DEVICES);
+    const carried = carriedWaitingRoomDenialRef.current;
+    if (!carried) {
+      return;
+    }
+    (['microphone', 'camera'] as DeviceKind[]).forEach((device) => {
+      if (!carried[device]) {
+        return;
+      }
+      void queryDevicePermissionState(device).then((state) => {
+        if (state === 'granted') {
+          clearDeviceDenied(device);
+        } else {
+          markDeviceDenied(device);
+        }
+      });
+    });
+  }, [markDeviceDenied, clearDeviceDenied]);
 
   const handleAccessDenied = useCallback(
     (event: AccessDeniedEvent) => {

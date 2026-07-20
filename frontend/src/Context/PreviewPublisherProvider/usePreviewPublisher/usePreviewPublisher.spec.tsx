@@ -101,7 +101,8 @@ describe('usePreviewPublisher', () => {
 
     it('honors the stored intent on a fresh init so a never-muted device starts unmuted', async () => {
       // No stored mute → intended unmuted/on. A FRESH init (no prior denial) must honor that intent;
-      // only a deny→re-grant cycle forces the recovered device muted (covered separately below).
+      // a deny→re-grant cycle instead brings the recovered device back on regardless of the prior
+      // intent (covered separately below).
       localStorage.removeItem('audioSourceEnabled');
       localStorage.removeItem('videoSourceEnabled');
       mockedInitPublisher.mockReturnValue(mockPublisher);
@@ -322,9 +323,9 @@ describe('usePreviewPublisher', () => {
       });
     });
 
-    it('re-acquires a re-granted device muted (Google Meet style), even if the intent was on', async () => {
-      // Intent ON for both devices (never manually muted).
-      localStorage.setItem('audioSourceEnabled', 'true');
+    it('brings a re-granted device back on (unmuted), even if it was muted before', async () => {
+      // Intent OFF for the mic (the user had muted it before the denial).
+      localStorage.setItem('audioSourceEnabled', 'false');
       localStorage.removeItem('videoSourceEnabled');
 
       let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
@@ -377,26 +378,26 @@ describe('usePreviewPublisher', () => {
 
       await waitFor(() => {
         const latestOptions = capturedOptions[capturedOptions.length - 1];
-        // The re-granted mic comes back MUTED despite the stored 'on' intent; the untouched camera
-        // stays on.
-        expect(latestOptions.publishAudio).toBe(false);
+        // The re-granted mic comes back ON (unmuted) despite the stored 'off' intent; the untouched
+        // camera stays on.
+        expect(latestOptions.publishAudio).toBe(true);
         expect(latestOptions.publishVideo).toBe(true);
       });
 
-      // The mute is persisted (not just transient state) so it survives a whole-publisher rebuild
-      // and carries into the call when the user joins.
-      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+      // The on-intent is persisted (not just transient state) so it survives a whole-publisher
+      // rebuild and carries into the call when the user joins.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
       expect(localStorage.getItem('videoSourceEnabled')).not.toBe('false');
 
       localStorage.removeItem('audioSourceEnabled');
     });
 
-    it('keeps the first re-granted device muted when the second device is re-granted next', async () => {
+    it('keeps the first re-granted device on when the second device is re-granted next', async () => {
       // Both devices denied then re-granted one at a time (the normal site-settings flow). The first
-      // recovery must not be silently un-muted when the second device's re-grant rebuilds the whole
+      // recovery must not be silently re-muted when the second device's re-grant rebuilds the whole
       // publisher.
-      localStorage.setItem('audioSourceEnabled', 'true');
-      localStorage.setItem('videoSourceEnabled', 'true');
+      localStorage.setItem('audioSourceEnabled', 'false');
+      localStorage.setItem('videoSourceEnabled', 'false');
 
       const statuses: Record<string, { state: string; onchange: null | (() => void) }> = {};
       mockQuery.mockImplementation(({ name }: { name: string }) => {
@@ -453,9 +454,9 @@ describe('usePreviewPublisher', () => {
 
       await waitFor(() => {
         const latestOptions = capturedOptions[capturedOptions.length - 1];
-        // The mic stays muted from its own earlier re-grant; the camera is now muted too.
-        expect(latestOptions.publishAudio).toBe(false);
-        expect(latestOptions.publishVideo).toBe(false);
+        // The mic stays on from its own earlier re-grant; the camera is now on too.
+        expect(latestOptions.publishAudio).toBe(true);
+        expect(latestOptions.publishVideo).toBe(true);
       });
 
       localStorage.removeItem('audioSourceEnabled');
@@ -463,7 +464,7 @@ describe('usePreviewPublisher', () => {
     });
 
     it('reacquireDevice recovers a still-denied device after the fallback delay (Safari fallback)', async () => {
-      localStorage.setItem('audioSourceEnabled', 'true');
+      localStorage.setItem('audioSourceEnabled', 'false');
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = await render({
         initialValue: { deniedDevices: { microphone: true, camera: true } },
@@ -478,11 +479,11 @@ describe('usePreviewPublisher', () => {
       });
       vi.useRealTimers();
 
-      // Safari never fires onchange, so the click fallback brings the mic back — muted (Meet style)
+      // Safari never fires onchange, so the click fallback brings the mic back — on (unmuted)
       // and persisted — via ACCESS_CHANGED, without a page reload.
       expect(result.current.deniedDevices.microphone).toBe(false);
       expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
-      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
 
       localStorage.removeItem('audioSourceEnabled');
     });

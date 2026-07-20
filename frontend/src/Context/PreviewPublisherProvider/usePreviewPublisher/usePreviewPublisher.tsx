@@ -171,17 +171,17 @@ const usePreviewPublisher = (
         event,
         setAccessStatus,
         onDeniedDevicesChange: setDeniedDevices,
-        // Google Meet re-acquires a re-granted device muted. Persist it like a manual mute rather
-        // than only flipping transient state: storage is what the in-place re-init reads, what
-        // survives a whole-publisher rebuild when the other device is re-granted next, and what the
-        // in-call publisher reads on join — so the device stays off consistently everywhere until
-        // the user turns it back on.
+        // A device re-granted after a denial comes back ON (unmuted) — the user just re-allowed it,
+        // so recover it live rather than leaving it off. Persist the intent to 'true' rather than
+        // only flipping transient state: storage is what the in-place re-init reads, what survives a
+        // whole-publisher rebuild when the other device is re-granted next, and what the in-call
+        // publisher reads on join — so the device stays on consistently everywhere.
         onDeviceReGrant: (device) => {
           setStorageItem(
             device === 'microphone'
               ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
               : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
-            'false'
+            'true'
           );
         },
       });
@@ -195,7 +195,7 @@ const usePreviewPublisher = (
    * fires for camera/microphone in Safari, so the granted device would otherwise stay badged. We
    * recover after a short grace period and only if the device is still denied — so on Chrome, where
    * onchange has already recovered it, this is a no-op (no double rebuild). Mirrors the onchange path:
-   * persist the Google-Meet muted intent and re-init in place via ACCESS_CHANGED.
+   * bring the device back on (unmuted) and re-init in place via ACCESS_CHANGED.
    * @param {DeviceKind} device - the re-granted device to bring back.
    * @returns {void}
    */
@@ -209,7 +209,7 @@ const usePreviewPublisher = (
           device === 'microphone'
             ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
             : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
-          'false'
+          'true'
         );
         setDeniedDevices((previous) => ({ ...previous, [device]: false }));
         setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);

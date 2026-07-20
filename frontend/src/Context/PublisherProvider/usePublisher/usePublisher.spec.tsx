@@ -8,6 +8,7 @@ import {
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
+import waitingRoomDenial$ from '../waitingRoomDenial';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
@@ -39,6 +40,7 @@ describe('usePublisher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    waitingRoomDenial$.setState({ microphone: false, camera: false });
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     setupWindowNavigatorMock({
       mediaDevices: {
@@ -573,9 +575,9 @@ describe('usePublisher', () => {
       querySpy.mockRestore();
     });
 
-    it('re-acquires a re-granted device muted (Google Meet style), even if it was on before', async () => {
-      // Intent ON for the mic (never manually muted).
-      localStorage.setItem('audioSourceEnabled', 'true');
+    it('brings a re-granted device back on (unmuted), even if it was muted before', async () => {
+      // Intent OFF for the mic (the user had muted it before).
+      localStorage.setItem('audioSourceEnabled', 'false');
       let microphoneChangeHandler: (() => void) | undefined;
       let microphoneStatus: { state: string } | undefined;
       const querySpy = vi
@@ -621,18 +623,18 @@ describe('usePublisher', () => {
       });
 
       await waitFor(() => {
-        // Comes back MUTED — not restored to the prior 'on' intent.
-        expect(result.current.isAudioEnabled).toBe(false);
+        // Comes back ON (unmuted) — the user just re-allowed it, overriding the prior 'off' intent.
+        expect(result.current.isAudioEnabled).toBe(true);
       });
-      // Persisted like a manual mute so it stays off across a fresh join/reload.
-      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+      // Persisted 'on' so it stays enabled across a fresh join/reload.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
 
       localStorage.removeItem('audioSourceEnabled');
       querySpy.mockRestore();
     });
 
     it('reacquireDevice recovers a still-denied device after the fallback delay (Safari fallback)', async () => {
-      localStorage.setItem('audioSourceEnabled', 'true');
+      localStorage.setItem('audioSourceEnabled', 'false');
       const querySpy = vi
         .spyOn(navigator.permissions, 'query')
         .mockImplementation(({ name }: { name: string }) =>
@@ -670,12 +672,90 @@ describe('usePublisher', () => {
       });
       vi.useRealTimers();
 
-      // Recovered in place, muted (Meet style) and persisted, without a page reload.
+      // Recovered in place, on (unmuted) and persisted, without a page reload.
       expect(result.current.deniedDevices.microphone).toBe(false);
-      expect(result.current.isAudioEnabled).toBe(false);
-      expect(localStorage.getItem('audioSourceEnabled')).toBe('false');
+      expect(result.current.isAudioEnabled).toBe(true);
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
 
       localStorage.removeItem('audioSourceEnabled');
+      querySpy.mockRestore();
+    });
+
+    it('seeds a device denied in the waiting room, so joining does not re-request (re-prompt) it', async () => {
+      // The user denied the mic in the waiting room; it's carried in via waitingRoomDenial$ so the
+      // in-call publisher badges it immediately and excludes it from its first getUserMedia — no
+      // automatic prompt on join.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) =>
+          Promise.resolve({
+            state: name === 'microphone' ? 'denied' : 'granted',
+            addEventListener: () => {},
+            removeEventListener: () => {},
+          } as unknown as PermissionStatus)
+        );
+
+      const { result } = renderHook(() => usePublisher());
+
+      // Badged synchronously from the carried denial — before any accessDenied event fires.
+      expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+
+      // The live-permission refinement runs and, since the mic is still denied, keeps it badged.
+      await waitFor(() => {
+        expect(querySpy).toHaveBeenCalled();
+      });
+      expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+
+      querySpy.mockRestore();
+    });
+
+    it('clears a carried waiting-room denial when the device was granted in the meantime', async () => {
+      // Carried as denied, but the user allowed the mic (e.g. via browser settings) between the
+      // waiting room and joining, so the live permission reads 'granted' — request it normally
+      // instead of leaving it badged.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi.spyOn(navigator.permissions, 'query').mockImplementation(() =>
+        Promise.resolve({
+          state: 'granted',
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        } as unknown as PermissionStatus)
+      );
+
+      const { result } = renderHook(() => usePublisher());
+
+      // Seeded denied synchronously...
+      expect(result.current.deniedDevices.microphone).toBe(true);
+
+      // ...then cleared once the live permission comes back 'granted'.
+      await waitFor(() => {
+        expect(result.current.deniedDevices.microphone).toBe(false);
+      });
+
+      querySpy.mockRestore();
+    });
+
+    it('consumes the carried denial (clears the store) so it cannot leak into a later room', async () => {
+      // A denial belongs to exactly the join that wrote it. After the publisher reads it on mount the
+      // store is reset, so a later publisher reached WITHOUT the waiting room (e.g. a bypass deep
+      // link) starts clean instead of inheriting a stale denial.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi.spyOn(navigator.permissions, 'query').mockImplementation(() =>
+        Promise.resolve({
+          state: 'denied',
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        } as unknown as PermissionStatus)
+      );
+
+      const { result } = renderHook(() => usePublisher());
+      expect(result.current.deniedDevices.microphone).toBe(true);
+
+      await waitFor(() => {
+        expect(waitingRoomDenial$.getState()).toEqual({ microphone: false, camera: false });
+      });
+
       querySpy.mockRestore();
     });
 

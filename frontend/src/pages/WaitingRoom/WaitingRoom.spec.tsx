@@ -10,6 +10,7 @@ import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import waitUntilPlaying from '@utils/waitUntilPlaying';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
+import waitingRoomDenial$ from '@Context/PublisherProvider/waitingRoomDenial';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
@@ -128,6 +129,7 @@ describe('WaitingRoom', () => {
     vi.mocked(waitUntilPlaying).mockResolvedValue();
 
     vi.spyOn(globalThis.location, 'reload');
+    waitingRoomDenial$.setState({ microphone: false, camera: false });
   });
 
   it('should render', async () => {
@@ -217,6 +219,38 @@ describe('WaitingRoom', () => {
     unmount();
 
     expect(mockedDestroyPublisher).toHaveBeenCalled();
+  });
+
+  it('hands off the denied devices to the room on join, so the call does not re-prompt', async () => {
+    const user = userEvent.setup();
+
+    env.partialUpdate({
+      WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
+    });
+
+    await render(<WaitingRoom />, {
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.REJECTED;
+          // The user denied the mic here (camera still granted).
+          context.deniedDevices = { microphone: true, camera: false };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('test-room-name')).toBeInTheDocument();
+    });
+
+    const input = screen.getByRole('textbox', { name: /name/i });
+    await user.type(input, 'Betsey Trotwood');
+    await user.keyboard('{Enter}');
+
+    expect(mockedNavigate).toHaveBeenCalledWith('/room/test-room-name', expect.anything());
+    // The denied mic is carried into the room so the in-call publisher excludes it up front.
+    expect(waitingRoomDenial$.getState()).toEqual({ microphone: true, camera: false });
   });
 
   it('should render VideoContainer when video loading finishes', async () => {

@@ -212,12 +212,12 @@ describe('useBackgroundPublisher', () => {
       });
     });
 
-    it('re-acquires the camera off after a re-grant (Google Meet style), even if it was on', async () => {
-      // Keep a video device in the store so isVideoEnabled stays true (intent on) rather than being
-      // flipped off by useSyncPublisherDevices — otherwise the test could not tell off-from-intent
-      // apart from off-from-re-grant.
+    it('re-acquires the camera on after a re-grant (unmuted), even if it was off', async () => {
+      // Keep a video device in the store so the re-init has a camera to publish (and so
+      // useSyncPublisherDevices doesn't flip isVideoEnabled off for device-absence). Intent OFF via
+      // storage, so a recovered-on state can only come from the re-grant, not the stored intent.
       mediaDevices$.setState((state) => ({ ...state, mediaDeviceInfo: makeMediaDeviceInfos() }));
-      localStorage.removeItem('videoSourceEnabled');
+      localStorage.setItem('videoSourceEnabled', 'false');
 
       let cameraStatus: { state: string; onchange: null | (() => void) } | undefined;
       mockQuery.mockImplementation(({ name }: { name: string }) => {
@@ -243,8 +243,8 @@ describe('useBackgroundPublisher', () => {
       act(() => {
         result.current.initBackgroundLocalPublisher();
       });
-      // Sanity: the camera starts on (intent honored) before any denial.
-      expect(capturedOptions[0].publishVideo).toBe(true);
+      // Sanity: the camera starts off (intent honored) before any denial.
+      expect(capturedOptions[0].publishVideo).toBe(false);
 
       act(() => {
         // @ts-expect-error Simulate the browser denying the camera.
@@ -271,9 +271,11 @@ describe('useBackgroundPublisher', () => {
 
       await waitFor(() => {
         const latestOptions = capturedOptions[capturedOptions.length - 1];
-        // The camera comes back OFF despite the stored 'on' intent.
-        expect(latestOptions.publishVideo).toBe(false);
+        // The camera comes back ON after the re-grant, overriding the stored 'off' intent.
+        expect(latestOptions.publishVideo).toBe(true);
       });
+
+      localStorage.removeItem('videoSourceEnabled');
     });
 
     it('does not throw on older, unsupported browsers', async () => {
