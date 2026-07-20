@@ -1,0 +1,21 @@
+integration-tests/playwright.config.ts
+  s_3da50b2a0f18d3::t_8563d6576eaeb0 9,51
+.github/workflows/run-tests.yml
+  s_3da50b2a0f18d3::t_448c6265916f12 115-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "1bf7261bd0448e55df36f4b6fbad8721a39c9301",
+  "prompts": {},
+  "sessions": {
+    "s_3da50b2a0f18d3": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "125e0675-12a1-4e69-a724-afdf25e6929f",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
