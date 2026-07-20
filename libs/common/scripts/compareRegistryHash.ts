@@ -3,7 +3,7 @@ import * as path from 'node:path';
 import * as https from 'node:https';
 import * as child_process from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import computeDistHash from './computeDistHash';
+import computePackageHash from './computePackageHash';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,7 +74,7 @@ async function main(): Promise<void> {
   child_process.execSync(`tar -xzf "${tarballPath}" -C "${extractPath}"`);
 
   const packageDir = path.join(extractPath, 'package');
-  const registryHash = computeDistHash(packageDir);
+  const registryHash = computePackageHash(packageDir);
 
   if (registryHash === localHash) {
     console.log(`Registry version ${version} matches local manifest hash — already published.`);

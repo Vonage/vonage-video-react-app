@@ -1,9 +1,7 @@
 import type { RequestHandler } from 'express';
 import handlerErrorWrapper from './handlerErrorWrapper';
-import tryCatch from '@common/execution/tryCatch';
-import { defer } from '@common/execution';
-import { isNil, isUndefined } from '@common/assertions';
-import isPromise from '@common/assertions/isPromise';
+import { defer, tryCatch } from '@common/execution';
+import { isNil, isUndefined, isPromise } from '@common/assertions';
 import type { Any } from '@common/types';
 
 /**

@@ -6,3 +6,6 @@ set -eu
 
 echo "🔍 Running tests before push..."
 yarn --silent test
+
+echo "🔍 Verifying @vonage/video-common source hash..."
+npx nx run common:hash:check
