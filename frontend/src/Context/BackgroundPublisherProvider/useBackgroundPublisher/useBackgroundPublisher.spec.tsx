@@ -219,11 +219,17 @@ describe('useBackgroundPublisher', () => {
       mediaDevices$.setState((state) => ({ ...state, mediaDeviceInfo: makeMediaDeviceInfos() }));
       localStorage.setItem('videoSourceEnabled', 'false');
 
-      let cameraStatus: { state: string; onchange: null | (() => void) } | undefined;
+      let cameraChangeHandler: (() => void) | undefined;
+      let cameraStatus: { state: string } | undefined;
       mockQuery.mockImplementation(({ name }: { name: string }) => {
         const status = {
           state: name === 'camera' ? 'denied' : 'granted',
-          onchange: null as null | (() => void),
+          addEventListener: (event: string, handler: () => void) => {
+            if (name === 'camera' && event === 'change') {
+              cameraChangeHandler = handler;
+            }
+          },
+          removeEventListener: () => {},
         };
         if (name === 'camera') {
           cameraStatus = status;
@@ -252,14 +258,14 @@ describe('useBackgroundPublisher', () => {
       });
 
       await waitFor(() => {
-        expect(typeof cameraStatus?.onchange).toBe('function');
+        expect(typeof cameraChangeHandler).toBe('function');
       });
 
       // Re-grant the camera, then re-init in place.
       capturedOptions.length = 0;
       act(() => {
         cameraStatus!.state = 'granted';
-        cameraStatus!.onchange?.();
+        cameraChangeHandler?.();
       });
       act(() => {
         // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.

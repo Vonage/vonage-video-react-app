@@ -13,7 +13,7 @@ import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 import { NO_DENIED_DEVICES } from '@utils/publisher/deviceAccess';
-import requestDeviceAccess from '@utils/publisher/requestDeviceAccess';
+import requestBlockedDeviceRecovery from '@utils/publisher/requestBlockedDeviceRecovery';
 import { env } from '../../../env';
 
 export type DeviceControlButtonProps = {
@@ -135,18 +135,12 @@ const DeviceControlButton = ({
   };
 
   const handleDeviceStateChange = () => {
-    // A browser-blocked device has no track to toggle, so a click instead re-requests access. The
-    // prompt only reappears while the permission is still pending (e.g. a dismissed prompt); after
-    // an explicit block the browser stays silent and the tooltip guides the user to their settings.
-    // On a successful grant, recover in place: Chrome via the publisher's onchange watcher, Safari
-    // (which never fires onchange) via reacquireDevice, which no-ops on Chrome to avoid a double
-    // rebuild.
+    // A browser-blocked device has no track to toggle, so a click instead re-requests access (see
+    // requestBlockedDeviceRecovery for the prompt/recovery semantics).
     if (isBlocked) {
-      const device = isAudio ? 'microphone' : 'camera';
-      void requestDeviceAccess({ device }).then((outcome) => {
-        if (outcome === 'granted') {
-          reacquireDevice(device);
-        }
+      requestBlockedDeviceRecovery({
+        device: isAudio ? 'microphone' : 'camera',
+        reacquireDevice,
       });
       return;
     }

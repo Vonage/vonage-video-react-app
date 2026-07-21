@@ -7,14 +7,12 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import { getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
-import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import useAttemptSignatureGuard from '../../../hooks/useAttemptSignatureGuard';
+import useDeviceDenialTracker from '../../../hooks/useDeviceDenialTracker';
+import persistDeviceIntent from '../../../utils/publisher/persistDeviceIntent';
 import type { DeniedDevices, DeviceKind } from '../../../utils/publisher/deviceAccess';
-import {
-  NO_DENIED_DEVICES,
-  DEVICE_REACQUIRE_FALLBACK_MS,
-} from '../../../utils/publisher/deviceAccess';
 import useStableCallback from '@web/hooks/useStableCallback';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices';
@@ -96,13 +94,18 @@ const usePreviewPublisher = (
   >(initialValue?.publisherVideoElement ?? undefined);
   const [speechLevel, setSpeechLevel] = useState(initialValue?.speechLevel ?? 0);
   const { setAccessStatus, accessStatus } = usePermissions();
-  const [deniedDevices, setDeniedDevices] = useState<DeniedDevices>(
-    initialValue?.deniedDevices ?? NO_DENIED_DEVICES
-  );
-  // Mirror deniedDevices so the delayed reacquire fallback below reads the latest value (not the one
-  // captured in its closure) when it checks whether onchange has already recovered the device.
-  const deniedDevicesRef = useRef(deniedDevices);
-  deniedDevicesRef.current = deniedDevices;
+  // The shared tracker owns which devices are blocked, watches each for re-grant, and recovers a
+  // re-granted device in place. It comes back ON (unmuted) — the user just re-allowed it — with the
+  // intent persisted to 'true': storage is what the in-place re-init reads, what survives a
+  // whole-publisher rebuild when the other device is re-granted next, and what the in-call publisher
+  // reads on join. ACCESS_CHANGED then makes the waiting room destroy + re-init in place.
+  const { deniedDevices, applyAccessDeniedEvent, reacquireDevice } = useDeviceDenialTracker({
+    initialDenied: initialValue?.deniedDevices,
+    onRecover: (device) => {
+      persistDeviceIntent({ device, enabled: true });
+      setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+    },
+  });
   const publisherRef = useRef<Publisher | null>(null);
 
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
@@ -167,55 +170,12 @@ const usePreviewPublisher = (
       // with the affected device badged (Google Meet style).
       setIsVideoLoading(false);
       setIsAcquiring(false);
-      await handlePublisherAccessDenied({
-        event,
-        setAccessStatus,
-        onDeniedDevicesChange: setDeniedDevices,
-        // A device re-granted after a denial comes back ON (unmuted) — the user just re-allowed it,
-        // so recover it live rather than leaving it off. Persist the intent to 'true' rather than
-        // only flipping transient state: storage is what the in-place re-init reads, what survives a
-        // whole-publisher rebuild when the other device is re-granted next, and what the in-call
-        // publisher reads on join — so the device stays on consistently everywhere.
-        onDeviceReGrant: (device) => {
-          setStorageItem(
-            device === 'microphone'
-              ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
-              : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
-            'true'
-          );
-        },
-      });
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      // The tracker resolves which device(s) are genuinely blocked (badging + re-grant watching);
+      // recovery arrives back through its onRecover above.
+      await applyAccessDeniedEvent(event);
     },
-    [setAccessStatus]
-  );
-
-  /**
-   * Recover a device the user just re-granted via the badge click (the click-to-re-prompt getUserMedia
-   * succeeded). Normally re-grant recovery is driven by PermissionStatus.onchange, but that never
-   * fires for camera/microphone in Safari, so the granted device would otherwise stay badged. We
-   * recover after a short grace period and only if the device is still denied — so on Chrome, where
-   * onchange has already recovered it, this is a no-op (no double rebuild). Mirrors the onchange path:
-   * bring the device back on (unmuted) and re-init in place via ACCESS_CHANGED.
-   * @param {DeviceKind} device - the re-granted device to bring back.
-   * @returns {void}
-   */
-  const reacquireDevice = useCallback(
-    (device: DeviceKind) => {
-      window.setTimeout(() => {
-        if (!deniedDevicesRef.current[device]) {
-          return;
-        }
-        setStorageItem(
-          device === 'microphone'
-            ? STORAGE_KEYS.AUDIO_SOURCE_ENABLED
-            : STORAGE_KEYS.VIDEO_SOURCE_ENABLED,
-          'true'
-        );
-        setDeniedDevices((previous) => ({ ...previous, [device]: false }));
-        setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
-      }, DEVICE_REACQUIRE_FALLBACK_MS);
-    },
-    [setAccessStatus]
+    [setAccessStatus, applyAccessDeniedEvent]
   );
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
@@ -269,14 +229,10 @@ const usePreviewPublisher = (
 
     const { frameRate, codecMode, codecPriority } = advancedSettings$.getState();
 
-    // Publish according to the user's *intent* (persisted on manual toggle), not the current
-    // enabled flags. While a device is blocked, useSyncPublisherDevices flips those flags off to
-    // reflect the missing device; re-initializing from them on re-grant would wrongly come back
-    // muted. Storage still holds the last manual choice, so a device the user never muted returns
-    // unmuted, while one they muted stays muted.
-    // Publish according to the user's persisted intent. A device re-granted after a denial has had
-    // its intent written to 'false' (Google Meet re-acquires it muted), so reading storage here also
-    // brings it back off; a device the user never denied keeps whatever intent it had.
+    // Publish according to the user's persisted intent (written on manual toggle and on re-grant),
+    // not the current enabled flags: while a device is blocked, useSyncPublisherDevices flips those
+    // flags off to reflect the missing device, and re-initializing from them would wrongly come
+    // back muted.
     const intendedAudioEnabled = getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false';
     const intendedVideoEnabled = getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false';
     setIsAudioEnabled(intendedAudioEnabled);
@@ -321,27 +277,25 @@ const usePreviewPublisher = (
   // When exactly one device is blocked, the combined getUserMedia above failed (no publisher) but
   // the other device is still available. Retry with the reduced request so the granted device —
   // typically the camera when the mic is blocked — still comes up. When both are blocked there is
-  // nothing to acquire, and when neither is blocked the normal init path already ran.
-  const lastPreviewAttemptRef = useRef<string | null>(null);
+  // nothing to acquire, and when neither is blocked the normal init path already ran. The guard
+  // stops the retry from re-requesting the identical source set that just failed (see
+  // useAttemptSignatureGuard); a genuinely different request (a device un-blocked, a source
+  // changed) has a new signature and is still allowed.
+  const reducedRetryGuard = useAttemptSignatureGuard();
   useEffect(() => {
     if (publisherRef.current) {
-      lastPreviewAttemptRef.current = null;
+      reducedRetryGuard.reset();
       return;
     }
     const someDenied = deniedDevices.microphone || deniedDevices.camera;
     const someGranted = !deniedDevices.microphone || !deniedDevices.camera;
-    // Don't re-request the identical source set that just failed. On Safari every getUserMedia
-    // re-prompts and permissions.query is unreliable, so without this the reduced-request retry would
-    // loop forever. A genuinely different request (a device un-blocked, a source changed) has a new
-    // signature and is still allowed.
     const attemptSignature = `${deniedDevices.microphone ? 'false' : audioSourceId}|${
       deniedDevices.camera ? 'false' : videoSourceId
     }`;
-    if (someDenied && someGranted && lastPreviewAttemptRef.current !== attemptSignature) {
-      lastPreviewAttemptRef.current = attemptSignature;
+    if (someDenied && someGranted && reducedRetryGuard.shouldAttempt(attemptSignature)) {
       initLocalPublisher();
     }
-  }, [deniedDevices, initLocalPublisher, audioSourceId, videoSourceId]);
+  }, [deniedDevices, initLocalPublisher, audioSourceId, videoSourceId, reducedRetryGuard]);
 
   /**
    * Destroys the preview publisher
@@ -373,7 +327,7 @@ const usePreviewPublisher = (
     }
 
     publisherRef.current.publishVideo(!isVideoEnabled);
-    setStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED, (!isVideoEnabled).toString());
+    persistDeviceIntent({ device: 'camera', enabled: !isVideoEnabled });
     setIsVideoEnabled(!isVideoEnabled);
     if (setUser) {
       setUser((prevUser: UserType) => ({
@@ -397,7 +351,7 @@ const usePreviewPublisher = (
     }
     publisherRef.current.publishAudio(!isAudioEnabled);
     setIsAudioEnabled(!isAudioEnabled);
-    setStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED, (!isAudioEnabled).toString());
+    persistDeviceIntent({ device: 'microphone', enabled: !isAudioEnabled });
     if (setUser) {
       setUser((prevUser: UserType) => ({
         ...prevUser,

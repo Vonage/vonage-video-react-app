@@ -14,7 +14,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import useDeviceDenialTracker from '../../../hooks/useDeviceDenialTracker';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
@@ -134,22 +134,25 @@ const useBackgroundPublisher = (
     [setBackgroundFilter]
   );
 
+  // The shared tracker badges + watches the blocked device(s). On re-grant, a camera comes back on
+  // (unmuted), matching the preview and in-call publishers — turning the flag on also feeds the
+  // re-init below, which publishes video according to isVideoEnabled — and ACCESS_CHANGED re-opens
+  // the init gate in useMeetingRoom so the effects preview recovers in place.
+  const { applyAccessDeniedEvent } = useDeviceDenialTracker({
+    onRecover: (device) => {
+      if (device === 'camera') {
+        setIsVideoEnabled(true);
+      }
+      setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+    },
+  });
+
   const handleBackgroundAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
-      await handlePublisherAccessDenied({
-        event,
-        setAccessStatus,
-        // A camera re-granted after a denial comes back on (unmuted), matching the preview and in-call
-        // publishers. Turning the flag on here also feeds the re-init below, which publishes video
-        // according to isVideoEnabled.
-        onDeviceReGrant: (device) => {
-          if (device === 'camera') {
-            setIsVideoEnabled(true);
-          }
-        },
-      });
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      await applyAccessDeniedEvent(event);
     },
-    [setAccessStatus]
+    [setAccessStatus, applyAccessDeniedEvent]
   );
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {

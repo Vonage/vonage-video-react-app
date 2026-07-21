@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useEffectEvent } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
+import useAttemptSignatureGuard from './useAttemptSignatureGuard';
 import usePreviewPublisherContext from './usePreviewPublisherContext';
 import useSessionKeyParam from './useSessionKeyParam';
 import useDecodedSessionKey from './useDecodedSessionKey';
@@ -32,18 +33,16 @@ const useWaitingRoom = () => {
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
 
-  // Guard so we don't auto re-init the preview with the identical requested-device set that just
-  // failed. On Chrome a denied device rejects silently, but on Safari every getUserMedia re-prompts
-  // and permissions.query is unreliable (a real denial can read as not-denied), so the publisher
-  // null↔object churn would otherwise re-request — and re-prompt — forever. A different request (a
-  // device newly blocked, so a different source set) has a new signature and is still allowed.
-  const lastPreviewInitSignatureRef = useRef<string | null>(null);
+  // Don't auto re-init the preview with the identical requested-device set that just failed (the
+  // publisher null↔object churn would otherwise re-request — and on Safari re-prompt — forever); a
+  // different request (a device newly blocked, so a different source set) has a new signature and
+  // is still allowed. See useAttemptSignatureGuard for the Safari rationale.
+  const previewInitGuard = useAttemptSignatureGuard();
 
   const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
       const signature = `${deniedDevices.microphone}|${deniedDevices.camera}`;
-      if (lastPreviewInitSignatureRef.current !== signature) {
-        lastPreviewInitSignatureRef.current = signature;
+      if (previewInitGuard.shouldAttempt(signature)) {
         initLocalPublisher();
       }
     }
@@ -65,14 +64,14 @@ const useWaitingRoom = () => {
     };
   }, [publisher, destroyPublisher]);
 
-  // Clear the retry guard once the preview is actually publishing (a real acquire), so a later
+  // Re-arm the retry guard once the preview is actually publishing (a real acquire), so a later
   // legitimate re-init is allowed. Kept in its own effect so it never triggers the destroy cleanup
   // of the [publisher] effect above.
   useEffect(() => {
     if (isPublishing) {
-      lastPreviewInitSignatureRef.current = null;
+      previewInitGuard.reset();
     }
-  }, [isPublishing]);
+  }, [isPublishing, previewInitGuard]);
 
   // When the user re-grants a previously denied permission the publisher reports ACCESS_CHANGED (both
   // the Safari reacquireDevice fallback and the Chrome permissions.onchange watcher funnel here). Drive
@@ -102,10 +101,17 @@ const useWaitingRoom = () => {
       return;
     }
     pendingRecoveryRef.current = false;
-    lastPreviewInitSignatureRef.current = null;
+    previewInitGuard.reset();
     destroyPublisher();
     initLocalPublisher();
-  }, [accessStatus, isAcquiring, deniedDevices, destroyPublisher, initLocalPublisher]);
+  }, [
+    accessStatus,
+    isAcquiring,
+    deniedDevices,
+    destroyPublisher,
+    initLocalPublisher,
+    previewInitGuard,
+  ]);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useEffectEvent } from 'react';
+import { useEffect, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
@@ -12,6 +12,7 @@ import type { PublishingErrorType } from '../Context/PublisherProvider/usePublis
 import useUserContext from './useUserContext';
 import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
+import useAttemptSignatureGuard from './useAttemptSignatureGuard';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
 
@@ -141,19 +142,19 @@ const useMeetingRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey, hasValidUsername, bypass]);
 
-  // Signature of the device sources of the last auto-init attempt — used to stop the gate below from
-  // re-initializing the identical (still-failing) request in a loop.
-  const lastAttemptedSourcesRef = useRef<string | null>(null);
+  // Stops the gate below from re-initializing the identical (still-failing) request in a
+  // re-prompt loop — see useAttemptSignatureGuard for the Safari rationale.
+  const initAttemptGuard = useAttemptSignatureGuard();
   useEffect(() => {
     if (!publisherOptions) {
       return;
     }
 
-    // Clear the retry guard only once we're actually publishing (a real acquired stream) — NOT while
-    // the publisher object merely exists transiently between initPublisher() and its accessDenied,
-    // which would re-arm the guard mid-denial and let the re-prompt loop resume on Safari.
+    // Re-arm the retry guard only once we're actually publishing (a real acquired stream) — NOT
+    // while the publisher object merely exists transiently between initPublisher() and its
+    // accessDenied, which would re-arm the guard mid-denial and let the re-prompt loop resume.
     if (isPublishing) {
-      lastAttemptedSourcesRef.current = null;
+      initAttemptGuard.reset();
     }
     if (publisher) {
       return;
@@ -162,22 +163,22 @@ const useMeetingRoom = () => {
     // Re-initialize unless BOTH devices are blocked (nothing to acquire). When only one is
     // blocked we still init, requesting just the granted device (publisherOptions already excludes
     // the blocked one) so e.g. the camera stays live while the mic is blocked — Google Meet style.
+    // A genuinely different request (e.g. the video-only retry after a mic denial) has a new
+    // signature and is allowed; the user re-requests a blocked device via the badge click.
     const allDevicesBlocked = deniedDevices.microphone && deniedDevices.camera;
-
-    // Don't auto-retry the SAME requested-device set that just failed. On Chrome a denied device
-    // rejects silently, but on Safari every getUserMedia re-prompts AND permissions.query is
-    // unreliable (it can report the device as no longer denied), so this gate would otherwise re-init
-    // the identical request forever — an endless permission prompt. A genuinely different request
-    // (e.g. the video-only retry after a mic denial) has a new signature and is still allowed; the
-    // user re-requests a blocked device via the badge click.
     const sourceSignature = `${sourceKey(publisherOptions.audioSource)}|${sourceKey(publisherOptions.videoSource)}`;
-    const alreadyAttempted = lastAttemptedSourcesRef.current === sourceSignature;
 
-    if (!allDevicesBlocked && !alreadyAttempted) {
-      lastAttemptedSourcesRef.current = sourceSignature;
+    if (!allDevicesBlocked && initAttemptGuard.shouldAttempt(sourceSignature)) {
       initializeLocalPublisher(publisherOptions);
     }
-  }, [initializeLocalPublisher, publisherOptions, publisher, isPublishing, deniedDevices]);
+  }, [
+    initializeLocalPublisher,
+    initAttemptGuard,
+    publisherOptions,
+    publisher,
+    isPublishing,
+    deniedDevices,
+  ]);
 
   useEffect(() => {
     if (connected && publisher && publish) {

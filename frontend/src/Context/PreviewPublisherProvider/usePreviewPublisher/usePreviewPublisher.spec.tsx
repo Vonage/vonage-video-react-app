@@ -328,11 +328,17 @@ describe('usePreviewPublisher', () => {
       localStorage.setItem('audioSourceEnabled', 'false');
       localStorage.removeItem('videoSourceEnabled');
 
-      let microphoneStatus: { state: string; onchange: null | (() => void) } | undefined;
+      let microphoneChangeHandler: (() => void) | undefined;
+      let microphoneStatus: { state: string } | undefined;
       mockQuery.mockImplementation(({ name }: { name: string }) => {
         const status = {
           state: name === 'microphone' ? 'denied' : 'granted',
-          onchange: null as null | (() => void),
+          addEventListener: (event: string, handler: () => void) => {
+            if (name === 'microphone' && event === 'change') {
+              microphoneChangeHandler = handler;
+            }
+          },
+          removeEventListener: () => {},
         };
         if (name === 'microphone') {
           microphoneStatus = status;
@@ -358,7 +364,7 @@ describe('usePreviewPublisher', () => {
 
       await waitFor(() => {
         expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
-        expect(typeof microphoneStatus?.onchange).toBe('function');
+        expect(typeof microphoneChangeHandler).toBe('function');
       });
 
       // Re-grant the microphone, then re-init in place (the waiting room does destroy+init on
@@ -366,7 +372,7 @@ describe('usePreviewPublisher', () => {
       capturedOptions.length = 0;
       act(() => {
         microphoneStatus!.state = 'granted';
-        microphoneStatus!.onchange?.();
+        microphoneChangeHandler?.();
       });
       act(() => {
         // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
@@ -399,9 +405,18 @@ describe('usePreviewPublisher', () => {
       localStorage.setItem('audioSourceEnabled', 'false');
       localStorage.setItem('videoSourceEnabled', 'false');
 
-      const statuses: Record<string, { state: string; onchange: null | (() => void) }> = {};
+      const statuses: Record<string, { state: string }> = {};
+      const changeHandlers: Record<string, (() => void) | undefined> = {};
       mockQuery.mockImplementation(({ name }: { name: string }) => {
-        const status = { state: 'denied', onchange: null as null | (() => void) };
+        const status = {
+          state: 'denied',
+          addEventListener: (event: string, handler: () => void) => {
+            if (event === 'change') {
+              changeHandlers[name] = handler;
+            }
+          },
+          removeEventListener: () => {},
+        };
         statuses[name] = status;
         return Promise.resolve(status as unknown as PermissionStatus);
       });
@@ -428,7 +443,7 @@ describe('usePreviewPublisher', () => {
       // Re-grant the microphone first, then rebuild.
       act(() => {
         statuses.microphone.state = 'granted';
-        statuses.microphone.onchange?.();
+        changeHandlers.microphone?.();
       });
       act(() => {
         // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
@@ -442,7 +457,7 @@ describe('usePreviewPublisher', () => {
       capturedOptions.length = 0;
       act(() => {
         statuses.camera.state = 'granted';
-        statuses.camera.onchange?.();
+        changeHandlers.camera?.();
       });
       act(() => {
         // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.

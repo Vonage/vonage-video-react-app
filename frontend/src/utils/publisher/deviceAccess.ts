@@ -11,6 +11,8 @@ export type DeniedDevices = {
   camera: boolean;
 };
 
+export const DEVICE_KINDS: DeviceKind[] = ['microphone', 'camera'];
+
 export const NO_DENIED_DEVICES: DeniedDevices = { microphone: false, camera: false };
 
 /**
