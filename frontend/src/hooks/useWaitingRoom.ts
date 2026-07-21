@@ -1,5 +1,7 @@
 import { useState, useEffect, useEffectEvent } from 'react';
 import type { MouseEvent, TouchEvent } from 'react';
+import { useMountEffect } from '@web/hooks';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import usePreviewPublisherContext from './usePreviewPublisherContext';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import useSessionKeyParam from './useSessionKeyParam';
@@ -27,6 +29,13 @@ const useWaitingRoom = () => {
   const [openVideoInput, setOpenVideoInput] = useState<boolean>(false);
   const [openAudioOutput, setOpenAudioOutput] = useState<boolean>(false);
   const [username, setUsername] = useState(getStorageItem(STORAGE_KEYS.USERNAME) ?? '');
+
+  // Reveal device labels now that the Waiting Room requires them. On Firefox this triggers the
+  // permission request that was intentionally kept off the landing page to avoid lighting the
+  // camera LED there. See https://github.com/Vonage/vonage-video-react-app/issues/723.
+  useMountEffect(() => {
+    void mediaDevices$.actions.requestDeviceLabels();
+  });
 
   const stableInitLocalPublisher = useEffectEvent(() => {
     if (!publisher) {
