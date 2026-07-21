@@ -191,7 +191,7 @@
     "normalize-range": "0.1.2",
     "opentok": "2.22.0",
     "opentok-jwt": "0.1.5",
-    "opentok-layout-js": "5.5.0",
+    "opentok-layout-js": "5.5.1",
     "opentok-solutions-logging": "1.1.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",

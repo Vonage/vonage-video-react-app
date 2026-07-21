@@ -11624,10 +11624,10 @@ opentok-jwt@0.1.5:
   dependencies:
     jsonwebtoken "^9.0.0"
 
-opentok-layout-js@5.5.0:
-  version "5.5.0"
-  resolved "https://registry.yarnpkg.com/opentok-layout-js/-/opentok-layout-js-5.5.0.tgz#20f6971fdd9a39c816b1c23182351836a61d25e2"
-  integrity sha512-ynUo+zRjp1iasLUT0UQXuWvFyPAQIxhrdLOjWdNrPkPtziTuZcxccgPhr2kGQm9TztdLLQVlFruJN48cmqQiYA==
+opentok-layout-js@5.5.1:
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/opentok-layout-js/-/opentok-layout-js-5.5.1.tgz#4d572269bec6d66539940688fb885e48dab7f142"
+  integrity sha512-7SDkQROSrVbAGcyfBzDcjZi6/P3pO/P9nermq28CH0/xYF7IrMZ8m89Qlq5j9EIW4WAsMfIIUqoKYGfJ7XOvyw==
 
 opentok-solutions-logging@1.1.5, opentok-solutions-logging@^1.1.1:
   version "1.1.5"
