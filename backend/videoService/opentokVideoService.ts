@@ -99,7 +99,14 @@ class OpenTokVideoService implements VideoService {
   // This is not the case for Vonage Video Node SDK, which has a built-in method for enabling captions.
   readonly API_URL = 'https://api.opentok.com/v2/project';
 
-  async enableCaptions(sessionId: string, captionOptions?: { languageCode?: string; maxDuration?: number; partialCaptions?: boolean | string }): Promise<EnableCaptionResponse> {
+  async enableCaptions(
+    sessionId: string,
+    captionOptions?: {
+      languageCode?: string;
+      maxDuration?: number;
+      partialCaptions?: boolean | string;
+    }
+  ): Promise<EnableCaptionResponse> {
     const expires = Math.floor(new Date().getTime() / 1000) + 24 * 60 * 60;
     // Note that the project token is different from the session token.
     // The project token is used to authenticate the request to the OpenTok API.

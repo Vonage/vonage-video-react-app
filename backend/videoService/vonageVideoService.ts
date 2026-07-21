@@ -70,7 +70,10 @@ class VonageVideoService implements VideoService {
     return 'Archive stopped successfully';
   }
 
-  async enableCaptions(sessionId: string, captionOptions?: CaptionOptions): Promise<EnableCaptionResponse> {
+  async enableCaptions(
+    sessionId: string,
+    captionOptions?: CaptionOptions
+  ): Promise<EnableCaptionResponse> {
     const requestToken = this.generateToken(sessionId);
     const { token } = requestToken;
 

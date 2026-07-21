@@ -111,7 +111,10 @@ const envSchema = z
     SHOW_PARTICIPANT_LIST: boolField(true),
     SHOW_VIDEO_STATS: boolField(false),
     BYPASS_WAITING_ROOM: boolField(false),
-    API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
+    API_URL: z.preprocess(
+      (v) => (v === undefined || v === null || v === '' ? '' : v),
+      z.string()
+    ),
     TUNNEL_DOMAIN: optionalStringField,
     AVOID_FETCHING_APP_CONFIG: boolField(true),
     MODE: z.preprocess(

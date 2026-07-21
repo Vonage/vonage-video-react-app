@@ -95,7 +95,13 @@ const CaptionsButton = ({
         handleCaptionsErrorResponse(error.response?.data.message);
       }
     }
-  }, [videoClient, sessionKey, i18n.language, handleCaptionsErrorResponse, setIsUserCaptionsEnabled]);
+  }, [
+    videoClient,
+    sessionKey,
+    i18n.language,
+    handleCaptionsErrorResponse,
+    setIsUserCaptionsEnabled,
+  ]);
 
   const handleCaptionsDisable = useCallback(() => {
     try {

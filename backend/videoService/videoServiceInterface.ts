@@ -4,10 +4,22 @@ import { Archive } from 'opentok';
 
 export interface VideoService {
   createSession(): Promise<string>;
-  generateToken(sessionId: string): { token: string; applicationId?: string; apiKey?: string };
-  startArchive(roomName: string, sessionId: string): Promise<Archive | SingleArchiveResponse>;
+  generateToken(sessionId: string): {
+    token: string;
+    applicationId?: string;
+    apiKey?: string;
+  };
+  startArchive(
+    roomName: string,
+    sessionId: string
+  ): Promise<Archive | SingleArchiveResponse>;
   stopArchive(archiveId: string): Promise<string>;
-  searchArchives(sessionId: string): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
-  enableCaptions(sessionId: string, captionOptions?: CaptionOptions): Promise<EnableCaptionResponse>;
+  searchArchives(
+    sessionId: string
+  ): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
+  enableCaptions(
+    sessionId: string,
+    captionOptions?: CaptionOptions
+  ): Promise<EnableCaptionResponse>;
   disableCaptions(captionsId: string): Promise<string>;
 }
