@@ -152,6 +152,8 @@
   "devices.audio.ariaLabel": "dispositivi audio",
   "devices.audio.defaultLabel": "Predefinito sistema",
   "devices.audio.disable": "Disattiva microfono",
+  "devices.audio.disabled": "Il controllo del microfono è disattivato in questa applicazione",
+  "devices.video.disabled": "Il controllo della camera è disattivato in questa applicazione",
   "devices.audio.enable": "Attiva il microfono o tieni premuta la barra spaziatrice per attivarlo temporaneamente",
   "devices.audio.microphone.ariaLabel": "attiva/disattiva audio",
   "devices.audio.microphone.full": "Microfono",
