@@ -51,7 +51,7 @@ describe('GET /.well-known/apple-app-site-association', () => {
                   comment: 'Matches any room URL',
                 }),
                 expect.objectContaining({
-                  '/': '/auth/callback',
+                  '/': '/api/auth/callback*',
                   comment: 'Auth callback',
                 }),
               ]),
