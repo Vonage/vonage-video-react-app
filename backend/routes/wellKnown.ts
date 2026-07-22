@@ -56,6 +56,10 @@ wellKnownRouter.get('/apple-app-site-association', (_req: Request, res: Response
               '/': '/room/*',
               comment: 'Matches any room URL',
             },
+            {
+              '/': '/api/auth/callback*',
+              comment: 'Auth callback',
+            },
           ],
         },
       ],
