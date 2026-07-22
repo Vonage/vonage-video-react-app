@@ -45,10 +45,12 @@ const useWaitingRoom = () => {
   }, [publisher]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
+    if (backgroundPublisher || !publisher || isVideoLoading) return;
+    // Share the preview publisher's already-captured camera track with the effects publisher
+    // (clone so each publisher owns its own track) instead of opening the camera again. See #619.
+    const previewTrack = publisher.getVideoSource().track;
+    initBackgroundLocalPublisher(previewTrack ? previewTrack.clone() : undefined);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, publisher, isVideoLoading]);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>

@@ -32,7 +32,7 @@ export type BackgroundPublisherContextType = {
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
-  initBackgroundLocalPublisher: () => void;
+  initBackgroundLocalPublisher: (sharedVideoTrack?: MediaStreamTrack) => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
   deleteCustomImage: (id: string) => void;
@@ -85,6 +85,9 @@ const useBackgroundPublisher = (
   const { setAccessStatus, accessStatus } = usePermissions();
 
   const backgroundPublisherRef = useRef<Publisher | null>(null);
+  // The cloned camera track shared from the preview publisher (see #619). We own it, so it must be
+  // stopped when this publisher is destroyed, otherwise it keeps a camera capture open.
+  const sharedVideoTrackRef = useRef<MediaStreamTrack | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
 
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
@@ -171,35 +174,50 @@ const useBackgroundPublisher = (
     });
 
     backgroundPublisherRef.current = null;
+
+    // Release the shared clone we own (see #619); the SDK does not stop a track it did not create.
+    sharedVideoTrackRef.current?.stop();
+    sharedVideoTrackRef.current = null;
   }, []);
 
-  const initBackgroundLocalPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) return;
+  const initBackgroundLocalPublisher = useCallback(
+    (sharedVideoTrack?: MediaStreamTrack) => {
+      if (backgroundPublisherRef.current) return;
 
-    let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
-      videoFilter = initialBackgroundRef.current;
-    }
+      sharedVideoTrackRef.current = sharedVideoTrack ?? null;
 
-    const publisherOptions: PublisherProperties = {
-      insertDefaultUI: false,
-      videoFilter,
-      resolution: env.DEFAULT_RESOLUTION,
-      videoSource: mediaDevices$.getState().videoinput,
-      publishAudio: false,
-      publishVideo: isVideoEnabled,
-    };
-
-    backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        backgroundPublisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
+      let videoFilter: VideoFilter | undefined;
+      if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
+        videoFilter = initialBackgroundRef.current;
       }
-    });
-    addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled]);
+
+      // Reuse the preview publisher's already-captured camera track when provided (see #619),
+      // so the effects preview doesn't open the camera a second time. Fall back to the device id.
+      const publisherOptions: PublisherProperties = {
+        insertDefaultUI: false,
+        videoFilter,
+        resolution: env.DEFAULT_RESOLUTION,
+        videoSource: sharedVideoTrack ?? mediaDevices$.getState().videoinput,
+        publishAudio: false,
+        publishVideo: isVideoEnabled,
+      };
+
+      backgroundPublisherRef.current = initPublisher(
+        undefined,
+        publisherOptions,
+        (err: unknown) => {
+          if (err instanceof Error) {
+            backgroundPublisherRef.current = null;
+            if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+              console.error('initPublisher error: ', err);
+            }
+          }
+        }
+      );
+      addPublisherListeners(backgroundPublisherRef.current);
+    },
+    [addPublisherListeners, isVideoEnabled]
+  );
 
   /**
    * Turns the camera on and off

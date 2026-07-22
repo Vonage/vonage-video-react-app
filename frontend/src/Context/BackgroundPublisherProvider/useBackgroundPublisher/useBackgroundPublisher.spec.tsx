@@ -55,6 +55,37 @@ describe('useBackgroundPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
+    it('should reuse a shared video track as videoSource instead of reopening the camera (see #619)', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({ videoSource: sharedVideoTrack }),
+        expect.any(Function)
+      );
+    });
+
+    it('should stop the shared video track it owns when destroyed (see #619)', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+      act(() => {
+        result.current.destroyBackgroundPublisher();
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
     it('should log access denied errors', () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
