@@ -38,6 +38,9 @@ describe('GET /.well-known/apple-app-site-association', () => {
 
     expect(json).toEqual(
       expect.objectContaining({
+        webcredentials: expect.objectContaining({
+          apps: expect.arrayContaining(['PR6C39UQ38.com.vonage.VERA']),
+        }),
         applinks: expect.objectContaining({
           details: expect.arrayContaining([
             expect.objectContaining({
