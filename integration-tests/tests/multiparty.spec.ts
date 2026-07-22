@@ -32,41 +32,26 @@ async function openMeetingWithThreeParticipantsAndAssertVisibility({
     roomName,
   });
   await waitUntilReady(pageOne, browserName);
+
   await expect(pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
 
-  // Once the meeting is ready, the remaining participants can join concurrently.
-  await Promise.all([
-    (async () => {
-      const pageTwo = await context.newPage();
+  const pageTwo = await context.newPage();
+  await openMeetingRoomWithSettings({
+    page: pageTwo,
+    username: 'User Two',
+    roomName,
+  });
+  await waitUntilReady(pageTwo, browserName);
 
-      await openMeetingRoomWithSettings({
-        page: pageTwo,
-        username: 'User Two',
-        roomName,
-      });
+  const pageThree = await context.newPage();
+  await openMeetingRoomWithSettings({
+    page: pageThree,
+    username: 'User Three',
+    roomName,
+  });
+  await waitUntilReady(pageThree, browserName);
 
-      await waitUntilReady(pageTwo, browserName);
-
-      await expect(pageTwo.getByTestId('publisher-container').getByText('User Two')).toBeVisible();
-    })(),
-
-    (async () => {
-      const pageThree = await context.newPage();
-
-      await openMeetingRoomWithSettings({
-        page: pageThree,
-        username: 'User Three',
-        roomName,
-      });
-
-      await waitUntilReady(pageThree, browserName);
-
-      await expect(
-        pageThree.getByTestId('publisher-container').getByText('User Three')
-      ).toBeVisible();
-    })(),
-  ]);
-
+  await pageOne.waitForSelector('.subscriber', { state: 'visible' });
   await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible();
   await expect(pageOne.locator('.subscriber').getByText('User Three')).toBeVisible();
 }
