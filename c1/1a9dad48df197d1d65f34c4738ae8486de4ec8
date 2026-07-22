@@ -1,0 +1,19 @@
+integration-tests/tests/multiparty.spec.ts
+  s_5be0f7ada839c8::t_2fe5592500a808 38-44,46-52,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "c11a9dad48df197d1d65f34c4738ae8486de4ec8",
+  "prompts": {},
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
