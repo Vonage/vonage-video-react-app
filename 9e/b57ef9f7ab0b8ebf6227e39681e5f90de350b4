@@ -1,0 +1,28 @@
+backend/tests/apple-app-site-association.test.ts
+  h_5ddc9d372ac6a1 41-43
+customWordList.mjs
+  s_8a8d0c0ea5645f::t_ad7e99312f9eb5 32
+backend/routes/wellKnown.ts
+  h_5ddc9d372ac6a1 67-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9eb57ef9f7ab0b8ebf6227e39681e5f90de350b4",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_8a8d0c0ea5645f": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "c92c25b9-447a-46df-b83a-f14b86b5ebf0",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

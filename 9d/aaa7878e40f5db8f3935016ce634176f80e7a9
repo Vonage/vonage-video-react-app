@@ -1,0 +1,16 @@
+backend/tests/apple-app-site-association.test.ts
+  h_5ddc9d372ac6a1 54
+backend/routes/wellKnown.ts
+  h_5ddc9d372ac6a1 60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9daaa7878e40f5db8f3935016ce634176f80e7a9",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
