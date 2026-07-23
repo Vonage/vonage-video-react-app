@@ -251,7 +251,6 @@ const useBackgroundPublisher = (
       setCustomImages((imgs) => imgs.filter((img) => img.id !== id));
 
       // If the deleted image was the currently applied background filter, clear it
-      // (apply 'none') — re-applying backgroundSelected would leave an effect on.
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
         changeBackground('none').catch(() => {
