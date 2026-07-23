@@ -235,7 +235,6 @@ type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
   backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
-  hookInitialValue?: Parameters<typeof useBackgroundPublisher>[0];
 };
 
 function render({
@@ -243,7 +242,6 @@ function render({
   sessionContext,
   publisherContext,
   backgroundPublisherContext,
-  hookInitialValue,
 }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
     [
@@ -264,7 +262,7 @@ function render({
 
   return {
     ...context,
-    ...renderHookBase(() => useBackgroundPublisher(hookInitialValue), {
+    ...renderHookBase(() => useBackgroundPublisher(), {
       wrapper,
     }),
   };
