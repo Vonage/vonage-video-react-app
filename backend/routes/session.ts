@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import getSessionStorageService from '../sessionStorageService';
 import { makeVideoClient$ } from './video';
-import { makeInternalErrorHandler } from '@api-lib/errors';
+import { makeInternalErrorHandler, makeNotFoundErrorHandler } from '@api-lib/errors';
 import { getSessionKeyFromRoomName, getOrCreateSessionKeyFromRoomName } from '../helpers';
 
 const sessionRouter = Router();
@@ -64,11 +64,15 @@ sessionRouter.post(
 
       // Ensure the archive belongs to this room's session before stopping it — otherwise a
       // caller who knows any room name could stop an archive from another room by its id.
-      const { items } = await videoClient.searchArchives({ sessionKey });
+      // Request up to 1000 archives to avoid missing archives on subsequent pages.
+      const { items } = await videoClient.searchArchives({ sessionKey, count: 1000 });
       const archiveBelongsToRoom = items.some((archive) => archive.id === archiveId);
 
       if (!archiveBelongsToRoom) {
-        res.status(404).json({ message: 'Archive not found for this room.' });
+        const notFoundError = makeNotFoundErrorHandler('Archive not found for this room.')(
+          new Error('Archive not found for this room.')
+        );
+        res.status(notFoundError.statusCode).json(notFoundError.exportSafely());
         return;
       }
 
@@ -145,7 +149,10 @@ sessionRouter.post(
       const storedCaptionsId = await sessionService.getCaptionsId({ sessionId });
 
       if (!storedCaptionsId || storedCaptionsId !== captionsId) {
-        res.status(404).json({ message: 'Captions not found for this room.' });
+        const notFoundError = makeNotFoundErrorHandler('Captions not found for this room.')(
+          new Error('Captions not found for this room.')
+        );
+        res.status(notFoundError.statusCode).json(notFoundError.exportSafely());
         return;
       }
 
