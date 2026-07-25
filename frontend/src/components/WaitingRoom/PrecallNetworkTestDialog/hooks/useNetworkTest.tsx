@@ -125,6 +125,15 @@ const useNetworkTest = () => {
     void testPromiseRef.current?.cancel();
   }, []);
 
+  const createTimeout = useCallback(
+    (reject: (error: Error) => void, timeoutMs: number) =>
+      setTimeout(
+        () => reject(new Error(t('waitingRoom.precallNetworkTest.error.timeout'))),
+        timeoutMs
+      ),
+    [t]
+  );
+
   const testQuality = useCallback(
     (roomName: string, options: NetworkTestOptions = {}): CancelablePromise<QualityResults> => {
       const isPending = testPromiseRef.current?.status === 'pending';
@@ -171,10 +180,7 @@ const useNetworkTest = () => {
             // timeout after 60s
 
             const qualityResults = await new Promise<QualityTestResults>((res, rej) => {
-              const timeout = setTimeout(
-                () => rej(new Error(t('waitingRoom.precallNetworkTest.error.timeout'))),
-                options.timeout || 60000
-              );
+              const timeout = createTimeout(rej, options.timeout || 60000);
 
               networkTest
                 .testQuality((qualityUpdateStats) => {
@@ -203,7 +209,7 @@ const useNetworkTest = () => {
 
             // Stop the test on timeout/error too (mirrors the onCancel path), so the
             // camera/mic and bandwidth probing don't keep running in the background.
-            void attempt(() => networkTest?.stop());
+            attempt(() => networkTest?.stop());
 
             const networkError: NetworkTestError = {
               message:
@@ -222,7 +228,7 @@ const useNetworkTest = () => {
         }
       ));
     },
-    [t, videoClient]
+    [t, videoClient, createTimeout]
   );
 
   useMountEffect(() => {
