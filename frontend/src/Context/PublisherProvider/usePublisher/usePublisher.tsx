@@ -129,9 +129,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   // would re-request a device the user dismissed in the waiting room and re-prompt them immediately.
   // Captured once; the mount effect below refines it against the live permission.
   const carriedWaitingRoomDenialRef = useRef<DeniedDevices | undefined>(undefined);
-  if (!carriedWaitingRoomDenialRef.current) {
-    carriedWaitingRoomDenialRef.current = waitingRoomDenial$.getState();
-  }
+  carriedWaitingRoomDenialRef.current ??= waitingRoomDenial$.getState();
 
   const [stream, setStream] = useState<Stream | null>(initialValue?.stream ?? null);
 

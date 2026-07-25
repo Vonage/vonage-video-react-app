@@ -55,7 +55,7 @@ type VonageVideoClientEvents = {
  * @augments {EventEmitter}
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  public clientSession: Session;
+  public readonly clientSession: Session;
   private readonly credential: Credential;
   private readonly applicationId: string;
   public readonly sessionId: string;
@@ -468,8 +468,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
 
     // The 2.35 SDK returns a promise here; disconnect is fire-and-forget during teardown.
-    void this.clientSession.disconnect();
-    this.clientSession = null as unknown as Session;
+    this.clientSession.disconnect();
   };
 
   /**
@@ -524,7 +523,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   signal = (data: SignalType) => {
     // The 2.35 SDK returns a promise here; signalling is fire-and-forget.
-    void this.clientSession.signal(data);
+    this.clientSession.signal(data);
   };
 
   /**

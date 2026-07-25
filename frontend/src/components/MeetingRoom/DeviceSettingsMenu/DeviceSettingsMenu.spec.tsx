@@ -121,11 +121,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(outputDevicesElement.children[1]).toHaveTextContent(usbHeadsetSpeakers.label);
       expect(outputDevicesElement.children[2]).toHaveTextContent(bluetoothSpeakers.label);
 
-      // test will fail without the await act
-      // eslint-disable-next-line @typescript-eslint/require-await
-      await act(async () => {
-        fireEvent.click(outputDevicesElement.children[2]);
-      });
+      fireEvent.click(outputDevicesElement.children[2]);
 
       // Verify the store action was called
       expect(selectDeviceSpy).toHaveBeenCalledWith('audiooutput', bluetoothSpeakers.deviceId);
@@ -153,9 +149,7 @@ describe('DeviceSettingsMenu Component', () => {
         (outputDevicesElement.firstChild as HTMLOptionElement).classList.contains('Mui-selected')
       ).toBe(true);
 
-      act(() => {
-        fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
-      });
+      fireEvent.click(outputDevicesElement.firstChild as HTMLOptionElement);
 
       // Verify the Vonage SDK function was not called
       expect(mockSetAudioOutputDevice).not.toHaveBeenCalled();
@@ -233,10 +227,7 @@ describe('DeviceSettingsMenu Component', () => {
       expect(outputDevicesElement.children[2]).toHaveTextContent(bluetoothSpeakers.label);
 
       // select device 2
-      // eslint-disable-next-line @typescript-eslint/require-await
-      await act(async () => {
-        fireEvent.click(outputDevicesElement.children[1] as HTMLOptionElement);
-      });
+      fireEvent.click(outputDevicesElement.children[1] as HTMLOptionElement);
 
       // Verify the store action was called
       expect(selectDeviceSpy).toHaveBeenCalledWith('audiooutput', usbHeadsetSpeakers.deviceId);
