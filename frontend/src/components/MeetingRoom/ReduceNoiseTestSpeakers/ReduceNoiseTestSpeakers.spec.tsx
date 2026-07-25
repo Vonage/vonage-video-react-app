@@ -78,6 +78,14 @@ describe('ReduceNoiseTestSpeakers', () => {
     expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
   });
 
+  it('checks audio-only media processor support (not "both")', () => {
+    mockHasMediaProcessorSupport.mockReturnValue(true);
+
+    render(<ReduceNoiseTestSpeakers />);
+
+    expect(mockHasMediaProcessorSupport).toHaveBeenCalledWith('audio');
+  });
+
   it('toggles the noise suppression state when clicked', async () => {
     mockHasMediaProcessorSupport.mockReturnValue(true);
 

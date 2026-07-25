@@ -47,12 +47,12 @@ const usePublisherOptions = ({
     const initials = getInitials(name);
 
     const audioFilter: AudioFilter | undefined =
-      noiseSuppression && hasMediaProcessorSupport('both')
+      noiseSuppression && hasMediaProcessorSupport('audio')
         ? { type: 'advancedNoiseSuppression' }
         : undefined;
 
     const videoFilter: VideoFilter | undefined =
-      backgroundFilter && hasMediaProcessorSupport('both') ? backgroundFilter : undefined;
+      backgroundFilter && hasMediaProcessorSupport('video') ? backgroundFilter : undefined;
 
     const options = {
       audioFallback: {

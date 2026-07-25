@@ -38,7 +38,7 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const hasSupportedMediaProcessor = hasMediaProcessorSupport('both');
+  const hasSupportedMediaProcessor = hasMediaProcessorSupport('video');
   const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
   const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
   const unsupportedFeatureTooltipTitle = t('waitingRoom.unsupportedFeature.tooltip');
