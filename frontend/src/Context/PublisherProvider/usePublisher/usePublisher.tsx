@@ -450,9 +450,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         frontendLogger.log('usePublisher: exception 1500', { code: exceptionEvent.code });
         consecutivePublishingFailureCountRef.current += 1;
 
-        if (firstPublishingFailureAtRef.current === null) {
-          firstPublishingFailureAtRef.current = Date.now();
-        }
+        firstPublishingFailureAtRef.current ??= Date.now();
 
         const isBrowserOnline = (() => {
           if (typeof navigator === 'undefined') return true;
