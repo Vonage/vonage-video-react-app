@@ -126,7 +126,7 @@ const useScreenShare = (): UseScreenShareType => {
           // Destroy the publisher too — onScreenShareStopped only nulls the ref, so the
           // screen capture (and the browser's screen-share indicator) would otherwise keep
           // running with no handle left to stop it.
-          void attempt(() => screenSharingPublisher.destroy());
+          attempt(() => screenSharingPublisher.destroy());
           onScreenShareStopped();
           return;
         }
