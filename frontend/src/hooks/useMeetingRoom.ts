@@ -119,7 +119,11 @@ const useMeetingRoom = () => {
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
-    void resolveAndJoin();
+    resolveAndJoin().catch(() => {
+      // Errors from createSession/joinRoom are surfaced via the redirect hooks
+      // (useRedirectOnPublisherError, useRedirectOnSubscriberError) or the
+      // cancelled flag prevents stale updates on unmount.
+    });
 
     return () => {
       cancelled = true;

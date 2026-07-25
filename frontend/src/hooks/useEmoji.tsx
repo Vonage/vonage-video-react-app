@@ -119,7 +119,16 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
     ({ data, from: sendingConnection }: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => {
       if (data && sendingConnection) {
         const senderName = getSenderName(sendingConnection, subscriberWrappers) ?? '';
-        const { emoji, time }: EmojiDataType = JSON.parse(data);
+
+        let emojiData: EmojiDataType;
+        try {
+          emojiData = JSON.parse(data);
+        } catch {
+          // Malformed or non-JSON emoji signal — skip to avoid breaking the
+          // signal handler for the whole session.
+          return;
+        }
+        const { emoji, time } = emojiData;
 
         const emojiWrapper: EmojiWrapper = {
           name: senderName,
