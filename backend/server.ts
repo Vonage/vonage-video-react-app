@@ -32,7 +32,11 @@ app.use(rateLimitMiddleware);
 // parser. body-parser skips re-parsing once req._body is set, so this scoped limit caps the
 // base64-attachment -> Buffer -> form-data memory amplification (a DoS vector) before the
 // handler ever runs. Reject oversized bodies with a clean 413 instead of the generic 500.
+// Apply CORS first so 413 responses include the expected headers (the global cors() middleware
+// runs later and would otherwise never execute for error responses).
+app.use('/feedback', cors({ origin: true, credentials: true }));
 app.use('/feedback', express.json({ limit: '2mb' }));
+app.use('/feedback', express.urlencoded({ limit: '2mb', extended: true }));
 app.use('/feedback', (error: unknown, _req: Request, res: Response, next: NextFunction) => {
   const isPayloadTooLarge =
     !!error &&
