@@ -35,15 +35,17 @@ app.use(express.urlencoded({ limit: '20mb', extended: true }));
 // requests. Configure CORS_ALLOWED_ORIGINS (comma-separated) with the origins that embed
 // <vera-room> against a remote API; when unset, only same-origin / non-browser requests
 // (no Origin header) are allowed.
-const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const allowedOrigins = new Set(
+  (process.env.CORS_ALLOWED_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.has(origin)) {
         callback(null, true);
         return;
       }
