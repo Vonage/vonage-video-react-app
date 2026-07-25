@@ -76,7 +76,7 @@ export class ApplicationServerError extends ApplicationError {
    * Replaces sensitive header values (Jira Basic token, Vonage JWT, cookies) with a
    * placeholder so credentials are not leaked to logs on upstream 4xx/5xx.
    */
-  private static redactSensitiveHeaders = (headers?: Record<string, unknown>) => {
+  private static readonly redactSensitiveHeaders = (headers?: Record<string, unknown>) => {
     if (!headers) return headers;
 
     return Object.fromEntries(
