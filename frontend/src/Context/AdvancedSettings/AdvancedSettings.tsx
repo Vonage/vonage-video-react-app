@@ -19,6 +19,7 @@ import {
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
 import { Resolution } from '@common/types';
+import { STORAGE_KEYS } from '../../utils/storage';
 
 const INITIAL_STATE = {
   isOpen: false,
@@ -35,6 +36,10 @@ const INITIAL_STATE = {
   publisherAudioFallbackEnabled: false,
   subscriberAudioFallbackEnabled: false,
   publisherStatisticsEnabled: false,
+  advancedNoiseSuppressionEnabled: false,
+  echoCancellationEnabled: true,
+  noiseSuppressionEnabled: true,
+  autoGainControlEnabled: true,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -68,6 +73,10 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   publisherAudioFallbackEnabled: z.boolean(),
   subscriberAudioFallbackEnabled: z.boolean(),
   publisherStatisticsEnabled: z.boolean(),
+  advancedNoiseSuppressionEnabled: z.boolean(),
+  echoCancellationEnabled: z.boolean(),
+  noiseSuppressionEnabled: z.boolean(),
+  autoGainControlEnabled: z.boolean(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -80,11 +89,18 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
       }) as advancedSettings,
 
     validator: ({ restored, initial }): advancedSettings => {
-      const restoredState = advancedSettingsSchema.safeParse(restored);
+      const restoredState = advancedSettingsSchema.safeParse(restored as advancedSettings);
       const fallbackState = initial as advancedSettings;
 
       if (restoredState.success) {
-        return restoredState.data;
+        const migrated = { ...restoredState.data };
+        if (!('advancedNoiseSuppressionEnabled' in (restored as advancedSettings))) {
+          const legacyNoiseSuppression = window.localStorage.getItem(
+            STORAGE_KEYS.NOISE_SUPPRESSION
+          );
+          migrated.advancedNoiseSuppressionEnabled = legacyNoiseSuppression === 'true';
+        }
+        return migrated;
       }
 
       console.error('AdvancedSettings: invalid restored localStorage state', restoredState.error);
@@ -166,6 +182,26 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setPublisherStatisticsEnabled(value: boolean) {
       return () => {
         partialUpdate({ publisherStatisticsEnabled: value });
+      };
+    },
+    setAdvancedNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ advancedNoiseSuppressionEnabled: value });
+      };
+    },
+    setEchoCancellationEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ echoCancellationEnabled: value });
+      };
+    },
+    setNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ noiseSuppressionEnabled: value });
+      };
+    },
+    setAutoGainControlEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ autoGainControlEnabled: value });
       };
     },
   },

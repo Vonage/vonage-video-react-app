@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { SelectField, SwitchField } from '@ui/components';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
@@ -11,6 +12,7 @@ const {
   setEnableDtx,
   setPublisherAudioFallbackEnabled,
   setSubscriberAudioFallbackEnabled,
+  setAdvancedNoiseSuppressionEnabled,
 } = advancedSettings$.actions;
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
@@ -30,6 +32,9 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
   );
   const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
     ({ subscriberAudioFallbackEnabled }) => subscriberAudioFallbackEnabled
+  );
+  const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
+    ({ advancedNoiseSuppressionEnabled }) => advancedNoiseSuppressionEnabled
   );
 
   const audioBitrateOptions = [
@@ -118,6 +123,15 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         checked={subscriberAudioFallbackEnabled}
         onChange={setSubscriberAudioFallbackEnabled}
         description={t('advancedSettings.audio.subscriberAudioFallback.description')}
+      />
+
+      <SwitchField
+        id="advanced-settings-audio-advanced-noise-suppression"
+        label={t('advancedSettings.audio.advancedNoiseSuppression.label')}
+        checked={advancedNoiseSuppressionEnabled}
+        onChange={setAdvancedNoiseSuppressionEnabled}
+        disabled={!hasMediaProcessorSupport('audio')}
+        description={t('advancedSettings.audio.advancedNoiseSuppression.description')}
       />
     </div>
   );

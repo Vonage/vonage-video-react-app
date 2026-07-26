@@ -35,9 +35,12 @@ const usePublisherOptions = ({
   const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
     (state) => state.subscriberAudioFallbackEnabled
   );
+  const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
+    (state) => state.advancedNoiseSuppressionEnabled
+  );
 
   // Extract individual properties to avoid object reference changes
-  const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
+  const { name, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
     user.defaultSettings;
 
   const videoSource = useDeviceId('videoinput');
@@ -47,12 +50,12 @@ const usePublisherOptions = ({
     const initials = getInitials(name);
 
     const audioFilter: AudioFilter | undefined =
-      noiseSuppression && hasMediaProcessorSupport('both')
+      advancedNoiseSuppressionEnabled && hasMediaProcessorSupport('audio')
         ? { type: 'advancedNoiseSuppression' }
         : undefined;
 
     const videoFilter: VideoFilter | undefined =
-      backgroundFilter && hasMediaProcessorSupport('both') ? backgroundFilter : undefined;
+      backgroundFilter && hasMediaProcessorSupport('video') ? backgroundFilter : undefined;
 
     const options = {
       audioFallback: {
@@ -90,7 +93,6 @@ const usePublisherOptions = ({
       backgroundFilter,
       enableDtx,
       name,
-      noiseSuppression,
       publishAudio,
       publishCaptions,
       publishVideo,
@@ -102,6 +104,7 @@ const usePublisherOptions = ({
       codecPriority,
       publisherAudioFallbackEnabled,
       subscriberAudioFallbackEnabled,
+      advancedNoiseSuppressionEnabled,
     ]
   );
 };
