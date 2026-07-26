@@ -10,6 +10,7 @@ export type SwitchFieldProps = {
   size?: 'default' | 'small';
   labelClassName?: string;
   labelStyle?: CSSProperties;
+  disabled?: boolean;
 };
 
 const SwitchField = ({
@@ -21,6 +22,7 @@ const SwitchField = ({
   size,
   labelClassName,
   labelStyle,
+  disabled,
 }: SwitchFieldProps): ReactElement => {
   return (
     <Field>
@@ -28,7 +30,14 @@ const SwitchField = ({
         <Field.Label htmlFor={id} className={labelClassName} style={labelStyle}>
           {label}
         </Field.Label>
-        <Field.Input id={id} variant="switch" checked={checked} onChange={onChange} size={size} />
+        <Field.Input
+          id={id}
+          variant="switch"
+          checked={checked}
+          onChange={onChange}
+          size={size}
+          disabled={disabled}
+        />
       </Field.Row>
       {description ? <Field.Description>{description}</Field.Description> : null}
     </Field>
