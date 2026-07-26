@@ -88,7 +88,11 @@ class VonageVideoService implements VideoService {
         // However, it may also increase the number of inaccuracies in the captions.
         partialCaptions: 'true',
       };
-      const captionsId = await this.vonageVideo.enableCaptions(sessionId, token, resolvedCaptionOptions);
+      const captionsId = await this.vonageVideo.enableCaptions(
+        sessionId,
+        token,
+        resolvedCaptionOptions
+      );
       return captionsId;
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';

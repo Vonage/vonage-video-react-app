@@ -23,7 +23,15 @@ export type EnvArg = {
   [key: string]: unknown;
 };
 
-const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de', 'ja'] as const satisfies readonly Lang[];
+const langValues = [
+  'en',
+  'it',
+  'es',
+  'es-MX',
+  'en-US',
+  'de',
+  'ja',
+] as const satisfies readonly Lang[];
 const langEnum = z.enum([...langValues] as [Lang, ...Lang[]]);
 
 const boolField = (defaultValue: boolean) =>
@@ -111,10 +119,7 @@ const envSchema = z
     SHOW_PARTICIPANT_LIST: boolField(true),
     SHOW_VIDEO_STATS: boolField(false),
     BYPASS_WAITING_ROOM: boolField(false),
-    API_URL: z.preprocess(
-      (v) => (v === undefined || v === null || v === '' ? '' : v),
-      z.string()
-    ),
+    API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
     TUNNEL_DOMAIN: optionalStringField,
     AVOID_FETCHING_APP_CONFIG: boolField(true),
     MODE: z.preprocess(

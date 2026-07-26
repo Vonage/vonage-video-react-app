@@ -63,11 +63,11 @@ const CaptionsButton = ({
     captionsState;
   const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (isOverflowButton && handleClick) {
       handleClick();
     }
-  };
+  }, [isOverflowButton, handleClick]);
 
   const handleCaptionsErrorResponse = useCallback(
     (message: string | null) => {

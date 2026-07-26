@@ -9,14 +9,9 @@ export interface VideoService {
     applicationId?: string;
     apiKey?: string;
   };
-  startArchive(
-    roomName: string,
-    sessionId: string
-  ): Promise<Archive | SingleArchiveResponse>;
+  startArchive(roomName: string, sessionId: string): Promise<Archive | SingleArchiveResponse>;
   stopArchive(archiveId: string): Promise<string>;
-  searchArchives(
-    sessionId: string
-  ): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
+  searchArchives(sessionId: string): Promise<Archive[] | SingleArchiveResponse[] | undefined>;
   enableCaptions(
     sessionId: string,
     captionOptions?: CaptionOptions
