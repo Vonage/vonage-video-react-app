@@ -13,6 +13,9 @@ const {
   setPublisherAudioFallbackEnabled,
   setSubscriberAudioFallbackEnabled,
   setAdvancedNoiseSuppressionEnabled,
+  setEchoCancellationEnabled,
+  setNoiseSuppressionEnabled,
+  setAutoGainControlEnabled,
 } = advancedSettings$.actions;
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
@@ -35,6 +38,15 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
   );
   const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
     ({ advancedNoiseSuppressionEnabled }) => advancedNoiseSuppressionEnabled
+  );
+  const echoCancellationEnabled = advancedSettings$.use.select(
+    ({ echoCancellationEnabled }) => echoCancellationEnabled
+  );
+  const noiseSuppressionEnabled = advancedSettings$.use.select(
+    ({ noiseSuppressionEnabled }) => noiseSuppressionEnabled
+  );
+  const autoGainControlEnabled = advancedSettings$.use.select(
+    ({ autoGainControlEnabled }) => autoGainControlEnabled
   );
 
   const audioBitrateOptions = [
@@ -102,6 +114,39 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       </div>
 
       <SwitchField
+        id="advanced-settings-audio-advanced-noise-suppression"
+        label={t('advancedSettings.audio.advancedNoiseSuppression.label')}
+        checked={advancedNoiseSuppressionEnabled}
+        onChange={setAdvancedNoiseSuppressionEnabled}
+        disabled={!hasMediaProcessorSupport('audio')}
+        description={t('advancedSettings.audio.advancedNoiseSuppression.description')}
+      />
+
+      <SwitchField
+        id="advanced-settings-audio-echo-cancellation"
+        label={t('advancedSettings.audio.echoCancellation.label')}
+        checked={echoCancellationEnabled}
+        onChange={setEchoCancellationEnabled}
+        description={t('advancedSettings.audio.echoCancellation.description')}
+      />
+
+      <SwitchField
+        id="advanced-settings-audio-noise-suppression"
+        label={t('advancedSettings.audio.noiseSuppression.label')}
+        checked={noiseSuppressionEnabled}
+        onChange={setNoiseSuppressionEnabled}
+        description={t('advancedSettings.audio.noiseSuppression.description')}
+      />
+
+      <SwitchField
+        id="advanced-settings-audio-auto-gain-control"
+        label={t('advancedSettings.audio.autoGainControl.label')}
+        checked={autoGainControlEnabled}
+        onChange={setAutoGainControlEnabled}
+        description={t('advancedSettings.audio.autoGainControl.description')}
+      />
+
+      <SwitchField
         id="advanced-settings-audio-enable-dtx"
         label={t('advancedSettings.audio.enableDtx.label')}
         checked={enableDtx}
@@ -123,15 +168,6 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         checked={subscriberAudioFallbackEnabled}
         onChange={setSubscriberAudioFallbackEnabled}
         description={t('advancedSettings.audio.subscriberAudioFallback.description')}
-      />
-
-      <SwitchField
-        id="advanced-settings-audio-advanced-noise-suppression"
-        label={t('advancedSettings.audio.advancedNoiseSuppression.label')}
-        checked={advancedNoiseSuppressionEnabled}
-        onChange={setAdvancedNoiseSuppressionEnabled}
-        disabled={!hasMediaProcessorSupport('audio')}
-        description={t('advancedSettings.audio.advancedNoiseSuppression.description')}
       />
     </div>
   );
