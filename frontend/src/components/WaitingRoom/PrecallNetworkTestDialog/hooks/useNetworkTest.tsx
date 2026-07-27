@@ -167,9 +167,7 @@ const useNetworkTest = () => {
             );
 
             onCancel(() => {
-              attempt(() => {
-                networkTest!.stop();
-              });
+              stopNetworkTest(networkTest);
 
               setState((prev) => ({
                 ...prev,
@@ -209,7 +207,7 @@ const useNetworkTest = () => {
 
             // Stop the test on timeout/error too (mirrors the onCancel path), so the
             // camera/mic and bandwidth probing don't keep running in the background.
-            attempt(() => networkTest?.stop());
+            stopNetworkTest(networkTest);
 
             const networkError: NetworkTestError = {
               message:
@@ -244,6 +242,12 @@ const useNetworkTest = () => {
     clearResults,
   };
 };
+
+// Releases the NetworkTest's OT session, publisher (camera/mic) and bandwidth probing.
+// Kept at module scope so the call sites stay within Sonar's function-nesting limit.
+function stopNetworkTest(networkTest: NetworkTest | undefined) {
+  attempt(() => networkTest?.stop());
+}
 
 export { ErrorNames };
 export default useNetworkTest;
