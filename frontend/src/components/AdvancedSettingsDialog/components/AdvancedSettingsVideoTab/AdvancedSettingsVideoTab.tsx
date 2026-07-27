@@ -5,8 +5,16 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import { SelectField, SettingsSection, SwitchField, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
-import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../../types/types';
+import type {
+  AdvancedSettingsContentHint,
+  AdvancedSettingsFrameRate,
+  AdvancedSettingsSelectOption,
+} from '../../types/types';
+import {
+  ADVANCED_SETTINGS_BITRATE_MODE,
+  ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_CONTENT_HINT,
+} from '../../types/types';
 import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
 import { Resolution } from '@common/types';
 
@@ -36,13 +44,47 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const videoStatsOverlayEnabled = advancedSettings$.use.select(
     ({ videoStatsOverlayEnabled }) => videoStatsOverlayEnabled
   );
+  const cameraContentHint = advancedSettings$.use.select(
+    ({ cameraContentHint }) => cameraContentHint
+  );
+  const screenShareContentHint = advancedSettings$.use.select(
+    ({ screenShareContentHint }) => screenShareContentHint
+  );
 
   const {
     handleFrameRateChange,
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
+    handleCameraContentHintChange,
+    handleScreenShareContentHintChange,
   } = useAdvancedSettingsVideoHandlers({ bitrateMode, customVideoBitrate });
+
+  const contentHintOptionLabels: Record<AdvancedSettingsContentHint, string> = {
+    '': t('advancedSettings.video.contentHint.options.automatic'),
+    motion: t('advancedSettings.video.contentHint.options.motion'),
+    detail: t('advancedSettings.video.contentHint.options.detail'),
+    text: t('advancedSettings.video.contentHint.options.text'),
+  };
+
+  const toContentHintOptions = (
+    hints: AdvancedSettingsContentHint[]
+  ): AdvancedSettingsSelectOption<AdvancedSettingsContentHint>[] =>
+    hints.map((hint) => ({ value: hint, label: contentHintOptionLabels[hint] }));
+
+  // 'text' is legal on a camera but meaningless, so it is offered for screen sharing only.
+  const cameraContentHintOptions = toContentHintOptions([
+    ADVANCED_SETTINGS_CONTENT_HINT.automatic,
+    ADVANCED_SETTINGS_CONTENT_HINT.motion,
+    ADVANCED_SETTINGS_CONTENT_HINT.detail,
+  ]);
+
+  const screenShareContentHintOptions = toContentHintOptions([
+    ADVANCED_SETTINGS_CONTENT_HINT.automatic,
+    ADVANCED_SETTINGS_CONTENT_HINT.motion,
+    ADVANCED_SETTINGS_CONTENT_HINT.detail,
+    ADVANCED_SETTINGS_CONTENT_HINT.text,
+  ]);
 
   const bitrateOptions = [
     {
@@ -145,6 +187,15 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           onChange={handleResolutionChange}
         />
 
+        <SelectField
+          id="advanced-settings-video-camera-content-hint"
+          label={t('advancedSettings.video.contentHint.label')}
+          value={cameraContentHint}
+          options={cameraContentHintOptions}
+          onChange={handleCameraContentHintChange}
+          description={t('advancedSettings.video.contentHint.description')}
+        />
+
         <SwitchField
           id="advanced-settings-video-stats-overlay"
           label={t('advancedSettings.video.statsOverlay.label')}
@@ -159,7 +210,16 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         icon={<VividIcon name="screen-share-solid" customSize={-5} />}
         description={t('advancedSettings.video.sections.screenSharing.description')}
         data-testid="advanced-settings-video-screen-sharing-section"
-      />
+      >
+        <SelectField
+          id="advanced-settings-video-screen-share-content-hint"
+          label={t('advancedSettings.video.contentHint.label')}
+          value={screenShareContentHint}
+          options={screenShareContentHintOptions}
+          onChange={handleScreenShareContentHintChange}
+          description={t('advancedSettings.video.contentHint.description')}
+        />
+      </SettingsSection>
     </div>
   );
 };

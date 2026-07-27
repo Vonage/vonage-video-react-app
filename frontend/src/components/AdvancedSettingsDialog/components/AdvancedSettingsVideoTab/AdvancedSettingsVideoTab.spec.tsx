@@ -61,7 +61,7 @@ describe('AdvancedSettingsVideoTab', () => {
     expect(advancedSettings$.getState().videoStatsOverlayEnabled).toBe(!statsOverlayBefore);
   });
 
-  it('renders the Screen Sharing section with its description and no controls yet', () => {
+  it('renders the Screen Sharing section with its own Optimize for control', () => {
     render(<AdvancedSettingsVideoTab />);
 
     const screenSharingSection = screen.getByTestId(
@@ -74,7 +74,24 @@ describe('AdvancedSettingsVideoTab', () => {
     expect(
       within(screenSharingSection).getByText(/take effect the next time/i)
     ).toBeInTheDocument();
-    expect(within(screenSharingSection).queryAllByRole('combobox')).toHaveLength(0);
+
+    const screenShareContentHint = within(screenSharingSection).getByLabelText('Optimize for');
+    expect(screenShareContentHint).toHaveValue('detail');
+    expect(
+      [...(screenShareContentHint as HTMLSelectElement).options].map((option) => option.value)
+    ).toEqual(['', 'motion', 'detail', 'text']);
+  });
+
+  it('offers the camera its own Optimize for control, without the screen-only text option', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+    const cameraContentHint = within(cameraSection).getByLabelText('Optimize for');
+
+    expect(cameraContentHint).toHaveValue('');
+    expect(
+      [...(cameraContentHint as HTMLSelectElement).options].map((option) => option.value)
+    ).toEqual(['', 'motion', 'detail']);
   });
 
   it('renders codec priority drag and drop when codec mode is manual', () => {

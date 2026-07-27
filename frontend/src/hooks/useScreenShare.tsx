@@ -3,6 +3,7 @@ import { Publisher, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
+import advancedSettings$ from '@Context/AdvancedSettings';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -65,7 +66,7 @@ const useScreenShare = (): UseScreenShareType => {
           {
             videoSource: 'screen',
             insertDefaultUI: false,
-            videoContentHint: 'detail',
+            videoContentHint: advancedSettings$.getState().screenShareContentHint,
             name: t('participants.screen', { participantName: user.defaultSettings.name }),
           },
           (err) => {
