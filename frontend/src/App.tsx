@@ -7,6 +7,7 @@ import WaitingRoom from './pages/WaitingRoom';
 import { PreviewPublisherProvider } from './Context/PreviewPublisherProvider';
 import LandingPage from './pages/LandingPage';
 import { PublisherProvider } from './Context/PublisherProvider';
+import { ScreenShareProvider } from './Context/ScreenShareProvider';
 import { RedirectToWaitingRoom, ErrorBoundary, EnvGuard } from './components';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomProvider from './Context/RoomProvider';
@@ -51,7 +52,9 @@ const InnerApp = () => {
                       <SessionProvider>
                         <LoggerSynchronizer />
                         <PublisherProvider>
-                          <MeetingRoom />
+                          <ScreenShareProvider>
+                            <MeetingRoom />
+                          </ScreenShareProvider>
                         </PublisherProvider>
                       </SessionProvider>
                     </RoomProvider>

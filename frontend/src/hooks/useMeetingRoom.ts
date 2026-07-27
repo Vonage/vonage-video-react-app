@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
 import useSessionContext from './useSessionContext';
-import useScreenShare from './useScreenShare';
+import useScreenShareContext from './useScreenShareContext';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
@@ -67,7 +67,7 @@ const useMeetingRoom = () => {
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
-  } = useScreenShare();
+  } = useScreenShareContext();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
