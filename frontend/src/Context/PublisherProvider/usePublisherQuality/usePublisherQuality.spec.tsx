@@ -30,33 +30,28 @@ describe('usePublisherQuality', () => {
     vi.mocked(useUserContext).mockImplementation(() => mockUserContext);
   });
 
-  it('should set quality to good on videoEnabled event', async () => {
-    const mockPublisher = new EventEmitter();
-    const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    void act(() => mockPublisher.emit('videoEnabled'));
-    await waitFor(() => expect(result.current).toBe('good'));
-  });
+  it.each([
+    { publisherEvent: 'videoEnabled', expectedQuality: 'good' },
+    { publisherEvent: 'videoDisableWarningLifted', expectedQuality: 'good' },
+    { publisherEvent: 'videoDisableWarning', expectedQuality: 'poor' },
+  ])(
+    'should set quality to $expectedQuality on $publisherEvent event',
+    async ({ publisherEvent, expectedQuality }) => {
+      const mockPublisher = new EventEmitter();
+      const { result } = renderHook(() =>
+        usePublisherQuality(mockPublisher as unknown as Publisher)
+      );
+      void act(() => mockPublisher.emit(publisherEvent));
+      await waitFor(() => expect(result.current).toBe(expectedQuality));
+    }
+  );
 
-  it('should set quality to good on videoDisableWarningLifted event', async () => {
-    const mockPublisher = new EventEmitter();
-    const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    void act(() => mockPublisher.emit('videoDisableWarningLifted'));
-    await waitFor(() => expect(result.current).toBe('good'));
-  });
-
-  it('should set quality to good on videoDisabled event', async () => {
+  it('should set quality to bad and count an audio fallback on videoDisabled event', async () => {
     const mockPublisher = new EventEmitter();
     const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
     void act(() => mockPublisher.emit('videoDisabled'));
     await waitFor(() => expect(result.current).toBe('bad'));
     expect(useUserContext().user.issues.audioFallbacks).toBe(1);
-  });
-
-  it('should set quality to good on videoDisableWarning event', async () => {
-    const mockPublisher = new EventEmitter();
-    const { result } = renderHook(() => usePublisherQuality(mockPublisher as unknown as Publisher));
-    void act(() => mockPublisher.emit('videoDisableWarning'));
-    await waitFor(() => expect(result.current).toBe('poor'));
   });
 
   it('removes listeners from the previous publisher when the publisher is re-created', () => {
