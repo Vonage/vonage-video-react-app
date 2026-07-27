@@ -14,12 +14,20 @@ import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
 } from '../../types/types';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
-const { setCodecMode, setCodecPriority, setSelfViewMirroringEnabled, setVideoStatsOverlayEnabled } =
-  advancedSettings$.actions;
+const {
+  setCodecMode,
+  setCodecPriority,
+  setSelfViewMirroringEnabled,
+  setVideoStatsOverlayEnabled,
+  setScreenShareCodecMode,
+  setScreenShareCodecPriority,
+  setScalableScreenshareEnabled,
+} = advancedSettings$.actions;
 
 const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(Resolution).map(
   (value) => ({
@@ -46,6 +54,15 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   );
   const screenShareContentHint = advancedSettings$.use.select(
     ({ screenShareContentHint }) => screenShareContentHint
+  );
+  const screenShareCodecMode = advancedSettings$.use.select(
+    ({ screenShareCodecMode }) => screenShareCodecMode
+  );
+  const screenShareCodecPriority = advancedSettings$.use.select(
+    ({ screenShareCodecPriority }) => screenShareCodecPriority
+  );
+  const scalableScreenshareEnabled = advancedSettings$.use.select(
+    ({ scalableScreenshareEnabled }) => scalableScreenshareEnabled
   );
 
   const {
@@ -111,6 +128,14 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
       value: ADVANCED_SETTINGS_CODEC_MODE.manual,
       label: t('advancedSettings.video.codec.options.manual'),
     },
+  ];
+
+  const screenShareCodecOptions = [
+    {
+      value: ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit,
+      label: t('advancedSettings.video.screenShareCodec.options.inherit'),
+    },
+    ...codecOptions,
   ];
 
   const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] = (
@@ -215,6 +240,31 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           options={screenShareContentHintOptions}
           onChange={handleScreenShareContentHintChange}
           description={t('advancedSettings.video.contentHint.description')}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-codec"
+          label={t('advancedSettings.video.codec.label')}
+          value={screenShareCodecMode}
+          options={screenShareCodecOptions}
+          onChange={setScreenShareCodecMode}
+          description={t('advancedSettings.video.screenShareCodec.description')}
+        />
+
+        {screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.manual && (
+          <AdvancedSettingsCodecPriorityField
+            codecPriority={screenShareCodecPriority}
+            setCodecPriority={setScreenShareCodecPriority}
+            idPrefix="advanced-settings-screen-share-codec-priority"
+          />
+        )}
+
+        <SwitchField
+          id="advanced-settings-video-scalable-screenshare"
+          label={t('advancedSettings.video.scalableScreenshare.label')}
+          checked={scalableScreenshareEnabled}
+          onChange={setScalableScreenshareEnabled}
+          description={t('advancedSettings.video.scalableScreenshare.description')}
         />
       </SettingsSection>
     </div>

@@ -17,11 +17,13 @@ describe('AdvancedSettingsVideoTab', () => {
   it('renders all video sections', () => {
     render(<AdvancedSettingsVideoTab />);
 
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+
     expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/^bitrate$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^codec$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^frame rate$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^resolution$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^bitrate$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^frame rate$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^resolution$/i)).toBeInTheDocument();
   });
 
   it('groups every existing control under the Camera section', () => {
@@ -82,6 +84,33 @@ describe('AdvancedSettingsVideoTab', () => {
     ).toEqual(['', 'motion', 'detail', 'text']);
   });
 
+  it('defaults the screen share to following the camera codec, and reveals its own list on manual', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const screenSharingSection = screen.getByTestId(
+      'advanced-settings-video-screen-sharing-section'
+    );
+    const screenShareCodec = within(screenSharingSection).getByLabelText(/^codec$/i);
+
+    expect(screenShareCodec).toHaveValue('inherit');
+    expect([...(screenShareCodec as HTMLSelectElement).options].map((o) => o.value)).toEqual([
+      'inherit',
+      'automatic',
+      'manual',
+    ]);
+    expect(
+      screen.queryByTestId('advanced-settings-screen-share-codec-priority-list')
+    ).not.toBeInTheDocument();
+
+    render(<AdvancedSettingsVideoTab />, {
+      dialogState: { screenShareCodecMode: 'manual' },
+    });
+
+    expect(
+      screen.getAllByTestId('advanced-settings-screen-share-codec-priority-list').length
+    ).toBeGreaterThan(0);
+  });
+
   it('offers the camera its own Optimize for control, without the screen-only text option', () => {
     render(<AdvancedSettingsVideoTab />);
 
@@ -99,7 +128,9 @@ describe('AdvancedSettingsVideoTab', () => {
       dialogState: { codecMode: 'manual', codecPriority: ['vp9', 'vp8', 'h264'] },
     });
 
-    expect(screen.getByText(/codec priority/i)).toBeInTheDocument();
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+
+    expect(within(cameraSection).getByText(/codec priority/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp9')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp8')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-h264')).toBeInTheDocument();

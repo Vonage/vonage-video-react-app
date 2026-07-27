@@ -1,4 +1,4 @@
-import { initPublisher } from '@vonage/client-sdk-video';
+import { PublisherProperties, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
 import { initialState } from './constants';
@@ -7,6 +7,11 @@ import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import {
+  ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
+} from '@components/AdvancedSettingsDialog/types/types';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -63,12 +68,35 @@ const screenShare$ = createContext(initialState, {
 
         if (!getState().isSharingScreen) {
           // Initializing the publisher for screen sharing
+          const {
+            screenShareContentHint,
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            scalableScreenshareEnabled,
+            codecMode,
+            codecPriority,
+          } = advancedSettings$.getState();
+
+          const preferredVideoCodecs = ((): PublisherProperties['preferredVideoCodecs'] => {
+            if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit) {
+              return codecMode === ADVANCED_SETTINGS_CODEC_MODE.automatic ? 'automatic' : codecPriority;
+            }
+
+            if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.automatic) {
+              return 'automatic';
+            }
+
+            return screenShareCodecPriority;
+          })();
+
           const publisher = initPublisher(
             undefined,
             {
               videoSource: 'screen',
               insertDefaultUI: false,
-              videoContentHint: 'detail',
+              videoContentHint: screenShareContentHint,
+              preferredVideoCodecs,
+              scalableScreenshare: scalableScreenshareEnabled,
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
             },
             (err) => {

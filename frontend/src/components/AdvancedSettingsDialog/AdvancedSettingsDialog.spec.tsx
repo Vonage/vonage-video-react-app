@@ -1,4 +1,4 @@
-import { render as renderBase, screen, waitFor } from '@testing-library/react';
+import { render as renderBase, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { beforeEach, afterEach, describe, expect, it } from 'vitest';
@@ -32,8 +32,9 @@ describe('AdvancedSettingsDialog', () => {
 
     await user.click(screen.getByRole('button', { name: /video/i }));
 
-    expect(screen.getByLabelText(/bitrate/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+    expect(within(cameraSection).getByLabelText(/^bitrate$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
   });
 
   it('switches to the audio tab', async () => {
