@@ -1,4 +1,4 @@
-import { render as renderBase, screen } from '@testing-library/react';
+import { render as renderBase, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
@@ -22,6 +22,34 @@ describe('AdvancedSettingsVideoTab', () => {
     expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/frame rate/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/resolution/i)).toBeInTheDocument();
+  });
+
+  it('groups every existing control under the Camera section', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+
+    expect(within(cameraSection).getByRole('heading', { name: 'Camera' })).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/bitrate/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/codec/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/frame rate/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/resolution/i)).toBeInTheDocument();
+  });
+
+  it('renders the Screen Sharing section with its description and no controls yet', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const screenSharingSection = screen.getByTestId(
+      'advanced-settings-video-screen-sharing-section'
+    );
+
+    expect(
+      within(screenSharingSection).getByRole('heading', { name: 'Screen Sharing' })
+    ).toBeInTheDocument();
+    expect(
+      within(screenSharingSection).getByText(/take effect the next time/i)
+    ).toBeInTheDocument();
+    expect(within(screenSharingSection).queryAllByRole('combobox')).toHaveLength(0);
   });
 
   it('renders codec priority drag and drop when codec mode is manual', () => {
