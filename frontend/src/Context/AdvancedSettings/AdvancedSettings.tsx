@@ -39,6 +39,8 @@ const INITIAL_STATE = {
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
+  selfViewMirroringEnabled: true,
+  videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -76,6 +78,8 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   echoCancellationEnabled: z.boolean(),
   noiseSuppressionEnabled: z.boolean(),
   autoGainControlEnabled: z.boolean(),
+  selfViewMirroringEnabled: z.boolean(),
+  videoStatsOverlayEnabled: z.boolean(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -194,6 +198,16 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setAutoGainControlEnabled(value: boolean) {
       return () => {
         partialUpdate({ autoGainControlEnabled: value });
+      };
+    },
+    setSelfViewMirroringEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ selfViewMirroringEnabled: value });
+      };
+    },
+    setVideoStatsOverlayEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ videoStatsOverlayEnabled: value });
       };
     },
   },

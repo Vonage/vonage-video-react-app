@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { SelectField, SettingsSection, VividIcon } from '@ui';
+import { SelectField, SettingsSection, SwitchField, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
@@ -10,7 +10,8 @@ import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '..
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
-const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
+const { setCodecMode, setCodecPriority, setSelfViewMirroringEnabled, setVideoStatsOverlayEnabled } =
+  advancedSettings$.actions;
 
 const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(Resolution).map(
   (value) => ({
@@ -26,6 +27,12 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const codecPriority = advancedSettings$.use.select(({ codecPriority }) => codecPriority);
   const frameRate = advancedSettings$.use.select(({ frameRate }) => frameRate);
   const resolution = advancedSettings$.use.select(({ resolution }) => resolution);
+  const selfViewMirroringEnabled = advancedSettings$.use.select(
+    ({ selfViewMirroringEnabled }) => selfViewMirroringEnabled
+  );
+  const videoStatsOverlayEnabled = advancedSettings$.use.select(
+    ({ videoStatsOverlayEnabled }) => videoStatsOverlayEnabled
+  );
   const {
     handleFrameRateChange,
     handleResolutionChange,
@@ -124,6 +131,22 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           value={resolution}
           options={resolutionOptions}
           onChange={handleResolutionChange}
+        />
+
+        <SwitchField
+          id="advanced-settings-video-self-view-mirroring"
+          label={t('advancedSettings.video.selfViewMirroring.label')}
+          checked={selfViewMirroringEnabled}
+          onChange={setSelfViewMirroringEnabled}
+          description={t('advancedSettings.video.selfViewMirroring.description')}
+        />
+
+        <SwitchField
+          id="advanced-settings-video-stats-overlay"
+          label={t('advancedSettings.video.statsOverlay.label')}
+          checked={videoStatsOverlayEnabled}
+          onChange={setVideoStatsOverlayEnabled}
+          description={t('advancedSettings.video.statsOverlay.description')}
         />
       </SettingsSection>
 

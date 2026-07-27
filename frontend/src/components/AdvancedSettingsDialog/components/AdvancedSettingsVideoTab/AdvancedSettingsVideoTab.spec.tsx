@@ -18,10 +18,10 @@ describe('AdvancedSettingsVideoTab', () => {
     render(<AdvancedSettingsVideoTab />);
 
     expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/bitrate/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/frame rate/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/resolution/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^bitrate$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^codec$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^frame rate$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^resolution$/i)).toBeInTheDocument();
   });
 
   it('groups every existing control under the Camera section', () => {
@@ -30,10 +30,26 @@ describe('AdvancedSettingsVideoTab', () => {
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
     expect(within(cameraSection).getByRole('heading', { name: 'Camera' })).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/bitrate/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/codec/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/frame rate/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/resolution/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^bitrate$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^frame rate$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText(/^resolution$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getByLabelText('Mirror my video')).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByLabelText('Show resolution and frame rate')
+    ).toBeInTheDocument();
+  });
+
+  it('toggles self-view mirroring and the stats overlay through the store', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(true);
+    screen.getByLabelText('Mirror my video').click();
+    expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(false);
+
+    const statsOverlayBefore = advancedSettings$.getState().videoStatsOverlayEnabled;
+    screen.getByLabelText('Show resolution and frame rate').click();
+    expect(advancedSettings$.getState().videoStatsOverlayEnabled).toBe(!statsOverlayBefore);
   });
 
   it('renders the Screen Sharing section with its description and no controls yet', () => {
