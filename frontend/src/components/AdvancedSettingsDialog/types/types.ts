@@ -30,6 +30,19 @@ export type AdvancedSettingsFrameRate = NonNullable<
   import('@vonage/client-sdk-video').GetUserMediaProperties['frameRate']
 >;
 
+/**
+ * Maps to the track's videoContentHint. '' lets the browser decide, which is what the camera
+ * publisher has always done; the screen-share publisher has always been created with 'detail'.
+ */
+export type AdvancedSettingsContentHint = import('@vonage/client-sdk-video').VideoContentHint;
+
+export const ADVANCED_SETTINGS_CONTENT_HINT = {
+  automatic: '',
+  motion: 'motion',
+  detail: 'detail',
+  text: 'text',
+} as const satisfies Record<string, AdvancedSettingsContentHint>;
+
 export type AdvancedSettingsAudioBitrateMode = 'automatic' | 'custom';
 
 export const ADVANCED_SETTINGS_AUDIO_BITRATE_MODE = {

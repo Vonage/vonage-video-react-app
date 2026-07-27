@@ -14,6 +14,7 @@ const createMockPublisher = () =>
     setPreferredResolution: vi.fn().mockResolvedValue(undefined),
     setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
     setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
+    setVideoContentHint: vi.fn(),
   }) as unknown as Publisher;
 
 describe('applyAdvancedSettingsToPublisher', () => {
@@ -61,6 +62,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
+      contentHint: '' as const,
     });
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -82,6 +84,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'custom',
       customVideoBitrate: 750_000,
+      contentHint: '' as const,
     });
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -101,6 +104,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
+      contentHint: '' as const,
     });
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(

@@ -6,6 +6,7 @@ import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
@@ -15,6 +16,7 @@ import {
   ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_CONTENT_HINT,
 } from '@components/AdvancedSettingsDialog/types/types';
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
@@ -41,6 +43,8 @@ const INITIAL_STATE = {
   autoGainControlEnabled: true,
   selfViewMirroringEnabled: true,
   videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
+  cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic as AdvancedSettingsContentHint,
+  screenShareContentHint: ADVANCED_SETTINGS_CONTENT_HINT.detail as AdvancedSettingsContentHint,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -80,6 +84,8 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   autoGainControlEnabled: z.boolean(),
   selfViewMirroringEnabled: z.boolean(),
   videoStatsOverlayEnabled: z.boolean(),
+  cameraContentHint: z.enum(['', 'motion', 'detail', 'text']),
+  screenShareContentHint: z.enum(['', 'motion', 'detail', 'text']),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -208,6 +214,16 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setVideoStatsOverlayEnabled(value: boolean) {
       return () => {
         partialUpdate({ videoStatsOverlayEnabled: value });
+      };
+    },
+    setCameraContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ cameraContentHint: value });
+      };
+    },
+    setScreenShareContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ screenShareContentHint: value });
       };
     },
   },

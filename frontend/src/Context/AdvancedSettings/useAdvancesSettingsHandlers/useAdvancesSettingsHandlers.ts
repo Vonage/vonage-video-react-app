@@ -7,11 +7,13 @@ import {
   applyFrameRate,
   applyResolution,
   applyBitrate,
+  applyContentHint,
 } from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import tryCatch from '@common/execution/tryCatch';
 import { t } from 'i18next';
 import type {
   AdvancedSettingsBitrateMode,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
 } from '@components/AdvancedSettingsDialog/types/types';
@@ -24,6 +26,8 @@ const {
   setFrameRate,
   setResolution,
   setAdvancedNoiseSuppressionEnabled,
+  setCameraContentHint,
+  setScreenShareContentHint,
 } = advancedSettings$.actions;
 
 type UseAdvancesSettingsHandlers = {
@@ -32,6 +36,8 @@ type UseAdvancesSettingsHandlers = {
   handleBitrateModeChange: (value: AdvancedSettingsBitrateMode) => Promise<void>;
   handleCustomVideoBitrateChange: (value: AdvancedSettingsCustomVideoBitrate) => Promise<void>;
   handleAdvancedNoiseSuppressionChange: (checked: boolean) => Promise<void>;
+  handleCameraContentHintChange: (value: AdvancedSettingsContentHint) => void;
+  handleScreenShareContentHintChange: (value: AdvancedSettingsContentHint) => void;
 };
 
 /**
@@ -108,12 +114,37 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
     setAdvancedNoiseSuppressionEnabled(!checked);
   };
 
+  const handleCameraContentHintChange = (value: AdvancedSettingsContentHint) => {
+    try {
+      applyContentHint(publisher, value);
+      setCameraContentHint(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
+  /**
+   * The screen-share publisher only exists while a share is running, and only inside the meeting
+   * room. When it is absent the setting is stored and picked up by the next initPublisher call.
+   * @param {AdvancedSettingsContentHint} value - the requested content hint
+   */
+  const handleScreenShareContentHintChange = (value: AdvancedSettingsContentHint) => {
+    try {
+      applyContentHint(screensharingPublisher ?? null, value);
+      setScreenShareContentHint(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
   return {
     handleFrameRateChange,
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
     handleAdvancedNoiseSuppressionChange,
+    handleCameraContentHintChange,
+    handleScreenShareContentHintChange,
   };
 };
 
