@@ -1,0 +1,110 @@
+scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_84c227fb3e9dc0 129-131,135-136,139
+  s_5be0f7ada839c8::t_c671f4a6d7720d 44,77
+  s_5be0f7ada839c8::t_20f30533950790 144-147
+  s_5be0f7ada839c8::t_0b575c7c806374 29-32,34-43,45-76,78-81
+  s_5be0f7ada839c8::t_74576ab3a1c218 1-4,8-9,13,15-28,110,112-118,120-122,124-126,128,138,140-143
+  s_5be0f7ada839c8::t_671abfded455b7 5-7,10-12,14,33,82-109,111,119,123,127,132-134,137
+package.json
+  s_5be0f7ada839c8::t_2630e2e8bd95c2 49
+  s_5be0f7ada839c8::t_c91d6ae5dbf27e 33-34,48
+libs/common/scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_f42e658e7bb7ae 5
+  s_5be0f7ada839c8::t_2b02830a8eefb6 24-25,27-30,32-35,37-38,40-41,43-44,46-47,49-63,65-72,74
+libs/common/scripts/publishPackage.dev.ts
+  s_5be0f7ada839c8::t_2f2bcfb36f1099 281-282
+  s_5be0f7ada839c8::t_1454c035ac95d7 65
+  s_5be0f7ada839c8::t_e70d6de671024c 115
+  s_5be0f7ada839c8::t_c680d5de6f42a0 123-125
+  s_5be0f7ada839c8::t_4b1887443e0ad9 184,237
+  s_5be0f7ada839c8::t_d3361d7c3abf53 38-40
+  s_5be0f7ada839c8::t_e89dd079b75472 256
+  s_5be0f7ada839c8::t_328b491f440e6a 109
+  s_5be0f7ada839c8::t_8097bf572273b2 141-142
+  s_5be0f7ada839c8::t_6316717babc2de 206
+  s_5be0f7ada839c8::t_f3f0a5d31fcd9a 104-106
+  s_5be0f7ada839c8::t_66aa2a4b267c94 10
+  s_5be0f7ada839c8::t_f6c553325c125a 121-122
+  s_5be0f7ada839c8::t_4d9bc2c2a705a4 152-153
+  s_5be0f7ada839c8::t_79ea338698278f 216
+  s_5be0f7ada839c8::t_9f4ef0bc7d3ced 246
+  s_5be0f7ada839c8::t_5d24bbc6fdf27e 143-144
+  s_5be0f7ada839c8::t_742e70b5773466 35-37
+  s_5be0f7ada839c8::t_540b309132a805 126
+  s_5be0f7ada839c8::t_d06a06b7a5d911 41,103,209,235
+  s_5be0f7ada839c8::t_14d481564370eb 107-108,294
+  s_5be0f7ada839c8::t_7c43e781bfce5e 151
+  s_5be0f7ada839c8::t_517dfed17aaf91 210,214
+  s_5be0f7ada839c8::t_ee7234163fb7d9 168,170
+  s_5be0f7ada839c8::t_2f18736ac2a2e6 217,280,291
+  s_5be0f7ada839c8::t_0357c4b515ec20 178,228-232,234
+  s_5be0f7ada839c8::t_b5753398ee8a47 174
+  s_5be0f7ada839c8::t_1817ed8ef44ad3 242-244
+  s_5be0f7ada839c8::t_59c5ff5f33c119 247
+  s_5be0f7ada839c8::t_dcd0647b38a482 223-224,287,295,306
+  s_5be0f7ada839c8::t_a2fd9c70c1fd41 253-254
+  s_5be0f7ada839c8::t_386fc04561a75a 1-3,7-8,11-14
+  s_5be0f7ada839c8::t_47382b6898cda1 111-113,279
+  s_5be0f7ada839c8::t_522f53eed129a0 257
+  s_5be0f7ada839c8::t_a3d765b814ef96 271
+  s_5be0f7ada839c8::t_3fc6eb6a9b8486 277-278
+  s_5be0f7ada839c8::t_1761c064291fd5 4
+  s_5be0f7ada839c8::t_3792415f14a2ad 67-68
+  s_5be0f7ada839c8::t_a26732cbaf44ef 213
+  s_5be0f7ada839c8::t_28f545784a3cbc 110,264,276
+  s_5be0f7ada839c8::t_6ce41280ebf05c 127-128,171
+  s_5be0f7ada839c8::t_a70311e027429f 221-222
+  s_5be0f7ada839c8::t_40f7c409e04c35 274-275
+  s_5be0f7ada839c8::t_b16caf383d4008 5-6,9,90-100,102
+  s_5be0f7ada839c8::t_807c5b7675e063 118-120
+  s_5be0f7ada839c8::t_c36636a9ba91d6 175-177
+  s_5be0f7ada839c8::t_11015d3dad7eeb 32-34
+  s_5be0f7ada839c8::t_33f7ec75a8ff3e 66,116-117
+  s_5be0f7ada839c8::t_39cebd679f5656 185,238-241
+  s_5be0f7ada839c8::t_7c591e08baefa0 207
+  s_5be0f7ada839c8::t_648e95fee040ec 138,179-181,259
+  s_5be0f7ada839c8::t_d26490608e0017 249-251
+  s_5be0f7ada839c8::t_3c292a65c9b56a 71-76,78-82,86,114,129-137
+  s_5be0f7ada839c8::t_3b32aac032c587 154-156,158-161,164
+  s_5be0f7ada839c8::t_9470e90871818a 31
+  s_5be0f7ada839c8::t_e0ead62eb6f453 63-64
+  s_5be0f7ada839c8::t_f0eb2d43870d1e 89
+  s_5be0f7ada839c8::t_5362aaad9451a1 139-140
+  s_5be0f7ada839c8::t_0f1c76bb220b69 148-150
+  s_5be0f7ada839c8::t_ada77026af4d7f 165
+  s_5be0f7ada839c8::t_1a1f88bd3f6d77 182-183
+  s_5be0f7ada839c8::t_c01e5d4034453c 186-188
+  s_5be0f7ada839c8::t_622e4c17ea5e9e 208
+  s_5be0f7ada839c8::t_5a6f19d9cc8487 211
+  s_5be0f7ada839c8::t_54430a44c1aa6d 220
+  s_5be0f7ada839c8::t_25c4f8577613ab 245
+  s_5be0f7ada839c8::t_14c5057b01624d 248
+  s_5be0f7ada839c8::t_dd006a5cea4e16 258
+  s_5be0f7ada839c8::t_a187175d5309f5 260-261
+  s_5be0f7ada839c8::t_215bfe9367e12f 263
+  s_5be0f7ada839c8::t_d925a74cc1a7f7 286
+  s_5be0f7ada839c8::t_b9d5b6fcc49b3d 288-290
+  s_5be0f7ada839c8::t_280235fbe48bb2 292-293
+  s_5be0f7ada839c8::t_965d2484447154 296-297
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "8106b0879210f2799376626953337fa777494162",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
