@@ -59,6 +59,7 @@
   "advancedSettings.video.screenShareCodec.description": "Choose a codec order for shared content, or follow the camera. Applies the next time you start sharing.",
   "advancedSettings.video.scalableScreenshare.label": "Scalable screen sharing",
   "advancedSettings.video.scalableScreenshare.description": "Sends multiple quality layers so each viewer gets the best their connection allows. Applies the next time you start sharing.",
+  "advancedSettings.video.screenShare.useDefault": "Browser default",
   "advancedSettings.video.selfViewMirroring.label": "Mirror my video",
   "advancedSettings.video.selfViewMirroring.description": "Flips your own video preview horizontally, like a mirror. Only you see this - other participants are not affected.",
   "advancedSettings.video.statsOverlay.label": "Show resolution and frame rate",

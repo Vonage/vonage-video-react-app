@@ -51,6 +51,14 @@ const INITIAL_STATE = {
     ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit as AdvancedSettingsScreenShareCodecMode,
   screenShareCodecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
   scalableScreenshareEnabled: false,
+  /**
+   * null means "leave it to the browser", which is what the screen-share publisher has always
+   * done - it receives none of these constraints today.
+   */
+  screenShareFrameRate: null as AdvancedSettingsFrameRate | null,
+  screenShareResolution: null as Resolution | null,
+  screenShareBitrateMode: null as AdvancedSettingsBitrateMode | null,
+  screenShareCustomVideoBitrate: 500_000 as AdvancedSettingsCustomVideoBitrate,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -99,6 +107,18 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
     z.enum(['vp8', 'vp9', 'h264']),
   ]),
   scalableScreenshareEnabled: z.boolean(),
+  screenShareFrameRate: z
+    .custom<AdvancedSettingsFrameRate>(
+      (value): value is AdvancedSettingsFrameRate =>
+        typeof value === 'number' &&
+        Number.isInteger(value) &&
+        env.SUPPORTED_FRAME_RATES.includes(value),
+      { message: 'Unsupported frame rate' }
+    )
+    .nullable(),
+  screenShareResolution: ResolutionSchema.nullable(),
+  screenShareBitrateMode: z.enum(['default', 'bw_saver', 'extra_bw_saver', 'custom']).nullable(),
+  screenShareCustomVideoBitrate: z.number().int(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -252,6 +272,26 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setScalableScreenshareEnabled(value: boolean) {
       return () => {
         partialUpdate({ scalableScreenshareEnabled: value });
+      };
+    },
+    setScreenShareFrameRate(value: AdvancedSettingsFrameRate | null) {
+      return () => {
+        partialUpdate({ screenShareFrameRate: value });
+      };
+    },
+    setScreenShareResolution(value: Resolution | null) {
+      return () => {
+        partialUpdate({ screenShareResolution: value });
+      };
+    },
+    setScreenShareBitrateMode(value: AdvancedSettingsBitrateMode | null) {
+      return () => {
+        partialUpdate({ screenShareBitrateMode: value });
+      };
+    },
+    setScreenShareCustomVideoBitrate(value: AdvancedSettingsCustomVideoBitrate) {
+      return () => {
+        partialUpdate({ screenShareCustomVideoBitrate: value });
       };
     },
   },

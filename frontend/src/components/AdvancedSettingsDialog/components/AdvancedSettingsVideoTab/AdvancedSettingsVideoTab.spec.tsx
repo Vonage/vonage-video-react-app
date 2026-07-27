@@ -111,6 +111,34 @@ describe('AdvancedSettingsVideoTab', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('defaults every screen-share constraint to the browser default, so shares stay unconstrained', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const screenSharingSection = screen.getByTestId(
+      'advanced-settings-video-screen-sharing-section'
+    );
+
+    expect(within(screenSharingSection).getByLabelText(/^frame rate$/i)).toHaveValue('default-sdk');
+    expect(within(screenSharingSection).getByLabelText(/^resolution$/i)).toHaveValue('default-sdk');
+    expect(within(screenSharingSection).getByLabelText(/^bitrate$/i)).toHaveValue('default-sdk');
+    expect(
+      screen.queryByTestId('advanced-settings-screen-share-custom-video-bitrate-slider')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows a separate custom bitrate slider for the screen share', () => {
+    render(<AdvancedSettingsVideoTab />, {
+      dialogState: { screenShareBitrateMode: 'custom', screenShareCustomVideoBitrate: 750_000 },
+    });
+
+    const slider = screen.getByTestId('advanced-settings-screen-share-custom-video-bitrate-slider');
+
+    expect(slider).toHaveValue('750000');
+    expect(
+      screen.queryByTestId('advanced-settings-custom-video-bitrate-slider')
+    ).not.toBeInTheDocument();
+  });
+
   it('offers the camera its own Optimize for control, without the screen-only text option', () => {
     render(<AdvancedSettingsVideoTab />);
 
@@ -139,10 +167,12 @@ describe('AdvancedSettingsVideoTab', () => {
   it('renders custom video bitrate controls when bitrate mode is custom', () => {
     render(<AdvancedSettingsVideoTab />, { dialogState: { bitrateMode: 'custom' } });
 
-    expect(screen.getByText(/custom bitrate/i)).toBeInTheDocument();
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+
+    expect(within(cameraSection).getByText(/custom bitrate/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toBeInTheDocument();
-    expect(screen.getAllByText(/5 kbps/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/^10 Mbps$/i)).toBeInTheDocument();
+    expect(within(cameraSection).getAllByText(/5 kbps/i).length).toBeGreaterThan(0);
+    expect(within(cameraSection).getByText(/^10 Mbps$/i)).toBeInTheDocument();
   });
 });
 
