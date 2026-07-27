@@ -1,0 +1,83 @@
+libs/common/scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_2b02830a8eefb6 24-25,27-30,32-35,37-38,40-41,43-44,46-47,49-63,65-72,74
+  s_5be0f7ada839c8::t_f42e658e7bb7ae 5
+libs/common/scripts/publishPackage.dev.ts
+  s_5be0f7ada839c8::t_e70d6de671024c 107-112,294
+  s_5be0f7ada839c8::t_8a3e9626c79e4a 114
+  s_5be0f7ada839c8::t_66aa2a4b267c94 10
+  s_5be0f7ada839c8::t_807c5b7675e063 128-130
+  s_5be0f7ada839c8::t_517dfed17aaf91 224
+  s_5be0f7ada839c8::t_f3f0a5d31fcd9a 96-98
+  s_5be0f7ada839c8::t_0975f23e6c834e 206
+  s_5be0f7ada839c8::t_f898f4b6f321c2 207
+  s_5be0f7ada839c8::t_386fc04561a75a 1-3,7-8,11-14
+  s_5be0f7ada839c8::t_3b32aac032c587 168,170-171,174-179
+  s_5be0f7ada839c8::t_3c292a65c9b56a 61,63-68,71-76,78,106,113,143-144,148-153,214,277,288
+  s_5be0f7ada839c8::t_4b1887443e0ad9 250-251
+  s_5be0f7ada839c8::t_522f53eed129a0 271
+  s_5be0f7ada839c8::t_59c5ff5f33c119 261
+  s_5be0f7ada839c8::t_79e90e7ac0a2b2 274-276
+  s_5be0f7ada839c8::t_5ce28a1bde2c63 154
+  s_5be0f7ada839c8::t_983423b3de2c6d 164,216
+  s_5be0f7ada839c8::t_33f7ec75a8ff3e 120-127
+  s_5be0f7ada839c8::t_1761c064291fd5 4
+  s_5be0f7ada839c8::t_b16caf383d4008 5-6,9,79-82,86,89-94
+  s_5be0f7ada839c8::t_d06a06b7a5d911 41,95,131,217,223,249
+  s_5be0f7ada839c8::t_f6c553325c125a 132-134
+  s_5be0f7ada839c8::t_6ce41280ebf05c 141-142,185,239
+  s_5be0f7ada839c8::t_e25139a6669afa 213
+  s_5be0f7ada839c8::t_2d5d9f567b5b11 278-280
+  s_5be0f7ada839c8::t_2f18736ac2a2e6 138,180-181,259
+  s_5be0f7ada839c8::t_28f545784a3cbc 102,286-287,295,306
+  s_5be0f7ada839c8::t_d3361d7c3abf53 38-40
+  s_5be0f7ada839c8::t_7c591e08baefa0 209,221-222
+  s_5be0f7ada839c8::t_7fd3c5803730a6 289
+  s_5be0f7ada839c8::t_e0aa1af88b1b2f 115
+  s_5be0f7ada839c8::t_1454c035ac95d7 57
+  s_5be0f7ada839c8::t_dd9c4c249cc100 116-119
+  s_5be0f7ada839c8::t_742e70b5773466 35-37
+  s_5be0f7ada839c8::t_14d481564370eb 99-100
+  s_5be0f7ada839c8::t_47382b6898cda1 103-105
+  s_5be0f7ada839c8::t_c680d5de6f42a0 135-137
+  s_5be0f7ada839c8::t_540b309132a805 139-140
+  s_5be0f7ada839c8::t_8097bf572273b2 155-156
+  s_5be0f7ada839c8::t_7c43e781bfce5e 165
+  s_5be0f7ada839c8::t_ee7234163fb7d9 182-184
+  s_5be0f7ada839c8::t_b5753398ee8a47 186-188
+  s_5be0f7ada839c8::t_3c65d70f7b1cb6 208
+  s_5be0f7ada839c8::t_feb8350058c59f 210-211
+  s_5be0f7ada839c8::t_6316717babc2de 220
+  s_5be0f7ada839c8::t_dcd0647b38a482 237-238
+  s_5be0f7ada839c8::t_0357c4b515ec20 240-242,246-248
+  s_5be0f7ada839c8::t_1817ed8ef44ad3 256-258
+  s_5be0f7ada839c8::t_9f4ef0bc7d3ced 260
+  s_5be0f7ada839c8::t_a6035f5008146d 281-282
+  s_5be0f7ada839c8::t_6790013eda1db7 290-293
+  s_5be0f7ada839c8::t_25acf508793319 296-297
+scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_84c227fb3e9dc0 129-131,135-136,139
+  s_5be0f7ada839c8::t_c671f4a6d7720d 44,77
+  s_5be0f7ada839c8::t_20f30533950790 144-147
+  s_5be0f7ada839c8::t_74576ab3a1c218 1-4,8-9,13,15-28,110,112-118,120-122,124-126,128,138,140-143
+  s_5be0f7ada839c8::t_671abfded455b7 5-7,10-12,14,33,82-109,111,119,123,127,132-134,137
+  s_5be0f7ada839c8::t_0b575c7c806374 29-32,34-43,45-76,78-81
+package.json
+  s_5be0f7ada839c8::t_2630e2e8bd95c2 49
+  s_5be0f7ada839c8::t_c91d6ae5dbf27e 33-34,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "c3825a730397fb6406419635b58b1f1c2207733c",
+  "prompts": {},
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
