@@ -229,7 +229,7 @@ describe('SessionProvider', () => {
       } as unknown as SubscriberWrapper);
     });
 
-    await waitFor(() => expect(getByTestId('subscriberWrappers').children.length).toBe(3));
+    await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(3));
 
     // The array currently held in state (which the reorder updater receives as `prev`).
     const arrayBeforeReorder = capturedArrays[capturedArrays.length - 1];
@@ -381,35 +381,31 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 
-    it('when reconnecting session, sets reconnecting to true', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
+    it.each([
+      {
+        sessionState: 'reconnecting',
+        emitSessionEvent: () => vonageVideoClient.emit('sessionReconnecting'),
+        expectedReconnecting: 'true',
+      },
+      {
+        sessionState: 'reconnected',
+        emitSessionEvent: () => vonageVideoClient.emit('sessionReconnected'),
+        expectedReconnecting: 'false',
+      },
+    ])(
+      'when the session is $sessionState, sets reconnecting to $expectedReconnecting',
+      async ({ emitSessionEvent, expectedReconnecting }) => {
+        const { getByTestId } = await renderAndWaitForConnection();
 
-      act(() => {
-        vonageVideoClient.emit('sessionReconnecting');
-      });
+        act(() => {
+          emitSessionEvent();
+        });
 
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
-    });
-
-    it('when reconnected, sets reconnecting to false', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
-
-      act(() => {
-        vonageVideoClient.emit('sessionReconnected');
-      });
-
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
-    });
-
-    it('when re-connected, sets reconnecting to false', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
-
-      act(() => {
-        vonageVideoClient.emit('sessionReconnected');
-      });
-
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
-    });
+        await waitFor(() =>
+          expect(getByTestId('reconnecting')).toHaveTextContent(expectedReconnecting)
+        );
+      }
+    );
 
     it('when disconnected, sets connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
