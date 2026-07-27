@@ -18,6 +18,18 @@ export const ADVANCED_SETTINGS_CODEC_MODE = {
   manual: 'manual' as AdvancedSettingsCodecMode,
 };
 
+/**
+ * The screen share follows the camera's codec settings until explicitly changed, so it carries a
+ * third mode the camera does not have.
+ */
+export type AdvancedSettingsScreenShareCodecMode = 'inherit' | AdvancedSettingsCodecMode;
+
+export const ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE = {
+  inherit: 'inherit',
+  automatic: 'automatic',
+  manual: 'manual',
+} as const satisfies Record<string, AdvancedSettingsScreenShareCodecMode>;
+
 export type AdvancedSettingsVideoCodec = 'vp8' | 'vp9' | 'h264';
 
 export type AdvancedSettingsManualCodecOrder = [

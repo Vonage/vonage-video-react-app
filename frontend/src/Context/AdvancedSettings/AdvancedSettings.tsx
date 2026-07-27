@@ -10,6 +10,7 @@ import type {
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
+  AdvancedSettingsScreenShareCodecMode,
   AdvancedSettingsTab,
 } from '@components/AdvancedSettingsDialog/types/types';
 import {
@@ -17,6 +18,7 @@ import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
@@ -47,6 +49,10 @@ const INITIAL_STATE = {
   videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
   cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic as AdvancedSettingsContentHint,
   screenShareContentHint: ADVANCED_SETTINGS_CONTENT_HINT.detail as AdvancedSettingsContentHint,
+  screenShareCodecMode:
+    ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit as AdvancedSettingsScreenShareCodecMode,
+  screenShareCodecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
+  scalableScreenshareEnabled: false,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -88,6 +94,13 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   videoStatsOverlayEnabled: z.boolean(),
   cameraContentHint: z.enum(['', 'motion', 'detail', 'text']),
   screenShareContentHint: z.enum(['', 'motion', 'detail', 'text']),
+  screenShareCodecMode: z.enum(['inherit', 'automatic', 'manual']),
+  screenShareCodecPriority: z.tuple([
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+  ]),
+  scalableScreenshareEnabled: z.boolean(),
 });
 
 const ADVANCED_SETTINGS_STORAGE_KEY = 'advancedSettings';
@@ -235,6 +248,21 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setScreenShareContentHint(value: AdvancedSettingsContentHint) {
       return () => {
         partialUpdate({ screenShareContentHint: value });
+      };
+    },
+    setScreenShareCodecMode(value: AdvancedSettingsScreenShareCodecMode) {
+      return () => {
+        partialUpdate({ screenShareCodecMode: value });
+      };
+    },
+    setScreenShareCodecPriority(value: AdvancedSettingsManualCodecOrder) {
+      return () => {
+        partialUpdate({ screenShareCodecPriority: value });
+      };
+    },
+    setScalableScreenshareEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ scalableScreenshareEnabled: value });
       };
     },
   },

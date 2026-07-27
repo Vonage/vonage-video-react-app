@@ -1,9 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
-import { Publisher, initPublisher } from '@vonage/client-sdk-video';
+import { Publisher, PublisherProperties, initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from './useSessionContext';
 import useUserContext from './useUserContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import {
+  ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
+} from '@components/AdvancedSettingsDialog/types/types';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -60,13 +64,38 @@ const useScreenShare = (): UseScreenShareType => {
   const toggleShareScreen = useCallback(async () => {
     if (vonageVideoClient) {
       if (!isSharingScreen) {
+        const {
+          screenShareContentHint,
+          screenShareCodecMode,
+          screenShareCodecPriority,
+          scalableScreenshareEnabled,
+          codecMode,
+          codecPriority,
+        } = advancedSettings$.getState();
+
+        const preferredVideoCodecs = ((): PublisherProperties['preferredVideoCodecs'] => {
+          if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit) {
+            return codecMode === ADVANCED_SETTINGS_CODEC_MODE.automatic
+              ? 'automatic'
+              : codecPriority;
+          }
+
+          if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.automatic) {
+            return 'automatic';
+          }
+
+          return screenShareCodecPriority;
+        })();
+
         // Initializing the publisher for screen sharing
         screenSharingPubRef.current = initPublisher(
           undefined,
           {
             videoSource: 'screen',
             insertDefaultUI: false,
-            videoContentHint: advancedSettings$.getState().screenShareContentHint,
+            videoContentHint: screenShareContentHint,
+            preferredVideoCodecs,
+            scalableScreenshare: scalableScreenshareEnabled,
             name: t('participants.screen', { participantName: user.defaultSettings.name }),
           },
           (err) => {
