@@ -8,6 +8,12 @@ import {
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
+import {
+  applyBitrate,
+  applyFrameRate,
+  applyResolution,
+} from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import tryCatch from '@common/execution/tryCatch';
 
 /**
  * @typedef {object} UseScreenShareType
@@ -146,6 +152,10 @@ const useScreenShare = (): UseScreenShareType => {
         // Publishing the screen sharing stream
         await publish(screenSharingPubRef.current);
 
+        // Frame rate, resolution and bitrate have no initPublisher equivalent for a screen source,
+        // so apply the stored values once the track exists. Nulls mean "leave it to the browser".
+        await applyScreenShareConstraints(screenSharingPubRef.current);
+
         vonageVideoClient?.on('screenshareStreamCreated', handleStreamCreated);
       } else if (screenSharingPubRef.current) {
         unpublishScreenshare();
@@ -175,5 +185,30 @@ const useScreenShare = (): UseScreenShareType => {
     screensharingPublisher: screenSharingPubRef.current,
   };
 };
+
+/**
+ * Applies the stored screen-share constraints to a freshly published screen publisher.
+ * Failures are logged rather than surfaced: the share itself is already live, and a rejected
+ * constraint should not tear it down.
+ * @param {Publisher | null} publisher - the screen-share publisher
+ */
+async function applyScreenShareConstraints(publisher: Publisher | null): Promise<void> {
+  const {
+    screenShareFrameRate,
+    screenShareResolution,
+    screenShareBitrateMode,
+    screenShareCustomVideoBitrate,
+  } = advancedSettings$.getState();
+
+  const { error } = await tryCatch(async () => {
+    if (screenShareFrameRate !== null) await applyFrameRate(publisher, screenShareFrameRate);
+    if (screenShareResolution !== null) await applyResolution(publisher, screenShareResolution);
+    if (screenShareBitrateMode !== null) {
+      await applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate);
+    }
+  });
+
+  if (error) console.error('useScreenShare: applying screen-share constraints failed', error);
+}
 
 export default useScreenShare;

@@ -27,11 +27,17 @@ const {
   setResolution,
   setCameraContentHint,
   setScreenShareContentHint,
+  setScreenShareFrameRate,
+  setScreenShareResolution,
+  setScreenShareBitrateMode,
+  setScreenShareCustomVideoBitrate,
 } = advancedSettings$.actions;
 
 type UseAdvancedSettingsVideoHandlersArgs = {
   bitrateMode: AdvancedSettingsBitrateMode;
   customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
+  screenShareBitrateMode: AdvancedSettingsBitrateMode | null;
+  screenShareCustomVideoBitrate: AdvancedSettingsCustomVideoBitrate;
 };
 
 type UseAdvancedSettingsVideoHandlers = {
@@ -41,11 +47,19 @@ type UseAdvancedSettingsVideoHandlers = {
   handleCustomVideoBitrateChange: (value: AdvancedSettingsCustomVideoBitrate) => Promise<void>;
   handleCameraContentHintChange: (value: AdvancedSettingsContentHint) => void;
   handleScreenShareContentHintChange: (value: AdvancedSettingsContentHint) => void;
+  handleScreenShareFrameRateChange: (value: AdvancedSettingsFrameRate | null) => Promise<void>;
+  handleScreenShareResolutionChange: (value: Resolution | null) => Promise<void>;
+  handleScreenShareBitrateModeChange: (value: AdvancedSettingsBitrateMode | null) => Promise<void>;
+  handleScreenShareCustomVideoBitrateChange: (
+    value: AdvancedSettingsCustomVideoBitrate
+  ) => Promise<void>;
 };
 
 const useAdvancedSettingsVideoHandlers = ({
   bitrateMode,
   customVideoBitrate,
+  screenShareBitrateMode,
+  screenShareCustomVideoBitrate,
 }: UseAdvancedSettingsVideoHandlersArgs): UseAdvancedSettingsVideoHandlers => {
   const { publisher: meetingRoomPublisher } = usePublisherContext();
   const { publisher: previewPublisher } = usePreviewPublisherContext();
@@ -101,6 +115,50 @@ const useAdvancedSettingsVideoHandlers = ({
     }
   };
 
+  const screenSharePublisher = screensharingPublisher ?? null;
+
+  const handleScreenShareFrameRateChange = async (value: AdvancedSettingsFrameRate | null) => {
+    try {
+      if (value !== null) await applyFrameRate(screenSharePublisher, value);
+      setScreenShareFrameRate(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
+  const handleScreenShareResolutionChange = async (value: Resolution | null) => {
+    try {
+      if (value !== null) await applyResolution(screenSharePublisher, value);
+      setScreenShareResolution(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
+  const handleScreenShareBitrateModeChange = async (value: AdvancedSettingsBitrateMode | null) => {
+    try {
+      if (value !== null) {
+        await applyBitrate(screenSharePublisher, value, screenShareCustomVideoBitrate);
+      }
+      setScreenShareBitrateMode(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
+  const handleScreenShareCustomVideoBitrateChange = async (
+    value: AdvancedSettingsCustomVideoBitrate
+  ) => {
+    try {
+      if (screenShareBitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
+        await applyBitrate(screenSharePublisher, screenShareBitrateMode, value);
+      }
+      setScreenShareCustomVideoBitrate(value);
+    } catch (error) {
+      handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
+    }
+  };
+
   const handleCustomVideoBitrateChange = async (value: AdvancedSettingsCustomVideoBitrate) => {
     try {
       if (bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
@@ -119,6 +177,10 @@ const useAdvancedSettingsVideoHandlers = ({
     handleCustomVideoBitrateChange,
     handleCameraContentHintChange,
     handleScreenShareContentHintChange,
+    handleScreenShareFrameRateChange,
+    handleScreenShareResolutionChange,
+    handleScreenShareBitrateModeChange,
+    handleScreenShareCustomVideoBitrateChange,
   };
 };
 

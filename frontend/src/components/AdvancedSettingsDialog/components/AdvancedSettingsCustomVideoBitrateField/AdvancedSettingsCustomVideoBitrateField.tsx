@@ -8,11 +8,24 @@ const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
 
 type Props = {
   onChange: (value: AdvancedSettingsCustomVideoBitrate) => void;
+  /**
+   * Defaults to the camera's stored value so existing call sites are unaffected; the screen-share
+   * section passes its own.
+   */
+  value?: AdvancedSettingsCustomVideoBitrate;
+  idPrefix?: string;
 };
 
-const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElement => {
+const AdvancedSettingsCustomVideoBitrateField = ({
+  onChange,
+  value,
+  idPrefix = 'advanced-settings-custom-video-bitrate',
+}: Props): ReactElement => {
   const { t } = useTranslation();
-  const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
+  const cameraCustomVideoBitrate = advancedSettings$.use.select(
+    (state) => state.customVideoBitrate
+  );
+  const customVideoBitrate = value ?? cameraCustomVideoBitrate;
   const currentCustomVideoBitrate = Number(customVideoBitrate);
 
   return (
@@ -36,7 +49,7 @@ const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElem
             onChange(clampCustomVideoBitrate(Number(event.target.value)));
           }}
           className="w-full accent-vera-primary"
-          data-testid="advanced-settings-custom-video-bitrate-slider"
+          data-testid={`${idPrefix}-slider`}
           aria-label={t('advancedSettings.video.customBitrate.label')}
         />
 

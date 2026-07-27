@@ -6,6 +6,7 @@ import { SelectField, SettingsSection, SwitchField, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type {
+  AdvancedSettingsBitrateMode,
   AdvancedSettingsContentHint,
   AdvancedSettingsFrameRate,
   AdvancedSettingsSelectOption,
@@ -35,6 +36,9 @@ const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.val
     label: value,
   })
 );
+
+/** Sentinel for "send no constraint", which is distinct from any real SDK value. */
+const DEFAULT_OPTION_VALUE = 'default-sdk';
 
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
@@ -67,6 +71,18 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const scalableScreenshareEnabled = advancedSettings$.use.select(
     ({ scalableScreenshareEnabled }) => scalableScreenshareEnabled
   );
+  const screenShareFrameRate = advancedSettings$.use.select(
+    ({ screenShareFrameRate }) => screenShareFrameRate
+  );
+  const screenShareResolution = advancedSettings$.use.select(
+    ({ screenShareResolution }) => screenShareResolution
+  );
+  const screenShareBitrateMode = advancedSettings$.use.select(
+    ({ screenShareBitrateMode }) => screenShareBitrateMode
+  );
+  const screenShareCustomVideoBitrate = advancedSettings$.use.select(
+    ({ screenShareCustomVideoBitrate }) => screenShareCustomVideoBitrate
+  );
 
   const {
     handleFrameRateChange,
@@ -75,7 +91,16 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     handleCustomVideoBitrateChange,
     handleCameraContentHintChange,
     handleScreenShareContentHintChange,
-  } = useAdvancedSettingsVideoHandlers({ bitrateMode, customVideoBitrate });
+    handleScreenShareFrameRateChange,
+    handleScreenShareResolutionChange,
+    handleScreenShareBitrateModeChange,
+    handleScreenShareCustomVideoBitrateChange,
+  } = useAdvancedSettingsVideoHandlers({
+    bitrateMode,
+    customVideoBitrate,
+    screenShareBitrateMode,
+    screenShareCustomVideoBitrate,
+  });
 
   const contentHintOptionLabels: Record<AdvancedSettingsContentHint, string> = {
     '': t('advancedSettings.video.contentHint.options.automatic'),
@@ -133,6 +158,34 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     },
   ];
 
+  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] = (
+    env.SUPPORTED_FRAME_RATES as AdvancedSettingsFrameRate[]
+  ).map((supportedFrameRate) => ({
+    value: supportedFrameRate,
+    label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
+  }));
+
+  // The screen share receives no constraints today, so every control needs an explicit opt-out.
+  const defaultOption = {
+    value: DEFAULT_OPTION_VALUE,
+    label: t('advancedSettings.video.screenShare.useDefault'),
+  };
+
+  const screenShareFrameRateOptions = [
+    defaultOption,
+    ...frameRateOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
+  const screenShareResolutionOptions = [
+    defaultOption,
+    ...resolutionOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
+  const screenShareBitrateOptions = [
+    defaultOption,
+    ...bitrateOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
   const screenShareCodecOptions = [
     {
       value: ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit,
@@ -140,13 +193,6 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     },
     ...codecOptions,
   ];
-
-  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] = (
-    env.SUPPORTED_FRAME_RATES as AdvancedSettingsFrameRate[]
-  ).map((supportedFrameRate) => ({
-    value: supportedFrameRate,
-    label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
-  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -259,6 +305,50 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
             codecPriority={screenShareCodecPriority}
             setCodecPriority={setScreenShareCodecPriority}
             idPrefix="advanced-settings-screen-share-codec-priority"
+          />
+        )}
+
+        <SelectField
+          id="advanced-settings-video-screen-share-frame-rate"
+          label={t('advancedSettings.video.frameRate.label')}
+          value={String(screenShareFrameRate ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareFrameRateOptions}
+          onChange={(value) => {
+            void handleScreenShareFrameRateChange(
+              value === DEFAULT_OPTION_VALUE ? null : (Number(value) as AdvancedSettingsFrameRate)
+            );
+          }}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-resolution"
+          label={t('advancedSettings.video.resolution.label')}
+          value={String(screenShareResolution ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareResolutionOptions}
+          onChange={(value) => {
+            void handleScreenShareResolutionChange(
+              value === DEFAULT_OPTION_VALUE ? null : (value as Resolution)
+            );
+          }}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-bitrate"
+          label={t('advancedSettings.video.bitrate.label')}
+          value={String(screenShareBitrateMode ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareBitrateOptions}
+          onChange={(value) => {
+            void handleScreenShareBitrateModeChange(
+              value === DEFAULT_OPTION_VALUE ? null : (value as AdvancedSettingsBitrateMode)
+            );
+          }}
+        />
+
+        {screenShareBitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom && (
+          <AdvancedSettingsCustomVideoBitrateField
+            onChange={handleScreenShareCustomVideoBitrateChange}
+            value={screenShareCustomVideoBitrate}
+            idPrefix="advanced-settings-screen-share-custom-video-bitrate"
           />
         )}
 
