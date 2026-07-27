@@ -17,7 +17,6 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import classNames from 'classnames';
-import { env } from '../../../env';
 import VideoStatsOverlay from '../VideoStatsOverlay';
 
 export type VideoContainerProps = {
@@ -36,6 +35,12 @@ export type VideoContainerProps = {
 const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
+  const selfViewMirroringEnabled = advancedSettings$.use.select(
+    (state) => state.selfViewMirroringEnabled
+  );
+  const videoStatsOverlayEnabled = advancedSettings$.use.select(
+    (state) => state.videoStatsOverlayEnabled
+  );
   const [{ isOpen: isBackgroundEffectsOpen }, { open, close }] = backgroundEffectsDialog$.use();
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
@@ -66,7 +71,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         className={classNames(
           'child:mx-auto',
           'child:animate-[fade-in_.6s_linear]',
-          'child:-scale-x-100',
+          selfViewMirroringEnabled ? 'child:-scale-x-100' : null,
           'child:object-contain',
           'child:aspect-video',
           'child:w-dvw',
@@ -85,7 +90,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
       <VignetteEffect />
 
-      {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && (
+      {videoStatsOverlayEnabled && isVideoEnabled && !isVideoLoading && (
         <div className="absolute left-4 top-3 z-10">
           <VideoStatsOverlay />
         </div>
