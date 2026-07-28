@@ -38,7 +38,7 @@ vi.mock('../useIsSmallViewport', () => ({
   default: () => false,
 }));
 
-vi.mock('../useScreenShare', () => ({
+vi.mock('../useScreenShareContext', () => ({
   default: () => ({
     isSharingScreen: false,
     screensharingPublisher: null,
