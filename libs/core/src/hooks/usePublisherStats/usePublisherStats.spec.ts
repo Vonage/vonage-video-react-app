@@ -80,6 +80,85 @@ describe('usePublisherStats', () => {
       // 0 fps is a real value; the formatted output should not be the fallback '-'
       expect(stats.frameRate.value).toBe(0);
     });
+
+    it('reports the measured frame rate, not the one the publisher was asked for', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            frameRate: 12,
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          // The configured value disagrees with reality; reality wins.
+          fixedFrameRate: 30,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(12);
+    });
+
+    it('falls back to the highest encoding layer when the stats object has no frameRate', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            // No top-level frameRate, as the client observability guide describes.
+            frameRate: undefined,
+            layers: [{ encodedFrameRate: 5 }, { encodedFrameRate: 24 }],
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          fixedFrameRate: null,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(24);
+    });
+
+    it('still reports a frame rate for a publisher with none configured, such as a screen share', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            frameRate: 5,
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          // Screen shares default to the browser default, so nothing is configured.
+          fixedFrameRate: null,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(5);
+    });
   });
 
   describe('bitrateBps', () => {
