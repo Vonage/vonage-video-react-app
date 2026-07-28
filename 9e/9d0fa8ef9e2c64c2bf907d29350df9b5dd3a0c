@@ -1,0 +1,34 @@
+backend/tests/blockCallsForArgs.test.ts
+  c25a3f8674d5b51d 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "9e9d0fa8ef9e2c64c2bf907d29350df9b5dd3a0c",
+  "prompts": {
+    "c25a3f8674d5b51d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "6f4fdd2d-a61b-45df-8f55-b02559a29078",
+        "model": "gpt-4o"
+      },
+      "human_author": "czoli1976 <64466170+czoli1976@users.noreply.github.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:42.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:42.000Z"
+        }
+      ],
+      "total_additions": 3,
+      "total_deletions": 2,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
