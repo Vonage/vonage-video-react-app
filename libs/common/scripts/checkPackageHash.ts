@@ -26,7 +26,7 @@ if (computedHash !== manifest.hash) {
   console.error(`   Expected (manifest.json): ${manifest.hash || '(empty — never computed)'}`);
   console.error(`   Actual   (source):        ${computedHash}\n`);
   console.error('   To fix, run:\n');
-  console.error('     yarn hash:update\n');
+  console.error('     yarn common:hash:update\n');
   console.error('   Then commit the updated manifest.json.\n');
   process.exit(1);
 }

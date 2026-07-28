@@ -47,16 +47,16 @@ function run(args: { command: string; cwd: string }): void {
   child_process.execSync(command, { cwd, stdio: 'inherit' });
 }
 
-function execWithStatus(args: { command: string; cwd: string }): {
+function execWithStatus(args: { command: string; cwd: string; env?: NodeJS.ProcessEnv }): {
   exitCode: number;
   stdout: string;
   stderr: string;
 } {
-  const { command, cwd } = args;
+  const { command, cwd, env } = args;
 
   const commandResult = child_process.spawnSync(command, {
     cwd,
-    env: getProcessEnvironmentWithoutNodeOptions(),
+    env: env || getProcessEnvironmentWithoutNodeOptions(),
     encoding: 'utf-8',
     shell: true,
   });
@@ -232,7 +232,7 @@ async function main(): Promise<void> {
   }
 
   console.log('\nBuilding package...');
-  run({ command: 'npx nx run common:build', cwd: MONOREPO_ROOT });
+  run({ command: 'yarn nx run common:build', cwd: MONOREPO_ROOT });
 
   if (!fs.existsSync(DIST_PACKAGE_JSON_PATH)) {
     console.error('dist/package.json not found. The build may have failed to copy it.');
@@ -271,16 +271,16 @@ async function main(): Promise<void> {
   // Step 5: Publish once using the computed remote-safe version
   console.log(`\nPublishing ${devName}@${devVersion} with tag "${DEV_TAG}"...`);
 
-  const publishCommand = [
-    'npm publish',
-    `--tag ${DEV_TAG}`,
-    `--registry ${REGISTRY}`,
-    `--//npm.pkg.github.com/:_authToken=${token}`,
-  ].join(' ');
+  // Pass auth via environment variable (never in argv or on disk)
+  const publishEnv = getProcessEnvironmentWithoutNodeOptions();
+  publishEnv[`npm_config_//npm.pkg.github.com/:_authToken`] = token;
+
+  const publishCommand = ['npm publish', `--tag ${DEV_TAG}`, `--registry ${REGISTRY}`].join(' ');
 
   const publishResult = execWithStatus({
     command: publishCommand,
     cwd: DIST_PATH,
+    env: publishEnv,
   });
 
   if (publishResult.stdout.trim()) {
@@ -306,4 +306,5 @@ async function main(): Promise<void> {
   console.log(`Persisted version ${devVersion} to package.json and manifest.json.`);
 }
 
+// @ts-ignore
 await main();

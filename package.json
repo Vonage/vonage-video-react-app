@@ -29,7 +29,7 @@
     "test:ui": "npx tsx scripts/testLibs.ts ui",
     "test:common": "npx tsx scripts/testLibs.ts common",
     "ts-check": "npx tsx scripts/tsCheck.ts",
-    "common:hash:update": "npx nx run common:hash:update",
+    "common:hash:update": "yarn nx run common:hash:update",
     "vcr:dev": "npx tsx scripts/vcrDev.ts",
     "publish:package": "npx tsx scripts/publishPackage.ts"
   },
