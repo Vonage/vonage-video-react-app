@@ -1,0 +1,34 @@
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  d24ca3b2b3930d33 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "1c440d75d1c3ae891504378a1de60184aaa255ec",
+  "prompts": {
+    "d24ca3b2b3930d33": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "8b04715f-e7c3-4003-9c92-28a4c09c347a",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:44.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:44.000Z"
+        }
+      ],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
