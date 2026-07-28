@@ -1,0 +1,36 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  000bc6feb844a5c0 1-16
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  000bc6feb844a5c0 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "4ab45106cf832920c7aae78223e93a8ec97f1c0d",
+  "prompts": {
+    "000bc6feb844a5c0": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "3de9fa08-20a7-4daf-99c2-1e0105a4f404",
+        "model": "gpt-4o"
+      },
+      "human_author": "czoli1976 <64466170+czoli1976@users.noreply.github.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:44.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:44.000Z"
+        }
+      ],
+      "total_additions": 29,
+      "total_deletions": 6,
+      "accepted_lines": 29,
+      "overriden_lines": 0
+    }
+  }
+}
