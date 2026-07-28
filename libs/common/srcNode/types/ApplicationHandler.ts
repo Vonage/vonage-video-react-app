@@ -3,9 +3,10 @@ import type {
   Response as ExpressResponse,
   RequestHandler as ExpressRequestHandler,
 } from 'express';
-import ApplicationRequest from './ApplicationRequest';
-import ParamsDictionary from './ParamsDictionary';
-import Query from './Query';
+
+import type { ApplicationRequest } from './ApplicationRequest';
+import type { ParamsDictionary } from './ParamsDictionary';
+import type { Query } from './Query';
 import type { Any } from '@common/types';
 
 export type ApplicationHandler<
