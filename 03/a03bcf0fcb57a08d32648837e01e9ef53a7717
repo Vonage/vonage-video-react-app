@@ -1,0 +1,48 @@
+frontend/src/hooks/useWaitingRoom.ts
+  010601f69318e1dd 1-9
+libs/core/src/stores/mediaDevices/actions/index.ts
+  010601f69318e1dd 1
+libs/core/src/stores/mediaDevices/actions/requestDeviceLabels/index.ts
+  010601f69318e1dd 1
+libs/core/src/stores/mediaDevices/actions/requestDeviceLabels/requestDeviceLabels.spec.ts
+  010601f69318e1dd 1-82
+libs/core/src/stores/mediaDevices/actions/requestDeviceLabels/requestDeviceLabels.ts
+  010601f69318e1dd 1-32
+libs/core/src/stores/mediaDevices/helpers/setupDeviceStore/setupDeviceStore.test.ts
+  010601f69318e1dd 1-5
+libs/core/src/stores/mediaDevices/helpers/setupDeviceStore/setupDeviceStore.ts
+  010601f69318e1dd 1-9
+libs/core/src/stores/mediaDevices/mediaDevicesStore.ts
+  010601f69318e1dd 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "03a03bcf0fcb57a08d32648837e01e9ef53a7717",
+  "prompts": {
+    "010601f69318e1dd": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "6a749058-55a9-4947-9b01-656f162bd203",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:33.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:33.000Z"
+        }
+      ],
+      "total_additions": 147,
+      "total_deletions": 48,
+      "accepted_lines": 147,
+      "overriden_lines": 0
+    }
+  }
+}
