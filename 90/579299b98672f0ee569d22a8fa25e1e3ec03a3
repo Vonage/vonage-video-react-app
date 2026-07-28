@@ -1,0 +1,40 @@
+package.json
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 32
+.github/workflows/video-common-integrity.yml
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 23,26
+.husky/pre-push
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 11
+libs/common/scripts/checkPackageHash.ts
+  h_6029769cf9ac60 29
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 50,55,59,274-276,278,283,309
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 235
+  s_9ec6db2ea2e728::t_2d0176132f9feb 277
+.github/workflows/video-common-publish.yml
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 38
+nx.json
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 77
+libs/common/scripts/publishPackage.ts
+  s_9ec6db2ea2e728::t_edb2e43aff7b9a 38,41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "90579299b98672f0ee569d22a8fa25e1e3ec03a3",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_9ec6db2ea2e728": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "12aefb03-e6ed-4e4e-af82-d9bac6e97487",
+        "model": "claude-haiku-4.5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
