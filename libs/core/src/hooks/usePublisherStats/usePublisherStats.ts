@@ -165,8 +165,18 @@ type PreviousPublisherVideoSample = {
 };
 
 /**
- * Encoded dimensions of the largest active layer, which is what a well-connected subscriber
- * receives. Layers are compared by area so the ordering of the array does not matter.
+ * Encoded dimensions of the largest layer that reports usable ones.
+ *
+ * Under simulcast that is the full-resolution encoding - what a well-connected subscriber
+ * receives. Under VP9 SVC the sender still carries the encodings that were negotiated before the
+ * codec was agreed, so the array can also hold siblings that are active but not transmitting;
+ * those arrive with no `width`/`height` and are dropped by the filters below.
+ *
+ * Those guards are load-bearing even though `VideoLayerStats` types both as required numbers: the
+ * SDK assigns them straight from the underlying stats with no default, and defends them the same
+ * way in its own sort. That sort also means `layers` already runs highest to lowest, so the reduce
+ * is redundant - but reading `layers[0]` instead would yield undefined dimensions before any frame
+ * has been encoded, rather than falling through to the captured size.
  * @param {VideoLayerStats[] | undefined} layers - the publisher's active encoding layers
  * @returns {{ width: number; height: number } | null} the largest encoded size, or null when no
  * layer reports usable dimensions
