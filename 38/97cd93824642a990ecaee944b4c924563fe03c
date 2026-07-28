@@ -1,0 +1,54 @@
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  10019b7e95738cbc 1
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  10019b7e95738cbc 1
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  10019b7e95738cbc 1-2
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  10019b7e95738cbc 1
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  10019b7e95738cbc 1-8
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  10019b7e95738cbc 1-2
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.spec.tsx
+  10019b7e95738cbc 1-6
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  10019b7e95738cbc 1
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  10019b7e95738cbc 1
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  10019b7e95738cbc 1
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  10019b7e95738cbc 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "3897cd93824642a990ecaee944b4c924563fe03c",
+  "prompts": {
+    "10019b7e95738cbc": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9c33b04c-84c1-46f1-ad10-89324d22f05f",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:33.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:33.000Z"
+        }
+      ],
+      "total_additions": 25,
+      "total_deletions": 10,
+      "accepted_lines": 25,
+      "overriden_lines": 0
+    }
+  }
+}
