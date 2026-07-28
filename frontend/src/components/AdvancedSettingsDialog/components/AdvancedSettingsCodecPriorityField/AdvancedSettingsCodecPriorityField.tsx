@@ -95,6 +95,8 @@ const AdvancedSettingsCodecPriorityField = ({
           const isDraggedCodec = draggedCodec === codec;
           const isDropTarget = dropTargetCodec === codec && draggedCodec !== codec;
           const codecLabel = t(`advancedSettings.video.codec.priority.options.${codec}`);
+          const isFirstCodec = index === 0;
+          const isLastCodec = index === codecPriority.length - 1;
 
           return (
             <li
@@ -125,17 +127,31 @@ const AdvancedSettingsCodecPriorityField = ({
                 {codecLabel}
               </span>
 
+              {/*
+                These are marked `aria-disabled` rather than `disabled` on purpose. Moving a codec
+                to either end of the list disables the very button that was just activated, and the
+                browser drops focus from a disabled element to <body> - so the last press of a
+                keyboard-only reorder would strand the user at the top of the dialog, which is the
+                opposite of what this control is for. `aria-disabled` keeps the button focusable and
+                in the tab order while still announcing itself as unavailable; `moveCodec` already
+                no-ops at the bounds, so pressing it does nothing.
+              */}
               <div className="ml-auto flex flex-row items-center gap-1">
                 <button
                   type="button"
                   onClick={() => {
                     moveCodec(codec, -1);
                   }}
-                  disabled={index === 0}
+                  aria-disabled={isFirstCodec}
                   aria-label={t('advancedSettings.video.codec.priority.moveUp', {
                     codec: codecLabel,
                   })}
-                  className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity hover:bg-vera-background disabled:cursor-not-allowed disabled:opacity-40"
+                  className={classNames(
+                    'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                    isFirstCodec
+                      ? 'cursor-not-allowed opacity-40'
+                      : 'cursor-pointer hover:bg-vera-background'
+                  )}
                   data-testid={`${idPrefix}-move-up-${codec}`}
                 >
                   <VividIcon name="chevron-up-line" customSize={-5} />
@@ -146,11 +162,16 @@ const AdvancedSettingsCodecPriorityField = ({
                   onClick={() => {
                     moveCodec(codec, 1);
                   }}
-                  disabled={index === codecPriority.length - 1}
+                  aria-disabled={isLastCodec}
                   aria-label={t('advancedSettings.video.codec.priority.moveDown', {
                     codec: codecLabel,
                   })}
-                  className="cursor-pointer flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity hover:bg-vera-background disabled:cursor-not-allowed disabled:opacity-40"
+                  className={classNames(
+                    'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                    isLastCodec
+                      ? 'cursor-not-allowed opacity-40'
+                      : 'cursor-pointer hover:bg-vera-background'
+                  )}
                   data-testid={`${idPrefix}-move-down-${codec}`}
                 >
                   <VividIcon name="chevron-down-line" customSize={-5} />

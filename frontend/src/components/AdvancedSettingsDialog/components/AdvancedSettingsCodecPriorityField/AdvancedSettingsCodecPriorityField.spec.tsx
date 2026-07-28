@@ -40,18 +40,40 @@ describe('AdvancedSettingsCodecPriorityField', () => {
     expect(setCodecPriority).toHaveBeenCalledWith(['vp9', 'h264', 'vp8']);
   });
 
-  it('disables the moves that would fall off either end of the list', () => {
+  it('marks the moves that would fall off either end unavailable, without dropping them from the tab order', () => {
+    const setCodecPriority = vi.fn();
+
     render(
       <AdvancedSettingsCodecPriorityField
         codecPriority={['vp9', 'vp8', 'h264']}
-        setCodecPriority={vi.fn()}
+        setCodecPriority={setCodecPriority}
       />
     );
 
-    expect(screen.getByRole('button', { name: 'Move VP9 up' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Move H.264 down' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Move VP8 up' })).toBeEnabled();
-    expect(screen.getByRole('button', { name: 'Move VP8 down' })).toBeEnabled();
+    const moveFirstCodecUp = screen.getByRole('button', { name: 'Move VP9 up' });
+    const moveLastCodecDown = screen.getByRole('button', { name: 'Move H.264 down' });
+
+    expect(moveFirstCodecUp).toHaveAttribute('aria-disabled', 'true');
+    expect(moveLastCodecDown).toHaveAttribute('aria-disabled', 'true');
+
+    /**
+     * Deliberately NOT the `disabled` attribute. Moving a codec to either end disables the button
+     * that was just activated, and browsers drop focus from a disabled element to <body> - which
+     * would strand a keyboard user on the final press of a reorder. These must stay focusable.
+     */
+    expect(moveFirstCodecUp).toBeEnabled();
+    expect(moveLastCodecDown).toBeEnabled();
+
+    moveFirstCodecUp.click();
+    moveLastCodecDown.click();
+
+    expect(setCodecPriority).not.toHaveBeenCalled();
+
+    // React renders aria-* booleans as strings, so an available button reads "false", not absent.
+    expect(screen.getByRole('button', { name: 'Move VP8 up' })).toHaveAttribute(
+      'aria-disabled',
+      'false'
+    );
   });
 
   it('scopes its test ids to the given prefix so two instances can coexist', () => {
