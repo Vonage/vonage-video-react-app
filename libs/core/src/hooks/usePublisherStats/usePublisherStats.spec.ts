@@ -107,6 +107,34 @@ describe('usePublisherStats', () => {
       expect(stats.frameRate.value).toBe(12);
     });
 
+    it('prefers the encoding layers over the deprecated top-level frameRate', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            // The SDK deprecates this property in favour of the per-layer one, so when the two
+            // disagree the layers are the ones to believe.
+            frameRate: 30,
+            layers: [{ encodedFrameRate: 12 }],
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          fixedFrameRate: 30,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(12);
+    });
+
     it('falls back to the highest encoding layer when the stats object has no frameRate', async () => {
       expect.assertions(1);
 

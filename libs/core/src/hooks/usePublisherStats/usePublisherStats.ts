@@ -99,10 +99,14 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
        * observability guide lists only bytes/packets/layers and puts it in
        * `layers[].encodedFrameRate` ("actual encoding frame rate for this layer"). Both are read,
        * highest layer first, so simulcast and single-layer publishers behave the same.
+       *
+       * The layers win because the SDK itself deprecates the other one: "video.frameRate (Number)
+       * - The current average video frame rate. This property is deprecated and will be removed in
+       * the future. Please instead use the encodedFrameRate property in the different layers."
        */
       const frameRate =
-        stats?.video?.frameRate ??
         readHighestLayerFrameRate(stats?.video?.layers) ??
+        stats?.video?.frameRate ??
         readTrackFrameRate(publisher) ??
         fixedFrameRate ??
         null;
