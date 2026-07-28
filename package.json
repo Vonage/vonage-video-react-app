@@ -152,7 +152,7 @@
     "@babel/helpers": "7.28.6",
     "@babel/runtime": "7.28.6",
     "brace-expansion": "2.0.2",
-    "form-data": "4.0.5"
+    "form-data": "4.0.6"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "dependencies": {
@@ -181,7 +181,7 @@
     "events": "3.3.0",
     "express": "4.22.1",
     "express-rate-limit": "8.5.2",
-    "form-data": "4.0.5",
+    "form-data": "4.0.6",
     "helmet": "8.2.0",
     "i18next": "25.8.8",
     "i18next-browser-languagedetector": "8.2.1",
