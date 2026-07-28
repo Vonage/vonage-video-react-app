@@ -1,0 +1,36 @@
+libs/ui/src/components/NotificationsContainer/NotificationsContainer.spec.tsx
+  3c97b090fca82343 1-43
+libs/ui/src/components/NotificationsContainer/NotificationsContainer.tsx
+  3c97b090fca82343 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "4231cd4a90f167d2926be003faff4a4642d7801b",
+  "prompts": {
+    "3c97b090fca82343": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "29dd955d-a4c9-49a3-8ef3-6a3e0613c700",
+        "model": "gpt-4o"
+      },
+      "human_author": "czoli1976 <64466170+czoli1976@users.noreply.github.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:36.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:36.000Z"
+        }
+      ],
+      "total_additions": 48,
+      "total_deletions": 3,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  }
+}
