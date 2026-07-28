@@ -1,5 +1,6 @@
 import type { Request as ExpressRequest } from 'express';
-import ParamsDictionary from './ParamsDictionary';
+
+import type { ParamsDictionary } from './ParamsDictionary';
 import type { Any } from '@common/types';
 import type { ParsedQs } from 'qs';
 
