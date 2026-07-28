@@ -1,0 +1,34 @@
+backend/routes/session.ts
+  a35da9495d132ae2 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "c0b837962514242187cb7d9c3694c04cef6be5a4",
+  "prompts": {
+    "a35da9495d132ae2": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "0dd38e02-1e5c-418d-ba72-3a46fece2e83",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:38.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:38.000Z"
+        }
+      ],
+      "total_additions": 11,
+      "total_deletions": 4,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    }
+  }
+}
