@@ -4,5 +4,6 @@ export { default as NotificationItem } from './NotificationItem';
 export { default as Card } from './Card';
 export { default as Field } from './Field';
 export { default as SelectField } from './SelectField';
+export { default as SettingsSection } from './SettingsSection';
 export { default as SwitchField } from './SwitchField';
 export { default as VividIcon } from './VividIcon';

@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { SelectField } from '@ui';
+import { SelectField, SettingsSection, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
@@ -80,7 +80,11 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         {t('advancedSettings.tabs.video')}
       </h2>
 
-      <div className="flex flex-col gap-6">
+      <SettingsSection
+        title={t('advancedSettings.video.sections.camera.label')}
+        icon={<VividIcon name="video-solid" customSize={-5} />}
+        data-testid="advanced-settings-video-camera-section"
+      >
         <SelectField
           id="advanced-settings-video-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
@@ -125,7 +129,14 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           options={resolutionOptions}
           onChange={handleResolutionChange}
         />
-      </div>
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('advancedSettings.video.sections.screenSharing.label')}
+        icon={<VividIcon name="screen-share-solid" customSize={-5} />}
+        description={t('advancedSettings.video.sections.screenSharing.description')}
+        data-testid="advanced-settings-video-screen-sharing-section"
+      />
     </div>
   );
 };
