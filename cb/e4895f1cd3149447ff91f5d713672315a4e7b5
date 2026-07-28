@@ -1,0 +1,36 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  27d38377d3086c01 1-49
+frontend/src/Context/SessionProvider/session.tsx
+  27d38377d3086c01 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "cbe4895f1cd3149447ff91f5d713672315a4e7b5",
+  "prompts": {
+    "27d38377d3086c01": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "7b607a2c-ab0d-4f0b-8722-90971d92a16f",
+        "model": "gpt-4o"
+      },
+      "human_author": "czoli1976 <64466170+czoli1976@users.noreply.github.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:37.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:37.000Z"
+        }
+      ],
+      "total_additions": 59,
+      "total_deletions": 5,
+      "accepted_lines": 59,
+      "overriden_lines": 0
+    }
+  }
+}
