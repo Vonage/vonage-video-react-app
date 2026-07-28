@@ -1,0 +1,36 @@
+frontend/src/hooks/useEmoji.tsx
+  7f10c1e13cc512ad 1-10
+frontend/src/hooks/useMeetingRoom.ts
+  7f10c1e13cc512ad 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "3af7c49233836abda9db323c5bd2212cfb7df6ea",
+  "prompts": {
+    "7f10c1e13cc512ad": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "e72b857d-3e1b-4029-816a-b90c182c6c9e",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:40.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:40.000Z"
+        }
+      ],
+      "total_additions": 15,
+      "total_deletions": 2,
+      "accepted_lines": 15,
+      "overriden_lines": 0
+    }
+  }
+}
