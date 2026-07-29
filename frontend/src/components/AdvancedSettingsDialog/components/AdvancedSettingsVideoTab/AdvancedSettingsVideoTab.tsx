@@ -88,6 +88,14 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         icon={<VividIcon name="video-solid" customSize={-5} />}
         data-testid="advanced-settings-video-camera-section"
       >
+        <SwitchField
+          id="advanced-settings-video-self-view-mirroring"
+          label={t('advancedSettings.video.selfViewMirroring.label')}
+          checked={selfViewMirroringEnabled}
+          onChange={setSelfViewMirroringEnabled}
+          description={t('advancedSettings.video.selfViewMirroring.description')}
+        />
+
         <SelectField
           id="advanced-settings-video-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
@@ -131,14 +139,6 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           value={resolution}
           options={resolutionOptions}
           onChange={handleResolutionChange}
-        />
-
-        <SwitchField
-          id="advanced-settings-video-self-view-mirroring"
-          label={t('advancedSettings.video.selfViewMirroring.label')}
-          checked={selfViewMirroringEnabled}
-          onChange={setSelfViewMirroringEnabled}
-          description={t('advancedSettings.video.selfViewMirroring.description')}
         />
 
         <SwitchField

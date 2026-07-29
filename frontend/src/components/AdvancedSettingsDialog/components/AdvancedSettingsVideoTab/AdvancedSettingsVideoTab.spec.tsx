@@ -40,6 +40,15 @@ describe('AdvancedSettingsVideoTab', () => {
     ).toBeInTheDocument();
   });
 
+  it('leads the Camera section with Mirror my video', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+    const [firstLabelledControl] = within(cameraSection).getAllByLabelText(/.+/);
+
+    expect(firstLabelledControl).toBe(within(cameraSection).getByLabelText('Mirror my video'));
+  });
+
   it('toggles self-view mirroring and the stats overlay through the store', () => {
     render(<AdvancedSettingsVideoTab />);
 
