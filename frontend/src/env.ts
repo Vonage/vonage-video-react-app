@@ -3,7 +3,7 @@ import { LAYOUT_MODES, type LayoutMode } from './types/session';
 
 declare const __APP_ENV__: Record<string, string | undefined>;
 
-export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de';
+export type Lang = 'en' | 'it' | 'es' | 'es-MX' | 'en-US' | 'de' | 'ja';
 
 export const RESOLUTIONS = [
   '1920x1080',
@@ -23,7 +23,7 @@ export type EnvArg = {
   [key: string]: unknown;
 };
 
-const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de'] as const satisfies readonly Lang[];
+const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de', 'ja'] as const satisfies readonly Lang[];
 const langEnum = z.enum([...langValues] as [Lang, ...Lang[]]);
 
 const boolField = (defaultValue: boolean) =>

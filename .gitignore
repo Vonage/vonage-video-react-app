@@ -32,6 +32,7 @@ public/js/*
 server.key
 server.crt
 server.csr
+private.key
 
 dump.rdb
 coverage/
