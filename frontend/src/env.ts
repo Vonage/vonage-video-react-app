@@ -23,7 +23,15 @@ export type EnvArg = {
   [key: string]: unknown;
 };
 
-const langValues = ['en', 'it', 'es', 'es-MX', 'en-US', 'de', 'ja'] as const satisfies readonly Lang[];
+const langValues = [
+  'en',
+  'it',
+  'es',
+  'es-MX',
+  'en-US',
+  'de',
+  'ja',
+] as const satisfies readonly Lang[];
 const langEnum = z.enum([...langValues] as [Lang, ...Lang[]]);
 
 const boolField = (defaultValue: boolean) =>
