@@ -1,13 +1,42 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
+import type { Publisher } from '@vonage/client-sdk-video';
+import type { PublisherContextType } from '@Context/PublisherProvider';
+import usePublisherContext from '@hooks/usePublisherContext';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsAudioTab from './AdvancedSettingsAudioTab';
 
+vi.mock('@hooks/usePublisherContext');
+
+// The advanced noise suppression switch is disabled unless the media processor is supported, which
+// jsdom does not provide.
+const { mockHasMediaProcessorSupport } = vi.hoisted(() => ({
+  mockHasMediaProcessorSupport: vi.fn().mockReturnValue(true),
+}));
+
+vi.mock('@vonage/client-sdk-video', () => ({
+  hasMediaProcessorSupport: mockHasMediaProcessorSupport,
+}));
+
+const mockPublisher = {
+  applyAudioFilter: vi.fn().mockResolvedValue(undefined),
+  clearAudioFilter: vi.fn().mockResolvedValue(undefined),
+} as unknown as Publisher;
+
 describe('AdvancedSettingsAudioTab', () => {
+  beforeEach(() => {
+    mockHasMediaProcessorSupport.mockReturnValue(true);
+    vi.mocked(usePublisherContext).mockReturnValue({
+      publisher: mockPublisher,
+    } as unknown as PublisherContextType);
+    vi.mocked(mockPublisher.applyAudioFilter).mockResolvedValue(undefined);
+    vi.mocked(mockPublisher.clearAudioFilter).mockResolvedValue(undefined);
+  });
+
   afterEach(() => {
     advancedSettings$.reset();
   });
@@ -51,6 +80,23 @@ describe('AdvancedSettingsAudioTab', () => {
     await user.click(screen.getByRole('checkbox', { name: /enable opus dtx/i }));
 
     expect(screen.getByRole('checkbox', { name: /enable opus dtx/i })).not.toBeChecked();
+  });
+
+  it('applies advanced noise suppression to the running publisher, not just the store', async () => {
+    const user = userEvent.setup();
+    render(<AdvancedSettingsAudioTab />);
+
+    const toggle = screen.getByRole('checkbox', { name: /advanced noise suppression/i });
+
+    await user.click(toggle);
+    expect(mockPublisher.applyAudioFilter).toHaveBeenCalledWith({
+      type: 'advancedNoiseSuppression',
+    });
+    expect(advancedSettings$.getState().advancedNoiseSuppressionEnabled).toBe(true);
+
+    await user.click(toggle);
+    expect(mockPublisher.clearAudioFilter).toHaveBeenCalled();
+    expect(advancedSettings$.getState().advancedNoiseSuppressionEnabled).toBe(false);
   });
 });
 type RenderOptions = {
