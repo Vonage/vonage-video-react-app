@@ -7,13 +7,12 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 
 interface SubscriberStatisticsProps {
   subscriber: Subscriber;
-  subscriberId: string;
 }
 
-const SubscriberStatistics = ({ subscriber, subscriberId }: SubscriberStatisticsProps): ReactElement => {
+const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactElement => {
   const { t } = useTranslation();
 
-  const { data } = useSubscriberStats({ subscriber, subscriberId });
+  const { data } = useSubscriberStats({ subscriber });
 
   const publisherAudioFallbackEnabled = advancedSettings$.use.select(
     ({ publisherAudioFallbackEnabled }) => publisherAudioFallbackEnabled

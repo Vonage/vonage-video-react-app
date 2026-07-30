@@ -47,18 +47,14 @@ export type SubscriberInspectorStatistics = {
 export type useSubscriberStatsProps<TData = SubscriberInspectorStatistics> = {
   queryOptions?: QueryOptions<SubscriberInspectorStatistics | null, TData>;
   subscriber: Subscriber | null | undefined;
-  subscriberId?: string;
 };
 
 const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
   queryOptions,
   subscriber,
-  subscriberId,
 }: useSubscriberStatsProps<Selected>) => {
-  const stableId = subscriberId ?? subscriber?.id;
-
   return runtime$.useQuery({
-    queryKey: ['subscriberStats', stableId],
+    queryKey: ['subscriberStats', subscriber?.id],
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!subscriber) {
@@ -94,8 +90,8 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
         stats.mediaLink?.remotePublisherTransport?.connectionEstimatedBandwidth;
 
       return {
-        id: stableId,
-        title: subscriber.stream?.name ?? stableId,
+        id: subscriber.id,
+        title: subscriber.stream?.name ?? subscriber.id,
         audio,
 
         network: {
