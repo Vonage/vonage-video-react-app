@@ -1,3 +1,5 @@
+export type * from '@node/types';
+
 export type * from './IVideoClient';
 
 // Schema types
@@ -25,10 +27,3 @@ export * from './VideoAction';
 export type * from './HandlerConfig';
 export type * from './HandlersConfig';
 export type * from './HandlersDefaults';
-
-export type * from '@node/types/ApplicationErrorMiddleware';
-export type * from '@node/types/ApplicationHandler';
-export type * from '@node/types/ApplicationRequest';
-export type * from '@node/types/ApplicationRequestHandler';
-export type * from '@node/types/ParamsDictionary';
-export type * from '@node/types/Query';

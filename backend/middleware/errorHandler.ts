@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import StatusCodeEnum from 'status-code-enum';
 import { isApplicationError } from '@common/errors/assertions';
-import ApplicationServerError from '@api-lib/errors/ApplicationServerError';
+import { ApplicationServerError } from '@api-lib/errors';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
