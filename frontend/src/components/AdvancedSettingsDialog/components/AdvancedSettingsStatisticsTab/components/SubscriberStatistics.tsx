@@ -2,16 +2,17 @@ import { useMemo, type ReactElement } from 'react';
 import { useSubscriberStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsStatisticsGroup } from '../../AdvancedSettingsStatisticsGroup';
-import { Subscriber } from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { SubscriberWrapper } from '@app-types/session';
 
 interface SubscriberStatisticsProps {
-  subscriber: Subscriber;
+  subscriberWrapper: SubscriberWrapper;
 }
 
-const SubscriberStatistics = ({ subscriber }: SubscriberStatisticsProps): ReactElement => {
+const SubscriberStatistics = ({ subscriberWrapper }: SubscriberStatisticsProps): ReactElement => {
   const { t } = useTranslation();
 
+  const subscriber = Object.assign(subscriberWrapper.subscriber, { id: subscriberWrapper.id });
   const { data } = useSubscriberStats({ subscriber });
 
   const publisherAudioFallbackEnabled = advancedSettings$.use.select(
