@@ -1,3 +1,5 @@
+export type * from '@node/types';
+
 export type * from './IVideoClient';
 
 // Schema types

@@ -20,7 +20,7 @@ jobs:
         run: yarn install --ignore-scripts --frozen-lockfile
 
       - name: Build
-        run: npx nx run common:build
+        run: yarn nx run common:build
 
       - name: Hash check
-        run: npx nx run common:hash:check
+        run: yarn nx run common:hash:check

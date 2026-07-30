@@ -107,8 +107,12 @@ async function resolveToken(tokenFromArgs: string | undefined): Promise<string> 
 }
 
 async function main(): Promise<void> {
-  const target = process.argv[2];
-  const tokenFromArgs = process.argv[3];
+  const args = process.argv.slice(2);
+  const isDryRun = args.includes('dry');
+  const positionalArgs = args.filter((arg) => arg !== 'dry');
+
+  const target = positionalArgs[0];
+  const tokenFromArgs = positionalArgs[1];
 
   if (!target || !PUBLISHABLE_TARGETS[target]) {
     const availableTargets = Object.keys(PUBLISHABLE_TARGETS).join(', ');
@@ -116,13 +120,17 @@ async function main(): Promise<void> {
     console.error(
       `Invalid or missing target "${target ?? '(none)'}". Available targets: ${availableTargets}`
     );
-    console.error('Usage: yarn publish:package <target>');
+    console.error('Usage: yarn publish:package <target> [dry]');
     process.exit(1);
   }
 
   const token = await resolveToken(tokenFromArgs);
 
   const scriptPath = PUBLISHABLE_TARGETS[target];
+
+  if (isDryRun) {
+    console.log('\n[DRY RUN] Validating without publishing...');
+  }
 
   console.log(`\n> npx tsx ${scriptPath}`);
 
@@ -131,8 +139,12 @@ async function main(): Promise<void> {
   // with its network calls (observed as fetch EPIPE failures).
   // Token is passed via env var, never as a CLI argument, so it doesn't appear
   // in the process list (e.g. `ps aux`) for the child process.
-  const childEnv = { ...process.env, GH_TOKEN: token };
+  const childEnv = { ...process.env, GH_TOKEN: token } as NodeJS.ProcessEnv;
   delete childEnv.NODE_OPTIONS;
+
+  if (isDryRun) {
+    childEnv.PUBLISH_DRY_RUN = '1';
+  }
 
   child_process.execSync(`npx tsx "${scriptPath}"`, {
     cwd: MONOREPO_ROOT,

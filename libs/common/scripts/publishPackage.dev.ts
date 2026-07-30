@@ -47,16 +47,16 @@ function run(args: { command: string; cwd: string }): void {
   child_process.execSync(command, { cwd, stdio: 'inherit' });
 }
 
-function execWithStatus(args: { command: string; cwd: string }): {
+function execWithStatus(args: { command: string; cwd: string; env?: NodeJS.ProcessEnv }): {
   exitCode: number;
   stdout: string;
   stderr: string;
 } {
-  const { command, cwd } = args;
+  const { command, cwd, env } = args;
 
   const commandResult = child_process.spawnSync(command, {
     cwd,
-    env: getProcessEnvironmentWithoutNodeOptions(),
+    env: env || getProcessEnvironmentWithoutNodeOptions(),
     encoding: 'utf-8',
     shell: true,
   });
@@ -218,12 +218,18 @@ function persistResolvedDevVersion(args: {
 }
 
 async function main(): Promise<void> {
+  const isDryRun = process.env.PUBLISH_DRY_RUN === '1';
+
   // Step 1: Resolve token and current GitHub username
   const token = resolveToken();
   const githubUsername = await resolveGitHubUsernameFromToken(token);
   const devName = `@${githubUsername}/video-common`;
 
   console.log(`Publishing as ${devName}...`);
+
+  if (isDryRun) {
+    console.log('[DRY RUN] Will validate build and version without publishing.');
+  }
 
   // Step 2: Build
   if (fs.existsSync(DIST_PATH)) {
@@ -232,7 +238,7 @@ async function main(): Promise<void> {
   }
 
   console.log('\nBuilding package...');
-  run({ command: 'npx nx run common:build', cwd: MONOREPO_ROOT });
+  run({ command: 'yarn nx run common:build', cwd: MONOREPO_ROOT });
 
   if (!fs.existsSync(DIST_PACKAGE_JSON_PATH)) {
     console.error('dist/package.json not found. The build may have failed to copy it.');
@@ -268,19 +274,29 @@ async function main(): Promise<void> {
   console.log(`\nUsing package name: ${devName}`);
   console.log(`Using dev version: ${devVersion}`);
 
-  // Step 5: Publish once using the computed remote-safe version
-  console.log(`\nPublishing ${devName}@${devVersion} with tag "${DEV_TAG}"...`);
+  if (isDryRun) {
+    console.log(
+      `\n[DRY RUN] Publishing ${devName}@${devVersion} with tag "${DEV_TAG}" (--dry-run)...`
+    );
+  } else {
+    console.log(`\nPublishing ${devName}@${devVersion} with tag "${DEV_TAG}"...`);
+  }
+
+  // Pass auth via environment variable (never in argv or on disk)
+  const publishEnv = getProcessEnvironmentWithoutNodeOptions();
+  publishEnv[`npm_config_//npm.pkg.github.com/:_authToken`] = token;
 
   const publishCommand = [
     'npm publish',
     `--tag ${DEV_TAG}`,
     `--registry ${REGISTRY}`,
-    `--//npm.pkg.github.com/:_authToken=${token}`,
+    ...(isDryRun ? ['--dry-run'] : []),
   ].join(' ');
 
   const publishResult = execWithStatus({
     command: publishCommand,
     cwd: DIST_PATH,
+    env: publishEnv,
   });
 
   if (publishResult.stdout.trim()) {
@@ -295,7 +311,11 @@ async function main(): Promise<void> {
     throw new Error(`npm publish failed with exit code ${publishResult.exitCode}`);
   }
 
-  console.log('\nPublished successfully.');
+  if (isDryRun) {
+    console.log('\nDry run completed successfully.');
+  } else {
+    console.log('\nPublished successfully.');
+  }
 
   persistResolvedDevVersion({
     packageJson,
@@ -306,4 +326,5 @@ async function main(): Promise<void> {
   console.log(`Persisted version ${devVersion} to package.json and manifest.json.`);
 }
 
+// @ts-ignore
 await main();

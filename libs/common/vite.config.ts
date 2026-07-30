@@ -162,6 +162,10 @@ const buildConfig = defineConfig({
         // ─── Copy LICENSE ────────────────────────────────────────────────
         const licenseSrcPath = path.resolve(monorepoRoot, 'LICENSE.MIT');
         fs.copyFileSync(licenseSrcPath, path.join(distDir, 'LICENSE'));
+
+        // ─── Copy README and docs ───────────────────────────────────────
+        const readmeSrcPath = path.join(__dirname, 'README.md');
+        fs.copyFileSync(readmeSrcPath, path.join(distDir, 'README.md'));
       },
     },
   ],

@@ -35,10 +35,10 @@ function main(): void {
   }
 
   console.log('\nRunning tests...');
-  run({ command: 'npx nx run common:test', cwd: MONOREPO_ROOT });
+  run({ command: 'yarn nx run common:test', cwd: MONOREPO_ROOT });
 
   console.log('\nBuilding package...');
-  run({ command: 'npx nx run common:build', cwd: MONOREPO_ROOT });
+  run({ command: 'yarn nx run common:build', cwd: MONOREPO_ROOT });
 
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
   const packageJson = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf-8'));

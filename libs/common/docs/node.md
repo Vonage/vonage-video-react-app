@@ -79,5 +79,77 @@ Re-exports all [universal assertions](./universal.md#assertions). No Node-specif
 
 Re-exports all [universal helpers](./universal.md#helpers). No Node-specific helpers are added.
 
+---
+
+## errors
+
+Server-specific error handling. Re-exports all [universal errors](./universal.md#errors) plus Node-specific additions.
+
+```ts
+import { ApplicationServerError, makeInternalErrorHandler } from '@vonage/video-common/node/errors';
+```
+
+### ApplicationServerError
+
+Extends `ApplicationError` with HTTP response and request metadata. Provides `retrieveErrorLogDetails()` for structured logging and `exportSafely()` for client-safe error responses.
+
+### Error handlers
+
+Factory functions that return error handlers wrapping errors as `ApplicationServerError` with the appropriate status code.
+
+| Export | Status code |
+|---|---|
+| `makeInternalErrorHandler` | 500 |
+| `makeBadRequestErrorHandler` | 400 |
+| `makeUnauthorizedErrorHandler` | 401 |
+| `makeNotFoundErrorHandler` | 404 |
+| `makeThirdPartyErrorHandler` | 502 |
+| `makeVideoApiErrorHandler` | 502 (with OpenTok error parsing) |
+
+```ts
+import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@vonage/video-common/node/errors';
+
+const handleInternalError = makeInternalErrorHandler('Something went wrong');
+const handleThirdPartyError = makeThirdPartyErrorHandler({ fallbackMessage: 'Service error', mapThirdPartyErrors: true });
+```
+
+### Server assertions
+
+| Export | Description |
+|---|---|
+| `isApplicationServerError` | Type guard for `ApplicationServerError` instances |
+| `isApplicationServerErrorLike` | Checks if an object has the minimum shape of an `ApplicationServerError` |
+| `isHttpErrorLike` | Checks if an error has an HTTP response shape |
+
+### Server helpers
+
+| Export | Description |
+|---|---|
+| `mapServerSourceToState` | Maps an unknown error source to a partial `ApplicationErrorState` |
+
+---
+
+## executions
+
+Re-exports all [universal execution utilities](./universal.md#execution). The server-specific `assertResult` shadows the base version.
+
+```ts
+import { assertResult } from '@vonage/video-common/node/executions';
+```
+
+### assertResult
+
+Wraps a callback execution and, on failure, produces an `ApplicationServerError` with the provided fallback configuration. The server version is typed against `ApplicationServerError` rather than the base `ApplicationError`.
+
+```ts
+import { assertResult } from '@vonage/video-common/node/executions';
+import { makeInternalErrorHandler } from '@vonage/video-common/node/errors';
+
+const session = await assertResult(
+  () => videoClient.createSession(),
+  { fallbackConfig: { fallbackMessage: 'Failed to create session', statusCode: 500 } }
+);
+```
+
 
 
