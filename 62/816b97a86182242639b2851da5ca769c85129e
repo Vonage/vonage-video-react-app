@@ -1,0 +1,30 @@
+libs/common/srcNode/index.ts
+  h_6029769cf9ac60 4-5,10-12
+libs/common/scripts/checkPackageHash.ts
+  h_6029769cf9ac60 29
+.husky/pre-push
+  h_6029769cf9ac60 11
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 38,41
+package.json
+  h_6029769cf9ac60 32,197
+.github/workflows/video-common-publish.yml
+  h_6029769cf9ac60 38
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 50,55,59,235,274-276,283,309
+.github/workflows/video-common-integrity.yml
+  h_6029769cf9ac60 23,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "62816b97a86182242639b2851da5ca769c85129e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
