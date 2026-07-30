@@ -44,9 +44,10 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
           </h4>
         )}
 
-        {subscriberWrappers.map(({ subscriber, id }, index) => {
-          subscriber.id = id;
-          return <SubscriberStatistics subscriber={subscriber} key={id ?? index} />;
+        {subscriberWrappers.map((subscriber, index) => {
+          return (
+            <SubscriberStatistics subscriberWrapper={subscriber} key={subscriber.id ?? index} />
+          );
         })}
       </div>
     </div>
