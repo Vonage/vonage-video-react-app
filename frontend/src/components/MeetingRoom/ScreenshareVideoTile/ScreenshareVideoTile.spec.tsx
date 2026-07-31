@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Box } from 'opentok-layout-js';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import ScreenshareVideoTile from './ScreenshareVideoTile';
+import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 
 vi.mock('../ZoomIndicator', () => ({
   default: ({
@@ -362,11 +363,13 @@ describe('ScreenshareVideoTile', () => {
 
     describe('when hasMediaProcessorSupport returns false', () => {
       beforeEach(() => {
+        resetMediaProcessorSupportCache();
         vi.mocked(hasMediaProcessorSupport).mockReturnValue(false);
       });
 
       afterEach(() => {
         vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+        resetMediaProcessorSupportCache();
       });
 
       it('does not render ZoomIndicator', () => {
@@ -382,8 +385,10 @@ describe('ScreenshareVideoTile', () => {
         fireEvent.wheel(tile, { deltaY: -100 });
         fireEvent.wheel(tile, { deltaY: -100 });
 
-        // Re-enable support to expose ZoomIndicator and read the zoom level
+        // Re-enable support to expose ZoomIndicator and read the zoom level. Support is memoized,
+        // so clear the cache to let this forced change take effect on re-render.
         vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+        resetMediaProcessorSupportCache();
         rerender(<ScreenshareVideoTile {...defaultProps} />);
 
         expect(screen.getByTestId('zoom-level')).toHaveTextContent('1');

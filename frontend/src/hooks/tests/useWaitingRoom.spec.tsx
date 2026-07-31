@@ -16,13 +16,6 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-vi.mock('../useBackgroundPublisherContext', () => ({
-  default: () => ({
-    initBackgroundLocalPublisher: vi.fn(),
-    publisher: null,
-  }),
-}));
-
 describe('useWaitingRoom', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,6 +73,29 @@ describe('useWaitingRoom', () => {
     });
 
     expect(result.current.isRoomReady).toBe(false);
+  });
+
+  it('re-initializes the publisher when access is re-granted (ACCESS_CHANGED)', () => {
+    const destroyPublisher = vi.fn();
+    const initLocalPublisher = vi.fn();
+
+    renderHook(() => useWaitingRoom(), {
+      previewPublisherContext: {
+        __interceptor: (ctx) => {
+          if (ctx) {
+            ctx.accessStatus = DEVICE_ACCESS_STATUS.ACCESS_CHANGED;
+            ctx.destroyPublisher = destroyPublisher;
+            ctx.initLocalPublisher = initLocalPublisher;
+          }
+        },
+      },
+    });
+
+    // The re-init must be driven explicitly (destroy + init). Relying on the destroy→'destroyed'→
+    // [publisher]-effect chain is what left the room stuck, because after the initial denial the
+    // publisher ref is already null and destroy() no-ops — so the [publisher] dep never changes.
+    expect(destroyPublisher).toHaveBeenCalled();
+    expect(initLocalPublisher).toHaveBeenCalled();
   });
 
   it('isRoomReady is false when WAITING_ROOM_ALLOW_DEVICE_SELECTION is false', () => {

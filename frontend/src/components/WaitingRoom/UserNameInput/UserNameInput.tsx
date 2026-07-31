@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Card from '@ui/components/Card';
 import useUserContext from '@hooks/useUserContext';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import waitingRoomDenial$ from '@Context/PublisherProvider/waitingRoomDenial';
 import { UserType } from '@Context/user';
 import isValidUserName from '@utils/isValidUserName';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
@@ -39,6 +41,7 @@ const UsernameInput = ({
 }: UserNameInputProps): ReactElement => {
   const { t } = useTranslation();
   const { setUser } = useUserContext();
+  const { deniedDevices } = usePreviewPublisherContext();
   const navigate = useNavigate();
 
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
@@ -76,6 +79,10 @@ const UsernameInput = ({
         },
       }));
       setStorageItem(STORAGE_KEYS.USERNAME, username);
+      // Carry the devices the user denied here into the room so the in-call publisher excludes them
+      // from its first getUserMedia instead of re-prompting on join (Google Meet keeps a pre-join
+      // denial). The publisher reads and refines this on mount against the live permission.
+      waitingRoomDenial$.setState(deniedDevices);
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room

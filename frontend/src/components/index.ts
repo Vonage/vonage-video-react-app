@@ -3,7 +3,6 @@ export { default as AvatarInitials } from './AvatarInitials';
 export { default as Banner } from './Banner';
 export { default as BannerLanguage } from './BannerLanguage';
 export { default as BannerLogo } from './BannerLogo';
-export { default as DeviceAccessAlert } from './DeviceAccessAlert';
 export { default as EnvGuard } from './EnvGuard';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as Footer } from './Footer';

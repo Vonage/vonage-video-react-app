@@ -7,8 +7,6 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useWaitingRoom from '@hooks/useWaitingRoom';
 import { Box } from '@mui/material';
-import DeviceAccessAlert from '@components/DeviceAccessAlert';
-import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import UsernameInput from '@components/WaitingRoom/UserNameInput';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
@@ -64,7 +62,6 @@ function WaitingRoomStageContent() {
     openAudioOutput,
     username,
     setUsername,
-    accessStatus,
     isRoomReady,
     roomName,
     handleAudioInputOpen,
@@ -116,9 +113,6 @@ function WaitingRoomStageContent() {
               {!isRoomReady && <UsernameInputSkeleton />}
             </PageLayoutEmbed.Right>
           </PageLayoutEmbed>
-          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-            <DeviceAccessAlert accessStatus={accessStatus} />
-          )}
         </Box>
       </precallNetworkTestDialog$.Provider>
     </backgroundEffectsDialog$.Provider>

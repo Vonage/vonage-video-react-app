@@ -321,5 +321,13 @@
   "zoom.current": "Aktueller Zoom",
   "errorPage.title": "Etwas ist schiefgelaufen",
   "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.",
-  "notification.dismiss": "Benachrichtigung schließen"
+  "notification.dismiss": "Benachrichtigung schließen",
+  "deviceAccessHint.blocked": "Zugriff auf {{device}} ist blockiert. Bitte in den Browsereinstellungen erlauben.",
+  "deviceAccessHint.camera": "Kamera",
+  "deviceAccessHint.microphone": "Mikrofon",
+  "deviceAccessHint.cameraAndMicrophone": "Kamera und Mikrofon",
+  "deviceAccessHint.blockedTitle": "Gerätezugriff blockiert",
+  "deviceAccessHint.reload": "Seite neu laden",
+  "devices.audio.microphone.state.blocked": "Mikrofonzugriff ist blockiert. Bitte in den Browsereinstellungen erlauben.",
+  "devices.video.camera.state.blocked": "Kamerazugriff ist blockiert. Bitte in den Browsereinstellungen erlauben."
 }

@@ -24,6 +24,8 @@ describe('FooterLinks', () => {
 
     const versionElement = screen.getByTestId('app-version');
     expect(versionElement).toBeInTheDocument();
-    expect(versionElement.textContent).toMatch(/^v\d+\.\d+\.\d+ \(SDK \d+\.\d+\.\d+\)$/);
+    expect(versionElement.textContent).toMatch(
+      /^v\d+\.\d+\.\d+ \(SDK \d+\.\d+\.\d+(-[0-9A-Za-z.]+)?\)$/
+    );
   });
 });

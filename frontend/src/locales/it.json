@@ -321,5 +321,13 @@
   "zoom.current": "Zoom attuale",
   "errorPage.title": "Qualcosa è andato storto",
   "errorPage.description": "L'applicazione non è riuscita ad avviarsi. Ricarica la pagina o contatta il supporto se il problema persiste.",
-  "notification.dismiss": "Ignora notifica"
+  "notification.dismiss": "Ignora notifica",
+  "deviceAccessHint.blocked": "L'accesso a {{device}} è bloccato. Consentilo nelle impostazioni del browser.",
+  "deviceAccessHint.camera": "fotocamera",
+  "deviceAccessHint.microphone": "microfono",
+  "deviceAccessHint.cameraAndMicrophone": "fotocamera e microfono",
+  "deviceAccessHint.blockedTitle": "Accesso ai dispositivi bloccato",
+  "deviceAccessHint.reload": "Ricarica la pagina",
+  "devices.audio.microphone.state.blocked": "L'accesso al microfono è bloccato. Consentilo nelle impostazioni del browser.",
+  "devices.video.camera.state.blocked": "L'accesso alla fotocamera è bloccato. Consentilo nelle impostazioni del browser."
 }

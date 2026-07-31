@@ -3,6 +3,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
+import DeviceAccessAlert from '@components/MeetingRoom/DeviceAccessAlert';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
@@ -151,6 +152,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
           severity="warning"
         />
       )}
+      <DeviceAccessAlert />
     </Box>
   );
 }

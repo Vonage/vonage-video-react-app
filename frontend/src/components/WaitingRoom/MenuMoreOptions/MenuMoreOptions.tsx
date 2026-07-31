@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { FocusEvent, MouseEvent, ReactElement } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
+import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import MenuItem from '@mui/material/MenuItem';
 import type { MenuItemProps } from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -38,6 +39,9 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
+  const { deniedDevices } = usePreviewPublisherContext();
+  // A blocked camera has no feed to preview, so background effects make no sense — hide the entry.
+  const isCameraBlocked = deniedDevices?.camera ?? false;
   const hasSupportedMediaProcessor = hasMediaProcessorSupport('both');
   const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
   const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
@@ -147,10 +151,12 @@ const MenuMoreOptions = ({
           </MenuItem>
         )}
 
-        <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>
-          <VividIcon name="gallery-line" customSize={-6} />
-          <span className="ml-2">{t('backgroundEffects.title')}</span>
-        </MenuItem>
+        {!isCameraBlocked && (
+          <MenuItem key="backgroundEffects-option" {...backgroundEffectsAvailabilityProps}>
+            <VividIcon name="gallery-line" customSize={-6} />
+            <span className="ml-2">{t('backgroundEffects.title')}</span>
+          </MenuItem>
+        )}
         <MenuItem key="precallNetworkTest-option" {...precallNetworkTestAvailabilityProps}>
           <VividIcon name="cell-reception-line" customSize={-6} />
           <span className="ml-2">{t('waitingRoom.precallNetworkTest.title')}</span>

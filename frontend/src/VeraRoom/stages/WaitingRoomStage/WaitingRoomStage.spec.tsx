@@ -45,10 +45,6 @@ vi.mock('@components/WaitingRoom/UserNameInput/UserNameInput.skeleton', () => ({
   default: () => <div data-testid="username-input-skeleton" />,
 }));
 
-vi.mock('@components/DeviceAccessAlert', () => ({
-  default: () => <div data-testid="device-access-alert" />,
-}));
-
 vi.mock('@ui', async () => {
   const actual = await vi.importActual<typeof import('@ui')>('@ui');
   return {

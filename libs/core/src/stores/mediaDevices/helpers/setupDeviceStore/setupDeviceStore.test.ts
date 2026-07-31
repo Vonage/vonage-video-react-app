@@ -285,15 +285,15 @@ describe('setupDeviceStore', () => {
       );
     });
 
-    it('should request permissions when on Firefox and device labels are empty', async () => {
+    it('should NOT request permissions at init on Firefox even when device labels are empty', async () => {
+      // The eager label-unlock getUserMedia used to run here at store construction, prompting for
+      // camera/mic on every page (including the landing page). It is now deferred: labels get
+      // unlocked when a publisher acquires media in the waiting/meeting room, via the monkey-patched
+      // getUserMedia action. So init must only sync the (unlabeled) device list, never prompt.
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 
-      const mockStream = {
-        getTracks: vi.fn().mockReturnValue([{ stop: vi.fn() }, { stop: vi.fn() }]),
-      };
-
       const getUserMediaSpy = vi.fn(() =>
-        Promise.resolve(mockStream)
+        Promise.resolve({ getTracks: () => [] })
       ) as unknown as typeof navigator.mediaDevices.getUserMedia;
 
       setupWindowNavigatorMock({
@@ -313,18 +313,16 @@ describe('setupDeviceStore', () => {
 
       setupDeviceStore(api$);
 
+      // Init still syncs the device list...
       await waitFor(
         () => {
-          expect(getUserMediaSpy).toHaveBeenCalledWith({
-            audio: true,
-            video: true,
-          });
+          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalled();
         },
         { timeout: 200 }
       );
 
-      // Verify tracks were stopped after getting permissions
-      expect(mockStream.getTracks).toHaveBeenCalled();
+      // ...but never prompts for permissions at boot.
+      expect(getUserMediaSpy).not.toHaveBeenCalled();
     });
 
     it('should NOT request permissions when on Firefox and device labels are present', async () => {
@@ -416,7 +414,7 @@ describe('setupDeviceStore', () => {
   });
 
   describe('cleanup behavior', () => {
-    it('should cancel pending permissions request on cleanup', () => {
+    it('should cancel the pending store-ready promise on cleanup', () => {
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 
       const neverResolve = new Promise<MediaDeviceInfo[]>(() => {});

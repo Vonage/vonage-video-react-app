@@ -6,8 +6,6 @@ import Footer from '@components/Footer/Footer';
 import ControlPanel from '@components/WaitingRoom/ControlPanel';
 import VideoContainer from '@components/WaitingRoom/VideoContainer';
 import UsernameInput from '@components/WaitingRoom/UserNameInput';
-import DeviceAccessAlert from '@components/DeviceAccessAlert';
-import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
@@ -37,7 +35,6 @@ const WaitingRoom: FC = () => {
     openAudioOutput,
     username,
     setUsername,
-    accessStatus,
     isRoomReady,
     roomName,
     handleAudioInputOpen,
@@ -97,9 +94,6 @@ const WaitingRoom: FC = () => {
               <Footer />
             </PageLayout.Footer>
           </PageLayout>
-          {accessStatus !== DEVICE_ACCESS_STATUS.ACCEPTED && (
-            <DeviceAccessAlert accessStatus={accessStatus} />
-          )}
         </Box>
       </precallNetworkTestDialog$.Provider>
     </backgroundEffectsDialog$.Provider>

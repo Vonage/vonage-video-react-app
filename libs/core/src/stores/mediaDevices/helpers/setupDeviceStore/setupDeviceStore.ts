@@ -2,7 +2,6 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
 import debounce from '@common/execution/debounce';
 import { assertDevicesAPI } from '../../assertions';
 import { attempt } from '@common/execution';
-import isFirefox from '@web/platform/isFirefox';
 import CancelablePromise from 'easy-cancelable-promise';
 import { mediaDevicesEnvelop } from '@core/interceptors';
 
@@ -41,35 +40,19 @@ function setupDeviceStore(api: unknown) {
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
 
-  meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
-    const syncDevicesAndResolve = () => {
-      void api.actions
-        .syncMediaDevicesInfo()
-        .then(() => {
-          resolve();
-        })
-        .catch(reject);
-    };
-
-    if (!isFirefox()) {
-      void syncDevicesAndResolve();
-      return;
-    }
-
-    void navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        if (isCanceled()) return;
-
-        const hasLabels = devices.some((device) => device.label);
-        if (hasLabels) return;
-
-        //we should request permissions to be able to see the devices labels.
-        return getUserMedia({ audio: true, video: true }).then((stream) => {
-          stream.getTracks().forEach((track) => track.stop());
-        });
+  // Populate the device list without requesting permissions. On Firefox this means device *labels*
+  // stay hidden until the user grants access — we deliberately do NOT force a getUserMedia here.
+  // That eager call used to run at store construction (app boot), popping a camera/mic prompt on
+  // every page including the landing page. Labels are unlocked lazily instead: when a publisher
+  // actually acquires media in the waiting/meeting room, the SDK's getUserMedia is routed through
+  // this store's getUserMedia action (see the monkey-patch below), which resyncs the device info —
+  // and therefore the labels — on grant.
+  meta.isStoreReady = new CancelablePromise((resolve, reject) => {
+    void api.actions
+      .syncMediaDevicesInfo()
+      .then(() => {
+        resolve();
       })
-      .then(() => syncDevicesAndResolve())
       .catch(reject);
   });
 

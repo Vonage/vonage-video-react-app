@@ -8,11 +8,13 @@ import {
 } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
 import usePublisher from './usePublisher';
+import waitingRoomDenial$ from '../waitingRoomDenial';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
 import { StrictMode } from 'react';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import { DEVICE_REACQUIRE_FALLBACK_MS } from '@utils/publisher/deviceAccess';
 import mediaDevices$ from '@core/stores/mediaDevices';
 
 vi.mock('@vonage/client-sdk-video');
@@ -38,6 +40,7 @@ describe('usePublisher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    waitingRoomDenial$.setState({ microphone: false, camera: false });
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
     setupWindowNavigatorMock({
       mediaDevices: {
@@ -393,7 +396,7 @@ describe('usePublisher', () => {
   });
 
   describe('device access events', () => {
-    it('should set publishingError and destroy publisher when camera access is denied', async () => {
+    it('keeps the user in the call and marks the camera as blocked when camera access is denied', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
 
@@ -411,17 +414,17 @@ describe('usePublisher', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.publishingError).toEqual({
-          header: 'Camera access is denied',
-          caption:
-            "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
-        });
+        // Google Meet style: a device denial does NOT eject the user (no publishingError → no
+        // goodbye redirect). It surfaces the blocked device so the toolbar can badge it, and
+        // tears down the dead publisher so it can be re-created on re-grant.
+        expect(result.current.publishingError).toBeNull();
+        expect(result.current.deniedDevices).toEqual({ microphone: false, camera: true });
         expect(destroySpy).toHaveBeenCalled();
         expect(result.current.publisher).toBeNull();
       });
     });
 
-    it('should set publishingError when microphone access is denied', async () => {
+    it('keeps the user in the call and marks the microphone as blocked when microphone access is denied', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
 
@@ -434,21 +437,326 @@ describe('usePublisher', () => {
       act(() => {
         // @ts-expect-error We simulate user denying microphone permissions in a browser.
         mockPublisher.emit('accessDenied', {
-          message: 'Microphone permission denied during the call',
+          // The SDK's real mid-call revocation message is lowercase — the device match
+          // must be case-insensitive for this to be attributed to the microphone.
+          message: 'microphone permission denied during the call',
         });
       });
 
       await waitFor(() => {
-        // NOTE: Due to a bug in the implementation, when microphone is denied,
-        // the error message says "Camera access is denied" (the ternary is backwards)
-        expect(result.current.publishingError).toEqual({
-          header: 'Camera access is denied',
-          caption:
-            "It seems your browser is blocked from accessing your camera. Reset the permission state through your browser's UI.",
-        });
+        // A microphone denial must name the microphone, not the camera.
+        expect(result.current.publishingError).toBeNull();
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
         expect(destroySpy).toHaveBeenCalled();
         expect(result.current.publisher).toBeNull();
       });
+    });
+
+    it('badges both devices when both are blocked even though the SDK event names only one', async () => {
+      // Joining with camera and mic both revoked: the SDK fires a single accessDenied (here,
+      // camera). Querying both permissions catches the mic too, so both get badged/watched.
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockResolvedValue({ state: 'denied', onchange: null } as unknown as PermissionStatus);
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      act(() => {
+        // @ts-expect-error We simulate the browser denying access mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'camera permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: true });
+      });
+
+      querySpy.mockRestore();
+    });
+
+    it('does not badge a still-granted camera when the SDK misattributes a mic-only denial', async () => {
+      // The generic init message names no device, so the seed flags BOTH, but only the mic is truly
+      // blocked. The authoritative permission query must correct that so the granted camera is
+      // never badged (which would also block its re-acquisition).
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) =>
+          Promise.resolve({
+            state: name === 'microphone' ? 'denied' : 'granted',
+            onchange: null,
+          } as unknown as PermissionStatus)
+        );
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      act(() => {
+        // @ts-expect-error Mis-attributed denial: message does not start with "microphone".
+        mockPublisher.emit('accessDenied', { message: 'OT_USER_MEDIA_ACCESS_DENIED' });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+      });
+
+      querySpy.mockRestore();
+    });
+
+    it('rebuilds the publisher when a blocked device is re-granted so the device can be re-acquired', async () => {
+      // The reduced publisher has no track for the previously-blocked device (the SDK acquires
+      // tracks at init), so on re-grant it must be torn down and re-created with the full request.
+      let microphoneChangeHandler: (() => void) | undefined;
+      let microphoneStatus: { state: string } | undefined;
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) => {
+          const status = {
+            state: name === 'microphone' ? 'denied' : 'granted',
+            addEventListener: (event: string, handler: () => void) => {
+              if (name === 'microphone' && event === 'change') {
+                microphoneChangeHandler = handler;
+              }
+            },
+            removeEventListener: () => {},
+          };
+          if (name === 'microphone') {
+            microphoneStatus = status;
+          }
+          return Promise.resolve(status as unknown as PermissionStatus);
+        });
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the microphone mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'microphone permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+        expect(typeof microphoneChangeHandler).toBe('function');
+      });
+
+      // Stand in for useMeetingRoom re-initializing the reduced (video-only) publisher.
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      destroySpy.mockClear();
+
+      // Re-grant the microphone.
+      act(() => {
+        microphoneStatus!.state = 'granted';
+        microphoneChangeHandler?.();
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: false, camera: false });
+        // The reduced publisher is torn down so it can be rebuilt with audio + video.
+        expect(destroySpy).toHaveBeenCalled();
+        expect(result.current.publisher).toBeNull();
+      });
+
+      querySpy.mockRestore();
+    });
+
+    it('brings a re-granted device back on (unmuted), even if it was muted before', async () => {
+      // Intent OFF for the mic (the user had muted it before).
+      localStorage.setItem('audioSourceEnabled', 'false');
+      let microphoneChangeHandler: (() => void) | undefined;
+      let microphoneStatus: { state: string } | undefined;
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) => {
+          const status = {
+            state: name === 'microphone' ? 'denied' : 'granted',
+            addEventListener: (event: string, handler: () => void) => {
+              if (name === 'microphone' && event === 'change') {
+                microphoneChangeHandler = handler;
+              }
+            },
+            removeEventListener: () => {},
+          };
+          if (name === 'microphone') {
+            microphoneStatus = status;
+          }
+          return Promise.resolve(status as unknown as PermissionStatus);
+        });
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the microphone mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'microphone permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+        expect(typeof microphoneChangeHandler).toBe('function');
+      });
+
+      // Re-grant the microphone.
+      act(() => {
+        microphoneStatus!.state = 'granted';
+        microphoneChangeHandler?.();
+      });
+
+      await waitFor(() => {
+        // Comes back ON (unmuted) — the user just re-allowed it, overriding the prior 'off' intent.
+        expect(result.current.isAudioEnabled).toBe(true);
+      });
+      // Persisted 'on' so it stays enabled across a fresh join/reload.
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
+
+      localStorage.removeItem('audioSourceEnabled');
+      querySpy.mockRestore();
+    });
+
+    it('reacquireDevice recovers a still-denied device after the fallback delay (Safari fallback)', async () => {
+      localStorage.setItem('audioSourceEnabled', 'false');
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) =>
+          Promise.resolve({
+            state: name === 'microphone' ? 'denied' : 'granted',
+            onchange: null,
+          } as unknown as PermissionStatus)
+        );
+
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the microphone mid-call.
+        mockPublisher.emit('accessDenied', {
+          message: 'microphone permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.deniedDevices.microphone).toBe(true);
+      });
+
+      // Safari never fires PermissionStatus.onchange, so the badge click's successful re-grant
+      // recovers here instead of via the watcher.
+      vi.useFakeTimers();
+      act(() => {
+        result.current.reacquireDevice('microphone');
+      });
+      act(() => {
+        vi.advanceTimersByTime(DEVICE_REACQUIRE_FALLBACK_MS);
+      });
+      vi.useRealTimers();
+
+      // Recovered in place, on (unmuted) and persisted, without a page reload.
+      expect(result.current.deniedDevices.microphone).toBe(false);
+      expect(result.current.isAudioEnabled).toBe(true);
+      expect(localStorage.getItem('audioSourceEnabled')).toBe('true');
+
+      localStorage.removeItem('audioSourceEnabled');
+      querySpy.mockRestore();
+    });
+
+    it('seeds a device denied in the waiting room, so joining does not re-request (re-prompt) it', async () => {
+      // The user denied the mic in the waiting room; it's carried in via waitingRoomDenial$ so the
+      // in-call publisher badges it immediately and excludes it from its first getUserMedia — no
+      // automatic prompt on join.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi
+        .spyOn(navigator.permissions, 'query')
+        .mockImplementation(({ name }: { name: string }) =>
+          Promise.resolve({
+            state: name === 'microphone' ? 'denied' : 'granted',
+            addEventListener: () => {},
+            removeEventListener: () => {},
+          } as unknown as PermissionStatus)
+        );
+
+      const { result } = renderHook(() => usePublisher());
+
+      // Badged synchronously from the carried denial — before any accessDenied event fires.
+      expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+
+      // The live-permission refinement runs and, since the mic is still denied, keeps it badged.
+      await waitFor(() => {
+        expect(querySpy).toHaveBeenCalled();
+      });
+      expect(result.current.deniedDevices).toEqual({ microphone: true, camera: false });
+
+      querySpy.mockRestore();
+    });
+
+    it('clears a carried waiting-room denial when the device was granted in the meantime', async () => {
+      // Carried as denied, but the user allowed the mic (e.g. via browser settings) between the
+      // waiting room and joining, so the live permission reads 'granted' — request it normally
+      // instead of leaving it badged.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi.spyOn(navigator.permissions, 'query').mockImplementation(() =>
+        Promise.resolve({
+          state: 'granted',
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        } as unknown as PermissionStatus)
+      );
+
+      const { result } = renderHook(() => usePublisher());
+
+      // Seeded denied synchronously...
+      expect(result.current.deniedDevices.microphone).toBe(true);
+
+      // ...then cleared once the live permission comes back 'granted'.
+      await waitFor(() => {
+        expect(result.current.deniedDevices.microphone).toBe(false);
+      });
+
+      querySpy.mockRestore();
+    });
+
+    it('consumes the carried denial (clears the store) so it cannot leak into a later room', async () => {
+      // A denial belongs to exactly the join that wrote it. After the publisher reads it on mount the
+      // store is reset, so a later publisher reached WITHOUT the waiting room (e.g. a bypass deep
+      // link) starts clean instead of inheriting a stale denial.
+      waitingRoomDenial$.setState({ microphone: true, camera: false });
+      const querySpy = vi.spyOn(navigator.permissions, 'query').mockImplementation(() =>
+        Promise.resolve({
+          state: 'denied',
+          addEventListener: () => {},
+          removeEventListener: () => {},
+        } as unknown as PermissionStatus)
+      );
+
+      const { result } = renderHook(() => usePublisher());
+      expect(result.current.deniedDevices.microphone).toBe(true);
+
+      await waitFor(() => {
+        expect(waitingRoomDenial$.getState()).toEqual({ microphone: false, camera: false });
+      });
+
+      querySpy.mockRestore();
     });
 
     it('should not set publishingError when receiving an accessAllowed event', async () => {

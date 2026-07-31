@@ -6,7 +6,8 @@ import { defaultAudioDevice, defaultVideoDevice } from '@utils/mockData/device';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
-import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
+import { mediaDevices$ } from '@core/stores';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -39,8 +40,10 @@ describe('useBackgroundPublisher', () => {
 
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
-    (initPublisher as Mock).mockImplementation(mockedInitPublisher);
-    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    (initPublisher as unknown as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(
+      mockedHasMediaProcessorSupport
+    );
   });
 
   describe('initBackgroundLocalPublisher', () => {
@@ -60,7 +63,7 @@ describe('useBackgroundPublisher', () => {
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
-      (initPublisher as Mock).mockImplementation((_, _args, callback) => {
+      (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
       });
 
@@ -166,7 +169,9 @@ describe('useBackgroundPublisher', () => {
     const emitAccessDeniedError = () => {
       // @ts-expect-error We simulate user denying microphone permissions in a browser.
       mockPublisher.emit('accessDenied', {
-        message: 'Microphone permission denied during the call',
+        // The SDK's real mid-call revocation message is lowercase — the device match
+        // must be case-insensitive for this to be attributed to the microphone.
+        message: 'microphone permission denied during the call',
       });
     };
 
@@ -193,13 +198,90 @@ describe('useBackgroundPublisher', () => {
 
       expect(result.current.accessStatus).not.toBe(DEVICE_ACCESS_STATUS.REJECTED);
 
+      // Isolate the denial handler's own permission query from any queries made during mount.
+      mockQuery.mockClear();
+
       act(() => {
         emitAccessDeniedError();
       });
 
       await waitFor(() => {
         expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+        // The denied device must be identified as the microphone, not the camera fallback.
+        expect(mockQuery).toHaveBeenCalledWith({ name: 'microphone' });
       });
+    });
+
+    it('re-acquires the camera on after a re-grant (unmuted), even if it was off', async () => {
+      // Keep a video device in the store so the re-init has a camera to publish (and so
+      // useSyncPublisherDevices doesn't flip isVideoEnabled off for device-absence). Intent OFF via
+      // storage, so a recovered-on state can only come from the re-grant, not the stored intent.
+      mediaDevices$.setState((state) => ({ ...state, mediaDeviceInfo: makeMediaDeviceInfos() }));
+      localStorage.setItem('videoSourceEnabled', 'false');
+
+      let cameraChangeHandler: (() => void) | undefined;
+      let cameraStatus: { state: string } | undefined;
+      mockQuery.mockImplementation(({ name }: { name: string }) => {
+        const status = {
+          state: name === 'camera' ? 'denied' : 'granted',
+          addEventListener: (event: string, handler: () => void) => {
+            if (name === 'camera' && event === 'change') {
+              cameraChangeHandler = handler;
+            }
+          },
+          removeEventListener: () => {},
+        };
+        if (name === 'camera') {
+          cameraStatus = status;
+        }
+        return Promise.resolve(status as unknown as PermissionStatus);
+      });
+
+      const capturedOptions: Array<{ publishVideo?: boolean }> = [];
+      (initPublisher as unknown as Mock).mockImplementation(
+        (_dependency: unknown, options: { publishVideo?: boolean }) => {
+          capturedOptions.push(options);
+          return mockPublisher;
+        }
+      );
+
+      const { result } = render();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+      // Sanity: the camera starts off (intent honored) before any denial.
+      expect(capturedOptions[0].publishVideo).toBe(false);
+
+      act(() => {
+        // @ts-expect-error Simulate the browser denying the camera.
+        mockPublisher.emit('accessDenied', { message: 'camera permission denied' });
+      });
+
+      await waitFor(() => {
+        expect(typeof cameraChangeHandler).toBe('function');
+      });
+
+      // Re-grant the camera, then re-init in place.
+      capturedOptions.length = 0;
+      act(() => {
+        cameraStatus!.state = 'granted';
+        cameraChangeHandler?.();
+      });
+      act(() => {
+        // @ts-expect-error stand in for the SDK 'destroyed' event clearing the publisher ref.
+        mockPublisher.emit('destroyed');
+      });
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+
+      await waitFor(() => {
+        const latestOptions = capturedOptions[capturedOptions.length - 1];
+        // The camera comes back ON after the re-grant, overriding the stored 'off' intent.
+        expect(latestOptions.publishVideo).toBe(true);
+      });
+
+      localStorage.removeItem('videoSourceEnabled');
     });
 
     it('does not throw on older, unsupported browsers', async () => {

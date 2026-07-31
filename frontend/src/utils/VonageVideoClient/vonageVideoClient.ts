@@ -55,7 +55,7 @@ type VonageVideoClientEvents = {
  * @augments {EventEmitter}
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
-  public clientSession: Session;
+  public readonly clientSession: Session;
   private readonly credential: Credential;
   private readonly applicationId: string;
   public readonly sessionId: string;
@@ -88,7 +88,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Handles various session events and emits corresponding custom events.
    * @private
    */
-  private attachEventListeners = () => {
+  private readonly attachEventListeners = () => {
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
     this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
@@ -129,7 +129,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.streams.delete(streamId);
   }
 
-  private subscribeToStream = async (stream: Stream) => {
+  private readonly subscribeToStream = async (stream: Stream) => {
     if (this.disconnected) {
       return;
     }
@@ -237,7 +237,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {boolean} params.isScreenshare - Whether the stream is a screenshare
    * @private
    */
-  private setupSubscriberListeners = ({
+  private readonly setupSubscriberListeners = ({
     subscriber,
     streamId,
     isScreenshare,
@@ -284,7 +284,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @returns {boolean} True if the error is recoverable
    * @private
    */
-  private isRecoverableSubscriptionError = (error: unknown): boolean => {
+  private readonly isRecoverableSubscriptionError = (error: unknown): boolean => {
     if (!error || typeof error !== 'object') {
       return false;
     }
@@ -332,7 +332,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {unknown} error - The subscription error
    * @private
    */
-  private handleSubscriptionError = (error: unknown) => {
+  private readonly handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
       eventSource: 'vonageVideoClient.handleSubscriptionError',
       partnerId: this.applicationId,
@@ -347,7 +347,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * The event includes the stream, the changed property, and the old and new values.
    * @private
    */
-  private handleStreamPropertyChanged = (event: StreamPropertyChangedEvent) => {
+  private readonly handleStreamPropertyChanged = (event: StreamPropertyChangedEvent) => {
     this.emit('streamPropertyChanged', event);
   };
 
@@ -356,7 +356,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalEvent} event - The signal event received from the session.
    * @private
    */
-  private handleSignal = (event: SignalEvent) => {
+  private readonly handleSignal = (event: SignalEvent) => {
     const { type } = event;
     if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
       this.emit(type, event);
@@ -367,7 +367,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when the session is reconnecting.
    * @private
    */
-  private handleReconnecting = () => {
+  private readonly handleReconnecting = () => {
     frontendLogger.log('vonageVideoClient: is reconnecting', {
       partnerId: this.applicationId,
     });
@@ -379,7 +379,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when the session has reconnected.
    * @private
    */
-  private handleReconnected = () => {
+  private readonly handleReconnected = () => {
     frontendLogger.log('vonageVideoClient: reconnected', {
       partnerId: this.applicationId,
     });
@@ -391,7 +391,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when the session is disconnected.
    * @private
    */
-  private handleSessionDisconnected = (event: { reason?: string }) => {
+  private readonly handleSessionDisconnected = (event: { reason?: string }) => {
     const reason = event?.reason || 'unknown';
 
     frontendLogger.log('vonageVideoClient: handle session disconnected', {
@@ -407,7 +407,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {{ id: string }} param - The archive ID.
    * @private
    */
-  private handleArchiveStarted = ({ id }: { id: string }) => {
+  private readonly handleArchiveStarted = ({ id }: { id: string }) => {
     this.emit('archiveStarted', id);
   };
 
@@ -415,7 +415,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Emits an event when an archive stops.
    * @private
    */
-  private handleArchiveStopped = () => {
+  private readonly handleArchiveStopped = () => {
     this.emit('archiveStopped');
   };
 
@@ -467,8 +467,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
+    // The 2.35 SDK returns a promise here; disconnect is fire-and-forget during teardown.
     this.clientSession.disconnect();
-    this.clientSession = null as unknown as Session;
   };
 
   /**
@@ -522,6 +522,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
+    // The 2.35 SDK returns a promise here; signalling is fire-and-forget.
     this.clientSession.signal(data);
   };
 

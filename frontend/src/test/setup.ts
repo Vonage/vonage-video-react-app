@@ -34,6 +34,7 @@ const VERA_CSS_VARS: Record<string, string> = {
   '--vera-on-surface': '#929292',
   '--vera-on-tertiary': '#FFFFFF',
   '--vera-on-warning': '#FFFFFF',
+  '--vera-on-warning-dark': '#000000',
   '--vera-primary': '#9941FF',
   '--vera-secondary': '#000000',
   '--vera-success': '#008080',
@@ -43,6 +44,7 @@ const VERA_CSS_VARS: Record<string, string> = {
   '--vera-text-primary': '#000000',
   '--vera-text-secondary': '#757575',
   '--vera-warning': '#CC8800',
+  '--vera-warning-dark': '#FA9F00',
 };
 
 beforeAll(() => {

@@ -1,4 +1,5 @@
-import { hasMediaProcessorSupport, Publisher, VideoFilter } from '@vonage/client-sdk-video';
+import { Publisher, VideoFilter } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { UserType } from '../../../Context/user';
 import { BACKGROUNDS_PATH } from '../../constants';
 import { setStorageItem, STORAGE_KEYS } from '../../storage';

@@ -1,5 +1,5 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -22,6 +22,7 @@ export type DeviceSettingsMenuProps = {
   anchorRef: RefObject<HTMLInputElement | null>;
   handleClose: (event: MouseEvent | TouchEvent) => void;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  isCameraBlocked?: boolean;
 };
 
 /**
@@ -50,10 +51,12 @@ const DeviceSettingsMenu = ({
   anchorRef,
   handleClose,
   setIsOpen,
+  isCameraBlocked = false,
 }: DeviceSettingsMenuProps): ReactElement | false => {
   const isAudio = deviceType === 'audio';
+  // A blocked camera has no feed to preview, so background effects make no sense — hide the entry.
   const shouldDisplayBackgroundEffects =
-    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS;
+    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS && !isCameraBlocked;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();

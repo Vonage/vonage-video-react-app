@@ -5,12 +5,15 @@ import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext'
 import getControlButtonTooltip from '@utils/getControlButtonTooltip';
 import DeviceSettingsMenu from '../DeviceSettingsMenu';
 import MutedAlert from '../../MutedAlert';
+import DevicePermissionBadge from '../../DevicePermissionBadge';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
+import { NO_DENIED_DEVICES } from '@utils/publisher/deviceAccess';
+import requestBlockedDeviceRecovery from '@utils/publisher/requestBlockedDeviceRecovery';
 import { env } from '../../../env';
 
 export type DeviceControlButtonProps = {
@@ -33,16 +36,28 @@ const DeviceControlButton = ({
   toggleBackgroundEffects,
 }: DeviceControlButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
+  const {
+    isVideoEnabled,
+    toggleAudio,
+    toggleVideo,
+    isAudioEnabled,
+    deniedDevices,
+    reacquireDevice,
+  } = usePublisherContext();
   const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
 
   const isAudio = deviceType === 'audio';
+  // Fall back when consumed without a full publisher context (matches the `{}` context default).
+  const { microphone: isMicrophoneBlocked, camera: isCameraBlocked } =
+    deniedDevices ?? NO_DENIED_DEVICES;
+  const isBlocked = isAudio ? isMicrophoneBlocked : isCameraBlocked;
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
   const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
 
   const tooltipTitle = getControlButtonTooltip({
     isAudio,
+    isBlocked,
     isAudioEnabled,
     isVideoEnabled,
     allowMicrophoneControl: env.ALLOW_MICROPHONE_CONTROL,
@@ -72,7 +87,8 @@ const DeviceControlButton = ({
           />
         );
       }
-      if (isAudioEnabled) {
+      // A blocked microphone has no track, so present it as muted regardless of toggle intent.
+      if (isAudioEnabled && !isBlocked) {
         return (
           <VividIcon
             name="microphone-solid"
@@ -97,7 +113,8 @@ const DeviceControlButton = ({
         <VividIcon name="video-solid" customSize={-5} style={{ color: 'var(--vera-disabled)' }} />
       );
     }
-    if (isVideoEnabled) {
+    // A blocked camera has no track, so present it as off regardless of toggle intent.
+    if (isVideoEnabled && !isBlocked) {
       return (
         <VividIcon
           name="video-solid"
@@ -118,6 +135,15 @@ const DeviceControlButton = ({
   };
 
   const handleDeviceStateChange = () => {
+    // A browser-blocked device has no track to toggle, so a click instead re-requests access (see
+    // requestBlockedDeviceRecovery for the prompt/recovery semantics).
+    if (isBlocked) {
+      requestBlockedDeviceRecovery({
+        device: isAudio ? 'microphone' : 'camera',
+        reacquireDevice,
+      });
+      return;
+    }
     if (isAudio) {
       toggleAudio();
     } else {
@@ -172,7 +198,7 @@ const DeviceControlButton = ({
           )}
         </IconButton>
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
-          <Box>
+          <Box className="relative">
             {/* We add the Box here so that the tooltip is present if the button is disabled */}
             <IconButton
               onClick={handleDeviceStateChange}
@@ -191,6 +217,7 @@ const DeviceControlButton = ({
             >
               {renderControlIcon()}
             </IconButton>
+            {isBlocked && <DevicePermissionBadge />}
           </Box>
         </Tooltip>
       </ButtonGroup>
@@ -202,6 +229,7 @@ const DeviceControlButton = ({
         isOpen={open}
         handleClose={handleClose}
         setIsOpen={setOpen}
+        isCameraBlocked={isCameraBlocked}
       />
     </>
   );

@@ -4,9 +4,9 @@ import {
   Event,
   initPublisher,
   VideoFilter,
-  hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -14,7 +14,7 @@ import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePubli
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
-import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
+import useDeviceDenialTracker from '../../../hooks/useDeviceDenialTracker';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
@@ -134,11 +134,25 @@ const useBackgroundPublisher = (
     [setBackgroundFilter]
   );
 
+  // The shared tracker badges + watches the blocked device(s). On re-grant, a camera comes back on
+  // (unmuted), matching the preview and in-call publishers — turning the flag on also feeds the
+  // re-init below, which publishes video according to isVideoEnabled — and ACCESS_CHANGED re-opens
+  // the init gate in useMeetingRoom so the effects preview recovers in place.
+  const { applyAccessDeniedEvent } = useDeviceDenialTracker({
+    onRecover: (device) => {
+      if (device === 'camera') {
+        setIsVideoEnabled(true);
+      }
+      setAccessStatus(DEVICE_ACCESS_STATUS.ACCESS_CHANGED);
+    },
+  });
+
   const handleBackgroundAccessDenied = useCallback(
     async (event: AccessDeniedEvent) => {
-      await handlePublisherAccessDenied(event, setAccessStatus);
+      setAccessStatus(DEVICE_ACCESS_STATUS.REJECTED);
+      await applyAccessDeniedEvent(event);
     },
-    [setAccessStatus]
+    [setAccessStatus, applyAccessDeniedEvent]
   );
 
   const handleVideoElementCreated = (event: PublisherVideoElementCreatedEvent) => {
@@ -186,7 +200,13 @@ const useBackgroundPublisher = (
       videoFilter,
       resolution: env.DEFAULT_RESOLUTION,
       videoSource: mediaDevices$.getState().videoinput,
+      // This is a video-only publisher (background-effects preview). `publishAudio: false` alone
+      // still makes the SDK acquire the default mic via getUserMedia, which fails wholesale when the
+      // mic is blocked and leaves the effects preview with no video. `audioSource: false` skips
+      // acquiring the mic entirely so the camera preview comes up regardless of mic permission.
       publishAudio: false,
+      audioSource: false,
+      // A camera re-granted after a denial comes back on (onDeviceReGrant flips isVideoEnabled).
       publishVideo: isVideoEnabled,
     };
 

@@ -321,5 +321,13 @@
   "zoom.current": "Current zoom",
   "errorPage.title": "Something went wrong",
   "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
-  "notification.dismiss": "Dismiss notification"
+  "notification.dismiss": "Dismiss notification",
+  "deviceAccessHint.blocked": "{{device}} access is blocked. Allow it in your browser settings.",
+  "deviceAccessHint.camera": "Camera",
+  "deviceAccessHint.microphone": "Microphone",
+  "deviceAccessHint.cameraAndMicrophone": "Camera and microphone",
+  "deviceAccessHint.blockedTitle": "Device access blocked",
+  "deviceAccessHint.reload": "Reload page",
+  "devices.audio.microphone.state.blocked": "Microphone access is blocked. Allow it in your browser settings.",
+  "devices.video.camera.state.blocked": "Camera access is blocked. Allow it in your browser settings."
 }

@@ -135,6 +135,61 @@ describe('CameraButton', () => {
       expect(screen.queryByTestId('camera-button-wrapper')).not.toBeInTheDocument();
     });
   });
+
+  it('re-requests browser access instead of toggling when the camera is blocked', async () => {
+    const previewToggleMock = vi.fn();
+    const backgroundToggleMock = vi.fn();
+    const reacquireDeviceMock = vi.fn();
+    const getUserMedia = vi
+      .spyOn(globalThis.navigator.mediaDevices, 'getUserMedia')
+      .mockResolvedValue({ getTracks: () => [] } as unknown as MediaStream);
+
+    render(<CameraButton />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: false, camera: true };
+          context.toggleVideo = previewToggleMock;
+          context.reacquireDevice = reacquireDeviceMock;
+        },
+      },
+      backgroundPublisherContext: {
+        __interceptor: (context) => {
+          context.toggleVideo = backgroundToggleMock;
+        },
+      },
+    });
+
+    fireEvent.click(screen.getByRole('button'));
+
+    // A blocked camera can't be toggled: the click pokes the browser permission (video-only)
+    // instead, and must not flip either publisher's video state.
+    await waitFor(() => {
+      expect(getUserMedia).toHaveBeenCalledWith({ video: true });
+    });
+    expect(previewToggleMock).not.toHaveBeenCalled();
+    expect(backgroundToggleMock).not.toHaveBeenCalled();
+    // A successful re-grant recovers in place (the Safari fallback, no-op on Chrome).
+    await waitFor(() => {
+      expect(reacquireDeviceMock).toHaveBeenCalledWith('camera');
+    });
+  });
+
+  it('shows the off icon and a warning badge when the camera permission is blocked', async () => {
+    render(<CameraButton />, {
+      previewPublisherContext: {
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: false, camera: true };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      // A blocked camera is presented as off (never the on icon) with a warning badge, Meet style.
+      expect(screen.getByTestId('vivid-icon-video-off-line')).toBeInTheDocument();
+      expect(screen.queryByTestId('vivid-icon-video-line')).not.toBeInTheDocument();
+      expect(screen.getByTestId('device-permission-badge')).toBeInTheDocument();
+    });
+  });
 });
 
 type RenderOptions = {

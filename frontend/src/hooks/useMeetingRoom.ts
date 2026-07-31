@@ -6,12 +6,31 @@ import useSessionContext from './useSessionContext';
 import useScreenShare from './useScreenShare';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
+import { hasDeniedDevice } from '../utils/publisher/deviceAccess';
+import type { DeniedDevices } from '../utils/publisher/deviceAccess';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
 import useUserContext from './useUserContext';
 import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
+import useAttemptSignatureGuard from './useAttemptSignatureGuard';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
+
+// Grace period before ejecting to the goodbye page on a publishing error, so transient failures
+// while a device is being (re)acquired can clear before we give up on the call.
+const PUBLISHING_ERROR_REDIRECT_DELAY_MS = 1500;
+
+// Stable key for a publisher device source (a deviceId string, false/null, or a MediaStreamTrack),
+// used to tell whether a re-init would request the identical source set that just failed.
+const sourceKey = (source: unknown): string => {
+  if (typeof source === 'string') {
+    return source;
+  }
+  if (source && typeof source === 'object') {
+    return (source as { id?: string }).id ?? 'track';
+  }
+  return String(source);
+};
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -27,10 +46,12 @@ const useMeetingRoom = () => {
   } = useUserContext();
   const {
     publisher,
+    isPublishing,
     publish,
     quality,
     initializeLocalPublisher,
     publishingError,
+    deniedDevices,
     isVideoEnabled,
     publisherOptions,
   } = usePublisherContext();
@@ -121,15 +142,43 @@ const useMeetingRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey, hasValidUsername, bypass]);
 
+  // Stops the gate below from re-initializing the identical (still-failing) request in a
+  // re-prompt loop — see useAttemptSignatureGuard for the Safari rationale.
+  const initAttemptGuard = useAttemptSignatureGuard();
   useEffect(() => {
     if (!publisherOptions) {
       return;
     }
 
-    if (!publisher) {
+    // Re-arm the retry guard only once we're actually publishing (a real acquired stream) — NOT
+    // while the publisher object merely exists transiently between initPublisher() and its
+    // accessDenied, which would re-arm the guard mid-denial and let the re-prompt loop resume.
+    if (isPublishing) {
+      initAttemptGuard.reset();
+    }
+    if (publisher) {
+      return;
+    }
+
+    // Re-initialize unless BOTH devices are blocked (nothing to acquire). When only one is
+    // blocked we still init, requesting just the granted device (publisherOptions already excludes
+    // the blocked one) so e.g. the camera stays live while the mic is blocked — Google Meet style.
+    // A genuinely different request (e.g. the video-only retry after a mic denial) has a new
+    // signature and is allowed; the user re-requests a blocked device via the badge click.
+    const allDevicesBlocked = deniedDevices.microphone && deniedDevices.camera;
+    const sourceSignature = `${sourceKey(publisherOptions.audioSource)}|${sourceKey(publisherOptions.videoSource)}`;
+
+    if (!allDevicesBlocked && initAttemptGuard.shouldAttempt(sourceSignature)) {
       initializeLocalPublisher(publisherOptions);
     }
-  }, [initializeLocalPublisher, publisherOptions, publisher]);
+  }, [
+    initializeLocalPublisher,
+    initAttemptGuard,
+    publisherOptions,
+    publisher,
+    isPublishing,
+    deniedDevices,
+  ]);
 
   useEffect(() => {
     if (connected && publisher && publish) {
@@ -138,21 +187,19 @@ const useMeetingRoom = () => {
   }, [publisher, publish, connected]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
+    // While the camera is blocked (REJECTED) the background publisher can't acquire it and
+    // retrying would loop. On re-grant the background publisher's accessStatus flips to
+    // ACCESS_CHANGED, re-opening this gate so it recovers in place — no reload.
+    if (!backgroundPublisher && accessStatus !== DEVICE_ACCESS_STATUS.REJECTED) {
       void initBackgroundLocalPublisher();
     }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
-
-  useEffect(() => {
-    if (accessStatus === DEVICE_ACCESS_STATUS.ACCESS_CHANGED) {
-      window.location.reload();
-    }
-  }, [accessStatus]);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, accessStatus]);
 
   useRedirectOnPublisherError({
     publishingError,
     reconnecting,
     sessionKey,
+    deniedDevices,
   });
   useRedirectOnSubscriberError({
     subscriberError: subscriptionError,
@@ -207,15 +254,24 @@ function useRedirectOnPublisherError({
   publishingError,
   reconnecting,
   sessionKey,
+  deniedDevices,
 }: {
   publishingError: PublishingErrorType | null;
   reconnecting: boolean | null;
   sessionKey: string | null;
+  deniedDevices: DeniedDevices;
 }) {
   const navigate = useNavigate();
 
   const maybeRedirect = useEffectEvent(() => {
     if (!publishingError) {
+      return;
+    }
+
+    // A blocked camera/microphone makes publishing fail, but that's recoverable in place (Google
+    // Meet keeps you in the call) — don't eject to the goodbye page. The device is badged and
+    // re-acquired on re-grant; publishingError clears once a track publishes again.
+    if (hasDeniedDevice(deniedDevices)) {
       return;
     }
 
@@ -238,9 +294,22 @@ function useRedirectOnPublisherError({
     });
   });
 
+  // Key the timer off whether an error is *active*, not its object identity: a publisher failing
+  // in a loop re-sets publishingError repeatedly, and depending on the object would keep resetting
+  // the timer and delay a genuine redirect indefinitely.
+  const hasPublishingError = publishingError !== null;
+
   useEffect(() => {
-    maybeRedirect();
-  }, [publishingError, reconnecting]);
+    if (!hasPublishingError) {
+      return;
+    }
+    // Defer the ejection so transient publish failures during device (re)acquisition can resolve
+    // first — e.g. revoking then re-granting a device mid-call briefly fails publishing before the
+    // track re-publishes (handleStreamCreated clears publishingError) or the denial is detected.
+    // A genuinely persistent failure still redirects after the delay.
+    const timer = setTimeout(maybeRedirect, PUBLISHING_ERROR_REDIRECT_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [hasPublishingError, reconnecting]);
 }
 
 /**

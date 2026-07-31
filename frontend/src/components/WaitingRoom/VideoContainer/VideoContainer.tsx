@@ -5,6 +5,7 @@ import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
 import useUserContext from '../../../hooks/useUserContext';
 import usePreviewPublisherContext from '../../../hooks/usePreviewPublisherContext';
+import useDeferredBackgroundEffectsPublisher from '../../../hooks/useDeferredBackgroundEffectsPublisher';
 import getInitials from '../../../utils/getInitials';
 import PreviewAvatar from '../PreviewAvatar';
 import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator';
@@ -16,6 +17,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
+import DeviceAccessHint from '../DeviceAccessHint';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import VideoStatsOverlay from '../VideoStatsOverlay';
@@ -40,14 +42,34 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
   const [{ isOpen: isPrecallNetworkTestOpen }, { close: closePrecallTest }] =
     precallNetworkTestDialog$.use();
   const { user } = useUserContext();
-  const { publisherVideoElement, isVideoEnabled, isAudioEnabled, speechLevel, isVideoLoading } =
-    usePreviewPublisherContext();
+  const {
+    publisherVideoElement,
+    isVideoEnabled,
+    isAudioEnabled,
+    speechLevel,
+    isVideoLoading,
+    deniedDevices,
+  } = usePreviewPublisherContext();
   const initials = getInitials(username);
+  // A blocked camera produces no video, so show the avatar placeholder as if video were off.
+  const isVideoVisible = isVideoEnabled && !deniedDevices.camera;
+
+  // Lazily acquire the effects-preview camera only when the effects panel opens. VideoContainer is
+  // the natural home: it owns the effects entry point and lives inside the backgroundEffectsDialog$
+  // provider, which the waiting-room hook (running above that provider) cannot read.
+  useDeferredBackgroundEffectsPublisher();
 
   useEffect(() => {
     if (!publisherVideoElement) return;
 
     containerRef.current!.appendChild(publisherVideoElement);
+
+    // Detach the element when it changes or the tile unmounts. Without this, a recovery rebuild
+    // (which swaps publisherVideoElement) orphans the old, now-destroyed <video> node in the
+    // container, leaking stale nodes across the rebuild.
+    return () => {
+      publisherVideoElement.remove();
+    };
   }, [publisherVideoElement]);
 
   return (
@@ -64,6 +86,10 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       <div
         ref={containerRef}
         className={classNames(
+          // Reserve the video's 16:9 footprint on the container itself, not only on the appended
+          // <video> child. When a device is blocked there is no child, so without this the tile
+          // would collapse to its content and shrink (the waiting-room Box is `inline-flex`).
+          'w-dvw md:w-146.25 aspect-video',
           'child:mx-auto',
           'child:animate-[fade-in_.6s_linear]',
           'child:-scale-x-100',
@@ -85,6 +111,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
 
       <VignetteEffect />
 
+      <DeviceAccessHint />
+
       {env.SHOW_VIDEO_STATS && isVideoEnabled && !isVideoLoading && (
         <div className="absolute left-4 top-3 z-10">
           <VideoStatsOverlay />
@@ -96,7 +124,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
       <PreviewAvatar
         initials={initials}
         username={user.defaultSettings.name}
-        isVideoEnabled={isVideoEnabled}
+        isVideoEnabled={isVideoVisible}
         isVideoLoading={isVideoLoading}
       />
 
@@ -112,7 +140,8 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
             <CameraButton />
           </div>
           <div className="absolute right-5">
-            <BackgroundEffectsButton onClick={open} />
+            {/* A blocked camera has no feed to preview, so hide the effects entry entirely. */}
+            {!deniedDevices.camera && <BackgroundEffectsButton onClick={open} />}
             {isBackgroundEffectsOpen && (
               <BackgroundEffectsDialog
                 isBackgroundEffectsOpen={true}

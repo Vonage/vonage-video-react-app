@@ -101,6 +101,59 @@ describe('MicButton', () => {
       expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
     });
   });
+
+  it('re-requests browser access instead of toggling when the microphone is blocked', async () => {
+    const toggleAudioMock = vi.fn();
+    const reacquireDeviceMock = vi.fn();
+    const getUserMedia = vi
+      .spyOn(globalThis.navigator.mediaDevices, 'getUserMedia')
+      .mockResolvedValue({ getTracks: () => [] } as unknown as MediaStream);
+    render(<MicButton />, {
+      previewPublisherContext: {
+        __onCreated: (context) => {
+          context.isAudioEnabled = true;
+          context.toggleAudio = toggleAudioMock;
+          context.reacquireDevice = reacquireDeviceMock;
+        },
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: false };
+        },
+      },
+    });
+
+    fireEvent.click(screen.getByRole('button'));
+
+    // A blocked mic can't be toggled: the click pokes the browser permission (audio-only) instead,
+    // and must not flip publish state.
+    await waitFor(() => {
+      expect(getUserMedia).toHaveBeenCalledWith({ audio: true });
+    });
+    expect(toggleAudioMock).not.toHaveBeenCalled();
+    // A successful re-grant recovers in place (the Safari fallback, no-op on Chrome).
+    await waitFor(() => {
+      expect(reacquireDeviceMock).toHaveBeenCalledWith('microphone');
+    });
+  });
+
+  it('shows the muted icon and a warning badge when the microphone permission is blocked', async () => {
+    render(<MicButton />, {
+      previewPublisherContext: {
+        __onCreated: (context) => {
+          context.isAudioEnabled = true;
+        },
+        __interceptor: (context) => {
+          context.deniedDevices = { microphone: true, camera: false };
+        },
+      },
+    });
+
+    await waitFor(() => {
+      // A blocked mic is presented as muted (never the on icon) with a warning badge, Meet style.
+      expect(screen.getByTestId('vivid-icon-mic-mute-line')).toBeInTheDocument();
+      expect(screen.queryByTestId('vivid-icon-microphone-line')).not.toBeInTheDocument();
+      expect(screen.getByTestId('device-permission-badge')).toBeInTheDocument();
+    });
+  });
 });
 
 type RenderOptions = {
