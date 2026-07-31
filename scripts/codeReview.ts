@@ -31,7 +31,7 @@ function main() {
   const normalizedScopePath = normalizePath(scopePathOrHelpFlag);
   const scopeType = inferScopeType(normalizedScopePath);
 
-  const addTestCoverageCommand = buildAddTestCoverageCommand({
+  const codeReviewHarnessCommand = buildCodeReviewHarnessCommand({
     scopeType,
     scopeValue: normalizedScopePath,
     codeReviewConfig,
@@ -43,7 +43,7 @@ function main() {
   console.log(`Target mode: ${codeReviewConfig.targetMode}`);
   console.log('');
 
-  execSync(addTestCoverageCommand, {
+  execSync(codeReviewHarnessCommand, {
     stdio: 'inherit',
     env: process.env,
   });
@@ -131,7 +131,7 @@ function inferScopeType(scopePath: string): 'file' | 'folder' {
   throw new Error(`Scope path must be a file or folder: ${scopePath}`);
 }
 
-function buildAddTestCoverageCommand(args: {
+function buildCodeReviewHarnessCommand(args: {
   scopeType: 'file' | 'folder';
   scopeValue: string;
   codeReviewConfig: CodeReviewConfig;
@@ -139,7 +139,7 @@ function buildAddTestCoverageCommand(args: {
   const { scopeType, scopeValue, codeReviewConfig } = args;
 
   const commandParts = [
-    'yarn add-test-coverage',
+    'yarn code-review:harness',
     `--scope-type ${scopeType}`,
     `--scope-value ${shellQuote(scopeValue)}`,
     `--target-mode ${codeReviewConfig.targetMode}`,

@@ -2,6 +2,7 @@
 
 import { execSync } from 'child_process';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 
 type ScopeType = 'folder' | 'file' | 'working-tree' | 'commit';
@@ -141,6 +142,8 @@ function main() {
 		excludedFiles: ExcludedFile[];
 	};
 
+	printClassificationSummary(parsedFilterResult);
+
 	if (parsedFilterResult.testableFiles.length === 0) {
 		console.log('\nNo testable files found after filtering. Exiting successfully.\n');
 		process.exit(0);
@@ -189,6 +192,10 @@ function main() {
 		excludedFiles: parsedFilterResult.excludedFiles,
 		fileResults: iterationResult,
 	});
+	printRunSummary({
+		fileResults: iterationResult,
+		coverageThreshold: normalizedOptions.coverageThreshold,
+	});
 
 	const hasFailures = iterationResult.some((item) => item.status === 'failed');
 	printProgress('Phase 6/6: final summary emitted.');
@@ -214,6 +221,34 @@ function printHeader(options: HarnessOptions) {
 function printProgress(message: string) {
 	const timestamp = new Date().toISOString();
 	console.log(`[progress ${timestamp}] ${message}`);
+}
+
+function printClassificationSummary(result: {
+	testableFiles: FileClassification[];
+	excludedFiles: ExcludedFile[];
+}) {
+	const { testableFiles, excludedFiles } = result;
+
+	console.log('');
+	console.log('Classification summary:');
+	console.log(`- Testable files: ${testableFiles.length}`);
+	console.log(`- Excluded files: ${excludedFiles.length}`);
+
+	if (excludedFiles.length > 0) {
+		const groupedByReason = excludedFiles.reduce<Record<string, number>>((accumulator, excludedFile) => {
+			const current = accumulator[excludedFile.reason] ?? 0;
+			return {
+				...accumulator,
+				[excludedFile.reason]: current + 1,
+			};
+		}, {});
+
+		for (const reason of Object.keys(groupedByReason).sort()) {
+			console.log(`  - ${reason}: ${groupedByReason[reason]}`);
+		}
+	}
+
+	console.log('');
 }
 
 function parseOptions(argumentsList: string[]): HarnessOptions {
@@ -278,7 +313,7 @@ function parseOptions(argumentsList: string[]): HarnessOptions {
 
 function printHelp() {
 	console.log('Usage:');
-	console.log('  yarn add-test-coverage --scope-type <type> [options]');
+	console.log('  yarn code-review:harness --scope-type <type> [options]');
 	console.log('');
 	console.log('Required:');
 	console.log('  --scope-type <folder|file|working-tree|commit>');
@@ -291,14 +326,14 @@ function printHelp() {
 	console.log('  --max-retries-segment <number>              Default: 2');
 	console.log('  --max-retries-file <number>                 Default: 2');
 	console.log('  --ai-command <command>                      Required when not using --dry-run');
-	console.log('  --monitoring-dir <path>                     Default: _testMonitoring/addTestCoverage');
+	console.log('  --monitoring-dir <path>                     Default: _testMonitoring/codeReviewHarness');
 	console.log('  --dry-run                                   Plan and validate only');
 	console.log('  --verbose                                   Print full command output');
 	console.log('');
 	console.log('Examples:');
-	console.log('  yarn add-test-coverage --scope-type working-tree --target-mode current-changes --dry-run');
-	console.log('  yarn add-test-coverage --scope-type file --scope-value backend/routes/video/video.ts --target-mode whole-file --dry-run');
-	console.log('  yarn add-test-coverage --scope-type commit --scope-value <sha> --target-mode current-changes --ai-command "copilot"');
+	console.log('  yarn code-review:harness --scope-type working-tree --target-mode current-changes --dry-run');
+	console.log('  yarn code-review:harness --scope-type file --scope-value backend/routes/video/video.ts --target-mode whole-file --dry-run');
+	console.log('  yarn code-review:harness --scope-type commit --scope-value <sha> --target-mode current-changes --ai-command "copilot"');
 }
 
 function parseRawArguments(argumentsList: string[]): Record<string, string> {
@@ -669,7 +704,7 @@ function runCommandSegment(args: {
 				return `dry-run: ${command}`;
 			}
 
-			return runCommandCapture(command, `${segmentName} failed`);
+			return runCommandCapture(command, `${segmentName} failed`, { liveOutput: true });
 		},
 	});
 
@@ -740,6 +775,9 @@ function processFilesSequentially(args: {
 		}
 
 		const metadata = JSON.parse(metadataResult.output) as MetadataResponse;
+		printProgress(
+			`Metadata ready for ${filePath}: suggestedTests=${metadata.suggestedTestFilePaths.length}, blockers=${metadata.blockers?.length ?? 0}`
+		);
 
 		const instructionComplianceResult = runSegmentWithRetry({
 			segmentName: `file-instruction-compliance-${sanitizeSegmentName(filePath)}`,
@@ -773,6 +811,14 @@ function processFilesSequentially(args: {
 			continue;
 		}
 
+		const instructionComplianceOutput = JSON.parse(instructionComplianceResult.output) as {
+			status: string;
+			checkedFileCount: number;
+		};
+		printProgress(
+			`Instruction compliance ${instructionComplianceOutput.status} for ${filePath} (checked files: ${instructionComplianceOutput.checkedFileCount})`
+		);
+
 		const baselineCoverageResult = runSegmentWithRetry({
 			segmentName: `file-baseline-coverage-${sanitizeSegmentName(filePath)}`,
 			monitoringDirectory: options.monitoringDirectory,
@@ -801,6 +847,12 @@ function processFilesSequentially(args: {
 		}
 
 		const baselineCoverage = JSON.parse(baselineCoverageResult.output) as CoverageMeasurement;
+		printCoverageObservation({
+			filePath,
+			coverageThreshold: options.coverageThreshold,
+			label: 'Baseline coverage',
+			measurement: baselineCoverage,
+		});
 
 		if (baselineCoverage.coveragePercentage !== null && baselineCoverage.coveragePercentage >= options.coverageThreshold) {
 			fileResults.push({
@@ -809,6 +861,9 @@ function processFilesSequentially(args: {
 				reason: 'already-covered-at-threshold',
 				details: `baseline=${baselineCoverage.coveragePercentage}`,
 			});
+			printProgress(
+				`Skipping ${filePath}: baseline coverage ${baselineCoverage.coveragePercentage}% already meets threshold ${options.coverageThreshold}%.`
+			);
 			continue;
 		}
 
@@ -835,7 +890,8 @@ function processFilesSequentially(args: {
 					run: () => {
 						runCommandCapture(
 							metadata.recommendedTestCommand,
-							`File test command failed for ${filePath}.`
+							`File test command failed for ${filePath}.`,
+							{ liveOutput: true }
 						);
 
 						const measurement = runCoverageMeasurement({
@@ -859,6 +915,12 @@ function processFilesSequentially(args: {
 				}
 
 				const measurement = JSON.parse(executionStepResult.output) as CoverageMeasurement;
+				printCoverageObservation({
+					filePath,
+					coverageThreshold: options.coverageThreshold,
+					label: `Post-test coverage (attempt ${attemptCounter})`,
+					measurement,
+				});
 				const hasValidCoverage = measurement.coveragePercentage !== null;
 
 				if (!hasValidCoverage) {
@@ -919,6 +981,53 @@ function processFilesSequentially(args: {
 	return fileResults;
 }
 
+function printCoverageObservation(args: {
+	filePath: string;
+	coverageThreshold: number;
+	label: string;
+	measurement: CoverageMeasurement;
+}) {
+	const { filePath, coverageThreshold, label, measurement } = args;
+
+	if (measurement.coveragePercentage === null) {
+		printProgress(
+			`${label} unavailable for ${filePath} (target not found in ${measurement.coverageFilePath}).`
+		);
+		return;
+	}
+
+	const thresholdStatus =
+		measurement.coveragePercentage >= coverageThreshold ? 'meets-threshold' : 'below-threshold';
+
+	printProgress(
+		`${label} for ${filePath}: ${measurement.coveragePercentage}% (threshold=${coverageThreshold}% -> ${thresholdStatus})`
+	);
+}
+
+function printRunSummary(args: {
+	fileResults: Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string; details?: string }>;
+	coverageThreshold: number;
+}) {
+	const { fileResults, coverageThreshold } = args;
+
+	const passedCount = fileResults.filter((entry) => entry.status === 'passed').length;
+	const skippedCount = fileResults.filter((entry) => entry.status === 'skipped').length;
+	const failedCount = fileResults.filter((entry) => entry.status === 'failed').length;
+
+	console.log('');
+	console.log(`Run summary (coverage threshold ${coverageThreshold}%):`);
+	console.log(`- Passed : ${passedCount}`);
+	console.log(`- Skipped: ${skippedCount}`);
+	console.log(`- Failed : ${failedCount}`);
+
+	for (const result of fileResults) {
+		const detailsSuffix = result.details ? ` | ${result.details}` : '';
+		console.log(`  - [${result.status}] ${result.filePath} | ${result.reason}${detailsSuffix}`);
+	}
+
+	console.log('');
+}
+
 function runMetadataStep(args: {
 	fileClassification: FileClassification;
 	options: HarnessOptions;
@@ -954,7 +1063,9 @@ function runMetadataStep(args: {
 		requestFilePath,
 		responseFilePath,
 	});
-	runCommandCapture(aiCommandLine, `AI metadata command failed for ${fileClassification.filePath}.`);
+	runCommandCapture(aiCommandLine, `AI metadata command failed for ${fileClassification.filePath}.`, {
+		liveOutput: true,
+	});
 
 	if (!fs.existsSync(responseFilePath)) {
 		throw new Error(`AI metadata response file was not created: ${responseFilePath}`);
@@ -996,7 +1107,8 @@ function runCoverageMeasurement(args: {
 
 	runCommandCapture(
 		metadata.recommendedCoverageCommand,
-		`Coverage command failed for ${fileClassification.filePath} (${segmentLabel}).`
+		`Coverage command failed for ${fileClassification.filePath} (${segmentLabel}).`,
+		{ liveOutput: true }
 	);
 
 	const coverageFilePath = getCoverageFilePathForProject(fileClassification.projectName);
@@ -1260,9 +1372,24 @@ function writeSegmentReport(args: {
 	fs.writeFileSync(reportPath, lines.join('\n'), 'utf-8');
 }
 
-function runCommandCapture(command: string, errorPrefix: string): string {
+function runCommandCapture(
+	command: string,
+	errorPrefix: string,
+	options?: {
+		liveOutput?: boolean;
+	}
+): string {
 	const startedAt = Date.now();
 	printProgress(`Running command: ${command}`);
+	const shouldStreamLiveOutput = options?.liveOutput === true;
+
+	if (shouldStreamLiveOutput) {
+		return runCommandCaptureLive({
+			command,
+			errorPrefix,
+			startedAt,
+		});
+	}
 
 	try {
 		const output = execSync(command, {
@@ -1280,6 +1407,60 @@ function runCommandCapture(command: string, errorPrefix: string): string {
 		printProgress(`Command failed after ${durationSeconds}s`);
 		const normalizedError = normalizeExecError(error, errorPrefix);
 		throw new Error(normalizedError);
+	}
+}
+
+function runCommandCaptureLive(args: {
+	command: string;
+	errorPrefix: string;
+	startedAt: number;
+}): string {
+	const { command, errorPrefix, startedAt } = args;
+	const liveOutputFilePath = path.join(
+		os.tmpdir(),
+		`code-review-harness-live-output-${Date.now()}-${Math.random().toString(16).slice(2)}.log`
+	);
+
+	const wrappedCommand = `set -o pipefail; ${command} 2>&1 | tee ${shellQuote(liveOutputFilePath)}`;
+
+	try {
+		execSync(wrappedCommand, {
+			encoding: 'utf-8',
+			stdio: 'inherit',
+			env: process.env,
+			shell: '/bin/bash',
+		});
+
+		const durationSeconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+		printProgress(`Command completed in ${durationSeconds}s`);
+
+		if (!fs.existsSync(liveOutputFilePath)) {
+			return '(live output streamed; no captured output file was produced)';
+		}
+
+		return redactSensitiveText(fs.readFileSync(liveOutputFilePath, 'utf-8'));
+	} catch (error) {
+		const durationSeconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+		printProgress(`Command failed after ${durationSeconds}s`);
+
+		const capturedOutput = fs.existsSync(liveOutputFilePath)
+			? redactSensitiveText(fs.readFileSync(liveOutputFilePath, 'utf-8'))
+			: '';
+
+		const normalizedError = normalizeExecError(error, errorPrefix);
+		const combinedError = capturedOutput
+			? `${normalizedError}\n\nlive-output:\n${capturedOutput}`
+			: normalizedError;
+
+		throw new Error(combinedError);
+	} finally {
+		try {
+			if (fs.existsSync(liveOutputFilePath)) {
+				fs.rmSync(liveOutputFilePath, { force: true });
+			}
+		} catch {
+			// ignore cleanup errors for temporary output files
+		}
 	}
 }
 
