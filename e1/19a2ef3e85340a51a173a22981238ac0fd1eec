@@ -1,0 +1,29 @@
+scripts/harnessMetadataAdapter.ts
+  h_6029769cf9ac60 3,7-13,44-64,66-90,92-98,100,102-103,107-109,111-125,127,130,147-187,189-258,260-322,324-369,491,493,547
+  s_02fd3b14e1283d::t_f5c775c3f1f827 91,99,104,110,126,142-145,259,323,389-394,396-401,447-452,485-490,492,523-528
+scripts/harnessMetadataPrompt.md
+  h_6029769cf9ac60 1-36
+package.json
+  s_02fd3b14e1283d::t_bd4a336c8d9f4d 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "e119a2ef3e85340a51a173a22981238ac0fd1eec",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
