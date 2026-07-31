@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
+import { execSync, spawn } from 'child_process';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+
+const DEFAULT_PROVIDER: AdapterProvider = 'deterministic';
+const DEFAULT_MAX_RETRIES = 10;
+const COPILOT_TIMEOUT_MILLISECONDS = 120_000;
+const DEFAULT_PROMPT_TEMPLATE_PATH = 'scripts/harnessMetadataPrompt.md';
+
+type AdapterProvider = 'deterministic' | 'gh-copilot';
 
 type ProjectName =
   | 'backend'
@@ -34,18 +41,93 @@ type MetadataResponse = {
   blockers?: string[];
 };
 
-function main() {
-  const [, , requestPath, responsePath] = process.argv;
+type CliOptions = {
+  provider: AdapterProvider;
+  maxRetries: number;
+  promptTemplatePath: string;
+  requestPath: string;
+  responsePath: string;
+};
 
-  if (!requestPath || !responsePath) {
-    console.error('Usage: npx tsx scripts/harnessMetadataAdapter.ts <requestFile> <responseFile>');
-    process.exit(1);
+type ParseValidationResult =
+  | {
+      success: true;
+      data: MetadataResponse;
+    }
+  | {
+      success: false;
+      errorMessage: string;
+    };
+
+async function main() {
+  const options = parseCliOptions(process.argv.slice(2));
+  const request = JSON.parse(fs.readFileSync(options.requestPath, 'utf-8')) as MetadataRequest;
+
+  const response =
+    options.provider === 'gh-copilot'
+      ? await buildCopilotResponse({ request, options })
+      : buildDeterministicResponse(request);
+
+  fs.writeFileSync(options.responsePath, JSON.stringify(response, null, 2), 'utf-8');
+}
+
+function parseCliOptions(argumentsList: string[]): CliOptions {
+  const optionsRecord: Record<string, string> = {};
+  const positionalArguments: string[] = [];
+
+  let index = 0;
+  while (index < argumentsList.length) {
+    const current = argumentsList[index];
+
+    if (!current.startsWith('--')) {
+      positionalArguments.push(current);
+      index += 1;
+      continue;
+    }
+
+    const optionName = current.replace(/^--/, '');
+    const next = argumentsList[index + 1];
+    const hasValue = !!next && !next.startsWith('--');
+
+    if (!hasValue) {
+      throw new Error(`Missing value for option --${optionName}.`);
+    }
+
+    optionsRecord[optionName] = next;
+    index += 2;
   }
 
-  const request = JSON.parse(fs.readFileSync(requestPath, 'utf-8')) as MetadataRequest;
+  const [requestPath, responsePath] = positionalArguments;
+  if (!requestPath || !responsePath) {
+    throw new Error(
+      'Usage: npx tsx scripts/harnessMetadataAdapter.ts [--provider deterministic|gh-copilot] [--max-retries N] [--prompt-template path] <requestFile> <responseFile>'
+    );
+  }
+
+  const provider = (optionsRecord.provider ?? DEFAULT_PROVIDER) as AdapterProvider;
+  if (provider !== 'deterministic' && provider !== 'gh-copilot') {
+    throw new Error(`Unsupported provider '${provider}'. Supported: deterministic, gh-copilot.`);
+  }
+
+  const maxRetriesRaw = optionsRecord['max-retries'] ?? `${DEFAULT_MAX_RETRIES}`;
+  const maxRetries = Number(maxRetriesRaw);
+  if (!Number.isInteger(maxRetries) || maxRetries <= 0) {
+    throw new Error('--max-retries must be a positive integer.');
+  }
+
+  return {
+    provider,
+    maxRetries,
+    promptTemplatePath: optionsRecord['prompt-template'] ?? DEFAULT_PROMPT_TEMPLATE_PATH,
+    requestPath,
+    responsePath,
+  };
+}
+
+function buildDeterministicResponse(request: MetadataRequest): MetadataResponse {
   const suggestedTestFilePaths = findSuggestedTestFiles(request.filePath, request.projectName);
 
-  const response: MetadataResponse = {
+  return {
     targetFilePath: request.filePath,
     suggestedTestFilePaths,
     recommendedCoverageCommand: buildCoverageCommand({
@@ -57,10 +139,234 @@ function main() {
       suggestedTestFilePaths,
     }),
     behaviorsToTest: buildBehaviorHints(request.filePath),
-    blockers: request.projectName === 'integration-tests' ? ['integration-tests-no-file-coverage-support'] : [],
+    blockers:
+      request.projectName === 'integration-tests'
+        ? ['integration-tests-no-file-coverage-support']
+        : [],
   };
+}
 
-  fs.writeFileSync(responsePath, JSON.stringify(response, null, 2), 'utf-8');
+async function buildCopilotResponse(args: {
+  request: MetadataRequest;
+  options: CliOptions;
+}): Promise<MetadataResponse> {
+  const { request, options } = args;
+
+  const deterministicCandidate = buildDeterministicResponse(request);
+  const promptTemplate = fs.readFileSync(path.resolve(options.promptTemplatePath), 'utf-8');
+  const fullPrompt = buildCopilotPrompt({
+    promptTemplate,
+    request,
+    deterministicCandidate,
+  });
+
+  for (let attempt = 1; attempt <= options.maxRetries; attempt += 1) {
+    const rawOutput = await invokeCopilotModel(fullPrompt);
+    const parseResult = tryParseAndValidateCopilotOutput({
+      rawOutput,
+      expectedFilePath: request.filePath,
+    });
+
+    if (parseResult.success) {
+      return parseResult.data;
+    }
+
+    console.warn(
+      `Copilot output validation failed on attempt ${attempt}/${options.maxRetries}: ${parseResult.errorMessage}`
+    );
+  }
+
+  throw new Error(`Copilot output failed validation after ${options.maxRetries} retries.`);
+}
+
+function buildCopilotPrompt(args: {
+  promptTemplate: string;
+  request: MetadataRequest;
+  deterministicCandidate: MetadataResponse;
+}): string {
+  const { promptTemplate, request, deterministicCandidate } = args;
+
+  return [
+    promptTemplate,
+    '',
+    '## Metadata Request',
+    JSON.stringify(request, null, 2),
+    '',
+    '## Deterministic Candidate (fallback baseline)',
+    JSON.stringify(deterministicCandidate, null, 2),
+  ].join('\n');
+}
+
+async function invokeCopilotModel(prompt: string): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const copilotProcess = spawn('gh', ['copilot', '-p', prompt], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+      timeout: COPILOT_TIMEOUT_MILLISECONDS,
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    copilotProcess.stdout.on('data', function collectStdout(chunk: Buffer) {
+      stdout += chunk.toString();
+    });
+
+    copilotProcess.stderr.on('data', function collectStderr(chunk: Buffer) {
+      stderr += chunk.toString();
+    });
+
+    copilotProcess.stdin.end();
+
+    copilotProcess.on('close', function handleClose(exitCode: number | null) {
+      if (exitCode !== 0) {
+        reject(new Error(`gh copilot exited with code ${exitCode}: ${stderr.trim()}`));
+        return;
+      }
+
+      resolve(stdout);
+    });
+
+    copilotProcess.on('error', reject);
+  });
+}
+
+function tryParseAndValidateCopilotOutput(args: {
+  rawOutput: string;
+  expectedFilePath: string;
+}): ParseValidationResult {
+  const { rawOutput, expectedFilePath } = args;
+  const sanitizedOutput = extractJsonFromOutput(rawOutput);
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(sanitizedOutput);
+  } catch {
+    return {
+      success: false,
+      errorMessage: 'Output is not valid JSON.',
+    };
+  }
+
+  const shapeCheck = validateMetadataResponseShape(parsed, expectedFilePath);
+  if (!shapeCheck.success) {
+    return shapeCheck;
+  }
+
+  return {
+    success: true,
+    data: shapeCheck.data,
+  };
+}
+
+const ANSI_ESCAPE_PATTERN = new RegExp(
+  String.raw`[\u001B\u009B][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nq-uy=><~]`,
+  'g'
+);
+
+function extractJsonFromOutput(rawOutput: string): string {
+  const withoutAnsi = rawOutput.replace(ANSI_ESCAPE_PATTERN, '');
+  const trimmed = withoutAnsi.trim();
+
+  const fencedJsonMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
+
+  if (fencedJsonMatch) {
+    return fencedJsonMatch[1].trim();
+  }
+
+  const jsonObjectMatch = trimmed.match(/\{[\s\S]*\}/);
+
+  if (jsonObjectMatch) {
+    return jsonObjectMatch[0].trim();
+  }
+
+  return trimmed;
+}
+
+function validateMetadataResponseShape(
+  candidate: unknown,
+  expectedFilePath: string
+): ParseValidationResult {
+  if (!candidate || typeof candidate !== 'object') {
+    return {
+      success: false,
+      errorMessage: 'Response is not an object.',
+    };
+  }
+
+  const typedCandidate = candidate as Partial<MetadataResponse>;
+
+  if (typedCandidate.targetFilePath !== expectedFilePath) {
+    return {
+      success: false,
+      errorMessage: `targetFilePath mismatch. expected='${expectedFilePath}' received='${typedCandidate.targetFilePath ?? ''}'`,
+    };
+  }
+
+  if (!Array.isArray(typedCandidate.suggestedTestFilePaths)) {
+    return {
+      success: false,
+      errorMessage: 'suggestedTestFilePaths must be an array of strings.',
+    };
+  }
+
+  const areSuggestedFilesValid = typedCandidate.suggestedTestFilePaths.every(
+    (item) => typeof item === 'string'
+  );
+
+  if (!areSuggestedFilesValid) {
+    return {
+      success: false,
+      errorMessage: 'suggestedTestFilePaths contains non-string values.',
+    };
+  }
+
+  if (typeof typedCandidate.recommendedCoverageCommand !== 'string') {
+    return {
+      success: false,
+      errorMessage: 'recommendedCoverageCommand must be a string.',
+    };
+  }
+
+  if (typeof typedCandidate.recommendedTestCommand !== 'string') {
+    return {
+      success: false,
+      errorMessage: 'recommendedTestCommand must be a string.',
+    };
+  }
+
+  if (!Array.isArray(typedCandidate.behaviorsToTest)) {
+    return {
+      success: false,
+      errorMessage: 'behaviorsToTest must be an array of strings.',
+    };
+  }
+
+  const areBehaviorsValid = typedCandidate.behaviorsToTest.every(
+    (item) => typeof item === 'string'
+  );
+
+  if (!areBehaviorsValid) {
+    return {
+      success: false,
+      errorMessage: 'behaviorsToTest contains non-string values.',
+    };
+  }
+
+  return {
+    success: true,
+    data: {
+      targetFilePath: typedCandidate.targetFilePath,
+      suggestedTestFilePaths: typedCandidate.suggestedTestFilePaths,
+      recommendedCoverageCommand: typedCandidate.recommendedCoverageCommand,
+      recommendedTestCommand: typedCandidate.recommendedTestCommand,
+      behaviorsToTest: typedCandidate.behaviorsToTest,
+      blockers:
+        typedCandidate.blockers && Array.isArray(typedCandidate.blockers)
+          ? typedCandidate.blockers.filter((item): item is string => typeof item === 'string')
+          : [],
+    },
+  };
 }
 
 function findSuggestedTestFiles(filePath: string, projectName: ProjectName): string[] {
@@ -80,10 +386,19 @@ function findSuggestedTestFiles(filePath: string, projectName: ProjectName): str
     candidateSet.add(`backend/tests/${backendRelativePath.replace(/\.[jt]sx?$/, '.test.ts')}`);
   }
 
-  if (projectName === 'api' || projectName === 'core' || projectName === 'ui' || projectName === 'common') {
+  if (
+    projectName === 'api' ||
+    projectName === 'core' ||
+    projectName === 'ui' ||
+    projectName === 'common'
+  ) {
     const libraryRelativePath = filePath.replace(/^libs\/(api|core|ui|common)\//, '');
-    candidateSet.add(`libs/${projectName}/${libraryRelativePath.replace(/\.[jt]sx?$/, '.test.ts')}`);
-    candidateSet.add(`libs/${projectName}/${libraryRelativePath.replace(/\.[jt]sx?$/, '.test.tsx')}`);
+    candidateSet.add(
+      `libs/${projectName}/${libraryRelativePath.replace(/\.[jt]sx?$/, '.test.ts')}`
+    );
+    candidateSet.add(
+      `libs/${projectName}/${libraryRelativePath.replace(/\.[jt]sx?$/, '.test.tsx')}`
+    );
   }
 
   const existingFiles = runCommandCapture('git ls-files')
@@ -129,7 +444,12 @@ function buildCoverageCommand(args: {
     return 'yarn nx test frontend --configuration=coverage';
   }
 
-  if (projectName === 'api' || projectName === 'core' || projectName === 'ui' || projectName === 'common') {
+  if (
+    projectName === 'api' ||
+    projectName === 'core' ||
+    projectName === 'ui' ||
+    projectName === 'common'
+  ) {
     if (normalizedTestPath) {
       return `yarn nx test ${projectName} --coverage --run ${shellQuote(normalizedTestPath)}`;
     }
@@ -162,8 +482,15 @@ function buildTestCommand(args: {
     return 'yarn nx test frontend';
   }
 
-  if (projectName === 'api' || projectName === 'core' || projectName === 'ui' || projectName === 'common') {
-    if (normalizedTestPath) return `yarn nx test ${projectName} --run ${shellQuote(normalizedTestPath)}`;
+  if (
+    projectName === 'api' ||
+    projectName === 'core' ||
+    projectName === 'ui' ||
+    projectName === 'common'
+  ) {
+    if (normalizedTestPath) {
+      return `yarn nx test ${projectName} --run ${shellQuote(normalizedTestPath)}`;
+    }
     return `yarn nx test ${projectName}`;
   }
 
@@ -193,7 +520,12 @@ function normalizeTestPathForProject(args: {
   const { projectName, testFilePath } = args;
   if (!testFilePath) return null;
 
-  if (projectName === 'api' || projectName === 'core' || projectName === 'ui' || projectName === 'common') {
+  if (
+    projectName === 'api' ||
+    projectName === 'core' ||
+    projectName === 'ui' ||
+    projectName === 'common'
+  ) {
     return testFilePath.replace(new RegExp(`^libs/${projectName}/`), '');
   }
 
@@ -212,4 +544,4 @@ function shellQuote(value: string): string {
   return `'${value.replace(/'/g, `'"'"'`)}'`;
 }
 
-main();
+void main();

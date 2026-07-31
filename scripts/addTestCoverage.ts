@@ -79,16 +79,6 @@ type CoverageMeasurement = {
 	wasCommandExecuted: boolean;
 };
 
-const PROJECT_ROOTS: Record<Exclude<ProjectName, 'unknown'>, string> = {
-	backend: 'backend',
-	frontend: 'frontend',
-	'integration-tests': 'integration-tests',
-	api: 'libs/api',
-	core: 'libs/core',
-	ui: 'libs/ui',
-	common: 'libs/common',
-};
-
 const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/addTestCoverage';
 
 let globalSegmentCounter = 0;
