@@ -79,6 +79,15 @@ type CoverageMeasurement = {
 	wasCommandExecuted: boolean;
 };
 
+type InstructionViolation = {
+	filePath: string;
+	line: number;
+	ruleId: string;
+	description: string;
+	instructionsSource: string;
+	matchText: string;
+};
+
 const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/addTestCoverage';
 
 let globalSegmentCounter = 0;
@@ -721,6 +730,38 @@ function processFilesSequentially(args: {
 
 		const metadata = JSON.parse(metadataResult.output) as MetadataResponse;
 
+		const instructionComplianceResult = runSegmentWithRetry({
+			segmentName: `file-instruction-compliance-${sanitizeSegmentName(filePath)}`,
+			monitoringDirectory: options.monitoringDirectory,
+			maxRetries: options.maxRetriesSegment,
+			verbose: options.verbose,
+			run: () => {
+				const violations = checkInstructionCompliance({
+					targetFilePath: filePath,
+					suggestedTestFilePaths: metadata.suggestedTestFilePaths,
+				});
+
+				if (violations.length > 0) {
+					throw new Error(buildInstructionViolationError(violations));
+				}
+
+				return toJson({
+					status: 'pass',
+					checkedFileCount: uniqueStrings([filePath, ...metadata.suggestedTestFilePaths]).length,
+				});
+			},
+		});
+
+		if (!instructionComplianceResult.ok) {
+			fileResults.push({
+				filePath,
+				status: 'failed',
+				reason: 'instruction-rules-violation',
+				details: instructionComplianceResult.error,
+			});
+			continue;
+		}
+
 		const baselineCoverageResult = runSegmentWithRetry({
 			segmentName: `file-baseline-coverage-${sanitizeSegmentName(filePath)}`,
 			monitoringDirectory: options.monitoringDirectory,
@@ -1309,6 +1350,196 @@ function redactSensitiveText(text: string): string {
 	];
 
 	return patterns.reduce((current, pattern) => current.replace(pattern, '[REDACTED]'), text);
+}
+
+function checkInstructionCompliance(args: {
+	targetFilePath: string;
+	suggestedTestFilePaths: string[];
+}): InstructionViolation[] {
+	const filesToCheck = uniqueStrings([args.targetFilePath, ...args.suggestedTestFilePaths]);
+	const violations: InstructionViolation[] = [];
+
+	for (const filePath of filesToCheck) {
+		const absoluteFilePath = path.resolve(filePath);
+		if (!fs.existsSync(absoluteFilePath)) {
+			continue;
+		}
+
+		const fileContent = fs.readFileSync(absoluteFilePath, 'utf-8');
+		const isTestFile = /\.(test|spec)\.[jt]sx?$/.test(filePath);
+
+		for (const ruleCheck of getBaseInstructionRuleChecks()) {
+			violations.push(
+				...findRuleViolations({
+					filePath,
+					fileContent,
+					ruleCheck,
+					instructionsSource: '.github/copilot-instructions.md',
+				})
+			);
+		}
+
+		if (isTestFile) {
+			for (const ruleCheck of getTestInstructionRuleChecks()) {
+				violations.push(
+					...findRuleViolations({
+						filePath,
+						fileContent,
+						ruleCheck,
+						instructionsSource: '.github/instructions/test-files.instructions.md',
+					})
+				);
+			}
+
+			const asyncTestExists = /(it|test)\s*\(\s*['"`][^\n]*['"`]\s*,\s*async\s*\(/.test(fileContent);
+			const hasExplicitAssertionCount = /expect\.assertions\s*\(\s*\d+\s*\)/.test(fileContent);
+
+			if (asyncTestExists && !hasExplicitAssertionCount) {
+				violations.push({
+					filePath,
+					line: 1,
+					ruleId: 'test-async-expect-assertions-required',
+					description:
+						'Async tests must declare expect.assertions(n) at the start of the async test body.',
+					instructionsSource: '.github/instructions/test-files.instructions.md',
+					matchText: 'async test found without expect.assertions(n)',
+				});
+			}
+		}
+	}
+
+	return violations;
+}
+
+function getBaseInstructionRuleChecks(): Array<{
+	ruleId: string;
+	description: string;
+	pattern: RegExp;
+}> {
+	return [
+		{
+			ruleId: 'copilot-no-react-suspense-direct',
+			description: 'Do not use React.Suspense or Suspense directly; use SuspenseBoundary/Suspense$.',
+			pattern: /\bReact\.Suspense\b|<\s*Suspense\b/g,
+		},
+		{
+			ruleId: 'copilot-no-react-use-direct',
+			description: 'Do not use React.use directly; use boundary-aware use$ patterns.',
+			pattern: /\bReact\.use\s*\(/g,
+		},
+		{
+			ruleId: 'copilot-no-mui-sx-prop',
+			description: 'MUI sx prop is banned by repository rules.',
+			pattern: /\bsx\s*=\s*\{/g,
+		},
+		{
+			ruleId: 'copilot-no-mui-grid',
+			description: 'MUI Grid is banned; use Tailwind flex/grid utilities.',
+			pattern: /<\s*Grid\b/g,
+		},
+		{
+			ruleId: 'copilot-no-tailwind-group-class',
+			description: 'Tailwind group class usage is banned.',
+			pattern: /className\s*=\s*['"`][^'"`]*\bgroup\b[^'"`]*['"`]/g,
+		},
+		{
+			ruleId: 'copilot-no-display-none-hiding',
+			description: 'Do not hide components with display:none; use Activity mode handling.',
+			pattern: /display\s*:\s*['"`]none['"`]/g,
+		},
+		{
+			ruleId: 'copilot-no-nested-try-catch',
+			description: 'Nested try/catch blocks are banned; prefer linear tryCatch helper patterns.',
+			pattern: /try[\s\S]{0,1200}catch[\s\S]{0,1200}try/g,
+		},
+	];
+}
+
+function getTestInstructionRuleChecks(): Array<{
+	ruleId: string;
+	description: string;
+	pattern: RegExp;
+}> {
+	return [
+		{
+			ruleId: 'test-no-snapshot-tests',
+			description: 'Snapshot assertions are banned in test files.',
+			pattern: /toMatchSnapshot\s*\(|toMatchInlineSnapshot\s*\(/g,
+		},
+		{
+			ruleId: 'test-no-mocked-cast',
+			description: 'as Mocked<...> casting is banned; use vi.mocked(...) for typed mocks.',
+			pattern: /as\s+Mocked\s*</g,
+		},
+		{
+			ruleId: 'test-no-settimeout',
+			description: 'setTimeout is banned for async test synchronization.',
+			pattern: /\bsetTimeout\s*\(/g,
+		},
+		{
+			ruleId: 'test-no-waitfortimeout',
+			description: 'waitForTimeout is banned for async test synchronization.',
+			pattern: /\bwaitForTimeout\s*\(/g,
+		},
+		{
+			ruleId: 'test-no-global-cleanup-boilerplate',
+			description:
+				'Do not call global cleanup boilerplate in test files; it is already provided by global setup.',
+			pattern:
+				/\bcleanup\s*\(|\bvi\.clearAllMocks\s*\(|\bvi\.restoreAllMocks\s*\(|\bvi\.unstubAllGlobals\s*\(|\bcancelablePromiseTracker\.mockClear\s*\(|\bsetupResizeObserverMock\s*\(|\bsetupScrollIntoViewMock\s*\(|\bsetupHtmlMediaElementGuards\s*\(|\bsetupHtmlCanvasElementGuards\s*\(|\bsetupCancelablePromiseHook\s*\(/g,
+		},
+	];
+}
+
+function findRuleViolations(args: {
+	filePath: string;
+	fileContent: string;
+	ruleCheck: { ruleId: string; description: string; pattern: RegExp };
+	instructionsSource: string;
+}): InstructionViolation[] {
+	const { filePath, fileContent, ruleCheck, instructionsSource } = args;
+	const violations: InstructionViolation[] = [];
+
+	for (const match of fileContent.matchAll(ruleCheck.pattern)) {
+		const matchText = match[0] ?? '';
+		const matchIndex = match.index ?? 0;
+
+		violations.push({
+			filePath,
+			line: lineFromIndex(fileContent, matchIndex),
+			ruleId: ruleCheck.ruleId,
+			description: ruleCheck.description,
+			instructionsSource,
+			matchText,
+		});
+	}
+
+	return violations;
+}
+
+function lineFromIndex(fileContent: string, index: number): number {
+	const safeIndex = Math.max(index, 0);
+	return fileContent.slice(0, safeIndex).split('\n').length;
+}
+
+function buildInstructionViolationError(violations: InstructionViolation[]): string {
+	const maxViolationsToPrint = 30;
+	const lines = violations.slice(0, maxViolationsToPrint).map((violation) => {
+		return [
+			`ruleId=${violation.ruleId}`,
+			`source=${violation.instructionsSource}`,
+			`file=${violation.filePath}`,
+			`line=${violation.line}`,
+			`description=${violation.description}`,
+			`match=${violation.matchText}`,
+		].join(' | ');
+	});
+
+	if (violations.length > maxViolationsToPrint) {
+		lines.push(`...and ${violations.length - maxViolationsToPrint} additional violation(s).`);
+	}
+
+	return `Instruction compliance failed (${violations.length} violation(s)).\n${lines.join('\n')}`;
 }
 
 main();
