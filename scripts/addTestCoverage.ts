@@ -72,6 +72,13 @@ type MetadataResponse = {
 	blockers?: string[];
 };
 
+type CoverageMeasurement = {
+	coveragePercentage: number | null;
+	coverageFilePath: string;
+	normalizedTargetPath: string;
+	wasCommandExecuted: boolean;
+};
+
 const PROJECT_ROOTS: Record<Exclude<ProjectName, 'unknown'>, string> = {
 	backend: 'backend',
 	frontend: 'frontend',
@@ -240,9 +247,7 @@ function parseOptions(argumentsList: string[]): HarnessOptions {
 	const maxRetriesFile = parseNonNegativeInteger(parsed['max-retries-file'] ?? '2', '--max-retries-file');
 
 	const aiCommand = parsed['ai-command'];
-	const dryRun = parsed['dry-run'] === 'true' || parsed['dry-run'] === undefined
-		? parsed['dry-run'] === 'true' || argumentsList.includes('--dry-run')
-		: false;
+	const dryRun = argumentsList.includes('--dry-run');
 	const verbose = parsed.verbose === 'true' || argumentsList.includes('--verbose');
 
 	const monitoringDirectory = parsed['monitoring-dir'] ?? DEFAULT_MONITORING_DIRECTORY;
@@ -650,9 +655,14 @@ function processFilesSequentially(args: {
 	options: HarnessOptions;
 	resolvedScope: ResolvedScope;
 	testableFiles: FileClassification[];
-}): Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string }> {
+}): Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string; details?: string }> {
 	const { options, resolvedScope, testableFiles } = args;
-	const fileResults: Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string }> = [];
+	const fileResults: Array<{
+		filePath: string;
+		status: 'skipped' | 'passed' | 'failed';
+		reason: string;
+		details?: string;
+	}> = [];
 	let globalRetriesRemaining = options.maxRetriesGlobal;
 
 	for (const fileClassification of testableFiles) {
@@ -666,20 +676,6 @@ function processFilesSequentially(args: {
 			});
 			continue;
 		}
-
-		const baselineCoverageResult = runSegmentWithRetry({
-			segmentName: `file-baseline-coverage-${sanitizeSegmentName(filePath)}`,
-			monitoringDirectory: options.monitoringDirectory,
-			maxRetries: options.maxRetriesSegment,
-			verbose: options.verbose,
-			run: () => {
-				return toJson({
-					implemented: false,
-					reason: 'baseline-coverage-computation-will-be-wired-next',
-				});
-			},
-		});
-		assertSegmentSucceeded(baselineCoverageResult, `baseline-coverage-${filePath}`);
 
 		if (options.dryRun) {
 			fileResults.push({
@@ -699,8 +695,68 @@ function processFilesSequentially(args: {
 			continue;
 		}
 
+		const metadataResult = runSegmentWithRetry({
+			segmentName: `file-metadata-${sanitizeSegmentName(filePath)}-baseline`,
+			monitoringDirectory: options.monitoringDirectory,
+			maxRetries: options.maxRetriesSegment,
+			verbose: options.verbose,
+			run: () => runMetadataStep({ fileClassification, options }),
+		});
+
+		if (!metadataResult.ok) {
+			fileResults.push({
+				filePath,
+				status: 'failed',
+				reason: 'metadata-step-failed',
+				details: metadataResult.error,
+			});
+			continue;
+		}
+
+		const metadata = JSON.parse(metadataResult.output) as MetadataResponse;
+
+		const baselineCoverageResult = runSegmentWithRetry({
+			segmentName: `file-baseline-coverage-${sanitizeSegmentName(filePath)}`,
+			monitoringDirectory: options.monitoringDirectory,
+			maxRetries: options.maxRetriesSegment,
+			verbose: options.verbose,
+			run: () => {
+				const measurement = runCoverageMeasurement({
+					fileClassification,
+					metadata,
+					options,
+					segmentLabel: 'baseline',
+				});
+
+				return toJson(measurement);
+			},
+		});
+
+		if (!baselineCoverageResult.ok) {
+			fileResults.push({
+				filePath,
+				status: 'failed',
+				reason: 'baseline-coverage-failed',
+				details: baselineCoverageResult.error,
+			});
+			continue;
+		}
+
+		const baselineCoverage = JSON.parse(baselineCoverageResult.output) as CoverageMeasurement;
+
+		if (baselineCoverage.coveragePercentage !== null && baselineCoverage.coveragePercentage >= options.coverageThreshold) {
+			fileResults.push({
+				filePath,
+				status: 'skipped',
+				reason: 'already-covered-at-threshold',
+				details: `baseline=${baselineCoverage.coveragePercentage}`,
+			});
+			continue;
+		}
+
 		let filePassed = false;
 		let fileFailedByReason = 'file-retries-exhausted';
+		let fileDetails = '';
 		let shouldRetryFromGlobalBudget = true;
 
 		while (shouldRetryFromGlobalBudget) {
@@ -710,41 +766,52 @@ function processFilesSequentially(args: {
 			while (attemptCounter <= options.maxRetriesFile) {
 				attemptCounter += 1;
 
-				const metadataSegmentName = `file-metadata-${sanitizeSegmentName(filePath)}-attempt-${attemptCounter}`;
-				const metadataResult = runSegmentWithRetry({
-					segmentName: metadataSegmentName,
+				const executionStepResult = runSegmentWithRetry({
+					segmentName: `file-iteration-${sanitizeSegmentName(filePath)}-attempt-${attemptCounter}`,
 					monitoringDirectory: options.monitoringDirectory,
 					maxRetries: options.maxRetriesSegment,
 					verbose: options.verbose,
-					run: () => runMetadataStep({ fileClassification, options }),
+					run: () => {
+						runCommandCapture(
+							metadata.recommendedTestCommand,
+							`File test command failed for ${filePath}.`
+						);
+
+						const measurement = runCoverageMeasurement({
+							fileClassification,
+							metadata,
+							options,
+							segmentLabel: `attempt-${attemptCounter}`,
+						});
+
+						return toJson(measurement);
+					},
 				});
 
-				if (!metadataResult.ok) {
-					fileFailedByReason = 'metadata-step-failed';
+				if (!executionStepResult.ok) {
+					fileFailedByReason = 'iteration-step-failed';
+					fileDetails = executionStepResult.error ?? '';
 					if (attemptCounter > options.maxRetriesFile) {
 						break;
 					}
 					continue;
 				}
 
-				const parsedMetadata = JSON.parse(metadataResult.output) as MetadataResponse;
-				const simulateLoopResult = runSegmentWithRetry({
-					segmentName: `file-iteration-${sanitizeSegmentName(filePath)}-attempt-${attemptCounter}`,
-					monitoringDirectory: options.monitoringDirectory,
-					maxRetries: options.maxRetriesSegment,
-					verbose: options.verbose,
-					run: () => {
-						return toJson({
-							implemented: false,
-							message: 'test-generation-and-coverage-recheck-step-will-be-wired-next',
-							recommendedTestCommand: parsedMetadata.recommendedTestCommand,
-							recommendedCoverageCommand: parsedMetadata.recommendedCoverageCommand,
-						});
-					},
-				});
+				const measurement = JSON.parse(executionStepResult.output) as CoverageMeasurement;
+				const hasValidCoverage = measurement.coveragePercentage !== null;
 
-				if (!simulateLoopResult.ok) {
-					fileFailedByReason = 'iteration-step-failed';
+				if (!hasValidCoverage) {
+					fileFailedByReason = 'coverage-not-found';
+					fileDetails = `lcov=${measurement.coverageFilePath}`;
+					if (attemptCounter > options.maxRetriesFile) {
+						break;
+					}
+					continue;
+				}
+
+				if ((measurement.coveragePercentage as number) < options.coverageThreshold) {
+					fileFailedByReason = 'coverage-below-threshold';
+					fileDetails = `coverage=${measurement.coveragePercentage} threshold=${options.coverageThreshold}`;
 					if (attemptCounter > options.maxRetriesFile) {
 						break;
 					}
@@ -752,6 +819,7 @@ function processFilesSequentially(args: {
 				}
 
 				filePassed = true;
+				fileDetails = `coverage=${measurement.coveragePercentage}`;
 				break;
 			}
 
@@ -773,7 +841,8 @@ function processFilesSequentially(args: {
 			fileResults.push({
 				filePath,
 				status: 'passed',
-				reason: 'metadata-step-successful',
+				reason: 'coverage-threshold-reached',
+				details: fileDetails,
 			});
 			continue;
 		}
@@ -782,6 +851,7 @@ function processFilesSequentially(args: {
 			filePath,
 			status: 'failed',
 			reason: fileFailedByReason,
+			details: fileDetails,
 		});
 	}
 
@@ -818,7 +888,11 @@ function runMetadataStep(args: {
 
 	fs.writeFileSync(requestFilePath, toJson(request), 'utf-8');
 
-	const aiCommandLine = `${options.aiCommand} ${shellQuote(requestFilePath)} ${shellQuote(responseFilePath)}`;
+	const aiCommandLine = buildAiCommandLine({
+		baseCommand: options.aiCommand,
+		requestFilePath,
+		responseFilePath,
+	});
 	runCommandCapture(aiCommandLine, `AI metadata command failed for ${fileClassification.filePath}.`);
 
 	if (!fs.existsSync(responseFilePath)) {
@@ -830,6 +904,126 @@ function runMetadataStep(args: {
 	validateMetadataResponse(parsed, fileClassification.filePath);
 
 	return toJson(parsed);
+}
+
+function buildAiCommandLine(args: {
+	baseCommand: string;
+	requestFilePath: string;
+	responseFilePath: string;
+}): string {
+	const { baseCommand, requestFilePath, responseFilePath } = args;
+
+	const hasRequestPlaceholder = baseCommand.includes('{requestFile}');
+	const hasResponsePlaceholder = baseCommand.includes('{responseFile}');
+
+	if (hasRequestPlaceholder && hasResponsePlaceholder) {
+		return baseCommand
+			.replace('{requestFile}', shellQuote(requestFilePath))
+			.replace('{responseFile}', shellQuote(responseFilePath));
+	}
+
+	return `${baseCommand} ${shellQuote(requestFilePath)} ${shellQuote(responseFilePath)}`;
+}
+
+function runCoverageMeasurement(args: {
+	fileClassification: FileClassification;
+	metadata: MetadataResponse;
+	options: HarnessOptions;
+	segmentLabel: string;
+}): CoverageMeasurement {
+	const { fileClassification, metadata, segmentLabel } = args;
+
+	runCommandCapture(
+		metadata.recommendedCoverageCommand,
+		`Coverage command failed for ${fileClassification.filePath} (${segmentLabel}).`
+	);
+
+	const coverageFilePath = getCoverageFilePathForProject(fileClassification.projectName);
+	const normalizedTargetPath = path.resolve(fileClassification.filePath).replace(/\\/g, '/');
+
+	if (!coverageFilePath || !fs.existsSync(coverageFilePath)) {
+		return {
+			coveragePercentage: null,
+			coverageFilePath: coverageFilePath ?? '(unknown)',
+			normalizedTargetPath,
+			wasCommandExecuted: true,
+		};
+	}
+
+	const coveragePercentage = readFileLineCoveragePercentage({
+		lcovFilePath: coverageFilePath,
+		targetFilePath: fileClassification.filePath,
+	});
+
+	return {
+		coveragePercentage,
+		coverageFilePath,
+		normalizedTargetPath,
+		wasCommandExecuted: true,
+	};
+}
+
+function getCoverageFilePathForProject(projectName: ProjectName): string | null {
+	const coverageDirectoryByProject: Partial<Record<ProjectName, string>> = {
+		backend: 'backend/coverage',
+		frontend: 'frontend/coverage',
+		api: 'libs/api/coverage',
+		core: 'libs/core/coverage',
+		ui: 'libs/ui/coverage',
+		common: 'libs/common/coverage',
+	};
+
+	const relativeCoverageDirectory = coverageDirectoryByProject[projectName];
+	if (!relativeCoverageDirectory) return null;
+
+	return path.resolve(relativeCoverageDirectory, 'lcov.info');
+}
+
+function readFileLineCoveragePercentage(args: {
+	lcovFilePath: string;
+	targetFilePath: string;
+}): number | null {
+	const { lcovFilePath, targetFilePath } = args;
+	const lcovContent = fs.readFileSync(lcovFilePath, 'utf-8');
+	const records = lcovContent.split('end_of_record');
+
+	const normalizedTargetPath = path.resolve(targetFilePath).replace(/\\/g, '/');
+
+	for (const record of records) {
+		const lines = record
+			.split('\n')
+			.map((entry) => entry.trim())
+			.filter(Boolean);
+
+		const sourceLine = lines.find((line) => line.startsWith('SF:'));
+		if (!sourceLine) continue;
+
+		const sourceFilePath = sourceLine.replace(/^SF:/, '').replace(/\\/g, '/');
+		const isMatch =
+			sourceFilePath === normalizedTargetPath ||
+			normalizedTargetPath.endsWith(sourceFilePath) ||
+			sourceFilePath.endsWith(normalizedTargetPath);
+
+		if (!isMatch) continue;
+
+		const executableLines = lines.filter((line) => line.startsWith('DA:'));
+		if (executableLines.length === 0) return 0;
+
+		const coveredLinesCount = executableLines.reduce((count, entry) => {
+			const [, hitCountRaw] = entry.replace('DA:', '').split(',');
+			const hitCount = Number(hitCountRaw);
+			if (Number.isFinite(hitCount) && hitCount > 0) {
+				return count + 1;
+			}
+
+			return count;
+		}, 0);
+
+		const percentage = (coveredLinesCount / executableLines.length) * 100;
+		return Number(percentage.toFixed(2));
+	}
+
+	return null;
 }
 
 function validateMetadataResponse(response: MetadataResponse, expectedFilePath: string) {
@@ -986,7 +1180,7 @@ function writeSegmentReport(args: {
 		'## Output',
 		'',
 		'```text',
-		output || '(empty)',
+		redactSensitiveText(output) || '(empty)',
 		'```',
 	];
 
@@ -995,7 +1189,7 @@ function writeSegmentReport(args: {
 		lines.push('## Error');
 		lines.push('');
 		lines.push('```text');
-		lines.push(error);
+		lines.push(redactSensitiveText(error));
 		lines.push('```');
 	}
 
@@ -1010,7 +1204,7 @@ function runCommandCapture(command: string, errorPrefix: string): string {
 			env: process.env,
 		});
 
-		return output;
+		return redactSensitiveText(output);
 	} catch (error) {
 		const normalizedError = normalizeExecError(error, errorPrefix);
 		throw new Error(normalizedError);
@@ -1039,7 +1233,7 @@ function normalizeExecError(error: unknown, errorPrefix: string): string {
 		.filter(Boolean)
 		.join('\n\n');
 
-	return `${errorPrefix}\n${details}`;
+	return redactSensitiveText(`${errorPrefix}\n${details}`);
 }
 
 function toUtf8String(value: unknown): string {
@@ -1063,11 +1257,9 @@ function assertSegmentSucceeded(result: SegmentResult, segmentName: string) {
 }
 
 function blockDelay(milliseconds: number) {
-	const finishAt = Date.now() + milliseconds;
-
-	while (Date.now() < finishAt) {
-		// Busy wait intentionally for deterministic retry delays in a short-lived CLI script.
-	}
+	const buffer = new SharedArrayBuffer(4);
+	const view = new Int32Array(buffer);
+	Atomics.wait(view, 0, 0, milliseconds);
 }
 
 function sanitizeSegmentName(name: string): string {
@@ -1088,6 +1280,17 @@ function shellQuote(value: string): string {
 
 function toJson(value: unknown): string {
 	return JSON.stringify(value, null, 2);
+}
+
+function redactSensitiveText(text: string): string {
+	const patterns: RegExp[] = [
+		/ghp_[A-Za-z0-9_]{20,}/g,
+		/github_pat_[A-Za-z0-9_]{20,}/g,
+		/"?_authToken"?\s*[:=]\s*"?[^\s"']+"?/gi,
+		/(npm\.pkg\.github\.com\/:_authToken=)[^\s]+/gi,
+	];
+
+	return patterns.reduce((current, pattern) => current.replace(pattern, '[REDACTED]'), text);
 }
 
 main();

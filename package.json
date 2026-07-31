@@ -29,6 +29,7 @@
     "test:ui": "npx tsx scripts/testLibs.ts ui",
     "test:common": "npx tsx scripts/testLibs.ts common",
     "add-test-coverage": "npx tsx scripts/addTestCoverage.ts",
+    "add-test-coverage:metadata-adapter": "npx tsx scripts/harnessMetadataAdapter.ts",
     "ts-check": "npx tsx scripts/tsCheck.ts",
     "vcr:dev": "npx tsx scripts/vcrDev.ts"
   },
@@ -44,7 +45,8 @@
     "test:backend": "Run backend tests. Usage: 'yarn test:backend' (all), 'yarn test:backend <path>' (specific), 'yarn test:backend watch <path>' (watch mode), 'yarn test:backend debug <path>' (debug mode)",
     "test:frontend": "Run frontend tests. Usage: 'yarn test:frontend' (all), 'yarn test:frontend <path>' (specific), 'yarn test:frontend watch <path>' (watch mode), 'yarn test:frontend debug <path>' (debug mode)",
     "test:integration": "Run integration tests. Usage: 'yarn test:integration' (all), 'yarn test:integration api' (API/Jest only), 'yarn test:integration playwright' (Playwright only), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
-    "add-test-coverage": "Run retryable scope-based harness. Usage: 'yarn add-test-coverage --scope-type working-tree --target-mode current-changes --dry-run'",
+    "add-test-coverage": "Run retryable scope-based harness. Usage: 'yarn add-test-coverage --scope-type working-tree --target-mode current-changes --dry-run' or 'yarn add-test-coverage --scope-type file --scope-value libs/common/src/helpers/decodeJwt/decodeJwt.ts --target-mode whole-file --ai-command \"npx tsx scripts/harnessMetadataAdapter.ts\"'",
+    "add-test-coverage:metadata-adapter": "Internal metadata adapter for the harness. Usage: 'yarn add-test-coverage:metadata-adapter <requestFile> <responseFile>'",
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying"
   },
   "repository": {
