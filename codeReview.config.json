@@ -4,7 +4,7 @@
   "maxRetriesFile": 0,
   "maxRetriesSegment": 0,
   "maxRetriesGlobal": 0,
-  "aiCommand": "npx tsx scripts/harnessMetadataAdapter.ts --provider gh-copilot --max-retries 2 --prompt-template scripts/harnessMetadataPrompt.md {requestFile} {responseFile}",
-  "aiAutofixCommand": "npx tsx scripts/harnessAutofixAdapter.ts --provider gh-copilot --max-retries 2 {requestFile} {responseFile}",
+  "aiCommand": "npx tsx scripts/harnessMetadataAdapter.ts --provider gh-copilot --strategy deterministic-then-copilot --max-retries 2 --prompt-template scripts/harnessMetadataPrompt.md {requestFile} {responseFile}",
+  "aiAutofixCommand": "npx tsx scripts/harnessAutofixAdapter.ts --provider gh-copilot --strategy deterministic-then-copilot --max-retries 2 {requestFile} {responseFile}",
   "monitoringDirectory": "_testMonitoring/codeReviewHarness"
 }

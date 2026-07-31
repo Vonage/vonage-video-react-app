@@ -57,7 +57,7 @@ const VideoTile = forwardRef(
         id={id}
         data-testid={dataTestId}
         className={className}
-        sx={{
+        style={{
           position: 'absolute',
           display: isHidden ? 'none' : 'flex',
           alignItems: 'center',
@@ -70,7 +70,7 @@ const VideoTile = forwardRef(
         <Box
           ref={ref}
           className="rounded-vera-large bg-vera-dark-grey"
-          sx={{
+          style={{
             position: 'relative',
             left: isScreenshare ? 0 : '4px',
             top: isScreenshare ? 0 : '4px',
@@ -85,7 +85,7 @@ const VideoTile = forwardRef(
         />
         <Box
           className="rounded-vera-large bg-vera-dark-grey"
-          sx={{
+          style={{
             position: 'relative',
             left: isScreenshare ? 0 : '4px',
             top: isScreenshare ? 0 : '4px',

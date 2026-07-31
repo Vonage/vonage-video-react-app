@@ -1,0 +1,10 @@
+{
+  "filePath": "frontend/src/components/MeetingRoom/VideoTile/VideoTile.tsx",
+  "projectName": "frontend",
+  "targetMode": "whole-file",
+  "coverageThreshold": 80,
+  "repositoryRules": {
+    "testInstructionsFile": ".github/instructions/test-files.instructions.md",
+    "copilotInstructionsFile": ".github/copilot-instructions.md"
+  }
+}

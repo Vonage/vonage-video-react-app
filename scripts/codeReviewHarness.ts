@@ -90,6 +90,34 @@ type InstructionViolation = {
 	matchText: string;
 };
 
+type ReviewedRule = {
+	ruleId: string;
+	description: string;
+	instructionsSource: string;
+};
+
+type InstructionValidationEvidence = {
+	validatedFiles: string[];
+	reviewedRules: ReviewedRule[];
+	ruleScores: Array<{
+		ruleId: string;
+		description: string;
+		instructionsSource: string;
+		violationCount: number;
+		status: 'passed' | 'failed';
+		score: number;
+		affectedFiles: string[];
+	}>;
+	reviewedRuleCount: number;
+	violationCount: number;
+	violations: InstructionViolation[];
+	score: {
+		passedRules: number;
+		totalRules: number;
+		percentage: number;
+	};
+};
+
 type AutofixRequest = {
 	targetFilePath: string;
 	projectName: ProjectName;
@@ -738,13 +766,20 @@ function processFilesSequentially(args: {
 	options: HarnessOptions;
 	resolvedScope: ResolvedScope;
 	testableFiles: FileClassification[];
-}): Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string; details?: string }> {
+}): Array<{
+	filePath: string;
+	status: 'skipped' | 'passed' | 'failed';
+	reason: string;
+	details?: string;
+	instructionValidation?: InstructionValidationEvidence;
+}> {
 	const { options, resolvedScope, testableFiles } = args;
 	const fileResults: Array<{
 		filePath: string;
 		status: 'skipped' | 'passed' | 'failed';
 		reason: string;
 		details?: string;
+		instructionValidation?: InstructionValidationEvidence;
 	}> = [];
 	let globalRetriesRemaining = options.maxRetriesGlobal;
 
@@ -808,14 +843,14 @@ function processFilesSequentially(args: {
 			maxRetries: options.maxRetriesSegment,
 			verbose: options.verbose,
 			run: () => {
-				const violations = checkInstructionCompliance({
+				const evidence = evaluateInstructionCompliance({
 					targetFilePath: filePath,
 					suggestedTestFilePaths: metadata.suggestedTestFilePaths,
 				});
 				return toJson({
-					status: violations.length === 0 ? 'pass' : 'violations-found',
-					checkedFileCount: uniqueStrings([filePath, ...metadata.suggestedTestFilePaths]).length,
-					violations,
+					status: evidence.violationCount === 0 ? 'pass' : 'violations-found',
+					checkedFileCount: evidence.validatedFiles.length,
+					evidence,
 				});
 			},
 		});
@@ -833,12 +868,14 @@ function processFilesSequentially(args: {
 		const instructionComplianceOutput = JSON.parse(instructionComplianceResult.output) as {
 			status: string;
 			checkedFileCount: number;
-			violations: InstructionViolation[];
+			evidence: InstructionValidationEvidence;
 		};
 
-		if (instructionComplianceOutput.violations.length > 0) {
+		let instructionValidationEvidence = instructionComplianceOutput.evidence;
+
+		if (instructionComplianceOutput.evidence.violationCount > 0) {
 			printProgress(
-				`Instruction compliance found ${instructionComplianceOutput.violations.length} violation(s) for ${filePath}. Attempting autofix.`
+				`Instruction compliance found ${instructionComplianceOutput.evidence.violationCount} violation(s) for ${filePath}. Attempting autofix.`
 			);
 
 			const autofixResult = runSegmentWithRetry({
@@ -850,7 +887,7 @@ function processFilesSequentially(args: {
 					runAutofixStep({
 						fileClassification,
 						options,
-						violations: instructionComplianceOutput.violations,
+						violations: instructionComplianceOutput.evidence.violations,
 					}),
 			});
 
@@ -874,17 +911,19 @@ function processFilesSequentially(args: {
 				`Autofix result for ${filePath}: status=${parsedAutofixResult.status}, appliedActions=${parsedAutofixResult.appliedActions}, blockers=${parsedAutofixResult.blockers.length}`
 			);
 
-			const remainingViolations = checkInstructionCompliance({
+			const recheckedEvidence = evaluateInstructionCompliance({
 				targetFilePath: filePath,
 				suggestedTestFilePaths: metadata.suggestedTestFilePaths,
 			});
+			instructionValidationEvidence = recheckedEvidence;
 
-			if (remainingViolations.length > 0) {
+			if (recheckedEvidence.violationCount > 0) {
 				fileResults.push({
 					filePath,
 					status: 'failed',
 					reason: 'instruction-rules-violation',
-					details: buildInstructionViolationError(remainingViolations),
+					details: buildInstructionViolationError(recheckedEvidence.violations),
+					instructionValidation: recheckedEvidence,
 				});
 				continue;
 			}
@@ -945,6 +984,7 @@ function processFilesSequentially(args: {
 				status: 'skipped',
 				reason: 'already-covered-at-threshold',
 				details: `baseline=${baselineCoverage.coveragePercentage}`,
+				instructionValidation: instructionValidationEvidence,
 			});
 			printProgress(
 				`Skipping ${filePath}: baseline coverage ${baselineCoverage.coveragePercentage}% already meets threshold ${options.coverageThreshold}%.`
@@ -1051,6 +1091,7 @@ function processFilesSequentially(args: {
 				status: 'passed',
 				reason: 'coverage-threshold-reached',
 				details: fileDetails,
+				instructionValidation: instructionValidationEvidence,
 			});
 			continue;
 		}
@@ -1060,6 +1101,7 @@ function processFilesSequentially(args: {
 			status: 'failed',
 			reason: fileFailedByReason,
 			details: fileDetails,
+			instructionValidation: instructionValidationEvidence,
 		});
 	}
 
@@ -1098,19 +1140,85 @@ function printRunSummary(args: {
 	const passedCount = fileResults.filter((entry) => entry.status === 'passed').length;
 	const skippedCount = fileResults.filter((entry) => entry.status === 'skipped').length;
 	const failedCount = fileResults.filter((entry) => entry.status === 'failed').length;
+	const evaluatedCount = fileResults.length;
 
 	console.log('');
 	console.log(`Run summary (coverage threshold ${coverageThreshold}%):`);
-	console.log(`- Passed : ${passedCount}`);
-	console.log(`- Skipped: ${skippedCount}`);
-	console.log(`- Failed : ${failedCount}`);
+	console.log(`- Evaluated files: ${evaluatedCount}`);
+	console.log(`- Passed : ${passedCount} (tests executed and threshold reached)`);
+	console.log(`- Skipped: ${skippedCount} (no new tests executed)`);
+	console.log(`- Failed : ${failedCount} (requires changes or rerun)`);
+
+	if (evaluatedCount > 0) {
+		console.log('');
+		console.log('Evaluated file details:');
+	}
 
 	for (const result of fileResults) {
-		const detailsSuffix = result.details ? ` | ${result.details}` : '';
-		console.log(`  - [${result.status}] ${result.filePath} | ${result.reason}${detailsSuffix}`);
+		const reasonLabel = formatResultReasonLabel(result.reason);
+		const detailsSuffix = result.details ? ` | details=${result.details}` : '';
+		console.log(
+			`  - [${result.status}] ${result.filePath} | reason=${result.reason} (${reasonLabel})${detailsSuffix}`
+		);
 	}
 
 	console.log('');
+}
+
+function formatResultReasonLabel(reason: string): string {
+	if (reason === 'already-covered-at-threshold') {
+		return 'baseline coverage already meets threshold';
+	}
+
+	if (reason === 'coverage-threshold-reached') {
+		return 'coverage threshold reached after running tests';
+	}
+
+	if (reason === 'not-in-current-changes') {
+		return 'file excluded by current-changes target mode';
+	}
+
+	if (reason === 'dry-run-planned') {
+		return 'planned only (dry run)';
+	}
+
+	if (reason === 'instruction-rules-violation') {
+		return 'repository instruction rules failed';
+	}
+
+	if (reason === 'ai-command-missing') {
+		return 'no AI metadata command configured';
+	}
+
+	if (reason === 'metadata-step-failed') {
+		return 'metadata generation failed';
+	}
+
+	if (reason === 'autofix-step-failed') {
+		return 'autofix generation or application failed';
+	}
+
+	if (reason === 'baseline-coverage-failed') {
+		return 'baseline coverage command failed';
+	}
+
+	if (reason === 'coverage-not-found') {
+		return 'coverage record for target file was not found';
+	}
+
+	if (reason === 'coverage-below-threshold') {
+		return 'coverage is below threshold after retries';
+	}
+
+	if (reason === 'iteration-step-failed') {
+		return 'test iteration command failed';
+	}
+
+	if (reason === 'file-retries-exhausted') {
+		return 'retries exhausted without passing';
+	}
+
+	return 'unclassified reason';
 }
 
 function runMetadataStep(args: {
@@ -1246,6 +1354,7 @@ function applyAutofixActions(args: {
 }): number {
 	const { actions, allowedFilePaths } = args;
 	const allowedFileSet = new Set(allowedFilePaths.map((filePath) => filePath.replace(/\\/g, '/')));
+	const fileContentsByPath = new Map<string, string>();
 
 	let appliedCount = 0;
 
@@ -1264,19 +1373,26 @@ function applyAutofixActions(args: {
 			continue;
 		}
 
-		const currentContent = fs.readFileSync(absoluteFilePath, 'utf-8');
-		const occurrences = currentContent.split(action.findText).length - 1;
-		if (occurrences !== 1) {
+		const currentContent =
+			fileContentsByPath.get(normalizedFilePath) ?? fs.readFileSync(absoluteFilePath, 'utf-8');
+		const occurrenceIndex = currentContent.indexOf(action.findText);
+		if (occurrenceIndex < 0) {
 			continue;
 		}
 
-		const nextContent = currentContent.replace(action.findText, action.replaceText);
+		const beforeMatch = currentContent.slice(0, occurrenceIndex);
+		const afterMatch = currentContent.slice(occurrenceIndex + action.findText.length);
+		const nextContent = `${beforeMatch}${action.replaceText}${afterMatch}`;
 		if (nextContent === currentContent) {
 			continue;
 		}
 
-		fs.writeFileSync(absoluteFilePath, nextContent, 'utf-8');
+		fileContentsByPath.set(normalizedFilePath, nextContent);
 		appliedCount += 1;
+	}
+
+	for (const [normalizedFilePath, content] of fileContentsByPath.entries()) {
+		fs.writeFileSync(path.resolve(normalizedFilePath), content, 'utf-8');
 	}
 
 	return appliedCount;
@@ -1462,9 +1578,19 @@ function emitFinalSummary(args: {
 	resolvedScope: ResolvedScope;
 	testableFiles: FileClassification[];
 	excludedFiles: ExcludedFile[];
-	fileResults: Array<{ filePath: string; status: 'skipped' | 'passed' | 'failed'; reason: string }>;
+	fileResults: Array<{
+		filePath: string;
+		status: 'skipped' | 'passed' | 'failed';
+		reason: string;
+		details?: string;
+		instructionValidation?: InstructionValidationEvidence;
+	}>;
 }) {
 	const { options, resolvedScope, testableFiles, excludedFiles, fileResults } = args;
+	const passedCount = fileResults.filter((result) => result.status === 'passed').length;
+	const skippedCount = fileResults.filter((result) => result.status === 'skipped').length;
+	const failedCount = fileResults.filter((result) => result.status === 'failed').length;
+	const evaluatedFiles = fileResults.map((result) => result.filePath);
 
 	const summary = {
 		scopeType: options.scopeType,
@@ -1476,9 +1602,25 @@ function emitFinalSummary(args: {
 		testableCount: testableFiles.length,
 		excludedCount: excludedFiles.length,
 		fileResultCount: fileResults.length,
-		passedCount: fileResults.filter((result) => result.status === 'passed').length,
-		skippedCount: fileResults.filter((result) => result.status === 'skipped').length,
-		failedCount: fileResults.filter((result) => result.status === 'failed').length,
+		evaluatedFileCount: fileResults.length,
+		evaluatedFiles,
+		passedCount,
+		skippedCount,
+		failedCount,
+		statusSummary: {
+			passed: {
+				count: passedCount,
+				description: 'tests executed and threshold reached',
+			},
+			skipped: {
+				count: skippedCount,
+				description: 'no new tests executed',
+			},
+			failed: {
+				count: failedCount,
+				description: 'requires changes or rerun',
+			},
+		},
 		excludedFiles,
 		fileResults,
 	};
@@ -1788,11 +1930,59 @@ function redactSensitiveText(text: string): string {
 	return patterns.reduce((current, pattern) => current.replace(pattern, '[REDACTED]'), text);
 }
 
-function checkInstructionCompliance(args: {
+function evaluateInstructionCompliance(args: {
 	targetFilePath: string;
 	suggestedTestFilePaths: string[];
-}): InstructionViolation[] {
-	const filesToCheck = uniqueStrings([args.targetFilePath, ...args.suggestedTestFilePaths]);
+}): InstructionValidationEvidence {
+	const validatedFiles = uniqueStrings([args.targetFilePath, ...args.suggestedTestFilePaths]);
+	const violations = collectInstructionViolations(validatedFiles);
+	const reviewedRules = getReviewedRules(validatedFiles);
+	const violationsByRuleId = violations.reduce<Record<string, InstructionViolation[]>>(
+		(accumulator, violation) => {
+			const currentViolations = accumulator[violation.ruleId] ?? [];
+			return {
+				...accumulator,
+				[violation.ruleId]: [...currentViolations, violation],
+			};
+		},
+		{}
+	);
+
+	const ruleScores = reviewedRules.map((reviewedRule) => {
+		const ruleViolations = violationsByRuleId[reviewedRule.ruleId] ?? [];
+		const ruleFailed = ruleViolations.length > 0;
+
+		return {
+			ruleId: reviewedRule.ruleId,
+			description: reviewedRule.description,
+			instructionsSource: reviewedRule.instructionsSource,
+			violationCount: ruleViolations.length,
+			status: ruleFailed ? ('failed' as const) : ('passed' as const),
+			score: ruleFailed ? 0 : 100,
+			affectedFiles: uniqueStrings(ruleViolations.map((violation) => violation.filePath)),
+		};
+	});
+
+	const passedRules = ruleScores.filter((ruleScore) => ruleScore.status === 'passed').length;
+	const totalRules = reviewedRules.length;
+	const percentage = totalRules === 0 ? 100 : Number(((passedRules / totalRules) * 100).toFixed(2));
+
+	return {
+		validatedFiles,
+		reviewedRules,
+		ruleScores,
+		reviewedRuleCount: totalRules,
+		violationCount: violations.length,
+		violations,
+		score: {
+			passedRules,
+			totalRules,
+			percentage,
+		},
+	};
+}
+
+function collectInstructionViolations(filesToCheck: string[]): InstructionViolation[] {
 	const violations: InstructionViolation[] = [];
 
 	for (const filePath of filesToCheck) {
@@ -1845,6 +2035,43 @@ function checkInstructionCompliance(args: {
 	}
 
 	return violations;
+}
+
+function getReviewedRules(filesToCheck: string[]): ReviewedRule[] {
+	const baseRules = getBaseInstructionRuleChecks().map((ruleCheck) => ({
+		ruleId: ruleCheck.ruleId,
+		description: ruleCheck.description,
+		instructionsSource: '.github/copilot-instructions.md',
+	}));
+
+	const includesTestFile = filesToCheck.some((filePath) => /\.(test|spec)\.[jt]sx?$/.test(filePath));
+	if (!includesTestFile) {
+		return baseRules;
+	}
+
+	const testRules = getTestInstructionRuleChecks().map((ruleCheck) => ({
+		ruleId: ruleCheck.ruleId,
+		description: ruleCheck.description,
+		instructionsSource: '.github/instructions/test-files.instructions.md',
+	}));
+
+	return [
+		...baseRules,
+		...testRules,
+		{
+			ruleId: 'test-async-expect-assertions-required',
+			description:
+				'Async tests must declare expect.assertions(n) at the start of the async test body.',
+			instructionsSource: '.github/instructions/test-files.instructions.md',
+		},
+	];
+}
+
+function checkInstructionCompliance(args: {
+	targetFilePath: string;
+	suggestedTestFilePaths: string[];
+}): InstructionViolation[] {
+	return evaluateInstructionCompliance(args).violations;
 }
 
 function getBaseInstructionRuleChecks(): Array<{

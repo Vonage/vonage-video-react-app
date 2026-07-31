@@ -52,7 +52,7 @@ describe('VideoTile component', () => {
     render(<VideoTile {...defaultProps} isHidden />);
 
     const container = screen.getByTestId('video-tile');
-    expect(container).toHaveStyle({ display: 'none' });
+    expect(container).toHaveStyle({ visibility: 'hidden' });
   });
 
   it('shows fallback div when hasVideo is false', () => {
@@ -63,7 +63,7 @@ describe('VideoTile component', () => {
     const hasVideoTileDiv = container.querySelector('div > div:first-child')!;
     const notHasVideoTileDiv = container.querySelector('div > div:last-child')!;
 
-    expect(hasVideoTileDiv).toHaveStyle({ display: 'none' });
+    expect(hasVideoTileDiv).toHaveStyle({ visibility: 'hidden' });
     expect(notHasVideoTileDiv).toHaveStyle({ display: 'block' });
   });
 

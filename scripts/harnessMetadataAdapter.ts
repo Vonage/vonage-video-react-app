@@ -10,6 +10,7 @@ const COPILOT_TIMEOUT_MILLISECONDS = 120_000;
 const DEFAULT_PROMPT_TEMPLATE_PATH = 'scripts/harnessMetadataPrompt.md';
 
 type AdapterProvider = 'deterministic' | 'gh-copilot';
+type AdapterStrategy = 'deterministic-first' | 'deterministic-then-copilot' | 'copilot-first';
 
 type ProjectName =
   | 'backend'
@@ -43,6 +44,7 @@ type MetadataResponse = {
 
 type CliOptions = {
   provider: AdapterProvider;
+  strategy: AdapterStrategy;
   maxRetries: number;
   promptTemplatePath: string;
   requestPath: string;
@@ -100,7 +102,7 @@ function parseCliOptions(argumentsList: string[]): CliOptions {
   const [requestPath, responsePath] = positionalArguments;
   if (!requestPath || !responsePath) {
     throw new Error(
-      'Usage: npx tsx scripts/harnessMetadataAdapter.ts [--provider deterministic|gh-copilot] [--max-retries N] [--prompt-template path] <requestFile> <responseFile>'
+      'Usage: npx tsx scripts/harnessMetadataAdapter.ts [--provider deterministic|gh-copilot] [--strategy deterministic-first|deterministic-then-copilot|copilot-first] [--max-retries N] [--prompt-template path] <requestFile> <responseFile>'
     );
   }
 
@@ -115,8 +117,20 @@ function parseCliOptions(argumentsList: string[]): CliOptions {
     throw new Error('--max-retries must be a positive integer.');
   }
 
+  const strategy = (optionsRecord.strategy ?? 'deterministic-first') as AdapterStrategy;
+  if (
+    strategy !== 'deterministic-first' &&
+    strategy !== 'deterministic-then-copilot' &&
+    strategy !== 'copilot-first'
+  ) {
+    throw new Error(
+      "--strategy must be 'deterministic-first', 'deterministic-then-copilot', or 'copilot-first'."
+    );
+  }
+
   return {
     provider,
+    strategy,
     maxRetries,
     promptTemplatePath: optionsRecord['prompt-template'] ?? DEFAULT_PROMPT_TEMPLATE_PATH,
     requestPath,
@@ -155,6 +169,27 @@ async function buildCopilotResponse(args: {
   const { request, options } = args;
 
   const deterministicCandidate = buildDeterministicResponse(request);
+
+  if (options.strategy === 'deterministic-first') {
+    return {
+      ...deterministicCandidate,
+      blockers: uniqueStrings([
+        ...(deterministicCandidate.blockers ?? []),
+        'copilot-skipped-deterministic-first-strategy',
+      ]),
+    };
+  }
+
+  if (
+    options.strategy === 'deterministic-then-copilot' &&
+    !requiresCopilotForMetadata({
+      request,
+      deterministicCandidate,
+    })
+  ) {
+    return deterministicCandidate;
+  }
+
   const promptTemplate = fs.readFileSync(path.resolve(options.promptTemplatePath), 'utf-8');
   const fullPrompt = buildCopilotPrompt({
     promptTemplate,
@@ -163,7 +198,18 @@ async function buildCopilotResponse(args: {
   });
 
   for (let attempt = 1; attempt <= options.maxRetries; attempt += 1) {
-    const rawOutput = await invokeCopilotModel(fullPrompt);
+    let rawOutput = '';
+
+    try {
+      rawOutput = await invokeCopilotModel(fullPrompt);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(
+        `Copilot invocation failed on attempt ${attempt}/${options.maxRetries}: ${errorMessage}`
+      );
+      continue;
+    }
+
     const parseResult = tryParseAndValidateCopilotOutput({
       rawOutput,
       expectedFilePath: request.filePath,
@@ -195,6 +241,27 @@ async function buildCopilotResponse(args: {
     ...deterministicCandidate,
     blockers: fallbackBlockers,
   };
+}
+
+function requiresCopilotForMetadata(args: {
+  request: MetadataRequest;
+  deterministicCandidate: MetadataResponse;
+}): boolean {
+  const { request, deterministicCandidate } = args;
+
+  if (request.projectName === 'unknown') {
+    return true;
+  }
+
+  if (request.projectName === 'integration-tests') {
+    return true;
+  }
+
+  if (deterministicCandidate.suggestedTestFilePaths.length === 0) {
+    return true;
+  }
+
+  return false;
 }
 
 function normalizeCopilotResponse(args: {
