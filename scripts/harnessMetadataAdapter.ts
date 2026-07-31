@@ -432,16 +432,16 @@ function buildCoverageCommand(args: {
 
   if (projectName === 'backend') {
     if (firstTest) {
-      return `yarn nx test backend --configuration=coverage --testPathPattern=${shellQuote(firstTest)}`;
+      return `npx nx test backend --configuration=coverage --testPathPattern=${shellQuote(firstTest)}`;
     }
-    return 'yarn nx test backend --configuration=coverage';
+    return 'npx nx test backend --configuration=coverage';
   }
 
   if (projectName === 'frontend') {
     if (firstTest) {
       return `vitest --root frontend --config vite.config.ts --reporter=verbose --coverage --bail=1 --run ${shellQuote(firstTest)}`;
     }
-    return 'yarn nx test frontend --configuration=coverage';
+    return 'npx nx test frontend --configuration=coverage';
   }
 
   if (
@@ -451,9 +451,9 @@ function buildCoverageCommand(args: {
     projectName === 'common'
   ) {
     if (normalizedTestPath) {
-      return `yarn nx test ${projectName} --coverage --run ${shellQuote(normalizedTestPath)}`;
+      return `npx nx test ${projectName} --coverage --run ${shellQuote(normalizedTestPath)}`;
     }
-    return `yarn nx test ${projectName} --coverage`;
+    return `npx nx test ${projectName} --coverage`;
   }
 
   return 'echo "coverage-not-supported-for-project"';
@@ -471,15 +471,15 @@ function buildTestCommand(args: {
   });
 
   if (projectName === 'backend') {
-    if (firstTest) return `yarn nx test backend --testPathPattern=${shellQuote(firstTest)}`;
-    return 'yarn nx test backend';
+    if (firstTest) return `npx nx test backend --testPathPattern=${shellQuote(firstTest)}`;
+    return 'npx nx test backend';
   }
 
   if (projectName === 'frontend') {
     if (firstTest) {
       return `vitest --root frontend --config vite.config.ts --reporter=verbose --no-coverage --bail=1 --run ${shellQuote(firstTest)}`;
     }
-    return 'yarn nx test frontend';
+    return 'npx nx test frontend';
   }
 
   if (
@@ -489,9 +489,9 @@ function buildTestCommand(args: {
     projectName === 'common'
   ) {
     if (normalizedTestPath) {
-      return `yarn nx test ${projectName} --run ${shellQuote(normalizedTestPath)}`;
+      return `npx nx test ${projectName} --run ${shellQuote(normalizedTestPath)}`;
     }
-    return `yarn nx test ${projectName}`;
+    return `npx nx test ${projectName}`;
   }
 
   return 'echo "test-command-not-supported-for-project"';

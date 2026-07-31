@@ -1,0 +1,9 @@
+{
+  "targetMode": "whole-file",
+  "coverageThreshold": 80,
+  "maxRetriesFile": 0,
+  "maxRetriesSegment": 0,
+  "maxRetriesGlobal": 0,
+  "aiCommand": "npx tsx scripts/harnessMetadataAdapter.ts --provider gh-copilot --max-retries 2 --prompt-template scripts/harnessMetadataPrompt.md {requestFile} {responseFile}",
+  "monitoringDirectory": "_testMonitoring/addTestCoverage"
+}

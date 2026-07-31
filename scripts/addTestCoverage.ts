@@ -587,8 +587,8 @@ function runScopeQualityGates(args: {
 		return;
 	}
 
-	const prettierCommand = `yarn prettier --check ${qualityTargetFiles.map(shellQuote).join(' ')}`;
-	const eslintCommand = `yarn eslint ${qualityTargetFiles.map(shellQuote).join(' ')}`;
+	const prettierCommand = `npx prettier --check ${qualityTargetFiles.map(shellQuote).join(' ')}`;
+	const eslintCommand = `npx eslint ${qualityTargetFiles.map(shellQuote).join(' ')}`;
 
 	const impactedProjects = uniqueStrings(
 		testableFiles
@@ -596,7 +596,7 @@ function runScopeQualityGates(args: {
 			.filter((projectName): projectName is Exclude<ProjectName, 'unknown'> => projectName !== 'unknown')
 	);
 
-	const tsCheckCommand = `yarn nx run-many -t ts-check -p ${impactedProjects.join(',')}`;
+	const tsCheckCommand = `npx nx run-many -t ts-check -p ${impactedProjects.join(',')}`;
 
 	runCommandSegment({
 		segmentName: 'quality-prettier-check',
