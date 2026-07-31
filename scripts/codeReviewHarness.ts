@@ -825,6 +825,14 @@ function processFilesSequentially(args: {
 			maxRetries: options.maxRetriesSegment,
 			verbose: options.verbose,
 			run: () => {
+				const existingCoverageMeasurement = readCoverageFromExistingLcov(fileClassification);
+				if (existingCoverageMeasurement.coveragePercentage !== null) {
+					printProgress(
+						`Using existing LCOV for baseline coverage of ${filePath}; no baseline test run required.`
+					);
+					return toJson(existingCoverageMeasurement);
+				}
+
 				const measurement = runCoverageMeasurement({
 					fileClassification,
 					metadata,
@@ -1150,6 +1158,32 @@ function getCoverageFilePathForProject(projectName: ProjectName): string | null 
 	if (!relativeCoverageDirectory) return null;
 
 	return path.resolve(relativeCoverageDirectory, 'lcov.info');
+}
+
+function readCoverageFromExistingLcov(fileClassification: FileClassification): CoverageMeasurement {
+	const coverageFilePath = getCoverageFilePathForProject(fileClassification.projectName);
+	const normalizedTargetPath = path.resolve(fileClassification.filePath).replace(/\\/g, '/');
+
+	if (!coverageFilePath || !fs.existsSync(coverageFilePath)) {
+		return {
+			coveragePercentage: null,
+			coverageFilePath: coverageFilePath ?? '(unknown)',
+			normalizedTargetPath,
+			wasCommandExecuted: false,
+		};
+	}
+
+	const coveragePercentage = readFileLineCoveragePercentage({
+		lcovFilePath: coverageFilePath,
+		targetFilePath: fileClassification.filePath,
+	});
+
+	return {
+		coveragePercentage,
+		coverageFilePath,
+		normalizedTargetPath,
+		wasCommandExecuted: false,
+	};
 }
 
 function readFileLineCoveragePercentage(args: {

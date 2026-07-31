@@ -133,10 +133,12 @@ function buildDeterministicResponse(request: MetadataRequest): MetadataResponse 
     recommendedCoverageCommand: buildCoverageCommand({
       projectName: request.projectName,
       suggestedTestFilePaths,
+      targetFilePath: request.filePath,
     }),
     recommendedTestCommand: buildTestCommand({
       projectName: request.projectName,
       suggestedTestFilePaths,
+      targetFilePath: request.filePath,
     }),
     behaviorsToTest: buildBehaviorHints(request.filePath),
     blockers:
@@ -180,7 +182,19 @@ async function buildCopilotResponse(args: {
     );
   }
 
-  throw new Error(`Copilot output failed validation after ${options.maxRetries} retries.`);
+  const fallbackBlockers = uniqueStrings([
+    ...(deterministicCandidate.blockers ?? []),
+    'copilot-output-invalid-fallback-deterministic',
+  ]);
+
+  console.warn(
+    `Copilot output failed validation after ${options.maxRetries} retries. Falling back to deterministic metadata.`
+  );
+
+  return {
+    ...deterministicCandidate,
+    blockers: fallbackBlockers,
+  };
 }
 
 function normalizeCopilotResponse(args: {
@@ -458,12 +472,17 @@ function findSuggestedTestFiles(filePath: string, projectName: ProjectName): str
 function buildCoverageCommand(args: {
   projectName: ProjectName;
   suggestedTestFilePaths: string[];
+  targetFilePath: string;
 }): string {
-  const { projectName, suggestedTestFilePaths } = args;
+  const { projectName, suggestedTestFilePaths, targetFilePath } = args;
   const [firstTest] = suggestedTestFilePaths;
   const normalizedTestPath = normalizeTestPathForProject({
     projectName,
     testFilePath: firstTest,
+  });
+  const normalizedTargetFilePath = normalizeSourcePathForProject({
+    projectName,
+    filePath: targetFilePath,
   });
 
   if (projectName === 'backend') {
@@ -477,7 +496,12 @@ function buildCoverageCommand(args: {
     if (firstTest) {
       return `vitest --root frontend --config vite.config.ts --reporter=verbose --coverage --bail=1 --run ${shellQuote(firstTest)}`;
     }
-    return 'npx nx test frontend --configuration=coverage';
+
+    if (normalizedTargetFilePath) {
+      return `cd frontend && npx vitest related --coverage --run --passWithNoTests ${shellQuote(normalizedTargetFilePath)}`;
+    }
+
+    return 'echo "coverage-related-source-not-supported"';
   }
 
   if (
@@ -489,7 +513,12 @@ function buildCoverageCommand(args: {
     if (normalizedTestPath) {
       return `npx nx test ${projectName} --coverage --run ${shellQuote(normalizedTestPath)}`;
     }
-    return `npx nx test ${projectName} --coverage`;
+
+    if (normalizedTargetFilePath) {
+      return `cd libs/${projectName} && npx vitest related --coverage --run --passWithNoTests ${shellQuote(normalizedTargetFilePath)}`;
+    }
+
+    return 'echo "coverage-related-source-not-supported"';
   }
 
   return 'echo "coverage-not-supported-for-project"';
@@ -498,12 +527,17 @@ function buildCoverageCommand(args: {
 function buildTestCommand(args: {
   projectName: ProjectName;
   suggestedTestFilePaths: string[];
+  targetFilePath: string;
 }): string {
-  const { projectName, suggestedTestFilePaths } = args;
+  const { projectName, suggestedTestFilePaths, targetFilePath } = args;
   const [firstTest] = suggestedTestFilePaths;
   const normalizedTestPath = normalizeTestPathForProject({
     projectName,
     testFilePath: firstTest,
+  });
+  const normalizedTargetFilePath = normalizeSourcePathForProject({
+    projectName,
+    filePath: targetFilePath,
   });
 
   if (projectName === 'backend') {
@@ -515,7 +549,12 @@ function buildTestCommand(args: {
     if (firstTest) {
       return `vitest --root frontend --config vite.config.ts --reporter=verbose --no-coverage --bail=1 --run ${shellQuote(firstTest)}`;
     }
-    return 'npx nx test frontend';
+
+    if (normalizedTargetFilePath) {
+      return `cd frontend && npx vitest related --run --passWithNoTests ${shellQuote(normalizedTargetFilePath)}`;
+    }
+
+    return 'echo "test-related-source-not-supported"';
   }
 
   if (
@@ -527,7 +566,12 @@ function buildTestCommand(args: {
     if (normalizedTestPath) {
       return `npx nx test ${projectName} --run ${shellQuote(normalizedTestPath)}`;
     }
-    return `npx nx test ${projectName}`;
+
+    if (normalizedTargetFilePath) {
+      return `cd libs/${projectName} && npx vitest related --run --passWithNoTests ${shellQuote(normalizedTargetFilePath)}`;
+    }
+
+    return 'echo "test-related-source-not-supported"';
   }
 
   return 'echo "test-command-not-supported-for-project"';
@@ -574,6 +618,32 @@ function normalizeTestPathForProject(args: {
   }
 
   return testFilePath;
+}
+
+function normalizeSourcePathForProject(args: {
+  projectName: ProjectName;
+  filePath: string;
+}): string | null {
+  const { projectName, filePath } = args;
+
+  if (
+    projectName === 'api' ||
+    projectName === 'core' ||
+    projectName === 'ui' ||
+    projectName === 'common'
+  ) {
+    return filePath.replace(new RegExp(`^libs/${projectName}/`), '');
+  }
+
+  if (projectName === 'frontend') {
+    return filePath.replace(/^frontend\//, '');
+  }
+
+  if (projectName === 'backend') {
+    return filePath.replace(/^backend\//, '');
+  }
+
+  return null;
 }
 
 function shellQuote(value: string): string {
