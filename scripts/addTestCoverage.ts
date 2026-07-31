@@ -88,7 +88,7 @@ type InstructionViolation = {
 	matchText: string;
 };
 
-const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/addTestCoverage';
+const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/codeReviewHarness';
 
 let globalSegmentCounter = 0;
 
@@ -101,6 +101,7 @@ function main() {
 	};
 
 	printHeader(normalizedOptions);
+	printProgress('Phase 1/6: resolving scope and candidate files...');
 
 	const scopeResult = runSegmentWithRetry({
 		segmentName: 'resolve-scope',
@@ -133,6 +134,7 @@ function main() {
 		},
 	});
 	assertSegmentSucceeded(classificationResult, 'classify-and-filter-files');
+	printProgress('Phase 2/6: classifying files and applying testability filters...');
 
 	const parsedFilterResult = JSON.parse(classificationResult.output) as {
 		testableFiles: FileClassification[];
@@ -149,6 +151,7 @@ function main() {
 		resolvedScope,
 		testableFiles: parsedFilterResult.testableFiles,
 	});
+	printProgress('Phase 3/6: quality gates complete (prettier, eslint, ts-check).');
 
 	const queueResult = runSegmentWithRetry({
 		segmentName: 'build-queue-manifest',
@@ -171,6 +174,7 @@ function main() {
 		},
 	});
 	assertSegmentSucceeded(queueResult, 'build-queue-manifest');
+	printProgress('Phase 4/6: queue manifest created.');
 
 	const iterationResult = processFilesSequentially({
 		options: normalizedOptions,
@@ -187,6 +191,7 @@ function main() {
 	});
 
 	const hasFailures = iterationResult.some((item) => item.status === 'failed');
+	printProgress('Phase 6/6: final summary emitted.');
 
 	if (hasFailures) {
 		console.error('\nHarness finished with failures. See monitoring reports for details.\n');
@@ -197,13 +202,18 @@ function main() {
 }
 
 function printHeader(options: HarnessOptions) {
-	console.log('\n=== Add Test Coverage Harness ===\n');
+	console.log('\n=== Code Review Quality and Coverage Harness ===\n');
 	console.log(`Scope type: ${options.scopeType}`);
 	console.log(`Scope value: ${options.scopeValue ?? '(none)'}`);
 	console.log(`Target mode: ${options.targetMode}`);
 	console.log(`Coverage threshold: ${options.coverageThreshold}`);
 	console.log(`Dry run: ${options.dryRun ? 'true' : 'false'}`);
 	console.log(`Monitoring directory: ${options.monitoringDirectory}\n`);
+}
+
+function printProgress(message: string) {
+	const timestamp = new Date().toISOString();
+	console.log(`[progress ${timestamp}] ${message}`);
 }
 
 function parseOptions(argumentsList: string[]): HarnessOptions {
@@ -680,8 +690,9 @@ function processFilesSequentially(args: {
 	}> = [];
 	let globalRetriesRemaining = options.maxRetriesGlobal;
 
-	for (const fileClassification of testableFiles) {
+	for (const [fileIndex, fileClassification] of testableFiles.entries()) {
 		const { filePath } = fileClassification;
+		printProgress(`Phase 5/6: processing file ${fileIndex + 1}/${testableFiles.length}: ${filePath}`);
 
 		if (options.targetMode === 'current-changes' && !resolvedScope.changedFiles.includes(filePath)) {
 			fileResults.push({
@@ -812,6 +823,9 @@ function processFilesSequentially(args: {
 
 			while (attemptCounter <= options.maxRetriesFile) {
 				attemptCounter += 1;
+				printProgress(
+					`File iteration attempt ${attemptCounter}/${options.maxRetriesFile + 1} for ${filePath}`
+				);
 
 				const executionStepResult = runSegmentWithRetry({
 					segmentName: `file-iteration-${sanitizeSegmentName(filePath)}-attempt-${attemptCounter}`,
@@ -1145,6 +1159,7 @@ function runSegmentWithRetry(args: {
 
 	while (attempt <= maxRetries) {
 		attempt += 1;
+		printProgress(`Starting segment '${segmentName}' attempt ${attempt}/${maxRetries + 1}`);
 
 		try {
 			const output = run();
@@ -1160,6 +1175,7 @@ function runSegmentWithRetry(args: {
 			if (verbose) {
 				console.log(`\n[segment:${segmentName}] success on attempt ${attempt}\n`);
 			}
+			printProgress(`Completed segment '${segmentName}' on attempt ${attempt}`);
 
 			return {
 				ok: true,
@@ -1180,6 +1196,7 @@ function runSegmentWithRetry(args: {
 			});
 
 			const hasMoreAttempts = attempt <= maxRetries;
+			printProgress(`Segment '${segmentName}' failed on attempt ${attempt}`);
 
 			if (!hasMoreAttempts) {
 				break;
@@ -1244,6 +1261,9 @@ function writeSegmentReport(args: {
 }
 
 function runCommandCapture(command: string, errorPrefix: string): string {
+	const startedAt = Date.now();
+	printProgress(`Running command: ${command}`);
+
 	try {
 		const output = execSync(command, {
 			encoding: 'utf-8',
@@ -1251,8 +1271,13 @@ function runCommandCapture(command: string, errorPrefix: string): string {
 			env: process.env,
 		});
 
+		const durationSeconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+		printProgress(`Command completed in ${durationSeconds}s`);
+
 		return redactSensitiveText(output);
 	} catch (error) {
+		const durationSeconds = ((Date.now() - startedAt) / 1000).toFixed(1);
+		printProgress(`Command failed after ${durationSeconds}s`);
 		const normalizedError = normalizeExecError(error, errorPrefix);
 		throw new Error(normalizedError);
 	}
