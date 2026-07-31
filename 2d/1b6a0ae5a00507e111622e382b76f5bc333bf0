@@ -1,0 +1,33 @@
+scripts/addTestCoverage.ts
+  s_02fd3b14e1283d::t_91c77433887267 75-81,250,658,660-665,680-717,724-728,730-731,735,738-740,745-747,750-752,759,769-770,774-788,791-793,800-801,803-814,822,844-845,854,891-895,909-1027,1260-1262,1294
+  s_02fd3b14e1283d::t_6c90b279cf107a 1183,1192,1207,1236,1285-1293
+  s_02fd3b14e1283d::t_49678e47bab9e4 1028
+  s_02fd3b14e1283d::t_9c1f8afb6dd7bd 1295
+scripts/harnessMetadataAdapter.ts
+  s_02fd3b14e1283d::t_76fbc40d2f2807 119-122,126-129,135-136,154-155,159-162,167
+  s_02fd3b14e1283d::t_f4da7466c14c8a 1-112,117-118,123-125,130-132,137-147,152-153,156-158,163-165,168-186,209-215
+  s_02fd3b14e1283d::t_74017f4fbdb824 113-116,133-134,148-151,166,187-208
+package.json
+  s_02fd3b14e1283d::t_15b93f5b2789df 32,48-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "2d1b6a0ae5a00507e111622e382b76f5bc333bf0",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
