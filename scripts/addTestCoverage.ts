@@ -384,17 +384,25 @@ function getErrorCode(error: unknown): string | undefined {
 }
 
 function resolveScope(options: HarnessOptions): ResolvedScope {
+	const workspaceRoot = process.cwd();
+
 	const candidateFiles = (() => {
 		if (options.scopeType === 'working-tree') {
 			if (options.targetMode === 'whole-file') {
-				return uniqueStrings(getWorkingTreeChangedFiles());
+				return uniqueStrings(getWorkingTreeChangedFiles()).map((filePath) =>
+					normalizeWorkspacePath(filePath, workspaceRoot)
+				);
 			}
 
-			return uniqueStrings(getWorkingTreeChangedFiles());
+			return uniqueStrings(getWorkingTreeChangedFiles()).map((filePath) =>
+				normalizeWorkspacePath(filePath, workspaceRoot)
+			);
 		}
 
 		if (options.scopeType === 'commit') {
-			const commitFiles = getCommitChangedFiles(options.scopeValue as string);
+			const commitFiles = getCommitChangedFiles(options.scopeValue as string).map((filePath) =>
+				normalizeWorkspacePath(filePath, workspaceRoot)
+			);
 			if (options.targetMode === 'whole-file') {
 				return uniqueStrings(commitFiles);
 			}
@@ -403,7 +411,7 @@ function resolveScope(options: HarnessOptions): ResolvedScope {
 		}
 
 		if (options.scopeType === 'file') {
-			const normalizedFilePath = normalizeWorkspacePath(options.scopeValue as string);
+			const normalizedFilePath = normalizeWorkspacePath(options.scopeValue as string, workspaceRoot);
 			if (!fs.existsSync(path.resolve(normalizedFilePath))) {
 				throw new Error(`Scope file does not exist: ${normalizedFilePath}`);
 			}
@@ -412,12 +420,14 @@ function resolveScope(options: HarnessOptions): ResolvedScope {
 				return [normalizedFilePath];
 			}
 
-			const hasChanges = getWorkingTreeChangedFiles().includes(normalizedFilePath);
+			const hasChanges = getWorkingTreeChangedFiles()
+				.map((filePath) => normalizeWorkspacePath(filePath, workspaceRoot))
+				.includes(normalizedFilePath);
 			return hasChanges ? [normalizedFilePath] : [];
 		}
 
 		if (options.scopeType === 'folder') {
-			const folderPath = normalizeWorkspacePath(options.scopeValue as string);
+			const folderPath = normalizeWorkspacePath(options.scopeValue as string, workspaceRoot);
 			const folderAbsolutePath = path.resolve(folderPath);
 			if (!fs.existsSync(folderAbsolutePath)) {
 				throw new Error(`Scope folder does not exist: ${folderPath}`);
@@ -427,7 +437,9 @@ function resolveScope(options: HarnessOptions): ResolvedScope {
 				return getTrackedFilesUnderPath(folderPath);
 			}
 
-			const changedFiles = getWorkingTreeChangedFiles();
+			const changedFiles = getWorkingTreeChangedFiles().map((filePath) =>
+				normalizeWorkspacePath(filePath, workspaceRoot)
+			);
 			return changedFiles.filter((filePath) => filePath.startsWith(`${folderPath}/`));
 		}
 
@@ -436,10 +448,14 @@ function resolveScope(options: HarnessOptions): ResolvedScope {
 
 	const changedFiles = (() => {
 		if (options.scopeType === 'commit') {
-			return uniqueStrings(getCommitChangedFiles(options.scopeValue as string));
+			return uniqueStrings(getCommitChangedFiles(options.scopeValue as string)).map((filePath) =>
+				normalizeWorkspacePath(filePath, workspaceRoot)
+			);
 		}
 
-		return uniqueStrings(getWorkingTreeChangedFiles());
+		return uniqueStrings(getWorkingTreeChangedFiles()).map((filePath) =>
+			normalizeWorkspacePath(filePath, workspaceRoot)
+		);
 	})();
 
 	return {
@@ -1260,8 +1276,20 @@ function uniqueStrings(values: string[]): string[] {
 	return Array.from(new Set(values));
 }
 
-function normalizeWorkspacePath(rawPath: string): string {
-	return rawPath.replace(/^\.\//, '').replace(/\\/g, '/');
+function normalizeWorkspacePath(rawPath: string, workspaceRoot = process.cwd()): string {
+	const slashNormalizedPath = rawPath.replace(/\\/g, '/');
+	const normalizedRootPath = path.resolve(workspaceRoot).replace(/\\/g, '/');
+
+	if (path.isAbsolute(slashNormalizedPath)) {
+		const absolutePath = path.resolve(slashNormalizedPath).replace(/\\/g, '/');
+		if (absolutePath.startsWith(`${normalizedRootPath}/`)) {
+			return absolutePath.slice(normalizedRootPath.length + 1);
+		}
+
+		return absolutePath;
+	}
+
+	return slashNormalizedPath.replace(/^\.\//, '');
 }
 
 function shellQuote(value: string): string {

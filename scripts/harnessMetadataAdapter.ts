@@ -168,7 +168,11 @@ async function buildCopilotResponse(args: {
     });
 
     if (parseResult.success) {
-      return parseResult.data;
+      return normalizeCopilotResponse({
+        request,
+        deterministicCandidate,
+        copilotCandidate: parseResult.data,
+      });
     }
 
     console.warn(
@@ -177,6 +181,38 @@ async function buildCopilotResponse(args: {
   }
 
   throw new Error(`Copilot output failed validation after ${options.maxRetries} retries.`);
+}
+
+function normalizeCopilotResponse(args: {
+  request: MetadataRequest;
+  deterministicCandidate: MetadataResponse;
+  copilotCandidate: MetadataResponse;
+}): MetadataResponse {
+  const { request, deterministicCandidate, copilotCandidate } = args;
+
+  const normalizedBehaviorsToTest =
+    copilotCandidate.behaviorsToTest.length > 0
+      ? copilotCandidate.behaviorsToTest
+      : deterministicCandidate.behaviorsToTest;
+
+  const mergedBlockers = uniqueStrings([
+    ...(copilotCandidate.blockers ?? []),
+    ...(deterministicCandidate.blockers ?? []),
+  ]);
+
+  if (deterministicCandidate.suggestedTestFilePaths.length === 0) {
+    mergedBlockers.push('no-direct-test-file-detected');
+  }
+
+  return {
+    targetFilePath: request.filePath,
+    // Always trust repository-derived paths/commands to prevent hallucinated test filters.
+    suggestedTestFilePaths: deterministicCandidate.suggestedTestFilePaths,
+    recommendedCoverageCommand: deterministicCandidate.recommendedCoverageCommand,
+    recommendedTestCommand: deterministicCandidate.recommendedTestCommand,
+    behaviorsToTest: normalizedBehaviorsToTest,
+    blockers: uniqueStrings(mergedBlockers),
+  };
 }
 
 function buildCopilotPrompt(args: {
@@ -542,6 +578,10 @@ function normalizeTestPathForProject(args: {
 
 function shellQuote(value: string): string {
   return `'${value.replace(/'/g, `'"'"'`)}'`;
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
 void main();
