@@ -26,6 +26,7 @@ type HarnessOptions = {
 	maxRetriesSegment: number;
 	maxRetriesFile: number;
 	aiCommand?: string;
+	aiAutofixCommand?: string;
 	dryRun: boolean;
 	verbose: boolean;
 	monitoringDirectory: string;
@@ -87,6 +88,25 @@ type InstructionViolation = {
 	description: string;
 	instructionsSource: string;
 	matchText: string;
+};
+
+type AutofixRequest = {
+	targetFilePath: string;
+	projectName: ProjectName;
+	violations: InstructionViolation[];
+};
+
+type AutofixAction = {
+	filePath: string;
+	ruleId: string;
+	findText: string;
+	replaceText: string;
+	reason: string;
+};
+
+type AutofixResponse = {
+	actions: AutofixAction[];
+	blockers?: string[];
 };
 
 const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/codeReviewHarness';
@@ -291,6 +311,7 @@ function parseOptions(argumentsList: string[]): HarnessOptions {
 	const maxRetriesFile = parseNonNegativeInteger(parsed['max-retries-file'] ?? '2', '--max-retries-file');
 
 	const aiCommand = parsed['ai-command'];
+	const aiAutofixCommand = parsed['ai-autofix-command'];
 	const dryRun = argumentsList.includes('--dry-run');
 	const verbose = parsed.verbose === 'true' || argumentsList.includes('--verbose');
 
@@ -305,6 +326,7 @@ function parseOptions(argumentsList: string[]): HarnessOptions {
 		maxRetriesSegment,
 		maxRetriesFile,
 		aiCommand,
+		aiAutofixCommand,
 		dryRun,
 		verbose,
 		monitoringDirectory,
@@ -326,6 +348,7 @@ function printHelp() {
 	console.log('  --max-retries-segment <number>              Default: 2');
 	console.log('  --max-retries-file <number>                 Default: 2');
 	console.log('  --ai-command <command>                      Required when not using --dry-run');
+	console.log('  --ai-autofix-command <command>              Optional AI autofix command');
 	console.log('  --monitoring-dir <path>                     Default: _testMonitoring/codeReviewHarness');
 	console.log('  --dry-run                                   Plan and validate only');
 	console.log('  --verbose                                   Print full command output');
@@ -789,14 +812,10 @@ function processFilesSequentially(args: {
 					targetFilePath: filePath,
 					suggestedTestFilePaths: metadata.suggestedTestFilePaths,
 				});
-
-				if (violations.length > 0) {
-					throw new Error(buildInstructionViolationError(violations));
-				}
-
 				return toJson({
-					status: 'pass',
+					status: violations.length === 0 ? 'pass' : 'violations-found',
 					checkedFileCount: uniqueStrings([filePath, ...metadata.suggestedTestFilePaths]).length,
+					violations,
 				});
 			},
 		});
@@ -814,10 +833,68 @@ function processFilesSequentially(args: {
 		const instructionComplianceOutput = JSON.parse(instructionComplianceResult.output) as {
 			status: string;
 			checkedFileCount: number;
+			violations: InstructionViolation[];
 		};
-		printProgress(
-			`Instruction compliance ${instructionComplianceOutput.status} for ${filePath} (checked files: ${instructionComplianceOutput.checkedFileCount})`
-		);
+
+		if (instructionComplianceOutput.violations.length > 0) {
+			printProgress(
+				`Instruction compliance found ${instructionComplianceOutput.violations.length} violation(s) for ${filePath}. Attempting autofix.`
+			);
+
+			const autofixResult = runSegmentWithRetry({
+				segmentName: `file-autofix-${sanitizeSegmentName(filePath)}`,
+				monitoringDirectory: options.monitoringDirectory,
+				maxRetries: options.maxRetriesSegment,
+				verbose: options.verbose,
+				run: () =>
+					runAutofixStep({
+						fileClassification,
+						options,
+						violations: instructionComplianceOutput.violations,
+					}),
+			});
+
+			if (!autofixResult.ok) {
+				fileResults.push({
+					filePath,
+					status: 'failed',
+					reason: 'autofix-step-failed',
+					details: autofixResult.error,
+				});
+				continue;
+			}
+
+			const parsedAutofixResult = JSON.parse(autofixResult.output) as {
+				status: string;
+				appliedActions: number;
+				blockers: string[];
+			};
+
+			printProgress(
+				`Autofix result for ${filePath}: status=${parsedAutofixResult.status}, appliedActions=${parsedAutofixResult.appliedActions}, blockers=${parsedAutofixResult.blockers.length}`
+			);
+
+			const remainingViolations = checkInstructionCompliance({
+				targetFilePath: filePath,
+				suggestedTestFilePaths: metadata.suggestedTestFilePaths,
+			});
+
+			if (remainingViolations.length > 0) {
+				fileResults.push({
+					filePath,
+					status: 'failed',
+					reason: 'instruction-rules-violation',
+					details: buildInstructionViolationError(remainingViolations),
+				});
+				continue;
+			}
+
+			printProgress(`Instruction compliance pass for ${filePath} after autofix.`);
+		} else {
+			printProgress(
+				`Instruction compliance pass for ${filePath} (checked files: ${instructionComplianceOutput.checkedFileCount})`
+			);
+		}
 
 		const baselineCoverageResult = runSegmentWithRetry({
 			segmentName: `file-baseline-coverage-${sanitizeSegmentName(filePath)}`,
@@ -1084,6 +1161,125 @@ function runMetadataStep(args: {
 	validateMetadataResponse(parsed, fileClassification.filePath);
 
 	return toJson(parsed);
+}
+
+function runAutofixStep(args: {
+	fileClassification: FileClassification;
+	options: HarnessOptions;
+	violations: InstructionViolation[];
+}): string {
+	const { fileClassification, options, violations } = args;
+
+	if (!options.aiAutofixCommand) {
+		return toJson({
+			status: 'skipped',
+			appliedActions: 0,
+			blockers: ['ai-autofix-command-missing'],
+		});
+	}
+
+	const autofixRequest: AutofixRequest = {
+		targetFilePath: fileClassification.filePath,
+		projectName: fileClassification.projectName,
+		violations,
+	};
+
+	const autofixDirectory = path.join(options.monitoringDirectory, 'autofix');
+	fs.mkdirSync(autofixDirectory, { recursive: true });
+
+	const safeName = sanitizeSegmentName(fileClassification.filePath);
+	const requestFilePath = path.join(autofixDirectory, `${safeName}.request.json`);
+	const responseFilePath = path.join(autofixDirectory, `${safeName}.response.json`);
+
+	fs.writeFileSync(requestFilePath, toJson(autofixRequest), 'utf-8');
+
+	const aiAutofixCommandLine = buildAiCommandLine({
+		baseCommand: options.aiAutofixCommand,
+		requestFilePath,
+		responseFilePath,
+	});
+
+	runCommandCapture(aiAutofixCommandLine, `AI autofix command failed for ${fileClassification.filePath}.`, {
+		liveOutput: true,
+	});
+
+	if (!fs.existsSync(responseFilePath)) {
+		throw new Error(`AI autofix response file was not created: ${responseFilePath}`);
+	}
+
+	const responseRaw = fs.readFileSync(responseFilePath, 'utf-8');
+	const parsedResponse = JSON.parse(responseRaw) as AutofixResponse;
+	validateAutofixResponse(parsedResponse);
+
+	const appliedActions = applyAutofixActions({
+		actions: parsedResponse.actions,
+		allowedFilePaths: uniqueStrings(violations.map((violation) => violation.filePath)),
+	});
+
+	return toJson({
+		status: 'completed',
+		requestedActions: parsedResponse.actions.length,
+		appliedActions,
+		blockers: parsedResponse.blockers ?? [],
+	});
+}
+
+function validateAutofixResponse(response: AutofixResponse) {
+	if (!Array.isArray(response.actions)) {
+		throw new Error('AI autofix response is missing actions array.');
+	}
+
+	for (const action of response.actions) {
+		if (!action || typeof action !== 'object') {
+			throw new Error('AI autofix action is not an object.');
+		}
+
+		if (!action.filePath || !action.findText || !action.replaceText || !action.ruleId) {
+			throw new Error('AI autofix action is missing required fields.');
+		}
+	}
+}
+
+function applyAutofixActions(args: {
+	actions: AutofixAction[];
+	allowedFilePaths: string[];
+}): number {
+	const { actions, allowedFilePaths } = args;
+	const allowedFileSet = new Set(allowedFilePaths.map((filePath) => filePath.replace(/\\/g, '/')));
+
+	let appliedCount = 0;
+
+	for (const action of actions) {
+		const normalizedFilePath = action.filePath.replace(/\\/g, '/');
+		if (!allowedFileSet.has(normalizedFilePath)) {
+			continue;
+		}
+
+		const absoluteFilePath = path.resolve(normalizedFilePath);
+		if (!fs.existsSync(absoluteFilePath)) {
+			continue;
+		}
+
+		if (!action.findText) {
+			continue;
+		}
+
+		const currentContent = fs.readFileSync(absoluteFilePath, 'utf-8');
+		const occurrences = currentContent.split(action.findText).length - 1;
+		if (occurrences !== 1) {
+			continue;
+		}
+
+		const nextContent = currentContent.replace(action.findText, action.replaceText);
+		if (nextContent === currentContent) {
+			continue;
+		}
+
+		fs.writeFileSync(absoluteFilePath, nextContent, 'utf-8');
+		appliedCount += 1;
+	}
+
+	return appliedCount;
 }
 
 function buildAiCommandLine(args: {

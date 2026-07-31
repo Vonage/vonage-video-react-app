@@ -13,6 +13,7 @@ type CodeReviewConfig = {
   maxRetriesSegment: number;
   maxRetriesGlobal: number;
   aiCommand: string;
+  aiAutofixCommand?: string;
   monitoringDirectory?: string;
 };
 
@@ -103,6 +104,7 @@ function loadConfig(): CodeReviewConfig {
     maxRetriesSegment: parsed.maxRetriesSegment,
     maxRetriesGlobal: parsed.maxRetriesGlobal,
     aiCommand: parsed.aiCommand,
+    aiAutofixCommand: parsed.aiAutofixCommand,
     monitoringDirectory: parsed.monitoringDirectory,
   };
 }
@@ -149,6 +151,10 @@ function buildCodeReviewHarnessCommand(args: {
     `--max-retries-global ${codeReviewConfig.maxRetriesGlobal}`,
     `--ai-command ${shellQuote(codeReviewConfig.aiCommand)}`,
   ];
+
+  if (codeReviewConfig.aiAutofixCommand) {
+    commandParts.push(`--ai-autofix-command ${shellQuote(codeReviewConfig.aiAutofixCommand)}`);
+  }
 
   if (codeReviewConfig.monitoringDirectory) {
     commandParts.push(`--monitoring-dir ${shellQuote(codeReviewConfig.monitoringDirectory)}`);
