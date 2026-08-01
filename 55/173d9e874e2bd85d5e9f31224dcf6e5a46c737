@@ -1,0 +1,42 @@
+scripts/codeReview.ts
+  s_02fd3b14e1283d::t_2fb4ba9b0b60ff 21-26,180-210
+scripts/codeReviewHarness.ts
+  s_02fd3b14e1283d::t_5d3feab20a8368 1218-1220
+  s_02fd3b14e1283d::t_7e02f5436f0ef3 1215-1217
+  s_02fd3b14e1283d::t_d6fe12c8243920 1221-1222
+  s_02fd3b14e1283d::t_cf14f2d0b25433 1211-1214
+scripts/harnessAutofixAdapter.ts
+  s_02fd3b14e1283d::t_4bc741eb6bd1d3 769-776
+  s_02fd3b14e1283d::t_ad3f18153c65a9 525-527,529,846
+  s_02fd3b14e1283d::t_94d2a907574004 313-324,453-466,573-575,578,582-659,963-967
+  s_02fd3b14e1283d::t_7f3bbe5a4ce71b 426-452,467,469-473,478,480,482-524,528,530-536,540-556,561-564,566,570-572,660-768,777-845,847-885
+  s_02fd3b14e1283d::t_91ec3ddcdeabf5 886
+scripts/harnessMetadataAdapter.ts
+  s_02fd3b14e1283d::t_88c44b5f24ef04 490-503,510-536,558-559,565-576,582-711
+  s_02fd3b14e1283d::t_46ff12403af86e 250
+  s_02fd3b14e1283d::t_b5e4897aacb4bd 712
+_testMonitoring/codeReviewHarness/999-final-summary.json
+  s_02fd3b14e1283d::t_59dd6271df54b8 31-211,218-219,221,223
+  s_02fd3b14e1283d::t_554bb3b08799dc 3,7,12,15-16,23,27,212-217,220,222,224-226,230-233,236-237,419-424,428-438,440,442
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "55173d9e874e2bd85d5e9f31224dcf6e5a46c737",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
