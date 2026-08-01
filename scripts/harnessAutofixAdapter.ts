@@ -66,7 +66,9 @@ async function main() {
   const options = parseCliOptions(process.argv.slice(2));
 
   if (options.mode === 'request-response') {
-    const request = JSON.parse(fs.readFileSync(options.requestPath as string, 'utf-8')) as AutofixRequest;
+    const request = JSON.parse(
+      fs.readFileSync(options.requestPath as string, 'utf-8')
+    ) as AutofixRequest;
 
     const response =
       options.provider === 'gh-copilot'
@@ -103,7 +105,9 @@ async function main() {
   const appliedActions = options.applyChanges
     ? applyAutofixActions({
         actions: response.actions,
-        allowedFilePaths: uniqueStrings(singleFileRequest.violations.map((violation) => violation.filePath)),
+        allowedFilePaths: uniqueStrings(
+          singleFileRequest.violations.map((violation) => violation.filePath)
+        ),
       })
     : 0;
 
@@ -228,8 +232,9 @@ function parseCliOptions(argumentsList: string[]): CliOptions {
     };
   }
 
-  throw new Error('Invalid arguments count. Expected one target file, or request/response file pair.');
-
+  throw new Error(
+    'Invalid arguments count. Expected one target file, or request/response file pair.'
+  );
 }
 
 function buildSingleFileRequest(targetFilePathInput: string): AutofixRequest {
@@ -338,7 +343,10 @@ function normalizeWorkspacePath(rawPath: string): string {
 }
 
 function sanitizePathForFileName(filePath: string): string {
-  return filePath.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+  return filePath
+    .replace(/[^a-zA-Z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
 }
 
 function applyAutofixActions(args: {
@@ -367,7 +375,8 @@ function applyAutofixActions(args: {
     }
 
     const currentContent =
-      fileContentsByPath.get(normalizedActionFilePath) ?? fs.readFileSync(absoluteFilePath, 'utf-8');
+      fileContentsByPath.get(normalizedActionFilePath) ??
+      fs.readFileSync(absoluteFilePath, 'utf-8');
     const nextContent = replaceFirstOccurrence(currentContent, action.findText, action.replaceText);
 
     if (nextContent === currentContent) {
@@ -410,7 +419,8 @@ function buildDeterministicAutofixResponse(request: AutofixRequest): AutofixResp
         ruleId: violation.ruleId,
         findText: violation.matchText,
         replaceText: 'style={',
-        reason: 'Replace MUI sx prop with style prop to remove banned sx usage while preserving dynamic style object behavior.',
+        reason:
+          'Replace MUI sx prop with style prop to remove banned sx usage while preserving dynamic style object behavior.',
       });
       continue;
     }
@@ -424,7 +434,8 @@ function buildDeterministicAutofixResponse(request: AutofixRequest): AutofixResp
       ruleId: violation.ruleId,
       findText: violation.matchText,
       replaceText: "visibility: 'hidden'",
-      reason: 'Replace display:none with visibility:hidden to satisfy no-display-none rule in tests.',
+      reason:
+        'Replace display:none with visibility:hidden to satisfy no-display-none rule in tests.',
     });
   }
 
@@ -490,7 +501,10 @@ async function buildCopilotAutofixResponse(args: {
 
       return {
         actions: deterministicFallback.actions,
-        blockers: uniqueStrings([...(parsed.blockers ?? []), ...(deterministicFallback.blockers ?? [])]),
+        blockers: uniqueStrings([
+          ...(parsed.blockers ?? []),
+          ...(deterministicFallback.blockers ?? []),
+        ]),
       };
     }
 
@@ -561,7 +575,8 @@ const ANSI_ESCAPE_PATTERN = new RegExp(
 function tryParseAutofixResponse(rawOutput: string): AutofixResponse | null {
   const withoutAnsi = rawOutput.replace(ANSI_ESCAPE_PATTERN, '').trim();
   const fenced = withoutAnsi.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const candidateJson = fenced?.[1]?.trim() ?? withoutAnsi.match(/\{[\s\S]*\}/)?.[0]?.trim() ?? withoutAnsi;
+  const candidateJson =
+    fenced?.[1]?.trim() ?? withoutAnsi.match(/\{[\s\S]*\}/)?.[0]?.trim() ?? withoutAnsi;
 
   let parsed: unknown;
   try {
