@@ -247,17 +247,13 @@ function requiresCopilotForMetadata(args: {
   request: MetadataRequest;
   deterministicCandidate: MetadataResponse;
 }): boolean {
-  const { request, deterministicCandidate } = args;
+  const { request } = args;
 
   if (request.projectName === 'unknown') {
     return true;
   }
 
   if (request.projectName === 'integration-tests') {
-    return true;
-  }
-
-  if (deterministicCandidate.suggestedTestFilePaths.length === 0) {
     return true;
   }
 
@@ -491,11 +487,52 @@ function findSuggestedTestFiles(filePath: string, projectName: ProjectName): str
 
   const extension = path.extname(filePath);
   const withoutExtension = filePath.slice(0, filePath.length - extension.length);
+  const normalizedFilePath = filePath.replace(/\\/g, '/');
+  const sourceDirectoryPath = path.posix.dirname(normalizedFilePath);
+  const sourceBaseName = path.posix.basename(withoutExtension);
+  const projectRoot = getProjectRoot(projectName);
+  const projectRelativePath =
+    projectRoot && normalizedFilePath.startsWith(`${projectRoot}/`)
+      ? normalizedFilePath.slice(projectRoot.length + 1)
+      : normalizedFilePath;
+  const projectRelativeWithoutExtension = projectRelativePath.replace(/\.[jt]sx?$/, '');
+
+  const sourceDirectoryRelativeToProject =
+    projectRoot && sourceDirectoryPath.startsWith(`${projectRoot}/`)
+      ? sourceDirectoryPath.slice(projectRoot.length + 1)
+      : sourceDirectoryPath;
 
   candidateSet.add(`${withoutExtension}.test.ts`);
   candidateSet.add(`${withoutExtension}.test.tsx`);
   candidateSet.add(`${withoutExtension}.spec.ts`);
   candidateSet.add(`${withoutExtension}.spec.tsx`);
+
+  candidateSet.add(`${sourceDirectoryPath}/__tests__/${sourceBaseName}.test.ts`);
+  candidateSet.add(`${sourceDirectoryPath}/__tests__/${sourceBaseName}.test.tsx`);
+  candidateSet.add(`${sourceDirectoryPath}/__tests__/${sourceBaseName}.spec.ts`);
+  candidateSet.add(`${sourceDirectoryPath}/__tests__/${sourceBaseName}.spec.tsx`);
+
+  candidateSet.add(`${sourceDirectoryPath}/tests/${sourceBaseName}.test.ts`);
+  candidateSet.add(`${sourceDirectoryPath}/tests/${sourceBaseName}.test.tsx`);
+  candidateSet.add(`${sourceDirectoryPath}/tests/${sourceBaseName}.spec.ts`);
+  candidateSet.add(`${sourceDirectoryPath}/tests/${sourceBaseName}.spec.tsx`);
+
+  if (projectRoot) {
+    candidateSet.add(`${projectRoot}/tests/${projectRelativeWithoutExtension}.test.ts`);
+    candidateSet.add(`${projectRoot}/tests/${projectRelativeWithoutExtension}.test.tsx`);
+    candidateSet.add(`${projectRoot}/tests/${projectRelativeWithoutExtension}.spec.ts`);
+    candidateSet.add(`${projectRoot}/tests/${projectRelativeWithoutExtension}.spec.tsx`);
+
+    candidateSet.add(`${projectRoot}/__tests__/${projectRelativeWithoutExtension}.test.ts`);
+    candidateSet.add(`${projectRoot}/__tests__/${projectRelativeWithoutExtension}.test.tsx`);
+    candidateSet.add(`${projectRoot}/__tests__/${projectRelativeWithoutExtension}.spec.ts`);
+    candidateSet.add(`${projectRoot}/__tests__/${projectRelativeWithoutExtension}.spec.tsx`);
+
+    candidateSet.add(`${projectRoot}/tests/${sourceBaseName}.test.ts`);
+    candidateSet.add(`${projectRoot}/tests/${sourceBaseName}.test.tsx`);
+    candidateSet.add(`${projectRoot}/tests/${sourceBaseName}.spec.ts`);
+    candidateSet.add(`${projectRoot}/tests/${sourceBaseName}.spec.tsx`);
+  }
 
   if (projectName === 'backend') {
     const backendRelativePath = filePath.replace(/^backend\//, '');
@@ -518,22 +555,159 @@ function findSuggestedTestFiles(filePath: string, projectName: ProjectName): str
     );
   }
 
-  const existingFiles = runCommandCapture('git ls-files')
-    .split('\n')
-    .map((entry) => entry.trim())
-    .filter(Boolean);
-
-  const existingSet = new Set(existingFiles);
+  const existingSet = getTrackedFilesSet();
+  const projectTestFiles = getProjectTrackedTestFiles(projectName);
 
   const matched = Array.from(candidateSet)
     .map((candidate) => candidate.replace(/\\/g, '/'))
     .filter((candidate) => existingSet.has(candidate));
 
-  if (matched.length > 0) {
-    return matched;
+  const rankedRelatedTests = rankRelatedProjectTests({
+    sourceBaseName,
+    projectRelativeWithoutExtension,
+    sourceDirectoryRelativeToProject,
+    projectRoot,
+    projectTestFiles,
+  });
+
+  const mergedResults = uniqueStrings([...matched, ...rankedRelatedTests]);
+
+  if (mergedResults.length > 0) {
+    return mergedResults.slice(0, 8);
   }
 
   return [];
+}
+
+let trackedFilesCache: string[] | null = null;
+let trackedFilesSetCache: Set<string> | null = null;
+let trackedProjectTestFilesCache: Record<string, string[]> | null = null;
+
+function getTrackedFiles(): string[] {
+  if (trackedFilesCache) {
+    return trackedFilesCache;
+  }
+
+  trackedFilesCache = runCommandCapture('git ls-files')
+    .split('\n')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => entry.replace(/\\/g, '/'));
+
+  return trackedFilesCache;
+}
+
+function getTrackedFilesSet(): Set<string> {
+  if (trackedFilesSetCache) {
+    return trackedFilesSetCache;
+  }
+
+  trackedFilesSetCache = new Set(getTrackedFiles());
+  return trackedFilesSetCache;
+}
+
+function getProjectTrackedTestFiles(projectName: ProjectName): string[] {
+  if (!trackedProjectTestFilesCache) {
+    trackedProjectTestFilesCache = {};
+  }
+
+  const cacheKey = projectName;
+  const cached = trackedProjectTestFilesCache[cacheKey];
+  if (cached) {
+    return cached;
+  }
+
+  const projectRoot = getProjectRoot(projectName);
+  const files = getTrackedFiles().filter((filePath) => {
+    if (!/\.(test|spec)\.[jt]sx?$/.test(filePath)) {
+      return false;
+    }
+
+    if (!projectRoot) {
+      return false;
+    }
+
+    return filePath.startsWith(`${projectRoot}/`);
+  });
+
+  trackedProjectTestFilesCache[cacheKey] = files;
+  return files;
+}
+
+function getProjectRoot(projectName: ProjectName): string | null {
+  if (projectName === 'backend') return 'backend';
+  if (projectName === 'frontend') return 'frontend';
+  if (projectName === 'integration-tests') return 'integration-tests';
+  if (projectName === 'api') return 'libs/api';
+  if (projectName === 'core') return 'libs/core';
+  if (projectName === 'ui') return 'libs/ui';
+  if (projectName === 'common') return 'libs/common';
+
+  return null;
+}
+
+function rankRelatedProjectTests(args: {
+  sourceBaseName: string;
+  projectRelativeWithoutExtension: string;
+  sourceDirectoryRelativeToProject: string;
+  projectRoot: string | null;
+  projectTestFiles: string[];
+}): string[] {
+  const {
+    sourceBaseName,
+    projectRelativeWithoutExtension,
+    sourceDirectoryRelativeToProject,
+    projectRoot,
+    projectTestFiles,
+  } = args;
+
+  const ranked = projectTestFiles
+    .map((testFilePath) => {
+      const normalizedTestPath = testFilePath.replace(/\\/g, '/');
+      const testRelativePath = projectRoot
+        ? normalizedTestPath.slice(projectRoot.length + 1)
+        : normalizedTestPath;
+      const testBaseName = path.posix
+        .basename(normalizedTestPath)
+        .replace(/\.(test|spec)\.[jt]sx?$/, '');
+      const testWithoutExtension = normalizedTestPath.replace(/\.[jt]sx?$/, '');
+
+      let score = 0;
+
+      if (testBaseName === sourceBaseName) {
+        score += 8;
+      }
+
+      if (testWithoutExtension.includes(projectRelativeWithoutExtension)) {
+        score += 6;
+      }
+
+      if (
+        sourceDirectoryRelativeToProject &&
+        testRelativePath.startsWith(`${sourceDirectoryRelativeToProject}/`)
+      ) {
+        score += 5;
+      }
+
+      if (normalizedTestPath.includes(`/${sourceBaseName}.`)) {
+        score += 2;
+      }
+
+      return {
+        filePath: normalizedTestPath,
+        score,
+      };
+    })
+    .filter((entry) => entry.score >= 8)
+    .sort((left, right) => {
+      if (right.score !== left.score) {
+        return right.score - left.score;
+      }
+
+      return left.filePath.localeCompare(right.filePath);
+    });
+
+  return ranked.map((entry) => entry.filePath);
 }
 
 function buildCoverageCommand(args: {

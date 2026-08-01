@@ -3,20 +3,17 @@
 - name: resolve-scope
 - attempts: 1
 - status: success
-- timestamp: 2026-07-31T23:31:18.880Z
+- timestamp: 2026-08-01T00:08:13.534Z
 
 ## Output
 
 ```text
 {
   "candidateFiles": [
-    "frontend/src/components/MeetingRoom/VideoTile/VideoTile.tsx"
+    "frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx"
   ],
   "changedFiles": [
-    "codeReview.config.json",
-    "frontend/src/components/MeetingRoom/VideoTile/VideoTile.spec.tsx",
-    "frontend/src/components/MeetingRoom/VideoTile/VideoTile.tsx",
-    "package.json",
+    "scripts/codeReview.ts",
     "scripts/codeReviewHarness.ts",
     "scripts/harnessAutofixAdapter.ts",
     "scripts/harnessMetadataAdapter.ts"

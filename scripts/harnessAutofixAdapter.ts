@@ -310,6 +310,18 @@ function scanViolationsForFile(filePath: string): InstructionViolation[] {
         matchText: displayNoneMatch[0],
       });
     }
+
+    if (line.includes('style={{')) {
+      violations.push({
+        filePath,
+        line: lineNumber,
+        ruleId: 'copilot-prefer-tailwind-over-inline-style',
+        description:
+          'Inline style objects should be migrated to Tailwind classes when deterministically possible.',
+        instructionsSource: '.github/copilot-instructions.md',
+        matchText: 'style={{',
+      });
+    }
   }
 
   return violations;
@@ -411,38 +423,465 @@ function replaceFirstOccurrence(source: string, findText: string, replaceText: s
 
 function buildDeterministicAutofixResponse(request: AutofixRequest): AutofixResponse {
   const actions: AutofixAction[] = [];
+  const blockers: string[] = [];
 
-  for (const violation of request.violations) {
-    if (violation.ruleId === 'copilot-no-mui-sx-prop') {
+  const violationsByFilePath = request.violations.reduce<Record<string, InstructionViolation[]>>(
+    function groupViolationsByFilePath(accumulator, violation) {
+      const currentViolations = accumulator[violation.filePath] ?? [];
+
+      return {
+        ...accumulator,
+        [violation.filePath]: [...currentViolations, violation],
+      };
+    },
+    {}
+  );
+
+  for (const [filePath, fileViolations] of Object.entries(violationsByFilePath)) {
+    const sxViolations = fileViolations.filter(function keepSxViolation(violation) {
+      return violation.ruleId === 'copilot-no-mui-sx-prop';
+    });
+
+    if (sxViolations.length > 0) {
+      const sxAutofixResult = buildTailwindSxAutofixActions({
+        filePath,
+        expectedSxViolationCount: sxViolations.length,
+      });
+
+      actions.push(...sxAutofixResult.actions);
+      blockers.push(...sxAutofixResult.blockers);
+    }
+
+    const styleViolations = fileViolations.filter(function keepStyleViolation(violation) {
+      return violation.ruleId === 'copilot-prefer-tailwind-over-inline-style';
+    });
+
+    if (styleViolations.length > 0) {
+      const styleAutofixResult = buildTailwindStyleAutofixActions({
+        filePath,
+        expectedStyleViolationCount: styleViolations.length,
+      });
+
+      actions.push(...styleAutofixResult.actions);
+      blockers.push(...styleAutofixResult.blockers);
+    }
+
+    const displayNoneViolations = fileViolations.filter(function keepDisplayNoneViolation(violation) {
+      return violation.ruleId === 'copilot-no-display-none-hiding';
+    });
+
+    for (const violation of displayNoneViolations) {
       actions.push({
         filePath: violation.filePath,
         ruleId: violation.ruleId,
         findText: violation.matchText,
-        replaceText: 'style={',
+        replaceText: "visibility: 'hidden'",
         reason:
-          'Replace MUI sx prop with style prop to remove banned sx usage while preserving dynamic style object behavior.',
+          'Replace display:none with visibility:hidden to satisfy no-display-none rule in tests.',
       });
-      continue;
     }
-
-    if (violation.ruleId !== 'copilot-no-display-none-hiding') {
-      continue;
-    }
-
-    actions.push({
-      filePath: violation.filePath,
-      ruleId: violation.ruleId,
-      findText: violation.matchText,
-      replaceText: "visibility: 'hidden'",
-      reason:
-        'Replace display:none with visibility:hidden to satisfy no-display-none rule in tests.',
-    });
   }
 
   return {
     actions,
-    blockers: actions.length === 0 ? ['no-deterministic-autofix-available'] : [],
+    blockers:
+      actions.length === 0
+        ? uniqueStrings([...blockers, 'no-deterministic-autofix-available'])
+        : uniqueStrings(blockers),
   };
+}
+
+function buildTailwindSxAutofixActions(args: {
+  filePath: string;
+  expectedSxViolationCount: number;
+}): {
+  actions: AutofixAction[];
+  blockers: string[];
+} {
+  const { filePath, expectedSxViolationCount } = args;
+  const absoluteFilePath = path.resolve(filePath);
+
+  if (!fs.existsSync(absoluteFilePath)) {
+    return {
+      actions: [],
+      blockers: [`${filePath}: file-not-found-for-sx-migration`],
+    };
+  }
+
+  const fileContent = fs.readFileSync(absoluteFilePath, 'utf-8');
+  const sxAttributes = Array.from(fileContent.matchAll(/sx\s*=\s*\{\{([\s\S]*?)\}\}/g));
+  const blockers: string[] = [];
+  const actions: AutofixAction[] = [];
+
+  for (const sxAttributeMatch of sxAttributes) {
+    const sxAttribute = sxAttributeMatch[0];
+    const sxBody = sxAttributeMatch[1] ?? '';
+    const sxStartIndex = sxAttributeMatch.index ?? -1;
+
+    if (sxStartIndex < 0) {
+      continue;
+    }
+
+    const containsSpreadOrComputedExpression = /\.\.\.|\?|=>|\b[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/.test(sxBody);
+    const containsNestedObjectDeclaration = /:\s*\{/.test(sxBody);
+    if (containsSpreadOrComputedExpression || containsNestedObjectDeclaration) {
+      blockers.push(
+        `${filePath}: sx block contains spread/computed or nested object expressions and cannot be safely migrated automatically.`
+      );
+      continue;
+    }
+
+    const mappedClasses = mapSxBodyToTailwindClasses(sxBody);
+    if (mappedClasses.length === 0) {
+      blockers.push(`${filePath}: sx block did not produce any tailwind classes.`);
+      continue;
+    }
+
+    const tagStartIndex = fileContent.lastIndexOf('<', sxStartIndex);
+    const tagEndIndex = fileContent.indexOf('>', sxStartIndex);
+
+    if (tagStartIndex < 0 || tagEndIndex < 0 || tagEndIndex <= tagStartIndex) {
+      blockers.push(`${filePath}: unable to determine JSX opening tag for sx migration.`);
+      continue;
+    }
+
+    const openingTag = fileContent.slice(tagStartIndex, tagEndIndex + 1);
+    const migratedOpeningTag = migrateOpeningTagWithTailwind({
+      openingTag,
+      sxAttribute,
+      tailwindClasses: mappedClasses,
+    });
+
+    if (!migratedOpeningTag) {
+      blockers.push(`${filePath}: className merge unsupported for one sx block.`);
+      continue;
+    }
+
+    actions.push({
+      filePath,
+      ruleId: 'copilot-no-mui-sx-prop',
+      findText: openingTag,
+      replaceText: migratedOpeningTag,
+      reason:
+        'Migrate MUI sx style object to Tailwind classes first; use arbitrary utility classes for unmapped static declarations.',
+    });
+  }
+
+  if (actions.length < expectedSxViolationCount) {
+    blockers.push(
+      `${filePath}: migrated ${actions.length}/${expectedSxViolationCount} sx block(s) to tailwind.`
+    );
+  }
+
+  return {
+    actions,
+    blockers,
+  };
+}
+
+function buildTailwindStyleAutofixActions(args: {
+  filePath: string;
+  expectedStyleViolationCount: number;
+}): {
+  actions: AutofixAction[];
+  blockers: string[];
+} {
+  const { filePath, expectedStyleViolationCount } = args;
+  const absoluteFilePath = path.resolve(filePath);
+
+  if (!fs.existsSync(absoluteFilePath)) {
+    return {
+      actions: [],
+      blockers: [`${filePath}: file-not-found-for-style-migration`],
+    };
+  }
+
+  const fileContent = fs.readFileSync(absoluteFilePath, 'utf-8');
+  const styleAttributes = Array.from(fileContent.matchAll(/style\s*=\s*\{\{([\s\S]*?)\}\}/g));
+  const blockers: string[] = [];
+  const actions: AutofixAction[] = [];
+
+  for (const styleAttributeMatch of styleAttributes) {
+    const styleAttribute = styleAttributeMatch[0];
+    const styleBody = styleAttributeMatch[1] ?? '';
+    const styleStartIndex = styleAttributeMatch.index ?? -1;
+
+    if (styleStartIndex < 0) {
+      continue;
+    }
+
+    const containsSpreadOrComputedExpression = /\.\.\.|\?|=>|\b[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/.test(styleBody);
+    const containsNestedObjectDeclaration = /:\s*\{/.test(styleBody);
+    if (containsSpreadOrComputedExpression || containsNestedObjectDeclaration) {
+      blockers.push(
+        `${filePath}: style block contains spread/computed or nested object expressions and cannot be safely migrated automatically.`
+      );
+      continue;
+    }
+
+    const mappedClasses = mapSxBodyToTailwindClasses(styleBody);
+    if (mappedClasses.length === 0) {
+      blockers.push(`${filePath}: style block did not produce any tailwind classes.`);
+      continue;
+    }
+
+    const tagStartIndex = fileContent.lastIndexOf('<', styleStartIndex);
+    const tagEndIndex = fileContent.indexOf('>', styleStartIndex);
+    if (tagStartIndex < 0 || tagEndIndex < 0 || tagEndIndex <= tagStartIndex) {
+      blockers.push(`${filePath}: unable to determine JSX opening tag for style migration.`);
+      continue;
+    }
+
+    const openingTag = fileContent.slice(tagStartIndex, tagEndIndex + 1);
+    const migratedOpeningTag = migrateOpeningTagWithTailwind({
+      openingTag,
+      sxAttribute: styleAttribute,
+      tailwindClasses: mappedClasses,
+    });
+
+    if (!migratedOpeningTag) {
+      blockers.push(`${filePath}: className merge unsupported for one style block.`);
+      continue;
+    }
+
+    actions.push({
+      filePath,
+      ruleId: 'copilot-prefer-tailwind-over-inline-style',
+      findText: openingTag,
+      replaceText: migratedOpeningTag,
+      reason:
+        'Migrate inline style object to Tailwind classes first; use arbitrary utility classes for unmapped static declarations.',
+    });
+  }
+
+  if (actions.length < expectedStyleViolationCount) {
+    blockers.push(
+      `${filePath}: migrated ${actions.length}/${expectedStyleViolationCount} style block(s) to tailwind.`
+    );
+  }
+
+  return {
+    actions,
+    blockers,
+  };
+}
+
+function mapSxBodyToTailwindClasses(sxBody: string): string[] {
+  const declarationMatches = Array.from(sxBody.matchAll(/([a-zA-Z][a-zA-Z0-9]*)\s*:\s*([^,\n]+)\s*,?/g));
+
+  return declarationMatches
+    .flatMap(function mapDeclarationToClasses(declarationMatch) {
+      const propertyName = declarationMatch[1];
+      const propertyValue = declarationMatch[2]?.trim() ?? '';
+      return mapSxDeclarationToTailwind({
+        propertyName,
+        propertyValue,
+      });
+    })
+    .filter(Boolean);
+}
+
+function mapSxDeclarationToTailwind(args: {
+  propertyName: string;
+  propertyValue: string;
+}): string[] {
+  const normalizedPropertyName = args.propertyName;
+  const normalizedValue = normalizeLiteralValue(args.propertyValue);
+
+  if (normalizedPropertyName === 'position') {
+    if (normalizedValue === 'relative') return ['relative'];
+    if (normalizedValue === 'absolute') return ['absolute'];
+    if (normalizedValue === 'fixed') return ['fixed'];
+    if (normalizedValue === 'sticky') return ['sticky'];
+  }
+
+  if (normalizedPropertyName === 'display') {
+    if (normalizedValue === 'inline-block') return ['inline-block'];
+    if (normalizedValue === 'block') return ['block'];
+    if (normalizedValue === 'flex') return ['flex'];
+    if (normalizedValue === 'inline-flex') return ['inline-flex'];
+    if (normalizedValue === 'none') return ['hidden'];
+  }
+
+  if (normalizedPropertyName === 'alignItems' && normalizedValue === 'center') {
+    return ['items-center'];
+  }
+
+  if (normalizedPropertyName === 'justifyContent' && normalizedValue === 'center') {
+    return ['justify-center'];
+  }
+
+  if (normalizedPropertyName === 'overflow' && normalizedValue === 'hidden') {
+    return ['overflow-hidden'];
+  }
+
+  if (normalizedPropertyName === 'borderRadius' && normalizedValue === '50%') {
+    return ['rounded-full'];
+  }
+
+  if (normalizedPropertyName === 'padding' && normalizedValue === '0') {
+    return ['p-0'];
+  }
+
+  const spacingClass = mapSpacingPropertyToTailwind({
+    propertyName: normalizedPropertyName,
+    normalizedValue,
+  });
+  if (spacingClass) {
+    return [spacingClass];
+  }
+
+  const sizeClass = mapSizePropertyToTailwind({
+    propertyName: normalizedPropertyName,
+    normalizedValue,
+  });
+  if (sizeClass) {
+    return [sizeClass];
+  }
+
+  const kebabPropertyName = normalizedPropertyName
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .toLowerCase();
+  const arbitraryValue = normalizedValue.replace(/\s+/g, '_');
+
+  return [`[${kebabPropertyName}:${arbitraryValue}]`];
+}
+
+function mapSpacingPropertyToTailwind(args: {
+  propertyName: string;
+  normalizedValue: string;
+}): string | null {
+  const propertyToPrefix: Record<string, string> = {
+    top: 'top',
+    right: 'right',
+    bottom: 'bottom',
+    left: 'left',
+  };
+
+  const prefix = propertyToPrefix[args.propertyName];
+  if (!prefix) return null;
+
+  const spacingToken = mapNumericValueToTailwindSpacing(args.normalizedValue);
+  if (!spacingToken) {
+    return null;
+  }
+
+  const isNegativeSpacing = spacingToken.startsWith('-');
+  const positiveSpacingToken = isNegativeSpacing ? spacingToken.slice(1) : spacingToken;
+
+  if (isNegativeSpacing) {
+    return `-${prefix}-${positiveSpacingToken}`;
+  }
+
+  return `${prefix}-${positiveSpacingToken}`;
+}
+
+function mapSizePropertyToTailwind(args: {
+  propertyName: string;
+  normalizedValue: string;
+}): string | null {
+  const propertyToPrefix: Record<string, string> = {
+    width: 'w',
+    minWidth: 'min-w',
+    maxWidth: 'max-w',
+    height: 'h',
+    minHeight: 'min-h',
+    maxHeight: 'max-h',
+  };
+
+  const prefix = propertyToPrefix[args.propertyName];
+  if (!prefix) return null;
+
+  const spacingToken = mapNumericValueToTailwindSpacing(args.normalizedValue);
+  if (!spacingToken) {
+    return null;
+  }
+
+  return `${prefix}-${spacingToken}`;
+}
+
+function mapNumericValueToTailwindSpacing(normalizedValue: string): string | null {
+  if (normalizedValue === '0') {
+    return '0';
+  }
+
+  const numericValue = Number(normalizedValue);
+  if (!Number.isFinite(numericValue)) {
+    return null;
+  }
+
+  const absoluteValue = Math.abs(numericValue);
+  if (absoluteValue % 4 !== 0) {
+    return null;
+  }
+
+  const spacingScale = absoluteValue / 4;
+  const isIntegerSpacing = Number.isInteger(spacingScale);
+  if (!isIntegerSpacing) {
+    return null;
+  }
+
+  const baseToken = `${spacingScale}`;
+  return numericValue < 0 ? `-${baseToken}` : baseToken;
+}
+
+function normalizeLiteralValue(value: string): string {
+  return value
+    .trim()
+    .replace(/^['"`]/, '')
+    .replace(/['"`]$/, '')
+    .trim();
+}
+
+function migrateOpeningTagWithTailwind(args: {
+  openingTag: string;
+  sxAttribute: string;
+  tailwindClasses: string[];
+}): string | null {
+  const classTokens = uniqueStrings(args.tailwindClasses).join(' ');
+  if (!classTokens) {
+    return null;
+  }
+
+  const openingTagWithoutSx = args.openingTag.replace(args.sxAttribute, '');
+
+  const classNameStringMatch = openingTagWithoutSx.match(/className\s*=\s*(["'])([\s\S]*?)\1/);
+  if (classNameStringMatch) {
+    const originalClassValue = classNameStringMatch[2];
+    const mergedClassValue = mergeClassTokenStrings(originalClassValue, classTokens);
+    return openingTagWithoutSx.replace(
+      classNameStringMatch[0],
+      `className=${classNameStringMatch[1]}${mergedClassValue}${classNameStringMatch[1]}`
+    );
+  }
+
+  const classNamesExpressionMatch = openingTagWithoutSx.match(/className\s*=\s*\{\s*classNames\(([^]*?)\)\s*\}/);
+  if (classNamesExpressionMatch) {
+    const expressionContent = classNamesExpressionMatch[1].trim();
+    const mergedExpression = expressionContent
+      ? `${expressionContent}, '${classTokens}'`
+      : `'${classTokens}'`;
+
+    return openingTagWithoutSx.replace(
+      classNamesExpressionMatch[0],
+      `className={classNames(${mergedExpression})}`
+    );
+  }
+
+  const closingToken = openingTagWithoutSx.endsWith('/>') ? '/>' : '>';
+  const insertionIndex = openingTagWithoutSx.lastIndexOf(closingToken);
+  if (insertionIndex < 0) {
+    return null;
+  }
+
+  return `${openingTagWithoutSx.slice(0, insertionIndex)} className="${classTokens}"${openingTagWithoutSx.slice(insertionIndex)}`;
+}
+
+function mergeClassTokenStrings(existingTokens: string, tokensToAppend: string): string {
+  const existingTokenList = existingTokens.split(/\s+/).filter(Boolean);
+  const appendedTokenList = tokensToAppend.split(/\s+/).filter(Boolean);
+
+  return uniqueStrings([...existingTokenList, ...appendedTokenList]).join(' ');
 }
 
 async function buildCopilotAutofixResponse(args: {
@@ -521,7 +960,11 @@ async function buildCopilotAutofixResponse(args: {
 }
 
 function getDeterministicSupportedRuleIds(): Set<string> {
-  return new Set(['copilot-no-display-none-hiding', 'copilot-no-mui-sx-prop']);
+  return new Set([
+    'copilot-no-display-none-hiding',
+    'copilot-no-mui-sx-prop',
+    'copilot-prefer-tailwind-over-inline-style',
+  ]);
 }
 
 function getUnsupportedViolationRuleIds(args: {

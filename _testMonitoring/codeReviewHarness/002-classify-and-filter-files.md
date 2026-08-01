@@ -3,7 +3,7 @@
 - name: classify-and-filter-files
 - attempts: 1
 - status: success
-- timestamp: 2026-07-31T23:31:18.880Z
+- timestamp: 2026-08-01T00:08:13.535Z
 
 ## Output
 
@@ -11,7 +11,7 @@
 {
   "testableFiles": [
     {
-      "filePath": "frontend/src/components/MeetingRoom/VideoTile/VideoTile.tsx",
+      "filePath": "frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx",
       "projectName": "frontend"
     }
   ],

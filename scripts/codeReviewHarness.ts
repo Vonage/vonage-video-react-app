@@ -1208,10 +1208,18 @@ function printRunSummary(args: {
 
   for (const result of fileResults) {
     const reasonLabel = formatResultReasonLabel(result.reason);
-    const detailsSuffix = result.details ? ` | details=${result.details}` : '';
-    console.log(
-      `  - [${result.status}] ${result.filePath} | reason=${result.reason} (${reasonLabel})${detailsSuffix}`
-    );
+    console.log(`  - [${result.status}] ${result.filePath} | reason=${result.reason} (${reasonLabel})`);
+
+    if (!result.details) {
+      continue;
+    }
+
+    console.log('    details:');
+
+    const detailLines = result.details.split('\n');
+    for (const detailLine of detailLines) {
+      console.log(`      ${detailLine}`);
+    }
   }
 
   console.log('');

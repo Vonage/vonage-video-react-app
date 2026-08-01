@@ -18,6 +18,12 @@ type CodeReviewConfig = {
 };
 
 const DEFAULT_CONFIG_FILE_PATH = 'codeReview.config.json';
+const DEFAULT_MONITORING_DIRECTORY = '_testMonitoring/codeReviewHarness';
+
+type CommandFailureError = Error & {
+  status?: number;
+  signal?: string | null;
+};
 
 function main() {
   const commandLineArguments = process.argv.slice(2);
@@ -171,4 +177,34 @@ function shellQuote(value: string): string {
   return `'${value.replace(/'/g, `'"'"'`)}'`;
 }
 
-main();
+function isCommandFailureError(error: unknown): error is CommandFailureError {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  return 'status' in error || 'signal' in error;
+}
+
+function run() {
+  try {
+    main();
+  } catch (error: unknown) {
+    if (isCommandFailureError(error)) {
+      const exitCode = typeof error.status === 'number' ? error.status : 1;
+      console.error('');
+      console.error(`Code review failed. Harness exited with code ${exitCode}.`);
+      console.error(
+        `See run summary above and monitoring reports in ${DEFAULT_MONITORING_DIRECTORY}.`
+      );
+      process.exitCode = exitCode;
+      return;
+    }
+
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('');
+    console.error(`Code review failed: ${errorMessage}`);
+    process.exitCode = 1;
+  }
+}
+
+run();
