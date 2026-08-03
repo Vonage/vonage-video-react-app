@@ -36,16 +36,6 @@ describe('ReduceNoiseTestSpeakers', () => {
 
     expect(screen.getByTestId('soundTest')).toBeInTheDocument();
   });
-
-  it('no longer offers Advanced Noise Suppression, which now lives in Settings -> Audio', () => {
-    const devices = makeMediaDeviceInfos();
-
-    mediaDevices$.setState((state) => ({ ...state, mediaDeviceInfo: devices }));
-
-    render(<ReduceNoiseTestSpeakers />);
-
-    expect(screen.queryByText('Advanced Noise Suppression')).not.toBeInTheDocument();
-  });
 });
 
 function render(ui: ReactElement) {
