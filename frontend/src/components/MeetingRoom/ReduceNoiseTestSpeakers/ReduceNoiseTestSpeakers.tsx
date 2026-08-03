@@ -10,9 +10,9 @@ import Box from '@mui/material/Box';
  * ReduceNoiseTestSpeakers Component
  *
  * This component displays the option to test the speakers.
- * @returns {ReactElement | false} Returns ReduceNoiseTestSpeakers component.
+ * @returns {ReactElement} Returns ReduceNoiseTestSpeakers component.
  */
-const ReduceNoiseTestSpeakers = (): ReactElement | false => {
+const ReduceNoiseTestSpeakers = (): ReactElement => {
   const hasSpeakerDevices = mediaDevices$.useMediaDevices(
     'audiooutput',
     (devices) => Object.values(devices).length > 0

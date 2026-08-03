@@ -19,8 +19,6 @@ import {
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
 import { Resolution } from '@common/types';
-import { STORAGE_KEYS } from '../../utils/storage';
-import tryCatch from '@common/execution/tryCatch';
 
 const INITIAL_STATE = {
   isOpen: false,
@@ -94,17 +92,7 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
       const fallbackState = initial as advancedSettings;
 
       if (restoredState.success) {
-        if (isAdvancedNoiseSuppressionPersisted()) {
-          return restoredState.data;
-        }
-
-        // First run after this setting shipped: adopt whatever the user already chose with the
-        // in-call Reduce Noise toggle, which persists under its own key.
-        return {
-          ...restoredState.data,
-          advancedNoiseSuppressionEnabled:
-            window.localStorage.getItem(STORAGE_KEYS.NOISE_SUPPRESSION) === 'true',
-        };
+        return restoredState.data;
       }
 
       console.error('AdvancedSettings: invalid restored localStorage state', restoredState.error);
@@ -221,23 +209,6 @@ const internals = actions(advancedSettings$, {
 
 function partialUpdate(partialState: Partial<advancedSettings>) {
   internals.update(partialState);
-}
-
-/**
- * Whether the persisted settings already carry `advancedNoiseSuppressionEnabled`. The store merges
- * the persisted payload over the initial state before validating, so `restored` always has the key -
- * reading the raw envelope is the only way to tell a stored value from the default just merged in.
- */
-function isAdvancedNoiseSuppressionPersisted(): boolean {
-  const persistedEnvelope = window.localStorage.getItem('advancedSettings');
-
-  if (!persistedEnvelope) return false;
-
-  const { result } = tryCatch(
-    () => JSON.parse(persistedEnvelope) as { s?: Partial<advancedSettings> }
-  );
-
-  return typeof result?.s?.advancedNoiseSuppressionEnabled === 'boolean';
 }
 
 export default advancedSettings$;

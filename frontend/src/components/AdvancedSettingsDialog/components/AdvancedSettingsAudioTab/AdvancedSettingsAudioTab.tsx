@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import usePublisherContext from '@hooks/usePublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import tryCatch from '@common/execution/tryCatch';
 import { SelectField, SwitchField } from '@ui/components';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
 
@@ -71,12 +72,18 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
   const handleAdvancedNoiseSuppressionChange = async (checked: boolean) => {
     setAdvancedNoiseSuppressionEnabled(checked);
 
-    if (checked) {
-      await publisher?.applyAudioFilter({ type: 'advancedNoiseSuppression' });
-      return;
-    }
+    const { error } = await tryCatch(async () => {
+      if (checked) return publisher?.applyAudioFilter({ type: 'advancedNoiseSuppression' });
 
-    await publisher?.clearAudioFilter();
+      return publisher?.clearAudioFilter();
+    });
+
+    if (!error) return;
+
+    // The filter never changed on the publisher, so keep the toggle honest about what is running.
+    console.error('AdvancedSettingsAudioTab: failed to apply advanced noise suppression', error);
+
+    setAdvancedNoiseSuppressionEnabled(!checked);
   };
 
   return (
