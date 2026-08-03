@@ -8,7 +8,7 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { handleClientApplicationError } from '@ui/helpers';
-import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
+import useAdvancesSettingsHandlers from './useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
 vi.mock('@hooks/usePublisherContext');
@@ -33,7 +33,7 @@ const createMockPublisher = () =>
     setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
   }) as unknown as Publisher;
 
-describe('useAdvancedSettingsVideoHandlers', () => {
+describe('useAdvancesSettingsHandlers', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     mockUsePublisherContext.mockReturnValue({ publisher: null } as PublisherContextType);
@@ -51,9 +51,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleFrameRateChange(15);
@@ -66,9 +64,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
     });
 
     it('still updates store when no publisher is active', async () => {
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleFrameRateChange(7);
@@ -86,9 +82,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
 
       const initialFrameRate = advancedSettings$.getState().frameRate;
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleFrameRateChange(15);
@@ -106,9 +100,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleFrameRateChange(15);
@@ -125,9 +117,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
@@ -145,9 +135,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
       const initialResolution = advancedSettings$.getState().resolution;
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
@@ -166,9 +154,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleBitrateModeChange('bw_saver');
@@ -186,9 +172,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
         publisher: previewPublisher,
       } as unknown as PreviewPublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleBitrateModeChange('bw_saver');
@@ -205,9 +189,7 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
       const initialBitrateMode = advancedSettings$.getState().bitrateMode;
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleBitrateModeChange('bw_saver');
@@ -226,9 +208,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
-      );
+      advancedSettings$.actions.setBitrateMode('custom');
+
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleCustomVideoBitrateChange(750_000);
@@ -244,9 +226,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       const publisher = createMockPublisher();
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'default', customVideoBitrate: 500_000 })
-      );
+      advancedSettings$.actions.setBitrateMode('default');
+
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleCustomVideoBitrateChange(750_000);
@@ -266,9 +248,9 @@ describe('useAdvancedSettingsVideoHandlers', () => {
       mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
       const initialCustomVideoBitrate = advancedSettings$.getState().customVideoBitrate;
 
-      const { result } = renderHook(() =>
-        useAdvancedSettingsVideoHandlers({ bitrateMode: 'custom', customVideoBitrate: 500_000 })
-      );
+      advancedSettings$.actions.setBitrateMode('custom');
+
+      const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
       await act(async () => {
         await result.current.handleCustomVideoBitrateChange(750_000);

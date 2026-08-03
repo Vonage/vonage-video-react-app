@@ -2,9 +2,8 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
-import usePublisherContext from '@hooks/usePublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import tryCatch from '@common/execution/tryCatch';
+import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { SelectField, SwitchField } from '@ui/components';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
 
@@ -14,7 +13,6 @@ const {
   setEnableDtx,
   setPublisherAudioFallbackEnabled,
   setSubscriberAudioFallbackEnabled,
-  setAdvancedNoiseSuppressionEnabled,
   setEchoCancellationEnabled,
   setNoiseSuppressionEnabled,
   setAutoGainControlEnabled,
@@ -22,7 +20,7 @@ const {
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
-  const { publisher } = usePublisherContext();
+  const { handleAdvancedNoiseSuppressionChange } = useAdvancesSettingsHandlers();
   const { pathname } = useLocation();
   const isInWaitingRoom = pathname.startsWith('/waiting-room');
   const nextCallWarningKey = isInWaitingRoom
@@ -62,29 +60,6 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
       label: t('advancedSettings.audio.bitrate.options.custom'),
     },
   ];
-
-  /**
-   * Advanced noise suppression is a media processor filter, so unlike the WebRTC constraints below
-   * it can be applied to a running publisher. Same calls the in-call menu used before this setting
-   * moved here.
-   * @param {boolean} checked - the requested state
-   */
-  const handleAdvancedNoiseSuppressionChange = async (checked: boolean) => {
-    setAdvancedNoiseSuppressionEnabled(checked);
-
-    const { error } = await tryCatch(async () => {
-      if (checked) return publisher?.applyAudioFilter({ type: 'advancedNoiseSuppression' });
-
-      return publisher?.clearAudioFilter();
-    });
-
-    if (!error) return;
-
-    // The filter never changed on the publisher, so keep the toggle honest about what is running.
-    console.error('AdvancedSettingsAudioTab: failed to apply advanced noise suppression', error);
-
-    setAdvancedNoiseSuppressionEnabled(!checked);
-  };
 
   return (
     <div className="flex flex-col gap-6">

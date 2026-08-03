@@ -17,6 +17,8 @@ const clearAudioFilterSpy = vi.fn();
 
 describe('AdvancedSettingsAudioTab', () => {
   beforeEach(() => {
+    advancedSettings$.reset();
+
     // The advanced noise suppression switch is disabled unless the media processor is supported,
     // which jsdom does not provide.
     vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
@@ -46,9 +48,9 @@ describe('AdvancedSettingsAudioTab', () => {
   });
 
   it('renders the custom audio bitrate slider when custom mode is selected', () => {
-    render(<AdvancedSettingsAudioTab />, {
-      advancedSettingsContext: { dialogState: { audioBitrateMode: 'custom' } },
-    });
+    advancedSettings$.actions.setAudioBitrateMode('custom');
+
+    render(<AdvancedSettingsAudioTab />);
 
     expect(screen.getByTestId('advanced-settings-custom-audio-bitrate-slider')).toBeInTheDocument();
     expect(screen.getByText(/6 kbps/i)).toBeInTheDocument();
@@ -112,14 +114,13 @@ describe('AdvancedSettingsAudioTab', () => {
 });
 
 type RenderOptions = {
-  advancedSettingsContext?: ProviderOptions['AdvancedSettingsContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
   initialPath?: string;
 };
 
 function render(
   ui: ReactElement,
-  { advancedSettingsContext, publisherContext, initialPath = '/waiting-room' }: RenderOptions = {}
+  { publisherContext, initialPath = '/waiting-room' }: RenderOptions = {}
 ) {
   const publisher = Object.assign(new EventEmitter(), {
     applyAudioFilter: applyAudioFilterSpy,
@@ -132,15 +133,8 @@ function render(
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(
-    [
-      providers.advancedSettings,
-      providers.runtime,
-      providers.user,
-      providers.session,
-      providers.publisher,
-    ],
+    [providers.runtime, providers.user, providers.session, providers.publisher],
     {
-      advancedSettingsContext,
       runtimeContext: undefined,
       userContext: undefined,
       sessionContext: undefined,

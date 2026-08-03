@@ -1,43 +1,30 @@
 import type { CSSProperties, ReactElement } from 'react';
 import Field from '../Field';
+import type { FieldInputProps } from '../Field';
 
-export type SwitchFieldProps = {
-  id: string;
+type SwitchInputProps = Omit<Extract<FieldInputProps, { variant: 'switch' }>, 'variant'>;
+
+export type SwitchFieldProps = SwitchInputProps & {
   label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
   description?: string;
-  size?: 'default' | 'small';
   labelClassName?: string;
   labelStyle?: CSSProperties;
-  disabled?: boolean;
 };
 
 const SwitchField = ({
-  id,
   label,
-  checked,
-  onChange,
   description,
-  size,
   labelClassName,
   labelStyle,
-  disabled,
+  ...inputProps
 }: SwitchFieldProps): ReactElement => {
   return (
     <Field>
       <Field.Row>
-        <Field.Label htmlFor={id} className={labelClassName} style={labelStyle}>
+        <Field.Label htmlFor={inputProps.id} className={labelClassName} style={labelStyle}>
           {label}
         </Field.Label>
-        <Field.Input
-          id={id}
-          variant="switch"
-          checked={checked}
-          onChange={onChange}
-          size={size}
-          disabled={disabled}
-        />
+        <Field.Input variant="switch" {...inputProps} />
       </Field.Row>
       {description ? <Field.Description>{description}</Field.Description> : null}
     </Field>
