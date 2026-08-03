@@ -66,7 +66,7 @@
   "advancedSettings.audio.advancedNoiseSuppression.label": "Supresión de ruido avanzada",
   "advancedSettings.audio.advancedNoiseSuppression.description": "Reduce el ruido de fondo de tu audio. Solo está disponible cuando el navegador es compatible con el Vonage Media Processor. Se aplica de inmediato.",
   "advancedSettings.audio.echoCancellation.label": "Cancelación de eco WebRTC",
-  "advancedSettings.audio.echoCancellation.description": "Reduce el eco de las bocinas durante las llamadas. Se aplica en tu próxima llamada.",
+  "advancedSettings.audio.echoCancellation.description": "Reduce el eco de los altavoces durante las llamadas. Se aplica en tu próxima llamada.",
   "advancedSettings.audio.noiseSuppression.label": "Supresión de ruido WebRTC",
   "advancedSettings.audio.noiseSuppression.description": "Suprime el ruido de fondo con el procesamiento de audio integrado del navegador. Se aplica en tu próxima llamada.",
   "advancedSettings.audio.autoGainControl.label": "Control automático de ganancia WebRTC",
