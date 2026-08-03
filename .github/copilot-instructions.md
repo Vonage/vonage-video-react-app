@@ -14,6 +14,23 @@ When reviewing code, Copilot must also evaluate changes according to these rules
 
 ---
 
+# Scope of Changes
+
+The rest of this document describes **how** to write code. This section describes **how much** code a change may touch, and it takes precedence over any instinct to improve the code around the task.
+
+- **Rule:** Change only what the task requires. Aim for a diff that is **purely additive** — in a file you only needed to extend, there should be no modified lines at all.
+- **Rule:** Opportunistic tidying is banned. No renames, no reordering, no extracting helpers, no rewriting comments, no "boy scout rule" cleanups in code the task did not force you to touch.
+- **Rule:** No cross-PR bleed. Do not carry a change that belongs to another branch or PR into this one, even when the change is correct.
+- **Rule:** Review your own diff before opening a PR and be able to justify every removed or modified line. If a line cannot be tied to the task, revert it.
+- **Rule:** No abstraction beyond the task. Three similar lines are better than a premature helper.
+- **Rule:** When you spot a genuine improvement that is out of scope, describe it in the PR description or a review comment and propose it as a follow-up. Do not include it.
+- **Rule:** One concern per PR. If a change covers several topics — a bug fix, a hardening change and a refactor — split it by topic into separate PRs branched from `develop`. A PR that does several things at once cannot be reviewed or partially reverted.
+- **Rule:** A large feature and the infrastructure it needs are two PRs, not one. Land the feature on its own first.
+
+**Why:** Reviewers here read diffs line by line. Every unrequested line is review cost they did not sign up for, and it obscures the change actually under review. Extra tidying does not read as care — it reads as noise, and it slows every PR down.
+
+---
+
 # Project Architecture & Libraries
 
 This is a mono repo containing:
@@ -141,6 +158,10 @@ if (isNil(data)) return;
 
 - **Rule:** Abbreviated or shortened names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
 - **Rule:** Use fully descriptive names, even if they are longer. Minification handles bundle size.
+- **Rule:** Booleans and boolean-returning helpers must read as a predicate — prefix them with `is*`, `has*` or `shouldShow*` (for example `isUserEligible`, `hasSpeakerDevices`, `useShouldShowSomeComponent`).
+- **Rule:** All user-facing text must be internationalised, including strings inside hooks and error messages.
+- **Rule:** Every new key must be added to **every** locale in `frontend/src/locales/` **and translated into that language**. Copying the English string into `de.json`, `es.json`, `es-MX.json` or `it.json` is a violation, not a placeholder. Product names that are not translated in the target language (for example "WebRTC", "Vonage Media Processor") may stay as-is.
+- **Rule:** Do not rely on CI to catch this. `localeParity.spec.ts` only checks that the same keys exist in each locale — it cannot tell that a value is still English, so a fully untranslated set of strings passes the suite.
 
 **Violation:**
 
@@ -174,6 +195,10 @@ const vc = new VideoClient();
 const videoClient = new VonageVideoClient();
 ```
 
+- **Rule:** Default to **no inline comments**. Names carry the meaning, and the code should be self-explanatory. A comment is justified only when a constraint, invariant or workaround genuinely cannot be read from the code.
+- **Rule:** Never write a comment that states a reason you have not verified. A confidently-worded but wrong explanation is worse than no comment — it misleads every future reader. If you did not confirm *why* something is needed, do not assert it.
+- **Rule:** Comments describe the current code only. No narration of the diff or history ("used to be", "previously", "now also handles").
+- **Rule:** No dead code and no defensive guards for states that cannot occur. If a value can never be `false`, do not test it; if a map only holds one kind of entry, the type must not imply otherwise. Types must not lie about what they can contain.
 - **Rule:** Prefer linear `tryCatch` helpers instead of nested `try/catch`.
 - **Rule:** Nested `try/catch` blocks are banned.
 
@@ -1012,6 +1037,24 @@ const usePublisherOptions = publisher$.use.createSelectorHook(({ publisherOption
 const allowVideo = usePublisherOptions((options) => options.allowVideo);
 ```
 
+- **Rule:** A selector must return the narrowest derived value the consumer actually needs, so the component re-renders only when *that* value changes. Selecting a collection and deriving from it in the component defeats the selector.
+
+**Violation:**
+
+```tsx
+// Bad: re-renders on every change to handsMap, even when the size is unchanged
+const useRaisedHandCount = raiseHand$.use.createSelectorHook(({ handsMap }) => handsMap);
+const count = useRaisedHandCount().size;
+```
+
+**Correct:**
+
+```tsx
+// Good: only re-renders when the size actually changes
+const useRaisedHandCount = raiseHand$.use.createSelectorHook(({ handsMap }) => handsMap.size);
+```
+
+- **Rule:** Do not subscribe twice to values that are always derivable from one another. Two selector hooks feeding one component means two re-render triggers for the same information — select once and derive locally.
 - **Rule:** For `react-global-state-hooks` context, store names must use the `$` suffix (for example `dialog$`), and must not use the `Context` suffix in variable names.
 - **Rule:** File names for context definitions must use the `Context` suffix (for example `dialogContext.tsx`).
 
@@ -1200,6 +1243,11 @@ Rationale (kept as background, not rules):
 - Tailwind is more familiar to contributors and easier to theme.
 - MUI themes can trigger global re-renders; Tailwind is static.
 
+- **Rule:** Use the project's **design tokens**, never raw Tailwind scale values. `text-sm`, `text-white`, `bg-black` and similar are not our tokens — use `text-vera-body-base`, `text-vera-caption-semibold`, `bg-vera-surface` and the other `vera-*` tokens. If you cannot find a token that fits, ask rather than falling back to a raw class.
+- **Rule:** Do not stack utilities that a token already provides (for example adding `leading-[1.4]` to `text-vera-caption-semibold`, which carries its own leading).
+- **Rule:** Every style you add must have a visible effect. Verify it in the running app — MUI's own styles frequently override Tailwind utilities, so a class can silently do nothing. Do not ship no-op CSS (`mt-0!` that changes nothing, `p-0`/`m-0` where Tailwind already defaults to zero, an `sx` block with no visual result).
+- **Rule:** Icons come from the [Vivid gallery](https://vivid.vonage.com/icons/icons-gallery/). Do not introduce a custom SVG unless nothing in Vivid can serve the use case, and say why in the PR. One icon source keeps the UI consistent.
+- **Rule:** Vivid components render into a shadow root, which blocks CSS classes from reaching them — the `style` prop is the supported way to style them.
 - **Rule:** MUI `Grid` is banned in favor of Tailwind grid/flex utilities.
 - **Rule:** Do not use Tailwind `group` classes, as they break the atomic, predictable nature of Tailwind.
 
@@ -1658,3 +1706,27 @@ const Component = () => {
     );
 };
 ```
+
+---
+
+# UI & Design Changes
+
+- **Rule:** A non-trivial UI change must be aligned with design **before** it is implemented. Match the existing Figma; if there is no design for what you are building, ask for one rather than inventing a layout.
+- **Rule:** New UI must be consistent with the components already in the product. A dialog, list row or badge you add should match the ones next to it in font, alignment, spacing and behaviour — do not copy a pattern from another product and assume it fits.
+- **Rule:** Do not request team review on a PR whose design has not been agreed. Reviewers should not be spending their time on a layout that will be redone.
+- **Rule:** Screenshots of the change (before/after, light **and** dark mode) belong in the PR description for anything visual.
+
+---
+
+# Pull Requests & Commits
+
+- **Rule:** Open the PR with a 1–2 sentence summary of **what** changed and **why**. Detail belongs in the diff and in review replies, not in the description.
+- **Rule:** Run the suite **workspace-wide**, not scoped to the project you touched. This is a mono repo — `libs` are consumed by `frontend` and `backend`, so a green result for one project does not mean the others still pass.
+- **Rule:** Keep the branch rebased on `develop` and free of conflicts. If `develop` has moved on while the PR was in review, rebase before asking for another round.
+- **Rule:** CI must be green before you ask for review. Do not hand a reviewer a PR with failing tests.
+- **Rule:** Before re-requesting review, walk every open review thread and confirm it is actually addressed. A reviewer having to repeat "this feedback has not been addressed" is a process failure, not a misunderstanding.
+- **Rule:** Do not add a dependency, and do not load code, models or assets from an external CDN at runtime. Both need explicit approval and a justification written in the PR description. A dynamic `import()` of a package that is not in `package.json` is never acceptable.
+- **Rule:** Commit messages are one short paragraph: what was wrong and what the fix is. No bullet-list changelogs, no `Result:` / `Symptom:` sections, no chains of consequences.
+- **Rule:** Run `yarn quality-check` and `yarn test` before pushing. The husky `pre-commit` and `pre-push` hooks run these for you; if you bypass them with `--no-verify`, you must have run both manually first.
+- **Rule:** Keep the PR to one concern. If a second concern appears, branch it off `develop` separately — see [Scope of Changes](#scope-of-changes).
+- **Rule:** Prove these instructions have been read by adding a 🦒 emoji at the end of the PR description.
