@@ -1,0 +1,29 @@
+scripts/harnessMetadataAdapter.ts
+  s_02fd3b14e1283d::t_110c26839e5811 136,141,475,477,483-486,499-504,516-521,530,532,538-541,552-557,569-574,623-646
+  s_02fd3b14e1283d::t_ba61cf59b399ad 185-197
+  s_02fd3b14e1283d::t_2a463bc5d618eb 647-648
+scripts/codeReviewHarness.ts
+  s_02fd3b14e1283d::t_fcfabd9fad8fb8 828-835,1163-1186
+  s_02fd3b14e1283d::t_09b6d0cfa475bd 1187-1188
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "592b2c4ac72e43f6180f7e2f99309d3db6e78a41",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

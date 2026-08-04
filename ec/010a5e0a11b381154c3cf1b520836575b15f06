@@ -1,0 +1,22 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "ec010a5e0a11b381154c3cf1b520836575b15f06",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

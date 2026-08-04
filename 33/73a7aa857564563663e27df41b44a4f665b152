@@ -1,0 +1,58 @@
+libs/common/scripts/publishPackage.dev.ts
+  s_5be0f7ada839c8::t_93d0eee2259fc2 299
+  h_6029769cf9ac60 50,55,59,277-278,282-283,314-318,329
+  s_5be0f7ada839c8::t_965d2484447154 280-281
+  s_5be0f7ada839c8::t_c314ec9905d037 285
+  s_5be0f7ada839c8::t_0357c4b515ec20 221-222,287
+  s_5be0f7ada839c8::t_39cebd679f5656 231-233
+  s_5be0f7ada839c8::t_01fc7fb4039f6d 284
+  s_5be0f7ada839c8::t_14c5057b01624d 241
+  s_5be0f7ada839c8::t_957f97fbefdee0 286
+  s_5be0f7ada839c8::t_dcd0647b38a482 279
+  s_5be0f7ada839c8::t_4b1887443e0ad9 230
+  s_5be0f7ada839c8::t_e1140c5037a139 293
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 38,41
+.husky/pre-push
+  h_6029769cf9ac60 11
+libs/common/srcNode/index.ts
+  h_6029769cf9ac60 4-5,10-12
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/scripts/checkPackageHash.ts
+  h_6029769cf9ac60 29
+package.json
+  s_5be0f7ada839c8::t_2630e2e8bd95c2 49
+  h_6029769cf9ac60 32,197
+.github/workflows/video-common-integrity.yml
+  h_6029769cf9ac60 23,26
+scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_94d275023779a4 148
+  s_5be0f7ada839c8::t_74576ab3a1c218 110,112-115
+  s_5be0f7ada839c8::t_84c227fb3e9dc0 131
+  s_5be0f7ada839c8::t_671abfded455b7 111,123,132-134
+  s_5be0f7ada839c8::t_20f30533950790 145-147
+.github/workflows/video-common-publish.yml
+  h_6029769cf9ac60 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "3373a7aa857564563663e27df41b44a4f665b152",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

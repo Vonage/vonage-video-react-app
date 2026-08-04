@@ -1,0 +1,28 @@
+scripts/addTestCoverage.ts
+  s_02fd3b14e1283d::t_bc983d3c51bd35 1-110,116-655,657-702,721,728-729,745,752,756-757,770-783,785-1093
+  s_02fd3b14e1283d::t_6b2336cbd55dca 111-115,656,703-720,722-727,730-744,746-751,753-755,758-769,784
+package.json
+  s_02fd3b14e1283d::t_761d15fad7a9c4 31
+  s_02fd3b14e1283d::t_487bb47c8edb50 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "7a44d3590b9500e98b799b78df31f4ccd40faa79",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
