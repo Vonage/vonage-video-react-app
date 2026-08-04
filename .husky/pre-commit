@@ -6,19 +6,3 @@ set -eu
 
 # Run your quality checks
 yarn --silent quality-check
-
-# vonage-git-ai: Copilot CLI AI tracking hook
-if command -v vonage-git-ai &>/dev/null; then
-  _VGAI_ACTIVE=false
-  # Detect active Copilot CLI session via env vars or marker files
-  [[ -n "${GITHUB_COPILOT_CLI:-}"    ]] && _VGAI_ACTIVE=true
-  [[ -n "${GH_COPILOT_SESSION:-}"    ]] && _VGAI_ACTIVE=true
-  [[ -n "${COPILOT_AGENT_SESSION:-}" ]] && _VGAI_ACTIVE=true
-  [[ -f ".git/.copilot-active"       ]] && _VGAI_ACTIVE=true
-  [[ -f ".copilot-session"           ]] && _VGAI_ACTIVE=true
-  if [[ "$_VGAI_ACTIVE" == true ]]; then
-    echo "vonage-git-ai: Copilot CLI session detected — creating checkpoint..."
-    vonage-git-ai copilot-checkpoint || true
-  fi
-fi
-
