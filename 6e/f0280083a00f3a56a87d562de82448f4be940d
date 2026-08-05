@@ -1,0 +1,16 @@
+scripts/codeReviewHarness.ts
+  h_6029769cf9ac60 1211-1213,1719
+scripts/harnessAutofixAdapter.ts
+  h_6029769cf9ac60 469-473,527-529,617-619,676-678,866-868
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "6ef0280083a00f3a56a87d562de82448f4be940d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
