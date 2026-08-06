@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
-import { SelectField, SwitchField } from '@ui/components';
+import { SelectField, Field } from '@ui/components';
 import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
 
 const {
@@ -114,62 +114,109 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         )}
       </div>
 
-      <SwitchField
-        id="advanced-settings-audio-advanced-noise-suppression"
-        label={t('advancedSettings.audio.advancedNoiseSuppression.label')}
-        checked={advancedNoiseSuppressionEnabled}
-        onChange={handleAdvancedNoiseSuppressionChange}
-        disabled={!hasMediaProcessorSupport('audio')}
-        description={t('advancedSettings.audio.advancedNoiseSuppression.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-advanced-noise-suppression">
+          {t('advancedSettings.audio.advancedNoiseSuppression.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-advanced-noise-suppression"
+          checked={advancedNoiseSuppressionEnabled}
+          onChange={(event) => handleAdvancedNoiseSuppressionChange(event.currentTarget.checked)}
+          disabled={!hasMediaProcessorSupport('audio')}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.advancedNoiseSuppression.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-echo-cancellation"
-        label={t('advancedSettings.audio.echoCancellation.label')}
-        checked={echoCancellationEnabled}
-        onChange={setEchoCancellationEnabled}
-        description={t('advancedSettings.audio.echoCancellation.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-echo-cancellation">
+          {t('advancedSettings.audio.echoCancellation.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-echo-cancellation"
+          checked={echoCancellationEnabled}
+          onChange={(event) => setEchoCancellationEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.echoCancellation.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-noise-suppression"
-        label={t('advancedSettings.audio.noiseSuppression.label')}
-        checked={noiseSuppressionEnabled}
-        onChange={setNoiseSuppressionEnabled}
-        description={t('advancedSettings.audio.noiseSuppression.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-noise-suppression">
+          {t('advancedSettings.audio.noiseSuppression.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-noise-suppression"
+          checked={noiseSuppressionEnabled}
+          onChange={(event) => setNoiseSuppressionEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.noiseSuppression.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-auto-gain-control"
-        label={t('advancedSettings.audio.autoGainControl.label')}
-        checked={autoGainControlEnabled}
-        onChange={setAutoGainControlEnabled}
-        description={t('advancedSettings.audio.autoGainControl.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-auto-gain-control">
+          {t('advancedSettings.audio.autoGainControl.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-auto-gain-control"
+          checked={autoGainControlEnabled}
+          onChange={(event) => setAutoGainControlEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.autoGainControl.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-enable-dtx"
-        label={t('advancedSettings.audio.enableDtx.label')}
-        checked={enableDtx}
-        onChange={setEnableDtx}
-        description={t('advancedSettings.audio.enableDtx.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-enable-dtx">
+          {t('advancedSettings.audio.enableDtx.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-enable-dtx"
+          checked={enableDtx}
+          onChange={(event) => setEnableDtx(event.currentTarget.checked)}
+        />
+        <Field.Description>{t('advancedSettings.audio.enableDtx.description')}</Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-publisher-fallback"
-        label={t('advancedSettings.audio.publisherAudioFallback.label')}
-        checked={publisherAudioFallbackEnabled}
-        onChange={setPublisherAudioFallbackEnabled}
-        description={t('advancedSettings.audio.publisherAudioFallback.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-publisher-fallback">
+          {t('advancedSettings.audio.publisherAudioFallback.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-publisher-fallback"
+          checked={publisherAudioFallbackEnabled}
+          onChange={(event) => setPublisherAudioFallbackEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.publisherAudioFallback.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-subscriber-fallback"
-        label={t('advancedSettings.audio.subscriberAudioFallback.label')}
-        checked={subscriberAudioFallbackEnabled}
-        onChange={setSubscriberAudioFallbackEnabled}
-        description={t('advancedSettings.audio.subscriberAudioFallback.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-subscriber-fallback">
+          {t('advancedSettings.audio.subscriberAudioFallback.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-subscriber-fallback"
+          checked={subscriberAudioFallbackEnabled}
+          onChange={(event) => setSubscriberAudioFallbackEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.subscriberAudioFallback.description')}
+        </Field.Description>
+      </Field>
     </div>
   );
 };

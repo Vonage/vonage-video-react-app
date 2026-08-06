@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import usePublisherContext from '@hooks/usePublisherContext';
-import { SwitchField } from '@ui/components';
+import { Field } from '@ui/components';
 import PublisherStatistics from './components/PublisherStatistics';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import SubscriberStatistics from './components/SubscriberStatistics';
@@ -27,13 +27,20 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.statistics')}
       </h2>
-      <SwitchField
-        id="advanced-settings-statistics-enable-publisher"
-        label={t('advancedSettings.statistics.collection.enablePublisher.label')}
-        checked={publisherStatisticsEnabled}
-        onChange={setPublisherStatisticsEnabled}
-        description={t('advancedSettings.statistics.collection.enablePublisher.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-statistics-enable-publisher">
+          {t('advancedSettings.statistics.collection.enablePublisher.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-statistics-enable-publisher"
+          checked={publisherStatisticsEnabled}
+          onChange={(event) => setPublisherStatisticsEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.statistics.collection.enablePublisher.description')}
+        </Field.Description>
+      </Field>
 
       <div className="flex flex-col gap-4">
         {publisher && <PublisherStatistics publisher={publisher} />}

@@ -43,10 +43,6 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
   const { publisher: meetingRoomPublisher } = usePublisherContext();
   const { publisher: previewPublisher } = usePreviewPublisherContext();
   const publisher = meetingRoomPublisher ?? previewPublisher ?? null;
-  const bitrateMode = advancedSettings$.use.select(({ bitrateMode }) => bitrateMode);
-  const customVideoBitrate = advancedSettings$.use.select(
-    ({ customVideoBitrate }) => customVideoBitrate
-  );
 
   const handleFrameRateChange = async (value: AdvancedSettingsFrameRate) => {
     try {
@@ -68,6 +64,8 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
 
   const handleBitrateModeChange = async (value: AdvancedSettingsBitrateMode) => {
     try {
+      const { customVideoBitrate } = advancedSettings$.getState();
+
       await applyBitrate(publisher, value, customVideoBitrate);
       setBitrateMode(value);
     } catch (error) {
@@ -77,6 +75,8 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
 
   const handleCustomVideoBitrateChange = async (value: AdvancedSettingsCustomVideoBitrate) => {
     try {
+      const { bitrateMode } = advancedSettings$.getState();
+
       if (bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
         await applyBitrate(publisher, bitrateMode, value);
       }
