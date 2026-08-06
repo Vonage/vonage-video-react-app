@@ -63,6 +63,32 @@ export class ApplicationServerError extends ApplicationError {
   }
 
   /**
+   * Header names whose values must never be written to logs.
+   */
+  private static readonly SENSITIVE_HEADERS = [
+    'authorization',
+    'x-api-key',
+    'cookie',
+    'set-cookie',
+  ];
+
+  /**
+   * Replaces sensitive header values (Jira Basic token, Vonage JWT, cookies) with a
+   * placeholder so credentials are not leaked to logs on upstream 4xx/5xx.
+   */
+  private static readonly redactSensitiveHeaders = (headers?: Record<string, unknown>) => {
+    if (!headers) return headers;
+
+    return Object.fromEntries(
+      Object.entries(headers).map(([key, value]) =>
+        ApplicationServerError.SENSITIVE_HEADERS.includes(key.toLowerCase())
+          ? [key, '[REDACTED]']
+          : [key, value]
+      )
+    );
+  };
+
+  /**
    * Extracts and returns detailed information from the error for logging purposes.
    */
   public retrieveErrorLogDetails = () => {
@@ -94,11 +120,11 @@ export class ApplicationServerError extends ApplicationError {
       body,
       bodyUsed,
       code,
-      configHeaders,
+      configHeaders: ApplicationServerError.redactSensitiveHeaders(configHeaders),
       configUrl,
       data,
       fallbackConfig,
-      headers,
+      headers: ApplicationServerError.redactSensitiveHeaders(headers),
       issues,
       message,
       method,
