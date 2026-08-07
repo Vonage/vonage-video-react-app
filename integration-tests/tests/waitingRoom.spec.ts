@@ -41,6 +41,9 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('MicNoneIcon')).toBeVisible();
   await expect(page.getByTestId('VideoCamIcon')).toBeVisible();
   await expect(page.locator('xpath=//div[contains(text(),"S")]')).toHaveCount(0);
+  await page.getByTestId('video-dropdown-button').click();
+
+  await expect(page.getByTestId('background-effects-text')).toBeVisible();
 });
 
 test('The buttons in the meeting room should match those in the waiting room with disabled buttons', async ({
@@ -71,6 +74,9 @@ test('The buttons in the meeting room should match those in the waiting room wit
 
   await expect(page.getByTestId('VideoCamOffIcon')).toBeVisible();
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
+  await page.getByTestId('video-dropdown-button').click();
+
+  await expect(page.getByTestId('background-effects-text')).toBeVisible();
 });
 
 test('should not navigate and should show validation error for invalid usernames', async ({
@@ -109,11 +115,13 @@ test('should open device selection menus and show device items', async ({ page, 
   await expect(videoInputMenu.getByRole('menuitem').first()).toBeVisible();
   await page.keyboard.press('Escape');
 
-  // Audio output (Speakers) is not supported on mobile/Android
+  // Open audio output (Speakers) device menu
+  await controlPanel.getByLabel('Speakers').click();
+  const audioOutputMenu = page.getByTestId('audiooutput-menu');
+  await expect(audioOutputMenu).toBeVisible();
+  await expect(audioOutputMenu.getByText('Test speakers')).toBeVisible();
+  // On mobile/Android, device selection is not supported but test speaker button is shown
   if (!isMobile) {
-    await controlPanel.getByLabel('Speakers').click();
-    const audioOutputMenu = page.getByTestId('audiooutput-menu');
-    await expect(audioOutputMenu).toBeVisible();
     await expect(audioOutputMenu.getByRole('menuitem').first()).toBeVisible();
   }
 });
