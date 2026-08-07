@@ -1,7 +1,8 @@
 import type { NextFunction, Response as ExpressResponse } from 'express';
-import ApplicationRequest from './ApplicationRequest';
-import ParamsDictionary from './ParamsDictionary';
-import Query from './Query';
+
+import type { ApplicationRequest } from './ApplicationRequest';
+import type { ParamsDictionary } from './ParamsDictionary';
+import type { Query } from './Query';
 import type { Any } from '@common/types';
 
 export type ApplicationRequestHandler<

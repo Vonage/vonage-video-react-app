@@ -1,5 +1,5 @@
-export interface ParamsDictionary {
+export type ParamsDictionary = {
   [key: string]: string;
-}
+};
 
 export default ParamsDictionary;
