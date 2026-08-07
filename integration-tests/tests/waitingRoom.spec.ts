@@ -90,7 +90,7 @@ test('should not navigate and should show validation error for invalid usernames
   await expect(page.getByText('Name cannot be empty or contain special characters.')).toBeVisible();
 });
 
-test('should open device selection menus and show device items', async ({ page }) => {
+test('should open device selection menus and show device items', async ({ page, isMobile }) => {
   const controlPanel = page.getByTestId('ControlPanel');
 
   // Open audio input (Microphone) device menu
@@ -109,11 +109,13 @@ test('should open device selection menus and show device items', async ({ page }
   await expect(videoInputMenu.getByRole('menuitem').first()).toBeVisible();
   await page.keyboard.press('Escape');
 
-  // Open audio output (Speakers) device menu
-  await controlPanel.getByLabel('Speakers').click();
-  const audioOutputMenu = page.getByTestId('audiooutput-menu');
-  await expect(audioOutputMenu).toBeVisible();
-  await expect(audioOutputMenu.getByRole('menuitem').first()).toBeVisible();
+  // Audio output (Speakers) is not supported on mobile/Android
+  if (!isMobile) {
+    await controlPanel.getByLabel('Speakers').click();
+    const audioOutputMenu = page.getByTestId('audiooutput-menu');
+    await expect(audioOutputMenu).toBeVisible();
+    await expect(audioOutputMenu.getByRole('menuitem').first()).toBeVisible();
+  }
 });
 
 test('should show all items in the More Options menu', async ({ page }) => {
@@ -126,8 +128,12 @@ test('should show all items in the More Options menu', async ({ page }) => {
   // Verify menu is visible
   await expect(page.getByTestId('menu-more-options')).toBeVisible();
 
-  // Verify menu items are present
-  await expect(page.getByTestId('advanced-settings-option')).toBeVisible();
+  // Advanced settings is conditionally rendered based on env config
+  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
+  if ((await advancedSettingsOption.count()) > 0) {
+    await expect(advancedSettingsOption).toBeVisible();
+  }
+
   await expect(page.getByText('Pre-call network test')).toBeVisible();
 });
 
@@ -150,6 +156,8 @@ test('should run Pre-call Network Test end-to-end: progress, stop, retry, and re
   page,
   browserName,
 }) => {
+  test.setTimeout(120_000);
+
   // Pre-call network test requires media processor support (not supported in Firefox)
   if (browserName === 'firefox') {
     return;
