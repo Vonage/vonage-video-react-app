@@ -41,9 +41,13 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('MicNoneIcon')).toBeVisible();
   await expect(page.getByTestId('VideoCamIcon')).toBeVisible();
   await expect(page.locator('xpath=//div[contains(text(),"S")]')).toHaveCount(0);
-  await page.getByTestId('video-dropdown-button').click();
 
-  await expect(page.getByTestId('background-effects-text')).toBeVisible();
+  // Skipping this step for FF as we don't support BG replacement on FF
+  if (browserName !== 'firefox') {
+    await page.getByTestId('video-dropdown-button').click();
+
+    await expect(page.getByTestId('background-effects-text')).toBeVisible();
+  }
 });
 
 test('The buttons in the meeting room should match those in the waiting room with disabled buttons', async ({
@@ -74,9 +78,13 @@ test('The buttons in the meeting room should match those in the waiting room wit
 
   await expect(page.getByTestId('VideoCamOffIcon')).toBeVisible();
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
-  await page.getByTestId('video-dropdown-button').click();
 
-  await expect(page.getByTestId('background-effects-text')).toBeVisible();
+  // Skipping this step for FF as we don't support BG replacement on FF
+  if (browserName !== 'firefox') {
+    await page.getByTestId('video-dropdown-button').click();
+
+    await expect(page.getByTestId('background-effects-text')).toBeVisible();
+  }
 });
 
 test('should not navigate and should show validation error for invalid usernames', async ({
@@ -96,7 +104,11 @@ test('should not navigate and should show validation error for invalid usernames
   await expect(page.getByText('Name cannot be empty or contain special characters.')).toBeVisible();
 });
 
-test('should open device selection menus and show device items', async ({ page, isMobile }) => {
+test('should open device selection menus and show device items', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
   const controlPanel = page.getByTestId('ControlPanel');
 
   // Open audio input (Microphone) device menu
@@ -119,9 +131,9 @@ test('should open device selection menus and show device items', async ({ page, 
   await controlPanel.getByLabel('Speakers').click();
   const audioOutputMenu = page.getByTestId('audiooutput-menu');
   await expect(audioOutputMenu).toBeVisible();
-  await expect(audioOutputMenu.getByText('Test speakers')).toBeVisible();
+  await expect(audioOutputMenu.getByTestId('soundTest')).toBeVisible();
   // On mobile/Android, device selection is not supported but test speaker button is shown
-  if (!isMobile) {
+  if (browserName !== 'firefox' && !isMobile) {
     await expect(audioOutputMenu.getByRole('menuitem').first()).toBeVisible();
   }
 });
