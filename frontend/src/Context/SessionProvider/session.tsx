@@ -34,6 +34,7 @@ import {
 } from '@utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
@@ -204,6 +205,10 @@ const SessionProvider = ({
     initialValue?.recordingAlreadyNotified ?? false
   );
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
+  // Remembers if this client was the archive initiator before the last archiveStopped event.
+  // Used to restore archiveIdStartedBySelf when the archive is restarted automatically
+  // (e.g. after server rotation) without requiring the user to accept consent again.
+  const wasArchiveInitiatorRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
     archiveStartRequestedBySelfRef.current = true;
@@ -357,19 +362,31 @@ const SessionProvider = ({
   const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
 
-    if (!archiveStartRequestedBySelfRef.current) {
+    const isInitiatedBySelf =
+      archiveStartRequestedBySelfRef.current || wasArchiveInitiatorRef.current;
+
+    if (!isInitiatedBySelf) {
       return;
     }
 
     setArchiveIdStartedBySelf(id);
+    wasArchiveInitiatorRef.current = true; // keep the flag set for future restarts
     archiveStartRequestedBySelfRef.current = false;
   };
 
-  const handleArchiveStopped = () => {
+  // Stable so it reads the current `reconnecting` value: session listeners are registered once
+  // in connect(), and a plain handler would close over the state of that first render.
+  const handleArchiveStopped = useStableCallback(() => {
+    // A stop while the session is reconnecting means a server rotation caused it. Preserve the
+    // initiator flag so it can be restored when the archive restarts automatically, without
+    // showing the consent dialog again. On a manual stop the flag is dropped, so the next
+    // archive prompts for consent.
+    wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
+
     setArchiveId(null);
     setArchiveIdStartedBySelf(null);
     archiveStartRequestedBySelfRef.current = false;
-  };
+  });
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
     setSubscriberWrappers((previousSubscriberWrappers) =>
