@@ -104,4 +104,71 @@ describe('InMemorySessionStorage', () => {
       );
     });
   });
+
+  describe('getSessionKeyBySessionId', () => {
+    it('should return null for an unknown sessionId', async () => {
+      const result = await storage.getSessionKeyBySessionId({ sessionId });
+      expect(result).toBeNull();
+    });
+
+    it('should return the sessionKey after setSession is called with that sessionId', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      const result = await storage.getSessionKeyBySessionId({ sessionId });
+      expect(result).toBe(sessionKey);
+    });
+  });
+
+  describe('setArchiveIds / getArchiveIds', () => {
+    it('should return an empty array for an unknown sessionId', async () => {
+      const archiveIds = await storage.getArchiveIds({ sessionId });
+      expect(archiveIds).toEqual([]);
+    });
+
+    it('should throw error when setting archiveIds for non-existent session', async () => {
+      await expect(storage.setArchiveIds({ sessionId, archiveIds: ['archive1'] })).rejects.toThrow(
+        `Session for id: ${sessionId} does not exist. Cannot set archiveIds.`
+      );
+    });
+
+    it('should set and get archiveIds', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setArchiveIds({ sessionId, archiveIds: ['archive1', 'archive2'] });
+      const archiveIds = await storage.getArchiveIds({ sessionId });
+      expect(archiveIds).toEqual(['archive1', 'archive2']);
+    });
+  });
+
+  describe('setServerRotationPending / getServerRotationPending', () => {
+    it('should return false for an unknown sessionId', async () => {
+      const pending = await storage.getServerRotationPending({ sessionId });
+      expect(pending).toBe(false);
+    });
+
+    it('should return false by default after setSession', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      const pending = await storage.getServerRotationPending({ sessionId });
+      expect(pending).toBe(false);
+    });
+
+    it('should return true after setServerRotationPending(true)', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setServerRotationPending({ sessionId, pending: true });
+      const pending = await storage.getServerRotationPending({ sessionId });
+      expect(pending).toBe(true);
+    });
+
+    it('should reset to false after setServerRotationPending(false)', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setServerRotationPending({ sessionId, pending: true });
+      await storage.setServerRotationPending({ sessionId, pending: false });
+      const pending = await storage.getServerRotationPending({ sessionId });
+      expect(pending).toBe(false);
+    });
+
+    it('should silently no-op for an unknown sessionId', async () => {
+      await expect(
+        storage.setServerRotationPending({ sessionId, pending: true })
+      ).resolves.toBeUndefined();
+    });
+  });
 });

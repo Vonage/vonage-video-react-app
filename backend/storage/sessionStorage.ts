@@ -1,5 +1,6 @@
 export interface SessionStorage {
   getSessionKeyByRoomName(args: { roomName: string }): Promise<string | null>;
+  getSessionKeyBySessionId(args: { sessionId: string }): Promise<string | null>;
   setSession(args: { roomName: string; sessionKey: string; sessionId: string }): Promise<void>;
 
   setCaptionsId(args: { sessionId: string; captionsId: string | null }): Promise<void>;
@@ -10,4 +11,7 @@ export interface SessionStorage {
 
   setArchiveIds(args: { sessionId: string; archiveIds: string[] }): Promise<void>;
   getArchiveIds(args: { sessionId: string }): Promise<string[]>;
+
+  setServerRotationPending(args: { sessionId: string; pending: boolean }): Promise<void>;
+  getServerRotationPending(args: { sessionId: string }): Promise<boolean>;
 }

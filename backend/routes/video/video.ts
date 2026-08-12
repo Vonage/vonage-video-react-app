@@ -9,6 +9,7 @@ import CaptionsHookPayloadSchema from './schemas/CaptionsHookPayload.schema';
 import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
 import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
+import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
 
@@ -97,7 +98,9 @@ videoRouter.post(
 );
 
 /**
- * Listen to archive started/stopped events
+ * Listen to archive started/stopped events.
+ * When an archive stops due to server rotation (session migration), the backend
+ * automatically restarts it so recording continues without user intervention.
  */
 videoRouter.post(
   '/hooks/archive',
@@ -129,7 +132,13 @@ videoRouter.post(
 
       const archiveIds = existingArchiveIds.filter((id) => id !== archiveId);
 
-      return sessionService.setArchiveIds({ sessionId, archiveIds });
+      await sessionService.setArchiveIds({ sessionId, archiveIds });
+
+      await restartArchivingAfterServerRotation({
+        sessionId,
+        sessionService,
+        makeVideoClient: makeVideoClient$,
+      });
     }, makeInternalErrorHandler('Failed to process archive event'));
 
     return res.status(200).send();
@@ -143,7 +152,7 @@ videoRouter.post(
 videoRouter.post(
   '/hooks/session',
   httpHandler(async (req: Request, res: Response) => {
-    const { sessionId, event } = assertResult(
+    const { sessionId, event, reason } = assertResult(
       () => SessionHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid session hook payload')
     );
@@ -152,24 +161,36 @@ videoRouter.post(
 
     if (!shouldProcessSessionEvent) return res.status(200).send();
 
-    await assertResult(async () => {
-      const captionsId = await sessionService.getCaptionsId({ sessionId });
-      const archiveIds = await sessionService.getArchiveIds({ sessionId });
+    const isServerRotation = reason === 'serverRotation';
 
-      const videoClient = makeVideoClient$();
+    if (isServerRotation) {
+      // Mark this session as pending migration restart so the next archive stopped
+      // event knows to restart archiving automatically.
+      await sessionService.setServerRotationPending({ sessionId, pending: true });
+    }
 
-      await Promise.allSettled([
-        captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
+    const captionsId = await sessionService.getCaptionsId({ sessionId });
+    const archiveIds = await sessionService.getArchiveIds({ sessionId });
 
-        // stop all the archives related to the session.
-        ...archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId)),
-      ]);
+    const videoClient = makeVideoClient$();
 
-      // cleanup session data
+    // On a server rotation the archives must be left alone: Vonage stops them itself and we
+    // want them to restart. For any other reason all pending archives are stopped.
+    const pendingArchiveStops = (() => {
+      if (isServerRotation) return [];
+
+      return archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId));
+    })();
+
+    await Promise.allSettled([
+      captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
+      ...pendingArchiveStops,
+    ]);
+
+    if (!isServerRotation) {
       await sessionService.setCaptionsId({ sessionId, captionsId: null });
-
-      return sessionService.setArchiveIds({ sessionId, archiveIds: [] });
-    }, makeInternalErrorHandler('Failed to process session event'));
+      await sessionService.setArchiveIds({ sessionId, archiveIds: [] });
+    }
 
     return res.status(200).send();
   })
