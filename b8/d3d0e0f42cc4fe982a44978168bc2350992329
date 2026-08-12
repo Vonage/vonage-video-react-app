@@ -1,0 +1,14 @@
+integration-tests/tests/multiparty.spec.ts
+  h_737cf808c1c597 128,134,137,143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b8d3d0e0f42cc4fe982a44978168bc2350992329",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

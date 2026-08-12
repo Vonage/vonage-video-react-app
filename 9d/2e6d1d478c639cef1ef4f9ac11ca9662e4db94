@@ -1,0 +1,25 @@
+.github/workflows/secret_scan.yml
+  s_8a8d0c0ea5645f::t_6c7870f9c1706d 5-21
+  s_8a8d0c0ea5645f::t_1eeb9091f5df41 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "9d2e6d1d478c639cef1ef4f9ac11ca9662e4db94",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_8a8d0c0ea5645f": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "c92c25b9-447a-46df-b83a-f14b86b5ebf0",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

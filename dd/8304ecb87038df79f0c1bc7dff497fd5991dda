@@ -1,0 +1,20 @@
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  h_6029769cf9ac60 2
+frontend/src/components/GoodBye/GoodbyeMessage/GoodbyeMessage.spec.tsx
+  h_6029769cf9ac60 2
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_6029769cf9ac60 47
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  h_6029769cf9ac60 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "dd8304ecb87038df79f0c1bc7dff497fd5991dda",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

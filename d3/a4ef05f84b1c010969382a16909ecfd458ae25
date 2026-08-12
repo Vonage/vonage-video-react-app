@@ -1,0 +1,34 @@
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 33,38,81,95,143,148
+.github/workflows/vcr-remove-on-comment.yml
+  h_6029769cf9ac60 58
+.github/workflows/video-common-integrity.yml
+  h_6029769cf9ac60 12,14
+.github/workflows/auto-set-base.yml
+  h_6029769cf9ac60 17
+.github/workflows/deploy-to-vcr.yml
+  h_6029769cf9ac60 22,25
+.github/workflows/vcr-remove-non-use-instance.yml
+  h_6029769cf9ac60 19
+.github/workflows/lint.yml
+  h_6029769cf9ac60 31,34,55,70,73
+.github/workflows/video-common-publish.yml
+  h_6029769cf9ac60 22,24
+.github/workflows/check-release.yml
+  h_6029769cf9ac60 22
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 61,66
+.github/workflows/auto-update-dependencies.yml
+  h_6029769cf9ac60 23,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "d3a4ef05f84b1c010969382a16909ecfd458ae25",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

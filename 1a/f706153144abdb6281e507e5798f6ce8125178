@@ -1,0 +1,14 @@
+libs/core/src/hooks/index.ts
+  h_737cf808c1c597 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "1af706153144abdb6281e507e5798f6ce8125178",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  s_89e2705259fe2d::t_1c9528c12a29ce 93
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_89e2705259fe2d::t_1c9528c12a29ce 69,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "f98649ab7e41ef93377b282a1a342ff1dc85b9e9",
+  "prompts": {},
+  "sessions": {
+    "s_89e2705259fe2d": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1784016753668325000",
+        "model": "unknown"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+libs/common/srcNode/executions/assertResult.test.ts
+  h_6029769cf9ac60 1-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "0fe5bac0d125bb17778ab05ddcfb9c3806f4c815",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

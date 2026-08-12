@@ -1,0 +1,24 @@
+libs/api/src/errors/assertions/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/errors/helpers/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/executions/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/types/index.ts
+  h_6029769cf9ac60 1-2
+libs/api/src/index.ts
+  h_6029769cf9ac60 1,3-5,7
+libs/api/src/errors/handlers/index.ts
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "04e2cf9bedf0c5ce25fd21378e079f0a4dee974b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

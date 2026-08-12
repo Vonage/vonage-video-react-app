@@ -1,0 +1,42 @@
+frontend/src/locales/es.json
+  h_737cf808c1c597 71
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField.tsx
+  h_737cf808c1c597 3,5,7-11,13,15-16,18-41,43-57,59-62,64-66,68-69,71-82,84-85,87
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_737cf808c1c597 7-11
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_737cf808c1c597 1-127
+frontend/src/locales/en.json
+  h_737cf808c1c597 71
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 71
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_737cf808c1c597 1-136
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/useAdvancedSettingsVideoHandlers.ts
+  h_737cf808c1c597 1-89
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.spec.tsx
+  h_737cf808c1c597 1-151
+libs/core/src/metrics/MetricValue/MetricValue.ts
+  h_737cf808c1c597 3,69
+frontend/src/locales/de.json
+  h_737cf808c1c597 71
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_737cf808c1c597 3,5,7-8,10,12,15-36,41
+frontend/src/locales/it.json
+  h_737cf808c1c597 71
+libs/core/src/metrics/OptionalValue/OptionalValue.ts
+  h_737cf808c1c597 1,21,24
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_737cf808c1c597 3-14,16,18-27,29-34,36-53,55-77,80-111,113-132,135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "fcd8392c4123c3c8533e11bb9cb1f310cca2aad6",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

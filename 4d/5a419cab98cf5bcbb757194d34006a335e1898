@@ -1,0 +1,36 @@
+backend/middleware/helmetMiddleware/helmetMiddleware.test.ts
+  6531571e05491617 1-19
+backend/middleware/helmetMiddleware/helmetMiddleware.ts
+  6531571e05491617 1-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "4d5a419cab98cf5bcbb757194d34006a335e1898",
+  "prompts": {
+    "6531571e05491617": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "03367653-1ec6-49b8-ad5f-3565ab68b7ce",
+        "model": "gpt-4o"
+      },
+      "human_author": "czoli1976 <64466170+czoli1976@users.noreply.github.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vonage-git-ai override: 100% AI]",
+          "timestamp": "2026-07-28T08:53:39.000Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vonage-git-ai override (github-copilot/gpt-4o).",
+          "timestamp": "2026-07-28T08:53:39.000Z"
+        }
+      ],
+      "total_additions": 23,
+      "total_deletions": 1,
+      "accepted_lines": 23,
+      "overriden_lines": 0
+    }
+  }
+}

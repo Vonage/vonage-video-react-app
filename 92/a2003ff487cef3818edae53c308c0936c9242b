@@ -1,0 +1,14 @@
+package.json
+  h_737cf808c1c597 172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "92a2003ff487cef3818edae53c308c0936c9242b",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

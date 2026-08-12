@@ -1,0 +1,16 @@
+libs/common/src/assertions/index.ts
+  h_6029769cf9ac60 20
+README.md
+  h_6029769cf9ac60 326,328,337,339-348,352-355,357,361-364,366,368,370-428,430,432,434-439
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "fc64762b45412fa1c6a46d90aa6cf48936e972c7",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

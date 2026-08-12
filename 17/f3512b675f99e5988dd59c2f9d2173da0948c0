@@ -1,0 +1,40 @@
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_c939f8fae0de97 64-65
+  s_4f2dd9c882ffca::t_da3cd974025119 3-4
+  s_4f2dd9c882ffca::t_d0b803df84a275 62-63,66-68
+frontend/src/hooks/tests/useCameraSwitch.spec.tsx
+  s_4f2dd9c882ffca::t_584306879a45b1 25-34,37-40,43-45,47-49,52-55,57-61,63-65,68-74,77-86,88-90,92-93,95,105-106,108-110,112-113
+  s_4f2dd9c882ffca::t_2fc256c5488a5f 76,98-101,103
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  s_4f2dd9c882ffca::t_5d52a198ee9c80 80-81,84-86
+  h_c939f8fae0de97 82-83
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  s_4f2dd9c882ffca::t_7a7f331689ea2f 5
+  s_4f2dd9c882ffca::t_47a4ad1d3fb03d 118-119,122-124
+  s_4f2dd9c882ffca::t_dcf3f83a46abe8 6
+  h_c939f8fae0de97 120-121
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.tsx
+  h_c939f8fae0de97 143,146
+  s_4f2dd9c882ffca::t_1dc6b6f2a73883 141-142,144-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.8",
+  "base_commit_sha": "17f3512b675f99e5988dd59c2f9d2173da0948c0",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_4f2dd9c882ffca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df2a1e5c-5913-45c4-9992-573526b75d59",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

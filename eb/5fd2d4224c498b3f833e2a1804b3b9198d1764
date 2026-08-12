@@ -1,0 +1,11 @@
+libs/core/src/metrics/OptionalValue/OptionalValue.ts
+  h_737cf808c1c597 40
+libs/core/src/hooks/usePublisherStats/usePublisherStats.spec.ts
+  h_737cf808c1c597 125,185,201,215,222,230,241,243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "eb5fd2d4224c498b3f833e2a1804b3b9198d1764",
+  "prompts": {}
+}

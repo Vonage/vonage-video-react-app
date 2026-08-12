@@ -1,0 +1,100 @@
+_testMonitoring/codeReviewHarness/999-final-summary.json
+  s_02fd3b14e1283d::t_84e2f43e4999c3 11-12,14,18-23,25-27,29-31
+  s_02fd3b14e1283d::t_b3d145f974382c 3,13,35
+  s_02fd3b14e1283d::t_e46b2ab40f0470 111-229
+  s_02fd3b14e1283d::t_fd9c3db7a48572 1-2,4-6,8-10,15,32-34,239-241
+  s_02fd3b14e1283d::t_9e436c4b646a3f 7
+  s_02fd3b14e1283d::t_40ded56535c526 16-17,24,28,36-37
+  s_02fd3b14e1283d::t_4d0a77499320c4 38-110,230-238
+_testMonitoring/codeReviewHarness/001-resolve-scope.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6
+  s_02fd3b14e1283d::t_9e436c4b646a3f 16
+  s_02fd3b14e1283d::t_d714b17541c9d0 1-5,7-15,17-25
+_testMonitoring/codeReviewHarness/003-quality-prettier-check.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6-29
+  s_02fd3b14e1283d::t_8e6d58f28bae8a 1-5,30-37
+_testMonitoring/codeReviewHarness/005-quality-ts-check.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6-67
+  s_02fd3b14e1283d::t_aa9c71a7da1144 1-5,68-80
+_testMonitoring/codeReviewHarness/006-build-queue-manifest.md
+  s_02fd3b14e1283d::t_9e436c4b646a3f 16
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6
+  s_02fd3b14e1283d::t_7dc9274080a47f 1-5,7-15,17-21
+_testMonitoring/codeReviewHarness/008-file-instruction-compliance-frontend-src-components-meetingroom-videotile-videotile.tsx.md
+  s_02fd3b14e1283d::t_ba0249dcca2831 5,11,13,212,214
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6,84-202
+  s_02fd3b14e1283d::t_4d0a77499320c4 12,14-83,203-211,213
+  s_02fd3b14e1283d::t_6898bb9be2d3c5 1-4,7-10,215
+_testMonitoring/codeReviewHarness/007-file-metadata-frontend-src-components-meetingroom-videotile-videotile.tsx-baseline.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6
+  s_02fd3b14e1283d::t_ac7f6cbdf9614d 1-4,7-10,25
+  s_02fd3b14e1283d::t_40ded56535c526 5,11-18,22,24
+  s_02fd3b14e1283d::t_813b2bb7bab9b0 23
+  s_02fd3b14e1283d::t_4d0a77499320c4 19-21
+frontend/src/components/MeetingRoom/VideoTile/VideoTile.spec.tsx
+  s_02fd3b14e1283d::t_19eb4898f99605 55,66
+frontend/src/components/MeetingRoom/VideoTile/VideoTile.tsx
+  s_02fd3b14e1283d::t_40ded56535c526 60,73,88
+_testMonitoring/codeReviewHarness/004-quality-eslint-check.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6-29
+  s_02fd3b14e1283d::t_89878c2c6d7e24 1-5,30-35
+scripts/harnessAutofixAdapter.ts
+  s_02fd3b14e1283d::t_f58d604dd1a922 44,178,187-188,207,222,444-452
+  s_02fd3b14e1283d::t_aa8ba8c95491e8 5,46-50,54-57,60-61,64,67-76,85-95,99-102,109-118,121-127,129-134,138-141,195,202-206,208-212,214-217,220-221,223-226,228-245,247-249,253-341,603
+  s_02fd3b14e1283d::t_e1d6d42f082c16 51,62-63,77-84,103-108,119-120,160-165,196-201,213,218-219,227,342-400
+  s_02fd3b14e1283d::t_ed929306c94f5b 12,58-59,179-186,401,454-464,509-526
+  s_02fd3b14e1283d::t_84f38eb62b8bce 407-417,487-494
+  s_02fd3b14e1283d::t_7a5cacbe7ceefe 402
+  s_02fd3b14e1283d::t_94075f5d6d2d09 453
+  s_02fd3b14e1283d::t_78ff9bc48b154d 527
+package.json
+  s_02fd3b14e1283d::t_ff675d8387b448 54
+_testMonitoring/codeReviewHarness/002-classify-and-filter-files.md
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6
+  s_02fd3b14e1283d::t_b4129ab4a0ecd6 1-5,7-20
+scripts/codeReviewHarness.ts
+  s_02fd3b14e1283d::t_ccaf7659a5a80b 1143,1147-1155,1158-1162,1168-1221,1590-1593,1605-1623
+  s_02fd3b14e1283d::t_88f346dec4266c 1357,1376-1379,1383-1385,1390,1394-1395
+  s_02fd3b14e1283d::t_f884ee26583960 102-110,1940-1966,1973
+  s_02fd3b14e1283d::t_1954fce8ec4787 93-101,111-120,769-775,782,846,851-853,871,874-876,878,890,914,918,920,925-926,987,1094,1104,1222,1396,1581-1587,1933,1936-1939,1967-1972,1974-1985,2040-2075
+  s_02fd3b14e1283d::t_8eab51d77ec433 1223
+  s_02fd3b14e1283d::t_cfdfa314060d57 1397
+  s_02fd3b14e1283d::t_f23440181ec9aa 2076
+_testMonitoring/codeReviewHarness/metadata/frontend-src-components-meetingroom-videotile-videotile.tsx.response.json
+  s_02fd3b14e1283d::t_6898bb9be2d3c5 1-8,12,14
+  s_02fd3b14e1283d::t_4d0a77499320c4 9-11
+  s_02fd3b14e1283d::t_813b2bb7bab9b0 13
+scripts/harnessMetadataAdapter.ts
+  s_02fd3b14e1283d::t_6430a6856cf991 201-212
+  s_02fd3b14e1283d::t_3275349282803f 13,105,121-128,181-190,246-264
+  s_02fd3b14e1283d::t_e39f46fadae587 47,120,129-130,133,172-180,191-192
+  s_02fd3b14e1283d::t_22ce7fc7c13336 265-266
+_testMonitoring/codeReviewHarness/009-file-baseline-coverage-frontend-src-components-meetingroom-videotile-videotile.tsx.md
+  s_02fd3b14e1283d::t_4d0a77499320c4 1-5,7-17
+  s_02fd3b14e1283d::t_e46b2ab40f0470 6
+codeReview.config.json
+  s_02fd3b14e1283d::t_0b5bcb20b75751 7-8
+_testMonitoring/codeReviewHarness/metadata/frontend-src-components-meetingroom-videotile-videotile.tsx.request.json
+  s_02fd3b14e1283d::t_27f045a1828f72 1-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "3c430c52e38977f53a8c70d04aaea04cdac2289e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

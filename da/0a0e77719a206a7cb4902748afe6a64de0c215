@@ -1,0 +1,16 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/PublisherStatistics.tsx
+  h_737cf808c1c597 21,25-26
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_737cf808c1c597 42,49,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "da0a0e77719a206a7cb4902748afe6a64de0c215",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

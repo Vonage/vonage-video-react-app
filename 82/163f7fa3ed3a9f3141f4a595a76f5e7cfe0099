@@ -1,0 +1,14 @@
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  h_737cf808c1c597 82,156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.5",
+  "base_commit_sha": "82163f7fa3ed3a9f3141f4a595a76f5e7cfe0099",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

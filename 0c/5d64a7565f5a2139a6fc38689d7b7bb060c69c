@@ -1,0 +1,32 @@
+libs/common/srcNode/types/ApplicationHandler.ts
+  h_6029769cf9ac60 6-9
+libs/api/src/types/index.ts
+  h_6029769cf9ac60 22,28-34
+libs/common/srcNode/routing/httpHandler/httpHandler.ts
+  h_6029769cf9ac60 8
+libs/common/srcNode/types/ParamsDictionary.ts
+  h_6029769cf9ac60 1,3
+.github/copilot-instructions.md
+  h_6029769cf9ac60 177-178
+libs/common/srcNode/types/index.ts
+  h_6029769cf9ac60 3-9
+libs/common/srcNode/types/Query.ts
+  h_6029769cf9ac60 1,3
+libs/common/srcNode/types/ApplicationRequestHandler.ts
+  h_6029769cf9ac60 2-5
+libs/common/srcNode/types/ApplicationRequest.ts
+  h_6029769cf9ac60 2-3
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0c5d64a7565f5a2139a6fc38689d7b7bb060c69c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

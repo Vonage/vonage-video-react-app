@@ -1,0 +1,16 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 64,114,117,133,220,458-463,471
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_737cf808c1c597 149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "b78e42dbcf72a8707cc1ed5dc166b5908b605254",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

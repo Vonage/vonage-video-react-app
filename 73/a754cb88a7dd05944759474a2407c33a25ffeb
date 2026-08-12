@@ -1,0 +1,7 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "73a754cb88a7dd05944759474a2407c33a25ffeb",
+  "prompts": {}
+}

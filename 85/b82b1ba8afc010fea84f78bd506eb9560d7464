@@ -1,0 +1,20 @@
+package.json
+  h_737cf808c1c597 3
+backend/package.json
+  h_737cf808c1c597 3
+integration-tests/package.json
+  h_737cf808c1c597 3
+frontend/package.json
+  h_737cf808c1c597 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "85b82b1ba8afc010fea84f78bd506eb9560d7464",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

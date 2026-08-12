@@ -1,0 +1,88 @@
+frontend/src/components/GHRepoButton/GHRepoButton.spec.tsx
+  h_6029769cf9ac60 3
+README.md
+  h_6029769cf9ac60 326,328,337,339-348,352-355,357,361-364,366,368,370-428,430,432,434-439
+libs/common/test/fixtures/makeArchive.ts
+  h_6029769cf9ac60 1-2,4-14,16,19,22,31-32,35-40,42-56,58-115,117
+frontend/src/components/FooterLinks/FooterLinks.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  h_6029769cf9ac60 4
+libs/common/testBrowser/index.ts
+  h_6029769cf9ac60 9-10
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  h_6029769cf9ac60 4
+frontend/src/components/Footer/Footer.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/pages/WaitingRoom/WaitingRoom.skeleton.spec.tsx
+  h_6029769cf9ac60 4
+libs/common/testBrowser/providers/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/types/index.ts
+  h_6029769cf9ac60 22
+frontend/src/components/RedirectToUnsupportedBrowserPage/RedirectToUnsupportedBrowserPage.spec.tsx
+  h_6029769cf9ac60 5
+frontend/src/pages/UnsupportedBrowserPage/UnsupportedBrowserPage.spec.tsx
+  h_6029769cf9ac60 4,9,11
+frontend/src/Context/tests/RoomContext.spec.tsx
+  h_6029769cf9ac60 4
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  h_6029769cf9ac60 2,4-7,10,16-17,22-41,43-47
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  h_6029769cf9ac60 13,192
+frontend/src/components/GoodBye/GoodbyeMessage/GoodbyeMessage.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/RedirectToWaitingRoom/RedirectToWaitingRoom.spec.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.spec.tsx
+  h_6029769cf9ac60 1,3-5,7-10,13-22,25,29-37,39-43,46-66,68-70,73-99
+frontend/src/hooks/useGoodByePage/useGoodByePage.spec.tsx
+  h_6029769cf9ac60 1-7,10,12-22,27,30-46,48-52,54-55,57-60
+libs/core/src/hooks/index.ts
+  h_6029769cf9ac60 5
+frontend/src/pages/ErrorBoundary/ErrorPage.spec.tsx
+  h_6029769cf9ac60 4,9,11
+libs/common/testBrowser/providers/makeMemoryRouterWrapper.tsx
+  h_6029769cf9ac60 1-9,11-15,17-23,25-28,30-35,37-47,50-51,53-55,57
+libs/common/test/fixtures/index.ts
+  h_6029769cf9ac60 2
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_6029769cf9ac60 4,6-8,12-13,30,41-46,48-50,58-59,63-65
+frontend/src/components/BannerLogo/BannerLogo.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/hooks/useGoodByePage/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/assertions/index.ts
+  h_6029769cf9ac60 20
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_6029769cf9ac60 1,3,21-24,26-27,38-45,48-54,64-65,82,84-90,151,159,163-165,176-178,186-190,210,214-216,219-254
+libs/common/srcNode/schemas/ArchiveOptions.schema.ts
+  h_6029769cf9ac60 8,17
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/BannerLanguage/BannerLanguage.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  h_6029769cf9ac60 3
+frontend/src/components/GoodBye/GoToLandingPageButton/GoToLandingPageButton.spec.tsx
+  h_6029769cf9ac60 4
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/useApplyAdvancedSettings.spec.tsx
+  h_6029769cf9ac60 7,31
+libs/core/src/hooks/useArchives/index.ts
+  h_6029769cf9ac60 2
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_6029769cf9ac60 4-6
+frontend/src/components/Banner/Banner.spec.tsx
+  h_6029769cf9ac60 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.10",
+  "base_commit_sha": "4275634f4b9cb8fca1a232f5aae19ecec06b1b25",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

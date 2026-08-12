@@ -1,0 +1,33 @@
+scripts/codeReview.ts
+  s_02fd3b14e1283d::t_0fd4da48f15ef6 34,46,134,142
+scripts/codeReviewHarness.ts
+  s_02fd3b14e1283d::t_f8547d79becd82 24,40,45,57,60,84,145-251,271,717,778-866,906,918-1028,1580,1585,1605,1612,1701,1714
+  s_02fd3b14e1283d::t_663367e8386a5f 5,116,123,136,252,258,272,279,290,312,316-707,709,712,739,748,757,765,775,868,1029,1034,1039,1065-1465,1470,1490,1497,1502,1509-1510,1516,1520,1524,1534,1537,1540,1544,1548,1559,1572,1586,1598,1613-1615,1618,1662,1698,1720-1721,1724,1729,1742,1746,1749
+  s_02fd3b14e1283d::t_f8b21380664b3d 893-894
+  s_02fd3b14e1283d::t_f0e036c3ddca53 253
+  s_02fd3b14e1283d::t_56fa5bc456c729 1030
+  s_02fd3b14e1283d::t_96d5d1dbca7847 1466
+package.json
+  h_6029769cf9ac60 31-33,51-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "5e72541cf5e74e65ed008a402e6a3cae6755222c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_02fd3b14e1283d": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "9f56fa10-42ea-4063-80fb-e7acb0c0733b",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

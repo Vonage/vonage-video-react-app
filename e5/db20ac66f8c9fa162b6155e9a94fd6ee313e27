@@ -1,0 +1,36 @@
+libs/ui/src/components/Field/FieldLabel.tsx
+  h_6029769cf9ac60 1-2,4-6,9-12,14
+libs/ui/src/components/Field/FieldInput.test.tsx
+  h_6029769cf9ac60 16,28,40,50,53,55,59,61
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.ts
+  h_6029769cf9ac60 67-68,78-79
+libs/ui/src/components/Field/Field.tsx
+  h_6029769cf9ac60 1,6-13,20-40,42-48,53-56
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_6029769cf9ac60 7,117-219
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_6029769cf9ac60 74
+frontend/eslint.config.mjs
+  h_6029769cf9ac60 20,29-32
+libs/ui/eslint.config.mjs
+  h_6029769cf9ac60 18,26-29
+frontend/tailwind.config.cjs
+  h_6029769cf9ac60 6-7,19-21
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_6029769cf9ac60 5,30-43
+libs/ui/src/components/Field/FieldDescription.tsx
+  h_6029769cf9ac60 1-3,5-7,10-12,14
+libs/ui/src/components/Field/FieldInput.tsx
+  h_6029769cf9ac60 1,4-10,15,17,19,22-41,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "e5db20ac66f8c9fa162b6155e9a94fd6ee313e27",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_737cf808c1c597 58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "49fad6f026a9771cffe6508175b7ac5409cf541c",
+  "prompts": {}
+}

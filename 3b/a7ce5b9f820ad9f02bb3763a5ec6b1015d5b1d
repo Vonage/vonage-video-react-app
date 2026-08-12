@@ -1,0 +1,14 @@
+.github/workflows/ai-adoption.yml
+  h_737cf808c1c597 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "3ba7ce5b9f820ad9f02bb3763a5ec6b1015d5b1d",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

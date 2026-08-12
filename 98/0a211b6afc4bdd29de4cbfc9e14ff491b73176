@@ -1,0 +1,16 @@
+backend/__mocks__/@vonage/vcr-sdk.ts
+  h_5ddc9d372ac6a1 1-16
+backend/jest.config.js
+  h_5ddc9d372ac6a1 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "980a211b6afc4bdd29de4cbfc9e14ff491b73176",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

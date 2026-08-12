@@ -1,0 +1,22 @@
+frontend/src/workers/zipVideoApp/types/ZipVideoAppResult.ts
+  h_6029769cf9ac60 1-5
+frontend/src/workers/zipVideoApp/types/index.ts
+  h_6029769cf9ac60 1-2
+frontend/src/workers/zipVideoApp/types/ZipVideoAppPayload.ts
+  h_6029769cf9ac60 1-6
+frontend/src/workers/zipVideoApp/zipVideoApp.worker.ts
+  h_6029769cf9ac60 1-20
+backend/routes/video/video.ts
+  h_6029769cf9ac60 13-14,180-215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "6c1d90104374c9933102d991fa785217a90f9f30",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

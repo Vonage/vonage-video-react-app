@@ -1,0 +1,76 @@
+libs/core/src/stores/mediaDevices/helpers/getMediaDevicesInfo/getMediaDevicesInfo.spec.ts
+  h_6029769cf9ac60 10
+libs/core/src/stores/mediaDevices/observables/mediaDevicesMap$.ts
+  h_6029769cf9ac60 1
+libs/core/src/stores/mediaDevices/hooks/useDeviceId.ts
+  h_6029769cf9ac60 1
+libs/ui/src/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices.spec.ts
+  h_6029769cf9ac60 5
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  h_6029769cf9ac60 5
+libs/ui/src/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices.ts
+  h_6029769cf9ac60 1,4
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.tsx
+  h_6029769cf9ac60 10
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.spec.tsx
+  h_6029769cf9ac60 8
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_6029769cf9ac60 13
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_6029769cf9ac60 7
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  h_6029769cf9ac60 8
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  h_6029769cf9ac60 2
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  h_6029769cf9ac60 13
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  h_6029769cf9ac60 10
+libs/core/src/stores/publisher/publisher$.test.ts
+  h_6029769cf9ac60 3
+frontend/src/utils/SpeakingDetector/speakingDetector.ts
+  h_6029769cf9ac60 1
+libs/core/src/stores/mediaDevices/actions/getUserMedia/getUserMedia.spec.ts
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_6029769cf9ac60 12
+libs/core/src/stores/mediaDevices/types/DevicesAPI.ts
+  h_6029769cf9ac60 1
+libs/core/src/stores/mediaDevices/actions/selectDevice/selectDevice.spec.ts
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  h_6029769cf9ac60 11
+libs/core/src/stores/mediaDevices/hooks/useMediaDeviceInfo/useMediaDeviceInfo.ts
+  h_6029769cf9ac60 2
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_6029769cf9ac60 15-21
+libs/core/src/stores/mediaDevices/mediaDevices$.ts
+  h_6029769cf9ac60 3
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  h_6029769cf9ac60 16
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_6029769cf9ac60 18
+libs/core/src/stores/mediaDevices/index.ts
+  h_6029769cf9ac60 3
+libs/core/src/stores/mediaDevices/helpers/setupDeviceStore/setupDeviceStore.test.ts
+  h_6029769cf9ac60 4
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_6029769cf9ac60 7
+libs/core/src/stores/publisher/actions/getFacingMode.ts
+  h_6029769cf9ac60 2,5
+libs/core/src/stores/index.ts
+  h_6029769cf9ac60 1
+libs/core/src/stores/mediaDevices/hooks/useMediaDeviceInfo/useMediaDeviceInfo.test.ts
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "e606f2c550f2ab180c193b83d48e622372fb540f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

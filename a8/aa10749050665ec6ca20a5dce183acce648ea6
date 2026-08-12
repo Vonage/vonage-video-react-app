@@ -1,0 +1,14 @@
+.github/workflows/check-release.yml
+  h_5ddc9d372ac6a1 1-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a8aa10749050665ec6ca20a5dce183acce648ea6",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

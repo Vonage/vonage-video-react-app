@@ -1,0 +1,14 @@
+README.md
+  h_6029769cf9ac60 197,250,252,254,258,261,263,331,333,336,342-344,346-351,353,357-360,362,366-437,439-444,500
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "5b720398c527a1b61c8c4ed425217bb0975f0eca",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
