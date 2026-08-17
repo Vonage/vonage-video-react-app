@@ -1,0 +1,30 @@
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_737cf808c1c597 42-45,65
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_737cf808c1c597 40-43,61
+frontend/src/hooks/tests/useScreenShare.spec.tsx
+  h_737cf808c1c597 36-38
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 470,525
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.spec.ts
+  h_737cf808c1c597 24
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_737cf808c1c597 154
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_737cf808c1c597 157
+package.json
+  h_737cf808c1c597 171
+yarn.lock
+  h_737cf808c1c597 5097-5100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c79bbc907f103ea1b517c62cbca75766564cc406",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
