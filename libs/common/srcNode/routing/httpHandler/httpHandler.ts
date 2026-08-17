@@ -5,7 +5,7 @@ import type {
   ApplicationRequestHandler,
   Query,
   ApplicationHandler,
-} from '@api-lib/types';
+} from '../../types';
 
 import composeHandlers from './helpers/composeHandlers';
 import type { Any } from '@common/types';

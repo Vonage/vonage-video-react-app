@@ -46,7 +46,7 @@ export type SubscriberInspectorStatistics = {
 
 export type useSubscriberStatsProps<TData = SubscriberInspectorStatistics> = {
   queryOptions?: QueryOptions<SubscriberInspectorStatistics | null, TData>;
-  subscriber: Subscriber | null | undefined;
+  subscriber: (Omit<Subscriber, 'id'> & { id: string }) | null | undefined;
 };
 
 const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
