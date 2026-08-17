@@ -151,7 +151,7 @@ type PreviousPublisherVideoSample = {
 
 function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
   return new Promise((resolve) => {
-    publisher.getStats((error, stats) => {
+    void publisher.getStats((error, stats) => {
       if (error) return resolve(null);
       resolve(stats ?? null);
     });
