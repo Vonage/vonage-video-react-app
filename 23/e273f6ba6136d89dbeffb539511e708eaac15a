@@ -1,0 +1,220 @@
+.github/copilot-instructions.md
+  h_5ddc9d372ac6a1 177-178
+.github/workflows/ai-shepherd.yml
+  h_5ddc9d372ac6a1 1-81
+.github/workflows/auto-set-base.yml
+  h_5ddc9d372ac6a1 17
+.github/workflows/auto-update-dependencies.yml
+  h_5ddc9d372ac6a1 23,25
+.github/workflows/check-base-branch.yml
+  h_5ddc9d372ac6a1 1-42
+.github/workflows/check-pull-request-title.yml
+  h_5ddc9d372ac6a1 21,24,31
+.github/workflows/check-release.yml
+  h_5ddc9d372ac6a1 1-60
+.github/workflows/deploy-to-vcr.yml
+  h_5ddc9d372ac6a1 22,25
+.github/workflows/lint.yml
+  h_5ddc9d372ac6a1 31,34,55,70,73
+.github/workflows/run-tests.yml
+  h_5ddc9d372ac6a1 33,38,81,95,143,148
+.github/workflows/vcr-deploy-on-comment.yml
+  h_5ddc9d372ac6a1 61,66
+.github/workflows/vcr-remove-non-use-instance.yml
+  h_5ddc9d372ac6a1 19
+.github/workflows/vcr-remove-on-comment.yml
+  h_5ddc9d372ac6a1 58
+.github/workflows/video-common-integrity.yml
+  h_5ddc9d372ac6a1 1-26
+.github/workflows/video-common-publish.yml
+  h_5ddc9d372ac6a1 1-60
+.gitignore
+  h_5ddc9d372ac6a1 67-75
+.husky/pre-commit
+  h_5ddc9d372ac6a1 7-10
+.husky/pre-push
+  h_5ddc9d372ac6a1 7-10,13-15
+.kiro/hooks/README.md
+  h_5ddc9d372ac6a1 1-33
+.kiro/hooks/git-ai.json
+  h_5ddc9d372ac6a1 1-27
+.prettierignore
+  h_5ddc9d372ac6a1 20
+LICENSE.MIT
+  h_5ddc9d372ac6a1 1-21
+backend/middleware/errorHandler.ts
+  h_5ddc9d372ac6a1 4
+backend/tests/errorHandler.test.ts
+  h_5ddc9d372ac6a1 5
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_5ddc9d372ac6a1 54-56
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/SubscriberStatistics.tsx
+  h_5ddc9d372ac6a1 6,9,12,15
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_5ddc9d372ac6a1 90-91
+frontend/src/env.ts
+  h_5ddc9d372ac6a1 62
+frontend/src/logger/FrontendLogger.ts
+  h_5ddc9d372ac6a1 1,11,14
+integration-tests/tests/landing.spec.ts
+  h_5ddc9d372ac6a1 78-134
+integration-tests/tests/waitingRoom.spec.ts
+  h_5ddc9d372ac6a1 9-15,44,81,87-252
+libs/api/src/errors/assertions/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/errors/handlers/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/errors/helpers/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/errors/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/errors/types/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/executions/index.ts
+  h_5ddc9d372ac6a1 1
+libs/api/src/index.ts
+  h_5ddc9d372ac6a1 1,3-5,7
+libs/api/src/types/index.ts
+  h_5ddc9d372ac6a1 1-2,24,30-36
+libs/common/README.md
+  h_5ddc9d372ac6a1 1,3,5,7-104
+libs/common/docs/node.md
+  h_5ddc9d372ac6a1 1-155
+libs/common/docs/node.test.md
+  h_5ddc9d372ac6a1 1-84
+libs/common/docs/universal.md
+  h_5ddc9d372ac6a1 1-543
+libs/common/docs/universal.test.md
+  h_5ddc9d372ac6a1 1-93
+libs/common/docs/web.md
+  h_5ddc9d372ac6a1 1-309
+libs/common/docs/web.test.md
+  h_5ddc9d372ac6a1 1-132
+libs/common/manifest.json
+  h_5ddc9d372ac6a1 1-5
+libs/common/package.json
+  h_5ddc9d372ac6a1 2,4-12
+libs/common/project.json
+  h_5ddc9d372ac6a1 40-88
+libs/common/scripts/checkPackageHash.ts
+  h_5ddc9d372ac6a1 1-35
+libs/common/scripts/compareRegistryHash.ts
+  h_5ddc9d372ac6a1 1-91
+libs/common/scripts/computePackageHash.ts
+  h_5ddc9d372ac6a1 1-61
+libs/common/scripts/helpers/index.ts
+  h_5ddc9d372ac6a1 1-3
+libs/common/scripts/helpers/scanExternalPackages.ts
+  h_5ddc9d372ac6a1 1-83
+libs/common/scripts/helpers/validateChannelFormat.ts
+  h_5ddc9d372ac6a1 1-16
+libs/common/scripts/helpers/validateVersionSync.ts
+  h_5ddc9d372ac6a1 1-12
+libs/common/scripts/printExternals.ts
+  h_5ddc9d372ac6a1 1-32
+libs/common/scripts/publishPackage.dev.ts
+  h_5ddc9d372ac6a1 1-330
+libs/common/scripts/publishPackage.ts
+  h_5ddc9d372ac6a1 1-74
+libs/common/scripts/updatePackageHash.ts
+  h_5ddc9d372ac6a1 1-29
+libs/common/src/assertions/isFunction/isFunction.ts
+  h_5ddc9d372ac6a1 1-4
+libs/common/src/execution/assertResult/assertResult.ts
+  h_5ddc9d372ac6a1 15-27,29-41
+libs/common/src/execution/enqueue/enqueue.ts
+  h_5ddc9d372ac6a1 18-27
+libs/common/src/execution/throttle/throttle.ts
+  h_5ddc9d372ac6a1 8-24
+libs/common/src/index.ts
+  h_5ddc9d372ac6a1 1-8
+libs/common/src/logger/Logger.spec.ts
+  h_5ddc9d372ac6a1 2
+libs/common/src/logger/Logger.ts
+  h_5ddc9d372ac6a1 59,235,250,286
+libs/common/src/logger/index.ts
+  h_5ddc9d372ac6a1 1
+libs/common/srcBrowser/components/index.ts
+  h_5ddc9d372ac6a1 1
+libs/common/srcBrowser/hooks/useStableRef/hooks/useNonDisposableStableRef.ts
+  h_5ddc9d372ac6a1 16
+libs/common/srcBrowser/hooks/useStableRef/useStableRef.ts
+  h_5ddc9d372ac6a1 6
+libs/common/srcBrowser/index.ts
+  h_5ddc9d372ac6a1 1-9
+libs/common/srcBrowser/platform/index.ts
+  h_5ddc9d372ac6a1 4
+libs/common/srcNode/errors/assertions/index.ts
+  h_5ddc9d372ac6a1 1-3
+libs/common/srcNode/errors/handlers/index.ts
+  h_5ddc9d372ac6a1 1-6
+libs/common/srcNode/errors/helpers/index.ts
+  h_5ddc9d372ac6a1 1
+libs/common/srcNode/errors/index.ts
+  h_5ddc9d372ac6a1 1-7
+libs/common/srcNode/errors/types/index.ts
+  h_5ddc9d372ac6a1 1-4
+libs/common/srcNode/executions/assertResult.test.ts
+  h_5ddc9d372ac6a1 1-61
+libs/common/srcNode/executions/index.ts
+  h_5ddc9d372ac6a1 1-4
+libs/common/srcNode/index.ts
+  h_5ddc9d372ac6a1 1-12
+libs/common/srcNode/routing/httpHandler/helpers/composeHandlers.ts
+  h_5ddc9d372ac6a1 3-4
+libs/common/srcNode/routing/httpHandler/httpHandler.ts
+  h_5ddc9d372ac6a1 8
+libs/common/srcNode/routing/index.ts
+  h_5ddc9d372ac6a1 1
+libs/common/srcNode/schemas/LayoutType.schema.ts
+  h_5ddc9d372ac6a1 4
+libs/common/srcNode/types/ApplicationHandler.ts
+  h_5ddc9d372ac6a1 6-9
+libs/common/srcNode/types/ApplicationRequest.ts
+  h_5ddc9d372ac6a1 2-3
+libs/common/srcNode/types/ApplicationRequestHandler.ts
+  h_5ddc9d372ac6a1 2-5
+libs/common/srcNode/types/ParamsDictionary.ts
+  h_5ddc9d372ac6a1 1,3
+libs/common/srcNode/types/Query.ts
+  h_5ddc9d372ac6a1 1,3
+libs/common/srcNode/types/index.ts
+  h_5ddc9d372ac6a1 3-9
+libs/common/test/environment/setupCancelablePromiseHook.ts
+  h_5ddc9d372ac6a1 1-3,6-11,15-18,22
+libs/common/testBrowser/index.ts
+  h_5ddc9d372ac6a1 6,8-9
+libs/common/testNode/index.ts
+  h_5ddc9d372ac6a1 1-2
+libs/common/vite.config.ts
+  h_5ddc9d372ac6a1 2,6-7,9-80,83-88,91-170,172-192,201,211-418
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_5ddc9d372ac6a1 49
+libs/core/src/logger/logger.ts
+  h_5ddc9d372ac6a1 1,3
+libs/core/test/fixtures/makeVideoClientMock.ts
+  h_5ddc9d372ac6a1 3,30
+libs/ui/src/components/Collapsible/components/Summary.tsx
+  h_5ddc9d372ac6a1 41
+nx.json
+  h_5ddc9d372ac6a1 77
+package.json
+  h_5ddc9d372ac6a1 32-34,48-49
+scripts/build.ts
+  h_5ddc9d372ac6a1 84-90,98,106,120-122
+scripts/publishPackage.ts
+  h_5ddc9d372ac6a1 1-159
+sonar-project.properties
+  h_5ddc9d372ac6a1 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "23e273f6ba6136d89dbeffb539511e708eaac15a",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
