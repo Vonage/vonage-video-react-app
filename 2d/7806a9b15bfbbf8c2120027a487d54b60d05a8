@@ -1,0 +1,25 @@
+libs/common/src/schemas/Lang.schema.ts
+  h_5ddc9d372ac6a1 10
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  h_5ddc9d372ac6a1 22
+frontend/src/components/LanguageSelector/LanguageSelector.spec.tsx
+  h_5ddc9d372ac6a1 25,106,120,176-192,254-261
+  h_5ddc9d372ac6a1 262-263
+env.sh
+  h_5ddc9d372ac6a1 5
+frontend/src/locales/index.ts
+  h_5ddc9d372ac6a1 6,36-38
+frontend/src/locales/ja.json
+  h_5ddc9d372ac6a1 1-320
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2d7806a9b15bfbbf8c2120027a487d54b60d05a8",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
