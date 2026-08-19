@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import { createVideoHandler, httpHandler, VideoAction } from '@api-lib';
+import { createVideoHandler, VideoAction } from '@api-lib';
 import { createSession, startArchive, enableCaptions, joinSession } from './constants';
+import { httpHandler } from '@node/routing';
 import type { Request, Response } from 'express';
 import { makeBadRequestErrorHandler, makeInternalErrorHandler } from '@api-lib/errors';
 import SessionHookPayloadSchema from './schemas/SessionHookPayload.schema';
