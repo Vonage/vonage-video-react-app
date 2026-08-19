@@ -253,7 +253,7 @@ const useBackgroundPublisher = (
       // If the deleted image was the currently applied background filter, clear it
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
-        changeBackground(backgroundSelected).catch(() => {
+        changeBackground('none').catch(() => {
           throw new Error('Failed to reset background filter after deleting custom image');
         });
       }

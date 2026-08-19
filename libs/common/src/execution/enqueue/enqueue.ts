@@ -15,6 +15,16 @@ type QueueExtensions = {
   [enqueue_symbol]?: true;
 };
 
+/**
+ * Appends a promise-producing task after an existing promise.
+ *
+ * The task only runs after the previous promise resolves. If the previous
+ * promise rejects, the queue rejects and the task is not executed.
+ *
+ * The returned promise includes `afterAll`, which runs a callback when the
+ * queue drains, unless another task was appended after the callback was
+ * registered.
+ */
 function enqueue<T extends Promise<any>>(
   promise: T | null | undefined,
   builder: () => T

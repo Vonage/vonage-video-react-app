@@ -1,5 +1,13 @@
 {
-  "name": "common",
+  "name": "@vonage/video-common",
   "version": "0.0.1",
-  "type": "module"
+  "type": "module",
+  "license": "MIT",
+  "types": "./index.d.ts",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
 }

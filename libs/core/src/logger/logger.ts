@@ -1,3 +1,3 @@
-import { LoggerBase } from '@common/logger';
+import { Logger } from '@common/logger';
 
-export default new LoggerBase();
+export default new Logger();

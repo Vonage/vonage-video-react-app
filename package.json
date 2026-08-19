@@ -29,7 +29,9 @@
     "test:ui": "npx tsx scripts/testLibs.ts ui",
     "test:common": "npx tsx scripts/testLibs.ts common",
     "ts-check": "npx tsx scripts/tsCheck.ts",
-    "vcr:dev": "npx tsx scripts/vcrDev.ts"
+    "common:hash:update": "yarn nx run common:hash:update",
+    "vcr:dev": "npx tsx scripts/vcrDev.ts",
+    "publish:package": "npx tsx scripts/publishPackage.ts"
   },
   "scriptsInfo": {
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom artifact), 'yarn build room zip' (zip VeraRoom artifact)",
@@ -43,7 +45,8 @@
     "test:backend": "Run backend tests. Usage: 'yarn test:backend' (all), 'yarn test:backend <path>' (specific), 'yarn test:backend watch <path>' (watch mode), 'yarn test:backend debug <path>' (debug mode)",
     "test:frontend": "Run frontend tests. Usage: 'yarn test:frontend' (all), 'yarn test:frontend <path>' (specific), 'yarn test:frontend watch <path>' (watch mode), 'yarn test:frontend debug <path>' (debug mode)",
     "test:integration": "Run integration tests. Usage: 'yarn test:integration' (all), 'yarn test:integration api' (API/Jest only), 'yarn test:integration playwright' (Playwright only), 'yarn test:integration <name>' (headed), 'yarn test:integration debug|inspect|canon [name]', 'yarn test:integration update [name]' (screenshots)",
-    "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying"
+    "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying",
+    "publish:package": "Publish a personal dev package to GitHub Packages. Usage: 'yarn publish:package common' (prompts for token, hidden input), 'yarn publish:package common dry' (dry run, validates without publishing), 'GH_TOKEN=<token> yarn publish:package common' (recommended for CI)"
   },
   "repository": {
     "type": "git",
@@ -170,7 +173,7 @@
     "@vonage/vcr-sdk": "1.3.0",
     "@vonage/video": "1.26.1",
     "@vonage/video-client-network-test": "5.1.2",
-    "@vonage/vivid": "5.15.1",
+    "@vonage/vivid": "^5.23.0",
     "autolinker": "4.1.5",
     "axios": "1.16.1",
     "body-parser": "1.20.4",
@@ -191,7 +194,7 @@
     "normalize-range": "0.1.2",
     "opentok": "2.22.0",
     "opentok-jwt": "0.1.5",
-    "opentok-layout-js": "5.5.0",
+    "opentok-layout-js": "5.5.1",
     "opentok-solutions-logging": "1.1.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",

@@ -46,7 +46,7 @@ export type SubscriberInspectorStatistics = {
 
 export type useSubscriberStatsProps<TData = SubscriberInspectorStatistics> = {
   queryOptions?: QueryOptions<SubscriberInspectorStatistics | null, TData>;
-  subscriber: Subscriber | null | undefined;
+  subscriber: (Omit<Subscriber, 'id'> & { id: string }) | null | undefined;
 };
 
 const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
@@ -54,7 +54,7 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
   subscriber,
 }: useSubscriberStatsProps<Selected>) => {
   return runtime$.useQuery({
-    queryKey: ['archives', subscriber],
+    queryKey: ['subscriberStats', subscriber?.id],
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!subscriber) {
