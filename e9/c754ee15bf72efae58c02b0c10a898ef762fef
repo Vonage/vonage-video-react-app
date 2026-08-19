@@ -1,0 +1,27 @@
+frontend/src/components/LanguageSelector/LanguageSelector.spec.tsx
+  h_5ddc9d372ac6a1 25,106,120,178-192
+  h_5ddc9d372ac6a1 193-194
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  h_5ddc9d372ac6a1 22
+libs/common/src/schemas/Lang.schema.ts
+  h_5ddc9d372ac6a1 10
+frontend/src/locales/ja.json
+  h_5ddc9d372ac6a1 1-320
+.github/workflows/check-base-branch.yml
+  h_5ddc9d372ac6a1 1-42
+env.sh
+  h_5ddc9d372ac6a1 5
+frontend/src/locales/index.ts
+  h_5ddc9d372ac6a1 6,36-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e9c754ee15bf72efae58c02b0c10a898ef762fef",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+frontend/src/i18n.ts
+  h_737cf808c1c597 5
+frontend/src/locales/detectLanguage/detectLanguage.spec.ts
+  h_737cf808c1c597 1-72
+frontend/src/locales/detectLanguage/detectLanguage.ts
+  h_737cf808c1c597 1-26
+frontend/src/locales/detectLanguage/index.ts
+  h_737cf808c1c597 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "850c4a15947c25ccf35040639bb09abc00b9e0da",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
