@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { createVideoHandler, VideoAction } from '@api-lib';
+import { createVideoHandler, httpHandler, VideoAction } from '@api-lib';
 import { createSession, startArchive, enableCaptions, joinSession } from './constants';
 import type { Request, Response } from 'express';
-import { makeInternalErrorHandler } from '@api-lib/errors';
+import { makeBadRequestErrorHandler, makeInternalErrorHandler } from '@api-lib/errors';
 import SessionHookPayloadSchema from './schemas/SessionHookPayload.schema';
 import CaptionsHookPayloadSchema from './schemas/CaptionsHookPayload.schema';
 import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
@@ -69,18 +69,18 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 /**
  * Listen to captions enabled/disabled events
  */
-videoRouter.post('/hooks/captions', async (req: Request, res: Response) => {
-  try {
-    const parsed = CaptionsHookPayloadSchema.parse(req.body);
-    const { sessionId, captionId, status } = parsed;
+videoRouter.post(
+  '/hooks/captions',
+  httpHandler(async (req: Request, res: Response) => {
+    const { sessionId, captionId, status } = await assertResult(
+      () => CaptionsHookPayloadSchema.parseAsync(req.body),
+      makeBadRequestErrorHandler('Invalid captions hook payload')
+    );
 
     const terminalStatuses: CaptionsStatus[] = ['started', 'stopped', 'failed'];
     const shouldProcessCaptionsEvent = terminalStatuses.includes(status);
 
-    if (!shouldProcessCaptionsEvent) {
-      res.status(200).send();
-      return;
-    }
+    if (!shouldProcessCaptionsEvent) return res.status(200).send();
 
     await assertResult(
       () =>
@@ -91,31 +91,28 @@ videoRouter.post('/hooks/captions', async (req: Request, res: Response) => {
       makeInternalErrorHandler('Failed to process captions event')
     );
 
-    res.status(200).send();
-  } catch (error) {
-    // Respond instead of rethrowing: this is an async Express 4 handler, so a throw here
-    // becomes an unhandled rejection (no error middleware catches it) and crashes the process.
-    const applicationError = makeInternalErrorHandler('Failed to process captions event')(
-      error
-    ).exportSafely();
-    res.status(applicationError.statusCode).json(applicationError);
-  }
-});
+    return res.status(200).send();
+  })
+);
 
 /**
  * Listen to archive started/stopped events
  */
-videoRouter.post('/hooks/archive', async (req: Request, res: Response) => {
-  try {
-    const parsed = ArchiveHookPayloadSchema.parse(req.body);
-    const { sessionId, id: archiveId, status } = parsed;
+videoRouter.post(
+  '/hooks/archive',
+  httpHandler(async (req: Request, res: Response) => {
+    const {
+      sessionId,
+      id: archiveId,
+      status,
+    } = await assertResult(
+      () => ArchiveHookPayloadSchema.parseAsync(req.body),
+      makeBadRequestErrorHandler('Invalid archive hook payload')
+    );
 
     const shouldProcessArchiveEvent = status === 'started' || status === 'stopped';
 
-    if (!shouldProcessArchiveEvent) {
-      res.status(200).send();
-      return;
-    }
+    if (!shouldProcessArchiveEvent) return res.status(200).send();
 
     await assertResult(async () => {
       const existingArchiveIds = await sessionService.getArchiveIds({ sessionId });
@@ -134,59 +131,48 @@ videoRouter.post('/hooks/archive', async (req: Request, res: Response) => {
       return sessionService.setArchiveIds({ sessionId, archiveIds });
     }, makeInternalErrorHandler('Failed to process archive event'));
 
-    res.status(200).send();
-  } catch (error) {
-    // Respond instead of rethrowing (async Express 4 handler — a throw would be an
-    // unhandled rejection that crashes the process).
-    const applicationError = makeInternalErrorHandler('Failed to process archive event')(
-      error
-    ).exportSafely();
-    res.status(applicationError.statusCode).json(applicationError);
-  }
-});
+    return res.status(200).send();
+  })
+);
 
 /**
  * Listen to session destroyed events to cleanup our state and stop any active archives or captions related to the session.
  * This hook is essential to avoid unnecessary costs and to clean up our state when sessions are destroyed.
  */
-videoRouter.post('/hooks/session', async (req: Request, res: Response) => {
-  try {
-    const parsed = SessionHookPayloadSchema.parse(req.body);
-    const { sessionId, event } = parsed;
+videoRouter.post(
+  '/hooks/session',
+  httpHandler(async (req: Request, res: Response) => {
+    const { sessionId, event } = await assertResult(
+      () => SessionHookPayloadSchema.parseAsync(req.body),
+      makeBadRequestErrorHandler('Invalid session hook payload')
+    );
 
     const shouldProcessSessionEvent = event === 'sessionDestroyed';
 
-    if (!shouldProcessSessionEvent) {
-      res.status(200).send();
-      return;
-    }
+    if (!shouldProcessSessionEvent) return res.status(200).send();
 
-    const captionsId = await sessionService.getCaptionsId({ sessionId });
-    const archiveIds = await sessionService.getArchiveIds({ sessionId });
+    await assertResult(async () => {
+      const captionsId = await sessionService.getCaptionsId({ sessionId });
+      const archiveIds = await sessionService.getArchiveIds({ sessionId });
 
-    const videoClient = makeVideoClient$();
+      const videoClient = makeVideoClient$();
 
-    await Promise.allSettled([
-      captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
+      await Promise.allSettled([
+        captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
 
-      // stop all the archives related to the session.
-      ...archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId)),
-    ]);
+        // stop all the archives related to the session.
+        ...archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId)),
+      ]);
 
-    // cleanup session data
-    await sessionService.setCaptionsId({ sessionId, captionsId: null });
-    await sessionService.setArchiveIds({ sessionId, archiveIds: [] });
+      // cleanup session data
+      await sessionService.setCaptionsId({ sessionId, captionsId: null });
 
-    res.status(200).send();
-  } catch (error) {
-    // Respond instead of rethrowing (async Express 4 handler — a throw would be an
-    // unhandled rejection that crashes the process).
-    const applicationError = makeInternalErrorHandler('Failed to process session event')(
-      error
-    ).exportSafely();
-    res.status(applicationError.statusCode).json(applicationError);
-  }
-});
+      return sessionService.setArchiveIds({ sessionId, archiveIds: [] });
+    }, makeInternalErrorHandler('Failed to process session event'));
+
+    return res.status(200).send();
+  })
+);
 
 // #endregion ------------------------------------------------------------------------
 
