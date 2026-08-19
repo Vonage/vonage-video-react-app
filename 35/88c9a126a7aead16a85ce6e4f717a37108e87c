@@ -1,0 +1,19 @@
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  s_b51bc11f7b82ec::t_d5d4b56a32959d 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3588c9a126a7aead16a85ce6e4f717a37108e87c",
+  "prompts": {},
+  "sessions": {
+    "s_b51bc11f7b82ec": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1787129831587956000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
