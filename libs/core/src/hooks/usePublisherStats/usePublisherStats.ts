@@ -81,12 +81,6 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       const firstPublisherStatsContainer = publisherStatsContainers[0];
       const stats = firstPublisherStatsContainer?.stats;
 
-      /**
-       * The layers come first because the SDK deprecates the alternative: "video.frameRate - The
-       * current average video frame rate. This property is deprecated and will be removed in the
-       * future. Please instead use the encodedFrameRate property in the different layers."
-       * `fixedFrameRate` is only the value the publisher was asked for, so it is the last resort.
-       */
       const frameRate =
         readHighestLayerFrameRate(stats?.video?.layers) ??
         stats?.video?.frameRate ??
@@ -159,13 +153,6 @@ type PreviousPublisherVideoSample = {
   timestamp: number;
 };
 
-/**
- * Highest per-layer encoding frame rate, which is where the client observability guide says the
- * real rate lives. With simulcast the layers differ, and the top one is what a well-connected
- * subscriber receives.
- * @param {VideoLayerStats[] | undefined} layers - the publisher's active encoding layers
- * @returns {number | null} the highest encoded frame rate, or null when there are no layers
- */
 function readHighestLayerFrameRate(layers: VideoLayerStats[] | undefined): number | null {
   const frameRates = (layers ?? [])
     .map((layer) => layer.encodedFrameRate)
