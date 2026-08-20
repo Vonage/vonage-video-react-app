@@ -1712,7 +1712,7 @@ const Component = () => {
 # UI & Design Changes
 
 - **Rule:** A non-trivial UI change must be aligned with design **before** it is implemented. Match the existing Figma; if there is no design for what you are building, ask for one rather than inventing a layout.
-- **Rule:** New UI must be consistent with the components already in the product. A dialog, list row or badge you add should match the ones next to it in font, alignment, spacing and behaviour — do not copy a pattern from another product and assume it fits.
+- **Rule:** New UI must be consistent with the components already in the product. A dialog, list row or badge you add should match the ones next to it in font, alignment, spacing and behavior — do not copy a pattern from another product and assume it fits.
 - **Rule:** Do not request team review on a PR whose design has not been agreed. Reviewers should not be spending their time on a layout that will be redone.
 - **Rule:** Screenshots of the change (before/after, light **and** dark mode) belong in the PR description for anything visual.
 
