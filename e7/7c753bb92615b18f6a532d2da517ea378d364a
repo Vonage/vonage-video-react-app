@@ -1,0 +1,14 @@
+frontend/src/locales/detectLanguage/detectLanguage.spec.ts
+  h_737cf808c1c597 35,37-38,42-43,46-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e77c753bb92615b18f6a532d2da517ea378d364a",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
