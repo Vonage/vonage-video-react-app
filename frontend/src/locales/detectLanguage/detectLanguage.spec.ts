@@ -19,4 +19,14 @@ describe('detectLanguage', () => {
 
     expect(detectLanguage()).toBe(Lang.ES);
   });
+
+  it('returns fallback when navigator is undefined', () => {
+    env.partialUpdate({
+      I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.ES_MX, Lang.IT, Lang.DE],
+      I18N_FALLBACK_LANGUAGE: Lang.EN,
+    });
+    vi.stubGlobal('navigator', undefined);
+
+    expect(detectLanguage()).toBe(Lang.EN);
+  });
 });
