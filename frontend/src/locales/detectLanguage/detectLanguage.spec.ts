@@ -31,4 +31,17 @@ describe('detectLanguage', () => {
 
     expect(detectLanguage()).toBe(Lang.EN);
   });
+
+  it('returns es if language navigator returns es-ES', () => {
+    setupWindowNavigatorMock({
+      language: 'es-ES',
+      languages: ['es-ES'],
+    });
+
+    env.partialUpdate({
+      I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.ES_MX, Lang.IT, Lang.DE],
+    });
+
+    expect(detectLanguage()).toBe(Lang.ES);
+  });
 });
