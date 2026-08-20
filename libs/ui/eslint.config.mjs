@@ -15,13 +15,22 @@ export default [
     settings: {
       tailwindcss: {
         config: path.join(__dirname, 'src/styles.css'),
+        callees: ['twMerge', 'cn', 'classNames'],
       },
     },
     rules: {
       'tailwindcss/no-custom-classname': [
         'error',
         {
-          whitelist: ['publisher', 'subscriber', 'screen-subscriber'],
+          whitelist: [
+            // allow component names to be used as class names
+            // this helps to identify components in the DOM
+            '^[A-Z][A-Za-z0-9_-]*$',
+
+            'publisher',
+            'subscriber',
+            'screen-subscriber',
+          ],
         },
       ],
     },
