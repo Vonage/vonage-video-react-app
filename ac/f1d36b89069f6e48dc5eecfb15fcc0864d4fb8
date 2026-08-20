@@ -1,0 +1,21 @@
+docs/SESSION_MIGRATION.md
+  s_ea086c6046882a::t_a7d4fbb27aacb2 1-126
+README.md
+  s_ea086c6046882a::t_a7d4fbb27aacb2 128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "acf1d36b89069f6e48dc5eecfb15fcc0864d4fb8",
+  "prompts": {},
+  "sessions": {
+    "s_ea086c6046882a": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1787126518264039000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
