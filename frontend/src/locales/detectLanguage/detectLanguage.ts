@@ -1,3 +1,4 @@
+import { isNil } from '@common/assertions';
 import { env } from '../../env';
 import type { Lang } from '@common/schemas';
 
@@ -6,18 +7,29 @@ import type { Lang } from '@common/schemas';
  * supported Lang value. Falls back to the configured fallback language.
  */
 function detectLanguage(): Lang {
-  const supported = env.I18N_SUPPORTED_LANGUAGES;
+  if (isNil(globalThis.navigator)) return env.I18N_FALLBACK_LANGUAGE;
 
-  if (typeof navigator === 'undefined') return env.I18N_FALLBACK_LANGUAGE;
+  const supported = env.I18N_SUPPORTED_LANGUAGES.reduce(
+    (acc, lang) => {
+      const normalized = lang.toLowerCase();
+      const base = normalized.split('-')[0];
+      acc[normalized] = lang;
+      acc[base] ??= lang;
+      return acc;
+    },
+    {} as Record<string, Lang>
+  );
 
-  const browserLanguages = navigator.languages || [navigator.language];
+  const userLang = globalThis.navigator.language.toLowerCase();
+  const match = supported[userLang] ?? supported[userLang.split('-')[0]];
+  if (match) return match;
+
+  const browserLanguages = globalThis.navigator.languages ?? [globalThis.navigator.language];
 
   for (const tag of browserLanguages) {
-    const exact = supported.find((lang) => (lang as string) === tag);
-    if (exact) return exact;
-
-    const base = supported.find((lang) => (lang as string) === tag.split('-')[0]);
-    if (base) return base;
+    const normalized = tag.toLowerCase();
+    const match = supported[normalized] ?? supported[normalized.split('-')[0]];
+    if (match) return match;
   }
 
   return env.I18N_FALLBACK_LANGUAGE;
