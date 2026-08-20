@@ -1,22 +1,21 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Lang } from '@common/schemas';
 import { env } from '../../env';
 import detectLanguage from './detectLanguage';
+import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
-function mockBrowserLanguage(language: string, languages: string[]) {
-  vi.stubGlobal('navigator', {
-    ...globalThis.navigator,
-    language,
-    languages,
+beforeEach(() => {
+  setupWindowNavigatorMock({
+    language: 'es',
+    languages: ['es'],
   });
-}
+});
 
 describe('detectLanguage', () => {
   it('returns exact match when browser language is directly supported', () => {
     env.partialUpdate({
       I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.ES_MX, Lang.IT, Lang.DE],
     });
-    mockBrowserLanguage('es', ['es']);
 
     expect(detectLanguage()).toBe(Lang.ES);
   });
