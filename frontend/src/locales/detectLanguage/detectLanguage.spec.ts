@@ -32,16 +32,31 @@ describe('detectLanguage', () => {
     expect(detectLanguage()).toBe(Lang.EN);
   });
 
-  it('returns es if language navigator returns es-ES', () => {
+  it('returns match from navigator.languages when primary language is not supported', () => {
     setupWindowNavigatorMock({
-      language: 'es-ES',
-      languages: ['es-ES'],
+      language: 'fr-FR',
+      languages: ['fr-FR', 'it-IT', 'en'],
     });
 
     env.partialUpdate({
-      I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.ES_MX, Lang.IT, Lang.DE],
+      I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.IT, Lang.DE],
+      I18N_FALLBACK_LANGUAGE: Lang.EN,
     });
 
-    expect(detectLanguage()).toBe(Lang.ES);
+    expect(detectLanguage()).toBe(Lang.IT);
+  });
+
+  it('returns fallback when no language in navigator.languages is supported', () => {
+    setupWindowNavigatorMock({
+      language: 'fr-FR',
+      languages: ['fr-FR', 'ja', 'zh-CN'],
+    });
+
+    env.partialUpdate({
+      I18N_SUPPORTED_LANGUAGES: [Lang.EN, Lang.EN_US, Lang.ES, Lang.IT, Lang.DE],
+      I18N_FALLBACK_LANGUAGE: Lang.DE,
+    });
+
+    expect(detectLanguage()).toBe(Lang.DE);
   });
 });
