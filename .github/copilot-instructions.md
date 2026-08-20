@@ -199,8 +199,8 @@ const videoClient = new VonageVideoClient();
 - **Rule:** Never write a comment that states a reason you have not verified. A confidently-worded but wrong explanation is worse than no comment — it misleads every future reader. If you did not confirm *why* something is needed, do not assert it.
 - **Rule:** Comments describe the current code only. No narration of the diff or history ("used to be", "previously", "now also handles").
 - **Rule:** No dead code and no defensive guards for states that cannot occur. If a value can never be `false`, do not test it; if a map only holds one kind of entry, the type must not imply otherwise. Types must not lie about what they can contain.
-- **Rule:** Prefer linear `tryCatch` helpers instead of nested `try/catch`.
-- **Rule:** Nested `try/catch` blocks are banned.
+- **Rule:** Nested `try/catch` blocks are banned. Prefer linear `tryCatch` helpers instead of nested `try/catch`.
+- **Rule:** Preserve the original error as the cause when wrapping it.
 
 **Violation:**
 

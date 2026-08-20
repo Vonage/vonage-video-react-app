@@ -6,21 +6,18 @@ import {
   makeRuntimeProviderWrapper,
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
-  makeAdvancedSettingsProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
   type PreviewPublisherProviderWrapperOptions,
   type PublisherProviderWrapperOptions,
   type RuntimeProviderWrapperOptions,
   type SessionProviderWrapperOptions,
   type UserProviderWrapperOptions,
-  AdvancedSettingsProviderWrapperOptions,
 } from './makersIndex';
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
-  advancedSettings = 'advancedSettings',
   runtime = 'runtime',
   user = 'user',
   session = 'session',
@@ -30,7 +27,6 @@ export enum providers {
 }
 
 type ProviderOptionsByKey = {
-  [providers.advancedSettings]: AdvancedSettingsProviderWrapperOptions;
   [providers.runtime]: RuntimeProviderWrapperOptions;
   [providers.user]: UserProviderWrapperOptions;
   [providers.session]: SessionProviderWrapperOptions;
@@ -40,9 +36,6 @@ type ProviderOptionsByKey = {
 };
 
 type ProviderContextsByKey = {
-  [providers.advancedSettings]: NonNullable<
-    ReturnType<typeof makeAdvancedSettingsProviderWrapper>['context']
-  >;
   [providers.runtime]: NonNullable<ReturnType<typeof makeRuntimeProviderWrapper>['context']>;
   [providers.user]: NonNullable<ReturnType<typeof makeUserProviderWrapper>['context']>;
   [providers.session]: NonNullable<ReturnType<typeof makeSessionProviderWrapper>['context']>;
@@ -59,7 +52,6 @@ type ProviderContextsByKey = {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
-  [providers.advancedSettings]: [],
   [providers.runtime]: [],
   [providers.user]: [],
   [providers.session]: [providers.runtime, providers.user],
@@ -154,11 +146,6 @@ function makeTestProvider<
    */
   const providerWrappers = sortedKeys.map((key) => {
     switch (key) {
-      case providers.advancedSettings:
-        return makeAdvancedSettingsProviderWrapper(
-          (options as ProviderOptionsFor<[providers.advancedSettings]> | undefined)
-            ?.advancedSettingsContext
-        );
       case providers.runtime:
         return makeRuntimeProviderWrapper(
           (options as ProviderOptionsFor<[providers.runtime]> | undefined)?.runtimeContext

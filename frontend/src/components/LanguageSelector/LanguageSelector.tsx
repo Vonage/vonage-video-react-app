@@ -19,6 +19,7 @@ const languageOptions: LanguageOption[] = [
   { code: Lang.IT, name: 'Italiano', flag: 'flag-italy' },
   { code: Lang.ES, name: 'Español', flag: 'flag-spain' },
   { code: Lang.ES_MX, name: 'Español (México)', flag: 'flag-mexico' },
+  { code: Lang.JA, name: '日本語', flag: 'flag-japan' },
 ];
 
 const ChevronIcon = ({ className, ...props }: { className?: string } & Record<string, unknown>) => (
