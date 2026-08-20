@@ -7,7 +7,7 @@ import type { Lang } from '@common/schemas';
  * supported Lang value. Falls back to the configured fallback language.
  */
 function detectLanguage(): Lang {
-  if (isNil(globalThis.navigator)) return env.I18N_FALLBACK_LANGUAGE;
+  if (isNil(globalThis.navigator?.language)) return env.I18N_FALLBACK_LANGUAGE;
 
   const supported = env.I18N_SUPPORTED_LANGUAGES.reduce(
     (acc, lang) => {
