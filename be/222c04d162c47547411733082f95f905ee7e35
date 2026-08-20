@@ -1,0 +1,25 @@
+libs/common/testBrowser/fixtures/makeWindowNavigatorMock/makeWindowNavigatorMock.ts
+  s_5bd8269df90a7a::t_d34b563d4e0575 3,23,36
+  s_5bd8269df90a7a::t_fe5cdf2d9d63bc 37-39
+libs/common/testBrowser/fixtures/makeWindowNavigatorMock/helpers/makeLanguagesMock.ts
+  s_5bd8269df90a7a::t_bb88861f2b5bc2 1-12
+libs/common/test/helpers/setupPartialMock.ts
+  s_5bd8269df90a7a::t_b8fe40440fc953 78
+  s_5bd8269df90a7a::t_3ee4435176cebe 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "be222c04d162c47547411733082f95f905ee7e35",
+  "prompts": {},
+  "sessions": {
+    "s_5bd8269df90a7a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "84b29a9d-7f80-4259-a8f0-fa0d081215f7",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
