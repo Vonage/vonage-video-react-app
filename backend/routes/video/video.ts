@@ -73,8 +73,8 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 videoRouter.post(
   '/hooks/captions',
   httpHandler(async (req: Request, res: Response) => {
-    const { sessionId, captionId, status } = await assertResult(
-      () => CaptionsHookPayloadSchema.parseAsync(req.body),
+    const { sessionId, captionId, status } = assertResult(
+      () => CaptionsHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid captions hook payload')
     );
 
@@ -106,8 +106,8 @@ videoRouter.post(
       sessionId,
       id: archiveId,
       status,
-    } = await assertResult(
-      () => ArchiveHookPayloadSchema.parseAsync(req.body),
+    } = assertResult(
+      () => ArchiveHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid archive hook payload')
     );
 
@@ -143,8 +143,8 @@ videoRouter.post(
 videoRouter.post(
   '/hooks/session',
   httpHandler(async (req: Request, res: Response) => {
-    const { sessionId, event } = await assertResult(
-      () => SessionHookPayloadSchema.parseAsync(req.body),
+    const { sessionId, event } = assertResult(
+      () => SessionHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid session hook payload')
     );
 
