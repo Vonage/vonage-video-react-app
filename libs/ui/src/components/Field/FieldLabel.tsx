@@ -1,19 +1,17 @@
-import type { ComponentProps, PropsWithChildren, ReactElement } from 'react';
+import type { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-const FieldLabel = ({
-  children,
-  className,
-  ...props
-}: PropsWithChildren<ComponentProps<'label'>>): ReactElement => {
+type FieldLabelProps = ComponentProps<'label'>;
+
+const FieldLabel: FC<FieldLabelProps> = ({ className, ...props }) => {
   return (
     <label
-      className={['font-vera-plain text-vera-body-extended-semibold text-vera-secondary', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={twMerge(
+        'font-vera-plain text-vera-body-extended-semibold! text-vera-secondary',
+        className
+      )}
       {...props}
-    >
-      {children}
-    </label>
+    />
   );
 };
 

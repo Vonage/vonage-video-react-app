@@ -22,6 +22,7 @@ const mockT = vi.fn((key: string) => {
     'languages.spanish': 'Español',
     'languages.spanishMX': 'Español (México)',
     'languages.italian': 'Italiano',
+    'languages.japanese': '日本語',
   };
   return translations[key] || key;
 });
@@ -102,7 +103,7 @@ describe('LanguageSelector', () => {
     });
 
     it('shows all languages when all are supported', async () => {
-      env.setSupportedLanguages('en|es|es-MX|it|en-US|de');
+      env.setSupportedLanguages('en|es|es-MX|it|en-US|de|ja');
 
       render(<LanguageSelector />);
 
@@ -116,6 +117,7 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-it')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
+        expect(screen.getByTestId('language-option-ja')).toBeInTheDocument();
       });
     });
   });
@@ -170,6 +172,23 @@ describe('LanguageSelector', () => {
       fireEvent.click(screen.getByTestId('language-option-en-US'));
 
       expect(mockChangeLanguage).toHaveBeenCalledWith('en-US');
+    });
+
+    it('changes language to ja when selected', async () => {
+      env.setSupportedLanguages('en|ja');
+
+      render(<LanguageSelector />);
+
+      const selectButton = screen.getByRole('combobox');
+      fireEvent.mouseDown(selectButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('language-option-ja')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('language-option-ja'));
+
+      expect(mockChangeLanguage).toHaveBeenCalledWith('ja');
     });
   });
 
@@ -230,6 +249,16 @@ describe('LanguageSelector', () => {
 
       expect(() => render(<LanguageSelector />)).toThrow();
     });
+  });
+
+  it('displays Japanese correctly', () => {
+    env.setSupportedLanguages('en|ja');
+    mockI18n.language = 'ja';
+
+    render(<LanguageSelector />);
+
+    expect(screen.getByText('日本語')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-flag-japan')).toBeInTheDocument();
   });
 
   describe('Fallback Language Handling', () => {

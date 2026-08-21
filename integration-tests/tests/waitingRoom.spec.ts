@@ -6,10 +6,16 @@ test.beforeEach(async ({ page }) => {
   await page.waitForTimeout(1000);
 });
 
+test('should navigate back to the welcome page when clicking the Vonage logo', async ({ page }) => {
+  await page.getByTestId('banner-logo-image').click();
+
+  await page.waitForURL(`${baseURL}`);
+  expect(page.url()).toBe(baseURL);
+});
+
 test('The buttons in the meeting room should match those in the waiting room with enabled buttons', async ({
   page,
   browserName,
-  isMobile,
 }) => {
   // Check icons in the video preview area (first .video-container-button)
   await expect(
@@ -35,8 +41,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.locator('xpath=//div[contains(text(),"S")]')).toHaveCount(0);
 
   // Skipping this step for FF as we don't support BG replacement on FF
-  // Also, skipping this step for mobile viewport as, currently BG replacement button is not displayed for mobile view ports.
-  if (browserName !== 'firefox' && !isMobile) {
+  if (browserName !== 'firefox') {
     await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('background-effects-text')).toBeVisible();
@@ -46,7 +51,6 @@ test('The buttons in the meeting room should match those in the waiting room wit
 test('The buttons in the meeting room should match those in the waiting room with disabled buttons', async ({
   page,
   browserName,
-  isMobile,
 }) => {
   // Click mic button in the video preview area
   await page.getByTestId('video-container-button').first().click();
@@ -74,10 +78,175 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
 
   // Skipping this step for FF as we don't support BG replacement on FF
-  // Also, skipping this step for mobile viewport as, currently BG replacement button is not displayed for mobile view ports.
-  if (browserName !== 'firefox' && !isMobile) {
+  if (browserName !== 'firefox') {
     await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('background-effects-text')).toBeVisible();
   }
+});
+
+test('should not navigate and should show validation error for invalid usernames', async ({
+  page,
+}) => {
+  // Attempt to join with empty name
+  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
+
+  expect(page.url()).toContain('waiting-room/test-room');
+  await expect(page.getByText('Name cannot be empty or contain special characters.')).toBeVisible();
+
+  // Attempt to join with only special characters
+  await page.getByLabel('Name').fill('!!!@@@');
+  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
+
+  expect(page.url()).toContain('waiting-room/test-room');
+  await expect(page.getByText('Name cannot be empty or contain special characters.')).toBeVisible();
+});
+
+test('should open device selection menus and show device items', async ({
+  page,
+  isMobile,
+  browserName,
+}) => {
+  const controlPanel = page.getByTestId('ControlPanel');
+
+  await controlPanel.getByLabel('toggle audio').click();
+  const audioInputMenu = page.getByTestId('audioinput-menu');
+  await expect(audioInputMenu).toBeVisible();
+  await expect(audioInputMenu.getByRole('menuitem').first()).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await controlPanel.getByLabel('toggle video').click();
+  const videoInputMenu = page.getByTestId('videoinput-menu');
+  await expect(videoInputMenu).toBeVisible();
+  await expect(videoInputMenu.getByRole('menuitem').first()).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await controlPanel.getByLabel('Speakers').click();
+  const audioOutputMenu = page.getByTestId('audiooutput-menu');
+  await expect(audioOutputMenu).toBeVisible();
+
+  // Firefox on Linux CI does not enumerate audio output devices.
+  if (browserName !== 'firefox') {
+    await expect(audioOutputMenu.getByTestId('soundTest')).toBeVisible();
+    if (!isMobile) {
+      await expect(audioOutputMenu.getByRole('menuitem').first()).toBeVisible();
+    }
+  }
+});
+
+test('should show all items in the More Options menu', async ({ page }) => {
+  const moreOptionsButton = page
+    .locator('button')
+    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') });
+  await moreOptionsButton.click();
+
+  await expect(page.getByTestId('menu-more-options')).toBeVisible();
+
+  // Advanced settings is conditionally rendered based on env config
+  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
+  if ((await advancedSettingsOption.count()) > 0) {
+    await expect(advancedSettingsOption).toBeVisible();
+  }
+
+  await expect(page.getByText('Pre-call network test')).toBeVisible();
+});
+
+test('should display the correct room name in the waiting room', async ({ page }) => {
+  await expect(page.getByText('test-room')).toBeVisible();
+});
+
+test('should render the video preview element after page load', async ({ page }) => {
+  await expect(page.locator('[data-video-container]')).toBeVisible();
+
+  await page.waitForSelector('.video__element', { state: 'attached', timeout: 10000 });
+  await expect(page.locator('.video__element')).toBeAttached();
+});
+
+test('should run Pre-call Network Test end-to-end: progress, stop, retry, and results', async ({
+  page,
+  browserName,
+}) => {
+  test.setTimeout(120_000);
+
+  // Pre-call network test requires media processor support (not supported in Firefox)
+  if (browserName === 'firefox') {
+    return;
+  }
+
+  const moreOptionsButton = page
+    .locator('button')
+    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') });
+  await moreOptionsButton.click();
+  await expect(page.getByTestId('menu-more-options')).toBeVisible();
+
+  await page.getByTestId('menu-more-options').getByText('Pre-call network test').click();
+
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Pre-call network test')).toBeVisible();
+  await expect(
+    dialog.getByText(
+      'Test your device access, network connectivity and call quality before joining'
+    )
+  ).toBeVisible();
+
+  await expect(page.locator('[role="progressbar"]')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Stop test' }).click();
+  await expect(dialog.getByText('Test stopped')).toBeVisible();
+  await expect(
+    dialog.getByText("You stopped the network test. You can retry when you're ready.")
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Retry test' }).click();
+  await expect(page.locator('[role="progressbar"]')).toBeVisible();
+
+  // Wait for the test to complete and show results (scores are displayed as X.XX/5)
+  await expect(dialog.getByText(/\d+\.\d+\/5/).first()).toBeVisible({ timeout: 60000 });
+
+  await expect(dialog.getByText('Audio')).toBeVisible();
+  await expect(dialog.getByText('Video')).toBeVisible();
+
+  await expect(dialog.getByText('Quality:').first()).toBeVisible();
+
+  // Verify both scores are present (format: X.XX/5)
+  const scoreElements = dialog.getByText(/^\d+\.\d+\/5$/);
+  await expect(scoreElements).toHaveCount(2);
+
+  await expect(page.getByRole('button', { name: 'Retry test' })).toBeVisible();
+});
+
+test('should show PersonIcon avatar with correct initials when video is disabled', async ({
+  page,
+}) => {
+  await page.getByTestId('video-container-button').nth(1).click();
+  await expect(
+    page.getByTestId('video-container-button').nth(1).getByTestId('vivid-icon-video-off-line')
+  ).toBeVisible();
+
+  await expect(page.getByTestId('PersonIcon')).toBeVisible();
+
+  await page.getByLabel('Name').fill('Alice');
+  await expect(page.getByTestId('PersonIcon')).toHaveText('A');
+
+  await page.getByLabel('Name').fill('John Doe');
+  await expect(page.getByTestId('PersonIcon')).toHaveText('JD');
+});
+
+test('should carry username and initials to the meeting room publisher tile', async ({ page }) => {
+  await page.getByTestId('video-container-button').nth(1).click();
+  await expect(
+    page.getByTestId('video-container-button').nth(1).getByTestId('vivid-icon-video-off-line')
+  ).toBeVisible();
+
+  await page.getByLabel('Name').fill('John Doe');
+  await expect(page.getByTestId('PersonIcon')).toHaveText('JD');
+
+  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
+  expect(page.url()).toContain('room/test-room');
+  await page.waitForSelector('.publisher', { state: 'visible' });
+
+  await expect(page.getByTestId('publisher-container').getByText('John Doe')).toBeVisible();
+
+  await expect(page.getByTestId('publisher-container').getByText('JD')).toBeVisible();
 });
