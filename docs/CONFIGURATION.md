@@ -70,6 +70,26 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 | `JIRA_EPIC_LINK` | Epic link field value |
 | `JIRA_EPIC_URL` | URL to the target epic |
 
+#### Okta authentication (optional, opt-in)
+
+Validates the caller's Okta access token on the protected session/token endpoints (`POST /v2/createSession`, `POST /v2/joinSession`) by calling Okta's introspection endpoint on every request. **Disabled by default** — when `OKTA_AUTH_ENABLED` is absent or `false`, the middleware is a no-op and existing behaviour is unchanged.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OKTA_AUTH_ENABLED` | ⚠️ opt-in | Set to `true` to enable Okta JWT validation. Any other value (or unset) keeps the middleware a no-op. |
+| `OKTA_CLIENT_ID` | ✅ if enabled | Your Okta application's client ID. Client IDs are public values (not secrets). |
+| `OKTA_ISSUER_URL` | ✅ if enabled | Your Okta org's root URL — not a path like `/oauth2/default`, which requires a Custom Authorization Server that may not exist on every tenant and can 400. The introspection URL is derived as `${OKTA_ISSUER_URL}/oauth2/v1/introspect`. |
+
+```ini
+OKTA_AUTH_ENABLED='true'
+OKTA_CLIENT_ID='your-okta-client-id'
+OKTA_ISSUER_URL='https://your-org.okta.com'
+```
+
+**Dual token source.** The middleware checks the `Authorization: Bearer <token>` header first — this is how mobile clients (iOS/Android) authenticate, since they hold the Okta access token directly. If no Bearer header is present, it falls back to `req.session.accessToken` — the path web clients use, since the browser never touches the token directly; the Node.js backend is expected to store it server-side at login. Both paths are validated through the same Okta introspection call, and a `401` is returned if the token is missing from both sources, inactive, or the introspection call fails.
+
+> ⚠️ The session-based path requires a server-side session populated at login (`req.session.accessToken`). That login flow (Okta Authorization Code redirect + callback + session write) is separate, not-yet-built work — this repo has no session middleware installed today. Until it ships, web requests relying on the session fallback will always 401 when `OKTA_AUTH_ENABLED=true`; only the mobile Bearer-header path is exercisable end-to-end right now.
+
 ---
 
 ### Frontend (`env.sh`)
