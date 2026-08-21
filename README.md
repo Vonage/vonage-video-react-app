@@ -118,6 +118,10 @@ This application provides features for common conferencing use cases, such as:
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
 
+### Okta authentication (optional)
+
+The backend can validate Okta access tokens on `/createSession` and `/joinSession` via `OKTA_AUTH_ENABLED` (opt-in, `false`/unset by default — a no-op otherwise) and `OKTA_CLIENT_ID`. Mobile clients authenticate via `Authorization: Bearer <token>`; web clients are validated via a server-side session (`req.session.accessToken`) instead, since the browser never holds the token directly. See [Configuration](./docs/CONFIGURATION.md#okta-authentication-optional-opt-in) for the full variable reference and current limitations.
+
 ## Documentation
 
 | Document | Description |
