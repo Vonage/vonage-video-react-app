@@ -1,0 +1,27 @@
+docs/CONFIGURATION.md
+  s_5c932d8b528372::t_ecea13cb50bb5d 80-86
+  s_5c932d8b528372::t_40d4b38fa73a51 77-79
+  s_5c932d8b528372::t_c4748ba7fb3b44 87-89
+  s_5c932d8b528372::t_0fbe30bb9f4880 73-76,90-92
+backend/.env.example
+  s_5c932d8b528372::t_2c4fe49b9c6fa1 49-52
+  s_5c932d8b528372::t_d696d64c1c49ad 46-48
+  s_5c932d8b528372::t_808ff1850d573c 53
+  s_5c932d8b528372::t_0f0bb0517bd5f3 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "27b5ca31361a742ec3f0d25e5406f06306bd211d",
+  "prompts": {},
+  "sessions": {
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
