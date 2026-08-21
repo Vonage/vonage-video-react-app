@@ -1,7 +1,60 @@
+libs/common/scripts/publishPackage.ts
+  s_5be0f7ada839c8::t_2b02830a8eefb6 29,38,41,44,47,52,55,62-63
+  s_5be0f7ada839c8::t_5ef5e91db12c15 2-4
+  s_5be0f7ada839c8::t_339418f379d450 6-8,26-28
+  s_5be0f7ada839c8::t_065894ed213692 30
+libs/common/scripts/publishPackage.dev.ts
+  s_5be0f7ada839c8::t_a2fd9c70c1fd41 111
+  s_5be0f7ada839c8::t_2da107b884e2ec 120
+  s_5be0f7ada839c8::t_3b32aac032c587 59,65,69
+  s_5be0f7ada839c8::t_01fc7fb4039f6d 32,127,143
+  s_5be0f7ada839c8::t_0357c4b515ec20 150
+  s_5be0f7ada839c8::t_b16caf383d4008 40,44-46
+  s_5be0f7ada839c8::t_d925a74cc1a7f7 133
+  h_6029769cf9ac60 141
+  s_5be0f7ada839c8::t_3c292a65c9b56a 33-34,56
+  s_5be0f7ada839c8::t_c36636a9ba91d6 74
+  s_5be0f7ada839c8::t_f3f0a5d31fcd9a 48-49
+  s_5be0f7ada839c8::t_dd006a5cea4e16 116
+  s_5be0f7ada839c8::t_39cebd679f5656 23,75,91,95,107
+  s_5be0f7ada839c8::t_c01e5d4034453c 76
+  s_5be0f7ada839c8::t_fbe02da57b7e10 146
+  s_5be0f7ada839c8::t_7d42c3a3ef0595 1-3,14-16
+  s_5be0f7ada839c8::t_df4310641373eb 17-22
+  s_5be0f7ada839c8::t_c75c4e00c48d30 58
+  s_5be0f7ada839c8::t_a4c9e22cbab874 60
+  s_5be0f7ada839c8::t_a605708d89ea92 62
+  s_5be0f7ada839c8::t_5ae8cb3338c1a3 66
+  s_5be0f7ada839c8::t_f9fe1bd0a04534 70
+  s_5be0f7ada839c8::t_e8e5c2a25e2469 80-82,88-90
+  s_5be0f7ada839c8::t_0f86674b97ce45 92-94
+  s_5be0f7ada839c8::t_e593685eefa408 96
+  s_5be0f7ada839c8::t_18e1d1154e423f 100
+  s_5be0f7ada839c8::t_1c6592472b4d9d 102
+  s_5be0f7ada839c8::t_df6d755e7b5f41 108
+  s_5be0f7ada839c8::t_210dcf8222c923 130
+  s_5be0f7ada839c8::t_93d0eee2259fc2 153,154-155
+libs/common/scripts/checkPackageHash.ts
+  h_6029769cf9ac60 40
 ---
 {
   "schema_version": "authorship/3.0.0",
-  "git_ai_version": "1.6.14",
+  "git_ai_version": "1.6.18",
   "base_commit_sha": "413250d94737c3a503b08a891b47167f3b7f3790",
-  "prompts": {}
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5be0f7ada839c8": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "bcb931c9-e48b-483c-bcd0-f8f108503ee4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
 }

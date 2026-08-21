@@ -1,0 +1,19 @@
+libs/common/manifest.json
+  s_5bd8269df90a7a::t_55f1dd494cc9cf 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "59e27193e450499d47367b62bee2eb5104722b71",
+  "prompts": {},
+  "sessions": {
+    "s_5bd8269df90a7a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "84b29a9d-7f80-4259-a8f0-fa0d081215f7",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

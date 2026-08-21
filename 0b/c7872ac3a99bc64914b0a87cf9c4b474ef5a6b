@@ -1,0 +1,29 @@
+libs/common/manifest.json
+  s_5bd8269df90a7a::t_55f1dd494cc9cf 4
+frontend/src/locales/detectLanguage/detectLanguage.spec.ts
+  h_6029769cf9ac60 9-10,12-13,22-26
+  h_6029769cf9ac60 11
+frontend/src/locales/detectLanguage/detectLanguage.ts
+  h_737cf808c1c597 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "0bc7872ac3a99bc64914b0a87cf9c4b474ef5a6b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5bd8269df90a7a": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "84b29a9d-7f80-4259-a8f0-fa0d081215f7",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
