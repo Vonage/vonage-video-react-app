@@ -107,6 +107,7 @@ describe('usePublisherStats', () => {
 
       expect(stats.frameRate.value).toBe(24);
     });
+  });
 
   describe('bitrateBps', () => {
     it('calculates bitrate correctly when a previous sample is available', async () => {
