@@ -36,7 +36,6 @@ function setupPartialMock<T extends object>(
   // mock functions based on the provided source
   entries.forEach((key) => {
     const value = source[key as keyof T];
-    const currentValue = target[key as keyof T];
 
     const desc = (() => {
       const desc = Object.getOwnPropertyDescriptor(target, key);
@@ -75,6 +74,8 @@ function setupPartialMock<T extends object>(
           `For ESM modules, pass a copy: { ...actual }`
       );
     }
+
+    const currentValue = target[key as keyof T];
 
     // Spy the function without modifying its implementation
     if (value === SPY_MARK) {
