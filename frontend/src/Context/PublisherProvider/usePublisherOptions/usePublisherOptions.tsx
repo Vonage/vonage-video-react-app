@@ -31,9 +31,21 @@ const usePublisherOptions = ({
   const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
     (state) => state.subscriberAudioFallbackEnabled
   );
+  const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
+    (state) => state.advancedNoiseSuppressionEnabled
+  );
+  const echoCancellationEnabled = advancedSettings$.use.select(
+    (state) => state.echoCancellationEnabled
+  );
+  const noiseSuppressionEnabled = advancedSettings$.use.select(
+    (state) => state.noiseSuppressionEnabled
+  );
+  const autoGainControlEnabled = advancedSettings$.use.select(
+    (state) => state.autoGainControlEnabled
+  );
 
   // Extract individual properties to avoid object reference changes
-  const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
+  const { name, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
     user.defaultSettings;
 
   const videoSource = useDeviceId('videoinput');
@@ -43,7 +55,7 @@ const usePublisherOptions = ({
     const initials = getInitials(name);
 
     const audioFilter: AudioFilter | undefined =
-      noiseSuppression && hasMediaProcessorSupport('audio')
+      advancedNoiseSuppressionEnabled && hasMediaProcessorSupport('audio')
         ? { type: 'advancedNoiseSuppression' }
         : undefined;
 
@@ -57,10 +69,13 @@ const usePublisherOptions = ({
       },
       audioFilter,
       audioSource,
+      autoGainControl: autoGainControlEnabled,
+      echoCancellation: echoCancellationEnabled,
       enableDtx,
       initials,
       insertDefaultUI: false,
       name,
+      noiseSuppression: noiseSuppressionEnabled,
       publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
@@ -86,7 +101,6 @@ const usePublisherOptions = ({
       backgroundFilter,
       enableDtx,
       name,
-      noiseSuppression,
       publishAudio,
       publishCaptions,
       publishVideo,
@@ -98,6 +112,10 @@ const usePublisherOptions = ({
       codecPriority,
       publisherAudioFallbackEnabled,
       subscriberAudioFallbackEnabled,
+      advancedNoiseSuppressionEnabled,
+      echoCancellationEnabled,
+      noiseSuppressionEnabled,
+      autoGainControlEnabled,
     ]
   );
 };
