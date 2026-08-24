@@ -231,6 +231,32 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(sessionKey).toEqual(expect.any(String));
         });
 
+        it.each([
+          ['/v2/hooks/archive', 'Invalid archive hook payload'],
+          ['/v2/hooks/captions', 'Invalid captions hook payload'],
+          ['/v2/hooks/session', 'Invalid session hook payload'],
+        ])(
+          'answers %s with a 400 instead of crashing on a malformed payload',
+          async (route, fallbackMessage) => {
+            expect.assertions(4);
+
+            // A malformed body fails the Zod schema. The handler is wrapped in httpHandler, so
+            // the rejection reaches the error middleware instead of becoming an unhandled
+            // rejection that kills the process and leaves the request hanging.
+            const response = await request(server)
+              .post(route)
+              .set('Content-Type', 'application/json')
+              .send({});
+
+            expect(response.statusCode).toEqual(400);
+            expect(response.body.message).toEqual(fallbackMessage);
+            // The response goes through exportSafely(), so captured request internals must
+            // not leak to clients.
+            expect(response.body).not.toHaveProperty('configHeaders');
+            expect(response.body).not.toHaveProperty('config');
+          }
+        );
+
         it('handles non-actionable and actionable captions events', async () => {
           await sessionService.setCaptionsId({
             sessionId: validSessionId,
