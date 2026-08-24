@@ -1,0 +1,14 @@
+backend/middleware/oktaAuthMiddleware/oktaAuthMiddleware.ts
+  h_c939f8fae0de97 6,99-100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "14a2dbc346238fe4cbff19b8f0e7d76ec0df1fcd",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
