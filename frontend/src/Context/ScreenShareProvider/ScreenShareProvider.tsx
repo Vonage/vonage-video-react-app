@@ -1,8 +1,18 @@
-import { ReactElement, ReactNode, createContext } from 'react';
+import { createContext } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import useScreenShare from '../../hooks/useScreenShare';
 
 export type ScreenShareContextType = ReturnType<typeof useScreenShare>;
-export const ScreenShareContext = createContext({} as ScreenShareContextType);
+
+const emptyScreenShareContext: ScreenShareContextType = {
+  toggleShareScreen: async () => {},
+  isSharingScreen: false,
+  isEntireScreen: false,
+  screensharingPublisher: null,
+  screenshareVideoElement: undefined,
+};
+
+export const ScreenShareContext = createContext<ScreenShareContextType>(emptyScreenShareContext);
 
 export type ScreenShareProviderProps = {
   children: ReactNode;
