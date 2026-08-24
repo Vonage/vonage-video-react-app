@@ -1,33 +1,46 @@
-import { renderHook } from '@testing-library/react';
+import type { Publisher } from '@vonage/client-sdk-video';
+import { render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
 import useScreenShareContext from '../../hooks/useScreenShareContext';
 import { ScreenShareProvider } from './ScreenShareProvider';
 
-const toggleShareScreen = vi.fn();
-const screensharingPublisher = { id: 'screen-publisher' };
+const screenShareValue: UseScreenShareType = {
+  isSharingScreen: true,
+  isEntireScreen: false,
+  screensharingPublisher: { id: 'screen-publisher' } as unknown as Publisher,
+  screenshareVideoElement: undefined,
+  toggleShareScreen: vi.fn(),
+};
 
 vi.mock('../../hooks/useScreenShare', () => ({
-  default: () => ({
-    isSharingScreen: true,
-    isEntireScreen: false,
-    screensharingPublisher,
-    screenshareVideoElement: undefined,
-    toggleShareScreen,
-  }),
+  default: vi.fn(),
 }));
 
 describe('ScreenShareProvider', () => {
-  it('exposes the screen-share publisher to consumers', () => {
+  it('passes the useScreenShare value through to consumers unchanged', () => {
+    vi.mocked(useScreenShare).mockReturnValue(screenShareValue);
+
     const wrapper = ({ children }: { children: ReactNode }) => (
       <ScreenShareProvider>{children}</ScreenShareProvider>
     );
 
     const { result } = renderHook(() => useScreenShareContext(), { wrapper });
 
-    expect(result.current.screensharingPublisher).toBe(screensharingPublisher);
-    expect(result.current.isSharingScreen).toBe(true);
-    expect(result.current.toggleShareScreen).toBe(toggleShareScreen);
+    expect(result.current).toBe(screenShareValue);
+  });
+
+  it('renders its children', () => {
+    vi.mocked(useScreenShare).mockReturnValue(screenShareValue);
+
+    render(
+      <ScreenShareProvider>
+        <div>child content</div>
+      </ScreenShareProvider>
+    );
+
+    expect(screen.getByText('child content')).toBeInTheDocument();
   });
 
   it('degrades to an empty context outside the provider, as in the waiting room', () => {
