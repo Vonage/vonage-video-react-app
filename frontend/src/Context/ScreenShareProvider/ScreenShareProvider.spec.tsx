@@ -44,9 +44,8 @@ describe('ScreenShareProvider', () => {
     expect(screen.getByText('child content')).toBeInTheDocument();
   });
 
-  it('degrades to an empty context outside the provider, as in the waiting room', () => {
-    const { result } = renderHook(() => useScreenShareContext());
+it('degrades to an empty context outside the provider, as in the waiting room', () => {
+  const { result } = renderHook(() => useScreenShareContext());
 
-    expect(result.current.screensharingPublisher).toBeUndefined();
-  });
+  expect(result.current.screensharingPublisher).toBeNull();
 });
