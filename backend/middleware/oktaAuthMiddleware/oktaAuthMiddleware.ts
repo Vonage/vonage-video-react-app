@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { StatusCode } from 'status-code-enum';
 import tryCatch from '@common/execution/tryCatch';
 
-const BEARER_SCHEME_PATTERN = /^Bearer\s+(.+)$/i;
+const BEARER_PREFIX = 'bearer ';
 const OKTA_INTROSPECT_PATH = '/oauth2/v1/introspect';
 const OKTA_REQUEST_TIMEOUT_MS = 5000;
 
@@ -95,10 +95,9 @@ export default oktaAuthMiddleware;
 
 function extractAccessToken(req: Request): string | undefined {
   const authorizationHeader = req.headers.authorization;
-  const bearerMatch = authorizationHeader?.match(BEARER_SCHEME_PATTERN);
 
-  if (bearerMatch) {
-    return bearerMatch[1];
+  if (authorizationHeader?.toLowerCase().startsWith(BEARER_PREFIX)) {
+    return authorizationHeader.slice(BEARER_PREFIX.length).trim();
   }
 
   return (req as RequestWithOktaAuth).session?.accessToken;
