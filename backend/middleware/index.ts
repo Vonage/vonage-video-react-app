@@ -1,4 +1,4 @@
 export { default as helmetMiddleware } from './helmetMiddleware';
 export { errorHandler } from './errorHandler';
 export { default as rateLimitMiddleware } from './rateLimitMiddleware';
-export { default as oktaAuthMiddleware } from './oktaAuthMiddleware';
+export { default as tokenAuthMiddleware } from './tokenAuthMiddleware';

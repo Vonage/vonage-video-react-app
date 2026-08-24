@@ -9,7 +9,7 @@ import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
 import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
 import getSessionStorageService from '../../sessionStorageService';
-import { oktaAuthMiddleware } from '../../middleware';
+import { tokenAuthMiddleware } from '../../middleware';
 import { CaptionsStatus } from './types';
 
 const videoRouter = Router();
@@ -177,11 +177,11 @@ videoRouter.post('/hooks/session', async (req: Request, res: Response) => {
 // #endregion ------------------------------------------------------------------------
 
 /**
- * Okta JWT validation on the protected session/token endpoints.
- * A no-op unless OKTA_AUTH_ENABLED=true (see backend/middleware/oktaAuthMiddleware).
+ * OIDC token validation on the protected session/token endpoints.
+ * A no-op unless AUTH_ENABLED=true (see backend/middleware/tokenAuthMiddleware).
  */
-videoRouter.post('/createSession', oktaAuthMiddleware);
-videoRouter.post('/joinSession', oktaAuthMiddleware);
+videoRouter.post('/createSession', tokenAuthMiddleware);
+videoRouter.post('/joinSession', tokenAuthMiddleware);
 
 videoRouter.use(videoHandler);
 
