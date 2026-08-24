@@ -2,7 +2,8 @@ import type { Publisher } from '@vonage/client-sdk-video';
 import { render, renderHook, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import useScreenShare, { UseScreenShareType } from '../../hooks/useScreenShare';
+import type { UseScreenShareType } from '../../hooks/useScreenShare';
+import useScreenShare from '../../hooks/useScreenShare';
 import useScreenShareContext from '../../hooks/useScreenShareContext';
 import { ScreenShareProvider } from './ScreenShareProvider';
 

@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { ScreenShareContext, ScreenShareContextType } from '../Context/ScreenShareProvider';
+import { ScreenShareContext } from '../Context/ScreenShareProvider';
+import type { ScreenShareContextType } from '../Context/ScreenShareProvider';
 
 /**
  * React hook to access the ScreenShare context containing the local screen-share publisher and
@@ -7,9 +8,6 @@ import { ScreenShareContext, ScreenShareContextType } from '../Context/ScreenSha
  * also mounted - this returns an empty context, so consumers must treat the publisher as optional.
  * @returns {ScreenShareContextType} - The current context value for the ScreenShare Context.
  */
-const useScreenShareContext = (): ScreenShareContextType => {
-  const context = useContext<ScreenShareContextType>(ScreenShareContext);
-  return context;
-};
+const useScreenShareContext = (): ScreenShareContextType => useContext(ScreenShareContext);
 
 export default useScreenShareContext;
