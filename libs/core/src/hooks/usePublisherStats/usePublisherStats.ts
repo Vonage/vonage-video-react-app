@@ -17,6 +17,7 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
+import { readHighestLayerResolution } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -83,11 +84,6 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
 
       const frameRate = fixedFrameRate ?? null;
 
-      /**
-       * `videoWidth`/`videoHeight` report the *captured* video, which does not follow the encoder
-       * scaling down under CPU or bandwidth pressure - the case this panel exists to diagnose. The
-       * layers carry the encoded dimensions, so they win, with the captured size as the fallback.
-       */
       const capturedWidth = publisher.videoWidth();
       const capturedHeight = publisher.videoHeight();
       const capturedResolution =
@@ -158,32 +154,6 @@ type PreviousPublisherVideoSample = {
   bytesSent: BytesValue;
   timestamp: number;
 };
-
-/**
- * Encoded dimensions of the largest layer that reports usable ones.
- *
- * The guards below are load-bearing even though `VideoLayerStats` types width and height as
- * required numbers: an encoding that is active but not transmitting arrives without them, and the
- * SDK assigns both straight from the underlying stats with no default - it guards them the same way
- * in its own sort.
- * @param {VideoLayerStats[] | undefined} layers - the publisher's active encoding layers
- * @returns {{ width: number; height: number } | null} the largest encoded size, or null when no
- * layer reports usable dimensions
- */
-function readHighestLayerResolution(
-  layers: VideoLayerStats[] | undefined
-): { width: number; height: number } | null {
-  const sizes = (layers ?? [])
-    .map((layer) => ({ width: layer.width, height: layer.height }))
-    .filter((size) => typeof size.width === 'number' && typeof size.height === 'number')
-    .filter((size) => size.width > 0 && size.height > 0);
-
-  if (!sizes.length) return null;
-
-  return sizes.reduce((largest, size) =>
-    size.width * size.height > largest.width * largest.height ? size : largest
-  );
-}
 
 function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
   return new Promise((resolve) => {
