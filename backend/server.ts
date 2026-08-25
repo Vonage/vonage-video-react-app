@@ -36,10 +36,10 @@ app.use(bodyParser.json());
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
 
-const routesExcludedFromAuth = ['/_/health'];
+const routesExcludedFromAuth = new Set(['/_/health']);
 
 app.use((req, res, next) => {
-  if (routesExcludedFromAuth.includes(req.path)) {
+  if (routesExcludedFromAuth.has(req.path)) {
     next();
     return;
   }
