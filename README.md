@@ -120,9 +120,7 @@ See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonag
 
 ### OIDC token authentication (optional)
 
-The backend can validate OIDC access tokens on `/v2/createSession` and `/v2/joinSession` via `AUTH_ENABLED` (opt-in, `false`/unset by default — a no-op otherwise),
-`OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Provider-agnostic — currently pointed at Vonage's internal Okta tenant, but nothing in the middleware is Okta-specific. Mobile clients authenticate via `Authorization: Bearer <token>`; web clients are validated via a server-side session (`req.session.accessToken`) instead, since the browser never holds the token directly. See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional-opt-in) for
-the full variable reference and current limitations.
+The backend can validate OIDC access tokens on `/v2/createSession` and `/v2/joinSession` via `AUTH_ENABLED` (opt-in, `false`/unset by default), `OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Mobile clients authenticate via `Authorization: Bearer <token>`; web clients via a server-side session (`req.session.accessToken`). See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional-opt-in) for the full variable reference and current limitations.
 
 ## Documentation
 

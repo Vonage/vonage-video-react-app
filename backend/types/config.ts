@@ -25,8 +25,13 @@ export type OpentokConfig = {
   apiSecret: string;
 };
 
+export type AuthConfig =
+  | { authEnabled: false }
+  | { authEnabled: true; oidcIssuerUrl: string; oidcClientId: string };
+
 export type Config = (VonageConfig | OpentokConfig) &
-  FeedbackConfig & {
+  FeedbackConfig &
+  AuthConfig & {
     sessionKeySecret: string;
     loggerVerbose: boolean;
   };
