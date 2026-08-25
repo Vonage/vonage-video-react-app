@@ -13,6 +13,8 @@ export type UseScreenShareType = {
   toggleShareScreen: () => Promise<void>;
   isSharingScreen: boolean;
   isEntireScreen: boolean;
+  showLocalScreensharePreview: boolean;
+  toggleLocalScreensharePreview: () => void;
   screensharingPublisher: Publisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
 };
@@ -32,13 +34,19 @@ const useScreenShare = (): UseScreenShareType => {
   // State to track sharing status
   const [isSharingScreen, setIsSharingScreen] = useState<boolean>(false);
   const [isEntireScreen, setIsEntireScreen] = useState<boolean>(false);
+  const [showLocalScreensharePreview, setShowLocalScreensharePreview] = useState<boolean>(false);
   const [screenshareVideoElement, setScreenshareVideoElement] = useState<
     HTMLVideoElement | HTMLObjectElement
   >();
 
+  const toggleLocalScreensharePreview = useCallback(() => {
+    setShowLocalScreensharePreview((current) => !current);
+  }, []);
+
   const onScreenShareStopped = useCallback(() => {
     setIsSharingScreen(false);
     setIsEntireScreen(false);
+    setShowLocalScreensharePreview(false);
     setScreenshareVideoElement(undefined);
     screenSharingPubRef.current = null;
   }, []);
@@ -48,6 +56,7 @@ const useScreenShare = (): UseScreenShareType => {
       unpublish(screenSharingPubRef.current);
       setIsSharingScreen(false);
       setIsEntireScreen(false);
+      setShowLocalScreensharePreview(false);
     }
   }, [unpublish]);
 
@@ -137,6 +146,8 @@ const useScreenShare = (): UseScreenShareType => {
     toggleShareScreen,
     isSharingScreen,
     isEntireScreen,
+    showLocalScreensharePreview,
+    toggleLocalScreensharePreview,
     screenshareVideoElement,
     /**
      * On the first render this will return null

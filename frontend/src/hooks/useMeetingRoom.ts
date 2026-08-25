@@ -64,6 +64,8 @@ const useMeetingRoom = () => {
   const {
     isSharingScreen,
     isEntireScreen,
+    showLocalScreensharePreview,
+    toggleLocalScreensharePreview,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -171,6 +173,8 @@ const useMeetingRoom = () => {
     t,
     isSharingScreen,
     isEntireScreen,
+    showLocalScreensharePreview,
+    toggleLocalScreensharePreview,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,

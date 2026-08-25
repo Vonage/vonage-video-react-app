@@ -287,6 +287,8 @@
   "screenSharing.dialog.content": "Parece que alguien más está compartiendo su pantalla. Si continúas, su pantalla dejará de compartirse.",
   "screenSharing.dialog.title": "¿Deseas compartir tu pantalla?",
   "screenSharing.dialog.hiddenMessage": "Estás compartiendo tu pantalla.",
+  "screenSharing.dialog.showPreview": "Mostrar vista previa",
+  "screenSharing.dialog.hidePreview": "Ocultar vista previa",
   "screenSharing.title.start": "Iniciar compartir pantalla",
   "screenSharing.title.stop": "Detener compartir pantalla",
   "screenSharing.tooltip.ariaLabel": "Iniciar o detener compartir pantalla",

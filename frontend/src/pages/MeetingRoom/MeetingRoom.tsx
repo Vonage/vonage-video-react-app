@@ -38,6 +38,8 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     t,
     isSharingScreen,
     isEntireScreen,
+    showLocalScreensharePreview,
+    toggleLocalScreensharePreview,
     screensharingPublisher,
     screenshareVideoElement,
     toggleShareScreen,
@@ -90,6 +92,8 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
       <VideoTileCanvas
         isSharingScreen={isSharingScreen}
         isEntireScreen={isEntireScreen}
+        showLocalScreensharePreview={showLocalScreensharePreview}
+        toggleLocalScreensharePreview={toggleLocalScreensharePreview}
         screensharingPublisher={screensharingPublisher}
         screenshareVideoElement={screenshareVideoElement}
         isRightPanelOpen={rightPanelActiveTab !== 'closed'}
