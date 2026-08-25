@@ -70,15 +70,17 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 | `JIRA_EPIC_LINK` | Epic link field value |
 | `JIRA_EPIC_URL` | URL to the target epic |
 
-#### OIDC token authentication (optional, opt-in)
+#### OIDC token authentication (optional)
 
-Validates the caller's OIDC access token on the protected session/token endpoints (`POST /v2/createSession`, `POST /v2/joinSession`) by calling the configured provider's introspection endpoint on every request. Provider-agnostic — any standard OAuth 2.0/OIDC introspection endpoint works; this app currently points it at Vonage's internal Okta tenant, but nothing in the middleware, types, or env var names is Okta-specific. **Disabled by default** — when `AUTH_ENABLED` is absent or `false`, the middleware is a no-op and existing behaviour is unchanged.
+Protects `POST /v2/createSession` and `POST /v2/joinSession` by validating OIDC access tokens through the configured OAuth 2.0 introspection endpoint.
+
+Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication is skipped and existing behavior is unchanged.
 
 | Variable | Required | Description |
-|----------|----------|-------------|
-| `AUTH_ENABLED` | ⚠️ opt-in | Set to `true` to enable OIDC token validation. Any other value (or unset) keeps the middleware a no-op. |
-| `OIDC_CLIENT_ID` | ✅ if enabled | Your OIDC provider's application client ID. Client IDs are public values (not secrets). |
-| `OIDC_ISSUER_URL` | ✅ if enabled | Your OIDC provider's org root URL — not a path like `/oauth2/default`, which requires a Custom Authorization Server that may not exist on every tenant and can 400. The introspection URL is derived as `${OIDC_ISSUER_URL}/oauth2/v1/introspect`. |
+|---|---|---|
+| `AUTH_ENABLED` | opt-in | Set to `true` to enable token validation. |
+| `OIDC_CLIENT_ID` | if enabled | OIDC application client ID. |
+| `OIDC_ISSUER_URL` | if enabled | Provider org root URL. Introspection uses `${OIDC_ISSUER_URL}/oauth2/v1/introspect`. |
 
 ```ini
 AUTH_ENABLED='true'
@@ -86,11 +88,9 @@ OIDC_CLIENT_ID='your-client-id'
 OIDC_ISSUER_URL='https://your-org.okta.com'
 ```
 
-**Dual token source.** The middleware checks the `Authorization: Bearer <token>` header first — this is how mobile clients (iOS/Android) authenticate, since they hold the access token directly. If no Bearer header is present, it falls back to `req.session.accessToken` — the path web clients use, since the browser never touches the token directly; the Node.js backend is expected to store it server-side at login. Both paths are validated through the same introspection call, and a `401` is returned if the token is missing from both sources, inactive, not issued for this application, or the introspection call fails.
+The middleware checks for a Bearer token first, then falls back to req.session.accessToken. Both use the same introspection flow. Requests return 401 when the token is missing, inactive, invalid for this application, or introspection fails.
 
-> ⚠️ The session-based path requires a server-side session populated at login (`req.session.accessToken`). That login flow (OIDC Authorization Code redirect + callback + session write) is separate, not-yet-built work — this repo has no session middleware installed today. Until it ships, web requests relying on the session fallback will always 401 when `AUTH_ENABLED=true`; only the mobile Bearer-header path is exercisable end-to-end right now.
-
----
+_Note: Session-based authentication is not yet available because this repo does not currently implement the OIDC login/session flow. With AUTH_ENABLED=true, only Bearer-token authentication works end-to-end today._
 
 ### Frontend (`env.sh`)
 

@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import { Config, FeedbackConfig } from '../types/config';
+import { AuthConfig, Config, FeedbackConfig } from '../types/config';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -21,6 +21,19 @@ const loadConfig = (): Config => {
   const sessionKeySecret = process.env.SESSION_KEY_SECRET ?? '';
 
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
+
+  const authConfig: AuthConfig = ((): AuthConfig => {
+    if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
+
+    const oidcIssuerUrl = process.env.OIDC_ISSUER_URL ?? '';
+    const oidcClientId = process.env.OIDC_CLIENT_ID ?? '';
+
+    if (!oidcIssuerUrl || !oidcClientId) {
+      throw new Error('AUTH_ENABLED is true but OIDC_ISSUER_URL/OIDC_CLIENT_ID is not set');
+    }
+
+    return { authEnabled: true, oidcIssuerUrl, oidcClientId };
+  })();
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -47,6 +60,7 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...authConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
@@ -66,6 +80,7 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...authConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',

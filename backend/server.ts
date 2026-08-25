@@ -8,7 +8,7 @@ import cors from 'cors';
 import { Server } from 'http';
 import router from './routes';
 import { fileURLToPath } from 'url';
-import { errorHandler, helmetMiddleware, rateLimitMiddleware } from './middleware';
+import { authMiddleware, errorHandler, helmetMiddleware, rateLimitMiddleware } from './middleware';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -35,6 +35,18 @@ app.use(bodyParser.json());
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
+
+const routesExcludedFromAuth = ['/_/health'];
+
+app.use((req, res, next) => {
+  if (routesExcludedFromAuth.includes(req.path)) {
+    next();
+    return;
+  }
+
+  void authMiddleware(req, res, next);
+});
+
 app.use(router);
 
 app.use((_req, res, next) => {
