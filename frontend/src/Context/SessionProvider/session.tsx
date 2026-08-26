@@ -16,6 +16,7 @@ import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
+import type { ActiveSpeakerChangedPayload } from '@utils/ActiveSpeakerTracker/activeSpeakerTracker';
 import {
   Credential,
   LocalCaptionReceived,
@@ -304,13 +305,22 @@ const SessionProvider = ({
 
   // hook to keep track of the active speaker during the call and move it to the top of the display order
   useEffect(() => {
-    activeSpeakerTracker.current.on('activeSpeakerChanged', ({ newActiveSpeaker }) => {
+    const tracker = activeSpeakerTracker.current;
+    const handleActiveSpeakerChanged = ({ newActiveSpeaker }: ActiveSpeakerChangedPayload) => {
       const { subscriberId } = newActiveSpeaker;
       setActiveSpeakerIdAndRef(subscriberId);
       if (subscriberId) {
         moveSubscriberToTopOfDisplayOrder(subscriberId);
       }
-    });
+    };
+
+    tracker.on('activeSpeakerChanged', handleActiveSpeakerChanged);
+
+    // Remove the listener when the effect re-runs or the provider unmounts, otherwise a
+    // new listener is stacked on every dep change and duplicates fire per event.
+    return () => {
+      tracker.off('activeSpeakerChanged', handleActiveSpeakerChanged);
+    };
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
   const { user } = useUserContext();
