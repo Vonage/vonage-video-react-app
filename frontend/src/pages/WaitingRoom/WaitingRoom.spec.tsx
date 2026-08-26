@@ -98,6 +98,11 @@ describe('WaitingRoom', () => {
       applyVideoFilter: vi.fn(),
       clearVideoFilter: vi.fn(),
       getAudioSource: () => defaultAudioDevice,
+      getVideoSource: () => ({
+        deviceId: 'mock-video',
+        type: 'camera',
+        track: { clone: () => ({ stop: vi.fn() }) } as unknown as MediaStreamTrack,
+      }),
       videoWidth: () => 1280,
       videoHeight: () => 720,
       destroy: vi.fn(),
