@@ -106,8 +106,21 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
   const onEmoji = useCallback(
     ({ data, from: sendingConnection }: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => {
       if (data && sendingConnection) {
+        // Guard against malformed/non-JSON signals (e.g. a different SDK version or a
+        // malicious participant) — an unguarded JSON.parse would throw and crash the
+        // session signal handler.
+        const parsed = (() => {
+          try {
+            return JSON.parse(data) as EmojiDataType;
+          } catch {
+            return null;
+          }
+        })();
+
+        if (!parsed) return;
+
         const senderName = getSenderName(sendingConnection, subscriberWrappers) ?? '';
-        const { emoji, time }: EmojiDataType = JSON.parse(data);
+        const { emoji, time } = parsed;
 
         const emojiWrapper: EmojiWrapper = {
           name: senderName,

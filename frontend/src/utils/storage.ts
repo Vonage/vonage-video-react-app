@@ -10,9 +10,18 @@ export const STORAGE_KEYS = {
 };
 
 export const setStorageItem = (key: string, value: string) => {
-  window.localStorage.setItem(key, value);
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Safari private browsing or quota exceeded — degrade silently rather than crash
+    // the calling code path (e.g. saving settings).
+  }
 };
 
 export const getStorageItem = (key: string): string | null => {
-  return window.localStorage.getItem(key);
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 };
