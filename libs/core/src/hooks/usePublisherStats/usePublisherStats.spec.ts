@@ -81,13 +81,13 @@ describe('usePublisherStats', () => {
       expect(stats.frameRate.value).toBe(0);
     });
 
-    it('falls back to the highest encoding layer when the stats object has no frameRate', async () => {
+    it('reads the highest encoding layer', async () => {
       expect.assertions(1);
 
       const publisher = makePublisher([
         makeStatsContainer({
           video: {
-            // No top-level frameRate, as the client observability guide describes.
+            // Layer-only stats, as the client observability guide describes them.
             frameRate: undefined,
             layers: [{ encodedFrameRate: 5 }, { encodedFrameRate: 24 }],
           },
