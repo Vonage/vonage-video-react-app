@@ -17,6 +17,7 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
+import { readHighestLayerFrameRate } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -81,7 +82,11 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       const firstPublisherStatsContainer = publisherStatsContainers[0];
       const stats = firstPublisherStatsContainer?.stats;
 
-      const frameRate = fixedFrameRate ?? null;
+      const frameRate =
+        readHighestLayerFrameRate(stats?.video?.layers) ??
+        stats?.video?.frameRate ??
+        fixedFrameRate ??
+        null;
 
       const width = publisher.videoWidth();
       const height = publisher.videoHeight();
