@@ -9,6 +9,16 @@ const mockVonageVideoSDK = async () => {
     '@vonage/client-sdk-video'
   );
 
+  const hasMediaProcessorSupport = vi.fn(() => {
+    throw new Error(
+      'OT.hasMediaProcessorSupport() requires browser APIs. Mock this method in your test:\n' +
+        'vi.mocked(OT.hasMediaProcessorSupport).mockReturnValue(true);'
+    );
+  });
+  hasMediaProcessorSupport.promise = vi.fn((mediaType?: 'audio' | 'video' | 'both') =>
+    Promise.resolve(hasMediaProcessorSupport(mediaType))
+  );
+
   return {
     ...actual,
 
@@ -26,12 +36,7 @@ const mockVonageVideoSDK = async () => {
       );
     }),
 
-    hasMediaProcessorSupport: vi.fn(() => {
-      throw new Error(
-        'OT.hasMediaProcessorSupport() requires browser APIs. Mock this method in your test:\n' +
-          'vi.mocked(OT.hasMediaProcessorSupport).mockReturnValue(true);'
-      );
-    }),
+    hasMediaProcessorSupport,
 
     getDevices: vi.fn(() => {
       throw new Error(

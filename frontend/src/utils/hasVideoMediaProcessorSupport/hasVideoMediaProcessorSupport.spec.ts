@@ -45,4 +45,14 @@ describe('hasVideoMediaProcessorSupportAsync', () => {
     expect(promise).toHaveBeenCalledWith('video');
     expect(hasMediaProcessorSupport).not.toHaveBeenCalled();
   });
+
+  it('ignores an unmocked SDK promise left on a Vitest automock', async () => {
+    const leftoverSdkPromise = (() => Promise.resolve(false)) as (
+      mediaType?: 'audio' | 'video' | 'both'
+    ) => Promise<boolean>;
+    vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+    Object.assign(hasMediaProcessorSupport, { promise: leftoverSdkPromise });
+
+    await expect(hasVideoMediaProcessorSupportAsync()).resolves.toBe(true);
+  });
 });
