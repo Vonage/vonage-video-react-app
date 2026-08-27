@@ -1,0 +1,19 @@
+yarn.lock
+  s_abbf1ac51e6bbc::t_ec2f809741067e 5951,6161,8297,11066,11668,12449
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3530e6eecc9ac04c2d829d3b266a94f7ccefa73c",
+  "prompts": {},
+  "sessions": {
+    "s_abbf1ac51e6bbc": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "22a6dea8-8f06-4fb0-9027-2fe8412f6cfe",
+        "model": "unknown"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
