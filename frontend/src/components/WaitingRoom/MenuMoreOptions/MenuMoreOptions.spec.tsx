@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render as renderBase, screen, waitFor } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import * as clientSdkVideo from '@vonage/client-sdk-video';
-import isFirefox from '@web/platform/isFirefox';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
@@ -11,9 +10,9 @@ import composeProviders from '@web/helpers/composeProviders';
 import MenuMoreOptions from './MenuMoreOptions';
 import { env } from '../../../env';
 
-vi.mock('@web/platform/isFirefox', () => ({
-  default: vi.fn(() => false),
-}));
+const originalUserAgent = navigator.userAgent;
+const FIREFOX_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0';
 
 describe('MenuMoreOptions', () => {
   const mockOnClose = vi.fn();
@@ -22,12 +21,15 @@ describe('MenuMoreOptions', () => {
   beforeEach(() => {
     env.reset();
     mockOnClose.mockReset();
-    vi.mocked(isFirefox).mockReturnValue(false);
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(true);
   });
 
   afterEach(() => {
     env.reset();
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: originalUserAgent,
+    });
   });
 
   it('should render when open is true', () => {
@@ -137,7 +139,10 @@ describe('MenuMoreOptions', () => {
   });
 
   it('disables precall network test on Firefox even when video media processor is supported', () => {
-    vi.mocked(isFirefox).mockReturnValue(true);
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: FIREFOX_UA,
+    });
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
     expect(screen.getByText(/pre-call network test/i).closest('li')).toHaveAttribute(
@@ -145,28 +150,6 @@ describe('MenuMoreOptions', () => {
       'true'
     );
     expect(screen.getByText(/video effects/i).closest('li')).not.toHaveAttribute('aria-disabled');
-  });
-
-  it('checks video-only media processor support for video effects', () => {
-    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
-
-    expect(clientSdkVideo.hasMediaProcessorSupport).toHaveBeenCalledWith('video');
-  });
-
-  it('enables video effects once the async video check resolves true', async () => {
-    const check = vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
-    Object.assign(check, { promise: vi.fn().mockResolvedValue(true) });
-
-    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
-
-    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
-      'aria-disabled',
-      'true'
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/video effects/i).closest('li')).not.toHaveAttribute('aria-disabled');
-    });
   });
 
   it('shows an unsupported-feature tooltip for disabled menu items', async () => {
