@@ -21,12 +21,34 @@ describe('applyBackgroundFilter', () => {
   }) as unknown as Publisher;
   beforeEach(() => {
     vi.resetAllMocks();
-    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(vi.fn().mockReturnValue(true));
+    delete (hasMediaProcessorSupport as { promise?: unknown }).promise;
+    (hasMediaProcessorSupport as unknown as Mock).mockReturnValue(true);
   });
 
   it('does nothing if publisher is not provided', async () => {
     await applyBackgroundFilter({ publisher: null, backgroundSelected: 'low-blur' });
     expect(setStorageItem).not.toHaveBeenCalled();
+  });
+
+  it('does nothing if video media processor is not supported', async () => {
+    (hasMediaProcessorSupport as unknown as Mock).mockReturnValue(false);
+
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'low-blur' });
+
+    expect(mockPublisher.applyVideoFilter).not.toHaveBeenCalled();
+    expect(setStorageItem).not.toHaveBeenCalled();
+  });
+
+  it('applies a filter when the async video check is true even if the sync check is false', async () => {
+    (hasMediaProcessorSupport as unknown as Mock).mockReturnValue(false);
+    Object.assign(hasMediaProcessorSupport, { promise: vi.fn().mockResolvedValue(true) });
+
+    await applyBackgroundFilter({ publisher: mockPublisher, backgroundSelected: 'low-blur' });
+
+    expect(mockPublisher.applyVideoFilter).toHaveBeenCalledWith({
+      type: 'backgroundBlur',
+      blurStrength: 'low',
+    });
   });
 
   it('applies low blur-sm filter', async () => {

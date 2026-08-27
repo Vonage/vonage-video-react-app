@@ -1,10 +1,10 @@
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import { ReactElement } from 'react';
 import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
+import useHasVideoMediaProcessorSupport from '@hooks/useHasVideoMediaProcessorSupport';
 import VideoContainerButton from '../../VideoContainerButton';
 import { env } from '../../../../env';
 
@@ -24,7 +24,7 @@ const BackgroundEffectsButton = ({
   onClick,
 }: BackgroundEffectsButtonProps): ReactElement | false => {
   const shouldDisplayBackgroundEffects =
-    hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
+    useHasVideoMediaProcessorSupport() && env.ALLOW_BACKGROUND_EFFECTS;
   const { t } = useTranslation();
 
   return (

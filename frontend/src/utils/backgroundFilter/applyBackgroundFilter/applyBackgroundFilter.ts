@@ -1,7 +1,8 @@
-import { hasMediaProcessorSupport, Publisher, VideoFilter } from '@vonage/client-sdk-video';
+import { Publisher, VideoFilter } from '@vonage/client-sdk-video';
 import { UserType } from '../../../Context/user';
 import { BACKGROUNDS_PATH } from '../../constants';
 import { setStorageItem, STORAGE_KEYS } from '../../storage';
+import { hasVideoMediaProcessorSupportAsync } from '@utils/hasVideoMediaProcessorSupport';
 
 export type ApplyBackgroundFilterParams = {
   publisher?: Publisher | null;
@@ -32,7 +33,7 @@ const applyBackgroundFilter = async ({
   if (!publisher) {
     return;
   }
-  if (!hasMediaProcessorSupport('video')) {
+  if (!(await hasVideoMediaProcessorSupportAsync())) {
     console.error('Media Processor is not supported in this environment.');
     return;
   }

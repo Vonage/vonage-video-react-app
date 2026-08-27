@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import type { FocusEvent, MouseEvent, ReactElement } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
 import type { MenuItemProps } from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -12,6 +11,8 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useStableRef from '@web/hooks/useStableRef';
+import useHasVideoMediaProcessorSupport from '@hooks/useHasVideoMediaProcessorSupport';
+import isPrecallNetworkTestSupported from '@utils/isPrecallNetworkTestSupported';
 import { env } from '../../../env';
 
 export type MenuMoreOptionsWaitingRoomProps = {
@@ -38,9 +39,9 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const hasSupportedMediaProcessor = hasMediaProcessorSupport('video');
-  const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
-  const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
+  const hasSupportedVideoProcessor = useHasVideoMediaProcessorSupport();
+  const isBackgroundEffectsSupported = hasSupportedVideoProcessor && env.ALLOW_BACKGROUND_EFFECTS;
+  const isNetworkTestSupported = isPrecallNetworkTestSupported();
   const unsupportedFeatureTooltipTitle = t('waitingRoom.unsupportedFeature.tooltip');
   const [tooltipAnchorElement, setTooltipAnchorElement] = useState<HTMLElement | null>(null);
   const menuAutoFocusGuard = useStableRef(
@@ -113,7 +114,7 @@ const MenuMoreOptions = ({
         onMouseLeave: handleCloseUnsupportedTooltip,
       };
 
-  const precallNetworkTestAvailabilityProps: MenuItemProps = isPrecallNetworkTestSupported
+  const precallNetworkTestAvailabilityProps: MenuItemProps = isNetworkTestSupported
     ? {
         onClick: handleClickNetworkTest,
       }
