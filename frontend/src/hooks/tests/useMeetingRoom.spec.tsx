@@ -1,5 +1,5 @@
 import { waitFor, renderHook as renderHookBase } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useMeetingRoom from '../useMeetingRoom';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import { MemoryRouter } from 'react-router-dom';
@@ -38,15 +38,6 @@ vi.mock('../useIsSmallViewport', () => ({
   default: () => false,
 }));
 
-vi.mock('../useScreenShareContext', () => ({
-  default: () => ({
-    isSharingScreen: false,
-    screensharingPublisher: null,
-    screenshareVideoElement: null,
-    toggleShareScreen: vi.fn(),
-  }),
-}));
-
 vi.mock('../useBackgroundPublisherContext', () => ({
   default: () => ({
     initBackgroundLocalPublisher: vi.fn(),
@@ -57,15 +48,10 @@ vi.mock('../useBackgroundPublisherContext', () => ({
 
 describe('useMeetingRoom', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
     mockCreateSessionMutate.mockResolvedValue({ sessionKey: validSessionKey });
     mockJoinSessionMutate.mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it('returns all expected fields', async () => {
@@ -173,7 +159,13 @@ function renderHook<Result>(
   { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.runtime],
+    [
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+      providers.screenShare,
+    ],
     {
       userContext: {
         value: { defaultSettings: { name: 'Test User' } },
@@ -181,7 +173,8 @@ function renderHook<Result>(
       },
       sessionContext,
       publisherContext,
-      runtimeContext: { videoClient: mockVideoClient as unknown as VideoClient },
+      runtimeContext: { videoClient: mockVideoClient as VideoClient },
+      screenShareContext: undefined,
     }
   );
 

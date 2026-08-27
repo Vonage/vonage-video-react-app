@@ -7,7 +7,6 @@ import WaitingRoom from './pages/WaitingRoom';
 import { PreviewPublisherProvider } from './Context/PreviewPublisherProvider';
 import LandingPage from './pages/LandingPage';
 import { PublisherProvider } from './Context/PublisherProvider';
-import { ScreenShareProvider } from './Context/ScreenShareProvider';
 import { RedirectToWaitingRoom, ErrorBoundary, EnvGuard } from './components';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomProvider from './Context/RoomProvider';
@@ -23,6 +22,7 @@ import { runtime$ } from '@core/stores';
 import { videoClient } from './services';
 import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
+import screenShare$ from '@Context/screenShare/screenShare$';
 
 const InnerApp = () => {
   return (
@@ -52,9 +52,9 @@ const InnerApp = () => {
                       <SessionProvider>
                         <LoggerSynchronizer />
                         <PublisherProvider>
-                          <ScreenShareProvider>
+                          <screenShare$.Provider>
                             <MeetingRoom />
-                          </ScreenShareProvider>
+                          </screenShare$.Provider>
                         </PublisherProvider>
                       </SessionProvider>
                     </RoomProvider>

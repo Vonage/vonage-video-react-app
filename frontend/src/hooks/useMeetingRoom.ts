@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
 import useSessionContext from './useSessionContext';
-import useScreenShareContext from './useScreenShareContext';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
@@ -12,6 +11,7 @@ import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
+import { screenShare$ } from '@Context';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -61,13 +61,11 @@ const useMeetingRoom = () => {
     archiveIdStartedBySelf,
   } = useSessionContext();
 
-  const {
-    isSharingScreen,
-    isEntireScreen,
-    screensharingPublisher,
-    screenshareVideoElement,
-    toggleShareScreen,
-  } = useScreenShareContext();
+  const { toggleShareScreen } = screenShare$.use.actions();
+  const isSharingScreen = screenShare$.use.select((state) => state.isSharingScreen);
+  const isEntireScreen = screenShare$.use.select((state) => state.isEntireScreen);
+  const screensharingPublisher = screenShare$.use.select((state) => state.publisher);
+  const screenshareVideoElement = screenShare$.use.select((state) => state.screenshareVideoElement);
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
