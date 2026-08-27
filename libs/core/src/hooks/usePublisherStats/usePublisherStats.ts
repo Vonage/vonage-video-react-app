@@ -17,6 +17,7 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
+import { readHighestLayerFrameRate } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -152,14 +153,6 @@ type PreviousPublisherVideoSample = {
   bytesSent: BytesValue;
   timestamp: number;
 };
-
-function readHighestLayerFrameRate(layers: VideoLayerStats[] | undefined): number | null {
-  const frameRates = (layers ?? [])
-    .map((layer) => layer.encodedFrameRate)
-    .filter((frameRate): frameRate is number => typeof frameRate === 'number');
-
-  return frameRates.length ? Math.max(...frameRates) : null;
-}
 
 function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
   return new Promise((resolve) => {
