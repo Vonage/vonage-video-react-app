@@ -62,10 +62,10 @@ const useMeetingRoom = () => {
   } = useSessionContext();
 
   const { toggleShareScreen } = screenShare$.use.actions();
-  const isSharingScreen = screenShare$.use.select((state) => state.isSharingScreen);
-  const isEntireScreen = screenShare$.use.select((state) => state.isEntireScreen);
-  const screensharingPublisher = screenShare$.use.select((state) => state.publisher);
-  const screenshareVideoElement = screenShare$.use.select((state) => state.screenshareVideoElement);
+  const isSharingScreen = screenShare$.useIsSharingScreen();
+  const isEntireScreen = screenShare$.useIsEntireScreen();
+  const screensharingPublisher = screenShare$.useScreensharingPublisher();
+  const screenshareVideoElement = screenShare$.useScreenshareVideoElement();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');

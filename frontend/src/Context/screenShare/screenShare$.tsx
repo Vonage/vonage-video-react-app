@@ -196,4 +196,11 @@ export default Object.assign(screenShare$, {
       makeProviderWrapper,
     });
   })(),
+
+  useIsSharingScreen: screenShare$.use.createSelectorHook((state) => state.isSharingScreen),
+  useIsEntireScreen: screenShare$.use.createSelectorHook((state) => state.isEntireScreen),
+  useScreensharingPublisher: screenShare$.use.createSelectorHook((state) => state.publisher),
+  useScreenshareVideoElement: screenShare$.use.createSelectorHook(
+    (state) => state.screenshareVideoElement
+  ),
 });
