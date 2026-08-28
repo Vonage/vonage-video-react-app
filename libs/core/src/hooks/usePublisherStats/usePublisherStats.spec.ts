@@ -114,6 +114,33 @@ describe('usePublisherStats', () => {
       // 0 fps is a real value; the formatted output should not be the fallback '-'
       expect(stats.frameRate.value).toBe(0);
     });
+
+    it('reads the highest encoding layer', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            // Layer-only stats, as the client observability guide describes them.
+            frameRate: undefined,
+            layers: [{ encodedFrameRate: 5 }, { encodedFrameRate: 24 }],
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          fixedFrameRate: null,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(24);
+    });
   });
 
   describe('bitrateBps', () => {

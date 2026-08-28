@@ -7,7 +7,7 @@ import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPrio
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
 import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../../types/types';
-import useAdvancedSettingsVideoHandlers from './useAdvancedSettingsVideoHandlers';
+import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
 const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
@@ -26,16 +26,12 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const codecPriority = advancedSettings$.use.select(({ codecPriority }) => codecPriority);
   const frameRate = advancedSettings$.use.select(({ frameRate }) => frameRate);
   const resolution = advancedSettings$.use.select(({ resolution }) => resolution);
-  const customVideoBitrate = advancedSettings$.use.select(
-    ({ customVideoBitrate }) => customVideoBitrate
-  );
-
   const {
     handleFrameRateChange,
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
-  } = useAdvancedSettingsVideoHandlers({ bitrateMode, customVideoBitrate });
+  } = useAdvancesSettingsHandlers();
 
   const bitrateOptions = [
     {

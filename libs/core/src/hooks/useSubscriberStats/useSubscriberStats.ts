@@ -46,7 +46,7 @@ export type SubscriberInspectorStatistics = {
 
 export type useSubscriberStatsProps<TData = SubscriberInspectorStatistics> = {
   queryOptions?: QueryOptions<SubscriberInspectorStatistics | null, TData>;
-  subscriber: Subscriber | null | undefined;
+  subscriber: (Omit<Subscriber, 'id'> & { id: string }) | null | undefined;
 };
 
 const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
@@ -154,10 +154,12 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
 
 function getSubscriberStats(subscriber: Subscriber): Promise<SubscriberStats | null> {
   return new Promise((resolve) => {
-    subscriber.getStats((error, stats) => {
-      if (error) return resolve(null);
-      resolve(stats ?? null);
-    });
+    subscriber
+      .getStats((error, stats) => {
+        if (error) return resolve(null);
+        resolve(stats ?? null);
+      })
+      .catch(() => resolve(null));
   });
 }
 

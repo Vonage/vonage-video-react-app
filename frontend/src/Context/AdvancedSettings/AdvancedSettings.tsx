@@ -35,6 +35,10 @@ const INITIAL_STATE = {
   publisherAudioFallbackEnabled: false,
   subscriberAudioFallbackEnabled: false,
   publisherStatisticsEnabled: false,
+  advancedNoiseSuppressionEnabled: false,
+  echoCancellationEnabled: true,
+  noiseSuppressionEnabled: true,
+  autoGainControlEnabled: true,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -68,6 +72,10 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   publisherAudioFallbackEnabled: z.boolean(),
   subscriberAudioFallbackEnabled: z.boolean(),
   publisherStatisticsEnabled: z.boolean(),
+  advancedNoiseSuppressionEnabled: z.boolean(),
+  echoCancellationEnabled: z.boolean(),
+  noiseSuppressionEnabled: z.boolean(),
+  autoGainControlEnabled: z.boolean(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -166,6 +174,26 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setPublisherStatisticsEnabled(value: boolean) {
       return () => {
         partialUpdate({ publisherStatisticsEnabled: value });
+      };
+    },
+    setAdvancedNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ advancedNoiseSuppressionEnabled: value });
+      };
+    },
+    setEchoCancellationEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ echoCancellationEnabled: value });
+      };
+    },
+    setNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ noiseSuppressionEnabled: value });
+      };
+    },
+    setAutoGainControlEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ autoGainControlEnabled: value });
       };
     },
   },

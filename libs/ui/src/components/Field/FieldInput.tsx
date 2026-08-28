@@ -1,49 +1,48 @@
+import classNames from 'classnames';
 import type { ComponentProps, ReactElement } from 'react';
 
-type SwitchInputProps = {
+type BaseProps = ComponentProps<'input'>;
+
+type InputProps = BaseProps & {
+  variant?: 'input';
+};
+
+type SwitchInputProps = Omit<BaseProps, 'size' | 'type'> & {
   variant: 'switch';
-  id: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  disabled?: boolean;
   size?: 'default' | 'small';
 };
 
-type NativeInputProps = ComponentProps<'input'> & { variant?: never };
+export type FieldInputProps = SwitchInputProps | InputProps;
 
-export type FieldInputProps = SwitchInputProps | NativeInputProps;
-
-const FieldInput = (props: FieldInputProps): ReactElement => {
+const FieldInput = ({ className, ...props }: FieldInputProps): ReactElement => {
   if (props.variant === 'switch') {
-    const { id, checked, onChange, disabled, size = 'default' } = props;
-    const switchSizeClassName =
-      size === 'small'
-        ? 'h-5 w-9 after:left-0.5 after:top-0.5 after:h-4 after:w-4 peer-checked:after:translate-x-4'
-        : 'h-6 w-11 after:left-0.5 after:top-0.5 after:h-5 after:w-5 peer-checked:after:translate-x-5';
+    const { variant: _variant, size, onChange, ...inputProps } = props;
 
     return (
-      <label htmlFor={id} className="relative inline-flex cursor-pointer items-center">
-        <input
-          id={id}
-          type="checkbox"
-          className="peer sr-only"
-          checked={checked}
-          disabled={disabled}
-          onChange={() => onChange(!checked)}
-        />
-        <span
-          className={[
-            "rounded-full bg-vera-border transition-colors after:absolute after:rounded-full after:bg-vera-surface after:transition-transform after:content-[''] peer-checked:bg-vera-primary",
-            switchSizeClassName,
-          ].join(' ')}
-        />
-      </label>
+      <input
+        {...inputProps}
+        type="checkbox"
+        onChange={onChange}
+        className={classNames(
+          'appearance-none rounded-full bg-vera-border bg-no-repeat transition-[background-color,background-position]',
+          'cursor-pointer checked:bg-vera-primary',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          {
+            ['h-5 w-9 bg-[radial-gradient(circle_at_center,var(--vera-surface)_0_7.5px,transparent_8.5px)] ' +
+            'bg-size-[18px_18px] bg-position-[1px_center] ' +
+            'checked:bg-position-[17px_center]']: size === 'small',
+
+            ['h-6 w-11 bg-[radial-gradient(circle_at_center,var(--vera-surface)_0_9.5px,transparent_10.5px)] ' +
+            'bg-size-[22px_22px] bg-position-[1px_center] ' +
+            'checked:bg-position-[21px_center]']: size !== 'small',
+          },
+          className
+        )}
+      />
     );
   }
 
-  const { variant: _variant, ...inputProps } = props;
-
-  return <input {...inputProps} />;
+  return <input className={className} {...props} />;
 };
 
 export default FieldInput;
