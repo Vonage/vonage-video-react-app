@@ -87,8 +87,8 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
 
                 {archive.status === 'available' && (
                   <>
-                    {archive.duration && formatDuration(archive.duration)}
-                    {archive.size && ` • ${formatFileSize(archive.size)}`}
+                    {Boolean(archive.duration) && formatDuration(archive.duration)}
+                    {Boolean(archive.size) && ` • ${formatFileSize(archive.size)}`}
                     {` • ${t('archiveList.archive.createdAt', {
                       createdAt: archive.createdAtFormatted,
                     })}`}

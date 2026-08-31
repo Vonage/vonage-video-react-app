@@ -1,19 +1,17 @@
-import type { ComponentProps, PropsWithChildren, ReactElement } from 'react';
+import classNames from 'classnames';
+import type { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-const FieldDescription = ({
-  children,
-  className,
-  ...props
-}: PropsWithChildren<ComponentProps<'p'>>): ReactElement => {
+type FieldDescriptionProps = ComponentProps<'p'>;
+
+const FieldDescription: FC<FieldDescriptionProps> = ({ className, ...props }) => {
   return (
     <p
-      className={['font-vera-plain text-vera-body-base text-vera-tertiary', className]
-        .filter(Boolean)
-        .join(' ')}
+      className={twMerge(
+        classNames('font-vera-plain text-vera-body-base text-vera-tertiary', className)
+      )}
       {...props}
-    >
-      {children}
-    </p>
+    />
   );
 };
 
