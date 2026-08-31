@@ -6,12 +6,14 @@ import {
   makeRuntimeProviderWrapper,
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
+  makeScreenShareProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
   type PreviewPublisherProviderWrapperOptions,
   type PublisherProviderWrapperOptions,
   type RuntimeProviderWrapperOptions,
   type SessionProviderWrapperOptions,
   type UserProviderWrapperOptions,
+  type ScreenShareProviderWrapperOptions,
 } from './makersIndex';
 
 /**
@@ -24,6 +26,7 @@ export enum providers {
   publisher = 'publisher',
   backgroundPublisher = 'backgroundPublisher',
   previewPublisher = 'previewPublisher',
+  screenShare = 'screenShare',
 }
 
 type ProviderOptionsByKey = {
@@ -33,6 +36,7 @@ type ProviderOptionsByKey = {
   [providers.publisher]: PublisherProviderWrapperOptions;
   [providers.backgroundPublisher]: BackgroundPublisherProviderWrapperOptions;
   [providers.previewPublisher]: PreviewPublisherProviderWrapperOptions;
+  [providers.screenShare]: ScreenShareProviderWrapperOptions;
 };
 
 type ProviderContextsByKey = {
@@ -45,6 +49,9 @@ type ProviderContextsByKey = {
   >;
   [providers.previewPublisher]: NonNullable<
     ReturnType<typeof makePreviewPublisherProviderWrapper>['context']
+  >;
+  [providers.screenShare]: NonNullable<
+    ReturnType<typeof makeScreenShareProviderWrapper>['context']
   >;
 };
 
@@ -63,6 +70,7 @@ const PROVIDER_DEPENDENCIES = {
     providers.publisher,
   ],
   [providers.previewPublisher]: [providers.user],
+  [providers.screenShare]: [providers.user, providers.session],
 } as const;
 
 /**
@@ -171,6 +179,10 @@ function makeTestProvider<
         return makePreviewPublisherProviderWrapper(
           (options as ProviderOptionsFor<[providers.previewPublisher]> | undefined)
             ?.previewPublisherContext
+        );
+      case providers.screenShare:
+        return makeScreenShareProviderWrapper(
+          (options as ProviderOptionsFor<[providers.screenShare]> | undefined)?.screenShareContext
         );
       default:
         throw new Error(`Unknown provider: ${key}`);

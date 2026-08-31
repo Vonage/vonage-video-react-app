@@ -27,3 +27,8 @@ export {
   default as makeRuntimeProviderWrapper,
   type RuntimeProviderWrapperOptions,
 } from './makeRuntimeProviderWrapper';
+
+export {
+  default as makeScreenShareProviderWrapper,
+  type ScreenShareProviderWrapperOptions,
+} from './makeScreenShareProviderWrapper';

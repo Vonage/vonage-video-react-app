@@ -22,6 +22,7 @@ import { runtime$ } from '@core/stores';
 import { videoClient } from './services';
 import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
+import screenShare$ from '@Context/screenShare/screenShare$';
 
 const InnerApp = () => {
   return (
@@ -51,7 +52,9 @@ const InnerApp = () => {
                       <SessionProvider>
                         <LoggerSynchronizer />
                         <PublisherProvider>
-                          <MeetingRoom />
+                          <screenShare$.Provider>
+                            <MeetingRoom />
+                          </screenShare$.Provider>
                         </PublisherProvider>
                       </SessionProvider>
                     </RoomProvider>
