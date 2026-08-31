@@ -24,7 +24,7 @@ function detectLanguage(): Lang {
   const match = supported[userLang] ?? supported[userLang.split('-')[0]];
   if (match) return match;
 
-  const browserLanguages = globalThis.navigator.languages ?? [globalThis.navigator.language];
+  const browserLanguages = globalThis.navigator.languages ?? [];
 
   for (const tag of browserLanguages) {
     const normalized = tag.toLowerCase();
