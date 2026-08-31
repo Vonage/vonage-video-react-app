@@ -197,7 +197,7 @@
     "react-dom": "19.2.4",
     "react-global-state-hooks": "15.0.15",
     "react-i18next": "15.7.4",
-    "react-router-dom": "6.30.3",
+    "react-router-dom": "6.30.4",
     "react-syntax-highlighter": "16.1.1",
     "resize-observer-polyfill": "1.5.1",
     "status-code-enum": "1.0.0",
