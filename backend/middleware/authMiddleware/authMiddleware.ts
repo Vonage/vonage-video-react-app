@@ -2,126 +2,145 @@ import axios from 'axios';
 import type { NextFunction, Request, Response } from 'express';
 import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
+import { isApplicationError } from '@common/errors/assertions';
 import loadConfig from '../../helpers/config';
-
-const BEARER_PREFIX = 'bearer ';
-const INTROSPECT_PATH = '/oauth2/v1/introspect';
-const INTROSPECTION_TIMEOUT_MS = 5000;
-
-const UNAUTHORIZED_MESSAGE =
-  'Token inactive, expired, not issued for this application, or introspection failed';
+import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
 
 type ActiveTokenIntrospectionResponse = {
   active: true;
   sub: string;
   client_id?: string;
   email?: string;
-  [claim: string]: unknown;
 };
-
-type InactiveTokenIntrospectionResponse = {
-  active: false;
-};
-
-type TokenIntrospectionResponse =
-  | ActiveTokenIntrospectionResponse
-  | InactiveTokenIntrospectionResponse;
 
 type RequestWithTokenAuth = Request & {
-  session?: { accessToken?: string };
   user?: ActiveTokenIntrospectionResponse;
 };
 
 /**
- * Validates the caller's OIDC access token against the configured provider's
- * introspection endpoint. Opt-in via AUTH_ENABLED a no-op otherwise,
- * preserving current behavior for deployments not yet on OIDC auth.
+ * Builds an Express middleware that validates the caller's OIDC access token against
+ * the configured provider's introspection endpoint. Opt-in via AUTH_ENABLED — a no-op
+ * otherwise, preserving current behavior for deployments not yet on OIDC auth.
+ *
+ * Reads config.ts once, at construction time (not per request), so a misconfigured
+ * deployment fails to start instead of 500ing on every request.
+ *
+ * @param options.excludedPaths - exact request paths (req.path) that skip auth entirely
+ * (e.g. health checks, provider webhooks, .well-known files) — callers that structurally
+ * cannot carry a user's token.
  */
-async function authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
-  // Checked directly (not via loadConfig) so the no-op path never depends on
-  // unrelated config (e.g. video provider credentials) being valid.
-  const isAuthEnabled = process.env.AUTH_ENABLED === 'true';
+function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
+  const authConfig = loadConfig();
 
-  if (!isAuthEnabled) {
-    next();
-    return;
+  if (!authConfig.authEnabled) {
+    return function handleRequest(_req: Request, _res: Response, next: NextFunction): void {
+      next();
+    };
   }
 
-  try {
-    const config = assertResult(
-      () => loadConfig(),
-      makeInternalErrorHandler('Token authentication is misconfigured')
-    );
+  const excludedPaths = new Set(options.excludedPaths ?? []);
+  const {
+    oidcIssuerUrl,
+    oidcClientId,
+    authHeaderName,
+    authScheme,
+    introspectPath,
+    introspectionTimeoutMs,
+  } = authConfig;
 
-    if (!config.authEnabled) {
+  return async function handleRequest(
+    req: Request,
+    _res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    if (excludedPaths.has(req.path)) {
       next();
       return;
     }
 
-    const { oidcIssuerUrl, oidcClientId } = config;
+    try {
+      const accessToken = extractAccessToken(req, { authHeaderName, authScheme });
 
-    const accessToken = extractAccessToken(req);
+      if (!accessToken) {
+        throw makeUnauthorizedErrorHandler('Missing access token')(
+          new Error(`No access token in the "${authHeaderName}" header`)
+        );
+      }
 
-    if (!accessToken) {
-      throw makeUnauthorizedErrorHandler('Missing access token')(
-        new Error('No access token in Bearer header or session')
+      // TODO(VIDSOL-1153): IAM-190121 hasn't confirmed yet whether VERA Web is provisioned in
+      // Okta as an SPA or a Confidential Client. This assumes SPA (public client, no secret).
+      // If it turns out to be Confidential, add `client_secret: process.env.OIDC_CLIENT_SECRET` below.
+      const introspectionResponse = await assertResult(
+        () =>
+          axios.post(
+            `${oidcIssuerUrl}${introspectPath}`,
+            new URLSearchParams({
+              token: accessToken,
+              client_id: oidcClientId,
+              token_type_hint: 'access_token',
+            }),
+            {
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              timeout: introspectionTimeoutMs,
+            }
+          ),
+        makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
       );
-    }
 
-    // TODO(VIDSOL-1153): IAM-190121 hasn't confirmed yet whether VERA Web is provisioned in
-    // Okta as an SPA or a Confidential Client. This assumes SPA (public client, no secret).
-    // If it turns out to be Confidential, add `client_secret: process.env.OIDC_CLIENT_SECRET` below.
-    const introspectionResponse = await assertResult(
-      () =>
-        axios.post<TokenIntrospectionResponse>(
-          `${oidcIssuerUrl}${INTROSPECT_PATH}`,
-          new URLSearchParams({
-            token: accessToken,
-            client_id: oidcClientId,
-            token_type_hint: 'access_token',
-          }),
-          {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            timeout: INTROSPECTION_TIMEOUT_MS,
-          }
-        ),
-      makeUnauthorizedErrorHandler(UNAUTHORIZED_MESSAGE)
-    );
-
-    // Beyond "active", confirm the token was actually issued to this application. This
-    // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-    // signal — without this check, a valid token from a different app in the same org would
-    // pass. Assumes one shared client id across mobile/web; revisit if VIDSOL-860 registers
-    // a separate web client id.
-    const isTokenValidForThisApp =
-      introspectionResponse.data.active === true &&
-      introspectionResponse.data.client_id === oidcClientId;
-
-    if (!isTokenValidForThisApp) {
-      throw makeUnauthorizedErrorHandler(UNAUTHORIZED_MESSAGE)(
-        new Error('Token inactive or issued for a different client_id')
+      const parsedIntrospection = TokenIntrospectionResponseSchema.safeParse(
+        introspectionResponse.data
       );
-    }
 
-    (req as RequestWithTokenAuth).user =
-      introspectionResponse.data as ActiveTokenIntrospectionResponse;
-    next();
-  } catch (error) {
-    next(error);
-  }
+      if (!parsedIntrospection.success) {
+        throw makeUnauthorizedErrorHandler('Token introspection response failed schema validation')(
+          new Error('Introspection response failed schema validation')
+        );
+      }
+
+      const introspectionData = parsedIntrospection.data;
+
+      // Beyond "active", confirm the token was actually issued to this application. This
+      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
+      // signal without this check, a valid token from a different app in the same org would
+      // pass. Assumes one shared client id across mobile/web; revisit if VIDSOL-860 registers
+      // a separate web client id.
+      const isTokenValidForThisApp =
+        introspectionData.active === true && introspectionData.client_id === oidcClientId;
+
+      if (!isTokenValidForThisApp) {
+        const rejectionReason = introspectionData.active
+          ? 'Token issued for a different client_id'
+          : 'Token inactive or expired';
+
+        throw makeUnauthorizedErrorHandler(rejectionReason)(new Error(rejectionReason));
+      }
+
+      (req as RequestWithTokenAuth).user = introspectionData;
+      next();
+    } catch (error) {
+      if (isApplicationError(error)) {
+        next(error);
+        return;
+      }
+
+      next(makeInternalErrorHandler('Unexpected error in authMiddleware')(error));
+    }
+  };
 }
 
 export default authMiddleware;
 
-function extractAccessToken(req: Request): string | undefined {
-  const authorizationHeader = req.headers.authorization;
+function extractAccessToken(
+  req: Request,
+  { authHeaderName, authScheme }: { authHeaderName: string; authScheme: string }
+): string | undefined {
+  const headerValue = req.headers[authHeaderName.toLowerCase()];
+  const authorizationHeader = Array.isArray(headerValue) ? headerValue[0] : headerValue;
+  const schemePrefix = `${authScheme.toLowerCase()} `;
 
-  if (authorizationHeader?.toLowerCase().startsWith(BEARER_PREFIX)) {
-    return authorizationHeader.slice(BEARER_PREFIX.length).trim();
+  if (authorizationHeader?.toLowerCase().startsWith(schemePrefix)) {
+    return authorizationHeader.slice(schemePrefix.length).trim();
   }
 
-  // Session fallback for the web BFF login flow (VIDSOL-860, not yet built). Dead code
-  // today: no session middleware is registered in server.ts, so req.session is always
-  // undefined until that ticket lands.
-  return (req as RequestWithTokenAuth).session?.accessToken;
+  return undefined;
 }

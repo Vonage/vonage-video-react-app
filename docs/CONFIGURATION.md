@@ -72,7 +72,7 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 #### OIDC token authentication (optional)
 
-Protects `POST /v2/createSession` and `POST /v2/joinSession` by validating OIDC access tokens through the configured OAuth 2.0 introspection endpoint.
+Applied app-wide in `server.ts`, ahead of the router — every route requires a valid OIDC access token, validated through the configured OAuth 2.0 introspection endpoint, except a small exclusion list of routes that can't carry a user token (see below). This includes the legacy `backend/routes/session.ts` routes (`GET /:room`, archive, and caption endpoints).
 
 Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication is skipped and existing behavior is unchanged.
 
@@ -80,7 +80,11 @@ Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication 
 |---|---|---|
 | `AUTH_ENABLED` | opt-in | Set to `true` to enable token validation. |
 | `OIDC_CLIENT_ID` | if enabled | OIDC application client ID. |
-| `OIDC_ISSUER_URL` | if enabled | Provider org root URL. Introspection uses `${OIDC_ISSUER_URL}/oauth2/v1/introspect`. |
+| `OIDC_ISSUER_URL` | if enabled | Provider org root URL. Must be a valid URL. Introspection uses `${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}`. |
+| `AUTH_HEADER_NAME` | set in `env.sh` (default `authorization`) | Which request header carries the token. |
+| `AUTH_SCHEME` | set in `env.sh` (default `Bearer`) | Scheme prefix on that header, matched case-insensitively. |
+| `OIDC_INTROSPECT_PATH` | set in `env.sh` (default `/oauth2/v1/introspect`) | Path appended to `OIDC_ISSUER_URL` for introspection calls. |
+| `AUTH_INTROSPECTION_TIMEOUT_MS` | set in `env.sh` (default `5000`) | Timeout for the introspection HTTP call. |
 
 ```ini
 AUTH_ENABLED='true'
@@ -88,9 +92,18 @@ OIDC_CLIENT_ID='your-client-id'
 OIDC_ISSUER_URL='https://your-org.okta.com'
 ```
 
-The middleware checks for a Bearer token first, then falls back to req.session.accessToken. Both use the same introspection flow. Requests return 401 when the token is missing, inactive, invalid for this application, or introspection fails.
+`AUTH_HEADER_NAME`, `AUTH_SCHEME`, `OIDC_INTROSPECT_PATH`, and `AUTH_INTROSPECTION_TIMEOUT_MS` are non-secret tuning knobs, set in [`env.sh`](../env.sh) overridable via `backend/.env`, which takes precedence. `env.sh` is sourced by every backend target that runs the server (`dev`, `start`, `start:bundled`, `debug`) as well as by tests; if `AUTH_ENABLED=true` and the server 500s on missing auth config — check `env.sh` was actually sourced.
 
-_Note: Session-based authentication is not yet available because this repo does not currently implement the OIDC login/session flow. With AUTH_ENABLED=true, only Bearer-token authentication works end-to-end today._
+Both web and mobile clients authenticate the same way: a token in the configured header (`AUTH_HEADER_NAME` + `AUTH_SCHEME`, default `Authorization: Bearer <token>`), validated through the same introspection flow. There's no server-side session — VCR instances are ephemeral, so auth relies entirely on this self-contained, per-request token check. Requests return 401 when the token is missing, inactive, invalid for this application, or introspection fails; 500 if `AUTH_ENABLED=true` but required config is missing or invalid.
+
+**Legacy `session.ts` routes:** kept alive and protected by the same gate rather than deprecated (e.g. `410 Gone`), because Android still calls them directly. Deprecating them was out of scope — changes to the iOS/Android clients aren't part of this work.
+
+**Excluded routes:** these callers can't carry a user's OIDC token, so they're excluded from the gate by exact path:
+- `/_/health` — infra liveness/readiness probes, no user involved.
+- `/v2/hooks/session`, `/v2/hooks/captions`, `/v2/hooks/archive` — server-to-server webhooks from the video provider, not a person.
+- `/.well-known/apple-app-site-association`, `/.well-known/assetlinks.json` — fetched anonymously by the OS for deep-link verification (Apple/Android spec requires these stay public).
+
+`/feedback` is not currently excluded and is not yet reviewed for whether it should be.
 
 ### Frontend (`env.sh`)
 
