@@ -12,6 +12,7 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useStableRef from '@web/hooks/useStableRef';
+import isFirefox from '@web/platform/isFirefox';
 import { env } from '../../../env';
 
 export type MenuMoreOptionsWaitingRoomProps = {
@@ -38,9 +39,9 @@ const MenuMoreOptions = ({
   anchorEl,
 }: MenuMoreOptionsWaitingRoomProps): ReactElement => {
   const { t } = useTranslation();
-  const hasSupportedMediaProcessor = hasMediaProcessorSupport('video');
-  const isBackgroundEffectsSupported = hasSupportedMediaProcessor && env.ALLOW_BACKGROUND_EFFECTS;
-  const isPrecallNetworkTestSupported = hasSupportedMediaProcessor;
+  const isBackgroundEffectsSupported =
+    hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
+  const isPrecallNetworkTestSupported = !isFirefox();
   const unsupportedFeatureTooltipTitle = t('waitingRoom.unsupportedFeature.tooltip');
   const [tooltipAnchorElement, setTooltipAnchorElement] = useState<HTMLElement | null>(null);
   const menuAutoFocusGuard = useStableRef(

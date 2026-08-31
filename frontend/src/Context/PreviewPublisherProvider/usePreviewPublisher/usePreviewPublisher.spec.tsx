@@ -39,8 +39,10 @@ describe('usePreviewPublisher', () => {
 
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
-    (initPublisher as Mock).mockImplementation(mockedInitPublisher);
-    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    (initPublisher as unknown as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(
+      mockedHasMediaProcessorSupport
+    );
   });
 
   describe('initLocalPublisher', () => {
@@ -58,7 +60,7 @@ describe('usePreviewPublisher', () => {
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
-      (initPublisher as Mock).mockImplementation((_, _args, callback) => {
+      (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
       });
 

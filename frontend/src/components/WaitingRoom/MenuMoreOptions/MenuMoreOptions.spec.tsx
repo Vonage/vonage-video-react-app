@@ -11,6 +11,10 @@ import MenuMoreOptions from './MenuMoreOptions';
 import { resetMediaProcessorSupportCache } from '@utils/hasMediaProcessorSupport/hasMediaProcessorSupport';
 import { env } from '../../../env';
 
+const originalUserAgent = navigator.userAgent;
+const FIREFOX_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) Gecko/20100101 Firefox/148.0';
+
 describe('MenuMoreOptions', () => {
   const mockOnClose = vi.fn();
   const mockAnchorEl = document.createElement('button');
@@ -24,6 +28,10 @@ describe('MenuMoreOptions', () => {
 
   afterEach(() => {
     env.reset();
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: originalUserAgent,
+    });
   });
 
   it('should render when open is true', () => {
@@ -119,15 +127,31 @@ describe('MenuMoreOptions', () => {
     );
   });
 
-  it('should still display precall network test when media processor is not supported', () => {
+  it('keeps precall network test enabled when video media processor is not supported', () => {
     vi.spyOn(clientSdkVideo, 'hasMediaProcessorSupport').mockReturnValue(false);
     render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
 
-    expect(screen.getByText(/pre-call network test/i)).toBeInTheDocument();
+    expect(screen.getByText(/pre-call network test/i).closest('li')).not.toHaveAttribute(
+      'aria-disabled'
+    );
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+  });
+
+  it('disables precall network test on Firefox even when video media processor is supported', () => {
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: FIREFOX_UA,
+    });
+    render(<MenuMoreOptions onClose={mockOnClose} open anchorEl={mockAnchorEl} />);
+
     expect(screen.getByText(/pre-call network test/i).closest('li')).toHaveAttribute(
       'aria-disabled',
       'true'
     );
+    expect(screen.getByText(/video effects/i).closest('li')).not.toHaveAttribute('aria-disabled');
   });
 
   it('shows an unsupported-feature tooltip for disabled menu items', async () => {
