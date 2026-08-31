@@ -17,8 +17,7 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
-import { readHighestLayerResolution } from './helpers';
-import { readHighestLayerFrameRate } from './helpers';
+import { readHighestLayerResolution, readHighestLayerFrameRate } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
 
