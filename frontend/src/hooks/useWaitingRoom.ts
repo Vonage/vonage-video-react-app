@@ -34,7 +34,7 @@ const useWaitingRoom = () => {
   // permission request that was intentionally kept off the landing page to avoid lighting the
   // camera LED there. See https://github.com/Vonage/vonage-video-react-app/issues/723.
   useMountEffect(() => {
-    void mediaDevices$.actions.requestDeviceLabels();
+    void mediaDevices$.actions.requestDeviceLabels().catch(() => {});
   });
 
   const stableInitLocalPublisher = useEffectEvent(() => {
