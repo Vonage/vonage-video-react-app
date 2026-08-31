@@ -1,18 +1,17 @@
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderHook as renderHookBase, act } from '@testing-library/react';
 import { Publisher, initPublisher } from '@vonage/client-sdk-video';
-import useScreenShare from '../useScreenShare';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
+import screenShare$ from './screenShare$';
 
-// Mocking dependencies
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
 }));
 
-describe('useScreenSharing', () => {
+describe('screenShare$', () => {
   let mockVonageVideoClient: Partial<VonageVideoClient>;
   let mockPublisher: Partial<Publisher>;
   let handlers: Record<string, (...args: unknown[]) => void>;
@@ -33,13 +32,7 @@ describe('useScreenSharing', () => {
       destroy: vi.fn(),
     } as unknown as Partial<Publisher>;
 
-    (initPublisher as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockPublisher as Publisher
-    );
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
+    vi.mocked(initPublisher).mockReturnValue(mockPublisher as Publisher);
   });
 
   it('initializes screen sharing publisher and publishes', async () => {
@@ -61,8 +54,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      // toggling screen share on
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     expect(initPublisher).toHaveBeenCalledWith(
@@ -99,13 +92,13 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      // toggling screen share on
-      await result.current.toggleShareScreen();
-      // toggling screen share off
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
+      await actions.toggleShareScreen();
     });
 
-    expect(result.current.isSharingScreen).toBe(false);
+    const [state] = result.current;
+    expect(state.isSharingScreen).toBe(false);
   });
 
   it('sets isEntireScreen to true when displaySurface is monitor', async () => {
@@ -127,7 +120,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     const mockVideoEl = {
@@ -140,8 +134,9 @@ describe('useScreenSharing', () => {
       handlers['videoElementCreated']({ element: mockVideoEl });
     });
 
-    expect(result.current.isEntireScreen).toBe(true);
-    expect(result.current.screenshareVideoElement).toBe(mockVideoEl);
+    const [state] = result.current;
+    expect(state.isEntireScreen).toBe(true);
+    expect(state.screenshareVideoElement).toBe(mockVideoEl);
   });
 
   it('sets isEntireScreen to false when displaySurface is window', async () => {
@@ -163,7 +158,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     const mockVideoEl = {
@@ -176,7 +172,8 @@ describe('useScreenSharing', () => {
       handlers['videoElementCreated']({ element: mockVideoEl });
     });
 
-    expect(result.current.isEntireScreen).toBe(false);
+    const [state] = result.current;
+    expect(state.isEntireScreen).toBe(false);
   });
 
   it('resets isEntireScreen when streamDestroyed fires', async () => {
@@ -198,7 +195,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     const mockVideoEl = {
@@ -211,16 +209,18 @@ describe('useScreenSharing', () => {
       handlers['videoElementCreated']({ element: mockVideoEl });
     });
 
-    expect(result.current.screenshareVideoElement).toBe(mockVideoEl);
-    expect(result.current.isEntireScreen).toBe(true);
+    const [stateAfterVideo] = result.current;
+    expect(stateAfterVideo.screenshareVideoElement).toBe(mockVideoEl);
+    expect(stateAfterVideo.isEntireScreen).toBe(true);
 
     act(() => {
       handlers['streamDestroyed']();
     });
 
-    expect(result.current.isEntireScreen).toBe(false);
-    expect(result.current.isSharingScreen).toBe(false);
-    expect(result.current.screenshareVideoElement).toBe(undefined);
+    const [stateAfterDestroyed] = result.current;
+    expect(stateAfterDestroyed.isEntireScreen).toBe(false);
+    expect(stateAfterDestroyed.isSharingScreen).toBe(false);
+    expect(stateAfterDestroyed.screenshareVideoElement).toBe(undefined);
   });
 
   it('sets isEntireScreen to true when displaySurface is undefined but dimensions match the screen area', async () => {
@@ -242,7 +242,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     const mockVideoEl = {
@@ -263,10 +264,11 @@ describe('useScreenSharing', () => {
       handlers['videoElementCreated']({ element: mockVideoEl });
     });
 
-    expect(result.current.isEntireScreen).toBe(true);
+    const [state] = result.current;
+    expect(state.isEntireScreen).toBe(true);
   });
 
-  it('does not initialize publisher if session is null', async () => {
+  it('does not initialize publisher if vonageVideoClient is null', async () => {
     const { result } = render({
       userContext: {
         __interceptor: (context: UserContextType | null) => {
@@ -285,7 +287,8 @@ describe('useScreenSharing', () => {
     });
 
     await act(async () => {
-      await result.current.toggleShareScreen();
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
     });
 
     expect(initPublisher).not.toHaveBeenCalled();
@@ -295,22 +298,28 @@ describe('useScreenSharing', () => {
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
   sessionContext?: ProviderOptions['SessionContext'];
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+  screenShareContext?: ProviderOptions['ScreenShareContext'];
 };
 
-function render({ userContext, sessionContext }: RenderOptions = {}) {
+function render({
+  userContext,
+  sessionContext,
+  runtimeContext,
+  screenShareContext,
+}: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.runtime],
+    [providers.runtime, providers.user, providers.session, providers.screenShare],
     {
       sessionContext,
       userContext,
-      runtimeContext: undefined,
+      runtimeContext,
+      screenShareContext,
     }
   );
 
   return {
     ...context,
-    ...renderHookBase(() => useScreenShare(), {
-      wrapper,
-    }),
+    ...renderHookBase(() => screenShare$.use(), { wrapper }),
   };
 }
