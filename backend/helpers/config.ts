@@ -1,7 +1,13 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
+import { z } from 'zod';
 import { AuthConfig, Config, FeedbackConfig } from '../types/config';
 import { fileURLToPath } from 'node:url';
+
+const DEFAULT_AUTH_HEADER_NAME = 'authorization';
+const DEFAULT_AUTH_SCHEME = 'Bearer';
+const DEFAULT_INTROSPECT_PATH = '/oauth2/v1/introspect';
+const DEFAULT_INTROSPECTION_TIMEOUT_MS = 5000;
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -14,7 +20,7 @@ if (process.env.__IS_CJS__) {
   runtimeDir = path.dirname(fileURLToPath(import.meta.url));
 }
 
-dotenv.config({ path: path.join(runtimeDir, '.env') });
+dotenv.config({ path: path.join(runtimeDir, '.env'), override: true });
 
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
@@ -22,18 +28,7 @@ const loadConfig = (): Config => {
 
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
-  const authConfig: AuthConfig = ((): AuthConfig => {
-    if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
-
-    const oidcIssuerUrl = process.env.OIDC_ISSUER_URL ?? '';
-    const oidcClientId = process.env.OIDC_CLIENT_ID ?? '';
-
-    if (!oidcIssuerUrl || !oidcClientId) {
-      throw new Error('AUTH_ENABLED is true but OIDC_ISSUER_URL/OIDC_CLIENT_ID is not set');
-    }
-
-    return { authEnabled: true, oidcIssuerUrl, oidcClientId };
-  })();
+  const authConfig = loadAuthConfig();
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -93,3 +88,34 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+/**
+ * Reads only the auth-related env vars, validated here since this is the single
+ * schema-validated source of truth for config in the app (consumers must go through
+ * loadConfig, not re-derive this independently).
+ */
+function loadAuthConfig(): AuthConfig {
+  if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
+
+  const oidcIssuerUrl = process.env.OIDC_ISSUER_URL ?? '';
+  const oidcClientId = process.env.OIDC_CLIENT_ID ?? '';
+  const isValidIssuerUrl = z.url().safeParse(oidcIssuerUrl).success;
+
+  if (!oidcIssuerUrl || !oidcClientId || !isValidIssuerUrl) {
+    throw new Error(
+      'AUTH_ENABLED is true but OIDC_ISSUER_URL (must be a valid URL) / OIDC_CLIENT_ID is not set'
+    );
+  }
+
+  return {
+    authEnabled: true,
+    oidcIssuerUrl,
+    oidcClientId,
+    authHeaderName: process.env.AUTH_HEADER_NAME ?? DEFAULT_AUTH_HEADER_NAME,
+    authScheme: process.env.AUTH_SCHEME ?? DEFAULT_AUTH_SCHEME,
+    introspectPath: process.env.OIDC_INTROSPECT_PATH ?? DEFAULT_INTROSPECT_PATH,
+    introspectionTimeoutMs: Number(
+      process.env.AUTH_INTROSPECTION_TIMEOUT_MS ?? DEFAULT_INTROSPECTION_TIMEOUT_MS
+    ),
+  };
+}

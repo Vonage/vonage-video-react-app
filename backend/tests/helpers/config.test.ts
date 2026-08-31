@@ -55,4 +55,62 @@ describe('loadConfig', () => {
       expect(config.videoHost).toBe('https://video.api.dev.vonage.com');
     }
   });
+
+  test('should default authEnabled to false when AUTH_ENABLED is unset', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+
+    const config = loadConfig();
+
+    expect(config.authEnabled).toBe(false);
+  });
+
+  test('should throw when AUTH_ENABLED is true but OIDC_CLIENT_ID/OIDC_ISSUER_URL are missing or invalid', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.AUTH_ENABLED = 'true';
+
+    expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
+
+    process.env.OIDC_CLIENT_ID = 'test-client-id';
+    process.env.OIDC_ISSUER_URL = 'not-a-url';
+
+    expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
+  });
+
+  test('should return auth config with defaults, overridable via env, when AUTH_ENABLED is true', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.AUTH_ENABLED = 'true';
+    process.env.OIDC_CLIENT_ID = 'test-client-id';
+    process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
+
+    const config = loadConfig();
+
+    expect(config.authEnabled).toBe(true);
+    if (config.authEnabled) {
+      expect(config.authHeaderName).toBe('authorization');
+      expect(config.authScheme).toBe('Bearer');
+      expect(config.introspectPath).toBe('/oauth2/v1/introspect');
+      expect(config.introspectionTimeoutMs).toBe(5000);
+    }
+
+    process.env.AUTH_HEADER_NAME = 'x-access-token';
+    process.env.AUTH_SCHEME = 'Token';
+    process.env.OIDC_INTROSPECT_PATH = '/custom/introspect';
+    process.env.AUTH_INTROSPECTION_TIMEOUT_MS = '9000';
+
+    const overriddenConfig = loadConfig();
+
+    expect(overriddenConfig.authEnabled).toBe(true);
+    if (overriddenConfig.authEnabled) {
+      expect(overriddenConfig.authHeaderName).toBe('x-access-token');
+      expect(overriddenConfig.authScheme).toBe('Token');
+      expect(overriddenConfig.introspectPath).toBe('/custom/introspect');
+      expect(overriddenConfig.introspectionTimeoutMs).toBe(9000);
+    }
+  });
 });

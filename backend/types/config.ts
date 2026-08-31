@@ -27,7 +27,15 @@ export type OpentokConfig = {
 
 export type AuthConfig =
   | { authEnabled: false }
-  | { authEnabled: true; oidcIssuerUrl: string; oidcClientId: string };
+  | {
+      authEnabled: true;
+      oidcIssuerUrl: string;
+      oidcClientId: string;
+      authHeaderName: string;
+      authScheme: string;
+      introspectPath: string;
+      introspectionTimeoutMs: number;
+    };
 
 export type Config = (VonageConfig | OpentokConfig) &
   FeedbackConfig &

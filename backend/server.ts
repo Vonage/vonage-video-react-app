@@ -36,16 +36,18 @@ app.use(bodyParser.json());
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
 
-const routesExcludedFromAuth = new Set(['/_/health']);
-
-app.use((req, res, next) => {
-  if (routesExcludedFromAuth.has(req.path)) {
-    next();
-    return;
-  }
-
-  void authMiddleware(req, res, next);
-});
+app.use(
+  authMiddleware({
+    excludedPaths: [
+      '/_/health',
+      '/v2/hooks/session',
+      '/v2/hooks/captions',
+      '/v2/hooks/archive',
+      '/.well-known/apple-app-site-association',
+      '/.well-known/assetlinks.json',
+    ],
+  })
+);
 
 app.use(router);
 

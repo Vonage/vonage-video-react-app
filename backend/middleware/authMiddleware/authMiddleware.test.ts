@@ -1,82 +1,120 @@
-import type { NextFunction, Request, Response } from 'express';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { StatusCode } from 'status-code-enum';
+import express, { type Express } from 'express';
+import request from 'supertest';
+import type { Config } from '../../types/config';
 
-type IntrospectionResponse = { active: boolean; sub?: string; client_id?: string };
+const loadConfigMock = jest.fn<() => Config>();
+const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
 
-const axiosPostMock = jest.fn<() => Promise<{ data: IntrospectionResponse }>>();
-
-const CONFIGURED_CLIENT_ID = 'test-client-id';
+jest.unstable_mockModule('../../helpers/config', () => ({
+  default: loadConfigMock,
+}));
 
 jest.unstable_mockModule('axios', () => ({
   default: { post: axiosPostMock },
 }));
 
 const { default: authMiddleware } = await import('./authMiddleware');
+const { errorHandler } = await import('../errorHandler');
+
+const CONFIGURED_CLIENT_ID = 'test-client-id';
+
+const BASE_CONFIG = {
+  provider: 'opentok',
+  apiKey: 'test-api-key',
+  apiSecret: 'test-api-secret',
+  sessionKeySecret: 'test-session-key-secret',
+  loggerVerbose: false,
+} as const;
+
+const DISABLED_CONFIG: Config = { ...BASE_CONFIG, authEnabled: false };
+
+const ENABLED_CONFIG: Config = {
+  ...BASE_CONFIG,
+  authEnabled: true,
+  oidcIssuerUrl: 'https://example.com',
+  oidcClientId: CONFIGURED_CLIENT_ID,
+  authHeaderName: 'authorization',
+  authScheme: 'Bearer',
+  introspectPath: '/oauth2/v1/introspect',
+  introspectionTimeoutMs: 5000,
+};
+
+function buildApp(): Express {
+  const app = express();
+
+  app.use(authMiddleware());
+  app.get('/protected', (_req, res) => res.status(200).json({ ok: true }));
+  app.use(errorHandler);
+
+  return app;
+}
 
 describe('authMiddleware', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-    process.env.AUTH_ENABLED = 'true';
-    process.env.OIDC_CLIENT_ID = CONFIGURED_CLIENT_ID;
-    process.env.OIDC_ISSUER_URL = 'https://example.com';
+    loadConfigMock.mockReturnValue(ENABLED_CONFIG);
   });
 
-  it('calls next() with a valid Bearer header', async () => {
+  it('is a no-op when AUTH_ENABLED is false', async () => {
+    loadConfigMock.mockReturnValue(DISABLED_CONFIG);
+
+    const res = await request(buildApp()).get('/protected');
+
+    expect(res.statusCode).toEqual(200);
+    expect(axiosPostMock).not.toHaveBeenCalled();
+  });
+
+  it('returns 401 when the token is missing', async () => {
+    const res = await request(buildApp()).get('/protected');
+
+    expect(res.statusCode).toEqual(401);
+  });
+
+  it('returns 200 with a valid Bearer token', async () => {
     axiosPostMock.mockResolvedValue({
       data: { active: true, sub: 'user-1', client_id: CONFIGURED_CLIENT_ID },
     });
 
-    const { req, res, next } = createRequestParameters({
-      headers: { authorization: 'Bearer valid-token' },
-    });
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Authorization', 'Bearer valid-token');
 
-    await authMiddleware(req, res, next);
-
-    expect(next).toHaveBeenCalledWith();
+    expect(res.statusCode).toEqual(200);
   });
 
-  it('calls next() with a valid session accessToken when the Bearer header is absent', async () => {
-    axiosPostMock.mockResolvedValue({
-      data: { active: true, sub: 'user-2', client_id: CONFIGURED_CLIENT_ID },
-    });
+  it.each([
+    ['token inactive', { active: false }],
+    ['issued to a different client_id', { active: true, sub: 'user-2', client_id: 'other-app' }],
+    ['response fails schema validation', { unexpected: 'shape' }],
+  ])('returns 401 when %s', async (_label, data) => {
+    axiosPostMock.mockResolvedValue({ data });
 
-    const { req, res, next } = createRequestParameters({
-      session: { accessToken: 'session-token' },
-    });
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Authorization', 'Bearer some-token');
 
-    await authMiddleware(req, res, next);
-
-    expect(next).toHaveBeenCalledWith();
+    expect(res.statusCode).toEqual(401);
   });
 
-  it('calls next() with a 401 error when the token is missing from both the Bearer header and the session', async () => {
-    const { req, res, next } = createRequestParameters();
+  it('returns 401 when the introspection call itself fails', async () => {
+    axiosPostMock.mockRejectedValue(new Error('network error'));
 
-    await authMiddleware(req, res, next);
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Authorization', 'Bearer some-token');
 
-    expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: StatusCode.ClientErrorUnauthorized })
-    );
-    expect(axiosPostMock).not.toHaveBeenCalled();
+    expect(res.statusCode).toEqual(401);
+  });
+
+  it('skips a request path in excludedPaths entirely', async () => {
+    const app = express();
+
+    app.use(authMiddleware({ excludedPaths: ['/protected'] }));
+    app.get('/protected', (_req, res) => res.status(200).json({ ok: true }));
+    app.use(errorHandler);
+
+    const res = await request(app).get('/protected');
+
+    expect(res.statusCode).toEqual(200);
   });
 });
-
-function createRequestParameters(
-  overrides: {
-    headers?: Record<string, string>;
-    session?: { accessToken?: string };
-  } = {}
-) {
-  const req = {
-    headers: overrides.headers ?? {},
-    session: overrides.session,
-  } as unknown as Request;
-
-  const res = {} as unknown as Response;
-
-  const next = jest.fn() as unknown as NextFunction;
-
-  return { req, res, next };
-}
