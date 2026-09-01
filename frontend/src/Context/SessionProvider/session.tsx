@@ -244,12 +244,18 @@ const SessionProvider = ({
     }
   };
 
+  // Mirror the latest subscriberWrappers into a ref so the emoji signal handler (registered once
+  // as a session listener) can read them without a stale closure. Previously handleEmoji abused
+  // setSubscriberWrappers to read current state and returned a fresh array copy, which re-rendered
+  // the whole session context and every video tile on every emoji received.
+  const subscriberWrappersRef = useRef(subscriberWrappers);
+  useEffect(() => {
+    subscriberWrappersRef.current = subscriberWrappers;
+  }, [subscriberWrappers]);
+
   const handleEmoji = useCallback(
     (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
+      onEmoji(emojiEvent, subscriberWrappersRef.current);
     },
     [onEmoji]
   );
