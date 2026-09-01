@@ -21,7 +21,7 @@
   "advancedSettings.general.resetDescription": "Ripristina tutte le impostazioni ai valori predefiniti",
   "advancedSettings.video.sections.camera.label": "Camera",
   "advancedSettings.video.sections.screenSharing.label": "Condivisione schermo",
-  "advancedSettings.video.sections.screenSharing.description": "Queste impostazioni si applicano ai contenuti che condividi. Avranno effetto la prossima volta che inizi a condividere.",
+  "advancedSettings.video.sections.screenSharing.description": "Queste impostazioni si applicano ai contenuti che condividi. Le modifiche hanno effetto immediato durante la condivisione o la prossima volta che inizi a condividere.",
   "advancedSettings.video.bitrate.label": "Bitrate",
   "advancedSettings.video.bitrate.options.default": "Predefinita",
   "advancedSettings.video.bitrate.options.bw_saver": "Risparmio di banda",
