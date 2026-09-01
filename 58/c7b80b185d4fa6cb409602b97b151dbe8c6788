@@ -1,0 +1,734 @@
+.github/copilot-instructions.md
+  h_2499cc15b3806e 177-178
+.github/workflows/ai-shepherd.yml
+  h_2499cc15b3806e 1-81
+.github/workflows/auto-set-base.yml
+  h_2499cc15b3806e 17
+.github/workflows/auto-update-dependencies.yml
+  h_2499cc15b3806e 23,25
+.github/workflows/check-base-branch.yml
+  h_2499cc15b3806e 1-42
+.github/workflows/check-pull-request-title.yml
+  h_2499cc15b3806e 21,24,31
+.github/workflows/check-release.yml
+  h_2499cc15b3806e 1-60
+.github/workflows/deploy-to-vcr.yml
+  h_2499cc15b3806e 22,25
+.github/workflows/lint.yml
+  h_2499cc15b3806e 31,34,55,70,73
+.github/workflows/run-tests.yml
+  h_2499cc15b3806e 33,38,81,95,115-116,143,148
+.github/workflows/secret_scan.yml
+  h_2499cc15b3806e 1-21
+.github/workflows/vcr-deploy-on-comment.yml
+  h_2499cc15b3806e 61,66
+.github/workflows/vcr-remove-non-use-instance.yml
+  h_2499cc15b3806e 19
+.github/workflows/vcr-remove-on-comment.yml
+  h_2499cc15b3806e 58
+.github/workflows/video-common-integrity.yml
+  h_2499cc15b3806e 1-26
+.github/workflows/video-common-publish.yml
+  h_2499cc15b3806e 1-60
+.gitignore
+  h_2499cc15b3806e 67-75
+.husky/pre-commit
+  h_2499cc15b3806e 7-10
+.husky/pre-push
+  h_2499cc15b3806e 7-10,13-15
+.kiro/hooks/README.md
+  h_2499cc15b3806e 1-33
+.kiro/hooks/git-ai.json
+  h_2499cc15b3806e 1-27
+.prettierignore
+  h_2499cc15b3806e 20
+.vonage/catalog-info.yaml
+  h_2499cc15b3806e 10
+LICENSE.MIT
+  h_2499cc15b3806e 1-21
+README.md
+  h_2499cc15b3806e 10,16,23-56,71,99,113-115,119,121,123,125-132,134,136,138,140,148,152
+backend/middleware/errorHandler.ts
+  h_2499cc15b3806e 4
+backend/middleware/helmetMiddleware/helmetMiddleware.ts
+  h_2499cc15b3806e 25-29,39-40
+backend/project.json
+  h_2499cc15b3806e 65,70
+backend/routes/video/constants/joinSession.test.ts
+  h_2499cc15b3806e 1-18
+backend/routes/video/constants/joinSession.ts
+  h_2499cc15b3806e 4,11-12
+backend/routes/video/video.ts
+  h_2499cc15b3806e 4,6,74-80,85,96-98,105-115,119,144-146,152-158,162,172-174,176,178-181,183-184,186-189,191-192,194-200
+backend/routes/wellKnown.ts
+  h_2499cc15b3806e 59-62,67-69
+backend/tests/apple-app-site-association.test.ts
+  h_2499cc15b3806e 41-43,56-59
+backend/tests/errorHandler.test.ts
+  h_2499cc15b3806e 5
+backend/tests/session.test.ts
+  h_2499cc15b3806e 239-264
+customWordList.mjs
+  h_2499cc15b3806e 30-32
+docs/ARCHITECTURE.md
+  h_2499cc15b3806e 1-65
+docs/CODE_STYLE.md
+  h_2499cc15b3806e 1-46
+docs/CONFIGURATION.md
+  h_2499cc15b3806e 1-212
+docs/GETTING_STARTED.md
+  h_2499cc15b3806e 1-202
+docs/TESTING.md
+  h_2499cc15b3806e 1-59
+env.sh
+  h_2499cc15b3806e 5,29-30
+frontend/.env.example
+  h_2499cc15b3806e 1-42
+frontend/eslint.config.mjs
+  h_2499cc15b3806e 20,29-32
+frontend/project.json
+  h_2499cc15b3806e 13,21,25,34,41,48,55,74,78,121,129
+frontend/src/App.tsx
+  h_2499cc15b3806e 1,25,30,55-57
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_2499cc15b3806e 19-21,31,38-41,68,75-78,144,179-198
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/index.ts
+  h_2499cc15b3806e 1
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.spec.ts
+  h_2499cc15b3806e 11-12,36,54,67,85,103,120,123,138,141,157,175,192,211-213,229-231,251-253
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.ts
+  h_2499cc15b3806e 11,17-19,21-27,29,31,34,37-42,56,67-68,78-79,89-110,116,120
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_2499cc15b3806e 42-45,65
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_2499cc15b3806e 18,180,256
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_2499cc15b3806e 40-43,61
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_2499cc15b3806e 13,184
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.spec.ts
+  h_2499cc15b3806e 8,29,39,41,61,82,101
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.ts
+  h_2499cc15b3806e 12,30,69
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/useApplyAdvancedSettings.spec.tsx
+  h_2499cc15b3806e 7,31
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  h_2499cc15b3806e 2
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  h_2499cc15b3806e 16
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  h_2499cc15b3806e 5,13,31,75-78,80,82,86,152-153,155,163,200
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  h_2499cc15b3806e 10,38-49,52,62,67,76-77,82,93,119-122
+frontend/src/Context/index.ts
+  h_2499cc15b3806e 1
+frontend/src/Context/screenShare/constants/index.ts
+  h_2499cc15b3806e 1
+frontend/src/Context/screenShare/constants/initialState.ts
+  h_2499cc15b3806e 1,8-9,14,17-24,26
+frontend/src/Context/screenShare/index.tsx
+  h_2499cc15b3806e 1
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_2499cc15b3806e 1,8,14,35,57-58,95-97,100-101,123-124,137-139,161-162,175-176,198-199,212-214,220-223,245-246,267-268,271,290-291,301-302,305-310,312,316-317,323
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_2499cc15b3806e 1-206
+frontend/src/Context/tests/RoomContext.spec.tsx
+  h_2499cc15b3806e 4
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  h_2499cc15b3806e 1-2,4-7,10-17,21-37,39-45
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  h_2499cc15b3806e 21,41
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.spec.tsx
+  h_2499cc15b3806e 4,6-9,13-17,19,21-33,51-53,62-63,73-74,82-113,115,117,120,123,125-149,151-154
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_2499cc15b3806e 4,6-7,16-18,23,40-51,117-219
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.spec.tsx
+  h_2499cc15b3806e 12,22-55
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.tsx
+  h_2499cc15b3806e 6,17-18,26-27,31-35,55-63,93-110
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.spec.tsx
+  h_2499cc15b3806e 129
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_2499cc15b3806e 5,30-43,54-56
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/PublisherStatistics.tsx
+  h_2499cc15b3806e 107-123,129
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/components/SubscriberStatistics.tsx
+  h_2499cc15b3806e 5-6,9,12,15,18-27,35,110-121,123-127,135-136
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_2499cc15b3806e 3,5,8,10-11,15-21,34
+frontend/src/components/BackgroundEffects/AddBackgroundEffect/AddBackgroundEffectLayout/AddBackgroundEffectLayout.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/BackgroundEffects/EffectOptionButtons/EffectOptionButtons.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/Banner/Banner.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/Banner/Banner.tsx
+  h_2499cc15b3806e 2
+frontend/src/components/BannerLanguage/BannerLanguage.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/BannerLogo/BannerLogo.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/BannerLogo/BannerLogo.tsx
+  h_2499cc15b3806e 16
+frontend/src/components/Footer/Footer.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/FooterLinks/FooterLinks.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/GHRepoButton/GHRepoButton.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/GHRepoButton/GHRepoButton.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.spec.tsx
+  h_2499cc15b3806e 1,3-5,7-10,13-22,25,29-37,39-43,46-70,73-99
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_2499cc15b3806e 1,3-5,9-12,14-15,26-122,125,127-140,143-144,146-150,153,155-162,164-168
+frontend/src/components/GoodBye/GoToLandingPageButton/GoToLandingPageButton.spec.tsx
+  h_2499cc15b3806e 4
+frontend/src/components/GoodBye/GoToLandingPageButton/GoToLandingPageButton.tsx
+  h_2499cc15b3806e 16
+frontend/src/components/GoodBye/GoodbyeMessage/GoodbyeMessage.spec.tsx
+  h_2499cc15b3806e 2
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  h_2499cc15b3806e 4
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  h_2499cc15b3806e 1,20
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  h_2499cc15b3806e 2
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.tsx
+  h_2499cc15b3806e 45
+frontend/src/components/LanguageSelector/LanguageSelector.spec.tsx
+  h_2499cc15b3806e 8,25,106,120,176-192,246,250,254-263
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  h_2499cc15b3806e 10,12-13,16-22,75-81
+frontend/src/components/LanguageSelector/LanguageSelector.types.tsx
+  h_2499cc15b3806e 1
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_2499cc15b3806e 5
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_2499cc15b3806e 8
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  h_2499cc15b3806e 9,93
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_2499cc15b3806e 11,69,78
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  h_2499cc15b3806e 56
+frontend/src/components/MeetingRoom/Emoji/Emoji.spec.tsx
+  h_2499cc15b3806e 21,27
+frontend/src/components/MeetingRoom/Emoji/Emoji.tsx
+  h_2499cc15b3806e 1-2,4-5,9,18,22,24-31,34,37-52
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  h_2499cc15b3806e 7,30
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_2499cc15b3806e 5,7
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_2499cc15b3806e 9,12
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  h_2499cc15b3806e 13
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  h_2499cc15b3806e 17
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/MeetingRoom/ParticipantListItem/ParticipantListItem.tsx
+  h_2499cc15b3806e 10
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantListItemMenu.tsx
+  h_2499cc15b3806e 10
+frontend/src/components/MeetingRoom/ParticipantListItemMenu/ParticipantPinMenuItem.tsx
+  h_2499cc15b3806e 8
+frontend/src/components/MeetingRoom/PinButton/PinButton.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/MeetingRoom/PopupDialog/PopupDialog.tsx
+  h_2499cc15b3806e 21,41,46-52
+frontend/src/components/MeetingRoom/RecordingPopupIndicator/RecordingPopupIndicator.spec.tsx
+  h_2499cc15b3806e 82-98
+frontend/src/components/MeetingRoom/RecordingPopupIndicator/RecordingPopupIndicator.tsx
+  h_2499cc15b3806e 38,66
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  h_2499cc15b3806e 1-2
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  h_2499cc15b3806e 1,6,12-13,15
+frontend/src/components/MeetingRoom/ReportIssue/FeedbackForm/FilePicker/FilePicker.tsx
+  h_2499cc15b3806e 10
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_2499cc15b3806e 5
+frontend/src/components/MeetingRoom/RightPanel/RightPanelTitle.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.spec.tsx
+  h_2499cc15b3806e 363-368
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  h_2499cc15b3806e 48
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  h_2499cc15b3806e 11
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_2499cc15b3806e 9
+frontend/src/components/MeetingRoom/TimeRoomName/TimeRoomName.test.tsx
+  h_2499cc15b3806e 1-74
+frontend/src/components/MeetingRoom/TimeRoomName/TimeRoomName.tsx
+  h_2499cc15b3806e 1-5,14-16,18-29,32-35,37-38
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.spec.tsx
+  h_2499cc15b3806e 8
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_2499cc15b3806e 5,7
+frontend/src/components/MeetingRoom/ZoomIndicator/ZoomIndicator.tsx
+  h_2499cc15b3806e 8
+frontend/src/components/NewRoomButton/NewRoomButton.tsx
+  h_2499cc15b3806e 5
+frontend/src/components/RedirectToUnsupportedBrowserPage/RedirectToUnsupportedBrowserPage.spec.tsx
+  h_2499cc15b3806e 5
+frontend/src/components/RedirectToWaitingRoom/RedirectToWaitingRoom.spec.tsx
+  h_2499cc15b3806e 5
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  h_2499cc15b3806e 3
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_2499cc15b3806e 5,27
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  h_2499cc15b3806e 4
+frontend/src/components/UnsupportedBrowser/SupportedBrowserListItem/SupportedBrowserListItem.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/UnsupportedBrowser/SupportedBrowsers/SupportedBrowsers.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/VividIcon/VividIcon.tsx
+  h_2499cc15b3806e 1
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  h_2499cc15b3806e 27
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsDialog/BackgroundEffectsDialog.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/WaitingRoom/CameraButton/CameraButton.tsx
+  h_2499cc15b3806e 9
+frontend/src/components/WaitingRoom/ControlPanel/ControlPanel.tsx
+  h_2499cc15b3806e 6
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  h_2499cc15b3806e 8
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.tsx
+  h_2499cc15b3806e 5,10,83-84
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.spec.tsx
+  h_2499cc15b3806e 13-16,29-32,128,132-147,152
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  h_2499cc15b3806e 10,15,42-44
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestDialog.tsx
+  h_2499cc15b3806e 7
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestQualityRow/PrecallNetworkTestQualityRow.tsx
+  h_2499cc15b3806e 4
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/hooks/useNetworkTest.tsx
+  h_2499cc15b3806e 167,171-172
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_2499cc15b3806e 8,82
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_2499cc15b3806e 74
+frontend/src/env.ts
+  h_2499cc15b3806e 3-16,19-62,70,93,95-96,98-99,103-110,116,118-119,127,157,161,163-171,174-241,243-244
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_2499cc15b3806e 2,5,162-168,176-177
+frontend/src/hooks/useGoodByePage/index.ts
+  h_2499cc15b3806e 1
+frontend/src/hooks/useGoodByePage/useGoodByePage.spec.tsx
+  h_2499cc15b3806e 1-7,10,12-22,27,30-46,48-52,54-55,57-60
+frontend/src/hooks/useGoodByePage/useGoodByePage.ts
+  h_2499cc15b3806e 4
+frontend/src/hooks/useMeetingRoom.ts
+  h_2499cc15b3806e 14,64-68,86,231,275
+frontend/src/i18n.ts
+  h_2499cc15b3806e 5,7-13
+frontend/src/locales/de.json
+  h_2499cc15b3806e 66-73,83-84,102-103,273-280,319
+frontend/src/locales/detectLanguage/detectLanguage.spec.ts
+  h_2499cc15b3806e 1-5,7-16,18-19,21-24,26-29,31-32,35-38,40-43,45-46,49-60
+frontend/src/locales/detectLanguage/detectLanguage.ts
+  h_2499cc15b3806e 1-38
+frontend/src/locales/detectLanguage/index.ts
+  h_2499cc15b3806e 1-3
+frontend/src/locales/en.json
+  h_2499cc15b3806e 66-73,83-84,94-95,319
+frontend/src/locales/es-MX.json
+  h_2499cc15b3806e 66-75,83-84,94-95,163-164,319
+frontend/src/locales/es.json
+  h_2499cc15b3806e 66-75,83-84,94-95,163-164,319
+frontend/src/locales/index.ts
+  h_2499cc15b3806e 6,36-38
+frontend/src/locales/it.json
+  h_2499cc15b3806e 66-73,83-84,102-103,163-164,319
+frontend/src/locales/localeParity.spec.ts
+  h_2499cc15b3806e 1-6,9-11,13-18,20,22-26,28-31
+frontend/src/logger/FrontendLogger.ts
+  h_2499cc15b3806e 1,11,14
+frontend/src/pages/ErrorBoundary/ErrorPage.spec.tsx
+  h_2499cc15b3806e 4,9,11
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  h_2499cc15b3806e 1-2,4-7,10-11,16-17,20,22-41,43-47
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_2499cc15b3806e 3-6,23,49
+frontend/src/pages/LandingPage/LandingPage.tsx
+  h_2499cc15b3806e 2
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_2499cc15b3806e 555-561,575
+frontend/src/pages/UnsupportedBrowserPage/UnsupportedBrowserPage.spec.tsx
+  h_2499cc15b3806e 4,9,11
+frontend/src/pages/UnsupportedBrowserPage/UnsupportedBrowserPage.tsx
+  h_2499cc15b3806e 2
+frontend/src/pages/WaitingRoom/WaitingRoom.skeleton.spec.tsx
+  h_2499cc15b3806e 4
+frontend/src/pages/WaitingRoom/WaitingRoom.skeleton.tsx
+  h_2499cc15b3806e 7
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_2499cc15b3806e 3
+frontend/src/test/providers/makeScreenShareProviderWrapper.tsx
+  h_2499cc15b3806e 1-11
+frontend/src/test/providers/makeTestProvider.ts
+  h_2499cc15b3806e 9,16,29,39,53-55,73,183-186
+frontend/src/test/providers/makersIndex.ts
+  h_2499cc15b3806e 32-34
+frontend/src/utils/SpeakingDetector/speakingDetector.ts
+  h_2499cc15b3806e 1,104
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_2499cc15b3806e 472,527
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.spec.ts
+  h_2499cc15b3806e 24
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  h_2499cc15b3806e 35
+frontend/tailwind.config.cjs
+  h_2499cc15b3806e 6-7,19-21
+integration-tests/playwright.config.ts
+  h_2499cc15b3806e 9,51,143,147
+integration-tests/tests/captions.spec.ts
+  h_2499cc15b3806e 1-154
+integration-tests/tests/landing.spec.ts
+  h_2499cc15b3806e 78-134
+integration-tests/tests/multiparty.spec.ts
+  h_2499cc15b3806e 1,4-116
+integration-tests/tests/utils.ts
+  h_2499cc15b3806e 28-29
+integration-tests/tests/waitingRoom.spec.ts
+  h_2499cc15b3806e 9-15,44,81,87-252
+libs/api/src/errors/assertions/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/errors/handlers/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/errors/helpers/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/errors/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/errors/types/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/executions/index.ts
+  h_2499cc15b3806e 1
+libs/api/src/handlers/createEphemeralToken.test.ts
+  h_2499cc15b3806e 2-4,6-12,14-16,18,20-24,26-30
+libs/api/src/handlers/createEphemeralToken.ts
+  h_2499cc15b3806e 21,23
+libs/api/src/index.ts
+  h_2499cc15b3806e 1,3-5,7
+libs/api/src/types/index.ts
+  h_2499cc15b3806e 1-2,24,30-36
+libs/common/README.md
+  h_2499cc15b3806e 1,3,5,7-104
+libs/common/docs/node.md
+  h_2499cc15b3806e 1-155
+libs/common/docs/node.test.md
+  h_2499cc15b3806e 1-24,27-68,70-71,73,75,77-78,80-84
+libs/common/docs/universal.md
+  h_2499cc15b3806e 1-543
+libs/common/docs/universal.test.md
+  h_2499cc15b3806e 1-93
+libs/common/docs/web.md
+  h_2499cc15b3806e 1-309
+libs/common/docs/web.test.md
+  h_2499cc15b3806e 1-132
+libs/common/manifest.json
+  h_2499cc15b3806e 1-5
+libs/common/package.json
+  h_2499cc15b3806e 2,4-12
+libs/common/project.json
+  h_2499cc15b3806e 40-88
+libs/common/scripts/checkPackageHash.ts
+  h_2499cc15b3806e 1-38
+libs/common/scripts/compareRegistryHash.ts
+  h_2499cc15b3806e 1-91
+libs/common/scripts/computePackageHash.ts
+  h_2499cc15b3806e 1-61
+libs/common/scripts/helpers/index.ts
+  h_2499cc15b3806e 1-3
+libs/common/scripts/helpers/scanExternalPackages.ts
+  h_2499cc15b3806e 1-83
+libs/common/scripts/helpers/validateChannelFormat.ts
+  h_2499cc15b3806e 1-16
+libs/common/scripts/helpers/validateVersionSync.ts
+  h_2499cc15b3806e 1-12
+libs/common/scripts/printExternals.ts
+  h_2499cc15b3806e 1-32
+libs/common/scripts/publishPackage.dev.ts
+  h_2499cc15b3806e 1-330
+libs/common/scripts/publishPackage.ts
+  h_2499cc15b3806e 1-74
+libs/common/scripts/updatePackageHash.ts
+  h_2499cc15b3806e 1-35
+libs/common/src/assertions/assertNotEmptyString.ts
+  h_2499cc15b3806e 1,4
+libs/common/src/assertions/index.ts
+  h_2499cc15b3806e 20
+libs/common/src/assertions/isEmptyString/index.ts
+  h_2499cc15b3806e 1
+libs/common/src/assertions/isEmptyString/isEmptyString.test.ts
+  h_2499cc15b3806e 1-9
+libs/common/src/assertions/isEmptyString/isEmptyString.ts
+  h_2499cc15b3806e 1-6
+libs/common/src/assertions/isFunction/isFunction.ts
+  h_2499cc15b3806e 1-4
+libs/common/src/execution/assertResult/assertResult.ts
+  h_2499cc15b3806e 15-27,29-41
+libs/common/src/execution/enqueue/enqueue.ts
+  h_2499cc15b3806e 18-27
+libs/common/src/execution/throttle/throttle.ts
+  h_2499cc15b3806e 8-24
+libs/common/src/index.ts
+  h_2499cc15b3806e 1-8
+libs/common/src/logger/Logger.spec.ts
+  h_2499cc15b3806e 2
+libs/common/src/logger/Logger.ts
+  h_2499cc15b3806e 59,235,250,286
+libs/common/src/logger/index.ts
+  h_2499cc15b3806e 1
+libs/common/src/schemas/Lang.schema.ts
+  h_2499cc15b3806e 1-23
+libs/common/src/schemas/Resolution.schema.ts
+  h_2499cc15b3806e 3-43
+libs/common/src/schemas/index.ts
+  h_2499cc15b3806e 5-7
+libs/common/src/types/index.ts
+  h_2499cc15b3806e 22-23
+libs/common/srcBrowser/components/index.ts
+  h_2499cc15b3806e 1
+libs/common/srcBrowser/hooks/useStableRef/hooks/useNonDisposableStableRef.ts
+  h_2499cc15b3806e 16
+libs/common/srcBrowser/hooks/useStableRef/useStableRef.ts
+  h_2499cc15b3806e 6
+libs/common/srcBrowser/index.ts
+  h_2499cc15b3806e 1-9
+libs/common/srcBrowser/platform/index.ts
+  h_2499cc15b3806e 4
+libs/common/srcNode/errors/assertions/index.ts
+  h_2499cc15b3806e 1-3
+libs/common/srcNode/errors/handlers/index.ts
+  h_2499cc15b3806e 1-6
+libs/common/srcNode/errors/helpers/index.ts
+  h_2499cc15b3806e 1
+libs/common/srcNode/errors/index.ts
+  h_2499cc15b3806e 1-7
+libs/common/srcNode/errors/types/index.ts
+  h_2499cc15b3806e 1-4
+libs/common/srcNode/executions/assertResult.test.ts
+  h_2499cc15b3806e 1-61
+libs/common/srcNode/executions/index.ts
+  h_2499cc15b3806e 1-4
+libs/common/srcNode/index.ts
+  h_2499cc15b3806e 1-12
+libs/common/srcNode/routing/httpHandler/helpers/composeHandlers.ts
+  h_2499cc15b3806e 3-4
+libs/common/srcNode/routing/httpHandler/httpHandler.ts
+  h_2499cc15b3806e 8
+libs/common/srcNode/routing/index.ts
+  h_2499cc15b3806e 1
+libs/common/srcNode/schemas/ArchiveOptions.schema.ts
+  h_2499cc15b3806e 8,17
+libs/common/srcNode/schemas/BaseArchiveOptions.schema.ts
+  h_2499cc15b3806e 6
+libs/common/srcNode/schemas/LayoutType.schema.ts
+  h_2499cc15b3806e 4
+libs/common/srcNode/types/ApplicationHandler.ts
+  h_2499cc15b3806e 6-9
+libs/common/srcNode/types/ApplicationRequest.ts
+  h_2499cc15b3806e 2-3
+libs/common/srcNode/types/ApplicationRequestHandler.ts
+  h_2499cc15b3806e 2-5
+libs/common/srcNode/types/ParamsDictionary.ts
+  h_2499cc15b3806e 1,3
+libs/common/srcNode/types/Query.ts
+  h_2499cc15b3806e 1,3
+libs/common/srcNode/types/index.ts
+  h_2499cc15b3806e 3-9
+libs/common/test/environment/setupCancelablePromiseHook.ts
+  h_2499cc15b3806e 1-3,6-11,15-18,22
+libs/common/test/fixtures/index.ts
+  h_2499cc15b3806e 2
+libs/common/test/fixtures/makeArchive.ts
+  h_2499cc15b3806e 1-2,4-14,16,19,22,31-32,35-40,42-56,58-115,117
+libs/common/test/helpers/setupPartialMock.ts
+  h_2499cc15b3806e 78-79
+libs/common/testBrowser/fixtures/makeWindowNavigatorMock/helpers/makeLanguagesMock.ts
+  h_2499cc15b3806e 1-12
+libs/common/testBrowser/fixtures/makeWindowNavigatorMock/makeWindowNavigatorMock.ts
+  h_2499cc15b3806e 3,23,36-40
+libs/common/testBrowser/index.ts
+  h_2499cc15b3806e 6,8-9,12-13
+libs/common/testBrowser/mocks/index.ts
+  h_2499cc15b3806e 4
+libs/common/testBrowser/mocks/languagesMock.ts
+  h_2499cc15b3806e 1-18
+libs/common/testBrowser/providers/index.ts
+  h_2499cc15b3806e 1
+libs/common/testBrowser/providers/makeMemoryRouterWrapper.tsx
+  h_2499cc15b3806e 1-9,11-15,17-23,25-28,30-35,37-47,50-51,53-55,57
+libs/common/testNode/index.ts
+  h_2499cc15b3806e 1-2
+libs/common/vite.config.ts
+  h_2499cc15b3806e 2,6-7,9-80,83-88,91-170,172-192,201,211-418
+libs/core/src/hooks/index.ts
+  h_2499cc15b3806e 5
+libs/core/src/hooks/useArchives/index.ts
+  h_2499cc15b3806e 2
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_2499cc15b3806e 4,6-8,12-13,30,41-50,58-59,63-66
+libs/core/src/hooks/usePublisherStats/helpers/index.ts
+  h_2499cc15b3806e 1-2
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerFrameRate.spec.ts
+  h_2499cc15b3806e 2-3,5-8,11-12,14,17-21,23,25-29
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerFrameRate.ts
+  h_2499cc15b3806e 1,3-6,8,11
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerResolution.spec.ts
+  h_2499cc15b3806e 1-3,5-15,17,20-24,26,29-33,35
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerResolution.ts
+  h_2499cc15b3806e 1-19
+libs/core/src/hooks/usePublisherStats/usePublisherStats.spec.ts
+  h_2499cc15b3806e 55-88,117-143
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_2499cc15b3806e 14-15,20,35-38,85-89,91-98,131-142,164-169
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_2499cc15b3806e 12-13,29-32,49,57,96-108,157-162
+libs/core/src/interceptors/index.ts
+  h_2499cc15b3806e 6
+libs/core/src/interceptors/patch-sdk-console-log.ts
+  h_2499cc15b3806e 1-10
+libs/core/src/logger/logger.ts
+  h_2499cc15b3806e 1,3
+libs/core/src/metrics/NetworkConditionReasonValue/NetworkConditionReasonValue.test.ts
+  h_2499cc15b3806e 1-14
+libs/core/src/metrics/NetworkConditionReasonValue/NetworkConditionReasonValue.ts
+  h_2499cc15b3806e 1,3,5-6,8-15,18-21,23-25,27-31,34
+libs/core/src/metrics/NetworkConditionReasonValue/index.ts
+  h_2499cc15b3806e 1
+libs/core/src/metrics/NetworkConditionValue/NetworkConditionValue.test.ts
+  h_2499cc15b3806e 1-17
+libs/core/src/metrics/NetworkConditionValue/NetworkConditionValue.ts
+  h_2499cc15b3806e 1-34
+libs/core/src/metrics/NetworkConditionValue/index.ts
+  h_2499cc15b3806e 1
+libs/core/src/metrics/index.ts
+  h_2499cc15b3806e 10-14
+libs/core/src/stores/index.ts
+  h_2499cc15b3806e 1
+libs/core/src/stores/mediaDevices/actions/getUserMedia/getUserMedia.spec.ts
+  h_2499cc15b3806e 3
+libs/core/src/stores/mediaDevices/actions/selectDevice/selectDevice.spec.ts
+  h_2499cc15b3806e 3
+libs/core/src/stores/mediaDevices/helpers/getMediaDevicesInfo/getMediaDevicesInfo.spec.ts
+  h_2499cc15b3806e 10
+libs/core/src/stores/mediaDevices/helpers/setupDeviceStore/setupDeviceStore.test.ts
+  h_2499cc15b3806e 4
+libs/core/src/stores/mediaDevices/hooks/useDeviceId.ts
+  h_2499cc15b3806e 1
+libs/core/src/stores/mediaDevices/hooks/useMediaDeviceInfo/useMediaDeviceInfo.test.ts
+  h_2499cc15b3806e 4
+libs/core/src/stores/mediaDevices/hooks/useMediaDeviceInfo/useMediaDeviceInfo.ts
+  h_2499cc15b3806e 2
+libs/core/src/stores/mediaDevices/index.ts
+  h_2499cc15b3806e 3
+libs/core/src/stores/mediaDevices/mediaDevices$.test.ts
+  h_2499cc15b3806e 2
+libs/core/src/stores/mediaDevices/mediaDevices$.ts
+  h_2499cc15b3806e 3
+libs/core/src/stores/mediaDevices/observables/mediaDevicesMap$.ts
+  h_2499cc15b3806e 1
+libs/core/src/stores/mediaDevices/types/DevicesAPI.ts
+  h_2499cc15b3806e 1
+libs/core/src/stores/publisher/actions/getFacingMode.ts
+  h_2499cc15b3806e 2,5
+libs/core/src/stores/publisher/publisher$.test.ts
+  h_2499cc15b3806e 3
+libs/core/test/fixtures/makeVideoClientMock.ts
+  h_2499cc15b3806e 3,30
+libs/ui/eslint.config.mjs
+  h_2499cc15b3806e 18,26-29
+libs/ui/src/components/Card/Card.spec.tsx
+  h_2499cc15b3806e 4
+libs/ui/src/components/Collapsible/components/Icon.tsx
+  h_2499cc15b3806e 1
+libs/ui/src/components/Collapsible/components/Summary.tsx
+  h_2499cc15b3806e 41
+libs/ui/src/components/Field/Field.tsx
+  h_2499cc15b3806e 1,6-13,20-40,42-48,53-56
+libs/ui/src/components/Field/FieldDescription.tsx
+  h_2499cc15b3806e 1-3,5-7,10-12,14
+libs/ui/src/components/Field/FieldInput.test.tsx
+  h_2499cc15b3806e 16,28,40,50,53,55,59,61
+libs/ui/src/components/Field/FieldInput.tsx
+  h_2499cc15b3806e 1,4-10,15,17,19,22-41,45
+libs/ui/src/components/Field/FieldLabel.tsx
+  h_2499cc15b3806e 1-2,4-6,9-12,14
+libs/ui/src/components/NotificationItem/NotificationItem.tsx
+  h_2499cc15b3806e 10
+libs/ui/src/components/VividIcon/VividIcon.tsx
+  h_2499cc15b3806e 2-3,8,10,16
+libs/ui/src/components/index.ts
+  h_2499cc15b3806e 4-7
+libs/ui/src/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices.spec.ts
+  h_2499cc15b3806e 5
+libs/ui/src/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices.ts
+  h_2499cc15b3806e 1,4
+libs/ui/src/index.ts
+  h_2499cc15b3806e 1,3-6,11-12
+libs/ui/src/layout/PageLayout/PageLayout.tsx
+  h_2499cc15b3806e 2
+libs/ui/src/layout/index.ts
+  h_2499cc15b3806e 1-3
+nx.json
+  h_2499cc15b3806e 77
+package.json
+  h_2499cc15b3806e 32-34,48-49,149,158,171,175-176,178-179,187,194,196,202
+scripts/build.ts
+  h_2499cc15b3806e 84-90,98,106,120-122
+scripts/publishPackage.ts
+  h_2499cc15b3806e 1-159
+scripts/testBackend.ts
+  h_2499cc15b3806e 38,47,62
+scripts/testFrontend.ts
+  h_2499cc15b3806e 26,51
+scripts/testIntegration.ts
+  h_2499cc15b3806e 19-23,60,147-156,159,178
+sonar-project.properties
+  h_2499cc15b3806e 46
+vcrBuild.sh
+  h_2499cc15b3806e 5
+yarn.lock
+  h_2499cc15b3806e 998,2430-2433,5097-5100,5130-5138,5274-5277,5292-5295,5298,5300-5301,5304-5306,5309,5311-5313,5874,5951-5954,5957-5958,6161-6176,6268,6669-6673,6694-6698,6985-6988,7277-7280,8297-8300,8305-8306,8722-8728,8854,8969-8975,10402,10781-10784,11066,11647-11650,11668-11671,11673-11676,12156-12159,12166,12176,12199-12206,12222,12229-12235,12245-12248,12250,12306-12313,12353-12362,12449-12452,12454,12456-12459,12461-12462,12978-12982,13070-13077,13110-13120,13950-13958,14291,14296-14299
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "58c7b80b185d4fa6cb409602b97b151dbe8c6788",
+  "prompts": {},
+  "humans": {
+    "h_2499cc15b3806e": {
+      "author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
