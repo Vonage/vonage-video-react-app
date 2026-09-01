@@ -29,8 +29,6 @@ function setupDeviceStore(api: unknown) {
 
   const abortController = new AbortController();
 
-  meta.isFirstMediaDevicesInfoQuery = true;
-
   void attempt(() => {
     void setVonageAudioOutputDevice(api.getState().audiooutput!);
   });
@@ -43,8 +41,11 @@ function setupDeviceStore(api: unknown) {
 
   meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
     const syncDevicesAndResolve = () => {
+      // skipStoreReady: this sync is what resolves isStoreReady, so it must not await it. Passing an
+      // explicit flag (instead of a shared single-use flag getMediaDevicesInfo consumed) prevents a
+      // concurrent getUserMedia-driven sync from stealing it and causing a circular-await deadlock.
       void api.actions
-        .syncMediaDevicesInfo()
+        .syncMediaDevicesInfo({ skipStoreReady: true })
         .then(() => {
           resolve();
         })
