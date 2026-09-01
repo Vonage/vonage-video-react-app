@@ -1,0 +1,126 @@
+backend/routes/auth/index.ts
+  s_1056c7a5eee4f6::t_fb2c15074946df 1
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_1056c7a5eee4f6::t_e6f275f0b557b4 1,7-24,44-45,47-48,50,54-57,59,61,67
+  s_1056c7a5eee4f6::t_c6b9f1d3c6e1ff 2-6,25-43,46,49,51-53,58,60,62-66,68-89
+frontend/vite.config.ts
+  s_1056c7a5eee4f6::t_d4d25811348f5f 168-176
+backend/server.ts
+  s_1056c7a5eee4f6::t_b0307ff547cc35 48-49
+README.md
+  s_1056c7a5eee4f6::t_34b3d728320efd 123
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_1056c7a5eee4f6::t_1859825c0284fb 107-137
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_1056c7a5eee4f6::t_0ef45234d9d63b 15-17
+  s_1056c7a5eee4f6::t_f45a964e168c49 115-152
+backend/routes/auth/handlers/callbackHandler.ts
+  s_1056c7a5eee4f6::t_f34e4b55b083b3 1-23,30,40,43,114,120,122,124,127,129,137,144,146,148-149
+  s_1056c7a5eee4f6::t_f0eef0fde01bc6 24-29,31-39,41-42,44-110,113,115-119,121,123,125-126,128,130-136,138-143,145,147,150
+  s_1056c7a5eee4f6::t_dde1eeb08483e7 111-112
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_1056c7a5eee4f6::t_53d1867c9d88df 6,8,10
+  s_1056c7a5eee4f6::t_aa6b8023ce23dc 147-152,154-163,172-178
+  s_1056c7a5eee4f6::t_bb40ef45a7a2f8 115-118,120-122
+  s_1056c7a5eee4f6::t_6c4c04e8a22ad0 69-73
+  s_1056c7a5eee4f6::t_bc8e37ffc2fd0e 49,55-56
+  s_1056c7a5eee4f6::t_525e70742a18a4 81
+  s_1056c7a5eee4f6::t_717f7d1c2e80c7 9
+  s_1056c7a5eee4f6::t_f385889eb6d930 82-85
+backend/routes/auth/helpers/computeCodeChallenge.ts
+  s_1056c7a5eee4f6::t_87216466e6d710 1-10
+backend/.env.example
+  s_1056c7a5eee4f6::t_040d7eb0339d91 49,57-59,62,66
+  s_1056c7a5eee4f6::t_7cc616647cbbcb 50-51,55
+  s_1056c7a5eee4f6::t_389d1bf33c6d9f 60-61,63-65
+customWordList.mjs
+  s_1056c7a5eee4f6::t_348b134aa7f0ac 33
+docs/CONFIGURATION.md
+  s_1056c7a5eee4f6::t_782fc33c45e3d8 82-83
+  s_1056c7a5eee4f6::t_d1de0328e959fd 101
+  s_1056c7a5eee4f6::t_c534c59f6387bb 84-85
+  s_1056c7a5eee4f6::t_98586c92e2b4e2 89-90,95,97-98,103-110,118
+backend/routes/auth/helpers/generateOpaqueToken.ts
+  s_1056c7a5eee4f6::t_ceb96d1e08fdb9 1-12
+backend/routes/auth/constants.ts
+  s_1056c7a5eee4f6::t_478bc1ed0dcb05 1-11
+backend/tests/helpers/config.test.ts
+  s_1056c7a5eee4f6::t_3ad7ef72eb93f7 87-93,98-106,114-115,121-122,126-127,134-135,145-146
+  s_1056c7a5eee4f6::t_cffeb192fcb6d9 74-77
+  s_1056c7a5eee4f6::t_f3ec6a92d67d3b 94-97
+backend/helpers/config.ts
+  s_1056c7a5eee4f6::t_f8c99bf6ef2dac 104-105,107,115-120,125-126,130-131
+  s_1056c7a5eee4f6::t_82d5360003adc0 10-11
+env.sh
+  s_1056c7a5eee4f6::t_8da4ab48d55d48 37-41
+  s_1056c7a5eee4f6::t_54fcb901b4e0b5 34-35
+  s_1056c7a5eee4f6::t_9c56cad865939b 36,42-43
+backend/types/config.ts
+  s_1056c7a5eee4f6::t_3f14c8f767208b 34-35,39-40
+libs/common/src/helpers/getCookieValue/getCookieValue.test.ts
+  s_1056c7a5eee4f6::t_adfec8dba1bd1f 1-14
+libs/common/src/helpers/index.ts
+  s_1056c7a5eee4f6::t_da8a7b993ca197 2
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_1056c7a5eee4f6::t_ffae7e374f0696 1-14,19-89,93-146
+  s_1056c7a5eee4f6::t_4ca3d7ecf68753 91-92
+  s_1056c7a5eee4f6::t_23dc7666916241 90
+  s_1056c7a5eee4f6::t_9d6b738383f8f8 15-18
+backend/routes/auth/schemas/TokenExchangeResponse.schema.ts
+  s_1056c7a5eee4f6::t_639e53d3987971 1-11
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_1056c7a5eee4f6::t_da9009390ca606 127-152,155-164
+  s_1056c7a5eee4f6::t_7dd80375381ac5 154
+  s_1056c7a5eee4f6::t_bdfe65f27bbcba 153
+  s_1056c7a5eee4f6::t_1869f89de17457 5-6,23,40-41,45-46
+backend/storage/vcrSessionStorage.ts
+  s_1056c7a5eee4f6::t_299a997f5aa7f1 23-26
+  s_1056c7a5eee4f6::t_728348484e2694 5-6,13-14
+  s_1056c7a5eee4f6::t_1b7ebf5556d95e 28
+  s_1056c7a5eee4f6::t_6605e73d6879e3 127-175
+libs/common/src/helpers/getCookieValue/getCookieValue.ts
+  s_1056c7a5eee4f6::t_26492cbe524128 1-24
+backend/routes/index.ts
+  s_1056c7a5eee4f6::t_a07029ed6867f5 8,18
+backend/routes/auth/auth.ts
+  s_1056c7a5eee4f6::t_80f406e8a56b24 2-3,7-8
+  s_1056c7a5eee4f6::t_a8107187039123 1,4-6,9-10
+backend/routes/auth/handlers/signInHandler.ts
+  s_1056c7a5eee4f6::t_9c6d2df5c68e79 12-17,19-27,29-30,32-72,74,77
+  s_1056c7a5eee4f6::t_c7c52e60890d14 1-11,18,28,31,73,75-76
+backend/storage/sessionStorage.ts
+  s_1056c7a5eee4f6::t_20db07daca81fb 13-25
+libs/common/src/helpers/getCookieValue/index.ts
+  s_1056c7a5eee4f6::t_dbd0cf8c65e88b 1
+libs/common/manifest.json
+  s_5938401ae0995d::t_385591184db9de 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8e9e407dc37bf8c2f3fb05d6b471b90daae3ab27",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_1056c7a5eee4f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f89c451e-d532-4daa-a4ba-a04f3b331fd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_5938401ae0995d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "885a9704-b13d-4250-b199-1b8a4382ce26",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
