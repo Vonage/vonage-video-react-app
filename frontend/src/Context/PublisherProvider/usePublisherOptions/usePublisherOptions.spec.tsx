@@ -64,6 +64,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: env.PUBLISHER_MAX_RESOLUTION,
+        videoContentHint: '',
         preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
@@ -138,6 +139,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: env.PUBLISHER_MAX_RESOLUTION,
+        videoContentHint: '',
         preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,

@@ -9,4 +9,8 @@ export {
   type SelectFieldOption,
   type SelectFieldProps,
 } from './components/SelectField';
+export {
+  default as SettingsSection,
+  type SettingsSectionProps,
+} from './components/SettingsSection';
 export { default as VividIcon, type VividIconProps } from './components/VividIcon';

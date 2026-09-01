@@ -2,15 +2,33 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { SelectField } from '@ui';
+import { Field, SelectField, SettingsSection, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import type { AdvancedSettingsFrameRate, AdvancedSettingsSelectOption } from '../../types/types';
-import { ADVANCED_SETTINGS_BITRATE_MODE, ADVANCED_SETTINGS_CODEC_MODE } from '../../types/types';
+import type {
+  AdvancedSettingsBitrateMode,
+  AdvancedSettingsContentHint,
+  AdvancedSettingsFrameRate,
+  AdvancedSettingsSelectOption,
+} from '../../types/types';
+import {
+  ADVANCED_SETTINGS_BITRATE_MODE,
+  ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_CONTENT_HINT,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
+} from '../../types/types';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
-const { setCodecMode, setCodecPriority } = advancedSettings$.actions;
+const {
+  setCodecMode,
+  setCodecPriority,
+  setSelfViewMirroringEnabled,
+  setVideoStatsOverlayEnabled,
+  setScreenShareCodecMode,
+  setScreenShareCodecPriority,
+  setScalableScreenshareEnabled,
+} = advancedSettings$.actions;
 
 const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.values(Resolution).map(
   (value) => ({
@@ -19,6 +37,8 @@ const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.val
   })
 );
 
+const DEFAULT_OPTION_VALUE = 'default-sdk';
+
 const AdvancedSettingsVideoTab = (): ReactElement => {
   const { t } = useTranslation();
   const bitrateMode = advancedSettings$.use.select(({ bitrateMode }) => bitrateMode);
@@ -26,12 +46,77 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   const codecPriority = advancedSettings$.use.select(({ codecPriority }) => codecPriority);
   const frameRate = advancedSettings$.use.select(({ frameRate }) => frameRate);
   const resolution = advancedSettings$.use.select(({ resolution }) => resolution);
+  const selfViewMirroringEnabled = advancedSettings$.use.select(
+    ({ selfViewMirroringEnabled }) => selfViewMirroringEnabled
+  );
+  const videoStatsOverlayEnabled = advancedSettings$.use.select(
+    ({ videoStatsOverlayEnabled }) => videoStatsOverlayEnabled
+  );
+  const cameraContentHint = advancedSettings$.use.select(
+    ({ cameraContentHint }) => cameraContentHint
+  );
+  const screenShareContentHint = advancedSettings$.use.select(
+    ({ screenShareContentHint }) => screenShareContentHint
+  );
+  const screenShareCodecMode = advancedSettings$.use.select(
+    ({ screenShareCodecMode }) => screenShareCodecMode
+  );
+  const screenShareCodecPriority = advancedSettings$.use.select(
+    ({ screenShareCodecPriority }) => screenShareCodecPriority
+  );
+  const scalableScreenshareEnabled = advancedSettings$.use.select(
+    ({ scalableScreenshareEnabled }) => scalableScreenshareEnabled
+  );
+  const screenShareFrameRate = advancedSettings$.use.select(
+    ({ screenShareFrameRate }) => screenShareFrameRate
+  );
+  const screenShareResolution = advancedSettings$.use.select(
+    ({ screenShareResolution }) => screenShareResolution
+  );
+  const screenShareBitrateMode = advancedSettings$.use.select(
+    ({ screenShareBitrateMode }) => screenShareBitrateMode
+  );
+  const screenShareCustomVideoBitrate = advancedSettings$.use.select(
+    ({ screenShareCustomVideoBitrate }) => screenShareCustomVideoBitrate
+  );
+
   const {
     handleFrameRateChange,
     handleResolutionChange,
     handleBitrateModeChange,
     handleCustomVideoBitrateChange,
+    handleCameraContentHintChange,
+    handleScreenShareContentHintChange,
+    handleScreenShareFrameRateChange,
+    handleScreenShareResolutionChange,
+    handleScreenShareBitrateModeChange,
+    handleScreenShareCustomVideoBitrateChange,
   } = useAdvancesSettingsHandlers();
+
+  const contentHintOptionLabels: Record<AdvancedSettingsContentHint, string> = {
+    '': t('advancedSettings.video.contentHint.options.automatic'),
+    motion: t('advancedSettings.video.contentHint.options.motion'),
+    detail: t('advancedSettings.video.contentHint.options.detail'),
+    text: t('advancedSettings.video.contentHint.options.text'),
+  };
+
+  const toContentHintOptions = (
+    hints: AdvancedSettingsContentHint[]
+  ): AdvancedSettingsSelectOption<AdvancedSettingsContentHint>[] =>
+    hints.map((hint) => ({ value: hint, label: contentHintOptionLabels[hint] }));
+
+  const cameraContentHintOptions = toContentHintOptions([
+    ADVANCED_SETTINGS_CONTENT_HINT.automatic,
+    ADVANCED_SETTINGS_CONTENT_HINT.motion,
+    ADVANCED_SETTINGS_CONTENT_HINT.detail,
+  ]);
+
+  const screenShareContentHintOptions = toContentHintOptions([
+    ADVANCED_SETTINGS_CONTENT_HINT.automatic,
+    ADVANCED_SETTINGS_CONTENT_HINT.motion,
+    ADVANCED_SETTINGS_CONTENT_HINT.detail,
+    ADVANCED_SETTINGS_CONTENT_HINT.text,
+  ]);
 
   const bitrateOptions = [
     {
@@ -70,13 +155,60 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
   }));
 
+  const defaultOption = {
+    value: DEFAULT_OPTION_VALUE,
+    label: t('advancedSettings.video.screenShare.useDefault'),
+  };
+
+  const screenShareFrameRateOptions = [
+    defaultOption,
+    ...frameRateOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
+  const screenShareResolutionOptions = [
+    defaultOption,
+    ...resolutionOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
+  const screenShareBitrateOptions = [
+    defaultOption,
+    ...bitrateOptions.map(({ value, label }) => ({ value: String(value), label })),
+  ];
+
+  const screenShareCodecOptions = [
+    {
+      value: ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit,
+      label: t('advancedSettings.video.screenShareCodec.options.inherit'),
+    },
+    ...codecOptions,
+  ];
+
   return (
     <div className="flex flex-col gap-6">
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.video')}
       </h2>
 
-      <div className="flex flex-col gap-6">
+      <SettingsSection
+        title={t('advancedSettings.video.sections.camera.label')}
+        icon={<VividIcon name="video-solid" customSize={-5} />}
+        data-testid="advanced-settings-video-camera-section"
+      >
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-self-view-mirroring">
+            {t('advancedSettings.video.selfViewMirroring.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-self-view-mirroring"
+            checked={selfViewMirroringEnabled}
+            onChange={(event) => setSelfViewMirroringEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.selfViewMirroring.description')}
+          </Field.Description>
+        </Field>
+
         <SelectField
           id="advanced-settings-video-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
@@ -121,7 +253,123 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           options={resolutionOptions}
           onChange={handleResolutionChange}
         />
-      </div>
+
+        <SelectField
+          id="advanced-settings-video-camera-content-hint"
+          label={t('advancedSettings.video.contentHint.label')}
+          value={cameraContentHint}
+          options={cameraContentHintOptions}
+          onChange={handleCameraContentHintChange}
+          description={t('advancedSettings.video.contentHint.description')}
+        />
+
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-stats-overlay">
+            {t('advancedSettings.video.statsOverlay.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-stats-overlay"
+            checked={videoStatsOverlayEnabled}
+            onChange={(event) => setVideoStatsOverlayEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.statsOverlay.description')}
+          </Field.Description>
+        </Field>
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('advancedSettings.video.sections.screenSharing.label')}
+        icon={<VividIcon name="screen-share-solid" customSize={-5} />}
+        description={t('advancedSettings.video.sections.screenSharing.description')}
+        data-testid="advanced-settings-video-screen-sharing-section"
+      >
+        <SelectField
+          id="advanced-settings-video-screen-share-content-hint"
+          label={t('advancedSettings.video.contentHint.label')}
+          value={screenShareContentHint}
+          options={screenShareContentHintOptions}
+          onChange={handleScreenShareContentHintChange}
+          description={t('advancedSettings.video.contentHint.description')}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-codec"
+          label={t('advancedSettings.video.codec.label')}
+          value={screenShareCodecMode}
+          options={screenShareCodecOptions}
+          onChange={setScreenShareCodecMode}
+          description={t('advancedSettings.video.screenShareCodec.description')}
+        />
+
+        {screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.manual && (
+          <AdvancedSettingsCodecPriorityField
+            codecPriority={screenShareCodecPriority}
+            setCodecPriority={setScreenShareCodecPriority}
+            idPrefix="advanced-settings-screen-share-codec-priority"
+          />
+        )}
+
+        <SelectField
+          id="advanced-settings-video-screen-share-frame-rate"
+          label={t('advancedSettings.video.frameRate.label')}
+          value={String(screenShareFrameRate ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareFrameRateOptions}
+          onChange={(value) => {
+            void handleScreenShareFrameRateChange(
+              value === DEFAULT_OPTION_VALUE ? null : (Number(value) as AdvancedSettingsFrameRate)
+            );
+          }}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-resolution"
+          label={t('advancedSettings.video.resolution.label')}
+          value={String(screenShareResolution ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareResolutionOptions}
+          onChange={(value) => {
+            void handleScreenShareResolutionChange(
+              value === DEFAULT_OPTION_VALUE ? null : (value as Resolution)
+            );
+          }}
+        />
+
+        <SelectField
+          id="advanced-settings-video-screen-share-bitrate"
+          label={t('advancedSettings.video.bitrate.label')}
+          value={String(screenShareBitrateMode ?? DEFAULT_OPTION_VALUE)}
+          options={screenShareBitrateOptions}
+          onChange={(value) => {
+            void handleScreenShareBitrateModeChange(
+              value === DEFAULT_OPTION_VALUE ? null : (value as AdvancedSettingsBitrateMode)
+            );
+          }}
+        />
+
+        {screenShareBitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom && (
+          <AdvancedSettingsCustomVideoBitrateField
+            onChange={handleScreenShareCustomVideoBitrateChange}
+            value={screenShareCustomVideoBitrate}
+            idPrefix="advanced-settings-screen-share-custom-video-bitrate"
+          />
+        )}
+
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-scalable-screenshare">
+            {t('advancedSettings.video.scalableScreenshare.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-scalable-screenshare"
+            checked={scalableScreenshareEnabled}
+            onChange={(event) => setScalableScreenshareEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.scalableScreenshare.description')}
+          </Field.Description>
+        </Field>
+      </SettingsSection>
     </div>
   );
 };

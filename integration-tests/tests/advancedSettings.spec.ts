@@ -23,7 +23,11 @@ test('should keep the selected resolution after reopening settings in the waitin
 
   await page.getByRole('button', { name: 'Video' }).click();
 
-  const resolutionSelect = page.getByLabel('Resolution');
+  // getByLabel matches substrings, so a bare 'Resolution' also picks up the new
+  // "Show resolution and frame rate" switch. Scope to the camera section and match exactly.
+  const resolutionSelect = page
+    .getByTestId('advanced-settings-video-camera-section')
+    .getByLabel('Resolution', { exact: true });
 
   await resolutionSelect.selectOption('640x480');
   await expect(resolutionSelect).toHaveValue('640x480');

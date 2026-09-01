@@ -6,15 +6,19 @@ import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
+  AdvancedSettingsScreenShareCodecMode,
   AdvancedSettingsTab,
 } from '@components/AdvancedSettingsDialog/types/types';
 import {
   ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_CONTENT_HINT,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
@@ -39,6 +43,18 @@ const INITIAL_STATE = {
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
+  selfViewMirroringEnabled: true,
+  videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
+  cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic as AdvancedSettingsContentHint,
+  screenShareContentHint: ADVANCED_SETTINGS_CONTENT_HINT.detail as AdvancedSettingsContentHint,
+  screenShareCodecMode:
+    ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit as AdvancedSettingsScreenShareCodecMode,
+  screenShareCodecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
+  scalableScreenshareEnabled: false,
+  screenShareFrameRate: null as AdvancedSettingsFrameRate | null,
+  screenShareResolution: null as Resolution | null,
+  screenShareBitrateMode: null as AdvancedSettingsBitrateMode | null,
+  screenShareCustomVideoBitrate: 500_000 as AdvancedSettingsCustomVideoBitrate,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -76,6 +92,29 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   echoCancellationEnabled: z.boolean(),
   noiseSuppressionEnabled: z.boolean(),
   autoGainControlEnabled: z.boolean(),
+  selfViewMirroringEnabled: z.boolean(),
+  videoStatsOverlayEnabled: z.boolean(),
+  cameraContentHint: z.enum(['', 'motion', 'detail', 'text']),
+  screenShareContentHint: z.enum(['', 'motion', 'detail', 'text']),
+  screenShareCodecMode: z.enum(['inherit', 'automatic', 'manual']),
+  screenShareCodecPriority: z.tuple([
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+    z.enum(['vp8', 'vp9', 'h264']),
+  ]),
+  scalableScreenshareEnabled: z.boolean(),
+  screenShareFrameRate: z
+    .custom<AdvancedSettingsFrameRate>(
+      (value): value is AdvancedSettingsFrameRate =>
+        typeof value === 'number' &&
+        Number.isInteger(value) &&
+        env.SUPPORTED_FRAME_RATES.includes(value),
+      { message: 'Unsupported frame rate' }
+    )
+    .nullable(),
+  screenShareResolution: ResolutionSchema.nullable(),
+  screenShareBitrateMode: z.enum(['default', 'bw_saver', 'extra_bw_saver', 'custom']).nullable(),
+  screenShareCustomVideoBitrate: z.number().int(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -194,6 +233,61 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setAutoGainControlEnabled(value: boolean) {
       return () => {
         partialUpdate({ autoGainControlEnabled: value });
+      };
+    },
+    setSelfViewMirroringEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ selfViewMirroringEnabled: value });
+      };
+    },
+    setVideoStatsOverlayEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ videoStatsOverlayEnabled: value });
+      };
+    },
+    setCameraContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ cameraContentHint: value });
+      };
+    },
+    setScreenShareContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ screenShareContentHint: value });
+      };
+    },
+    setScreenShareCodecMode(value: AdvancedSettingsScreenShareCodecMode) {
+      return () => {
+        partialUpdate({ screenShareCodecMode: value });
+      };
+    },
+    setScreenShareCodecPriority(value: AdvancedSettingsManualCodecOrder) {
+      return () => {
+        partialUpdate({ screenShareCodecPriority: value });
+      };
+    },
+    setScalableScreenshareEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ scalableScreenshareEnabled: value });
+      };
+    },
+    setScreenShareFrameRate(value: AdvancedSettingsFrameRate | null) {
+      return () => {
+        partialUpdate({ screenShareFrameRate: value });
+      };
+    },
+    setScreenShareResolution(value: Resolution | null) {
+      return () => {
+        partialUpdate({ screenShareResolution: value });
+      };
+    },
+    setScreenShareBitrateMode(value: AdvancedSettingsBitrateMode | null) {
+      return () => {
+        partialUpdate({ screenShareBitrateMode: value });
+      };
+    },
+    setScreenShareCustomVideoBitrate(value: AdvancedSettingsCustomVideoBitrate) {
+      return () => {
+        partialUpdate({ screenShareCustomVideoBitrate: value });
       };
     },
   },

@@ -64,6 +64,8 @@ describe('screenShare$', () => {
         videoSource: 'screen',
         insertDefaultUI: false,
         videoContentHint: 'detail',
+        preferredVideoCodecs: 'automatic',
+        scalableScreenshare: false,
         name: "TestUser's screen",
       },
       expect.any(Function)
