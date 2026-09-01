@@ -79,7 +79,9 @@ const screenShare$ = createContext(initialState, {
 
           const preferredVideoCodecs = ((): PublisherProperties['preferredVideoCodecs'] => {
             if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit) {
-              return codecMode === ADVANCED_SETTINGS_CODEC_MODE.automatic ? 'automatic' : codecPriority;
+              return codecMode === ADVANCED_SETTINGS_CODEC_MODE.automatic
+                ? 'automatic'
+                : codecPriority;
             }
 
             if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.automatic) {

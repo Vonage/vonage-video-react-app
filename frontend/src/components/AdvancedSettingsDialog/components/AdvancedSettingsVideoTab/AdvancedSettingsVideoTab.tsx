@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { SelectField, SettingsSection, SwitchField, VividIcon } from '@ui';
+import { Field, SelectField, SettingsSection, VividIcon } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type {
@@ -197,13 +197,20 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         icon={<VividIcon name="video-solid" customSize={-5} />}
         data-testid="advanced-settings-video-camera-section"
       >
-        <SwitchField
-          id="advanced-settings-video-self-view-mirroring"
-          label={t('advancedSettings.video.selfViewMirroring.label')}
-          checked={selfViewMirroringEnabled}
-          onChange={setSelfViewMirroringEnabled}
-          description={t('advancedSettings.video.selfViewMirroring.description')}
-        />
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-self-view-mirroring">
+            {t('advancedSettings.video.selfViewMirroring.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-self-view-mirroring"
+            checked={selfViewMirroringEnabled}
+            onChange={(event) => setSelfViewMirroringEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.selfViewMirroring.description')}
+          </Field.Description>
+        </Field>
 
         <SelectField
           id="advanced-settings-video-bitrate"
@@ -259,13 +266,20 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           description={t('advancedSettings.video.contentHint.description')}
         />
 
-        <SwitchField
-          id="advanced-settings-video-stats-overlay"
-          label={t('advancedSettings.video.statsOverlay.label')}
-          checked={videoStatsOverlayEnabled}
-          onChange={setVideoStatsOverlayEnabled}
-          description={t('advancedSettings.video.statsOverlay.description')}
-        />
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-stats-overlay">
+            {t('advancedSettings.video.statsOverlay.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-stats-overlay"
+            checked={videoStatsOverlayEnabled}
+            onChange={(event) => setVideoStatsOverlayEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.statsOverlay.description')}
+          </Field.Description>
+        </Field>
       </SettingsSection>
 
       <SettingsSection
@@ -344,13 +358,20 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           />
         )}
 
-        <SwitchField
-          id="advanced-settings-video-scalable-screenshare"
-          label={t('advancedSettings.video.scalableScreenshare.label')}
-          checked={scalableScreenshareEnabled}
-          onChange={setScalableScreenshareEnabled}
-          description={t('advancedSettings.video.scalableScreenshare.description')}
-        />
+        <Field>
+          <Field.Label htmlFor="advanced-settings-video-scalable-screenshare">
+            {t('advancedSettings.video.scalableScreenshare.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-video-scalable-screenshare"
+            checked={scalableScreenshareEnabled}
+            onChange={(event) => setScalableScreenshareEnabled(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.video.scalableScreenshare.description')}
+          </Field.Description>
+        </Field>
       </SettingsSection>
     </div>
   );

@@ -6,8 +6,7 @@ import type { PublisherContextType } from '@Context/PublisherProvider';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
-import useScreenShareContext from '@hooks/useScreenShareContext';
-import type { ScreenShareContextType } from '@Context/ScreenShareProvider';
+import { makeTestProvider, providers } from '@test/providers';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { handleClientApplicationError } from '@ui/helpers';
 import useAdvancesSettingsHandlers from './useAdvancesSettingsHandlers';
@@ -15,7 +14,7 @@ import { Resolution } from '@common/types';
 
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@hooks/usePreviewPublisherContext');
-vi.mock('@hooks/useScreenShareContext');
+
 vi.mock('@ui/helpers', () => ({
   handleClientApplicationError: vi.fn(),
 }));
@@ -26,7 +25,6 @@ const mockUsePreviewPublisherContext = usePreviewPublisherContext as Mock<
   PreviewPublisherContextType
 >;
 const mockHandleClientApplicationError = vi.mocked(handleClientApplicationError);
-const mockUseScreenShareContext = useScreenShareContext as Mock<[], ScreenShareContextType>;
 
 const createMockPublisher = () =>
   ({
@@ -44,9 +42,6 @@ describe('useAdvancesSettingsHandlers', () => {
     mockUsePreviewPublisherContext.mockReturnValue({
       publisher: null,
     } as unknown as PreviewPublisherContextType);
-    mockUseScreenShareContext.mockReturnValue({
-      screensharingPublisher: null,
-    } as unknown as ScreenShareContextType);
   });
 
   afterEach(() => {
@@ -273,18 +268,22 @@ describe('useAdvancesSettingsHandlers', () => {
 
   describe('screen-share handlers', () => {
     const renderWithScreenShare = (publisher: Publisher | null) => {
-      mockUseScreenShareContext.mockReturnValue({
-        screensharingPublisher: publisher,
-      } as unknown as ScreenShareContextType);
+      advancedSettings$.actions.setScreenShareBitrateMode('custom');
+      advancedSettings$.actions.setScreenShareCustomVideoBitrate(500_000);
 
-      return renderHook(() =>
-        useAdvancedSettingsVideoHandlers({
-          bitrateMode: 'default',
-          customVideoBitrate: 500_000,
-          screenShareBitrateMode: 'custom',
-          screenShareCustomVideoBitrate: 500_000,
-        })
-      );
+      const { wrapper, screenShareContext } = makeTestProvider([
+        providers.runtime,
+        providers.user,
+        providers.session,
+        providers.screenShare,
+      ]);
+      const rendered = renderHook(() => useAdvancesSettingsHandlers(), { wrapper });
+
+      act(() => {
+        screenShareContext.current?.setState((state) => ({ ...state, publisher }));
+      });
+
+      return rendered;
     };
 
     it('applies frame rate to the share publisher, not the camera', async () => {

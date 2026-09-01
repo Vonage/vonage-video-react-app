@@ -41,15 +41,15 @@ export const applyResolution = async (
   );
 };
 
-export const applyContentHint = (
+export const applyContentHint = async (
   publisher: Publisher | null,
   contentHint: AdvancedSettingsContentHint
-): void => {
+): Promise<void> => {
   if (!publisher) return;
   const hasVideoTrack = publisher?.getVideoSource()?.track;
   if (!hasVideoTrack) return;
 
-  publisher.setVideoContentHint(contentHint);
+  await publisher.setVideoContentHint(contentHint);
 };
 
 export const applyBitrate = async (
@@ -110,7 +110,9 @@ const applyAdvancedSettingsToPublisher = async (
     console.error(`applyAdvancedSettingsToPublisher: ${methodName} failed`, bitrateError);
   }
 
-  const { error: contentHintError } = tryCatch(() => applyContentHint(publisher, contentHint));
+  const { error: contentHintError } = await tryCatch(() =>
+    applyContentHint(publisher, contentHint)
+  );
 
   if (contentHintError)
     console.error('applyAdvancedSettingsToPublisher: setVideoContentHint failed', contentHintError);

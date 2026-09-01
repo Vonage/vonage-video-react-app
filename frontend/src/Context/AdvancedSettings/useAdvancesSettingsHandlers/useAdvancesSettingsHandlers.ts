@@ -1,6 +1,7 @@
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { useContext } from 'react';
 import screenShare$ from '@Context/screenShare';
 import { makeApplicationErrorMapper } from '@core/errors';
 import { handleClientApplicationError } from '@ui/helpers';
@@ -41,8 +42,8 @@ type UseAdvancesSettingsHandlers = {
   handleBitrateModeChange: (value: AdvancedSettingsBitrateMode) => Promise<void>;
   handleCustomVideoBitrateChange: (value: AdvancedSettingsCustomVideoBitrate) => Promise<void>;
   handleAdvancedNoiseSuppressionChange: (checked: boolean) => Promise<void>;
-  handleCameraContentHintChange: (value: AdvancedSettingsContentHint) => void;
-  handleScreenShareContentHintChange: (value: AdvancedSettingsContentHint) => void;
+  handleCameraContentHintChange: (value: AdvancedSettingsContentHint) => Promise<void>;
+  handleScreenShareContentHintChange: (value: AdvancedSettingsContentHint) => Promise<void>;
   handleScreenShareFrameRateChange: (value: AdvancedSettingsFrameRate | null) => Promise<void>;
   handleScreenShareResolutionChange: (value: Resolution | null) => Promise<void>;
   handleScreenShareBitrateModeChange: (value: AdvancedSettingsBitrateMode | null) => Promise<void>;
@@ -59,7 +60,9 @@ type UseAdvancesSettingsHandlers = {
 const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
   const { publisher: meetingRoomPublisher } = usePublisherContext();
   const { publisher: previewPublisher } = usePreviewPublisherContext();
-  const screensharingPublisher = screenShare$.useScreensharingPublisher();
+  const screenShare = useContext(screenShare$.Context) as ReturnType<
+    typeof screenShare$.use.api
+  > | null;
   const publisher = meetingRoomPublisher ?? previewPublisher ?? null;
 
   const handleFrameRateChange = async (value: AdvancedSettingsFrameRate) => {
@@ -126,9 +129,9 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
     setAdvancedNoiseSuppressionEnabled(!checked);
   };
 
-  const handleCameraContentHintChange = (value: AdvancedSettingsContentHint) => {
+  const handleCameraContentHintChange = async (value: AdvancedSettingsContentHint) => {
     try {
-      applyContentHint(publisher, value);
+      await applyContentHint(publisher, value);
       setCameraContentHint(value);
     } catch (error) {
       handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
@@ -140,20 +143,18 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
    * room. When it is absent the setting is stored and picked up by the next initPublisher call.
    * @param {AdvancedSettingsContentHint} value - the requested content hint
    */
-  const handleScreenShareContentHintChange = (value: AdvancedSettingsContentHint) => {
+  const handleScreenShareContentHintChange = async (value: AdvancedSettingsContentHint) => {
     try {
-      applyContentHint(screensharingPublisher ?? null, value);
+      await applyContentHint(screenShare?.getState().publisher ?? null, value);
       setScreenShareContentHint(value);
     } catch (error) {
       handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
     }
   };
 
-  const screenSharePublisher = screensharingPublisher ?? null;
-
   const handleScreenShareFrameRateChange = async (value: AdvancedSettingsFrameRate | null) => {
     try {
-      if (value !== null) await applyFrameRate(screenSharePublisher, value);
+      if (value !== null) await applyFrameRate(screenShare?.getState().publisher ?? null, value);
       setScreenShareFrameRate(value);
     } catch (error) {
       handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
@@ -162,7 +163,7 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
 
   const handleScreenShareResolutionChange = async (value: Resolution | null) => {
     try {
-      if (value !== null) await applyResolution(screenSharePublisher, value);
+      if (value !== null) await applyResolution(screenShare?.getState().publisher ?? null, value);
       setScreenShareResolution(value);
     } catch (error) {
       handleClientApplicationError(makeApplicationErrorMapper(t('errors.unknown'))(error));
@@ -174,7 +175,11 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
       const { screenShareCustomVideoBitrate } = advancedSettings$.getState();
 
       if (value !== null) {
-        await applyBitrate(screenSharePublisher, value, screenShareCustomVideoBitrate);
+        await applyBitrate(
+          screenShare?.getState().publisher ?? null,
+          value,
+          screenShareCustomVideoBitrate
+        );
       }
       setScreenShareBitrateMode(value);
     } catch (error) {
@@ -189,7 +194,11 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
       const { screenShareBitrateMode } = advancedSettings$.getState();
 
       if (screenShareBitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom) {
-        await applyBitrate(screenSharePublisher, screenShareBitrateMode, value);
+        await applyBitrate(
+          screenShare?.getState().publisher ?? null,
+          screenShareBitrateMode,
+          value
+        );
       }
       setScreenShareCustomVideoBitrate(value);
     } catch (error) {
