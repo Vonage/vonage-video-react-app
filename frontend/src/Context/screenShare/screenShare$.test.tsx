@@ -64,7 +64,6 @@ describe('screenShare$', () => {
         videoSource: 'screen',
         insertDefaultUI: false,
         videoContentHint: 'detail',
-        // 'inherit' by default, and the camera defaults to automatic codec selection
         preferredVideoCodecs: 'automatic',
         scalableScreenshare: false,
         name: "TestUser's screen",

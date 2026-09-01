@@ -9,17 +9,6 @@ export type SettingsSectionProps = PropsWithChildren<
   }
 >;
 
-/**
- * SettingsSection Component
- *
- * Groups related form fields under a heading with an optional leading icon and description.
- * The root element carries no outer spacing so the parent owns the gap between sections.
- * @param {SettingsSectionProps} props - the props for the component
- *  @property {string} title - the heading text
- *  @property {ReactNode} [icon] - rendered before the heading, typically a VividIcon
- *  @property {string} [description] - explanatory copy rendered under the heading
- * @returns {ReactElement} The settings section.
- */
 const SettingsSection = ({
   title,
   icon,

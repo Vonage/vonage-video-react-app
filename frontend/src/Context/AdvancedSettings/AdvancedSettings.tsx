@@ -51,10 +51,6 @@ const INITIAL_STATE = {
     ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit as AdvancedSettingsScreenShareCodecMode,
   screenShareCodecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
   scalableScreenshareEnabled: false,
-  /**
-   * null means "leave it to the browser", which is what the screen-share publisher has always
-   * done - it receives none of these constraints today.
-   */
   screenShareFrameRate: null as AdvancedSettingsFrameRate | null,
   screenShareResolution: null as Resolution | null,
   screenShareBitrateMode: null as AdvancedSettingsBitrateMode | null,

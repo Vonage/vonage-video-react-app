@@ -37,7 +37,6 @@ const resolutionOptions: AdvancedSettingsSelectOption<Resolution>[] = Object.val
   })
 );
 
-/** Sentinel for "send no constraint", which is distinct from any real SDK value. */
 const DEFAULT_OPTION_VALUE = 'default-sdk';
 
 const AdvancedSettingsVideoTab = (): ReactElement => {
@@ -106,7 +105,6 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
   ): AdvancedSettingsSelectOption<AdvancedSettingsContentHint>[] =>
     hints.map((hint) => ({ value: hint, label: contentHintOptionLabels[hint] }));
 
-  // 'text' is legal on a camera but meaningless, so it is offered for screen sharing only.
   const cameraContentHintOptions = toContentHintOptions([
     ADVANCED_SETTINGS_CONTENT_HINT.automatic,
     ADVANCED_SETTINGS_CONTENT_HINT.motion,
@@ -157,7 +155,6 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
   }));
 
-  // The screen share receives no constraints today, so every control needs an explicit opt-out.
   const defaultOption = {
     value: DEFAULT_OPTION_VALUE,
     label: t('advancedSettings.video.screenShare.useDefault'),

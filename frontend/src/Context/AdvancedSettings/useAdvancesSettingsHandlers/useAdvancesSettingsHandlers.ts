@@ -138,11 +138,6 @@ const useAdvancesSettingsHandlers = (): UseAdvancesSettingsHandlers => {
     }
   };
 
-  /**
-   * The screen-share publisher only exists while a share is running, and only inside the meeting
-   * room. When it is absent the setting is stored and picked up by the next initPublisher call.
-   * @param {AdvancedSettingsContentHint} value - the requested content hint
-   */
   const handleScreenShareContentHintChange = async (value: AdvancedSettingsContentHint) => {
     try {
       await applyContentHint(screenShare?.getState().publisher ?? null, value);

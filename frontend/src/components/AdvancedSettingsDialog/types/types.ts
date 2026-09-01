@@ -18,10 +18,6 @@ export const ADVANCED_SETTINGS_CODEC_MODE = {
   manual: 'manual' as AdvancedSettingsCodecMode,
 };
 
-/**
- * The screen share follows the camera's codec settings until explicitly changed, so it carries a
- * third mode the camera does not have.
- */
 export type AdvancedSettingsScreenShareCodecMode = 'inherit' | AdvancedSettingsCodecMode;
 
 export const ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE = {
@@ -42,10 +38,6 @@ export type AdvancedSettingsFrameRate = NonNullable<
   import('@vonage/client-sdk-video').GetUserMediaProperties['frameRate']
 >;
 
-/**
- * Maps to the track's videoContentHint. '' lets the browser decide, which is what the camera
- * publisher has always done; the screen-share publisher has always been created with 'detail'.
- */
 export type AdvancedSettingsContentHint = import('@vonage/client-sdk-video').VideoContentHint;
 
 export const ADVANCED_SETTINGS_CONTENT_HINT = {
