@@ -129,13 +129,15 @@ class VcrSessionStorage implements SessionStorage {
     transactionId,
     state,
     codeVerifier,
+    returnTo,
   }: {
     transactionId: string;
     state: string;
     codeVerifier: string;
+    returnTo: string;
   }): Promise<void> {
     const key = makeKey(StorageResource.AuthTransaction, transactionId);
-    await this.dbState.set(key, { state, codeVerifier });
+    await this.dbState.set(key, { state, codeVerifier, returnTo });
     await this.setKeyExpiry(key, AUTH_TRANSACTION_EXPIRATION_TIME);
   }
 
@@ -143,9 +145,10 @@ class VcrSessionStorage implements SessionStorage {
     transactionId,
   }: {
     transactionId: string;
-  }): Promise<{ state: string; codeVerifier: string } | null> {
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null> {
     const key = makeKey(StorageResource.AuthTransaction, transactionId);
-    const transaction: { state: string; codeVerifier: string } | null = await this.dbState.get(key);
+    const transaction: { state: string; codeVerifier: string; returnTo: string } | null =
+      await this.dbState.get(key);
 
     return transaction ?? null;
   }

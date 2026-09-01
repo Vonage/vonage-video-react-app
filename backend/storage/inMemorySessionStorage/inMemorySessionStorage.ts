@@ -12,8 +12,9 @@ class InMemorySessionStorage implements SessionStorage {
   private sessions: { [key: string]: SessionData } = {};
   private roomNameBySessionKey: { [sessionKey: string]: string } = {};
   private sessionKeyBySessionId: { [sessionId: string]: string } = {};
-  private authTransactions: { [transactionId: string]: { state: string; codeVerifier: string } } =
-    {};
+  private authTransactions: {
+    [transactionId: string]: { state: string; codeVerifier: string; returnTo: string };
+  } = {};
   private accessTokensBySessionId: { [sessionId: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
@@ -117,19 +118,21 @@ class InMemorySessionStorage implements SessionStorage {
     transactionId,
     state,
     codeVerifier,
+    returnTo,
   }: {
     transactionId: string;
     state: string;
     codeVerifier: string;
+    returnTo: string;
   }): Promise<void> {
-    this.authTransactions[transactionId] = { state, codeVerifier };
+    this.authTransactions[transactionId] = { state, codeVerifier, returnTo };
   }
 
   async getAuthTransaction({
     transactionId,
   }: {
     transactionId: string;
-  }): Promise<{ state: string; codeVerifier: string } | null> {
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null> {
     return this.authTransactions[transactionId] ?? null;
   }
 

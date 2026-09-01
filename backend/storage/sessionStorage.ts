@@ -15,10 +15,11 @@ export interface SessionStorage {
     transactionId: string;
     state: string;
     codeVerifier: string;
+    returnTo: string;
   }): Promise<void>;
   getAuthTransaction(args: {
     transactionId: string;
-  }): Promise<{ state: string; codeVerifier: string } | null>;
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null>;
   deleteAuthTransaction(args: { transactionId: string }): Promise<void>;
 
   setAccessToken(args: { sessionId: string; accessToken: string }): Promise<void>;

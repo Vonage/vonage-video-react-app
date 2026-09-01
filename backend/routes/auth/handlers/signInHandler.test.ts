@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
+import getSessionStorageService from '../../../sessionStorageService';
 import { TRANSACTION_COOKIE_NAME } from '../constants';
 
 const loadConfigMock = jest.fn<() => Config>();
@@ -85,5 +86,25 @@ describe('signInHandler', () => {
     const setCookieHeader = res.headers['set-cookie'][0];
     expect(setCookieHeader).toContain(`${TRANSACTION_COOKIE_NAME}=`);
     expect(setCookieHeader).toContain('HttpOnly');
+  });
+
+  it('stores a safe returnTo query param on the transaction', async () => {
+    const res = await request(buildApp()).get('/auth/signin?returnTo=/room/abc123');
+
+    const transactionId = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
+    const sessionService = getSessionStorageService();
+    const transaction = await sessionService.getAuthTransaction({ transactionId });
+
+    expect(transaction?.returnTo).toEqual('/room/abc123');
+  });
+
+  it('falls back to "/" when returnTo is not a safe relative path', async () => {
+    const res = await request(buildApp()).get('/auth/signin?returnTo=//evil.com');
+
+    const transactionId = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
+    const sessionService = getSessionStorageService();
+    const transaction = await sessionService.getAuthTransaction({ transactionId });
+
+    expect(transaction?.returnTo).toEqual('/');
   });
 });

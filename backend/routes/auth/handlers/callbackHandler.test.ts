@@ -54,13 +54,15 @@ async function seedTransaction({
   transactionId,
   state,
   codeVerifier = 'test-code-verifier',
+  returnTo = '/',
 }: {
   transactionId: string;
   state: string;
   codeVerifier?: string;
+  returnTo?: string;
 }): Promise<void> {
   const sessionService = getSessionStorageService();
-  await sessionService.setAuthTransaction({ transactionId, state, codeVerifier });
+  await sessionService.setAuthTransaction({ transactionId, state, codeVerifier, returnTo });
 }
 
 describe('callbackHandler', () => {
@@ -95,6 +97,24 @@ describe('callbackHandler', () => {
     const sessionId = sessionCookie!.split(';')[0].split('=')[1];
     expect(await sessionService.getAccessToken({ sessionId })).toEqual('okta-access-token');
     expect(await sessionService.getAuthTransaction({ transactionId: 'txn-1' })).toBeNull();
+  });
+
+  it('redirects to the transaction\'s returnTo path instead of always redirecting to "/"', async () => {
+    await seedTransaction({
+      transactionId: 'txn-return-to',
+      state: 'state-1',
+      returnTo: '/room/abc123',
+    });
+    axiosPostMock.mockResolvedValue({
+      data: { access_token: 'okta-access-token', token_type: 'Bearer', expires_in: 3600 },
+    });
+
+    const res = await request(buildApp())
+      .get('/api/auth/callback/okta?code=auth-code&state=state-1')
+      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=txn-return-to`);
+
+    expect(res.statusCode).toEqual(302);
+    expect(res.headers.location).toEqual('/room/abc123');
   });
 
   it('returns 401 when the state parameter does not match the stored transaction', async () => {

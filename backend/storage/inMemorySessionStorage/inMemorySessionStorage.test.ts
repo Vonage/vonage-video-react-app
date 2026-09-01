@@ -114,10 +114,19 @@ describe('InMemorySessionStorage', () => {
     });
 
     it('should set, get, and delete an auth transaction', async () => {
-      await storage.setAuthTransaction({ transactionId, state: 'state-1', codeVerifier: 'pkce-1' });
+      await storage.setAuthTransaction({
+        transactionId,
+        state: 'state-1',
+        codeVerifier: 'pkce-1',
+        returnTo: '/room/abc',
+      });
 
       const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toEqual({ state: 'state-1', codeVerifier: 'pkce-1' });
+      expect(transaction).toEqual({
+        state: 'state-1',
+        codeVerifier: 'pkce-1',
+        returnTo: '/room/abc',
+      });
 
       await storage.deleteAuthTransaction({ transactionId });
       expect(await storage.getAuthTransaction({ transactionId })).toBeNull();

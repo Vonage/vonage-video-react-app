@@ -13,12 +13,9 @@ import isVcr from '../../../middleware/isVcr';
 import getSessionStorageService from '../../../sessionStorageService';
 import loadConfig from '../../../helpers/config';
 import generateOpaqueToken from '../helpers/generateOpaqueToken';
+import readStringQueryParam from '../helpers/readStringQueryParam';
 import { SESSION_COOKIE_NAME, TRANSACTION_COOKIE_NAME } from '../constants';
 import TokenExchangeResponseSchema from '../schemas/TokenExchangeResponse.schema';
-
-function readStringQueryParam(value: unknown): string | undefined {
-  return typeof value === 'string' ? value : undefined;
-}
 
 /**
  * Builds the `GET /api/auth/callback/okta` handler — exchanges the authorization code for
@@ -135,7 +132,7 @@ function makeCallbackHandler() {
         path: '/',
       });
 
-      res.redirect('/');
+      res.redirect(transaction.returnTo);
     } catch (error) {
       if (isApplicationError(error)) {
         next(error);
