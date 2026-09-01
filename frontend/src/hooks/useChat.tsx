@@ -54,6 +54,7 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
         try {
           const { text, participantName } = JSON.parse(data);
           const message: ChatMessageType = {
+            id: crypto.randomUUID(),
             timestamp: Date.now(),
             participantName: participantName || t('user.unknown'),
             message: text,
