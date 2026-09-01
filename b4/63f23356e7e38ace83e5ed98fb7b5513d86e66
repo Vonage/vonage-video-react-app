@@ -1,0 +1,50 @@
+backend/routes/auth/handlers/callbackHandler.ts
+  s_1056c7a5eee4f6::t_19a3e31efa0bdb 16
+  s_1056c7a5eee4f6::t_d911bf634e4c17 135
+backend/routes/auth/helpers/isSafeReturnToPath.test.ts
+  s_1056c7a5eee4f6::t_6b2bd64afa5053 1-17
+backend/storage/vcrSessionStorage.ts
+  s_1056c7a5eee4f6::t_53bddf81fd318e 132,137,140,148,150-151
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_1056c7a5eee4f6::t_de22ce284e3984 15-17
+  s_1056c7a5eee4f6::t_da98026f7a31a6 121,126,128,135
+backend/storage/sessionStorage.ts
+  s_1056c7a5eee4f6::t_e4cd6af700165a 18,22
+backend/routes/auth/handlers/signInHandler.ts
+  s_1056c7a5eee4f6::t_33098c17c95932 43,48-53,59
+  s_1056c7a5eee4f6::t_069255ee141090 9-16
+backend/routes/auth/helpers/isSafeReturnToPath.ts
+  s_1056c7a5eee4f6::t_5370832858f0b5 1-9
+backend/routes/auth/constants.ts
+  s_1056c7a5eee4f6::t_e79838a9c94ba4 12-13
+backend/routes/auth/helpers/readStringQueryParam.ts
+  s_1056c7a5eee4f6::t_7bb73139de6c5d 1-5
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_1056c7a5eee4f6::t_f22f8a0fb553d6 102,108-119
+  s_1056c7a5eee4f6::t_8fb58f580fefe9 103-107
+  s_1056c7a5eee4f6::t_581ae1779785bb 57,62,65
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_1056c7a5eee4f6::t_711bd0067f6818 94,104
+  s_1056c7a5eee4f6::t_54166612edca06 5
+  s_1056c7a5eee4f6::t_079dcb22223c22 90-93,95-103,105-109
+docs/CONFIGURATION.md
+  s_1056c7a5eee4f6::t_ea85c11b6b90bc 106,108
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_1056c7a5eee4f6::t_b90099bf338364 117-122,125-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b463f23356e7e38ace83e5ed98fb7b5513d86e66",
+  "prompts": {},
+  "sessions": {
+    "s_1056c7a5eee4f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f89c451e-d532-4daa-a4ba-a04f3b331fd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
