@@ -120,7 +120,7 @@ See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonag
 
 ### OIDC token authentication (optional)
 
-The backend can validate OIDC access tokens on every route (minus a small exclusion list for health checks, webhooks, and well-known files) via `AUTH_ENABLED` (opt-in, `false`/unset by default), `OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Web and mobile clients authenticate the same way — a token in the configured header, default `Authorization: Bearer <token>`. See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional) for the full variable reference.
+The backend can validate OIDC access tokens on every route (minus a small exclusion list for health checks, webhooks, and well-known files) via `AUTH_ENABLED` (opt-in, `false`/unset by default), `OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Mobile sends the token directly in the configured header, default `Authorization: Bearer <token>`. Web authenticates via a Backend-for-Frontend login flow (`GET /auth/signin` → provider login → `GET /api/auth/callback/okta`) that stores the token server-side and hands the browser an opaque, `HttpOnly` session cookie instead — configured via `OIDC_WEB_CLIENT_ID` and `OIDC_WEB_REDIRECT_URI`. See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional) for the full variable reference and flow details.
 
 ## Documentation
 

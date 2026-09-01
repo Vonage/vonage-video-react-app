@@ -165,6 +165,15 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       allowedHosts: ['*', env.TUNNEL_DOMAIN],
+      proxy: {
+        // Okta's registered local redirect URI is fixed to this Vite dev server's origin
+        // (http://localhost:3000/api/auth/callback/okta) — proxy it through to the backend,
+        // which is the only thing that actually implements this route.
+        '/api/auth/callback/okta': {
+          target: env.API_URL || 'http://localhost:3345',
+          changeOrigin: true,
+        },
+      },
     },
     optimizeDeps: {
       include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],

@@ -31,4 +31,13 @@ export SHOW_VIDEO_STATS=false
 export AUTH_HEADER_NAME='authorization'
 export AUTH_SCHEME='Bearer'
 export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'
+export OIDC_AUTHORIZE_PATH='/oauth2/v1/authorize'
+export OIDC_TOKEN_PATH='/oauth2/v1/token'
 export AUTH_INTROSPECTION_TIMEOUT_MS=5000
+# DEV Okta tenant + app registrations (Mobile and Web are both SPA/public clients — issuer
+# URLs and client IDs are non-secret). Override via backend/.env for PROD, which has its own
+# issuer and client IDs (see docs/CONFIGURATION.md).
+export OIDC_ISSUER_URL='https://launchpadtest.vonage.com'
+export OIDC_CLIENT_ID='0oa2riw7qgnnUp8nO0h8'
+export OIDC_WEB_CLIENT_ID='0oa2tv2b9ga1ufsaQ0h8'
+export OIDC_WEB_REDIRECT_URI='http://localhost:3000/api/auth/callback/okta'

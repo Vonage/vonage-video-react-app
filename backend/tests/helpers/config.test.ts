@@ -71,6 +71,10 @@ describe('loadConfig', () => {
     process.env.OT_API_KEY = 'test-key';
     process.env.OT_API_SECRET = 'test-secret';
     process.env.AUTH_ENABLED = 'true';
+    // env.sh (sourced before the test run) defaults these for local DEV — clear them so this
+    // test can exercise the "missing" branch.
+    delete process.env.OIDC_CLIENT_ID;
+    delete process.env.OIDC_ISSUER_URL;
 
     expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
 
@@ -80,6 +84,26 @@ describe('loadConfig', () => {
     expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
   });
 
+  test('should throw when AUTH_ENABLED is true but OIDC_WEB_CLIENT_ID/OIDC_WEB_REDIRECT_URI are missing or invalid', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.AUTH_ENABLED = 'true';
+    process.env.OIDC_CLIENT_ID = 'test-client-id';
+    process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
+    // env.sh (sourced before the test run) defaults these for local DEV — clear them so this
+    // test can exercise the "missing" branch.
+    delete process.env.OIDC_WEB_CLIENT_ID;
+    delete process.env.OIDC_WEB_REDIRECT_URI;
+
+    expect(() => loadConfig()).toThrow('OIDC_WEB_CLIENT_ID');
+
+    process.env.OIDC_WEB_CLIENT_ID = 'test-web-client-id';
+    process.env.OIDC_WEB_REDIRECT_URI = 'not-a-url';
+
+    expect(() => loadConfig()).toThrow('OIDC_WEB_CLIENT_ID');
+  });
+
   test('should return auth config with defaults, overridable via env, when AUTH_ENABLED is true', () => {
     process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
     process.env.OT_API_KEY = 'test-key';
@@ -87,20 +111,28 @@ describe('loadConfig', () => {
     process.env.AUTH_ENABLED = 'true';
     process.env.OIDC_CLIENT_ID = 'test-client-id';
     process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
+    process.env.OIDC_WEB_CLIENT_ID = 'test-web-client-id';
+    process.env.OIDC_WEB_REDIRECT_URI = 'http://localhost:3000/api/auth/callback/okta';
 
     const config = loadConfig();
 
     expect(config.authEnabled).toBe(true);
     if (config.authEnabled) {
+      expect(config.oidcWebClientId).toBe('test-web-client-id');
+      expect(config.oidcWebRedirectUri).toBe('http://localhost:3000/api/auth/callback/okta');
       expect(config.authHeaderName).toBe('authorization');
       expect(config.authScheme).toBe('Bearer');
       expect(config.introspectPath).toBe('/oauth2/v1/introspect');
+      expect(config.authorizePath).toBe('/oauth2/v1/authorize');
+      expect(config.tokenPath).toBe('/oauth2/v1/token');
       expect(config.introspectionTimeoutMs).toBe(5000);
     }
 
     process.env.AUTH_HEADER_NAME = 'x-access-token';
     process.env.AUTH_SCHEME = 'Token';
     process.env.OIDC_INTROSPECT_PATH = '/custom/introspect';
+    process.env.OIDC_AUTHORIZE_PATH = '/custom/authorize';
+    process.env.OIDC_TOKEN_PATH = '/custom/token';
     process.env.AUTH_INTROSPECTION_TIMEOUT_MS = '9000';
 
     const overriddenConfig = loadConfig();
@@ -110,6 +142,8 @@ describe('loadConfig', () => {
       expect(overriddenConfig.authHeaderName).toBe('x-access-token');
       expect(overriddenConfig.authScheme).toBe('Token');
       expect(overriddenConfig.introspectPath).toBe('/custom/introspect');
+      expect(overriddenConfig.authorizePath).toBe('/custom/authorize');
+      expect(overriddenConfig.tokenPath).toBe('/custom/token');
       expect(overriddenConfig.introspectionTimeoutMs).toBe(9000);
     }
   });

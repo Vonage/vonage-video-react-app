@@ -79,22 +79,35 @@ Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication 
 | Variable | Required | Description |
 |---|---|---|
 | `AUTH_ENABLED` | opt-in | Set to `true` to enable token validation. |
-| `OIDC_CLIENT_ID` | if enabled | OIDC application client ID. |
-| `OIDC_ISSUER_URL` | if enabled | Provider org root URL. Must be a valid URL. Introspection uses `${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}`. |
+| `OIDC_CLIENT_ID` | if enabled — DEV defaults in `env.sh` | OIDC Mobile application client ID, used for Bearer-token introspection. |
+| `OIDC_ISSUER_URL` | if enabled — DEV defaults in `env.sh` | Provider org root URL. Must be a valid URL. Introspection uses `${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}`. |
+| `OIDC_WEB_CLIENT_ID` | if enabled — DEV defaults in `env.sh` | OIDC Web application client ID — a separate app registration from Mobile, used by the `/auth/signin` → `/api/auth/callback/okta` login flow. Client IDs are non-secret, so the DEV value is checked into `env.sh`; override via `backend/.env` for PROD. |
+| `OIDC_WEB_REDIRECT_URI` | if enabled — DEV defaults in `env.sh` | Must exactly match the redirect URI registered with the provider for the Web app (`http://localhost:3000/api/auth/callback/okta` for DEV, already defaulted; `https://meet.vonagenetworks.net/api/auth/callback/okta` for PROD, set via `backend/.env`). |
 | `AUTH_HEADER_NAME` | set in `env.sh` (default `authorization`) | Which request header carries the token. |
 | `AUTH_SCHEME` | set in `env.sh` (default `Bearer`) | Scheme prefix on that header, matched case-insensitively. |
 | `OIDC_INTROSPECT_PATH` | set in `env.sh` (default `/oauth2/v1/introspect`) | Path appended to `OIDC_ISSUER_URL` for introspection calls. |
+| `OIDC_AUTHORIZE_PATH` | set in `env.sh` (default `/oauth2/v1/authorize`) | Path appended to `OIDC_ISSUER_URL` for the Web login flow's authorize redirect. |
+| `OIDC_TOKEN_PATH` | set in `env.sh` (default `/oauth2/v1/token`) | Path appended to `OIDC_ISSUER_URL` for the Web login flow's code-for-token exchange. |
 | `AUTH_INTROSPECTION_TIMEOUT_MS` | set in `env.sh` (default `5000`) | Timeout for the introspection HTTP call. |
 
 ```ini
 AUTH_ENABLED='true'
-OIDC_CLIENT_ID='your-client-id'
+OIDC_CLIENT_ID='your-mobile-client-id'
 OIDC_ISSUER_URL='https://your-org.okta.com'
+OIDC_WEB_CLIENT_ID='your-web-client-id'
+OIDC_WEB_REDIRECT_URI='http://localhost:3000/api/auth/callback/okta'
 ```
 
-`AUTH_HEADER_NAME`, `AUTH_SCHEME`, `OIDC_INTROSPECT_PATH`, and `AUTH_INTROSPECTION_TIMEOUT_MS` are non-secret tuning knobs, set in [`env.sh`](../env.sh) overridable via `backend/.env`, which takes precedence. `env.sh` is sourced by every backend target that runs the server (`dev`, `start`, `start:bundled`, `debug`) as well as by tests; if `AUTH_ENABLED=true` and the server 500s on missing auth config — check `env.sh` was actually sourced.
+`AUTH_HEADER_NAME`, `AUTH_SCHEME`, `OIDC_INTROSPECT_PATH`, `OIDC_AUTHORIZE_PATH`, `OIDC_TOKEN_PATH`, and `AUTH_INTROSPECTION_TIMEOUT_MS` are non-secret tuning knobs, set in [`env.sh`](../env.sh) overridable via `backend/.env`, which takes precedence. `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, `OIDC_WEB_CLIENT_ID`, and `OIDC_WEB_REDIRECT_URI` also default there for DEV, since issuer URLs, client IDs, and redirect URIs are all non-secret, public values. `env.sh` is sourced by every backend target that runs the server (`dev`, `start`, `start:bundled`, `debug`) as well as by tests; if `AUTH_ENABLED=true` and the server 500s on missing auth config — check `env.sh` was actually sourced.
 
-Both web and mobile clients authenticate the same way: a token in the configured header (`AUTH_HEADER_NAME` + `AUTH_SCHEME`, default `Authorization: Bearer <token>`), validated through the same introspection flow. There's no server-side session — VCR instances are ephemeral, so auth relies entirely on this self-contained, per-request token check. Requests return 401 when the token is missing, inactive, invalid for this application, or introspection fails; 500 if `AUTH_ENABLED=true` but required config is missing or invalid.
+**Two token sources, one validation path.** Mobile sends the token directly in the configured header (`AUTH_HEADER_NAME` + `AUTH_SCHEME`, default `Authorization: Bearer <token>`) — it mints its own token client-side and never talks to `/auth/signin`. Web never sees the real token: the browser only carries an opaque, `HttpOnly` session cookie, and `authMiddleware` resolves it to the actual access token via the same `SessionStorage` abstraction already used for room sessions, captions, and archive ids (`getSessionStorageService()` — `InMemorySessionStorage` locally, `VcrSessionStorage` on Vonage Cloud Runtime, which survives ephemeral instance restarts). The Bearer header is checked first; the session cookie is only consulted when it's absent. Both paths converge on the same introspection call, and a token is accepted if its `client_id` matches either `OIDC_CLIENT_ID` (Mobile) or `OIDC_WEB_CLIENT_ID` (Web). Requests return 401 when the token is missing, inactive, invalid for this application, or introspection fails; 500 if `AUTH_ENABLED=true` but required config is missing or invalid.
+
+**The Web login flow (Backend-for-Frontend, Authorization Code + PKCE):**
+1. `GET /auth/signin` — generates a `state` and PKCE `code_verifier`/`code_challenge`, stashes them server-side (short-lived, single-use, via `SessionStorage`) referenced by an opaque transaction cookie, and redirects the browser to the provider's authorize endpoint.
+2. The user authenticates with the identity provider directly — a non-employee is rejected there and never reaches the app.
+3. `GET /api/auth/callback/okta` — validates `state` against the stashed transaction (CSRF check), exchanges the authorization code for an access token (PKCE `code_verifier`, no client secret — both Mobile and Web are SPA-type registrations), stores the token server-side via `SessionStorage`, and sets the `HttpOnly` session cookie described above.
+
+Note there is still no server-side *Express session* here — that pattern was deliberately ruled out because VCR instances are ephemeral. The session cookie only ever carries an opaque id; the token itself lives behind the same KV abstraction used elsewhere in this app.
 
 **Legacy `session.ts` routes:** kept alive and protected by the same gate rather than deprecated (e.g. `410 Gone`), because Android still calls them directly. Deprecating them was out of scope — changes to the iOS/Android clients aren't part of this work.
 
@@ -102,6 +115,7 @@ Both web and mobile clients authenticate the same way: a token in the configured
 - `/_/health` — infra liveness/readiness probes, no user involved.
 - `/v2/hooks/session`, `/v2/hooks/captions`, `/v2/hooks/archive` — server-to-server webhooks from the video provider, not a person.
 - `/.well-known/apple-app-site-association`, `/.well-known/assetlinks.json` — fetched anonymously by the OS for deep-link verification (Apple/Android spec requires these stay public).
+- `/auth/signin`, `/api/auth/callback/okta` — the login bootstrap routes themselves; a caller hitting these structurally can't have a token yet.
 
 `/feedback` is not currently excluded and is not yet reviewed for whether it should be.
 

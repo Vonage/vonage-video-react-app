@@ -12,6 +12,9 @@ class InMemorySessionStorage implements SessionStorage {
   private sessions: { [key: string]: SessionData } = {};
   private roomNameBySessionKey: { [sessionKey: string]: string } = {};
   private sessionKeyBySessionId: { [sessionId: string]: string } = {};
+  private authTransactions: { [transactionId: string]: { state: string; codeVerifier: string } } =
+    {};
+  private accessTokensBySessionId: { [sessionId: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
     return this.sessions[roomName]?.sessionKey || null;
@@ -108,6 +111,44 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getArchiveIds({ sessionId }: { sessionId: string }): Promise<string[]> {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
+  }
+
+  async setAuthTransaction({
+    transactionId,
+    state,
+    codeVerifier,
+  }: {
+    transactionId: string;
+    state: string;
+    codeVerifier: string;
+  }): Promise<void> {
+    this.authTransactions[transactionId] = { state, codeVerifier };
+  }
+
+  async getAuthTransaction({
+    transactionId,
+  }: {
+    transactionId: string;
+  }): Promise<{ state: string; codeVerifier: string } | null> {
+    return this.authTransactions[transactionId] ?? null;
+  }
+
+  async deleteAuthTransaction({ transactionId }: { transactionId: string }): Promise<void> {
+    delete this.authTransactions[transactionId];
+  }
+
+  async setAccessToken({
+    sessionId,
+    accessToken,
+  }: {
+    sessionId: string;
+    accessToken: string;
+  }): Promise<void> {
+    this.accessTokensBySessionId[sessionId] = accessToken;
+  }
+
+  async getAccessToken({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.accessTokensBySessionId[sessionId] ?? null;
   }
 }
 export default InMemorySessionStorage;
