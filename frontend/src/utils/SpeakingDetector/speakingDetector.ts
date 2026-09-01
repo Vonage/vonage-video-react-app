@@ -27,6 +27,7 @@ class SpeakingDetector extends EventEmitter {
   detectSpeakingTimer: number | undefined = undefined;
   turnMuteIndicationOffTimer: number | undefined = undefined;
   isSpeakingWhileMuted: boolean = false;
+  isCancelled: boolean = false;
 
   constructor({ selectedMicrophoneId }: SpeakingDetectorOptions) {
     super();
@@ -49,6 +50,9 @@ class SpeakingDetector extends EventEmitter {
    * Turns off the speaking detector and cleans up resources
    */
   turnSpeakingDetectorOff = () => {
+    // Signals an in-flight turnSpeakingDetectorOn() (still awaiting getUserMedia)
+    // to release the microphone stream it is about to receive instead of keeping it.
+    this.isCancelled = true;
     if (this.analyser) {
       this.analyser.disconnect();
     }
@@ -77,17 +81,31 @@ class SpeakingDetector extends EventEmitter {
    * Turns on the speaking detector by setting up audio context and analyser
    */
   turnSpeakingDetectorOn = async () => {
+    this.isCancelled = false;
+    // Held locally until we know the start was not cancelled, so a cleanup that races
+    // the getUserMedia await can always release them (assigned to `this` only on success).
+    let audioContext: AudioContext | null = null;
+    let stream: MediaStream | null = null;
     try {
       if (!this.selectedMicrophoneId) {
         return;
       }
-      this.audioContext = new AudioContext();
-      this.stream = await mediaDevices$.actions.getUserMedia({
+      audioContext = new AudioContext();
+      stream = await mediaDevices$.actions.getUserMedia({
         audio: {
           deviceId: this.selectedMicrophoneId,
         },
       });
 
+      if (this.isCancelled) {
+        // Cleanup ran while we were awaiting the mic — release everything and bail.
+        stream.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+        void audioContext.close();
+        return;
+      }
+
+      this.audioContext = audioContext;
+      this.stream = stream;
       this.source = this.audioContext.createMediaStreamSource(this.stream);
       this.analyser = this.audioContext.createAnalyser();
 
@@ -132,6 +150,12 @@ class SpeakingDetector extends EventEmitter {
 
       detectSpeaking();
     } catch (e) {
+      // Release whatever was acquired before the failure (e.g. getUserMedia rejecting
+      // after the AudioContext was created) so nothing is leaked on the error path.
+      stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
+      if (audioContext) {
+        void audioContext.close();
+      }
       throw new Error(`error starting speaking detector : ${e}`);
     }
   };
