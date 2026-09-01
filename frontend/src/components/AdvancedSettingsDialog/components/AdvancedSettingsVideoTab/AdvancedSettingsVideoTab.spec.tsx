@@ -74,7 +74,7 @@ describe('AdvancedSettingsVideoTab', () => {
       within(screenSharingSection).getByRole('heading', { name: 'Screen Sharing' })
     ).toBeInTheDocument();
     expect(
-      within(screenSharingSection).getByText(/take effect the next time/i)
+      within(screenSharingSection).getByText(/changes take effect immediately while sharing/i)
     ).toBeInTheDocument();
 
     const screenShareContentHint = within(screenSharingSection).getByLabelText('Optimize for');
