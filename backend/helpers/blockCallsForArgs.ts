@@ -10,16 +10,28 @@ type PromiseMap = {
 const blockCallsForArgs = <T>(fn: (key: string, ...args: unknown[]) => T) => {
   const callsInProgress: PromiseMap = {};
   return async (key: string, ...args: unknown[]): Promise<ReturnType<typeof fn>> => {
-    if (callsInProgress[key]) {
-      await callsInProgress[key].promise;
-    } else {
-      const promiseWithResolvers = Promise.withResolvers<null>();
-      callsInProgress[key] = promiseWithResolvers;
+    const existing = callsInProgress[key];
+
+    // Waiter: wait for the current owner, then run — but never touch the lock.
+    // The previous implementation ran an unconditional resolve()/delete() for waiters
+    // too, which could release a *different, later* owner's lock (with 3+ concurrent
+    // calls), breaking mutual exclusion and allowing the duplicate work this guards.
+    if (existing) {
+      await existing.promise;
+      return fn(key, ...args);
     }
-    const res = await fn(key, ...args);
-    callsInProgress[key]?.resolve(null);
-    delete callsInProgress[key];
-    return res;
+
+    // Owner: hold the lock for the duration of fn. Callers stay waiters while
+    // callsInProgress[key] is set, so no second owner can appear until this entry is
+    // cleared here — meaning the delete only ever removes this owner's own lock.
+    const lock = Promise.withResolvers<null>();
+    callsInProgress[key] = lock;
+    try {
+      return await fn(key, ...args);
+    } finally {
+      delete callsInProgress[key];
+      lock.resolve(null);
+    }
   };
 };
 
