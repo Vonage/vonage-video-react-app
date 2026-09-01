@@ -1,4 +1,4 @@
-import { PublisherProperties, initPublisher } from '@vonage/client-sdk-video';
+import { initPublisher, type PublisherProperties } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
 import { initialState } from './constants';
