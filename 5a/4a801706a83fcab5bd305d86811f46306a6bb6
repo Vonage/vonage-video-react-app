@@ -14,7 +14,7 @@ backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
 {
   "schema_version": "authorship/3.0.0",
   "git_ai_version": "1.7.0",
-  "base_commit_sha": "4d0e06c152923c71e7b0dc8e67a71f0ca0b5d918",
+  "base_commit_sha": "c7085260e25716711fbb3ec318628c83b4e894b0",
   "prompts": {},
   "sessions": {
     "s_d1ba5316392803": {
