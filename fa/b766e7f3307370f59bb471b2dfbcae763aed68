@@ -21,7 +21,7 @@ backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
 {
   "schema_version": "authorship/3.0.0",
   "git_ai_version": "1.6.22",
-  "base_commit_sha": "e2a6e688bc746b9bb4b03bcb6a3505607c65382f",
+  "base_commit_sha": "3f3344de7c38b369280a84fbc0e8d48daaba248f",
   "prompts": {},
   "sessions": {
     "s_a0080a22343d67": {
