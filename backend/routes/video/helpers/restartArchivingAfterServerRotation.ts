@@ -5,7 +5,7 @@ import type { VideoClient } from '../video';
 type RestartArchivingAfterServerRotationArgs = {
   sessionId: string;
   sessionService: SessionStorage;
-  makeVideoClient: () => VideoClient;
+  videoClient: VideoClient;
 };
 
 /**
@@ -15,13 +15,13 @@ type RestartArchivingAfterServerRotationArgs = {
  * session. The `/hooks/archive` `stopped` event does not carry a reason, so that flag is the only
  * signal available. Restarting from the backend keeps a single restart per session regardless of
  * how many participants are connected.
- * @param {RestartArchivingAfterServerRotationArgs} args - The session, its storage and the video client factory.
+ * @param {RestartArchivingAfterServerRotationArgs} args - The session, its storage and the video client.
  * @returns {Promise<void>} Resolves once the restart has been attempted, or immediately when not needed.
  */
 async function restartArchivingAfterServerRotation({
   sessionId,
   sessionService,
-  makeVideoClient,
+  videoClient,
 }: RestartArchivingAfterServerRotationArgs): Promise<void> {
   const isServerRotation = await sessionService.getServerRotationPending({ sessionId });
 
@@ -32,8 +32,6 @@ async function restartArchivingAfterServerRotation({
   const sessionKey = await sessionService.getSessionKeyBySessionId({ sessionId });
 
   if (!sessionKey) return;
-
-  const videoClient = makeVideoClient();
 
   // A failed restart must not reject: the webhook handler reports errors by throwing, and an
   // async throw surfaces as an unhandled rejection that would terminate the process.

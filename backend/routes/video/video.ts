@@ -51,6 +51,8 @@ export const videoHandler = createVideoHandler({
 
 export const { makeVideoClient$ } = videoHandler.router$;
 
+const videoClient = makeVideoClient$();
+
 /**
  * Middleware for storing the sessionKey per SessionId and roomName.
  */
@@ -137,7 +139,7 @@ videoRouter.post(
       await restartArchivingAfterServerRotation({
         sessionId,
         sessionService,
-        makeVideoClient: makeVideoClient$,
+        videoClient,
       });
     }, makeInternalErrorHandler('Failed to process archive event'));
 
@@ -171,8 +173,6 @@ videoRouter.post(
 
     const captionsId = await sessionService.getCaptionsId({ sessionId });
     const archiveIds = await sessionService.getArchiveIds({ sessionId });
-
-    const videoClient = makeVideoClient$();
 
     // On a server rotation the archives must be left alone: Vonage stops them itself and we
     // want them to restart. For any other reason all pending archives are stopped.

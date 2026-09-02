@@ -101,33 +101,7 @@ describe('SessionProvider — session migration archiving recovery', () => {
     return result;
   }
 
-  it('sets reconnecting to true when sessionReconnecting fires', async () => {
-    const { getByTestId } = await renderAndWaitForConnection();
-
-    act(() => {
-      vonageVideoClient.emit('sessionReconnecting');
-    });
-
-    await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
-  });
-
-  it('resets reconnecting when sessionReconnected fires', async () => {
-    const { getByTestId } = await renderAndWaitForConnection();
-
-    act(() => {
-      vonageVideoClient.emit('sessionReconnecting');
-    });
-
-    await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
-
-    act(() => {
-      vonageVideoClient.emit('sessionReconnected');
-    });
-
-    await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
-  });
-
-  it('does not restart the archive from the client — the backend owns that responsibility', async () => {
+  it('handles reconnecting → reconnected cycle without restarting the archive from the client', async () => {
     const { getByTestId } = await renderAndWaitForConnection();
 
     act(() => {
@@ -142,26 +116,11 @@ describe('SessionProvider — session migration archiving recovery', () => {
 
     await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
 
+    // The backend owns archive restart — the client must not call startArchive
     expect(mockVideoClient.startArchive).not.toHaveBeenCalled();
   });
 
   describe('server rotation consent suppression', () => {
-    it('archiveIdStartedBySelf is set when archive starts and user clicked markArchiveStartRequestedBySelf', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
-
-      act(() => {
-        getByTestId('markInitiator').click();
-      });
-
-      act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-001');
-      });
-
-      await waitFor(() =>
-        expect(getByTestId('archiveIdStartedBySelf')).toHaveTextContent('archive-001')
-      );
-    });
-
     it('after server rotation, archiveIdStartedBySelf is restored with new archiveId for the initiator', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 

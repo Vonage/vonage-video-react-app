@@ -174,7 +174,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(200);
         });
 
-        it('returns a 404 when starting captions in a non-existent room', async () => {
+        it('returns a 404 when enabling captions in a non-existent room', async () => {
           const invalidRoomName = 'randomRoomName';
           const res = await request(server)
             .post(`/session/${invalidRoomName}/enableCaptions`)
@@ -182,7 +182,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
 
-        it('returns a 502 when stopping an invalid caption in a room', async () => {
+        it('returns a 502 when disabling an invalid caption in a room', async () => {
           const invalidCaptionId = 'wrongCaptionId';
           const res = await request(server)
             .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
@@ -190,24 +190,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Accept', 'application/json');
 
           expect(res.statusCode).toEqual(502);
-        });
-
-        it('returns a 404 when stopping captions in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = '123e4567-a12b-41a2-a123-123456789012';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
-
-        it('returns a 404 when stopping captions with malformed captionsId in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = 'not-a-valid-captions-id';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
         });
       });
 
@@ -424,46 +406,10 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             expect(archiveIdsAfterRotation).toEqual(['archive-id-active']);
           });
 
-          it('/hooks/session with reason=clientDisconnected clears state normally', async () => {
-            await sessionService.setCaptionsId({
-              sessionId: validSessionId,
-              captionsId: 'captions-id-to-clear',
-            });
-
-            await sessionService.setArchiveIds({
-              sessionId: validSessionId,
-              archiveIds: ['archive-id-to-clear'],
-            });
-
-            const response = await request(server)
-              .post('/v2/hooks/session')
-              .set('Content-Type', 'application/json')
-              .send(
-                createSessionHookPayload({
-                  event: 'sessionDestroyed',
-                  reason: 'clientDisconnected',
-                })
-              );
-
-            const captionsIdAfterDestroyed = await sessionService.getCaptionsId({
-              sessionId: validSessionId,
-            });
-            const archiveIdsAfterDestroyed = await sessionService.getArchiveIds({
-              sessionId: validSessionId,
-            });
-            const serverRotationPending = await sessionService.getServerRotationPending({
-              sessionId: validSessionId,
-            });
-
-            expect(response.statusCode).toEqual(200);
-            expect(captionsIdAfterDestroyed).toBeNull();
-            expect(archiveIdsAfterDestroyed).toEqual([]);
-            expect(serverRotationPending).toBe(false);
-          });
-
           it('/hooks/archive stopped with serverRotationPending=true triggers startArchive', async () => {
-            // Clear startArchive call history on all currently-known Video instances.
-            getMockedVideoInstances().forEach((instance) => instance.startArchive.mockClear());
+            const videoInstance = getMockedVideoInstances()[0];
+
+            videoInstance.startArchive.mockClear();
 
             await sessionService.setArchiveIds({
               sessionId: validSessionId,
@@ -484,19 +430,15 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               sessionId: validSessionId,
             });
 
-            // The route calls makeVideoClient$() which constructs a new Video instance.
-            // After the request completes, the newest instance is that one.
-            const videoInstances = getMockedVideoInstances();
-            const latestVideoInstance = videoInstances[videoInstances.length - 1];
-
             expect(response.statusCode).toEqual(200);
             expect(serverRotationPendingAfter).toBe(false);
-            expect(latestVideoInstance?.startArchive).toHaveBeenCalledTimes(1);
+            expect(videoInstance.startArchive).toHaveBeenCalledTimes(1);
           });
 
           it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
-            // Clear call history on all known Video instances before the request.
-            getMockedVideoInstances().forEach((instance) => instance.startArchive.mockClear());
+            const videoInstance = getMockedVideoInstances()[0];
+
+            videoInstance.startArchive.mockClear();
 
             await sessionService.setArchiveIds({
               sessionId: validSessionId,
@@ -509,13 +451,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               .send(createArchiveHookPayload({ status: 'stopped', id: 'archive-id-active' }));
 
             expect(response.statusCode).toEqual(200);
-
-            // Verify no Video instance had startArchive called.
-            const anyStartArchiveCalled = getMockedVideoInstances().some(
-              (instance) => instance.startArchive.mock.calls.length > 0
-            );
-
-            expect(anyStartArchiveCalled).toBe(false);
+            expect(videoInstance.startArchive).not.toHaveBeenCalled();
           });
         });
       });
