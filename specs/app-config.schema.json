@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vonage.com/schemas/v1/video-app-config.schema.json",
   "title": "Vonage Video App Config",
-  "description": "Unified application-config schema consolidated across the Android, iOS and React (web) Vonage Video apps. Fields common to all platforms are required; platform-specific toggles are optional. The 'x-envVar' annotation records the flat environment-variable name used by the React app (frontend/vite.config.ts) for each flag; Android and iOS consume the nested JSON keys directly. Extra boolean feature flags are allowed forward-compatibly.",
+  "description": "Unified application-config schema consolidated across the Android, iOS and React (web) Vonage Video apps. Fields common to all platforms are required; platform-specific toggles are optional. The 'x-envVar' annotation records the flat environment-variable name used by the React app (frontend/vite.config.ts) for each flag; Android and iOS consume the nested JSON keys directly. Extra boolean feature flags are allowed forward-compatibly within the settings objects.",
   "version": "1.0.0",
   "type": "object",
   "required": ["metadata", "videoSettings", "audioSettings", "waitingRoomSettings", "meetingRoomSettings"],
