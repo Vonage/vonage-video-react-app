@@ -2,6 +2,7 @@ import { hasMediaProcessorSupport, Publisher, VideoFilter } from '@vonage/client
 import { UserType } from '../../../Context/user';
 import { BACKGROUNDS_PATH } from '../../constants';
 import { setStorageItem, STORAGE_KEYS } from '../../storage';
+import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
 
 export type ApplyBackgroundFilterParams = {
   publisher?: Publisher | null;
@@ -54,7 +55,7 @@ const applyBackgroundFilter = async ({
       backgroundImgUrl:
         isDataUrl || isImageUrl ? backgroundSelected : `${BACKGROUNDS_PATH}/${backgroundSelected}`,
     };
-    await publisher.applyVideoFilter(videoFilter);
+    await publisher.applyVideoFilter(withSafariWebGlRendering(videoFilter) ?? videoFilter);
   } else {
     await publisher.clearVideoFilter();
     videoFilter = undefined;

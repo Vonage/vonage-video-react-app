@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import {
   PublisherProperties,
-  VideoFilter,
   AudioFilter,
   hasMediaProcessorSupport,
 } from '@vonage/client-sdk-video';
@@ -11,6 +10,7 @@ import { useDeviceId } from '@core/stores/mediaDevices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext
@@ -63,8 +63,9 @@ const usePublisherOptions = ({
         ? { type: 'advancedNoiseSuppression' }
         : undefined;
 
-    const videoFilter: VideoFilter | undefined =
-      backgroundFilter && hasMediaProcessorSupport('video') ? backgroundFilter : undefined;
+    const videoFilter = withSafariWebGlRendering(
+      backgroundFilter && hasMediaProcessorSupport('video') ? backgroundFilter : undefined
+    );
 
     const options = {
       audioFallback: {

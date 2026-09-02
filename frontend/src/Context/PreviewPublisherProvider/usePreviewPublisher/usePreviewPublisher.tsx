@@ -18,6 +18,7 @@ import { useMountEffect } from '@web/hooks';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { env } from '../../../env';
+import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -189,7 +190,7 @@ const usePreviewPublisher = (
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
-      videoFilter,
+      videoFilter: withSafariWebGlRendering(videoFilter),
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       frameRate,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
