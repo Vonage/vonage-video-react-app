@@ -8,7 +8,7 @@ frontend/src/Context/SessionProvider/session.tsx
 {
   "schema_version": "authorship/3.0.0",
   "git_ai_version": "1.6.22",
-  "base_commit_sha": "d935801ed8cffb3311026567b9d574379fa09d65",
+  "base_commit_sha": "fab766e7f3307370f59bb471b2dfbcae763aed68",
   "prompts": {},
   "sessions": {
     "s_26543e35f14115": {
