@@ -94,6 +94,15 @@ const { Video: VideoMock } = (await import('@vonage/video')) as unknown as {
   Video: jest.Mock<(...args: unknown[]) => MockedVideoInstance>;
 };
 
+/**
+ * Capture the singleton Video instance created at module load time (in video.ts and session.ts).
+ * Must be captured here — before any test runs — because clearMocks:true wipes mock.results
+ * after each test, making it unreachable inside beforeAll or test bodies.
+ * video.ts creates its VideoClient (and thus its Video instance) first, so index 0 is the one
+ * used by the route handlers in video.ts.
+ */
+const singletonVideoInstance = getMockedVideoInstances()[0];
+
 describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
   '/session using %s',
   (_storageName, sessionStorage) => {
@@ -407,9 +416,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           });
 
           it('/hooks/archive stopped with serverRotationPending=true triggers startArchive', async () => {
-            const videoInstance = getMockedVideoInstances()[0];
-
-            videoInstance.startArchive.mockClear();
+            singletonVideoInstance.startArchive.mockClear();
 
             await sessionService.setArchiveIds({
               sessionId: validSessionId,
@@ -432,13 +439,11 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
 
             expect(response.statusCode).toEqual(200);
             expect(serverRotationPendingAfter).toBe(false);
-            expect(videoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
           });
 
           it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
-            const videoInstance = getMockedVideoInstances()[0];
-
-            videoInstance.startArchive.mockClear();
+            singletonVideoInstance.startArchive.mockClear();
 
             await sessionService.setArchiveIds({
               sessionId: validSessionId,
@@ -451,7 +456,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               .send(createArchiveHookPayload({ status: 'stopped', id: 'archive-id-active' }));
 
             expect(response.statusCode).toEqual(200);
-            expect(videoInstance.startArchive).not.toHaveBeenCalled();
+            expect(singletonVideoInstance.startArchive).not.toHaveBeenCalled();
           });
         });
       });
