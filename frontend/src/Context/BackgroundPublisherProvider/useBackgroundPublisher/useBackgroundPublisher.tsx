@@ -21,7 +21,7 @@ import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
-import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
+import { withSafariWebGlRendering } from '@core/videoFilters';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;

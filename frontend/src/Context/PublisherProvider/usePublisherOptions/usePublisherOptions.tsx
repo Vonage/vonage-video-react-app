@@ -10,7 +10,7 @@ import { useDeviceId } from '@core/stores/mediaDevices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
+import { withSafariWebGlRendering } from '@core/videoFilters';
 
 /**
  * React hook to get PublisherProperties combining default options and options set in UserContext

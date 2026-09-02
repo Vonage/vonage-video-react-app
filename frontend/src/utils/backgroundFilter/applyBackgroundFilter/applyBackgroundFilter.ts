@@ -3,7 +3,7 @@ import type { Publisher, VideoFilter } from '@vonage/client-sdk-video';
 import { UserType } from '../../../Context/user';
 import { BACKGROUNDS_PATH } from '../../constants';
 import { setStorageItem, STORAGE_KEYS } from '../../storage';
-import withSafariWebGlRendering from '@utils/backgroundFilter/withSafariWebGlRendering/withSafariWebGlRendering';
+import { withSafariWebGlRendering } from '@core/videoFilters';
 
 export type ApplyBackgroundFilterParams = {
   publisher?: Publisher | null;
