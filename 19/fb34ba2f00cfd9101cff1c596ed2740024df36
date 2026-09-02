@@ -1,0 +1,39 @@
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_5c932d8b528372::t_dd6d7f47c0f0d8 51
+  s_5c932d8b528372::t_7da7ccf82e516f 3-5,11-13,37,40-42,50,52-54,56-88,91-110
+backend/types/config.ts
+  s_5c932d8b528372::t_aa2a055352a8ca 28-31,33-34
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_5c932d8b528372::t_f3f195d35d8139 3,15-17,20-21,26,28,32,35,37,40,42,46,49,51,54-55,57,59-62,77
+README.md
+  s_5c932d8b528372::t_3b5b67d7a10e63 123
+backend/server.ts
+  s_5c932d8b528372::t_2c4f36cccf62b2 47
+  s_5c932d8b528372::t_61a588b65abbd4 11
+  s_5c932d8b528372::t_dd89ce74ffa4ae 38-46,48-49
+backend/tests/authMiddleware.test.ts
+  s_5c932d8b528372::t_822ae4030a9c5b 28-35
+  s_5c932d8b528372::t_7105ed0cfac569 13
+backend/helpers/config.ts
+  s_5c932d8b528372::t_c1d6ab3e1c6764 3
+  s_5c932d8b528372::t_9519ebe5093df0 25-31,33-37
+  s_5c932d8b528372::t_d35813fcc27867 32
+  s_5c932d8b528372::t_08e7274f42566e 83
+  s_5c932d8b528372::t_f32057b517f0a7 63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "19fb34ba2f00cfd9101cff1c596ed2740024df36",
+  "prompts": {},
+  "sessions": {
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

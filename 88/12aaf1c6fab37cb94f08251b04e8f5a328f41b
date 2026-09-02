@@ -1,0 +1,43 @@
+backend/tests/tokenAuthMiddleware.test.ts
+  s_5c932d8b528372::t_177ff5efb6a777 1-37
+docs/CONFIGURATION.md
+  s_5c932d8b528372::t_94920a5fbfd82a 73,75,79-81,84-86,89,91
+backend/middleware/tokenAuthMiddleware/tokenAuthMiddleware.test.ts
+  s_5c932d8b528372::t_2d307c092526bf 4,8-9,14,18-20,23-24,26,29,37,39,42,50-53,55,60,67,70,73-84,87-90,92-93,99-102,104,109,115-116,118,121,126,135,138,143
+  h_c939f8fae0de97 1-3,5-7,10-13,15-17,21-22,25,27-28,30-36,38,40-41,43-49,54,56-59,61-66,68-69,71-72,85-86,91,94-98,103,105-108,110-114,117,119-120,122-125,127-134,136-137,139-142,144-169
+backend/middleware/tokenAuthMiddleware/index.ts
+  s_5c932d8b528372::t_66834606077bb8 1
+README.md
+  s_5c932d8b528372::t_d68d49847546ff 121,123-124
+backend/middleware/tokenAuthMiddleware/tokenAuthMiddleware.ts
+  s_5c932d8b528372::t_4625ff18cab05d 7-22,24-91,93-110
+  h_c939f8fae0de97 23,92
+backend/routes/video/video.ts
+  s_5c932d8b528372::t_14a1b3ca84bc31 12,183-184
+  s_5c932d8b528372::t_9c5e6b41a908a6 180-181
+backend/middleware/index.ts
+  s_5c932d8b528372::t_95970467a4e78b 4
+backend/.env.example
+  s_5c932d8b528372::t_bad62e117eed73 46-50,52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "8812aaf1c6fab37cb94f08251b04e8f5a328f41b",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

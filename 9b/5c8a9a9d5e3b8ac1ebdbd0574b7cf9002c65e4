@@ -1,0 +1,35 @@
+README.md
+  h_c939f8fae0de97 123-125
+  h_c939f8fae0de97 126
+backend/middleware/oktaAuthMiddleware/oktaAuthMiddleware.ts
+  s_5c932d8b528372::t_9a2fe45888472d 98,100-101
+  s_5c932d8b528372::t_850ee0aa541f18 6,8
+  s_5c932d8b528372::t_e08a936cff1a17 50-61,68,71,74-77
+backend/.env.example
+  h_c939f8fae0de97 46
+backend/middleware/oktaAuthMiddleware/oktaAuthMiddleware.test.ts
+  h_c939f8fae0de97 92
+  s_5c932d8b528372::t_a3e6eae7440433 77-91,93-110
+  s_5c932d8b528372::t_20254fed7aa7f0 21-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "9b5c8a9a9d5e3b8ac1ebdbd0574b7cf9002c65e4",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

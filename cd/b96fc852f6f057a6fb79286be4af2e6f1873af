@@ -1,0 +1,14 @@
+specs/app-config.schema.json
+  h_25498f8d57a266 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "cdb96fc852f6f057a6fb79286be4af2e6f1873af",
+  "prompts": {},
+  "humans": {
+    "h_25498f8d57a266": {
+      "author": "Manuel Vera <manuel.veranieto@vonage.com>"
+    }
+  }
+}
