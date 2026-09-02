@@ -1,14 +1,34 @@
 specs/app-config.schema.json
-  h_25498f8d57a266 5
+  46262e5eaf1a325d 5
 ---
 {
   "schema_version": "authorship/3.0.0",
-  "git_ai_version": "1.7.0",
+  "git_ai_version": "vonage-override-1.0.0",
   "base_commit_sha": "3e3f137ef82670ea502ca3830e938d103df69c6f",
-  "prompts": {},
-  "humans": {
-    "h_25498f8d57a266": {
-      "author": "Manuel Vera <manuel.veranieto@vonage.com>"
+  "prompts": {
+    "46262e5eaf1a325d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "74bbc08b-1516-49e3-ac34-8209d38ec80b",
+        "model": "gpt-4o"
+      },
+      "human_author": "Manuel Vera <manuel.veranieto@vonage.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vg-ai attribution override: 100% AI]",
+          "timestamp": "2026-09-02T07:43:38.675Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vg-ai attribution override (opencode/gpt-4o).",
+          "timestamp": "2026-09-02T07:43:38.675Z"
+        }
+      ],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
     }
   }
 }
