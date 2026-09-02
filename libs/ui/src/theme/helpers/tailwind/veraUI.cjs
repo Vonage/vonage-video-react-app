@@ -6,93 +6,15 @@
 const plugin = require('tailwindcss/plugin');
 
 /**
- * @typedef {Object} VeraTypographyProperties
- * @property {string} [fontSize]
- * @property {string} [lineHeight]
- * @property {string} [fontWeight]
- * @property {string} [mobileFontSize]
- * @property {string} [mobileLineHeight]
- * @property {string} [mobileFontWeight]
- */
-/**
- * @typedef {Object} VeraColorThemeConfig
- * @property {string} [accent]
- * @property {string} [alertBackground]
- * @property {string} [alertBackgroundHover]
- * @property {string} [alertText]
- * @property {string} [background]
- * @property {string} [border]
- * @property {string} [darkBackground]
- * @property {string} [darkGrey]
- * @property {string} [darkGreyHover]
- * @property {string} [darkGreyOpacity]
- * @property {string} [disabled]
- * @property {string} [error]
- * @property {string} [errorHover]
- * @property {string} [information]
- * @property {string} [informationBackground]
- * @property {string} [informationHover]
- * @property {string} [onAccent]
- * @property {string} [onBackground]
- * @property {string} [onDarkGrey]
- * @property {string} [onError]
- * @property {string} [onInformation]
- * @property {string} [onPrimary]
- * @property {string} [onSecondary]
- * @property {string} [onSuccess]
- * @property {string} [onSurface]
- * @property {string} [onTertiary]
- * @property {string} [onWarning]
- * @property {string} [primary]
- * @property {string} [primaryHover]
- * @property {string} [secondary]
- * @property {string} [secondaryHover]
- * @property {string} [skeletonLike]
- * @property {string} [success]
- * @property {string} [successHover]
- * @property {string} [surface]
- * @property {string} [tertiary]
- * @property {string} [tertiaryHover]
- * @property {string} [textDisabled]
- * @property {string} [textPrimary]
- * @property {string} [textSecondary]
- * @property {string} [textTertiary]
- * @property {string} [warning]
- * @property {string} [warningHover]
- */
-/**
- * @typedef {Object} VeraUIConfig
- * @property {VeraColorThemeConfig} [light]
- * @property {VeraColorThemeConfig} [dark]
- * @property {string} [borderRadiusExtraLarge]
- * @property {string} [borderRadiusExtraSmall]
- * @property {string} [borderRadiusLarge]
- * @property {string} [borderRadiusMedium]
- * @property {string} [borderRadiusNone]
- * @property {string} [borderRadiusSmall]
- * @property {string} [fontFamilyPlain]
- * @property {VeraTypographyProperties} [headline]
- * @property {VeraTypographyProperties} [subtitle]
- * @property {VeraTypographyProperties} [heading1]
- * @property {VeraTypographyProperties} [heading2]
- * @property {VeraTypographyProperties} [heading3]
- * @property {VeraTypographyProperties} [heading4]
- * @property {VeraTypographyProperties} [bodyExtended]
- * @property {VeraTypographyProperties} [bodyExtendedSemibold]
- * @property {VeraTypographyProperties} [bodyBase]
- * @property {VeraTypographyProperties} [bodyBaseSemibold]
- * @property {VeraTypographyProperties} [caption]
- * @property {VeraTypographyProperties} [captionSemibold]
- */
-
-/**
- * @param {VeraUIConfig} [config={}]
+ * @param {import('../veraUI.types').VeraThemeTokens} [config] Optional theme
+ * document (the same standardized designTokens.json shape). When provided, its
+ * values override the baked-in defaults at runtime, which is what enables
+ * live theme updates in dev without regenerating this file.
  */
 
 const veraUI = (config = {}) => {
   return plugin(
     ({ addUtilities, addBase, addVariant }) => {
-      const { light = {}, dark = {} } = config; // also includes typography and layout
       const fontSizeUtilities = {};
       const fontWeightUtilities = {};
 
@@ -102,324 +24,684 @@ const veraUI = (config = {}) => {
       // Add CSS variables for theme-aware colors
       addBase({
         ':host, :root': {
-          '--vera-accent': config.accent ?? light.accent ?? '#FFFFFF',
-          '--vera-accent-light': config.accent ?? light.accent ?? '#FFFFFF',
-          '--vera-accent-dark': config.accent ?? dark.accent ?? '#FFFFFF',
-          '--vera-alert-background': config.alertBackground ?? light.alertBackground ?? '#FFEEF2',
-          '--vera-alert-background-light':
-            config.alertBackground ?? light.alertBackground ?? '#FFEEF2',
-          '--vera-alert-background-dark':
-            config.alertBackground ?? dark.alertBackground ?? '#3E0004',
+          '--vera-accent': config.colors?.light?.['accent'] ?? '#FFFFFF',
+          '--vera-accent-light': config.colors?.light?.['accent'] ?? '#FFFFFF',
+          '--vera-accent-dark': config.colors?.dark?.['accent'] ?? '#FFFFFF',
+          '--vera-alert-background': config.colors?.light?.['alert-background'] ?? '#FFEEF2',
+          '--vera-alert-background-light': config.colors?.light?.['alert-background'] ?? '#FFEEF2',
+          '--vera-alert-background-dark': config.colors?.dark?.['alert-background'] ?? '#3E0004',
           '--vera-alert-background-hover':
-            config.alertBackgroundHover ?? light.alertBackgroundHover ?? '#FEDFDF',
+            config.colors?.light?.['alert-background-hover'] ?? '#FEDFDF',
           '--vera-alert-background-hover-light':
-            config.alertBackgroundHover ?? light.alertBackgroundHover ?? '#FEDFDF',
+            config.colors?.light?.['alert-background-hover'] ?? '#FEDFDF',
           '--vera-alert-background-hover-dark':
-            config.alertBackgroundHover ?? dark.alertBackgroundHover ?? '#6E0000',
-          '--vera-alert-text': config.alertText ?? light.alertText ?? '#CD0000',
-          '--vera-alert-text-light': config.alertText ?? light.alertText ?? '#CD0000',
-          '--vera-alert-text-dark': config.alertText ?? dark.alertText ?? '#FEDFDF',
-          '--vera-background': config.background ?? light.background ?? '#F5F0FD',
-          '--vera-background-light': config.background ?? light.background ?? '#F5F0FD',
-          '--vera-background-dark': config.background ?? dark.background ?? '#26044D',
-          '--vera-border': config.border ?? light.border ?? '#E6E6E6',
-          '--vera-border-light': config.border ?? light.border ?? '#E6E6E6',
-          '--vera-border-dark': config.border ?? dark.border ?? '#333333',
-          '--vera-dark-background': config.darkBackground ?? light.darkBackground ?? '#202124',
-          '--vera-dark-background-light':
-            config.darkBackground ?? light.darkBackground ?? '#202124',
-          '--vera-dark-background-dark': config.darkBackground ?? dark.darkBackground ?? '#202124',
-          '--vera-dark-grey': config.darkGrey ?? light.darkGrey ?? '#333333',
-          '--vera-dark-grey-light': config.darkGrey ?? light.darkGrey ?? '#333333',
-          '--vera-dark-grey-dark': config.darkGrey ?? dark.darkGrey ?? '#333333',
-          '--vera-dark-grey-hover': config.darkGreyHover ?? light.darkGreyHover ?? '#292828',
-          '--vera-dark-grey-hover-light': config.darkGreyHover ?? light.darkGreyHover ?? '#292828',
-          '--vera-dark-grey-hover-dark': config.darkGreyHover ?? dark.darkGreyHover ?? '#292828',
-          '--vera-dark-grey-opacity':
-            config.darkGreyOpacity ?? light.darkGreyOpacity ?? '#333333CD',
+            config.colors?.dark?.['alert-background-hover'] ?? '#6E0000',
+          '--vera-alert-text': config.colors?.light?.['alert-text'] ?? '#CD0000',
+          '--vera-alert-text-light': config.colors?.light?.['alert-text'] ?? '#CD0000',
+          '--vera-alert-text-dark': config.colors?.dark?.['alert-text'] ?? '#FEDFDF',
+          '--vera-background': config.colors?.light?.['background'] ?? '#F5F0FD',
+          '--vera-background-light': config.colors?.light?.['background'] ?? '#F5F0FD',
+          '--vera-background-dark': config.colors?.dark?.['background'] ?? '#26044D',
+          '--vera-border': config.colors?.light?.['border'] ?? '#E6E6E6',
+          '--vera-border-light': config.colors?.light?.['border'] ?? '#E6E6E6',
+          '--vera-border-dark': config.colors?.dark?.['border'] ?? '#333333',
+          '--vera-dark-background': config.colors?.light?.['dark-background'] ?? '#202124',
+          '--vera-dark-background-light': config.colors?.light?.['dark-background'] ?? '#202124',
+          '--vera-dark-background-dark': config.colors?.dark?.['dark-background'] ?? '#202124',
+          '--vera-dark-grey': config.colors?.light?.['dark-grey'] ?? '#333333',
+          '--vera-dark-grey-light': config.colors?.light?.['dark-grey'] ?? '#333333',
+          '--vera-dark-grey-dark': config.colors?.dark?.['dark-grey'] ?? '#333333',
+          '--vera-dark-grey-hover': config.colors?.light?.['dark-grey-hover'] ?? '#292828',
+          '--vera-dark-grey-hover-light': config.colors?.light?.['dark-grey-hover'] ?? '#292828',
+          '--vera-dark-grey-hover-dark': config.colors?.dark?.['dark-grey-hover'] ?? '#292828',
+          '--vera-dark-grey-opacity': config.colors?.light?.['dark-grey-opacity'] ?? '#333333CD',
           '--vera-dark-grey-opacity-light':
-            config.darkGreyOpacity ?? light.darkGreyOpacity ?? '#333333CD',
+            config.colors?.light?.['dark-grey-opacity'] ?? '#333333CD',
           '--vera-dark-grey-opacity-dark':
-            config.darkGreyOpacity ?? dark.darkGreyOpacity ?? '#333333CD',
-          '--vera-disabled': config.disabled ?? light.disabled ?? '#E6E6E6',
-          '--vera-disabled-light': config.disabled ?? light.disabled ?? '#E6E6E6',
-          '--vera-disabled-dark': config.disabled ?? dark.disabled ?? '#333333',
-          '--vera-error': config.error ?? light.error ?? '#E61D1D',
-          '--vera-error-light': config.error ?? light.error ?? '#E61D1D',
-          '--vera-error-dark': config.error ?? dark.error ?? '#F75959',
-          '--vera-error-hover': config.errorHover ?? light.errorHover ?? '#CD0000',
-          '--vera-error-hover-light': config.errorHover ?? light.errorHover ?? '#CD0000',
-          '--vera-error-hover-dark': config.errorHover ?? dark.errorHover ?? '#FE9696',
-          '--vera-information': config.information ?? light.information ?? '#0276D5',
-          '--vera-information-light': config.information ?? light.information ?? '#0276D5',
-          '--vera-information-dark': config.information ?? dark.information ?? '#2997F0',
+            config.colors?.dark?.['dark-grey-opacity'] ?? '#333333CD',
+          '--vera-disabled': config.colors?.light?.['disabled'] ?? '#E6E6E6',
+          '--vera-disabled-light': config.colors?.light?.['disabled'] ?? '#E6E6E6',
+          '--vera-disabled-dark': config.colors?.dark?.['disabled'] ?? '#333333',
+          '--vera-error': config.colors?.light?.['error'] ?? '#E61D1D',
+          '--vera-error-light': config.colors?.light?.['error'] ?? '#E61D1D',
+          '--vera-error-dark': config.colors?.dark?.['error'] ?? '#F75959',
+          '--vera-error-hover': config.colors?.light?.['error-hover'] ?? '#CD0000',
+          '--vera-error-hover-light': config.colors?.light?.['error-hover'] ?? '#CD0000',
+          '--vera-error-hover-dark': config.colors?.dark?.['error-hover'] ?? '#FE9696',
+          '--vera-information': config.colors?.light?.['information'] ?? '#0276D5',
+          '--vera-information-light': config.colors?.light?.['information'] ?? '#0276D5',
+          '--vera-information-dark': config.colors?.dark?.['information'] ?? '#2997F0',
           '--vera-information-background':
-            config.informationBackground ?? light.informationBackground ?? '#E8F4FB',
+            config.colors?.light?.['information-background'] ?? '#E8F4FB',
           '--vera-information-background-light':
-            config.informationBackground ?? light.informationBackground ?? '#E8F4FB',
+            config.colors?.light?.['information-background'] ?? '#E8F4FB',
           '--vera-information-background-dark':
-            config.informationBackground ?? dark.informationBackground ?? '#E8F4FB',
-          '--vera-information-hover':
-            config.informationHover ?? light.informationHover ?? '#2997F0',
+            config.colors?.dark?.['information-background'] ?? '#E8F4FB',
+          '--vera-information-hover': config.colors?.light?.['information-hover'] ?? '#2997F0',
           '--vera-information-hover-light':
-            config.informationHover ?? light.informationHover ?? '#2997F0',
-          '--vera-information-hover-dark':
-            config.informationHover ?? dark.informationHover ?? '#0276D5',
-          '--vera-on-accent': config.onAccent ?? light.onAccent ?? '#000000',
-          '--vera-on-accent-light': config.onAccent ?? light.onAccent ?? '#000000',
-          '--vera-on-accent-dark': config.onAccent ?? dark.onAccent ?? '#000000',
-          '--vera-on-background': config.onBackground ?? light.onBackground ?? '#757575',
-          '--vera-on-background-light': config.onBackground ?? light.onBackground ?? '#757575',
-          '--vera-on-background-dark': config.onBackground ?? dark.onBackground ?? '#B3B3B3',
-          '--vera-on-dark-grey': config.onDarkGrey ?? light.onDarkGrey ?? '#FFFFFF',
-          '--vera-on-dark-grey-light': config.onDarkGrey ?? light.onDarkGrey ?? '#FFFFFF',
-          '--vera-on-dark-grey-dark': config.onDarkGrey ?? dark.onDarkGrey ?? '#FFFFFF',
-          '--vera-on-error': config.onError ?? light.onError ?? '#FFFFFF',
-          '--vera-on-error-light': config.onError ?? light.onError ?? '#FFFFFF',
-          '--vera-on-error-dark': config.onError ?? dark.onError ?? '#000000',
-          '--vera-on-information': config.onInformation ?? light.onInformation ?? '#FFFFFF',
-          '--vera-on-information-light': config.onInformation ?? light.onInformation ?? '#FFFFFF',
-          '--vera-on-information-dark': config.onInformation ?? dark.onInformation ?? '#FFFFFF',
-          '--vera-on-primary': config.onPrimary ?? light.onPrimary ?? '#FFFFFF',
-          '--vera-on-primary-light': config.onPrimary ?? light.onPrimary ?? '#FFFFFF',
-          '--vera-on-primary-dark': config.onPrimary ?? dark.onPrimary ?? '#000000',
-          '--vera-on-secondary': config.onSecondary ?? light.onSecondary ?? '#FFFFFF',
-          '--vera-on-secondary-light': config.onSecondary ?? light.onSecondary ?? '#FFFFFF',
-          '--vera-on-secondary-dark': config.onSecondary ?? dark.onSecondary ?? '#000000',
-          '--vera-on-success': config.onSuccess ?? light.onSuccess ?? '#FFFFFF',
-          '--vera-on-success-light': config.onSuccess ?? light.onSuccess ?? '#FFFFFF',
-          '--vera-on-success-dark': config.onSuccess ?? dark.onSuccess ?? '#000000',
-          '--vera-on-surface': config.onSurface ?? light.onSurface ?? '#929292',
-          '--vera-on-surface-light': config.onSurface ?? light.onSurface ?? '#929292',
-          '--vera-on-surface-dark': config.onSurface ?? dark.onSurface ?? '#FFFFFF',
-          '--vera-on-tertiary': config.onTertiary ?? light.onTertiary ?? '#FFFFFF',
-          '--vera-on-tertiary-light': config.onTertiary ?? light.onTertiary ?? '#FFFFFF',
-          '--vera-on-tertiary-dark': config.onTertiary ?? dark.onTertiary ?? '#000000',
-          '--vera-on-warning': config.onWarning ?? light.onWarning ?? '#FFFFFF',
-          '--vera-on-warning-light': config.onWarning ?? light.onWarning ?? '#FFFFFF',
-          '--vera-on-warning-dark': config.onWarning ?? dark.onWarning ?? '#000000',
-          '--vera-primary': config.primary ?? light.primary ?? '#9941FF',
-          '--vera-primary-light': config.primary ?? light.primary ?? '#9941FF',
-          '--vera-primary-dark': config.primary ?? dark.primary ?? '#B27BF2',
-          '--vera-primary-hover': config.primaryHover ?? light.primaryHover ?? '#871EFF',
-          '--vera-primary-hover-light': config.primaryHover ?? light.primaryHover ?? '#871EFF',
-          '--vera-primary-hover-dark': config.primaryHover ?? dark.primaryHover ?? '#CBA1FA',
-          '--vera-secondary': config.secondary ?? light.secondary ?? '#000000',
-          '--vera-secondary-light': config.secondary ?? light.secondary ?? '#000000',
-          '--vera-secondary-dark': config.secondary ?? dark.secondary ?? '#FFFFFF',
-          '--vera-secondary-hover': config.secondaryHover ?? light.secondaryHover ?? '#666666',
-          '--vera-secondary-hover-light':
-            config.secondaryHover ?? light.secondaryHover ?? '#666666',
-          '--vera-secondary-hover-dark': config.secondaryHover ?? dark.secondaryHover ?? '#929292',
-          '--vera-skeleton-like': config.skeletonLike ?? light.skeletonLike ?? '#B3B3B3',
-          '--vera-skeleton-like-light': config.skeletonLike ?? light.skeletonLike ?? '#B3B3B3',
-          '--vera-skeleton-like-dark': config.skeletonLike ?? dark.skeletonLike ?? '#333333',
-          '--vera-success': config.success ?? light.success ?? '#1C8731',
-          '--vera-success-light': config.success ?? light.success ?? '#1C8731',
-          '--vera-success-dark': config.success ?? dark.success ?? '#30A849',
-          '--vera-success-hover': config.successHover ?? light.successHover ?? '#1F7629',
-          '--vera-success-hover-light': config.successHover ?? light.successHover ?? '#1F7629',
-          '--vera-success-hover-dark': config.successHover ?? dark.successHover ?? '#53CA6A',
-          '--vera-surface': config.surface ?? light.surface ?? '#FFFFFF',
-          '--vera-surface-light': config.surface ?? light.surface ?? '#FFFFFF',
-          '--vera-surface-dark': config.surface ?? dark.surface ?? '#000000',
-          '--vera-tertiary': config.tertiary ?? light.tertiary ?? '#757575',
-          '--vera-tertiary-light': config.tertiary ?? light.tertiary ?? '#757575',
-          '--vera-tertiary-dark': config.tertiary ?? dark.tertiary ?? '#B3B3B3',
-          '--vera-tertiary-hover': config.tertiaryHover ?? light.tertiaryHover ?? '#929292',
-          '--vera-tertiary-hover-light': config.tertiaryHover ?? light.tertiaryHover ?? '#929292',
-          '--vera-tertiary-hover-dark': config.tertiaryHover ?? dark.tertiaryHover ?? '#B3B3B3',
-          '--vera-text-disabled': config.textDisabled ?? light.textDisabled ?? '#B3B3B3',
-          '--vera-text-disabled-light': config.textDisabled ?? light.textDisabled ?? '#B3B3B3',
-          '--vera-text-disabled-dark': config.textDisabled ?? dark.textDisabled ?? '#666666',
-          '--vera-text-primary': config.textPrimary ?? light.textPrimary ?? '#9941FF',
-          '--vera-text-primary-light': config.textPrimary ?? light.textPrimary ?? '#9941FF',
-          '--vera-text-primary-dark': config.textPrimary ?? dark.textPrimary ?? '#B27BF2',
-          '--vera-text-secondary': config.textSecondary ?? light.textSecondary ?? '#000000',
-          '--vera-text-secondary-light': config.textSecondary ?? light.textSecondary ?? '#000000',
-          '--vera-text-secondary-dark': config.textSecondary ?? dark.textSecondary ?? '#FFFFFF',
-          '--vera-text-tertiary': config.textTertiary ?? light.textTertiary ?? '#757575',
-          '--vera-text-tertiary-light': config.textTertiary ?? light.textTertiary ?? '#757575',
-          '--vera-text-tertiary-dark': config.textTertiary ?? dark.textTertiary ?? '#B3B3B3',
-          '--vera-warning': config.warning ?? light.warning ?? '#BE5702',
-          '--vera-warning-light': config.warning ?? light.warning ?? '#BE5702',
-          '--vera-warning-dark': config.warning ?? dark.warning ?? '#FA9F00',
-          '--vera-warning-hover': config.warningHover ?? light.warningHover ?? '#A64C03',
-          '--vera-warning-hover-light': config.warningHover ?? light.warningHover ?? '#A64C03',
-          '--vera-warning-hover-dark': config.warningHover ?? dark.warningHover ?? '#FACC4B',
+            config.colors?.light?.['information-hover'] ?? '#2997F0',
+          '--vera-information-hover-dark': config.colors?.dark?.['information-hover'] ?? '#0276D5',
+          '--vera-on-accent': config.colors?.light?.['on-accent'] ?? '#000000',
+          '--vera-on-accent-light': config.colors?.light?.['on-accent'] ?? '#000000',
+          '--vera-on-accent-dark': config.colors?.dark?.['on-accent'] ?? '#000000',
+          '--vera-on-background': config.colors?.light?.['on-background'] ?? '#757575',
+          '--vera-on-background-light': config.colors?.light?.['on-background'] ?? '#757575',
+          '--vera-on-background-dark': config.colors?.dark?.['on-background'] ?? '#B3B3B3',
+          '--vera-on-dark-grey': config.colors?.light?.['on-dark-grey'] ?? '#FFFFFF',
+          '--vera-on-dark-grey-light': config.colors?.light?.['on-dark-grey'] ?? '#FFFFFF',
+          '--vera-on-dark-grey-dark': config.colors?.dark?.['on-dark-grey'] ?? '#FFFFFF',
+          '--vera-on-error': config.colors?.light?.['on-error'] ?? '#FFFFFF',
+          '--vera-on-error-light': config.colors?.light?.['on-error'] ?? '#FFFFFF',
+          '--vera-on-error-dark': config.colors?.dark?.['on-error'] ?? '#000000',
+          '--vera-on-information': config.colors?.light?.['on-information'] ?? '#FFFFFF',
+          '--vera-on-information-light': config.colors?.light?.['on-information'] ?? '#FFFFFF',
+          '--vera-on-information-dark': config.colors?.dark?.['on-information'] ?? '#FFFFFF',
+          '--vera-on-primary': config.colors?.light?.['on-primary'] ?? '#FFFFFF',
+          '--vera-on-primary-light': config.colors?.light?.['on-primary'] ?? '#FFFFFF',
+          '--vera-on-primary-dark': config.colors?.dark?.['on-primary'] ?? '#000000',
+          '--vera-on-secondary': config.colors?.light?.['on-secondary'] ?? '#FFFFFF',
+          '--vera-on-secondary-light': config.colors?.light?.['on-secondary'] ?? '#FFFFFF',
+          '--vera-on-secondary-dark': config.colors?.dark?.['on-secondary'] ?? '#000000',
+          '--vera-on-success': config.colors?.light?.['on-success'] ?? '#FFFFFF',
+          '--vera-on-success-light': config.colors?.light?.['on-success'] ?? '#FFFFFF',
+          '--vera-on-success-dark': config.colors?.dark?.['on-success'] ?? '#000000',
+          '--vera-on-surface': config.colors?.light?.['on-surface'] ?? '#929292',
+          '--vera-on-surface-light': config.colors?.light?.['on-surface'] ?? '#929292',
+          '--vera-on-surface-dark': config.colors?.dark?.['on-surface'] ?? '#FFFFFF',
+          '--vera-on-tertiary': config.colors?.light?.['on-tertiary'] ?? '#FFFFFF',
+          '--vera-on-tertiary-light': config.colors?.light?.['on-tertiary'] ?? '#FFFFFF',
+          '--vera-on-tertiary-dark': config.colors?.dark?.['on-tertiary'] ?? '#000000',
+          '--vera-on-warning': config.colors?.light?.['on-warning'] ?? '#FFFFFF',
+          '--vera-on-warning-light': config.colors?.light?.['on-warning'] ?? '#FFFFFF',
+          '--vera-on-warning-dark': config.colors?.dark?.['on-warning'] ?? '#000000',
+          '--vera-primary': config.colors?.light?.['primary'] ?? '#9941FF',
+          '--vera-primary-light': config.colors?.light?.['primary'] ?? '#9941FF',
+          '--vera-primary-dark': config.colors?.dark?.['primary'] ?? '#B27BF2',
+          '--vera-primary-hover': config.colors?.light?.['primary-hover'] ?? '#871EFF',
+          '--vera-primary-hover-light': config.colors?.light?.['primary-hover'] ?? '#871EFF',
+          '--vera-primary-hover-dark': config.colors?.dark?.['primary-hover'] ?? '#CBA1FA',
+          '--vera-secondary': config.colors?.light?.['secondary'] ?? '#000000',
+          '--vera-secondary-light': config.colors?.light?.['secondary'] ?? '#000000',
+          '--vera-secondary-dark': config.colors?.dark?.['secondary'] ?? '#FFFFFF',
+          '--vera-secondary-hover': config.colors?.light?.['secondary-hover'] ?? '#666666',
+          '--vera-secondary-hover-light': config.colors?.light?.['secondary-hover'] ?? '#666666',
+          '--vera-secondary-hover-dark': config.colors?.dark?.['secondary-hover'] ?? '#929292',
+          '--vera-skeleton-like': config.colors?.light?.['skeleton-like'] ?? '#B3B3B3',
+          '--vera-skeleton-like-light': config.colors?.light?.['skeleton-like'] ?? '#B3B3B3',
+          '--vera-skeleton-like-dark': config.colors?.dark?.['skeleton-like'] ?? '#333333',
+          '--vera-success': config.colors?.light?.['success'] ?? '#1C8731',
+          '--vera-success-light': config.colors?.light?.['success'] ?? '#1C8731',
+          '--vera-success-dark': config.colors?.dark?.['success'] ?? '#30A849',
+          '--vera-success-hover': config.colors?.light?.['success-hover'] ?? '#1F7629',
+          '--vera-success-hover-light': config.colors?.light?.['success-hover'] ?? '#1F7629',
+          '--vera-success-hover-dark': config.colors?.dark?.['success-hover'] ?? '#53CA6A',
+          '--vera-surface': config.colors?.light?.['surface'] ?? '#FFFFFF',
+          '--vera-surface-light': config.colors?.light?.['surface'] ?? '#FFFFFF',
+          '--vera-surface-dark': config.colors?.dark?.['surface'] ?? '#000000',
+          '--vera-tertiary': config.colors?.light?.['tertiary'] ?? '#757575',
+          '--vera-tertiary-light': config.colors?.light?.['tertiary'] ?? '#757575',
+          '--vera-tertiary-dark': config.colors?.dark?.['tertiary'] ?? '#B3B3B3',
+          '--vera-tertiary-hover': config.colors?.light?.['tertiary-hover'] ?? '#929292',
+          '--vera-tertiary-hover-light': config.colors?.light?.['tertiary-hover'] ?? '#929292',
+          '--vera-tertiary-hover-dark': config.colors?.dark?.['tertiary-hover'] ?? '#B3B3B3',
+          '--vera-text-disabled': config.colors?.light?.['text-disabled'] ?? '#B3B3B3',
+          '--vera-text-disabled-light': config.colors?.light?.['text-disabled'] ?? '#B3B3B3',
+          '--vera-text-disabled-dark': config.colors?.dark?.['text-disabled'] ?? '#666666',
+          '--vera-text-primary': config.colors?.light?.['text-primary'] ?? '#9941FF',
+          '--vera-text-primary-light': config.colors?.light?.['text-primary'] ?? '#9941FF',
+          '--vera-text-primary-dark': config.colors?.dark?.['text-primary'] ?? '#B27BF2',
+          '--vera-text-secondary': config.colors?.light?.['text-secondary'] ?? '#000000',
+          '--vera-text-secondary-light': config.colors?.light?.['text-secondary'] ?? '#000000',
+          '--vera-text-secondary-dark': config.colors?.dark?.['text-secondary'] ?? '#FFFFFF',
+          '--vera-text-tertiary': config.colors?.light?.['text-tertiary'] ?? '#757575',
+          '--vera-text-tertiary-light': config.colors?.light?.['text-tertiary'] ?? '#757575',
+          '--vera-text-tertiary-dark': config.colors?.dark?.['text-tertiary'] ?? '#B3B3B3',
+          '--vera-warning': config.colors?.light?.['warning'] ?? '#BE5702',
+          '--vera-warning-light': config.colors?.light?.['warning'] ?? '#BE5702',
+          '--vera-warning-dark': config.colors?.dark?.['warning'] ?? '#FA9F00',
+          '--vera-warning-hover': config.colors?.light?.['warning-hover'] ?? '#A64C03',
+          '--vera-warning-hover-light': config.colors?.light?.['warning-hover'] ?? '#A64C03',
+          '--vera-warning-hover-dark': config.colors?.dark?.['warning-hover'] ?? '#FACC4B',
 
           // Typography and layout design tokens
-          '--vera-border-radius-extra-large': config.borderRadiusExtraLarge ?? '24px',
-          '--vera-border-radius-extra-small': config.borderRadiusExtraSmall ?? '2px',
-          '--vera-border-radius-large': config.borderRadiusLarge ?? '12px',
-          '--vera-border-radius-medium': config.borderRadiusMedium ?? '8px',
-          '--vera-border-radius-none': config.borderRadiusNone ?? '0px',
-          '--vera-border-radius-small': config.borderRadiusSmall ?? '4px',
+          '--vera-border-radius-extra-large':
+            config.borderRadius?.['extra-large'] != null
+              ? config.borderRadius?.['extra-large'] + 'px'
+              : '24px',
+          '--vera-border-radius-extra-small':
+            config.borderRadius?.['extra-small'] != null
+              ? config.borderRadius?.['extra-small'] + 'px'
+              : '2px',
+          '--vera-border-radius-large':
+            config.borderRadius?.['large'] != null ? config.borderRadius?.['large'] + 'px' : '12px',
+          '--vera-border-radius-medium':
+            config.borderRadius?.['medium'] != null
+              ? config.borderRadius?.['medium'] + 'px'
+              : '8px',
+          '--vera-border-radius-none':
+            config.borderRadius?.['none'] != null ? config.borderRadius?.['none'] + 'px' : '0px',
+          '--vera-border-radius-small':
+            config.borderRadius?.['small'] != null ? config.borderRadius?.['small'] + 'px' : '4px',
           '--vera-font-family-plain':
-            config.fontFamilyPlain ??
+            config.typography?.['font-family'] ??
             'Inter, sans-serif, system-ui, ui-sans-serif, Marker Felt, Trebuchet MS',
-          '--vera-typography-headline-font-size': config.headline?.fontSize ?? '4.125rem',
-          '--vera-typography-headline-line-height': config.headline?.lineHeight ?? '5.5rem',
-          '--vera-typography-headline-font-weight': config.headline?.fontWeight ?? '500',
-          '--vera-typography-headline-mobile-font-size': config.headline?.mobileFontSize ?? '2rem',
-          '--vera-typography-headline-mobile-line-height':
-            config.headline?.mobileLineHeight ?? '2.5rem',
+          '--vera-typography-headline-font-size': config.typography?.['desktop']?.['headline']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['headline']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '4.125rem',
+          '--vera-typography-headline-line-height': config.typography?.['desktop']?.['headline']?.[
+            'line-height'
+          ]
+            ? Number(config.typography?.['desktop']?.['headline']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '5.5rem',
+          '--vera-typography-headline-font-weight':
+            config.typography?.['desktop']?.['headline']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['headline']?.['font-weight'])
+              : '500',
+          '--vera-typography-headline-mobile-font-size': config.typography?.['mobile']?.[
+            'headline'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['headline']?.['font-size'].slice(0, -2)) / 16 +
+              'rem'
+            : '2rem',
+          '--vera-typography-headline-mobile-line-height': config.typography?.['mobile']?.[
+            'headline'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['headline']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.5rem',
           '--vera-typography-headline-mobile-font-weight':
-            config.headline?.mobileFontWeight ?? '500',
-          '--vera-typography-subtitle-font-size': config.subtitle?.fontSize ?? '3.25rem',
-          '--vera-typography-subtitle-line-height': config.subtitle?.lineHeight ?? '4.25rem',
-          '--vera-typography-subtitle-font-weight': config.subtitle?.fontWeight ?? '500',
-          '--vera-typography-subtitle-mobile-font-size':
-            config.subtitle?.mobileFontSize ?? '1.875rem',
-          '--vera-typography-subtitle-mobile-line-height':
-            config.subtitle?.mobileLineHeight ?? '2.375rem',
+            config.typography?.['mobile']?.['headline']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['headline']?.['font-weight'])
+              : '500',
+          '--vera-typography-subtitle-font-size': config.typography?.['desktop']?.['subtitle']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['subtitle']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '3.25rem',
+          '--vera-typography-subtitle-line-height': config.typography?.['desktop']?.['subtitle']?.[
+            'line-height'
+          ]
+            ? Number(config.typography?.['desktop']?.['subtitle']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '4.25rem',
+          '--vera-typography-subtitle-font-weight':
+            config.typography?.['desktop']?.['subtitle']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['subtitle']?.['font-weight'])
+              : '500',
+          '--vera-typography-subtitle-mobile-font-size': config.typography?.['mobile']?.[
+            'subtitle'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['subtitle']?.['font-size'].slice(0, -2)) / 16 +
+              'rem'
+            : '1.875rem',
+          '--vera-typography-subtitle-mobile-line-height': config.typography?.['mobile']?.[
+            'subtitle'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['subtitle']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.375rem',
           '--vera-typography-subtitle-mobile-font-weight':
-            config.subtitle?.mobileFontWeight ?? '500',
-          '--vera-typography-heading-1-font-size': config.heading1?.fontSize ?? '2.5rem',
-          '--vera-typography-heading-1-line-height': config.heading1?.lineHeight ?? '3.25rem',
-          '--vera-typography-heading-1-font-weight': config.heading1?.fontWeight ?? '500',
-          '--vera-typography-heading-1-mobile-font-size':
-            config.heading1?.mobileFontSize ?? '1.75rem',
-          '--vera-typography-heading-1-mobile-line-height':
-            config.heading1?.mobileLineHeight ?? '2.25rem',
+            config.typography?.['mobile']?.['subtitle']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['subtitle']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-1-font-size': config.typography?.['desktop']?.['heading-1']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['heading-1']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.5rem',
+          '--vera-typography-heading-1-line-height': config.typography?.['desktop']?.[
+            'heading-1'
+          ]?.['line-height']
+            ? Number(config.typography?.['desktop']?.['heading-1']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '3.25rem',
+          '--vera-typography-heading-1-font-weight':
+            config.typography?.['desktop']?.['heading-1']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['heading-1']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-1-mobile-font-size': config.typography?.['mobile']?.[
+            'heading-1'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['heading-1']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.75rem',
+          '--vera-typography-heading-1-mobile-line-height': config.typography?.['mobile']?.[
+            'heading-1'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['heading-1']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.25rem',
           '--vera-typography-heading-1-mobile-font-weight':
-            config.heading1?.mobileFontWeight ?? '500',
-          '--vera-typography-heading-2-font-size': config.heading2?.fontSize ?? '2rem',
-          '--vera-typography-heading-2-line-height': config.heading2?.lineHeight ?? '2.75rem',
-          '--vera-typography-heading-2-font-weight': config.heading2?.fontWeight ?? '500',
-          '--vera-typography-heading-2-mobile-font-size':
-            config.heading2?.mobileFontSize ?? '1.5rem',
-          '--vera-typography-heading-2-mobile-line-height':
-            config.heading2?.mobileLineHeight ?? '2rem',
+            config.typography?.['mobile']?.['heading-1']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['heading-1']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-2-font-size': config.typography?.['desktop']?.['heading-2']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['heading-2']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2rem',
+          '--vera-typography-heading-2-line-height': config.typography?.['desktop']?.[
+            'heading-2'
+          ]?.['line-height']
+            ? Number(config.typography?.['desktop']?.['heading-2']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.75rem',
+          '--vera-typography-heading-2-font-weight':
+            config.typography?.['desktop']?.['heading-2']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['heading-2']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-2-mobile-font-size': config.typography?.['mobile']?.[
+            'heading-2'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['heading-2']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.5rem',
+          '--vera-typography-heading-2-mobile-line-height': config.typography?.['mobile']?.[
+            'heading-2'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['heading-2']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2rem',
           '--vera-typography-heading-2-mobile-font-weight':
-            config.heading2?.mobileFontWeight ?? '500',
-          '--vera-typography-heading-3-font-size': config.heading3?.fontSize ?? '1.625rem',
-          '--vera-typography-heading-3-line-height': config.heading3?.lineHeight ?? '2.25rem',
-          '--vera-typography-heading-3-font-weight': config.heading3?.fontWeight ?? '500',
-          '--vera-typography-heading-3-mobile-font-size':
-            config.heading3?.mobileFontSize ?? '1.25rem',
-          '--vera-typography-heading-3-mobile-line-height':
-            config.heading3?.mobileLineHeight ?? '1.75rem',
+            config.typography?.['mobile']?.['heading-2']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['heading-2']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-3-font-size': config.typography?.['desktop']?.['heading-3']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['heading-3']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.625rem',
+          '--vera-typography-heading-3-line-height': config.typography?.['desktop']?.[
+            'heading-3'
+          ]?.['line-height']
+            ? Number(config.typography?.['desktop']?.['heading-3']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '2.25rem',
+          '--vera-typography-heading-3-font-weight':
+            config.typography?.['desktop']?.['heading-3']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['heading-3']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-3-mobile-font-size': config.typography?.['mobile']?.[
+            'heading-3'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['heading-3']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.25rem',
+          '--vera-typography-heading-3-mobile-line-height': config.typography?.['mobile']?.[
+            'heading-3'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['heading-3']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.75rem',
           '--vera-typography-heading-3-mobile-font-weight':
-            config.heading3?.mobileFontWeight ?? '500',
-          '--vera-typography-heading-4-font-size': config.heading4?.fontSize ?? '1.25rem',
-          '--vera-typography-heading-4-line-height': config.heading4?.lineHeight ?? '1.75rem',
-          '--vera-typography-heading-4-font-weight': config.heading4?.fontWeight ?? '500',
-          '--vera-typography-heading-4-mobile-font-size':
-            config.heading4?.mobileFontSize ?? '1.125rem',
-          '--vera-typography-heading-4-mobile-line-height':
-            config.heading4?.mobileLineHeight ?? '1.5rem',
+            config.typography?.['mobile']?.['heading-3']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['heading-3']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-4-font-size': config.typography?.['desktop']?.['heading-4']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['heading-4']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.25rem',
+          '--vera-typography-heading-4-line-height': config.typography?.['desktop']?.[
+            'heading-4'
+          ]?.['line-height']
+            ? Number(config.typography?.['desktop']?.['heading-4']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.75rem',
+          '--vera-typography-heading-4-font-weight':
+            config.typography?.['desktop']?.['heading-4']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['heading-4']?.['font-weight'])
+              : '500',
+          '--vera-typography-heading-4-mobile-font-size': config.typography?.['mobile']?.[
+            'heading-4'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['heading-4']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.125rem',
+          '--vera-typography-heading-4-mobile-line-height': config.typography?.['mobile']?.[
+            'heading-4'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['heading-4']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.5rem',
           '--vera-typography-heading-4-mobile-font-weight':
-            config.heading4?.mobileFontWeight ?? '500',
-          '--vera-typography-body-extended-font-size': config.bodyExtended?.fontSize ?? '1rem',
-          '--vera-typography-body-extended-line-height':
-            config.bodyExtended?.lineHeight ?? '1.5rem',
-          '--vera-typography-body-extended-font-weight': config.bodyExtended?.fontWeight ?? '400',
-          '--vera-typography-body-extended-mobile-font-size':
-            config.bodyExtended?.mobileFontSize ?? '1rem',
-          '--vera-typography-body-extended-mobile-line-height':
-            config.bodyExtended?.mobileLineHeight ?? '1.5rem',
+            config.typography?.['mobile']?.['heading-4']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['heading-4']?.['font-weight'])
+              : '500',
+          '--vera-typography-body-extended-font-size': config.typography?.['desktop']?.[
+            'body-extended'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['desktop']?.['body-extended']?.['font-size'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-body-extended-line-height': config.typography?.['desktop']?.[
+            'body-extended'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['desktop']?.['body-extended']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1.5rem',
+          '--vera-typography-body-extended-font-weight':
+            config.typography?.['desktop']?.['body-extended']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['body-extended']?.['font-weight'])
+              : '400',
+          '--vera-typography-body-extended-mobile-font-size': config.typography?.['mobile']?.[
+            'body-extended'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['body-extended']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-body-extended-mobile-line-height': config.typography?.['mobile']?.[
+            'body-extended'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['mobile']?.['body-extended']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1.5rem',
           '--vera-typography-body-extended-mobile-font-weight':
-            config.bodyExtended?.mobileFontWeight ?? '400',
-          '--vera-typography-body-extended-semibold-font-size':
-            config.bodyExtendedSemibold?.fontSize ?? '1rem',
-          '--vera-typography-body-extended-semibold-line-height':
-            config.bodyExtendedSemibold?.lineHeight ?? '1.5rem',
+            config.typography?.['mobile']?.['body-extended']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['body-extended']?.['font-weight'])
+              : '400',
+          '--vera-typography-body-extended-semibold-font-size': config.typography?.['desktop']?.[
+            'body-extended-semibold'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['desktop']?.['body-extended-semibold']?.['font-size'].slice(
+                  0,
+                  -2
+                )
+              ) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-body-extended-semibold-line-height': config.typography?.['desktop']?.[
+            'body-extended-semibold'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['desktop']?.['body-extended-semibold']?.['line-height'].slice(
+                  0,
+                  -2
+                )
+              ) /
+                16 +
+              'rem'
+            : '1.5rem',
           '--vera-typography-body-extended-semibold-font-weight':
-            config.bodyExtendedSemibold?.fontWeight ?? '600',
-          '--vera-typography-body-extended-semibold-mobile-font-size':
-            config.bodyExtendedSemibold?.mobileFontSize ?? '1rem',
-          '--vera-typography-body-extended-semibold-mobile-line-height':
-            config.bodyExtendedSemibold?.mobileLineHeight ?? '1.5rem',
+            config.typography?.['desktop']?.['body-extended-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['body-extended-semibold']?.['font-weight'])
+              : '600',
+          '--vera-typography-body-extended-semibold-mobile-font-size': config.typography?.[
+            'mobile'
+          ]?.['body-extended-semibold']?.['font-size']
+            ? Number(
+                config.typography?.['mobile']?.['body-extended-semibold']?.['font-size'].slice(
+                  0,
+                  -2
+                )
+              ) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-body-extended-semibold-mobile-line-height': config.typography?.[
+            'mobile'
+          ]?.['body-extended-semibold']?.['line-height']
+            ? Number(
+                config.typography?.['mobile']?.['body-extended-semibold']?.['line-height'].slice(
+                  0,
+                  -2
+                )
+              ) /
+                16 +
+              'rem'
+            : '1.5rem',
           '--vera-typography-body-extended-semibold-mobile-font-weight':
-            config.bodyExtendedSemibold?.mobileFontWeight ?? '600',
-          '--vera-typography-body-base-font-size': config.bodyBase?.fontSize ?? '0.875rem',
-          '--vera-typography-body-base-line-height': config.bodyBase?.lineHeight ?? '1.25rem',
-          '--vera-typography-body-base-font-weight': config.bodyBase?.fontWeight ?? '400',
-          '--vera-typography-body-base-mobile-font-size':
-            config.bodyBase?.mobileFontSize ?? '0.875rem',
-          '--vera-typography-body-base-mobile-line-height':
-            config.bodyBase?.mobileLineHeight ?? '1.25rem',
+            config.typography?.['mobile']?.['body-extended-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['body-extended-semibold']?.['font-weight'])
+              : '600',
+          '--vera-typography-body-base-font-size': config.typography?.['desktop']?.['body-base']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['body-base']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '0.875rem',
+          '--vera-typography-body-base-line-height': config.typography?.['desktop']?.[
+            'body-base'
+          ]?.['line-height']
+            ? Number(config.typography?.['desktop']?.['body-base']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.25rem',
+          '--vera-typography-body-base-font-weight':
+            config.typography?.['desktop']?.['body-base']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['body-base']?.['font-weight'])
+              : '400',
+          '--vera-typography-body-base-mobile-font-size': config.typography?.['mobile']?.[
+            'body-base'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['body-base']?.['font-size'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '0.875rem',
+          '--vera-typography-body-base-mobile-line-height': config.typography?.['mobile']?.[
+            'body-base'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['body-base']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1.25rem',
           '--vera-typography-body-base-mobile-font-weight':
-            config.bodyBase?.mobileFontWeight ?? '400',
-          '--vera-typography-body-base-semibold-font-size':
-            config.bodyBaseSemibold?.fontSize ?? '0.875rem',
-          '--vera-typography-body-base-semibold-line-height':
-            config.bodyBaseSemibold?.lineHeight ?? '1.25rem',
+            config.typography?.['mobile']?.['body-base']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['body-base']?.['font-weight'])
+              : '400',
+          '--vera-typography-body-base-semibold-font-size': config.typography?.['desktop']?.[
+            'body-base-semibold'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['desktop']?.['body-base-semibold']?.['font-size'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '0.875rem',
+          '--vera-typography-body-base-semibold-line-height': config.typography?.['desktop']?.[
+            'body-base-semibold'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['desktop']?.['body-base-semibold']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1.25rem',
           '--vera-typography-body-base-semibold-font-weight':
-            config.bodyBaseSemibold?.fontWeight ?? '600',
-          '--vera-typography-body-base-semibold-mobile-font-size':
-            config.bodyBaseSemibold?.mobileFontSize ?? '0.875rem',
-          '--vera-typography-body-base-semibold-mobile-line-height':
-            config.bodyBaseSemibold?.mobileLineHeight ?? '1.25rem',
+            config.typography?.['desktop']?.['body-base-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['body-base-semibold']?.['font-weight'])
+              : '600',
+          '--vera-typography-body-base-semibold-mobile-font-size': config.typography?.['mobile']?.[
+            'body-base-semibold'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['mobile']?.['body-base-semibold']?.['font-size'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '0.875rem',
+          '--vera-typography-body-base-semibold-mobile-line-height': config.typography?.[
+            'mobile'
+          ]?.['body-base-semibold']?.['line-height']
+            ? Number(
+                config.typography?.['mobile']?.['body-base-semibold']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1.25rem',
           '--vera-typography-body-base-semibold-mobile-font-weight':
-            config.bodyBaseSemibold?.mobileFontWeight ?? '600',
-          '--vera-typography-caption-font-size': config.caption?.fontSize ?? '0.75rem',
-          '--vera-typography-caption-line-height': config.caption?.lineHeight ?? '1rem',
-          '--vera-typography-caption-font-weight': config.caption?.fontWeight ?? '400',
-          '--vera-typography-caption-mobile-font-size': config.caption?.mobileFontSize ?? '0.75rem',
-          '--vera-typography-caption-mobile-line-height':
-            config.caption?.mobileLineHeight ?? '1rem',
-          '--vera-typography-caption-mobile-font-weight': config.caption?.mobileFontWeight ?? '400',
-          '--vera-typography-caption-semibold-font-size':
-            config.captionSemibold?.fontSize ?? '0.75rem',
-          '--vera-typography-caption-semibold-line-height':
-            config.captionSemibold?.lineHeight ?? '1rem',
+            config.typography?.['mobile']?.['body-base-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['body-base-semibold']?.['font-weight'])
+              : '600',
+          '--vera-typography-caption-font-size': config.typography?.['desktop']?.['caption']?.[
+            'font-size'
+          ]
+            ? Number(config.typography?.['desktop']?.['caption']?.['font-size'].slice(0, -2)) / 16 +
+              'rem'
+            : '0.75rem',
+          '--vera-typography-caption-line-height': config.typography?.['desktop']?.['caption']?.[
+            'line-height'
+          ]
+            ? Number(config.typography?.['desktop']?.['caption']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-caption-font-weight':
+            config.typography?.['desktop']?.['caption']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['caption']?.['font-weight'])
+              : '400',
+          '--vera-typography-caption-mobile-font-size': config.typography?.['mobile']?.[
+            'caption'
+          ]?.['font-size']
+            ? Number(config.typography?.['mobile']?.['caption']?.['font-size'].slice(0, -2)) / 16 +
+              'rem'
+            : '0.75rem',
+          '--vera-typography-caption-mobile-line-height': config.typography?.['mobile']?.[
+            'caption'
+          ]?.['line-height']
+            ? Number(config.typography?.['mobile']?.['caption']?.['line-height'].slice(0, -2)) /
+                16 +
+              'rem'
+            : '1rem',
+          '--vera-typography-caption-mobile-font-weight':
+            config.typography?.['mobile']?.['caption']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['caption']?.['font-weight'])
+              : '400',
+          '--vera-typography-caption-semibold-font-size': config.typography?.['desktop']?.[
+            'caption-semibold'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['desktop']?.['caption-semibold']?.['font-size'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '0.75rem',
+          '--vera-typography-caption-semibold-line-height': config.typography?.['desktop']?.[
+            'caption-semibold'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['desktop']?.['caption-semibold']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1rem',
           '--vera-typography-caption-semibold-font-weight':
-            config.captionSemibold?.fontWeight ?? '600',
-          '--vera-typography-caption-semibold-mobile-font-size':
-            config.captionSemibold?.mobileFontSize ?? '0.75rem',
-          '--vera-typography-caption-semibold-mobile-line-height':
-            config.captionSemibold?.mobileLineHeight ?? '1rem',
+            config.typography?.['desktop']?.['caption-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['desktop']?.['caption-semibold']?.['font-weight'])
+              : '600',
+          '--vera-typography-caption-semibold-mobile-font-size': config.typography?.['mobile']?.[
+            'caption-semibold'
+          ]?.['font-size']
+            ? Number(
+                config.typography?.['mobile']?.['caption-semibold']?.['font-size'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '0.75rem',
+          '--vera-typography-caption-semibold-mobile-line-height': config.typography?.['mobile']?.[
+            'caption-semibold'
+          ]?.['line-height']
+            ? Number(
+                config.typography?.['mobile']?.['caption-semibold']?.['line-height'].slice(0, -2)
+              ) /
+                16 +
+              'rem'
+            : '1rem',
           '--vera-typography-caption-semibold-mobile-font-weight':
-            config.captionSemibold?.mobileFontWeight ?? '600',
+            config.typography?.['mobile']?.['caption-semibold']?.['font-weight'] != null
+              ? String(config.typography?.['mobile']?.['caption-semibold']?.['font-weight'])
+              : '600',
         },
         ':host(.vera-dark-mode), :host(.dark), html.vera-dark-mode': {
-          '--vera-accent': config.accent ?? dark.accent ?? '#FFFFFF',
-          '--vera-alert-background': config.alertBackground ?? dark.alertBackground ?? '#3E0004',
+          '--vera-accent': config.colors?.dark?.['accent'] ?? '#FFFFFF',
+          '--vera-alert-background': config.colors?.dark?.['alert-background'] ?? '#3E0004',
           '--vera-alert-background-hover':
-            config.alertBackgroundHover ?? dark.alertBackgroundHover ?? '#6E0000',
-          '--vera-alert-text': config.alertText ?? dark.alertText ?? '#FEDFDF',
-          '--vera-background': config.background ?? dark.background ?? '#26044D',
-          '--vera-border': config.border ?? dark.border ?? '#333333',
-          '--vera-dark-background': config.darkBackground ?? dark.darkBackground ?? '#202124',
-          '--vera-dark-grey': config.darkGrey ?? dark.darkGrey ?? '#333333',
-          '--vera-dark-grey-hover': config.darkGreyHover ?? dark.darkGreyHover ?? '#292828',
-          '--vera-dark-grey-opacity': config.darkGreyOpacity ?? dark.darkGreyOpacity ?? '#333333CD',
-          '--vera-disabled': config.disabled ?? dark.disabled ?? '#333333',
-          '--vera-error': config.error ?? dark.error ?? '#F75959',
-          '--vera-error-hover': config.errorHover ?? dark.errorHover ?? '#FE9696',
-          '--vera-information': config.information ?? dark.information ?? '#2997F0',
+            config.colors?.dark?.['alert-background-hover'] ?? '#6E0000',
+          '--vera-alert-text': config.colors?.dark?.['alert-text'] ?? '#FEDFDF',
+          '--vera-background': config.colors?.dark?.['background'] ?? '#26044D',
+          '--vera-border': config.colors?.dark?.['border'] ?? '#333333',
+          '--vera-dark-background': config.colors?.dark?.['dark-background'] ?? '#202124',
+          '--vera-dark-grey': config.colors?.dark?.['dark-grey'] ?? '#333333',
+          '--vera-dark-grey-hover': config.colors?.dark?.['dark-grey-hover'] ?? '#292828',
+          '--vera-dark-grey-opacity': config.colors?.dark?.['dark-grey-opacity'] ?? '#333333CD',
+          '--vera-disabled': config.colors?.dark?.['disabled'] ?? '#333333',
+          '--vera-error': config.colors?.dark?.['error'] ?? '#F75959',
+          '--vera-error-hover': config.colors?.dark?.['error-hover'] ?? '#FE9696',
+          '--vera-information': config.colors?.dark?.['information'] ?? '#2997F0',
           '--vera-information-background':
-            config.informationBackground ?? dark.informationBackground ?? '#E8F4FB',
-          '--vera-information-hover': config.informationHover ?? dark.informationHover ?? '#0276D5',
-          '--vera-on-accent': config.onAccent ?? dark.onAccent ?? '#000000',
-          '--vera-on-background': config.onBackground ?? dark.onBackground ?? '#B3B3B3',
-          '--vera-on-dark-grey': config.onDarkGrey ?? dark.onDarkGrey ?? '#FFFFFF',
-          '--vera-on-error': config.onError ?? dark.onError ?? '#000000',
-          '--vera-on-information': config.onInformation ?? dark.onInformation ?? '#FFFFFF',
-          '--vera-on-primary': config.onPrimary ?? dark.onPrimary ?? '#000000',
-          '--vera-on-secondary': config.onSecondary ?? dark.onSecondary ?? '#000000',
-          '--vera-on-success': config.onSuccess ?? dark.onSuccess ?? '#000000',
-          '--vera-on-surface': config.onSurface ?? dark.onSurface ?? '#FFFFFF',
-          '--vera-on-tertiary': config.onTertiary ?? dark.onTertiary ?? '#000000',
-          '--vera-on-warning': config.onWarning ?? dark.onWarning ?? '#000000',
-          '--vera-primary': config.primary ?? dark.primary ?? '#B27BF2',
-          '--vera-primary-hover': config.primaryHover ?? dark.primaryHover ?? '#CBA1FA',
-          '--vera-secondary': config.secondary ?? dark.secondary ?? '#FFFFFF',
-          '--vera-secondary-hover': config.secondaryHover ?? dark.secondaryHover ?? '#929292',
-          '--vera-skeleton-like': config.skeletonLike ?? dark.skeletonLike ?? '#333333',
-          '--vera-success': config.success ?? dark.success ?? '#30A849',
-          '--vera-success-hover': config.successHover ?? dark.successHover ?? '#53CA6A',
-          '--vera-surface': config.surface ?? dark.surface ?? '#000000',
-          '--vera-tertiary': config.tertiary ?? dark.tertiary ?? '#B3B3B3',
-          '--vera-tertiary-hover': config.tertiaryHover ?? dark.tertiaryHover ?? '#B3B3B3',
-          '--vera-text-disabled': config.textDisabled ?? dark.textDisabled ?? '#666666',
-          '--vera-text-primary': config.textPrimary ?? dark.textPrimary ?? '#B27BF2',
-          '--vera-text-secondary': config.textSecondary ?? dark.textSecondary ?? '#FFFFFF',
-          '--vera-text-tertiary': config.textTertiary ?? dark.textTertiary ?? '#B3B3B3',
-          '--vera-warning': config.warning ?? dark.warning ?? '#FA9F00',
-          '--vera-warning-hover': config.warningHover ?? dark.warningHover ?? '#FACC4B',
+            config.colors?.dark?.['information-background'] ?? '#E8F4FB',
+          '--vera-information-hover': config.colors?.dark?.['information-hover'] ?? '#0276D5',
+          '--vera-on-accent': config.colors?.dark?.['on-accent'] ?? '#000000',
+          '--vera-on-background': config.colors?.dark?.['on-background'] ?? '#B3B3B3',
+          '--vera-on-dark-grey': config.colors?.dark?.['on-dark-grey'] ?? '#FFFFFF',
+          '--vera-on-error': config.colors?.dark?.['on-error'] ?? '#000000',
+          '--vera-on-information': config.colors?.dark?.['on-information'] ?? '#FFFFFF',
+          '--vera-on-primary': config.colors?.dark?.['on-primary'] ?? '#000000',
+          '--vera-on-secondary': config.colors?.dark?.['on-secondary'] ?? '#000000',
+          '--vera-on-success': config.colors?.dark?.['on-success'] ?? '#000000',
+          '--vera-on-surface': config.colors?.dark?.['on-surface'] ?? '#FFFFFF',
+          '--vera-on-tertiary': config.colors?.dark?.['on-tertiary'] ?? '#000000',
+          '--vera-on-warning': config.colors?.dark?.['on-warning'] ?? '#000000',
+          '--vera-primary': config.colors?.dark?.['primary'] ?? '#B27BF2',
+          '--vera-primary-hover': config.colors?.dark?.['primary-hover'] ?? '#CBA1FA',
+          '--vera-secondary': config.colors?.dark?.['secondary'] ?? '#FFFFFF',
+          '--vera-secondary-hover': config.colors?.dark?.['secondary-hover'] ?? '#929292',
+          '--vera-skeleton-like': config.colors?.dark?.['skeleton-like'] ?? '#333333',
+          '--vera-success': config.colors?.dark?.['success'] ?? '#30A849',
+          '--vera-success-hover': config.colors?.dark?.['success-hover'] ?? '#53CA6A',
+          '--vera-surface': config.colors?.dark?.['surface'] ?? '#000000',
+          '--vera-tertiary': config.colors?.dark?.['tertiary'] ?? '#B3B3B3',
+          '--vera-tertiary-hover': config.colors?.dark?.['tertiary-hover'] ?? '#B3B3B3',
+          '--vera-text-disabled': config.colors?.dark?.['text-disabled'] ?? '#666666',
+          '--vera-text-primary': config.colors?.dark?.['text-primary'] ?? '#B27BF2',
+          '--vera-text-secondary': config.colors?.dark?.['text-secondary'] ?? '#FFFFFF',
+          '--vera-text-tertiary': config.colors?.dark?.['text-tertiary'] ?? '#B3B3B3',
+          '--vera-warning': config.colors?.dark?.['warning'] ?? '#FA9F00',
+          '--vera-warning-hover': config.colors?.dark?.['warning-hover'] ?? '#FACC4B',
         },
       });
       // headline
