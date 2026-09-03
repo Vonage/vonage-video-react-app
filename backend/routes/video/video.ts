@@ -96,6 +96,24 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 });
 
 /**
+ * Middleware for storing archiveId immediately after starting archive.
+ * This ensures stopArchive middleware can find it without waiting for webhook.
+ */
+videoHandler.onSettled$(async ({ videoAction, error, result }) => {
+  if (error) return;
+  if (videoAction !== VideoAction.startArchive) return;
+
+  const archive = result as { id: string; sessionId: string };
+  const existingArchiveIds = await sessionService.getArchiveIds({ sessionId: archive.sessionId });
+  const archiveIds = [...new Set([...existingArchiveIds, archive.id])];
+
+  await sessionService.setArchiveIds({
+    sessionId: archive.sessionId,
+    archiveIds,
+  });
+});
+
+/**
  * Listen to captions enabled/disabled events
  */
 videoRouter.post(
