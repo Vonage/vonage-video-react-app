@@ -1,0 +1,54 @@
+env.sh
+  s_1056c7a5eee4f6::t_871b2c38a48808 42
+  s_1056c7a5eee4f6::t_3313f7de8cccf0 37-39
+  s_1056c7a5eee4f6::t_68cf7d01ebb2b3 43
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_1056c7a5eee4f6::t_c78f155fa9a24d 23
+  s_1056c7a5eee4f6::t_146d8ce769a39a 40
+  s_1056c7a5eee4f6::t_cbc1ee2aa1ee22 92-103
+docs/CONFIGURATION.md
+  s_1056c7a5eee4f6::t_1d248571198765 85
+  s_1056c7a5eee4f6::t_7337073e2aa2ce 82-83
+  s_1056c7a5eee4f6::t_99ba465e70d72d 98
+  s_1056c7a5eee4f6::t_2e48204d2ffc9e 95-96,101,103
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_1056c7a5eee4f6::t_00f50f7ca5d60a 95
+  s_1056c7a5eee4f6::t_9755898db461a5 34
+backend/types/config.ts
+  s_1056c7a5eee4f6::t_cd9139b87af13c 34
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_1056c7a5eee4f6::t_63b263b0eefa4d 110-113,115-117
+  s_1056c7a5eee4f6::t_6275f171bcf8f1 49,55
+backend/helpers/config.ts
+  s_1056c7a5eee4f6::t_4f91988b092fe0 104,115-118,129
+backend/routes/auth/handlers/callbackHandler.ts
+  s_1056c7a5eee4f6::t_8d83bc6a715965 41
+  s_1056c7a5eee4f6::t_e0e53a855f6950 102
+backend/routes/auth/handlers/signInHandler.ts
+  s_1056c7a5eee4f6::t_fe4fb7a17bd89d 39
+  s_1056c7a5eee4f6::t_a469c14ea0f581 71
+backend/tests/helpers/config.test.ts
+  s_1056c7a5eee4f6::t_2970a8b1a387fe 88-98,105,121,129
+  s_1056c7a5eee4f6::t_16fc455a291c18 12
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_1056c7a5eee4f6::t_c1280e02ca0c73 35
+  s_1056c7a5eee4f6::t_972797b91237ea 77
+backend/.env.example
+  s_1056c7a5eee4f6::t_b4f5b51b51b71c 49,53-56,64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e43ebb56e1f6e5e91bfdb35e2777919c94cfe46c",
+  "prompts": {},
+  "sessions": {
+    "s_1056c7a5eee4f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f89c451e-d532-4daa-a4ba-a04f3b331fd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
