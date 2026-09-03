@@ -31,6 +31,7 @@ const ENABLED_CONFIG: Config = {
   authEnabled: true,
   oidcIssuerUrl: 'https://example.okta.com',
   oidcClientId: 'test-client-id',
+  oidcWebClientId: 'test-web-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
@@ -91,6 +92,7 @@ describe('callbackHandler', () => {
     const [tokenUrl, body] = axiosPostMock.mock.calls[0] as unknown as [string, URLSearchParams];
     expect(tokenUrl).toEqual('https://example.okta.com/oauth2/v1/token');
     expect(body.toString()).toContain('code_verifier=test-code-verifier');
+    expect(body.toString()).toContain('client_id=test-web-client-id');
 
     const sessionService = getSessionStorageService();
     const sessionId = sessionCookie!.split(';')[0].split('=')[1];

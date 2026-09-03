@@ -32,6 +32,7 @@ const ENABLED_CONFIG: Config = {
   authEnabled: true,
   oidcIssuerUrl: 'https://example.okta.com',
   oidcClientId: 'test-client-id',
+  oidcWebClientId: 'test-web-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
@@ -73,7 +74,7 @@ describe('signInHandler', () => {
       'https://example.okta.com/oauth2/v1/authorize'
     );
     expect(location.searchParams.get('response_type')).toEqual('code');
-    expect(location.searchParams.get('client_id')).toEqual('test-client-id');
+    expect(location.searchParams.get('client_id')).toEqual('test-web-client-id');
     expect(location.searchParams.get('redirect_uri')).toEqual(
       'http://localhost:3000/api/auth/callback/okta'
     );

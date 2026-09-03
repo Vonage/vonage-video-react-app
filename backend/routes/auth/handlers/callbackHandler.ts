@@ -38,7 +38,7 @@ function makeCallbackHandler() {
     };
   }
 
-  const { oidcIssuerUrl, tokenPath, oidcClientId, oidcWebRedirectUri } = authConfig;
+  const { oidcIssuerUrl, tokenPath, oidcWebClientId, oidcWebRedirectUri } = authConfig;
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -99,7 +99,7 @@ function makeCallbackHandler() {
               grant_type: 'authorization_code',
               code,
               redirect_uri: oidcWebRedirectUri,
-              client_id: oidcClientId,
+              client_id: oidcWebClientId,
               code_verifier: transaction.codeVerifier,
             }),
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }

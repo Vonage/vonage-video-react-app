@@ -46,11 +46,13 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
   const {
     oidcIssuerUrl,
     oidcClientId,
+    oidcWebClientId,
     authHeaderName,
     authScheme,
     introspectPath,
     introspectionTimeoutMs,
   } = authConfig;
+  const allowedClientIds = new Set([oidcClientId, oidcWebClientId]);
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -105,12 +107,14 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
       const introspectionData = parsedIntrospection.data;
 
-      // Beyond "active", confirm the token was actually issued to this application. This
-      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-      // signal — without this check, a valid token from a different app in the same org would
-      // pass.
+      // Beyond "active", confirm the token was actually issued to one of our own applications
+      // (Mobile or Web, two separate Okta client_ids). This tenant has no Custom Authorization
+      // Server, so `client_id` (not `aud`) is the reliable signal, without this check, a valid
+      // token from a different app in the same org would pass.
       const isTokenValidForThisApp =
-        introspectionData.active === true && introspectionData.client_id === oidcClientId;
+        introspectionData.active === true &&
+        !!introspectionData.client_id &&
+        allowedClientIds.has(introspectionData.client_id);
 
       if (!isTokenValidForThisApp) {
         const rejectionReason = introspectionData.active

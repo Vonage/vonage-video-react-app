@@ -20,6 +20,7 @@ const { default: authMiddleware } = await import('./authMiddleware');
 const { errorHandler } = await import('../errorHandler');
 
 const CONFIGURED_CLIENT_ID = 'test-client-id';
+const CONFIGURED_WEB_CLIENT_ID = 'test-web-client-id';
 
 const BASE_CONFIG = {
   provider: 'opentok',
@@ -36,6 +37,7 @@ const ENABLED_CONFIG: Config = {
   authEnabled: true,
   oidcIssuerUrl: 'https://example.com',
   oidcClientId: CONFIGURED_CLIENT_ID,
+  oidcWebClientId: CONFIGURED_WEB_CLIENT_ID,
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
@@ -83,6 +85,18 @@ describe('authMiddleware', () => {
     const res = await request(buildApp())
       .get('/protected')
       .set('Authorization', 'Bearer valid-token');
+
+    expect(res.statusCode).toEqual(200);
+  });
+
+  it('returns 200 for a token issued to the Web client_id', async () => {
+    axiosPostMock.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CONFIGURED_WEB_CLIENT_ID },
+    });
+
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Authorization', 'Bearer valid-web-token');
 
     expect(res.statusCode).toEqual(200);
   });

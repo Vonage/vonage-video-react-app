@@ -36,7 +36,7 @@ function makeSignInHandler() {
     };
   }
 
-  const { oidcIssuerUrl, authorizePath, oidcClientId, oidcWebRedirectUri } = authConfig;
+  const { oidcIssuerUrl, authorizePath, oidcWebClientId, oidcWebRedirectUri } = authConfig;
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -68,7 +68,7 @@ function makeSignInHandler() {
 
       const authorizeUrl = new URL(`${oidcIssuerUrl}${authorizePath}`);
       authorizeUrl.searchParams.set('response_type', 'code');
-      authorizeUrl.searchParams.set('client_id', oidcClientId);
+      authorizeUrl.searchParams.set('client_id', oidcWebClientId);
       authorizeUrl.searchParams.set('redirect_uri', oidcWebRedirectUri);
       authorizeUrl.searchParams.set('scope', OIDC_SCOPES);
       authorizeUrl.searchParams.set('state', state);
