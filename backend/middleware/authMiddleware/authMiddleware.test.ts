@@ -20,7 +20,6 @@ const { default: authMiddleware } = await import('./authMiddleware');
 const { errorHandler } = await import('../errorHandler');
 
 const CONFIGURED_CLIENT_ID = 'test-client-id';
-const CONFIGURED_WEB_CLIENT_ID = 'test-web-client-id';
 
 const BASE_CONFIG = {
   provider: 'opentok',
@@ -37,7 +36,6 @@ const ENABLED_CONFIG: Config = {
   authEnabled: true,
   oidcIssuerUrl: 'https://example.com',
   oidcClientId: CONFIGURED_CLIENT_ID,
-  oidcWebClientId: CONFIGURED_WEB_CLIENT_ID,
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
@@ -121,18 +119,6 @@ describe('authMiddleware', () => {
     app.use(errorHandler);
 
     const res = await request(app).get('/protected');
-
-    expect(res.statusCode).toEqual(200);
-  });
-
-  it('accepts a token introspected under the Web client_id', async () => {
-    axiosPostMock.mockResolvedValue({
-      data: { active: true, sub: 'user-1', client_id: CONFIGURED_WEB_CLIENT_ID },
-    });
-
-    const res = await request(buildApp())
-      .get('/protected')
-      .set('Authorization', 'Bearer valid-web-token');
 
     expect(res.statusCode).toEqual(200);
   });

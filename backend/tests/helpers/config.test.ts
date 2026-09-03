@@ -7,6 +7,10 @@ describe('loadConfig', () => {
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...originalEnv }; // Copy originalEnv to avoid mutation across tests
+    delete process.env.AUTH_ENABLED;
+    delete process.env.OIDC_CLIENT_ID;
+    delete process.env.OIDC_ISSUER_URL;
+    delete process.env.OIDC_WEB_REDIRECT_URI;
   });
 
   test('should return defined values', () => {
@@ -71,10 +75,6 @@ describe('loadConfig', () => {
     process.env.OT_API_KEY = 'test-key';
     process.env.OT_API_SECRET = 'test-secret';
     process.env.AUTH_ENABLED = 'true';
-    // env.sh (sourced before the test run) defaults these for local DEV — clear them so this
-    // test can exercise the "missing" branch.
-    delete process.env.OIDC_CLIENT_ID;
-    delete process.env.OIDC_ISSUER_URL;
 
     expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
 
@@ -84,24 +84,19 @@ describe('loadConfig', () => {
     expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
   });
 
-  test('should throw when AUTH_ENABLED is true but OIDC_WEB_CLIENT_ID/OIDC_WEB_REDIRECT_URI are missing or invalid', () => {
+  test('should throw when AUTH_ENABLED is true but OIDC_WEB_REDIRECT_URI is missing or invalid', () => {
     process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
     process.env.OT_API_KEY = 'test-key';
     process.env.OT_API_SECRET = 'test-secret';
     process.env.AUTH_ENABLED = 'true';
     process.env.OIDC_CLIENT_ID = 'test-client-id';
     process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
-    // env.sh (sourced before the test run) defaults these for local DEV — clear them so this
-    // test can exercise the "missing" branch.
-    delete process.env.OIDC_WEB_CLIENT_ID;
-    delete process.env.OIDC_WEB_REDIRECT_URI;
 
-    expect(() => loadConfig()).toThrow('OIDC_WEB_CLIENT_ID');
+    expect(() => loadConfig()).toThrow('OIDC_WEB_REDIRECT_URI');
 
-    process.env.OIDC_WEB_CLIENT_ID = 'test-web-client-id';
     process.env.OIDC_WEB_REDIRECT_URI = 'not-a-url';
 
-    expect(() => loadConfig()).toThrow('OIDC_WEB_CLIENT_ID');
+    expect(() => loadConfig()).toThrow('OIDC_WEB_REDIRECT_URI');
   });
 
   test('should return auth config with defaults, overridable via env, when AUTH_ENABLED is true', () => {
@@ -111,14 +106,12 @@ describe('loadConfig', () => {
     process.env.AUTH_ENABLED = 'true';
     process.env.OIDC_CLIENT_ID = 'test-client-id';
     process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
-    process.env.OIDC_WEB_CLIENT_ID = 'test-web-client-id';
     process.env.OIDC_WEB_REDIRECT_URI = 'http://localhost:3000/api/auth/callback/okta';
 
     const config = loadConfig();
 
     expect(config.authEnabled).toBe(true);
     if (config.authEnabled) {
-      expect(config.oidcWebClientId).toBe('test-web-client-id');
       expect(config.oidcWebRedirectUri).toBe('http://localhost:3000/api/auth/callback/okta');
       expect(config.authHeaderName).toBe('authorization');
       expect(config.authScheme).toBe('Bearer');

@@ -46,13 +46,11 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
   const {
     oidcIssuerUrl,
     oidcClientId,
-    oidcWebClientId,
     authHeaderName,
     authScheme,
     introspectPath,
     introspectionTimeoutMs,
   } = authConfig;
-  const allowedClientIds = new Set([oidcClientId, oidcWebClientId]);
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -78,11 +76,6 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
         );
       }
 
-      // TODO(VIDSOL-860): introspecting under the Mobile app's client_id for all tokens,
-      // including ones minted by the Web flow under oidcWebClientId. IAM confirmed both Mobile
-      // and Web are SPA/public clients (no secret either way), but whether this tenant scopes
-      // introspection per-app is still unverified — confirm against DEV before relying on
-      // cross-app introspection for Web-issued tokens.
       const introspectionResponse = await assertResult(
         () =>
           axios.post(
@@ -112,14 +105,12 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
       const introspectionData = parsedIntrospection.data;
 
-      // Beyond "active", confirm the token was actually issued to one of this app's clients
-      // (Mobile or Web). This tenant has no Custom Authorization Server, so `client_id` (not
-      // `aud`) is the reliable signal — without this check, a valid token from a different app
-      // in the same org would pass.
+      // Beyond "active", confirm the token was actually issued to this application. This
+      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
+      // signal — without this check, a valid token from a different app in the same org would
+      // pass.
       const isTokenValidForThisApp =
-        introspectionData.active === true &&
-        !!introspectionData.client_id &&
-        allowedClientIds.has(introspectionData.client_id);
+        introspectionData.active === true && introspectionData.client_id === oidcClientId;
 
       if (!isTokenValidForThisApp) {
         const rejectionReason = introspectionData.active
