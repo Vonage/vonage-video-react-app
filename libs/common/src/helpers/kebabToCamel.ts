@@ -3,7 +3,6 @@
  * Example: 'hello-world' -> 'helloWorld'
  */
 function kebabToCamel(str: string): string {
-  console.log('hi');
   return str
     .split('-')
     .map((word, index) =>
