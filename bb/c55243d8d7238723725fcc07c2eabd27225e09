@@ -1,0 +1,14 @@
+libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts
+  h_737cf808c1c597 162,174-176,180,189,230-235,240
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bbc55243d8d7238723725fcc07c2eabd27225e09",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
