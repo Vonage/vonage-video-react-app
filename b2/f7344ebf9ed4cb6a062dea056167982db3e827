@@ -1,0 +1,18 @@
+libs/common/src/helpers/kebabToCamel.ts
+  h_737cf808c1c597 6
+libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts
+  h_737cf808c1c597 42-90,179,183,197,199,225-226,302-303
+libs/ui/src/theme/helpers/tailwind/veraUI.cjs
+  h_737cf808c1c597 8-48,68-276,279-768,771-828
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b2f7344ebf9ed4cb6a062dea056167982db3e827",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

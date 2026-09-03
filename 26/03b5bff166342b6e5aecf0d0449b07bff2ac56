@@ -1,0 +1,20 @@
+backend/routes/video/video.ts
+  s_b682538cdbf704::t_467725837231c3 99-115
+  s_b682538cdbf704::t_b77976954b5d02 98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "2603b5bff166342b6e5aecf0d0449b07bff2ac56",
+  "prompts": {},
+  "sessions": {
+    "s_b682538cdbf704": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788437524873409000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
