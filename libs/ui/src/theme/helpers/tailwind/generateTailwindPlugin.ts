@@ -39,6 +39,55 @@ const VERA_UI_CONFIG_JSDOC = `/**
  * live theme updates in dev without regenerating this file.
  */`;
 
+/**
+ * Runtime resolver helpers that are emitted verbatim into the generated plugin.
+ *
+ * Keeping the branching (?? / ternaries / unit conversions) inside these small,
+ * single-purpose functions is what keeps the main plugin callback linear: each
+ * addBase entry becomes a plain function call instead of an inline conditional
+ * expression. That is what holds the callback's cognitive complexity down.
+ */
+const RUNTIME_RESOLVERS = `/**
+ * Resolves a theme-aware color from the runtime config, falling back to the
+ * value baked in from designTokens.json.
+ */
+const resolveColor = (config, mode, key, fallback) => config.colors?.[mode]?.[key] ?? fallback;
+
+/**
+ * Resolves a border radius token. Config values are plain numbers and get a
+ * 'px' suffix; the fallback is already a full px string.
+ */
+const resolveBorderRadius = (config, key, fallback) => {
+  const value = config.borderRadius?.[key];
+  if (value == null) return fallback;
+  return value + 'px';
+};
+
+/**
+ * Resolves the plain font-family, falling back to the baked default.
+ */
+const resolveFontFamily = (config, fallback) => config.typography?.['font-family'] ?? fallback;
+
+/**
+ * Resolves a typography size (font-size / line-height). Config values are px
+ * strings that get converted to rem; the fallback is already a rem string.
+ */
+const resolveTypographySize = (config, viewport, tokenKey, prop, fallback) => {
+  const value = config.typography?.[viewport]?.[tokenKey]?.[prop];
+  if (!value) return fallback;
+  return Number(value.slice(0, -2)) / 16 + 'rem';
+};
+
+/**
+ * Resolves a typography font-weight. Config values are numbers coerced to a
+ * string; the fallback is already a string.
+ */
+const resolveTypographyWeight = (config, viewport, tokenKey, fallback) => {
+  const value = config.typography?.[viewport]?.[tokenKey]?.['font-weight'];
+  if (value == null) return fallback;
+  return String(value);
+};`;
+
 type NormalizedTypographyStyle = { fontSize: string; lineHeight: string; fontWeight: string };
 
 type NormalizedDesignTokens = {
@@ -127,12 +176,11 @@ function typographyOrLayoutLookup(cssVarName: string, bakedValue: string): strin
 
   const borderRadiusKey = cssVarName.match(/^--vera-border-radius-(.+)$/);
   if (borderRadiusKey) {
-    const access = `config.borderRadius?.['${borderRadiusKey[1]}']`;
-    return `${access} != null ? ${access} + 'px' : ${fallback}`;
+    return `resolveBorderRadius(config, '${borderRadiusKey[1]}', ${fallback})`;
   }
 
   if (cssVarName === '--vera-font-family-plain') {
-    return `config.typography?.['font-family'] ?? ${fallback}`;
+    return `resolveFontFamily(config, ${fallback})`;
   }
 
   const typography = cssVarName.match(
@@ -143,13 +191,12 @@ function typographyOrLayoutLookup(cssVarName: string, bakedValue: string): strin
     const isMobile = rawToken.endsWith('-mobile');
     const tokenKey = isMobile ? rawToken.slice(0, -'-mobile'.length) : rawToken;
     const viewport = isMobile ? 'mobile' : 'desktop';
-    const access = `config.typography?.['${viewport}']?.['${tokenKey}']?.['${prop}']`;
 
     // font-weight is a number in the config; sizes are px strings -> rem.
     if (prop === 'font-weight') {
-      return `${access} != null ? String(${access}) : ${fallback}`;
+      return `resolveTypographyWeight(config, '${viewport}', '${tokenKey}', ${fallback})`;
     }
-    return `${access} ? Number(${access}.slice(0, -2)) / 16 + 'rem' : ${fallback}`;
+    return `resolveTypographySize(config, '${viewport}', '${tokenKey}', '${prop}', ${fallback})`;
   }
 
   return fallback;
@@ -175,8 +222,8 @@ function generateAddBaseVariables(
   // For each color: theme-aware variable (light in :root, dark in dark scope)
   // plus static light/dark variants. Each reads the runtime override first.
   for (const key of colorKeys) {
-    const lightLookup = `config.colors?.light?.['${key}'] ?? ${toStringLiteral(lightColors[key])}`;
-    const darkLookup = `config.colors?.dark?.['${key}'] ?? ${toStringLiteral(darkColors[key])}`;
+    const lightLookup = `resolveColor(config, 'light', '${key}', ${toStringLiteral(lightColors[key])})`;
+    const darkLookup = `resolveColor(config, 'dark', '${key}', ${toStringLiteral(darkColors[key])})`;
     const cssVarName = `--vera-${key}`;
 
     // Theme-aware color (changes with theme)
@@ -251,6 +298,8 @@ function generateVeraUIPlugin() {
  */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const plugin = require('tailwindcss/plugin');
+
+${RUNTIME_RESOLVERS}
 
 ${VERA_UI_CONFIG_JSDOC}
 
