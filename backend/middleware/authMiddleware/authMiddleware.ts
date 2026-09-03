@@ -84,7 +84,7 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
             `${oidcIssuerUrl}${introspectPath}`,
             new URLSearchParams({
               token: accessToken,
-              client_id: oidcClientId,
+              client_id: oidcWebClientId,
               token_type_hint: 'access_token',
             }),
             {

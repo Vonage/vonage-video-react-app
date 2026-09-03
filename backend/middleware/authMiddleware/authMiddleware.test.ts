@@ -89,6 +89,17 @@ describe('authMiddleware', () => {
     expect(res.statusCode).toEqual(200);
   });
 
+  it('introspects as the public Web client_id, not the confidential Mobile one', async () => {
+    axiosPostMock.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CONFIGURED_CLIENT_ID },
+    });
+
+    await request(buildApp()).get('/protected').set('Authorization', 'Bearer valid-token');
+
+    const [, body] = axiosPostMock.mock.calls[0] as unknown as [string, URLSearchParams];
+    expect(body.toString()).toContain(`client_id=${CONFIGURED_WEB_CLIENT_ID}`);
+  });
+
   it('returns 200 for a token issued to the Web client_id', async () => {
     axiosPostMock.mockResolvedValue({
       data: { active: true, sub: 'user-1', client_id: CONFIGURED_WEB_CLIENT_ID },
