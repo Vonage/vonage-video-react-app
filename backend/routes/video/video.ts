@@ -54,6 +54,31 @@ export const { makeVideoClient$ } = videoHandler.router$;
 const videoClient = makeVideoClient$();
 
 /**
+ * Middleware to inject archiveId when not provided in stopArchive calls.
+ * This handles server rotation scenarios where the frontend has a stale archiveId.
+ */
+videoHandler.use$('stopArchive', async ({ input, next }) => {
+  let { archiveId } = input as { sessionKey: string; archiveId?: string };
+  const { sessionKey } = input as { sessionKey: string };
+
+  // If archiveId is not provided, retrieve it from storage
+  if (!archiveId && sessionKey) {
+    const { decodeSessionKey } = await import('@common/helpers');
+    const { sessionId } = decodeSessionKey({ sessionKey });
+
+    const archiveIds = await sessionService.getArchiveIds({ sessionId });
+
+    if (archiveIds.length > 0) {
+      archiveId = archiveIds[0];
+      // Inject the archiveId into the input
+      (input as { archiveId: string }).archiveId = archiveId;
+    }
+  }
+
+  return next();
+});
+
+/**
  * Middleware for storing the sessionKey per SessionId and roomName.
  */
 videoHandler.onSettled$(async ({ videoAction, error, result }) => {

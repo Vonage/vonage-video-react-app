@@ -340,10 +340,14 @@ const SessionProvider = ({
   };
 
   // handle the disconnect from session and clean up of the session object
-  const handleSessionDisconnected = () => {
-    vonageVideoClient.current = null;
-    setConnected(false);
-  };
+  const handleSessionDisconnected = useStableCallback(({ reason }: { reason?: string }) => {
+    const isServerRotation = reason === 'serverRotation';
+
+    if (!isServerRotation) {
+      vonageVideoClient.current = null;
+      setConnected(false);
+    }
+  });
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
   // this reconnection count can be then used in the UI to provide user feedback or for post-call analytics
