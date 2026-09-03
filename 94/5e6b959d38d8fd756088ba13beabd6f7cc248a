@@ -1,0 +1,34 @@
+libs/api/src/handlers/stopArchive.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 10,12,14
+backend/routes/video/constants/joinSession.test.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 5,14-18
+frontend/src/Context/SessionProvider/session.tsx
+  s_e80f94af6ab4ec::t_d9800392adce07 343-350
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 5-6
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_e80f94af6ab4ec::t_d9800392adce07 89-91
+backend/routes/video/constants/joinSession.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 4-11,14-56
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 209-225
+backend/routes/video/video.ts
+  s_e80f94af6ab4ec::t_d9800392adce07 57-80
+  s_e80f94af6ab4ec::t_0cdb6e1d94eea9 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "945e6b959d38d8fd756088ba13beabd6f7cc248a",
+  "prompts": {},
+  "sessions": {
+    "s_e80f94af6ab4ec": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788426946495657000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
