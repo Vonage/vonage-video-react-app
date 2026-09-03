@@ -1,0 +1,18 @@
+backend/routes/video/constants/joinSession.test.ts
+  h_2499cc15b3806e 5,14-15,18-65
+backend/routes/video/constants/joinSession.ts
+  h_2499cc15b3806e 4-11,14-56
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_2499cc15b3806e 209-225
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "942ba65a0450cf49ed804259d5556e5f84f22ab3",
+  "prompts": {},
+  "humans": {
+    "h_2499cc15b3806e": {
+      "author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
