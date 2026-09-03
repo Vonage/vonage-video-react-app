@@ -1,0 +1,19 @@
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_97c334ca5f40e2::t_08d33bc6e93dfb 223
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "92b4af89e521fe9240e9aad24bd41e73624e8d7f",
+  "prompts": {},
+  "sessions": {
+    "s_97c334ca5f40e2": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788446256772250000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
