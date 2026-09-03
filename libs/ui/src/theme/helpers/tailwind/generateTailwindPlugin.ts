@@ -159,7 +159,9 @@ function normalizeThemeTokens(tokens: VeraThemeTokens): NormalizedDesignTokens {
  * Produces a single-quoted JS string literal for a fallback value.
  */
 function toStringLiteral(value: string): string {
-  return `'${value.replaceAll("'", String.raw`\'`)}'`;
+  const escapedSingleQuote = String.raw`\'`;
+  const escapedValue = value.replaceAll("'", escapedSingleQuote);
+  return `'${escapedValue}'`;
 }
 
 /**
