@@ -2,125 +2,137 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import designTokens from '../designTokens.js';
-import type { VeraUIConfig } from '@ui/theme/helpers/veraUI.types';
+import type { TypographyScale, VeraThemeTokens } from '@ui/theme/helpers/veraUI.types';
 
 /**
- * Transforms design tokens into VeraUIConfig shape and writes to JSON file.
+ * Transforms design tokens into the cross-platform theme shape and writes them
+ * to a JSON file.
  * @param outputDirPath - Directory to write output file
  * @param outputFileName - Name of output file
  */
 export function tokensToJson(outputDirPath: string, outputFileName: string): void {
   const outputFilePath = path.resolve(outputDirPath, outputFileName);
-  const veraConfig = buildVeraUIConfig();
+  const themeTokens = buildThemeTokens();
 
   fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
-  fs.writeFileSync(outputFilePath, JSON.stringify(veraConfig, null, 2) + '\n', { flag: 'w' });
+  fs.writeFileSync(outputFilePath, JSON.stringify(themeTokens, null, 2) + '\n', {
+    flag: 'w',
+  });
 
   console.log(`\x1b[32m✔ Design tokens JSON written to ${outputFilePath}\x1b[0m`);
 }
 
+const THEME_METADATA: VeraThemeTokens['metadata'] = {
+  name: 'Vonage Video App Theme',
+  version: '1.0.0',
+  created: '2026-08-20',
+  description:
+    'Unified design tokens (colors, border radius, typography) shared across the Vonage Video Android, iOS and React apps.',
+};
+
+const TYPOGRAPHY_TOKEN_KEYS = [
+  'headline',
+  'subtitle',
+  'heading-1',
+  'heading-2',
+  'heading-3',
+  'heading-4',
+  'body-extended',
+  'body-extended-semibold',
+  'body-base',
+  'body-base-semibold',
+  'caption',
+  'caption-semibold',
+] as const;
+
 /**
- * Transforms unwrapped design tokens into VeraUIConfig shape.
+ * Transforms the unwrapped design tokens into the unified theme shape used to
+ * keep the Android, iOS and React theme documents structurally identical.
  */
-function buildVeraUIConfig(): VeraUIConfig {
+function buildThemeTokens(): VeraThemeTokens {
   const unwrapped = unwrapValue(designTokens) as Record<string, unknown>;
 
-  const kebabToCamelCase = (str: string): string =>
-    str.replace(/-([a-z0-9])/g, (_, c: string) => c.toUpperCase());
+  const colorObj = (unwrapped.color as Record<string, Record<string, string>> | undefined) ?? {};
+  const light = sortColorSet(colorObj.light ?? {});
+  const dark = sortColorSet(colorObj.dark ?? {});
 
-  // Light colors
-  const colorObj = unwrapped.color as Record<string, Record<string, string>> | undefined;
-  const lightColor = colorObj?.light ?? {};
-
-  const light = Object.fromEntries(
-    Object.entries(lightColor)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => [kebabToCamelCase(k), v])
-  );
-
-  // Dark colors
-  const darkColor = colorObj?.dark ?? {};
-
-  const dark = Object.fromEntries(
-    Object.entries(darkColor)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => [kebabToCamelCase(k), v])
-  );
-
-  // Border radius
   const border = (unwrapped.border as Record<string, string> | undefined) ?? {};
-  const borderRadiusConfig = Object.fromEntries(
-    Object.entries(border)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => [`borderRadius${kebabToCamelCase(`-${k}`)}`, v])
-  );
+  const borderRadius = buildBorderRadius(border);
 
-  // Font family
   const typography = (unwrapped.typography as Record<string, unknown> | undefined) ?? {};
   const typeface = (typography.typeface as Record<string, string> | undefined) ?? {};
+  const typeScale = (typography.typeScale as Record<string, TypeScaleViewport> | undefined) ?? {};
 
-  const fontFamilyConfig = Object.fromEntries(
-    Object.entries(typeface)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => [`fontFamily${kebabToCamelCase(`-${k}`)}`, v])
-  );
+  return {
+    metadata: THEME_METADATA,
+    colors: { light, dark },
+    borderRadius,
+    typography: {
+      'font-family': typeface.plain ?? '',
+      desktop: buildTypographyScale(typeScale.desktop ?? {}),
+      mobile: buildTypographyScale(typeScale.mobile ?? {}),
+    },
+  };
+}
 
-  // Typography
-  const typeScaleObj = typography.typeScale as
-    | Record<string, Record<string, Record<string, unknown>>>
-    | undefined;
-  const typeScale = typeScaleObj ?? {};
-  const desktop = (typeScale.desktop as Record<string, Record<string, unknown>> | undefined) ?? {};
-  const mobile = (typeScale.mobile as Record<string, Record<string, unknown>> | undefined) ?? {};
+type TypeScaleViewport = Record<string, Record<string, string | number>>;
 
-  const typographyKeysByConfig = {
-    headline: 'headline',
-    subtitle: 'subtitle',
-    heading1: 'heading-1',
-    heading2: 'heading-2',
-    heading3: 'heading-3',
-    heading4: 'heading-4',
-    bodyExtended: 'body-extended',
-    bodyExtendedSemibold: 'body-extended-semibold',
-    bodyBase: 'body-base',
-    bodyBaseSemibold: 'body-base-semibold',
-    caption: 'caption',
-    captionSemibold: 'caption-semibold',
-  } as const;
+/**
+ * Returns the color set sorted alphabetically by key, keeping every semantic
+ * color (including keys not present on all platforms).
+ */
+function sortColorSet(colorSet: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(Object.entries(colorSet).sort(([a], [b]) => a.localeCompare(b)));
+}
 
-  const typographyConfig = Object.fromEntries(
-    Object.entries(typographyKeysByConfig).map(([configKey, tokenKey]) => {
-      const dtObj = desktop[tokenKey] ?? {};
-      const mtObj = mobile[tokenKey] ?? {};
+/**
+ * Converts border radius token strings (e.g. "8px") into plain numbers without
+ * a unit, as required by the theme schema.
+ */
+function buildBorderRadius(border: Record<string, string>): VeraThemeTokens['borderRadius'] {
+  return Object.fromEntries(
+    Object.entries(border).map(([key, value]) => [key, parsePxToNumber(value)])
+  ) as VeraThemeTokens['borderRadius'];
+}
 
-      const fontSize = dtObj.fontSize as string | undefined;
-      const lineHeight = dtObj.lineHeight as string | undefined;
-      const fontWeight = dtObj.fontWeight as string | number | undefined;
-      const mobileFontSize = mtObj.fontSize as string | undefined;
-      const mobileLineHeight = mtObj.lineHeight as string | undefined;
-      const mobileFontWeight = mtObj.fontWeight as string | number | undefined;
-
+/**
+ * Builds a typography scale for one viewport, converting rem sizes to px
+ * strings and font weights to integers.
+ */
+function buildTypographyScale(viewport: TypeScaleViewport): TypographyScale {
+  return Object.fromEntries(
+    TYPOGRAPHY_TOKEN_KEYS.map((tokenKey) => {
+      const style = viewport[tokenKey] ?? {};
       return [
-        configKey,
+        tokenKey,
         {
-          ...(fontSize !== undefined ? { fontSize } : {}),
-          ...(lineHeight !== undefined ? { lineHeight } : {}),
-          ...(fontWeight !== undefined ? { fontWeight: String(fontWeight) } : {}),
-          ...(mobileFontSize !== undefined ? { mobileFontSize } : {}),
-          ...(mobileLineHeight !== undefined ? { mobileLineHeight } : {}),
-          ...(mobileFontWeight !== undefined ? { mobileFontWeight: String(mobileFontWeight) } : {}),
+          'font-size': remToPx(style.fontSize as string | undefined),
+          'line-height': remToPx(style.lineHeight as string | undefined),
+          'font-weight': Number(style.fontWeight),
         },
       ];
     })
-  );
+  ) as TypographyScale;
+}
 
-  return {
-    light: light as VeraUIConfig['light'],
-    dark: dark as VeraUIConfig['dark'],
-    ...borderRadiusConfig,
-    ...fontFamilyConfig,
-    ...typographyConfig,
-  } as VeraUIConfig;
+/**
+ * Converts a rem string (e.g. "1.5rem") to a px string (e.g. "24px"),
+ * using the 16px = 1rem base. Returns px/other units untouched.
+ */
+function remToPx(value: string | undefined): string {
+  if (value === undefined) return '';
+  if (value.endsWith('rem')) {
+    const rem = Number(value.slice(0, -3));
+    return `${Math.round(rem * 16)}px`;
+  }
+  return value;
+}
+
+/**
+ * Parses a px string (e.g. "8px") into a plain number without a unit (e.g. 8).
+ */
+function parsePxToNumber(value: string): number {
+  return Number(value.replace('px', ''));
 }
 
 /**
