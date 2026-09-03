@@ -159,7 +159,7 @@ function normalizeThemeTokens(tokens: VeraThemeTokens): NormalizedDesignTokens {
  * Produces a single-quoted JS string literal for a fallback value.
  */
 function toStringLiteral(value: string): string {
-  return `'${value.replaceAll("'", "\\'")}'`;
+  return `'${value.replaceAll("'", String.raw`\'`)}'`;
 }
 
 /**
@@ -171,10 +171,13 @@ function toStringLiteral(value: string): string {
  * - '--vera-font-family-plain'             -> config.typography?.['font-family'] ?? 'Inter, ...'
  * - '--vera-typography-headline-font-size' -> pxStr ? Number(pxStr.slice(0,-2))/16 + 'rem' : '4.125rem'
  */
+const BORDER_RADIUS_VARIABLE_PATTERN = /^--vera-border-radius-(.+)$/;
+const TYPOGRAPHY_VARIABLE_PATTERN = /^--vera-typography-(.+)-(font-size|line-height|font-weight)$/;
+
 function typographyOrLayoutLookup(cssVarName: string, bakedValue: string): string {
   const fallback = toStringLiteral(bakedValue);
 
-  const borderRadiusKey = cssVarName.match(/^--vera-border-radius-(.+)$/);
+  const borderRadiusKey = BORDER_RADIUS_VARIABLE_PATTERN.exec(cssVarName);
   if (borderRadiusKey) {
     return `resolveBorderRadius(config, '${borderRadiusKey[1]}', ${fallback})`;
   }
@@ -183,9 +186,7 @@ function typographyOrLayoutLookup(cssVarName: string, bakedValue: string): strin
     return `resolveFontFamily(config, ${fallback})`;
   }
 
-  const typography = cssVarName.match(
-    /^--vera-typography-(.+)-(font-size|line-height|font-weight)$/
-  );
+  const typography = TYPOGRAPHY_VARIABLE_PATTERN.exec(cssVarName);
   if (typography) {
     const [, rawToken, prop] = typography;
     const isMobile = rawToken.endsWith('-mobile');
@@ -226,21 +227,17 @@ function generateAddBaseVariables(
     const darkLookup = `resolveColor(config, 'dark', '${key}', ${toStringLiteral(darkColors[key])})`;
     const cssVarName = `--vera-${key}`;
 
-    // Theme-aware color (changes with theme)
-    rootLines.push(`${indentation}'${cssVarName}': ${lightLookup},`);
+    // Theme-aware color (changes with theme) plus static light/dark variants.
+    rootLines.push(
+      `${indentation}'${cssVarName}': ${lightLookup},`,
+      `${indentation}'--vera-${key}-light': ${lightLookup},`,
+      `${indentation}'--vera-${key}-dark': ${darkLookup},`
+    );
     darkLines.push(`${indentation}'${cssVarName}': ${darkLookup},`);
-
-    // Light variant (always light)
-    rootLines.push(`${indentation}'--vera-${key}-light': ${lightLookup},`);
-
-    // Dark variant (always dark)
-    rootLines.push(`${indentation}'--vera-${key}-dark': ${darkLookup},`);
   }
 
   // Typography and layout variables (not theme-aware)
-  rootLines.push('');
-  rootLines.push(`${indentation}// Typography and layout design tokens`);
-
+  rootLines.push('', `${indentation}// Typography and layout design tokens`);
   for (const [key, value] of Object.entries(typographyAndLayoutVariables)) {
     rootLines.push(`${indentation}'${key}': ${typographyOrLayoutLookup(key, value)},`);
   }
