@@ -159,7 +159,7 @@ function normalizeThemeTokens(tokens: VeraThemeTokens): NormalizedDesignTokens {
  * Produces a single-quoted JS string literal for a fallback value.
  */
 function toStringLiteral(value: string): string {
-  return `'${value.replace(/'/g, "\\'")}'`;
+  return `'${value.replaceAll("'", "\\'")}'`;
 }
 
 /**
@@ -363,9 +363,9 @@ ${darkVars}
     theme: {
       extend: {
         borderRadius: ${generateBorderRadiusThemeConfig(borderRadius)},
-        colors: ${JSON.stringify(colorTokens, null, 6).replace(/\n/g, '\n        ')},
+        colors: ${JSON.stringify(colorTokens, null, 6).replaceAll('\n', '\n        ')},
         fontFamily: ${generateFontFamilyThemeConfig(fontFamily)},
-        screens: ${JSON.stringify(screens, null, 6).replace(/\n/g, '\n        ')},
+        screens: ${JSON.stringify(screens, null, 6).replaceAll('\n', '\n        ')},
       },
     },
   }
