@@ -18,4 +18,23 @@ describe('joinSession defaults', () => {
     expect(Math.abs(expireTime - (nowSeconds + twentyFourHoursInSeconds))).toBeLessThan(5);
     expect(expireTime).toBeLessThan(1e11);
   });
+
+  it('extends token TTL to 24 hours (not default 1 hour) to handle server rotation reconnection', () => {
+    const addDefaults = joinSession.addDefaults as (payload: unknown) => {
+      clientTokenOptions: { expireTime: number };
+    };
+    const { expireTime } = addDefaults({}).clientTokenOptions;
+
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    const twentyFourHoursInSeconds = 24 * 60 * 60;
+    const oneHourInSeconds = 60 * 60;
+
+    // Verify it's NOT the default 1 hour
+    const diffFromOneHour = Math.abs(expireTime - (nowSeconds + oneHourInSeconds));
+    expect(diffFromOneHour).toBeGreaterThan(20 * 60 * 60); // More than 20 hours difference
+
+    // Verify it IS 24 hours
+    const diffFromTwentyFourHours = Math.abs(expireTime - (nowSeconds + twentyFourHoursInSeconds));
+    expect(diffFromTwentyFourHours).toBeLessThan(5); // Within 5 seconds
+  });
 });

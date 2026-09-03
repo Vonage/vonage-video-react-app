@@ -165,6 +165,25 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Accept', 'application/json');
           expect(res.statusCode).toEqual(502);
         });
+
+        it('stops archive without archiveId when stored in session (server rotation scenario)', async () => {
+          // Setup: Store an archiveId in session storage
+          await sessionService.setArchiveIds({
+            sessionId: validSessionId,
+            archiveIds: ['archive-id'],
+          });
+
+          // Call stopArchive through v2 endpoint without archiveId
+          // Middleware should inject it from storage
+          const res = await request(server)
+            .post('/v2/stopArchive')
+            .set('Content-Type', 'application/json')
+            .send({ sessionKey: validSessionKey });
+
+          expect(res.statusCode).toEqual(200);
+          // The middleware successfully injected the archiveId and stopped the archive
+          expect(res.body).toHaveProperty('result');
+        });
       });
 
       describe('captions', () => {
