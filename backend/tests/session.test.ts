@@ -483,10 +483,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
   }
 );
 
-/**
- * Returns every Video instance the mocked constructor has produced so far, so a test can
- * assert on (or reset) the startArchive calls made by the request under test.
- */
 function getMockedVideoInstances(): MockedVideoInstance[] {
   return VideoMock.mock.results
     .filter((result) => result.type === 'return')

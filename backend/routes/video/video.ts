@@ -143,9 +143,7 @@ videoRouter.post(
 );
 
 /**
- * Listen to archive started/stopped events.
- * When an archive stops due to server rotation (session migration), the backend
- * automatically restarts it so recording continues without user intervention.
+ * Listen to archive started/stopped events and restart recording after server rotation.
  */
 videoRouter.post(
   '/hooks/archive',

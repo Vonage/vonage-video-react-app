@@ -205,9 +205,7 @@ const SessionProvider = ({
     initialValue?.recordingAlreadyNotified ?? false
   );
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
-  // Remembers whether this client initiated the archive. Survives archive stop/restart cycles
-  // caused by server rotation so that archiveIdStartedBySelf can be restored automatically
-  // without prompting the consent dialog again. Cleared on manual stops.
+  // Tracks if this client initiated the archive (persists through server rotation)
   const wasArchiveInitiatorRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
@@ -378,8 +376,6 @@ const SessionProvider = ({
     archiveStartRequestedBySelfRef.current = false;
   };
 
-  // Stable so it reads the current `reconnecting` value: session listeners are registered once
-  // in connect(), and a plain handler would close over the state of that first render.
   const handleArchiveStopped = useStableCallback(() => {
     // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
     wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
