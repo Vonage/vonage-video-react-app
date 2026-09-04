@@ -11,6 +11,7 @@ const mockOpentokConfig = () => {
         provider: 'opentok',
         gollumUrl: 'https://example.com',
         loggerVerbose: false,
+        authEnabled: false,
       };
     }),
   };

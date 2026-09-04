@@ -28,6 +28,8 @@ export SHOW_PARTICIPANT_LIST=true
 export MEETING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export WAITING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export SHOW_VIDEO_STATS=false
+
+# Auth OIDC configuration
 export AUTH_HEADER_NAME='authorization'
 export AUTH_SCHEME='Bearer'
 export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'

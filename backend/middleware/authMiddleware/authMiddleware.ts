@@ -87,17 +87,10 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
         makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
       );
 
-      const parsedIntrospection = TokenIntrospectionResponseSchema.safeParse(
-        introspectionResponse.data
+      const introspectionData = assertResult(
+        () => TokenIntrospectionResponseSchema.parse(introspectionResponse.data),
+        makeUnauthorizedErrorHandler('Token introspection response is missing or invalid')
       );
-
-      if (!parsedIntrospection.success) {
-        throw makeUnauthorizedErrorHandler('Token introspection response failed schema validation')(
-          new Error('Introspection response failed schema validation')
-        );
-      }
-
-      const introspectionData = parsedIntrospection.data;
 
       // Beyond "active", confirm the token was actually issued to this application. This
       // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
