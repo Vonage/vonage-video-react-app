@@ -1,0 +1,36 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_a0080a22343d67::t_de5cda433bacd6 9,21-24,39,118-133
+backend/routes/video/video.ts
+  s_a0080a22343d67::t_de5cda433bacd6 11,102-104,132-138,154,163-170,176-183,186,189-192
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_a0080a22343d67::t_de5cda433bacd6 1-50
+backend/storage/sessionStorage.ts
+  s_a0080a22343d67::t_de5cda433bacd6 3,14-16
+backend/routes/video/schemas/ArchiveHookPayload.schema.ts
+  s_a0080a22343d67::t_de5cda433bacd6 24,27-28
+backend/routes/video/helpers/index.ts
+  s_a0080a22343d67::t_de5cda433bacd6 1
+backend/storage/vcrSessionStorage.ts
+  s_a0080a22343d67::t_de5cda433bacd6 8,12,37-42,46,52-58,131-153
+backend/tests/session.test.ts
+  s_a0080a22343d67::t_de5cda433bacd6 91-95,357-494,500-508
+  s_a0080a22343d67::t_23e5087d0a19c3 509
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_a0080a22343d67::t_de5cda433bacd6 107-173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3f3344de7c38b369280a84fbc0e8d48daaba248f",
+  "prompts": {},
+  "sessions": {
+    "s_a0080a22343d67": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1786518229293814000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}

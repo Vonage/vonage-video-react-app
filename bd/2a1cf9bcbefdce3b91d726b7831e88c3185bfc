@@ -1,0 +1,26 @@
+designTokens.json
+  h_737cf808c1c597 2-6,8-98,100-106,108-233
+libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson.ts
+  h_737cf808c1c597 5,8-9,15,18-20,25-47,49-50,52,55-57,60,64,66-86,88-96,98-105,107,109-111,115-116,118-135
+libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts
+  h_737cf808c1c597 5-6,20-33,35-39,42,44,52-53,55,57-65,67-73,75-76,78-93,97-98,103-104,110,112-113,117-123,125-126,128-131,134-135,138-152,155,159-162,164,175-176,178-179,183-184,186-187,189-190,193,197-198,216-219,240-241
+designTokens.example.json
+  h_737cf808c1c597 2-6,8-98,100-106,108-233
+libs/ui/src/theme/helpers/tailwind/veraUI.cjs
+  h_737cf808c1c597 9-12,27-32,34,36,38-57,59,61-73,75,77,79-80,82-164,167-184,186,188-218,220-253,255-289,291-325,327-361,363-397,399-439,441-467,469-495,497-531,533-553,555-575,577-631,633-653,655-657,660-661,663-674,676-704
+libs/ui/src/theme/helpers/veraUI.types.ts
+  h_737cf808c1c597 149-153,155,157-180
+libs/ui/src/theme/helpers/designTokens/designTokens.json
+  h_737cf808c1c597 2-6,8-98,100-106,108-233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bd2a1cf9bcbefdce3b91d726b7831e88c3185bfc",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

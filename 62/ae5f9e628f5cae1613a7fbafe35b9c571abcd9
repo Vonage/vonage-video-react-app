@@ -1,0 +1,30 @@
+backend/tests/session.test.ts
+  s_b62d6529c1785c::t_5a3026767d7174 168-186
+backend/routes/video/constants/joinSession.test.ts
+  s_07d95a21d34a4d::t_7e4453f5971766 27,31,35
+  s_b62d6529c1785c::t_5a3026767d7174 21-26,28-30,32-34,36-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "62ae5f9e628f5cae1613a7fbafe35b9c571abcd9",
+  "prompts": {},
+  "sessions": {
+    "s_07d95a21d34a4d": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788441349291140000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    },
+    "s_b62d6529c1785c": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788441213501166000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}

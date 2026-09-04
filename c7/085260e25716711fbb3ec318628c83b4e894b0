@@ -1,0 +1,23 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_26543e35f14115::t_d1a5bb28d78bca 81-83
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  s_26543e35f14115::t_d1a5bb28d78bca 1-290
+frontend/src/Context/SessionProvider/session.tsx
+  s_26543e35f14115::t_d1a5bb28d78bca 37,208-211,365-368,373,377-385,389
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fab766e7f3307370f59bb471b2dfbcae763aed68",
+  "prompts": {},
+  "sessions": {
+    "s_26543e35f14115": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1786518762468948000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
