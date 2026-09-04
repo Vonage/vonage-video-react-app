@@ -1,0 +1,32 @@
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  s_c46ba60afd2913::t_1c84aaf536a105 209
+backend/routes/video/constants/joinSession.test.ts
+  s_c46ba60afd2913::t_1c84aaf536a105 9,11-13,20,22-24,33,39-41,45,47,51
+  s_4960f0ef2ff5f6::t_2ceb46016c2ff6 3,10,15,21,29,34,49
+backend/routes/video/constants/joinSession.ts
+  s_c46ba60afd2913::t_1c84aaf536a105 7-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8e1511cc99840c73d47fcf906ff30892d8407afb",
+  "prompts": {},
+  "sessions": {
+    "s_4960f0ef2ff5f6": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788530399522074000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    },
+    "s_c46ba60afd2913": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788529110852999000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
