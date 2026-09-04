@@ -1,0 +1,66 @@
+backend/tests/helpers/index.ts
+  h_6029769cf9ac60 1
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 2,75,80
+backend/eslint.config.mjs
+  h_6029769cf9ac60 12-26
+backend/helpers/__mocks__/config.ts
+  h_6029769cf9ac60 14
+backend/helpers/config.ts
+  h_6029769cf9ac60 3-4,95,97,99-102,107
+  s_5938401ae0995d::t_fe574ac3d5ee03 103-106
+env.sh
+  h_6029769cf9ac60 31-32
+vcr-gha.yml
+  h_6029769cf9ac60 47-56
+backend/jest.config.js
+  h_6029769cf9ac60 11-12
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_5c932d8b528372::t_f3f195d35d8139 10
+  h_6029769cf9ac60 1-2,5-6,8,12,25-26,28-38,41-44,49-56,60-61,67-71,86-88,98-100,109-111,121
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_5c932d8b528372::t_58f17d51c0007e 90-91
+  s_5c932d8b528372::t_2feb621a39381c 92
+backend/jest/setEnvVars.js
+  h_6029769cf9ac60 11
+backend/tests/helpers/doPartialMock.ts
+  h_6029769cf9ac60 1-43
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_6029769cf9ac60 1-26
+backend/.env.example
+  s_5c932d8b528372::t_bad62e117eed73 48
+  s_5c932d8b528372::t_ffbc76c5814fe7 46-47
+  s_5c932d8b528372::t_9a939709909814 49
+  s_5c932d8b528372::t_2c4fe49b9c6fa1 50
+backend/types/config.ts
+  h_6029769cf9ac60 28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "e1b46615ba6ad96e4f22a6c3066f80bcffe0482d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5938401ae0995d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "885a9704-b13d-4250-b199-1b8a4382ce26",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
