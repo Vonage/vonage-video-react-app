@@ -1,0 +1,33 @@
+docs/CONFIGURATION.md
+  s_60c46e90bd91ea::t_1c87f013507bc1 103
+frontend/vite.config.ts
+  s_60c46e90bd91ea::t_5402b9db517fb3 171-173,178
+  s_60c46e90bd91ea::t_25b49f4be98cde 179-181
+backend/storage/vcrSessionStorage.ts
+  s_60c46e90bd91ea::t_00278b89b7c832 6
+  s_60c46e90bd91ea::t_0c315a88dd803d 164,168,172
+libs/common/src/helpers/getCookieValue/getCookieValue.ts
+  s_60c46e90bd91ea::t_ad7499b745df92 21-25
+backend/storage/sessionStorage.ts
+  s_60c46e90bd91ea::t_ed6cd461cee565 25-29
+backend/routes/auth/handlers/callbackHandler.ts
+  s_60c46e90bd91ea::t_e541692c5c0e0b 20-21
+  s_60c46e90bd91ea::t_abd928dba835c7 119
+  s_60c46e90bd91ea::t_b145f37c1ed0b8 99-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f09f2587a91606c8a92e69d58f1e8a87dc01f24e",
+  "prompts": {},
+  "sessions": {
+    "s_60c46e90bd91ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b85d267-a76c-4b3b-b027-a3ae009e8719",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
