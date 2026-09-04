@@ -1,0 +1,60 @@
+backend/storage/sessionStorage.ts
+  s_60c46e90bd91ea::t_ed6cd461cee565 25-29
+backend/routes/auth/handlers/signInHandler.ts
+  s_1056c7a5eee4f6::t_b89136082cb3b0 63
+  s_1056c7a5eee4f6::t_6305cfacef82d7 31
+env.sh
+  s_1056c7a5eee4f6::t_782d7ea0c403f7 37-39,41
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_1056c7a5eee4f6::t_cce891d8ac4bc4 76
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_1056c7a5eee4f6::t_623591e1b54871 94
+docs/CONFIGURATION.md
+  s_1056c7a5eee4f6::t_4012f2c03568b6 94,99,101
+  s_1056c7a5eee4f6::t_d26d86507ee93f 82
+backend/storage/vcrSessionStorage.ts
+  s_60c46e90bd91ea::t_0c315a88dd803d 164,168,172
+  s_60c46e90bd91ea::t_00278b89b7c832 6
+backend/routes/auth/handlers/callbackHandler.ts
+  s_1056c7a5eee4f6::t_44349db64e9444 96
+  s_1056c7a5eee4f6::t_0e45f5bb07a5a2 35
+  s_60c46e90bd91ea::t_e541692c5c0e0b 20-21
+  s_60c46e90bd91ea::t_abd928dba835c7 119
+  s_60c46e90bd91ea::t_b145f37c1ed0b8 99-102
+backend/tests/helpers/config.test.ts
+  s_1056c7a5eee4f6::t_b2236d509bade9 115
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_1056c7a5eee4f6::t_431c92847be245 85
+  s_1056c7a5eee4f6::t_28b91b2788544e 108-111,113
+backend/.env.example
+  s_1056c7a5eee4f6::t_506cbef6c97ca8 49-52
+libs/common/src/helpers/getCookieValue/getCookieValue.ts
+  s_60c46e90bd91ea::t_ad7499b745df92 21-25
+frontend/vite.config.ts
+  s_60c46e90bd91ea::t_5402b9db517fb3 171-173,178
+  s_60c46e90bd91ea::t_25b49f4be98cde 179-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "5cd1b73e43a7f8e0d7fced01b0a39ef7f8db395b",
+  "prompts": {},
+  "sessions": {
+    "s_1056c7a5eee4f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f89c451e-d532-4daa-a4ba-a04f3b331fd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_60c46e90bd91ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b85d267-a76c-4b3b-b027-a3ae009e8719",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
