@@ -1,13 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import { z } from 'zod';
-import { AuthConfig, Config, FeedbackConfig } from '../types/config';
+import type { AuthConfig, Config, FeedbackConfig } from '../types/config';
+import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 import { fileURLToPath } from 'node:url';
-
-const DEFAULT_AUTH_HEADER_NAME = 'authorization';
-const DEFAULT_AUTH_SCHEME = 'Bearer';
-const DEFAULT_INTROSPECT_PATH = '/oauth2/v1/introspect';
-const DEFAULT_INTROSPECTION_TIMEOUT_MS = 5000;
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -97,25 +92,17 @@ export default loadConfig;
 function loadAuthConfig(): AuthConfig {
   if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
 
-  const oidcIssuerUrl = process.env.OIDC_ISSUER_URL ?? '';
-  const oidcClientId = process.env.OIDC_CLIENT_ID ?? '';
-  const isValidIssuerUrl = z.url().safeParse(oidcIssuerUrl).success;
+  const introspectionTimeoutMs = process.env.AUTH_INTROSPECTION_TIMEOUT_MS;
 
-  if (!oidcIssuerUrl || !oidcClientId || !isValidIssuerUrl) {
-    throw new Error(
-      'AUTH_ENABLED is true but OIDC_ISSUER_URL (must be a valid URL) / OIDC_CLIENT_ID is not set'
-    );
-  }
-
-  return {
+  return AuthConfigSchema.parse({
     authEnabled: true,
-    oidcIssuerUrl,
-    oidcClientId,
-    authHeaderName: process.env.AUTH_HEADER_NAME ?? DEFAULT_AUTH_HEADER_NAME,
-    authScheme: process.env.AUTH_SCHEME ?? DEFAULT_AUTH_SCHEME,
-    introspectPath: process.env.OIDC_INTROSPECT_PATH ?? DEFAULT_INTROSPECT_PATH,
-    introspectionTimeoutMs: Number(
-      process.env.AUTH_INTROSPECTION_TIMEOUT_MS ?? DEFAULT_INTROSPECTION_TIMEOUT_MS
-    ),
-  };
+    oidcIssuerUrl: process.env.OIDC_ISSUER_URL,
+    oidcClientId: process.env.OIDC_CLIENT_ID,
+    // Pass through undefined for unset optional fields so the schema-level defaults apply
+    // (env.sh / .env / VCR manifest may override them, but they are not required).
+    authHeaderName: process.env.AUTH_HEADER_NAME,
+    authScheme: process.env.AUTH_SCHEME,
+    introspectPath: process.env.OIDC_INTROSPECT_PATH,
+    introspectionTimeoutMs: introspectionTimeoutMs ? Number(introspectionTimeoutMs) : undefined,
+  });
 }

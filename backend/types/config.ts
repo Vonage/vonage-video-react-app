@@ -25,17 +25,9 @@ export type OpentokConfig = {
   apiSecret: string;
 };
 
-export type AuthConfig =
-  | { authEnabled: false }
-  | {
-      authEnabled: true;
-      oidcIssuerUrl: string;
-      oidcClientId: string;
-      authHeaderName: string;
-      authScheme: string;
-      introspectPath: string;
-      introspectionTimeoutMs: number;
-    };
+export type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+
+import type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 
 export type Config = (VonageConfig | OpentokConfig) &
   FeedbackConfig &
