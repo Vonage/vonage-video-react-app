@@ -1,0 +1,36 @@
+specs/app-config.schema.json
+  ad3501e33041f42c 8-14,89-94,173-181
+specs/theme.schema.json
+  ad3501e33041f42c 71-96,114-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "40ff3e4b3ef83b315498d3dfe06f3cff91674cbc",
+  "prompts": {
+    "ad3501e33041f42c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "a53faa70-c374-4c9d-8abf-eec7c0931df7",
+        "model": "auto"
+      },
+      "human_author": "Manuel Vera <manuel.veranieto@vonage.com>",
+      "messages": [
+        {
+          "type": "user",
+          "text": "[vg-ai attribution override: 100% AI]",
+          "timestamp": "2026-09-04T08:16:25.373Z"
+        },
+        {
+          "type": "assistant",
+          "text": "Attribution set via vg-ai attribution override (opencode/auto).",
+          "timestamp": "2026-09-04T08:16:25.373Z"
+        }
+      ],
+      "total_additions": 60,
+      "total_deletions": 19,
+      "accepted_lines": 60,
+      "overriden_lines": 0
+    }
+  }
+}
