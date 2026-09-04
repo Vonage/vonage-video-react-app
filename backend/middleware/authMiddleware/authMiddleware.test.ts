@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../types/config';
+import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
+import getSessionStorageService from '../../sessionStorageService';
 
 const loadConfigMock = jest.fn<() => Config>();
 const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
@@ -34,9 +36,12 @@ const ENABLED_CONFIG: Config = {
   authEnabled: true,
   oidcIssuerUrl: 'https://example.com',
   oidcClientId: CONFIGURED_CLIENT_ID,
+  oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
   introspectPath: '/oauth2/v1/introspect',
+  authorizePath: '/oauth2/v1/authorize',
+  tokenPath: '/oauth2/v1/token',
   introspectionTimeoutMs: 5000,
 };
 
@@ -116,5 +121,31 @@ describe('authMiddleware', () => {
     const res = await request(app).get('/protected');
 
     expect(res.statusCode).toEqual(200);
+  });
+
+  it('falls back to the session cookie when there is no Bearer header, resolving it via SessionStorage', async () => {
+    axiosPostMock.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CONFIGURED_CLIENT_ID },
+    });
+
+    const sessionService = getSessionStorageService();
+    await sessionService.setAccessToken({ sessionId: 'session-abc', accessToken: 'session-token' });
+
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-abc`);
+
+    expect(res.statusCode).toEqual(200);
+    const [, body] = axiosPostMock.mock.calls[0] as unknown as [string, URLSearchParams];
+    expect(body.toString()).toContain('token=session-token');
+  });
+
+  it('returns 401 when the session cookie does not resolve to a stored access token', async () => {
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=unknown-session-id`);
+
+    expect(res.statusCode).toEqual(401);
+    expect(axiosPostMock).not.toHaveBeenCalled();
   });
 });

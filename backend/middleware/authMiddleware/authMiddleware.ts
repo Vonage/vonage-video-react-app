@@ -3,7 +3,11 @@ import type { NextFunction, Request, Response } from 'express';
 import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
 import { isApplicationError } from '@common/errors/assertions';
+import { getCookieValue } from '@node/helpers';
 import loadConfig from '../../helpers/config';
+import getSessionStorageService from '../../sessionStorageService';
+import type { SessionStorage } from '../../storage/sessionStorage';
+import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
 import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
 
 type ActiveTokenIntrospectionResponse = {
@@ -47,6 +51,7 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
     introspectPath,
     introspectionTimeoutMs,
   } = authConfig;
+  const sessionService = getSessionStorageService();
 
   return async function handleRequest(
     req: Request,
@@ -59,7 +64,11 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
     }
 
     try {
-      const accessToken = extractAccessToken(req, { authHeaderName, authScheme });
+      const accessToken = await extractAccessToken(req, {
+        authHeaderName,
+        authScheme,
+        sessionService,
+      });
 
       if (!accessToken) {
         throw makeUnauthorizedErrorHandler('Missing access token')(
@@ -67,9 +76,6 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
         );
       }
 
-      // TODO(VIDSOL-1153): IAM-190121 hasn't confirmed yet whether VERA Web is provisioned in
-      // Okta as an SPA or a Confidential Client. This assumes SPA (public client, no secret).
-      // If it turns out to be Confidential, add `client_secret: process.env.OIDC_CLIENT_SECRET` below.
       const introspectionResponse = await assertResult(
         () =>
           axios.post(
@@ -101,9 +107,8 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
       // Beyond "active", confirm the token was actually issued to this application. This
       // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-      // signal without this check, a valid token from a different app in the same org would
-      // pass. Assumes one shared client id across mobile/web; revisit if VIDSOL-860 registers
-      // a separate web client id.
+      // signal — without this check, a valid token from a different app in the same org would
+      // pass.
       const isTokenValidForThisApp =
         introspectionData.active === true && introspectionData.client_id === oidcClientId;
 
@@ -130,10 +135,23 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
 export default authMiddleware;
 
-function extractAccessToken(
+/**
+ * Mobile sends the token directly as a Bearer header. Web never sees the real token — the
+ * browser only carries an opaque session-id cookie, which this resolves to the access token
+ * the `/api/auth/callback/okta` route stored server-side via `SessionStorage`.
+ */
+async function extractAccessToken(
   req: Request,
-  { authHeaderName, authScheme }: { authHeaderName: string; authScheme: string }
-): string | undefined {
+  {
+    authHeaderName,
+    authScheme,
+    sessionService,
+  }: {
+    authHeaderName: string;
+    authScheme: string;
+    sessionService: SessionStorage;
+  }
+): Promise<string | undefined> {
   const headerValue = req.headers[authHeaderName.toLowerCase()];
   const authorizationHeader = Array.isArray(headerValue) ? headerValue[0] : headerValue;
   const schemePrefix = `${authScheme.toLowerCase()} `;
@@ -142,5 +160,11 @@ function extractAccessToken(
     return authorizationHeader.slice(schemePrefix.length).trim();
   }
 
-  return undefined;
+  const sessionId = getCookieValue({ cookieHeader: req.headers.cookie, name: SESSION_COOKIE_NAME });
+
+  if (!sessionId) return undefined;
+
+  const accessToken = await sessionService.getAccessToken({ sessionId });
+
+  return accessToken ?? undefined;
 }

@@ -10,4 +10,22 @@ export interface SessionStorage {
 
   setArchiveIds(args: { sessionId: string; archiveIds: string[] }): Promise<void>;
   getArchiveIds(args: { sessionId: string }): Promise<string[]>;
+
+  setAuthTransaction(args: {
+    transactionId: string;
+    state: string;
+    codeVerifier: string;
+    returnTo: string;
+  }): Promise<void>;
+  getAuthTransaction(args: {
+    transactionId: string;
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null>;
+  deleteAuthTransaction(args: { transactionId: string }): Promise<void>;
+
+  setAccessToken(args: {
+    sessionId: string;
+    accessToken: string;
+    expiresInSeconds?: number;
+  }): Promise<void>;
+  getAccessToken(args: { sessionId: string }): Promise<string | null>;
 }
