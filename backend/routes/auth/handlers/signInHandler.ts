@@ -15,14 +15,6 @@ import {
   TRANSACTION_COOKIE_NAME,
 } from '../constants';
 
-/**
- * Builds the `GET /auth/signin` handler — starts the Web BFF login flow: stashes a
- * PKCE/CSRF transaction server-side, hands the browser an opaque cookie referencing it,
- * and redirects to the identity provider.
- *
- * Reads config once at construction time, same fail-fast-at-startup pattern as
- * `authMiddleware`, rather than per request.
- */
 function makeSignInHandler() {
   const authConfig = loadConfig();
 
@@ -36,7 +28,7 @@ function makeSignInHandler() {
     };
   }
 
-  const { oidcIssuerUrl, authorizePath, oidcWebClientId, oidcWebRedirectUri } = authConfig;
+  const { oidcIssuerUrl, authorizePath, oidcClientId, oidcWebRedirectUri } = authConfig;
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -68,7 +60,7 @@ function makeSignInHandler() {
 
       const authorizeUrl = new URL(`${oidcIssuerUrl}${authorizePath}`);
       authorizeUrl.searchParams.set('response_type', 'code');
-      authorizeUrl.searchParams.set('client_id', oidcWebClientId);
+      authorizeUrl.searchParams.set('client_id', oidcClientId);
       authorizeUrl.searchParams.set('redirect_uri', oidcWebRedirectUri);
       authorizeUrl.searchParams.set('scope', OIDC_SCOPES);
       authorizeUrl.searchParams.set('state', state);

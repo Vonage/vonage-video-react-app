@@ -31,7 +31,6 @@ export type AuthConfig =
       authEnabled: true;
       oidcIssuerUrl: string;
       oidcClientId: string;
-      oidcWebClientId: string;
       oidcWebRedirectUri: string;
       authHeaderName: string;
       authScheme: string;

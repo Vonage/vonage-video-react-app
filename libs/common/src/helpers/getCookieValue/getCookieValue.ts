@@ -18,7 +18,11 @@ export const getCookieValue = ({
 
   if (!cookiePair) return undefined;
 
-  return decodeURIComponent(cookiePair.slice(name.length + 1));
+  try {
+    return decodeURIComponent(cookiePair.slice(name.length + 1));
+  } catch {
+    return undefined;
+  }
 };
 
 export default getCookieValue;

@@ -22,6 +22,10 @@ export interface SessionStorage {
   }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null>;
   deleteAuthTransaction(args: { transactionId: string }): Promise<void>;
 
-  setAccessToken(args: { sessionId: string; accessToken: string }): Promise<void>;
+  setAccessToken(args: {
+    sessionId: string;
+    accessToken: string;
+    expiresInSeconds?: number;
+  }): Promise<void>;
   getAccessToken(args: { sessionId: string }): Promise<string | null>;
 }

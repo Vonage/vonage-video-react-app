@@ -101,7 +101,6 @@ function loadAuthConfig(): AuthConfig {
 
   const oidcIssuerUrl = process.env.OIDC_ISSUER_URL ?? '';
   const oidcClientId = process.env.OIDC_CLIENT_ID ?? '';
-  const oidcWebClientId = process.env.OIDC_WEB_CLIENT_ID ?? '';
   const oidcWebRedirectUri = process.env.OIDC_WEB_REDIRECT_URI ?? '';
   const isValidIssuerUrl = z.url().safeParse(oidcIssuerUrl).success;
   const isValidWebRedirectUri = z.url().safeParse(oidcWebRedirectUri).success;
@@ -110,10 +109,6 @@ function loadAuthConfig(): AuthConfig {
     throw new Error(
       'AUTH_ENABLED is true but OIDC_ISSUER_URL (must be a valid URL) / OIDC_CLIENT_ID is not set'
     );
-  }
-
-  if (!oidcWebClientId) {
-    throw new Error('AUTH_ENABLED is true but OIDC_WEB_CLIENT_ID is not set');
   }
 
   if (!oidcWebRedirectUri || !isValidWebRedirectUri) {
@@ -126,7 +121,6 @@ function loadAuthConfig(): AuthConfig {
     authEnabled: true,
     oidcIssuerUrl,
     oidcClientId,
-    oidcWebClientId,
     oidcWebRedirectUri,
     authHeaderName: process.env.AUTH_HEADER_NAME ?? DEFAULT_AUTH_HEADER_NAME,
     authScheme: process.env.AUTH_SCHEME ?? DEFAULT_AUTH_SCHEME,

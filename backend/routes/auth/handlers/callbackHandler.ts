@@ -17,14 +17,8 @@ import readStringQueryParam from '../helpers/readStringQueryParam';
 import { SESSION_COOKIE_NAME, TRANSACTION_COOKIE_NAME } from '../constants';
 import TokenExchangeResponseSchema from '../schemas/TokenExchangeResponse.schema';
 
-/**
- * Builds the `GET /api/auth/callback/okta` handler — exchanges the authorization code for
- * an access token (PKCE, no client secret), stores the token server-side, and hands the
- * browser an opaque session cookie. The real token never reaches the browser.
- *
- * Reads config once at construction time, same fail-fast-at-startup pattern as
- * `authMiddleware`, rather than per request.
- */
+const TOKEN_EXCHANGE_TIMEOUT_MS = 5000;
+
 function makeCallbackHandler() {
   const authConfig = loadConfig();
 
@@ -38,7 +32,7 @@ function makeCallbackHandler() {
     };
   }
 
-  const { oidcIssuerUrl, tokenPath, oidcWebClientId, oidcWebRedirectUri } = authConfig;
+  const { oidcIssuerUrl, tokenPath, oidcClientId, oidcWebRedirectUri } = authConfig;
   const sessionService = getSessionStorageService();
 
   return async function handleRequest(
@@ -99,10 +93,13 @@ function makeCallbackHandler() {
               grant_type: 'authorization_code',
               code,
               redirect_uri: oidcWebRedirectUri,
-              client_id: oidcWebClientId,
+              client_id: oidcClientId,
               code_verifier: transaction.codeVerifier,
             }),
-            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+            {
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              timeout: TOKEN_EXCHANGE_TIMEOUT_MS,
+            }
           ),
         makeThirdPartyErrorHandler('Token exchange with the identity provider failed')
       );
@@ -119,7 +116,7 @@ function makeCallbackHandler() {
 
       const sessionId = generateOpaqueToken();
 
-      await sessionService.setAccessToken({ sessionId, accessToken });
+      await sessionService.setAccessToken({ sessionId, accessToken, expiresInSeconds });
       await sessionService.deleteAuthTransaction({ transactionId });
 
       res.clearCookie(TRANSACTION_COOKIE_NAME, { path: '/api/auth' });

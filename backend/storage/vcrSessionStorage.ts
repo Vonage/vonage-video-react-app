@@ -3,7 +3,7 @@ import { SessionStorage } from './sessionStorage';
 
 const ENTRY_EXPIRATION_TIME = 60 * 60 * 4; // 4 hours in seconds
 const AUTH_TRANSACTION_EXPIRATION_TIME = 60 * 10; // 10 minutes in seconds, single-use PKCE/CSRF handshake data
-const ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60; // 1 hour in seconds, matches typical Okta access token lifetime
+const DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60; // 1 hour in seconds, used when the token response has no expires_in
 
 enum StorageResource {
   SessionKeyByRoomName = 'sessionKey',
@@ -161,13 +161,15 @@ class VcrSessionStorage implements SessionStorage {
   async setAccessToken({
     sessionId,
     accessToken,
+    expiresInSeconds,
   }: {
     sessionId: string;
     accessToken: string;
+    expiresInSeconds?: number;
   }): Promise<void> {
     const key = makeKey(StorageResource.AccessToken, sessionId);
     await this.dbState.set(key, accessToken);
-    await this.setKeyExpiry(key, ACCESS_TOKEN_EXPIRATION_TIME);
+    await this.setKeyExpiry(key, expiresInSeconds ?? DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME);
   }
 
   async getAccessToken({ sessionId }: { sessionId: string }): Promise<string | null> {
