@@ -4,8 +4,9 @@ import { TokenRole } from '@api-lib';
 const twentyFourHoursInSeconds = 24 * 60 * 60;
 
 const joinSession: HandlersConfig['joinSession'] = {
-  addDefaults: (payload) => {
-    // role and expireTime must remain server-controlled
+  transformInput: ({ input, assertInput }) => {
+    const payload = assertInput(input);
+
     const {
       role: _ignoredRole,
       expireTime: _ignoredExpireTime,

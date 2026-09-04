@@ -206,7 +206,7 @@ function createVideoRouter<
     joinSession: makeMutation({
       key: VideoAction.joinSession,
       config: {
-        addDefaults: handlersConfig?.joinSession?.addDefaults,
+        transformInput: handlersConfig?.joinSession?.transformInput,
       },
       callback: (videoClient, input) => {
         return videoClient.joinSession(input);
