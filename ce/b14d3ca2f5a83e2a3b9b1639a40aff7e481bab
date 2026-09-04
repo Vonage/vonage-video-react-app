@@ -1,0 +1,70 @@
+backend/helpers/config.ts
+  s_60c46e90bd91ea::t_6dbc4aa15d7d8a 101-108
+  s_60c46e90bd91ea::t_f81eda7775aaba 99-100
+  s_60c46e90bd91ea::t_4856ff7d9b4fb0 109-110
+  s_60c46e90bd91ea::t_f985a1845bfb76 3-4,95,97
+vcr-gha.yml
+  s_60c46e90bd91ea::t_8e774ef50371e4 55-58
+  s_60c46e90bd91ea::t_8d65d06268d2f2 52-54
+  s_60c46e90bd91ea::t_b1b56432f2e8c4 59-60
+  s_60c46e90bd91ea::t_77555348695ab4 47-51
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_60c46e90bd91ea::t_7caddb7874febd 11,13
+  h_6029769cf9ac60 60-61,108,120
+  s_60c46e90bd91ea::t_bbe49b5b793712 35,62-65,119,130,134-137,148,153-154,160
+  s_60c46e90bd91ea::t_e7a478e567198c 10
+  s_60c46e90bd91ea::t_e2f476d6a089d3 12
+  s_60c46e90bd91ea::t_e841eb52c60b78 14
+  s_60c46e90bd91ea::t_8ba31e973f911a 32-34
+  s_60c46e90bd91ea::t_f5ed32ab1d9e78 36-38
+  s_60c46e90bd91ea::t_27e05d7a4cc5e6 118
+  s_60c46e90bd91ea::t_466b2eb8e51e4a 1-2,7-8,27-28,30-31,39-41,44-47,52-59,69-70,76-80,95-97,107,109
+backend/.env.example
+  s_60c46e90bd91ea::t_c84f2fb23aa14f 64-70
+  s_60c46e90bd91ea::t_8b4b0c17586727 71
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_6029769cf9ac60 1-16,24-29
+  s_60c46e90bd91ea::t_3fe1f7ef9e96a8 17-23
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 2,79,84
+  s_60c46e90bd91ea::t_5cf7a042761b7d 95-99
+backend/tests/helpers/index.ts
+  h_6029769cf9ac60 1
+backend/tests/helpers/doPartialMock.ts
+  h_6029769cf9ac60 1-43
+backend/eslint.config.mjs
+  s_60c46e90bd91ea::t_d3f1f1f24f90dc 12-26
+backend/helpers/__mocks__/config.ts
+  s_60c46e90bd91ea::t_29d49b3d876afb 14
+backend/jest.config.js
+  s_60c46e90bd91ea::t_66c77fa9cbb091 11-12
+backend/jest/setEnvVars.js
+  s_60c46e90bd91ea::t_cc13854066acbc 11
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_60c46e90bd91ea::t_045c90b7c2c3b5 96-98
+env.sh
+  s_60c46e90bd91ea::t_5f18c3be90791a 31-32
+backend/types/config.ts
+  s_60c46e90bd91ea::t_7ffa74962b4e2c 28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "ceb14d3ca2f5a83e2a3b9b1639a40aff7e481bab",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_60c46e90bd91ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b85d267-a76c-4b3b-b027-a3ae009e8719",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
