@@ -10,8 +10,6 @@ describe('joinSession defaults', () => {
     };
     const { expireTime } = addDefaults({}).clientTokenOptions;
 
-    // The SDK writes expireTime straight into the JWT `exp` (epoch seconds), so it
-    // must be ~now + 24h in seconds. The old bug used Date.now() + milliseconds (~1.7e12).
     expect(Math.abs(expireTime - (nowSeconds + 24 * 60 * 60))).toBeLessThan(5);
     expect(expireTime).toBeLessThan(1e11);
   });
@@ -54,13 +52,10 @@ describe('joinSession defaults', () => {
 
     const result = addDefaults(maliciousPayload);
 
-    // Server-controlled values cannot be overridden
     expect(result.clientTokenOptions.role).toBe('moderator');
     expect(
       Math.abs(result.clientTokenOptions.expireTime - (nowSeconds + 24 * 60 * 60))
     ).toBeLessThan(5);
-
-    // Safe client data should be preserved
     expect(result.clientTokenOptions.data).toBe('safe-user-data');
   });
 });
