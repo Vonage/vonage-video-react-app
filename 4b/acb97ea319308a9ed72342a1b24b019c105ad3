@@ -1,0 +1,57 @@
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 2,75,80
+backend/helpers/__mocks__/config.ts
+  h_6029769cf9ac60 14
+backend/types/config.ts
+  h_6029769cf9ac60 28-30
+backend/helpers/config.ts
+  h_6029769cf9ac60 3-4,97,99-100,107
+  s_5938401ae0995d::t_fe574ac3d5ee03 103-106
+  h_6029769cf9ac60 95,101-102
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_6029769cf9ac60 1-26
+backend/jest/setEnvVars.js
+  h_6029769cf9ac60 11
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_5c932d8b528372::t_f3f195d35d8139 10
+  h_6029769cf9ac60 1-2,5-6,8,12,25-26,28-38,41-44,49-56,60-61,67-71,86-88,98-100,109-111,121
+backend/tests/helpers/index.ts
+  h_6029769cf9ac60 1
+backend/eslint.config.mjs
+  h_6029769cf9ac60 12-26
+backend/tests/helpers/doPartialMock.ts
+  h_6029769cf9ac60 1-43
+backend/jest.config.js
+  h_6029769cf9ac60 11-12
+vcr-gha.yml
+  h_6029769cf9ac60 47-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "4bacb97ea319308a9ed72342a1b24b019c105ad3",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5938401ae0995d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "885a9704-b13d-4250-b199-1b8a4382ce26",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_5c932d8b528372": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "455293c5-bc2d-44e7-91df-0cd29cecd201",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
