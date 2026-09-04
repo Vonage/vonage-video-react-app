@@ -2,7 +2,6 @@ import { initTRPC, TRPCBuilder, type AnyMutationProcedure } from '@trpc/server';
 import {
   assertVideoRouterConfig,
   CreateSessionAndJoinPayloadSchema,
-  JoinSessionPayloadSchema,
   type VideoRouterConfig,
 } from '@api-lib/schemas';
 import { VideoClient } from '@api-lib/core';
@@ -207,27 +206,7 @@ function createVideoRouter<
     joinSession: makeMutation({
       key: VideoAction.joinSession,
       config: {
-        transformInput: (opts) => {
-          // potentially allow extra properties as long as the basic schema is valid
-          const {
-            clientTokenOptions: {
-              // remove sensitive options from the input
-              role: _role,
-              expireTime: _expireTime,
-
-              ...clientTokenOptions
-            } = {},
-            ...rest
-          } = JoinSessionPayloadSchema.loose().parse(opts.input);
-
-          const input = {
-            ...rest,
-            clientTokenOptions,
-          };
-
-          return handlersConfig?.joinSession?.transformInput?.({ ...opts, input }) ?? input;
-        },
-        defaults: handlersConfig?.joinSession?.addDefaults,
+        addDefaults: handlersConfig?.joinSession?.addDefaults,
       },
       callback: (videoClient, input) => {
         return videoClient.joinSession(input);

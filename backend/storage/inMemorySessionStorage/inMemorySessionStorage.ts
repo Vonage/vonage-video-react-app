@@ -6,6 +6,7 @@ interface SessionData {
   captionsId: string | null;
   captionsUserCount: number;
   archiveIds: string[];
+  serverRotationPending: boolean;
 }
 
 class InMemorySessionStorage implements SessionStorage {
@@ -15,6 +16,10 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
     return this.sessions[roomName]?.sessionKey || null;
+  }
+
+  async getSessionKeyBySessionId({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.sessionKeyBySessionId[sessionId] ?? null;
   }
 
   async setSession({
@@ -31,6 +36,7 @@ class InMemorySessionStorage implements SessionStorage {
       captionsId: null,
       captionsUserCount: 0,
       archiveIds: [],
+      serverRotationPending: false,
     };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
@@ -108,6 +114,22 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getArchiveIds({ sessionId }: { sessionId: string }): Promise<string[]> {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
+  }
+
+  async setServerRotationPending({
+    sessionId,
+    pending,
+  }: {
+    sessionId: string;
+    pending: boolean;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.serverRotationPending = pending;
+  }
+
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<boolean> {
+    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? false;
   }
 }
 export default InMemorySessionStorage;
