@@ -1,0 +1,19 @@
+backend/routes/video/constants/joinSession.ts
+  s_eb0e898b54a54e::t_830cf3557d5061 8,10-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "33849128e10835f706e6e41ac6b89550699413d6",
+  "prompts": {},
+  "sessions": {
+    "s_eb0e898b54a54e": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788527437010279000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
