@@ -44,5 +44,15 @@ instance:
       secret: JIRA_SEVERITY_ID
     - name: SESSION_KEY_SECRET
       secret: SESSION_KEY_SECRET
+
+    # Auth OIDC configuration
+    - name: AUTH_HEADER_NAME
+      value: 'authorization'
+    - name: AUTH_SCHEME
+      value: 'Bearer'
+    - name: OIDC_INTROSPECT_PATH
+      value: '/oauth2/v1/introspect'
+    - name: AUTH_INTROSPECTION_TIMEOUT_MS
+      value: '5000'
 debug:
   entrypoint: [node, bundle.cjs]
