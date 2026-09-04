@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vonage.com/schemas/v1/video-app-config.schema.json",
+  "title": "Vonage Video App Config",
+  "description": "Unified application-config schema consolidated across the Android, iOS and React (web) Vonage Video apps. Fields common to all platforms are required; platform-specific toggles are optional. The 'x-envVar' annotation records the flat environment-variable name used by the React app (frontend/vite.config.ts) for each flag; Android and iOS consume the nested JSON keys directly. Extra boolean feature flags are allowed forward-compatibly within the settings objects.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "metadata",
+    "videoSettings",
+    "audioSettings",
+    "waitingRoomSettings",
+    "meetingRoomSettings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "description": "Document metadata: name, version, creation date and description.",
+      "$ref": "#/$defs/metadata"
+    },
+    "baseApiUrl": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Base URL for the app API. May be a literal URL or a ${VAR} build-time placeholder. Android reads it from BASE_API_URL; React from API_URL.",
+      "x-envVar": "API_URL"
+    },
+    "localizationSettings": {
+      "type": "object",
+      "description": "Internationalization settings. React only; optional.",
+      "required": ["fallbackLanguage", "supportedLanguages"],
+      "additionalProperties": false,
+      "properties": {
+        "fallbackLanguage": {
+          "type": "string",
+          "minLength": 1,
+          "description": "BCP-47 language tag used when no supported language matches.",
+          "x-envVar": "I18N_FALLBACK_LANGUAGE"
+        },
+        "supportedLanguages": {
+          "type": "array",
+          "description": "List of BCP-47 language tags the app offers. In the React .env this is a comma-separated string.",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A single BCP-47 language tag (e.g. 'en', 'es-419')."
+          },
+          "x-envVar": "I18N_SUPPORTED_LANGUAGES"
+        }
+      }
+    },
+    "appSettings": {
+      "type": "object",
+      "description": "App-level feature toggles. React only; optional.",
+      "additionalProperties": { "type": "boolean" },
+      "properties": {
+        "enableReportIssue": {
+          "type": "boolean",
+          "description": "When true, shows the 'report an issue' control so users can submit problem reports.",
+          "x-envVar": "ENABLE_REPORT_ISSUE"
+        },
+        "showVideoStats": {
+          "type": "boolean",
+          "description": "When true, exposes the video statistics overlay (bitrate, resolution, packet loss) during a call.",
+          "x-envVar": "SHOW_VIDEO_STATS"
+        }
+      }
+    },
+    "connectionSettings": {
+      "type": "object",
+      "description": "Networking/host overrides. React only; optional. Values may be literal or ${VAR} placeholders.",
+      "additionalProperties": false,
+      "properties": {
+        "tunnelDomain": {
+          "type": "string",
+          "description": "Public tunnel domain used to expose the local dev server; added to the dev server's allowed hosts list.",
+          "x-envVar": "TUNNEL_DOMAIN"
+        },
+        "vonageVideoHost": {
+          "type": "string",
+          "description": "Override for the Vonage Video API host the client connects to.",
+          "x-envVar": "VONAGE_VIDEO_HOST"
+        }
+      }
+    },
+    "videoSettings": {
+      "type": "object",
+      "description": "Camera and video feature toggles and defaults.",
+      "required": [
+        "allowBackgroundEffects",
+        "allowCameraControl",
+        "allowVideoOnJoin",
+        "defaultResolution"
+      ],
+      "additionalProperties": { "type": "boolean" },
+      "properties": {
+        "allowBackgroundEffects": {
+          "type": "boolean",
+          "description": "When true, users can apply background blur or replacement to their camera feed.",
+          "x-envVar": "ALLOW_BACKGROUND_EFFECTS"
+        },
+        "allowCameraControl": {
+          "type": "boolean",
+          "description": "When true, users can toggle their camera on and off during a call.",
+          "x-envVar": "ALLOW_CAMERA_CONTROL"
+        },
+        "allowVideoOnJoin": {
+          "type": "boolean",
+          "description": "When true, the camera is enabled automatically when the user joins.",
+          "x-envVar": "ALLOW_VIDEO_ON_JOIN"
+        },
+        "defaultResolution": {
+          "description": "Default camera capture resolution as WIDTHxHEIGHT in pixels.",
+          "$ref": "#/$defs/resolution",
+          "x-envVar": "DEFAULT_RESOLUTION"
+        }
+      }
+    },
+    "audioSettings": {
+      "type": "object",
+      "description": "Microphone and audio feature toggles. allowAudioDiagnostics is iOS only.",
+      "required": ["allowAdvancedNoiseSuppression", "allowAudioOnJoin", "allowMicrophoneControl"],
+      "additionalProperties": { "type": "boolean" },
+      "properties": {
+        "allowAdvancedNoiseSuppression": {
+          "type": "boolean",
+          "description": "When true, users can enable advanced background noise suppression.",
+          "x-envVar": "ALLOW_ADVANCED_NOISE_SUPPRESSION"
+        },
+        "allowAudioOnJoin": {
+          "type": "boolean",
+          "description": "When true, the microphone is enabled automatically when the user joins.",
+          "x-envVar": "ALLOW_AUDIO_ON_JOIN"
+        },
+        "allowMicrophoneControl": {
+          "type": "boolean",
+          "description": "When true, users can toggle their microphone on and off during a call.",
+          "x-envVar": "ALLOW_MICROPHONE_CONTROL"
+        },
+        "allowAudioDiagnostics": {
+          "type": "boolean",
+          "description": "When true, users can run audio diagnostics to test microphone and speaker (iOS only)."
+        }
+      }
+    },
+    "waitingRoomSettings": {
+      "type": "object",
+      "description": "Waiting-room feature toggles. allowSettings is iOS + React; bypassWaitingRoom is React only.",
+      "required": ["allowDeviceSelection"],
+      "additionalProperties": { "type": "boolean" },
+      "properties": {
+        "allowDeviceSelection": {
+          "type": "boolean",
+          "description": "When true, users can choose camera/microphone/speaker devices in the waiting room.",
+          "x-envVar": "WAITING_ROOM_ALLOW_DEVICE_SELECTION"
+        },
+        "allowSettings": {
+          "type": "boolean",
+          "description": "When true, the advanced settings panel is available in the waiting room (iOS and React).",
+          "x-envVar": "WAITING_ROOM_ALLOW_ADVANCED_SETTINGS"
+        },
+        "bypassWaitingRoom": {
+          "type": "boolean",
+          "description": "When true, users skip the waiting room and join the meeting directly (React only).",
+          "x-envVar": "BYPASS_WAITING_ROOM"
+        }
+      }
+    },
+    "meetingRoomSettings": {
+      "type": "object",
+      "description": "In-meeting feature toggles and defaults. allowFeedback and allowPictureInPicture are iOS only.",
+      "required": [
+        "allowSettings",
+        "allowArchiving",
+        "allowCaptions",
+        "allowChat",
+        "allowDeviceSelection",
+        "allowEmojis",
+        "allowScreenShare",
+        "defaultLayoutMode",
+        "showParticipantList"
+      ],
+      "additionalProperties": { "type": "boolean" },
+      "properties": {
+        "allowSettings": {
+          "type": "boolean",
+          "description": "When true, the advanced settings panel is available inside the meeting room.",
+          "x-envVar": "MEETING_ROOM_ALLOW_ADVANCED_SETTINGS"
+        },
+        "allowArchiving": {
+          "type": "boolean",
+          "description": "When true, users can start and stop recording (archiving) of the meeting.",
+          "x-envVar": "ALLOW_ARCHIVING"
+        },
+        "allowCaptions": {
+          "type": "boolean",
+          "description": "When true, live captions can be enabled during the meeting.",
+          "x-envVar": "ALLOW_CAPTIONS"
+        },
+        "allowChat": {
+          "type": "boolean",
+          "description": "When true, the in-meeting text chat is available.",
+          "x-envVar": "ALLOW_CHAT"
+        },
+        "allowDeviceSelection": {
+          "type": "boolean",
+          "description": "When true, users can change camera/microphone/speaker devices during the meeting.",
+          "x-envVar": "MEETING_ROOM_ALLOW_DEVICE_SELECTION"
+        },
+        "allowEmojis": {
+          "type": "boolean",
+          "description": "When true, users can send emoji reactions during the meeting.",
+          "x-envVar": "ALLOW_EMOJIS"
+        },
+        "allowFeedback": {
+          "type": "boolean",
+          "description": "When true, a post-call feedback prompt is shown (iOS only)."
+        },
+        "allowPictureInPicture": {
+          "type": "boolean",
+          "description": "When true, the meeting can continue in a picture-in-picture window (iOS only)."
+        },
+        "allowScreenShare": {
+          "type": "boolean",
+          "description": "When true, users can share their screen during the meeting.",
+          "x-envVar": "ALLOW_SCREEN_SHARE"
+        },
+        "defaultLayoutMode": {
+          "description": "Default video layout used when entering the meeting room.",
+          "$ref": "#/$defs/layoutMode",
+          "x-envVar": "DEFAULT_LAYOUT_MODE"
+        },
+        "showParticipantList": {
+          "type": "boolean",
+          "description": "When true, the participant list panel is available during the meeting.",
+          "x-envVar": "SHOW_PARTICIPANT_LIST"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "description": "Document metadata describing this config file.",
+      "required": ["name", "version", "created", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable name of this config document."
+        },
+        "version": {
+          "description": "Semantic version of this config document, matching the schema version it targets.",
+          "$ref": "#/$defs/semver"
+        },
+        "created": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Date this config document was created (ISO 8601, YYYY-MM-DD)."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable description of this config document."
+        }
+      }
+    },
+    "semver": {
+      "type": "string",
+      "description": "Semantic version (MAJOR.MINOR.PATCH) of the config document, matching the schema version it targets.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "resolution": {
+      "type": "string",
+      "description": "Video resolution as WIDTHxHEIGHT in pixels.",
+      "pattern": "^\\d+x\\d+$"
+    },
+    "layoutMode": {
+      "type": "string",
+      "description": "Default video layout in the meeting room.",
+      "enum": ["activespeaker", "grid"]
+    }
+  }
+}
