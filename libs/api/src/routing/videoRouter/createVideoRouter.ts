@@ -206,22 +206,6 @@ function createVideoRouter<
     joinSession: makeMutation({
       key: VideoAction.joinSession,
       config: {
-        // NOTE: transformInput was removed to fix token expiration during server rotation.
-        //
-        // PROBLEM: The original transformInput stripped 'role' and 'expireTime' from
-        // clientTokenOptions AFTER addDefaults had set them. This caused tokens to expire
-        // in 30 seconds (default) instead of the configured 24 hours, leading to 401 errors
-        // during Vonage server rotation (~8 hours into sessions).
-        //
-        // SOLUTION: Remove transformInput and implement proper security in joinSession.ts.
-        // The addDefaults function now:
-        //   1. Extracts and discards role/expireTime from client input
-        //   2. Applies safe client options (data, initialLayoutClassList, etc.)
-        //   3. Enforces server-controlled role=MODERATOR and expireTime=24h
-        //
-        // SECURITY: Client-supplied role and expireTime are explicitly ignored to prevent
-        // privilege escalation. The spread order in addDefaults ensures these security-critical
-        // values cannot be overridden.
         addDefaults: handlersConfig?.joinSession?.addDefaults,
       },
       callback: (videoClient, input) => {
