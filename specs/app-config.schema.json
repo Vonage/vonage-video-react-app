@@ -5,7 +5,13 @@
   "description": "Unified application-config schema consolidated across the Android, iOS and React (web) Vonage Video apps. Fields common to all platforms are required; platform-specific toggles are optional. The 'x-envVar' annotation records the flat environment-variable name used by the React app (frontend/vite.config.ts) for each flag; Android and iOS consume the nested JSON keys directly. Extra boolean feature flags are allowed forward-compatibly within the settings objects.",
   "version": "1.0.0",
   "type": "object",
-  "required": ["metadata", "videoSettings", "audioSettings", "waitingRoomSettings", "meetingRoomSettings"],
+  "required": [
+    "metadata",
+    "videoSettings",
+    "audioSettings",
+    "waitingRoomSettings",
+    "meetingRoomSettings"
+  ],
   "additionalProperties": false,
   "properties": {
     "metadata": {
@@ -80,7 +86,12 @@
     "videoSettings": {
       "type": "object",
       "description": "Camera and video feature toggles and defaults.",
-      "required": ["allowBackgroundEffects", "allowCameraControl", "allowVideoOnJoin", "defaultResolution"],
+      "required": [
+        "allowBackgroundEffects",
+        "allowCameraControl",
+        "allowVideoOnJoin",
+        "defaultResolution"
+      ],
       "additionalProperties": { "type": "boolean" },
       "properties": {
         "allowBackgroundEffects": {
@@ -159,9 +170,15 @@
       "type": "object",
       "description": "In-meeting feature toggles and defaults. allowFeedback and allowPictureInPicture are iOS only.",
       "required": [
-        "allowSettings", "allowArchiving", "allowCaptions", "allowChat",
-        "allowDeviceSelection", "allowEmojis", "allowScreenShare",
-        "defaultLayoutMode", "showParticipantList"
+        "allowSettings",
+        "allowArchiving",
+        "allowCaptions",
+        "allowChat",
+        "allowDeviceSelection",
+        "allowEmojis",
+        "allowScreenShare",
+        "defaultLayoutMode",
+        "showParticipantList"
       ],
       "additionalProperties": { "type": "boolean" },
       "properties": {
