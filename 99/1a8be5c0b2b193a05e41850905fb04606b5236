@@ -1,0 +1,21 @@
+frontend/src/Context/SessionProvider/session.tsx
+  s_4ab604f5374fb1::t_14280624e7e02c 208
+backend/routes/video/video.ts
+  s_4ab604f5374fb1::t_14280624e7e02c 146
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "991a8be5c0b2b193a05e41850905fb04606b5236",
+  "prompts": {},
+  "sessions": {
+    "s_4ab604f5374fb1": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1788525450226321000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
