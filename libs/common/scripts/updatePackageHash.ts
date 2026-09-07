@@ -27,3 +27,9 @@ manifest.hash = newHash;
 fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + '\n');
 
 console.log('manifest.json updated. Commit manifest.json.');
+console.log(
+  '\nReminder: ensure your branch is up-to-date with the target branch before running this script,'
+);
+console.log(
+  'CI could fail if the target branch has newer libs/common changes that are not in your branch yet.'
+);
