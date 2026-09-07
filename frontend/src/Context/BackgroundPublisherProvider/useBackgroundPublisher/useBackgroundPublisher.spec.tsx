@@ -39,8 +39,10 @@ describe('useBackgroundPublisher', () => {
 
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
-    (initPublisher as Mock).mockImplementation(mockedInitPublisher);
-    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    (initPublisher as unknown as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(
+      mockedHasMediaProcessorSupport
+    );
   });
 
   describe('initBackgroundLocalPublisher', () => {
@@ -86,12 +88,28 @@ describe('useBackgroundPublisher', () => {
       expect(sharedVideoTrack.stop).toHaveBeenCalled();
     });
 
+    it('should stop the shared video track when publisher init fails (see #619)', () => {
+      const error = new Error('Simulated publisher init failure');
+      mockedInitPublisher.mockImplementation((_, _args, callback) => {
+        callback(error);
+        return null;
+      });
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
     it('should log access denied errors', () => {
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
-      (initPublisher as Mock).mockImplementation((_, _args, callback) => {
+      (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
       });
 

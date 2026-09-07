@@ -110,6 +110,11 @@ const useBackgroundPublisher = (
     initialValue?.backgroundSelected ?? ''
   );
 
+  const destroySharedVideoTrack = () => {
+    sharedVideoTrackRef.current?.stop();
+    sharedVideoTrackRef.current = null;
+  };
+
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
   };
@@ -176,8 +181,7 @@ const useBackgroundPublisher = (
     backgroundPublisherRef.current = null;
 
     // Release the shared clone we own (see #619); the SDK does not stop a track it did not create.
-    sharedVideoTrackRef.current?.stop();
-    sharedVideoTrackRef.current = null;
+    destroySharedVideoTrack();
   }, []);
 
   const initBackgroundLocalPublisher = useCallback(
@@ -187,7 +191,7 @@ const useBackgroundPublisher = (
       sharedVideoTrackRef.current = sharedVideoTrack ?? null;
 
       let videoFilter: VideoFilter | undefined;
-      if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
+      if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
         videoFilter = initialBackgroundRef.current;
       }
 
@@ -208,6 +212,7 @@ const useBackgroundPublisher = (
         (err: unknown) => {
           if (err instanceof Error) {
             backgroundPublisherRef.current = null;
+            destroySharedVideoTrack();
             if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
               console.error('initPublisher error: ', err);
             }
@@ -271,7 +276,7 @@ const useBackgroundPublisher = (
       // If the deleted image was the currently applied background filter, clear it
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
-        changeBackground(backgroundSelected).catch(() => {
+        changeBackground('none').catch(() => {
           throw new Error('Failed to reset background filter after deleting custom image');
         });
       }
