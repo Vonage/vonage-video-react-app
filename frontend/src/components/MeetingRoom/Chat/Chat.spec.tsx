@@ -86,7 +86,7 @@ describe('Chat', () => {
             if (context) {
               context.messages = sameTimestampMessages;
             }
-          }
+          },
         },
       });
 
