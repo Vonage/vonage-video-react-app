@@ -130,6 +130,8 @@ function reorderCodecPriority(args: {
   const draggedCodecIndex = reorderedCodecs.indexOf(draggedCodec);
   const targetCodecIndex = reorderedCodecs.indexOf(targetCodec);
 
+  if (draggedCodecIndex < 0 || targetCodecIndex < 0) return codecPriority;
+
   reorderedCodecs.splice(draggedCodecIndex, 1);
 
   // Removing the dragged codec shifts every later index down by one, so when dragging downward
