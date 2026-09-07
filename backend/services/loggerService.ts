@@ -16,7 +16,7 @@ let gollumWarningAcknowledged = false;
  */
 function redactEventPayload(event: ClientLogEvent): ClientLogEvent {
   if (!event.payload) {
-    return event;
+    return { ...event };
   }
 
   return {
