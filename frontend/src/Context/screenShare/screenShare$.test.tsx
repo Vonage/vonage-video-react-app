@@ -220,7 +220,7 @@ describe('screenShare$', () => {
     const [stateAfterDestroyed] = result.current;
     expect(stateAfterDestroyed.isEntireScreen).toBe(false);
     expect(stateAfterDestroyed.isSharingScreen).toBe(false);
-    expect(stateAfterDestroyed.screenshareVideoElement).toBe(undefined);
+    expect(stateAfterDestroyed.screenshareVideoElement).toBeUndefined();
   });
 
   it('sets isEntireScreen to true when displaySurface is undefined but dimensions match the screen area', async () => {
