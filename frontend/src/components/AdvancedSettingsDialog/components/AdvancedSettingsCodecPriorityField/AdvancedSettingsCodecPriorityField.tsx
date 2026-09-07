@@ -113,7 +113,7 @@ const AdvancedSettingsCodecPriorityField = ({
                 handleDrop(event, codec);
               }}
               className={classNames(
-                'flex cursor-grab items-center gap-3 rounded-vera-medium border bg-vera-surface px-4 py-3',
+                'flex cursor-grab select-none items-center gap-3 rounded-vera-medium border bg-vera-surface px-4 py-3',
                 isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
                 isDropTarget ? 'border-vera-primary' : null
               )}
@@ -127,15 +127,6 @@ const AdvancedSettingsCodecPriorityField = ({
                 {codecLabel}
               </span>
 
-              {/*
-                These are marked `aria-disabled` rather than `disabled` on purpose. Moving a codec
-                to either end of the list disables the very button that was just activated, and the
-                browser drops focus from a disabled element to <body> - so the last press of a
-                keyboard-only reorder would strand the user at the top of the dialog, which is the
-                opposite of what this control is for. `aria-disabled` keeps the button focusable and
-                in the tab order while still announcing itself as unavailable; `moveCodec` already
-                no-ops at the bounds, so pressing it does nothing.
-              */}
               <div className="ml-auto flex flex-row items-center gap-1">
                 <button
                   type="button"
