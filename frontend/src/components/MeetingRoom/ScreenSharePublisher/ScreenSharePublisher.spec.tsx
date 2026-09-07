@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Publisher } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'stream';
@@ -56,8 +56,9 @@ describe('ScreenSharePublisher component', () => {
     expect(element.style.objectFit).toBe('contain');
   });
 
-  it('renders show preview button when entire screen preview is hidden', () => {
+  it('renders and toggles the show preview button when entire screen preview is hidden', () => {
     const box = { height: 100, width: 100, top: 0, left: 0 };
+    const toggleLocalScreensharePreview = vi.fn();
 
     render(
       <ScreenSharePublisher
@@ -66,15 +67,18 @@ describe('ScreenSharePublisher component', () => {
         publisher={null}
         isEntireScreen={true}
         showLocalScreensharePreview={false}
-        toggleLocalScreensharePreview={vi.fn()}
+        toggleLocalScreensharePreview={toggleLocalScreensharePreview}
       />
     );
 
-    expect(screen.getByText('Show preview')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Show preview' }));
+
+    expect(toggleLocalScreensharePreview).toHaveBeenCalledOnce();
   });
 
-  it('renders hide preview button when local preview is shown', () => {
+  it('renders and toggles the hide preview button when local preview is shown', () => {
     const box = { height: 100, width: 100, top: 0, left: 0 };
+    const toggleLocalScreensharePreview = vi.fn();
 
     render(
       <ScreenSharePublisher
@@ -83,45 +87,13 @@ describe('ScreenSharePublisher component', () => {
         publisher={null}
         isEntireScreen={true}
         showLocalScreensharePreview={true}
-        toggleLocalScreensharePreview={vi.fn()}
+        toggleLocalScreensharePreview={toggleLocalScreensharePreview}
       />
     );
 
-    expect(screen.getByText('Hide preview')).toBeInTheDocument();
-  });
+    fireEvent.click(screen.getByRole('button', { name: 'Hide preview' }));
 
-  it('renders show preview button when entire screen preview is hidden', () => {
-    const box = { height: 100, width: 100, top: 0, left: 0 };
-
-    render(
-      <ScreenSharePublisher
-        box={box}
-        element={undefined}
-        publisher={null}
-        isEntireScreen={true}
-        showLocalScreensharePreview={false}
-        toggleLocalScreensharePreview={vi.fn()}
-      />
-    );
-
-    expect(screen.getByText('Show preview')).toBeInTheDocument();
-  });
-
-  it('renders hide preview button when local preview is shown', () => {
-    const box = { height: 100, width: 100, top: 0, left: 0 };
-
-    render(
-      <ScreenSharePublisher
-        box={box}
-        element={undefined}
-        publisher={null}
-        isEntireScreen={true}
-        showLocalScreensharePreview={true}
-        toggleLocalScreensharePreview={vi.fn()}
-      />
-    );
-
-    expect(screen.getByText('Hide preview')).toBeInTheDocument();
+    expect(toggleLocalScreensharePreview).toHaveBeenCalledOnce();
   });
 
   it('renders hidden message when entire screen is shared', () => {
