@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUserContext from './useUserContext';
-import { ChatMessageType } from '../types/chat';
+import type { ChatMessageType, ChatMessageId } from '../types/chat';
 import { SignalType } from '../types/session';
 
 export type UseChatProps = {
@@ -54,7 +54,7 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
         try {
           const { text, participantName } = JSON.parse(data);
           const message: ChatMessageType = {
-            id: crypto.randomUUID(),
+            id: crypto.randomUUID() as ChatMessageId,
             timestamp: Date.now(),
             participantName: participantName || t('user.unknown'),
             message: text,
