@@ -16,6 +16,11 @@ const VALID_MODES = [
 
 type ValidMode = (typeof VALID_MODES)[number];
 
+const VISUAL_COMPARISON_SPEC_FILES = [
+  'tests/multiparty.spec.ts',
+  'tests/visualComparisons.spec.ts',
+] as const;
+
 /**
  * Checks if a string looks like a file path.
  * File paths typically contain '/' or '.' characters.
@@ -139,11 +144,19 @@ const runCanon = (testNameOrPath?: string) => {
  * Runs across all browsers (Chrome, Firefox, Mobile Chrome).
  */
 const updateScreenshots = (testNameOrPath?: string) => {
-  const testArg = testNameOrPath || 'tests/visualComparisons.spec.ts';
-  console.log(`\n🔄 Updating screenshots for ${testArg}\n`);
+  const normalizedTestNameOrPath = testNameOrPath?.trim();
+
+  const targetSpecs = normalizedTestNameOrPath
+    ? [normalizedTestNameOrPath]
+    : [...VISUAL_COMPARISON_SPEC_FILES];
+  const targetDescription = normalizedTestNameOrPath || targetSpecs.join(' ');
+
+  console.log(`\n🔄 Updating screenshots for ${targetDescription}\n`);
+
+  const targetSpecsArg = targetSpecs.join(' ');
 
   runCommand(
-    `cd integration-tests && playwright test ${testArg} --project='Google Chrome Fake Devices' --project=firefox --project='Mobile Chrome' --update-snapshots`
+    `cd integration-tests && playwright test ${targetSpecsArg} --project='Google Chrome Fake Devices' --project=firefox --project='Mobile Chrome' --update-snapshots`
   );
 };
 
@@ -162,7 +175,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)
  * - canon [test-name]     - Generate canonical screenshots (baseline for visual regression)
- * - update [test-name]    - Update test screenshots (all browsers)
+ * - update [test-name]    - Update screenshots for one test or all visual comparison specs (all browsers)
  * - <test-name>           - Run specific test in headed Chrome
  *
  * @example
