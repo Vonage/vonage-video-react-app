@@ -13,7 +13,7 @@ function useNonDisposableStableRef<T>(
   dependencies: React.DependencyList
 ): React.RefObject<T> {
   const [ref] = useState(() => ({
-    current: undefined as T | undefined,
+    current: stable_ref_unique_symbol as T | undefined,
     dependencies: undefined as React.DependencyList | undefined,
   }));
 
