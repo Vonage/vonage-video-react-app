@@ -91,6 +91,27 @@ describe('loggerService', () => {
       );
     });
 
+    it('redacts sensitive keys from the payload before forwarding', async () => {
+      const event = createValidClientLogEvent({
+        payload: {
+          token: 'secret-jwt',
+          authorization: 'Bearer abc123',
+          user: { password: 'hunter2', name: 'Bob' },
+          note: 'safe value',
+        },
+      });
+
+      await forwardToGollum(event);
+
+      const forwardedBody = mockPost.mock.calls[0][1] as { payload: Record<string, unknown> };
+      expect(forwardedBody.payload).toEqual({
+        token: '[REDACTED]',
+        authorization: '[REDACTED]',
+        user: { password: '[REDACTED]', name: 'Bob' },
+        note: 'safe value',
+      });
+    });
+
     it('should reject when axios.post fails (route catches via attempt)', async () => {
       const event = createValidClientLogEvent();
 
