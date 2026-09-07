@@ -176,7 +176,6 @@ describe('AdvancedSettingsStatisticsTab', () => {
 });
 
 type RenderOptions = {
-  advancedSettingsContext?: ProviderOptions['AdvancedSettingsContext'];
   userContext?: ProviderOptions['UserContext'];
   publisherContext?: ProviderOptions['PublisherContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
@@ -185,17 +184,10 @@ type RenderOptions = {
 
 function render(
   ui: ReactElement,
-  {
-    advancedSettingsContext,
-    userContext,
-    publisherContext,
-    previewPublisherContext,
-    sessionContext,
-  }: RenderOptions = {}
+  { userContext, publisherContext, previewPublisherContext, sessionContext }: RenderOptions = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
     [
-      providers.advancedSettings,
       providers.runtime,
       providers.user,
       providers.publisher,
@@ -203,7 +195,6 @@ function render(
       providers.session,
     ],
     {
-      advancedSettingsContext,
       runtimeContext: undefined,
       userContext,
       sessionContext,
