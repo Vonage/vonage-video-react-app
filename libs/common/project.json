@@ -37,6 +37,55 @@
         "cwd": "libs/common",
         "command": "tsc -p tsconfig.lib.json --pretty true --noEmit"
       }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "vite build"
+      }
+    },
+    "hash:update": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/updatePackageHash.ts"
+      }
+    },
+    "hash:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/checkPackageHash.ts"
+      }
+    },
+    "registry:compare": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/compareRegistryHash.ts; EXIT_CODE=$?; if [ $EXIT_CODE -eq 2 ]; then exit 0; else exit $EXIT_CODE; fi"
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/publishPackage.ts"
+      }
+    },
+    "publish:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/publishPackage.dev.ts"
+      }
+    },
+    "externals": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx scripts/printExternals.ts"
+      }
     }
   },
   "tags": ["scope:common", "type:lib"]
