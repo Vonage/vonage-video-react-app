@@ -33,7 +33,9 @@ const useSyncPublisherDevices = (
               }
 
               if (hasDevices('videoinput')) return;
-              attempt(() => publisherRef.current?.publishVideo(false));
+              attempt(() => {
+                publisherRef.current?.publishVideo(false);
+              });
               args.setIsVideoEnabled?.(false);
             },
             {
@@ -55,7 +57,9 @@ const useSyncPublisherDevices = (
               }
 
               if (hasDevices('audioinput')) return;
-              attempt(() => publisherRef.current?.publishAudio(false));
+              attempt(() => {
+                publisherRef.current?.publishAudio(false);
+              });
               args.setIsAudioEnabled?.(false);
             },
             {
