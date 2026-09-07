@@ -174,8 +174,8 @@ const vc = new VideoClient();
 const videoClient = new VonageVideoClient();
 ```
 
-- **Rule:** Prefer linear `tryCatch` helpers instead of nested `try/catch`.
-- **Rule:** Nested `try/catch` blocks are banned.
+- **Rule:** Nested `try/catch` blocks are banned. Prefer linear `tryCatch` helpers instead of nested `try/catch`.
+- **Rule:** Preserve the original error as the cause when wrapping it.
 
 **Violation:**
 
