@@ -17,4 +17,5 @@ integration-tests/test-results/
 
 # Public compiled assets
 public/js/
+.kiro
 

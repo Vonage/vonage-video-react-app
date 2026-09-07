@@ -45,7 +45,7 @@ const ScreenshareVideoTile = forwardRef(
     }: ScreenshareVideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const isZoomSupported = hasMediaProcessorSupport('both');
+    const isZoomSupported = hasMediaProcessorSupport('video');
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({
