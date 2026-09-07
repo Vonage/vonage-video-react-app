@@ -2,7 +2,7 @@ import { useMemo, type ReactElement } from 'react';
 import { useSubscriberStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsStatisticsGroup } from '../../AdvancedSettingsStatisticsGroup';
-import { SubscriberWrapper } from '@app-types/session';
+import type { SubscriberWrapper } from '@app-types/session';
 
 interface SubscriberStatisticsProps {
   subscriberWrapper: SubscriberWrapper;
