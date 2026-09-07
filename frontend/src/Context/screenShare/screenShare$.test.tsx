@@ -6,6 +6,7 @@ import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
 import screenShare$ from './screenShare$';
+import advancedSettings$ from '@Context/AdvancedSettings';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -19,6 +20,7 @@ describe('screenShare$', () => {
   const mockUnpublish = vi.fn();
 
   beforeEach(() => {
+    advancedSettings$.reset();
     handlers = {};
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
       on: vi.fn(),
@@ -101,6 +103,49 @@ describe('screenShare$', () => {
 
     const [state] = result.current;
     expect(state.isSharingScreen).toBe(false);
+  });
+
+  it('applies stored video constraints when screen sharing starts', async () => {
+    mockPublisher = {
+      ...mockPublisher,
+      getVideoSource: vi.fn(() => ({ track: {} })),
+      setVideoBitratePreset: vi.fn(),
+    };
+    vi.mocked(initPublisher).mockReturnValue(mockPublisher as Publisher);
+    advancedSettings$.actions.setScreenShareFrameRate(7);
+    advancedSettings$.actions.setScreenShareResolution('1280x720');
+    advancedSettings$.actions.setScreenShareBitrateMode('bw_saver');
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
+    });
+
+    expect(initPublisher).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({
+        frameRate: 7,
+        resolution: '1280x720',
+      }),
+      expect.any(Function)
+    );
+    expect(mockPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
   });
 
   it('sets isEntireScreen to true when displaySurface is monitor', async () => {

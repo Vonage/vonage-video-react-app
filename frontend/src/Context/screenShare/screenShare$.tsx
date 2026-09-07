@@ -8,6 +8,8 @@ import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { applyBitrate } from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import tryCatch from '@common/execution/tryCatch';
 import {
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
@@ -73,6 +75,10 @@ const screenShare$ = createContext(initialState, {
             screenShareCodecMode,
             screenShareCodecPriority,
             scalableScreenshareEnabled,
+            screenShareFrameRate,
+            screenShareResolution,
+            screenShareBitrateMode,
+            screenShareCustomVideoBitrate,
             codecMode,
             codecPriority,
           } = advancedSettings$.getState();
@@ -99,6 +105,8 @@ const screenShare$ = createContext(initialState, {
               videoContentHint: screenShareContentHint,
               preferredVideoCodecs,
               scalableScreenshare: scalableScreenshareEnabled,
+              ...(screenShareFrameRate !== null && { frameRate: screenShareFrameRate }),
+              ...(screenShareResolution !== null && { resolution: screenShareResolution }),
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
             },
             (err) => {
@@ -163,6 +171,14 @@ const screenShare$ = createContext(initialState, {
 
           // Publishing the screen sharing stream
           await publish(publisher);
+
+          if (screenShareBitrateMode !== null) {
+            const { error } = await tryCatch(() =>
+              applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate)
+            );
+
+            if (error) console.error('Screen-share bitrate could not be applied', error);
+          }
 
           vonageVideoClient?.on('screenshareStreamCreated', actions$.handleStreamCreated);
 
