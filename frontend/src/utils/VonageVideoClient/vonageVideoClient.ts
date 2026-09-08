@@ -522,7 +522,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    this.clientSession.signal(data)?.catch(() => {});
+    this.clientSession.signal(data);
   };
 
   /**
