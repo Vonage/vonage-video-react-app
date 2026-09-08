@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
-import loadConfig from '../../helpers/config';
+import loadConfig from './config';
 
 describe('loadConfig', () => {
   const originalEnv = process.env;
@@ -76,12 +76,12 @@ describe('loadConfig', () => {
     process.env.OT_API_SECRET = 'test-secret';
     process.env.AUTH_ENABLED = 'true';
 
-    expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
+    expect(() => loadConfig()).toThrow(/oidcIssuerUrl|oidcClientId/);
 
     process.env.OIDC_CLIENT_ID = 'test-client-id';
     process.env.OIDC_ISSUER_URL = 'not-a-url';
 
-    expect(() => loadConfig()).toThrow('OIDC_ISSUER_URL');
+    expect(() => loadConfig()).toThrow(/oidcIssuerUrl/);
   });
 
   test('should throw when AUTH_ENABLED is true but OIDC_WEB_REDIRECT_URI is missing or invalid', () => {
@@ -92,11 +92,11 @@ describe('loadConfig', () => {
     process.env.OIDC_CLIENT_ID = 'test-client-id';
     process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
 
-    expect(() => loadConfig()).toThrow('OIDC_WEB_REDIRECT_URI');
+    expect(() => loadConfig()).toThrow(/oidcWebRedirectUri/);
 
     process.env.OIDC_WEB_REDIRECT_URI = 'not-a-url';
 
-    expect(() => loadConfig()).toThrow('OIDC_WEB_REDIRECT_URI');
+    expect(() => loadConfig()).toThrow(/oidcWebRedirectUri/);
   });
 
   test('should return auth config with defaults, overridable via env, when AUTH_ENABLED is true', () => {

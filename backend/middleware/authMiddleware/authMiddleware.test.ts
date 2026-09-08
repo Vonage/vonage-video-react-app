@@ -1,49 +1,17 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import axios from 'axios';
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
-import type { Config } from '../../types/config';
 import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
 import getSessionStorageService from '../../sessionStorageService';
+import { errorHandler } from '../errorHandler';
+import authMiddleware from './authMiddleware';
 
-const loadConfigMock = jest.fn<() => Config>();
-const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
+jest.mock('axios');
 
-jest.unstable_mockModule('../../helpers/config', () => ({
-  default: loadConfigMock,
-}));
+const mockPost = jest.spyOn(axios, 'post');
 
-jest.unstable_mockModule('axios', () => ({
-  default: { post: axiosPostMock },
-}));
-
-const { default: authMiddleware } = await import('./authMiddleware');
-const { errorHandler } = await import('../errorHandler');
-
-const CONFIGURED_CLIENT_ID = 'test-client-id';
-
-const BASE_CONFIG = {
-  provider: 'opentok',
-  apiKey: 'test-api-key',
-  apiSecret: 'test-api-secret',
-  sessionKeySecret: 'test-session-key-secret',
-  loggerVerbose: false,
-} as const;
-
-const DISABLED_CONFIG: Config = { ...BASE_CONFIG, authEnabled: false };
-
-const ENABLED_CONFIG: Config = {
-  ...BASE_CONFIG,
-  authEnabled: true,
-  oidcIssuerUrl: 'https://example.com',
-  oidcClientId: CONFIGURED_CLIENT_ID,
-  oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
-  authHeaderName: 'authorization',
-  authScheme: 'Bearer',
-  introspectPath: '/oauth2/v1/introspect',
-  authorizePath: '/oauth2/v1/authorize',
-  tokenPath: '/oauth2/v1/token',
-  introspectionTimeoutMs: 5000,
-};
+const CLIENT_ID = 'test-client-id';
 
 function buildApp(): Express {
   const app = express();
@@ -56,28 +24,60 @@ function buildApp(): Express {
 }
 
 describe('authMiddleware', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
-    loadConfigMock.mockReturnValue(ENABLED_CONFIG);
+    process.env = {
+      ...originalEnv,
+      AUTH_ENABLED: 'true',
+      OIDC_ISSUER_URL: 'https://example.com',
+      OIDC_CLIENT_ID: CLIENT_ID,
+      OIDC_WEB_REDIRECT_URI: 'http://localhost:3000/api/auth/callback/okta',
+    };
   });
 
-  it('is a no-op when AUTH_ENABLED is false', async () => {
-    loadConfigMock.mockReturnValue(DISABLED_CONFIG);
+  afterEach(() => {
+    process.env = originalEnv;
+    mockPost.mockReset();
+  });
+
+  it('is a no-op when auth is disabled', async () => {
+    expect.assertions(2);
+
+    process.env.AUTH_ENABLED = 'false';
 
     const res = await request(buildApp()).get('/protected');
 
     expect(res.statusCode).toEqual(200);
-    expect(axiosPostMock).not.toHaveBeenCalled();
+    expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  it('throws at construction when auth is enabled but a required field is missing', () => {
+    delete process.env.OIDC_ISSUER_URL;
+    delete process.env.OIDC_CLIENT_ID;
+
+    expect(() => authMiddleware()).toThrow();
+  });
+
+  it('throws at construction when auth is enabled but OIDC_WEB_REDIRECT_URI is missing', () => {
+    delete process.env.OIDC_WEB_REDIRECT_URI;
+
+    expect(() => authMiddleware()).toThrow();
   });
 
   it('returns 401 when the token is missing', async () => {
+    expect.assertions(1);
+
     const res = await request(buildApp()).get('/protected');
 
     expect(res.statusCode).toEqual(401);
   });
 
-  it('returns 200 with a valid Bearer token', async () => {
-    axiosPostMock.mockResolvedValue({
-      data: { active: true, sub: 'user-1', client_id: CONFIGURED_CLIENT_ID },
+  it('returns 200 with a valid Bearer token issued to this client', async () => {
+    expect.assertions(1);
+
+    mockPost.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CLIENT_ID },
     });
 
     const res = await request(buildApp())
@@ -92,7 +92,9 @@ describe('authMiddleware', () => {
     ['issued to a different client_id', { active: true, sub: 'user-2', client_id: 'other-app' }],
     ['response fails schema validation', { unexpected: 'shape' }],
   ])('returns 401 when %s', async (_label, data) => {
-    axiosPostMock.mockResolvedValue({ data });
+    expect.assertions(1);
+
+    mockPost.mockResolvedValue({ data });
 
     const res = await request(buildApp())
       .get('/protected')
@@ -102,7 +104,9 @@ describe('authMiddleware', () => {
   });
 
   it('returns 401 when the introspection call itself fails', async () => {
-    axiosPostMock.mockRejectedValue(new Error('network error'));
+    expect.assertions(1);
+
+    mockPost.mockRejectedValue(new Error('network error'));
 
     const res = await request(buildApp())
       .get('/protected')
@@ -111,7 +115,9 @@ describe('authMiddleware', () => {
     expect(res.statusCode).toEqual(401);
   });
 
-  it('skips a request path in excludedPaths entirely', async () => {
+  it('skips a request path in excludedPaths without introspecting', async () => {
+    expect.assertions(2);
+
     const app = express();
 
     app.use(authMiddleware({ excludedPaths: ['/protected'] }));
@@ -121,11 +127,14 @@ describe('authMiddleware', () => {
     const res = await request(app).get('/protected');
 
     expect(res.statusCode).toEqual(200);
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('falls back to the session cookie when there is no Bearer header, resolving it via SessionStorage', async () => {
-    axiosPostMock.mockResolvedValue({
-      data: { active: true, sub: 'user-1', client_id: CONFIGURED_CLIENT_ID },
+    expect.assertions(2);
+
+    mockPost.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CLIENT_ID },
     });
 
     const sessionService = getSessionStorageService();
@@ -136,16 +145,18 @@ describe('authMiddleware', () => {
       .set('Cookie', `${SESSION_COOKIE_NAME}=session-abc`);
 
     expect(res.statusCode).toEqual(200);
-    const [, body] = axiosPostMock.mock.calls[0] as unknown as [string, URLSearchParams];
+    const [, body] = mockPost.mock.calls[0] as unknown as [string, URLSearchParams];
     expect(body.toString()).toContain('token=session-token');
   });
 
   it('returns 401 when the session cookie does not resolve to a stored access token', async () => {
+    expect.assertions(2);
+
     const res = await request(buildApp())
       .get('/protected')
       .set('Cookie', `${SESSION_COOKIE_NAME}=unknown-session-id`);
 
     expect(res.statusCode).toEqual(401);
-    expect(axiosPostMock).not.toHaveBeenCalled();
+    expect(mockPost).not.toHaveBeenCalled();
   });
 });
