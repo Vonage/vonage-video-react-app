@@ -467,7 +467,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
-    this.clientSession.disconnect()?.catch(() => {});
+    this.clientSession.disconnect();
     this.clientSession = null as unknown as Session;
   };
 
