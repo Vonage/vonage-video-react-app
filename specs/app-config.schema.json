@@ -280,7 +280,7 @@
     "layoutMode": {
       "type": "string",
       "description": "Default video layout in the meeting room.",
-      "enum": ["activespeaker", "grid"]
+      "enum": ["activeSpeaker", "grid"]
     }
   }
 }
