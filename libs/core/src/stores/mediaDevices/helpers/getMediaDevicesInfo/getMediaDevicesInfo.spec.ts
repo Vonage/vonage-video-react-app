@@ -69,6 +69,8 @@ describe('getMediaDevicesInfo', () => {
   });
 
   it('does not deadlock when skipStoreReady is set while isStoreReady is still pending', async () => {
+    expect.assertions(1);
+
     const metadata = mediaDevices$.getMetadata();
 
     // Firefox bootstrap is parked on the permission prompt: isStoreReady is still pending, and a
@@ -79,13 +81,8 @@ describe('getMediaDevicesInfo', () => {
       metadata as unknown as { isFirstMediaDevicesInfoQuery: boolean }
     ).isFirstMediaDevicesInfoQuery = false;
 
-    const outcome = await Promise.race([
-      getMediaDevicesInfo({ skipStoreReady: true }).then(() => 'resolved'),
-      new Promise((resolve) => {
-        setTimeout(() => resolve('deadlock'), 150);
-      }),
-    ]);
+    const result = await getMediaDevicesInfo({ skipStoreReady: true });
 
-    expect(outcome).toBe('resolved');
+    expect(result).toHaveLength(makeMediaDeviceInfos().length);
   });
 });
