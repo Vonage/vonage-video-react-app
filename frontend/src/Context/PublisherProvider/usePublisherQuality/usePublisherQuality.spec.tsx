@@ -54,7 +54,9 @@ describe('usePublisherQuality', () => {
     expect(useUserContext().user.issues.audioFallbacks).toBe(1);
   });
 
-  it('removes listeners from the previous publisher when the publisher is re-created', () => {
+  it('removes listeners from the previous publisher when the publisher is re-created', async () => {
+    expect.assertions(3);
+
     const oldPublisher = new EventEmitter();
     const newPublisher = new EventEmitter();
 
@@ -68,14 +70,20 @@ describe('usePublisherQuality', () => {
 
     // The initial effect must actually attach the listener (otherwise the removal
     // assertion below would pass vacuously).
-    expect(oldPublisher.listenerCount('videoDisabled')).toBe(1);
+    await waitFor(() => {
+      if (oldPublisher.listenerCount('videoDisabled') !== 1) {
+        throw new Error('Expected the initial publisher listener to be attached');
+      }
+    });
 
     // Publisher re-created (reconnect/recovery, device change).
     rerender(newPublisher);
 
     // The old publisher is no longer observed and the new one is now observed.
-    expect(oldPublisher.listenerCount('videoDisabled')).toBe(0);
-    expect(newPublisher.listenerCount('videoDisabled')).toBe(1);
+    await waitFor(() => {
+      expect(oldPublisher.listenerCount('videoDisabled')).toBe(0);
+      expect(newPublisher.listenerCount('videoDisabled')).toBe(1);
+    });
 
     // A stale event from the old publisher must not inflate the shared fallback counter.
     act(() => {
