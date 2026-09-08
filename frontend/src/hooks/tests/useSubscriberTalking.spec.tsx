@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Subscriber } from '@vonage/client-sdk-video';
+import type { Subscriber } from '@vonage/client-sdk-video';
 import useSubscriberTalking from '../useSubscriberTalking';
 
 type AudioLevelHandler = (event: { audioLevel: number }) => void;
