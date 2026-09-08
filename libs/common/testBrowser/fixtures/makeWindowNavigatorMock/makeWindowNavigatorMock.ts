@@ -1,5 +1,6 @@
 import { setupPartialMock } from '../../../test/helpers';
 import type { Mockable, SPY_MARK } from '@common/types/Mockable';
+import makeLanguagesMock from './helpers/makeLanguagesMock';
 import makeMediaDevicesMock from './helpers/makeMediaDevicesMock';
 import makePermissionsMock from './helpers/makePermissionsMock';
 
@@ -19,7 +20,7 @@ export type NavigatorMock = Partial<
 const makeWindowNavigatorMock = <T extends NavigatorMock>(
   mock: T | ((spy: typeof SPY_MARK) => T)
 ) => {
-  const { mediaDevices, permissions, ...rest } = mock as NavigatorMock;
+  const { language, languages, mediaDevices, permissions, ...rest } = mock as NavigatorMock;
 
   const clone: Navigator = Object.create(Object.getPrototypeOf(window.navigator) as Navigator);
 
@@ -32,6 +33,11 @@ const makeWindowNavigatorMock = <T extends NavigatorMock>(
   Object.defineProperties(
     clone,
     Object.getOwnPropertyDescriptors({
+      ...makeLanguagesMock({
+        language: language ?? 'en',
+        languages: languages ?? ['en'],
+      }),
+
       mediaDevices: makeMediaDevicesMock(mediaDevices),
       permissions: makePermissionsMock(permissions),
 

@@ -66,7 +66,7 @@ const DeviceControlButton = ({
       if (!env.ALLOW_MICROPHONE_CONTROL) {
         return (
           <VividIcon
-            name="microphone-2-solid"
+            name="microphone-solid"
             customSize={-5}
             style={{ color: 'var(--vera-disabled)' }}
           />
@@ -75,7 +75,7 @@ const DeviceControlButton = ({
       if (isAudioEnabled) {
         return (
           <VividIcon
-            name="microphone-2-solid"
+            name="microphone-solid"
             customSize={-5}
             data-testid="MicNoneIcon"
             style={{ color: 'var(--vera-on-secondary-light)' }}
