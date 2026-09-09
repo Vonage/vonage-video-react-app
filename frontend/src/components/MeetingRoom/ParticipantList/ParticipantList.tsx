@@ -1,4 +1,4 @@
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
 import useUserContext from '@hooks/useUserContext';
@@ -69,13 +69,23 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
     };
   }, [subscriberWrappers, query, name]);
 
+  const copiedResetTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Clear the "copied" reset timer on unmount so it can't call setIsCopied afterwards.
+  useEffect(() => {
+    return () => {
+      if (copiedResetTimerRef.current) clearTimeout(copiedResetTimerRef.current);
+    };
+  }, []);
+
   const copyUrl = () => {
     void navigator.clipboard.writeText(roomShareUrl);
 
     setIsCopied(true);
 
     // reset the icon back after a brief timeout
-    setTimeout(() => {
+    if (copiedResetTimerRef.current) clearTimeout(copiedResetTimerRef.current);
+    copiedResetTimerRef.current = setTimeout(() => {
       setIsCopied(false);
     }, 3000);
   };
