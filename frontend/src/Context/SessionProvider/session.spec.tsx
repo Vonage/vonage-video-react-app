@@ -189,6 +189,67 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub2'));
   });
 
+  it('moving the active speaker to the top must not mutate the previous subscriberWrappers array', async () => {
+    const capturedArrays: SubscriberWrapper[][] = [];
+
+    const CaptureComponent = () => {
+      const { joinRoom, connected, subscriberWrappers } = useSessionContext();
+      useEffect(() => {
+        if (joinRoom) void joinRoom({ sessionKey: validSessionKey });
+      }, [joinRoom]);
+      // Capture committed values in an effect (not during render) so concurrent/StrictMode
+      // re-renders can't record aborted or duplicate references.
+      useEffect(() => {
+        capturedArrays.push(subscriberWrappers);
+      }, [subscriberWrappers]);
+      return (
+        <div>
+          <span data-testid="connected">{String(connected)}</span>
+          <div data-testid="subscriberWrappers">
+            {subscriberWrappers.map((wrapper) => (
+              <div key={wrapper.id}>{wrapper.id}</div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    const { getByTestId } = render(<CaptureComponent />);
+    await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('true'));
+
+    act(() => {
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub1',
+      } as unknown as SubscriberWrapper);
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub2',
+      } as unknown as SubscriberWrapper);
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub3',
+      } as unknown as SubscriberWrapper);
+    });
+
+    await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(3));
+
+    // The array currently held in state (which the reorder updater receives as `prev`).
+    const arrayBeforeReorder = capturedArrays[capturedArrays.length - 1];
+    const orderBeforeReorder = arrayBeforeReorder.map((wrapper) => wrapper.id);
+
+    void act(() =>
+      activeSpeakerTracker.emit('activeSpeakerChanged', {
+        previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
+        newActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0.4 },
+      })
+    );
+
+    await waitFor(() =>
+      expect(getByTestId('subscriberWrappers').children[0]).toHaveTextContent('sub1')
+    );
+
+    // The reorder must produce a new array; the previous one must be left untouched.
+    expect(arrayBeforeReorder.map((wrapper) => wrapper.id)).toEqual(orderBeforeReorder);
+  });
+
   describe('publish', () => {
     it('should call publish on VonageVideoClient when connected', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
@@ -320,35 +381,31 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 
-    it('when reconnecting session, sets reconnecting to true', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
+    it.each([
+      {
+        sessionState: 'reconnecting',
+        emitSessionEvent: () => vonageVideoClient.emit('sessionReconnecting'),
+        expectedReconnecting: 'true',
+      },
+      {
+        sessionState: 'reconnected',
+        emitSessionEvent: () => vonageVideoClient.emit('sessionReconnected'),
+        expectedReconnecting: 'false',
+      },
+    ])(
+      'when the session is $sessionState, sets reconnecting to $expectedReconnecting',
+      async ({ emitSessionEvent, expectedReconnecting }) => {
+        const { getByTestId } = await renderAndWaitForConnection();
 
-      act(() => {
-        vonageVideoClient.emit('sessionReconnecting');
-      });
+        act(() => {
+          emitSessionEvent();
+        });
 
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
-    });
-
-    it('when reconnected, sets reconnecting to false', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
-
-      act(() => {
-        vonageVideoClient.emit('sessionReconnected');
-      });
-
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
-    });
-
-    it('when re-connected, sets reconnecting to false', async () => {
-      const { getByTestId } = await renderAndWaitForConnection();
-
-      act(() => {
-        vonageVideoClient.emit('sessionReconnected');
-      });
-
-      await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('false'));
-    });
+        await waitFor(() =>
+          expect(getByTestId('reconnecting')).toHaveTextContent(expectedReconnecting)
+        );
+      }
+    );
 
     it('when disconnected, sets connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
