@@ -141,6 +141,19 @@ describe('JiraFeedbackService', () => {
     );
   });
 
+  it('should throw when the attachment exceeds the maximum allowed size', async () => {
+    const feedbackData: FeedbackData = {
+      ...sharedData,
+      attachment: 'A'.repeat(2_000_001),
+    };
+
+    mockPost.mockResolvedValue({ status: 200, data: { key: 'VIDSOL-2024' } });
+
+    await expect(jiraFeedbackService.reportIssue(feedbackData)).rejects.toThrow(
+      'Attachment exceeds the maximum allowed size.'
+    );
+  });
+
   it('should throw when the Jira issue key returned is invalid', async () => {
     const feedbackData: FeedbackData = {
       ...sharedData,

@@ -105,4 +105,39 @@ describe('POST /feedback/report', () => {
       origin: 'Android',
     });
   });
+
+  it('rejects an invalid payload with a 400 and does not call the feedback service', async () => {
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({ name: 'John Doe', issue: 'Cannot hear other participants' }); // missing title
+
+    expect(res.statusCode).toEqual(400);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
+
+  it('rejects an oversized attachment with a 400', async () => {
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({ ...feedbackPayload, attachment: 'A'.repeat(2_000_001) });
+
+    expect(res.statusCode).toEqual(400);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
+
+  it('returns a generic error and does not leak internal details when reporting fails', async () => {
+    mockReportIssue.mockRejectedValueOnce(new Error('secret upstream detail at /var/secret/path'));
+
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send(feedbackPayload);
+
+    const body = res.body as { message?: string };
+
+    expect(res.statusCode).toEqual(500);
+    expect(body.message).toBe('Failed to report issue. Please try again later.');
+    expect(JSON.stringify(body)).not.toContain('secret upstream detail');
+  });
 });

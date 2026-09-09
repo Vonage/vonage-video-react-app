@@ -3,7 +3,12 @@ import FormData from 'form-data';
 import { FeedbackService } from './feedbackService';
 import loadConfig from '../helpers/config';
 import { Config } from '../types/config';
-import { FeedbackData, FeedbackOrigin, ReportIssueReturn } from '../types/feedback';
+import {
+  FeedbackData,
+  FeedbackOrigin,
+  ReportIssueReturn,
+  MAX_ATTACHMENT_BASE64_LENGTH,
+} from '../types/feedback';
 
 class JiraFeedbackService implements FeedbackService {
   jiraApiUrl: string;
@@ -91,6 +96,11 @@ class JiraFeedbackService implements FeedbackService {
   ): Promise<ReportIssueReturn> {
     if (!/^[A-Z]+-\d+$/.test(key)) {
       throw new Error(`Invalid Jira issue key: ${key}`);
+    }
+    // Defense in depth: reject oversized attachments before allocating a Buffer,
+    // even if the route-level validation is ever bypassed.
+    if (attachment.length > MAX_ATTACHMENT_BASE64_LENGTH) {
+      throw new Error('Attachment exceeds the maximum allowed size.');
     }
     const fileBuffer = Buffer.from(attachment, 'base64');
     const formData = new FormData();
