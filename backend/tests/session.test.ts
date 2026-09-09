@@ -12,6 +12,10 @@ const validSessionId = '1_Mn52b25hZ2VBcHBJZH4wLjAuMC4wfjIwMjQtMDEtMDE=';
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiIxX01YNWtNVEkxWWpGbU1DMWtZMkl5TFRRM05EY3RZamxrWVMxa09ESTVOMkk0WkdFME9UZC1makUzTnpVM09UWXhOVGd3TWpkLWFqaElOU3RYZEV4VU5sYzBZbE5vZGs5UVNYVllVRmRDZm41LSIsInJvb21OYW1lIjoiYXdlc29tZS1yb29tLW5hbWUiLCJpYXQiOjE3NzU5NjMzMjh9.QcNVXp6gatPTV82IJa8VgDG6rOLBkFjU3r7j_BcxM-c';
 
+const mockEnableCaptions = jest
+  .fn<() => Promise<{ captionsId: string }>>()
+  .mockResolvedValue({ captionsId: '123e4567-a12b-41a2-a123-123456789012' });
+
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
 
 // Mock third-party Vonage SDKs only
@@ -48,9 +52,7 @@ await jest.unstable_mockModule('@vonage/video', () => ({
         items: [{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[],
         count: 2,
       }),
-    enableCaptions: jest
-      .fn<() => Promise<{ captionsId: string }>>()
-      .mockResolvedValue({ captionsId: '123e4567-a12b-41a2-a123-123456789012' }),
+    enableCaptions: mockEnableCaptions,
     disableCaptions: jest
       .fn<(captionsId: string) => Promise<void>>()
       .mockImplementation((captionsId: string) => {
@@ -203,6 +205,30 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
             .set('Content-Type', 'application/json');
           expect(res.statusCode).toEqual(404);
+        });
+
+        it('rolls back the captions user count when enabling fails so captions are not wedged', async () => {
+          // Seed the session the route resolves for this room, which zeroes the count.
+          await sessionService.setSession({
+            roomName,
+            sessionKey: validSessionKey,
+            sessionId: validSessionId,
+          });
+
+          // First user requests captions (0 -> 1) but the SDK enable transiently fails.
+          mockEnableCaptions.mockRejectedValueOnce(new Error('transient enable failure'));
+          const failed = await request(server)
+            .post(`/session/${roomName}/enableCaptions`)
+            .set('Content-Type', 'application/json');
+          expect(failed.statusCode).toBeGreaterThanOrEqual(400);
+
+          // With the rollback the count is back to 0, so the next increment returns 1
+          // (the "=== 1" branch that actually calls enableCaptions runs again). Without
+          // it the count is stuck at 1 and this would return 2 — captions never re-enable.
+          const nextCount = await sessionService.incrementCaptionsUserCount({
+            sessionKey: validSessionKey,
+          });
+          expect(nextCount).toBe(1);
         });
       });
 

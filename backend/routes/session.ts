@@ -3,6 +3,7 @@ import getSessionStorageService from '../sessionStorageService';
 import { makeVideoClient$ } from './video';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { getSessionKeyFromRoomName, getOrCreateSessionKeyFromRoomName } from '../helpers';
+import tryCatch from '@common/execution/tryCatch';
 
 const sessionRouter = Router();
 const sessionService = getSessionStorageService();
@@ -107,8 +108,20 @@ sessionRouter.post(
       const newCaptionCount = await sessionService.incrementCaptionsUserCount({ sessionKey });
 
       if (newCaptionCount === 1) {
-        const { captionsId } = await videoClient.enableCaptions({ sessionKey });
-        await sessionService.setCaptionsId({ sessionId, captionsId });
+        const { result: captionsId, error, didFail } = await tryCatch(async () => {
+          const { captionsId } = await videoClient.enableCaptions({ sessionKey });
+          await sessionService.setCaptionsId({ sessionId, captionsId });
+          return captionsId;
+        });
+
+        if (didFail) {
+          // Roll back the increment so a transient failure can't wedge captions for the
+          // whole room: otherwise the count stays >= 1 and the "=== 1" enable branch
+          // (the only path that actually calls enableCaptions) never runs again.
+          await sessionService.decrementCaptionsUserCount({ sessionKey });
+          throw error;
+        }
+
         res.status(200).json({ captionsId, status: 200 });
       } else {
         const captionsId = await sessionService.getCaptionsId({ sessionId });
