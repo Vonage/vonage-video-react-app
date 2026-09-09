@@ -23,6 +23,27 @@ describe('AdvancedSettingsCodecPriorityField', () => {
     expect(setCodecPriority).toHaveBeenCalledWith(['vp8', 'h264', 'vp9']);
   });
 
+  it('drags the card alone, so the position number does not travel with the codec', () => {
+    render(
+      <AdvancedSettingsCodecPriorityField
+        codecPriority={['vp9', 'vp8', 'h264']}
+        setCodecPriority={vi.fn()}
+      />
+    );
+
+    const setDragImage = vi.fn();
+
+    fireEvent.dragStart(screen.getByTestId('advanced-settings-codec-priority-item-vp9'), {
+      dataTransfer: { effectAllowed: 'none', setData: vi.fn(), setDragImage },
+    });
+
+    expect(setDragImage).toHaveBeenCalledWith(
+      screen.getByTestId('advanced-settings-codec-priority-card-vp9'),
+      expect.any(Number),
+      expect.any(Number)
+    );
+  });
+
   it('reorders codecs with the move buttons, so the control works without a pointer', () => {
     const setCodecPriority = vi.fn();
 
@@ -88,6 +109,11 @@ describe('AdvancedSettingsCodecPriorityField', () => {
     expect(screen.getByTestId('screen-share-codec-priority-list')).toBeInTheDocument();
     expect(screen.getByTestId('screen-share-codec-priority-item-vp9')).toBeInTheDocument();
     expect(screen.getByTestId('screen-share-codec-priority-move-down-vp9')).toBeInTheDocument();
+    // The handle is a decoration for the drag affordance; the move buttons carry the accessible names.
+    expect(screen.getByTestId('screen-share-codec-priority-drag-handle-vp9')).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
   });
 
   it('renders the codec labels in SDK order by default', () => {
