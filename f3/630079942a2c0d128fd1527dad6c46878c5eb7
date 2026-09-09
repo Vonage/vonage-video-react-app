@@ -1,0 +1,24 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_b514504dde749a::t_5841fbceaa72c2 525
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "f3630079942a2c0d128fd1527dad6c46878c5eb7",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_b514504dde749a": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1787646415139",
+        "model": "unknown"
+      },
+      "human_author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}

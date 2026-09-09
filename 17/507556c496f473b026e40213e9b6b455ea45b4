@@ -1,0 +1,40 @@
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  s_b514504dde749a::t_7e7194a1c1856f 59
+  s_b514504dde749a::t_747fb00aa2b29c 40-41
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  s_b514504dde749a::t_03fc1f036ee3b0 63
+  s_b514504dde749a::t_7bbfdd68b63ec7 42-43
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_b514504dde749a::t_605765d28d85ae 470
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.spec.ts
+  s_b514504dde749a::t_bd9e95a9e8758a 24
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  s_b514504dde749a::t_f3082d419e3c29 164-167
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  s_b514504dde749a::t_0e3279de00e44a 157-160
+package.json
+  h_9cf21c851a7c99 171
+yarn.lock
+  h_9cf21c851a7c99 5097-5100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "17507556c496f473b026e40213e9b6b455ea45b4",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_b514504dde749a": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1787646415139",
+        "model": "unknown"
+      },
+      "human_author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
