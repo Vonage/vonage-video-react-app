@@ -11,6 +11,8 @@ metadata:
       - Hossein Movahed @Hossein-Movahed
       - Johnny Esteban Quesada @johnny-quesada-developer
       - Oscar Fava @OscarFava
+  tags:
+    - tier2
 spec:
   type: library
   owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
