@@ -2,7 +2,7 @@ import axios from 'axios';
 import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
 import FormData from 'form-data';
 import JiraFeedbackService from '../jiraFeedbackService';
-import { FeedbackData, FeedbackOrigin } from '../../types/feedback';
+import type { FeedbackData, FeedbackOrigin } from '../../types/feedback';
 
 jest.mock('axios');
 

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/await-thenable */
 import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import request from 'supertest';
-import { Server } from 'http';
-import { ReportIssueReturn } from '../types/feedback';
+import type { Server } from 'http';
+import type { ReportIssueReturn } from '../types/feedback';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
 await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
@@ -112,7 +112,10 @@ describe('POST /feedback/report', () => {
       .set('Content-Type', 'application/json')
       .send({ name: 'John Doe', issue: 'Cannot hear other participants' }); // missing title
 
+    const body = res.body as { message?: string };
+
     expect(res.statusCode).toEqual(400);
+    expect(body.message).toEqual('Invalid feedback payload');
     expect(mockReportIssue).not.toHaveBeenCalled();
   });
 
@@ -123,6 +126,18 @@ describe('POST /feedback/report', () => {
       .send({ ...feedbackPayload, attachment: 'A'.repeat(2_000_001) });
 
     expect(res.statusCode).toEqual(400);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
+
+  it('rejects payloads that exceed the report parser limit even when unknown fields are used', async () => {
+    const oversizedField = 'A'.repeat(2_200_000);
+
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({ ...feedbackPayload, ignoredField: oversizedField });
+
+    expect(res.statusCode).toEqual(413);
     expect(mockReportIssue).not.toHaveBeenCalled();
   });
 
@@ -137,7 +152,7 @@ describe('POST /feedback/report', () => {
     const body = res.body as { message?: string };
 
     expect(res.statusCode).toEqual(500);
-    expect(body.message).toBe('Failed to report issue. Please try again later.');
+    expect(body.message).toBe('Failed to report issue');
     expect(JSON.stringify(body)).not.toContain('secret upstream detail');
   });
 });

@@ -1,14 +1,9 @@
 import axios from 'axios';
 import FormData from 'form-data';
-import { FeedbackService } from './feedbackService';
+import type { FeedbackService } from './feedbackService';
 import loadConfig from '../helpers/config';
-import { Config } from '../types/config';
-import {
-  FeedbackData,
-  FeedbackOrigin,
-  ReportIssueReturn,
-  MAX_ATTACHMENT_BASE64_LENGTH,
-} from '../types/feedback';
+import type { Config } from '../types/config';
+import type { FeedbackData, FeedbackOrigin, ReportIssueReturn } from '../types/feedback';
 
 class JiraFeedbackService implements FeedbackService {
   jiraApiUrl: string;
@@ -21,6 +16,7 @@ class JiraFeedbackService implements FeedbackService {
   jiraEpicUrl: string;
   jiraEpicLink: string;
   jiraSeverityId: string;
+  attachmentMaxBase64Length: number;
   config: Config;
 
   constructor() {
@@ -35,6 +31,7 @@ class JiraFeedbackService implements FeedbackService {
     this.jiraEpicUrl = this.config.epicUrl as string;
     this.jiraEpicLink = this.config.epicLink as string;
     this.jiraSeverityId = this.config.severityId as string;
+    this.attachmentMaxBase64Length = this.config.attachmentMaxBase64Length;
   }
 
   async reportIssue(data: FeedbackData): Promise<ReportIssueReturn> {
@@ -99,7 +96,7 @@ class JiraFeedbackService implements FeedbackService {
     }
     // Defense in depth: reject oversized attachments before allocating a Buffer,
     // even if the route-level validation is ever bypassed.
-    if (attachment.length > MAX_ATTACHMENT_BASE64_LENGTH) {
+    if (attachment.length > this.attachmentMaxBase64Length) {
       throw new Error('Attachment exceeds the maximum allowed size.');
     }
     const fileBuffer = Buffer.from(attachment, 'base64');

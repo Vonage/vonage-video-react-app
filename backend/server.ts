@@ -1,7 +1,8 @@
 // loads environment variables from .env file
 import './helpers/config';
 
-import express, { Express, Request, Response } from 'express';
+import express from 'express';
+import type { Express, Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -24,13 +25,29 @@ if (process.env.__IS_CJS__) {
 const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
 const app: Express = express();
+const jsonParser = express.json({ limit: '20mb' });
+const bodyParserJson = bodyParser.json();
 
 app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
-app.use(express.json({ limit: '20mb' }));
+app.use((request, response, next) => {
+  if (request.path === '/feedback/report') {
+    next();
+    return;
+  }
+
+  jsonParser(request, response, next);
+});
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(bodyParser.json());
+app.use((request, response, next) => {
+  if (request.path === '/feedback/report') {
+    next();
+    return;
+  }
+
+  bodyParserJson(request, response, next);
+});
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.

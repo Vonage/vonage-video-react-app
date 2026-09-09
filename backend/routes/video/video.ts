@@ -9,7 +9,6 @@ import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
 import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
 import getSessionStorageService from '../../sessionStorageService';
-import getRequiredEnv from '../../helpers/getRequiredEnv';
 import { CaptionsStatus } from './types';
 
 const videoRouter = Router();
@@ -19,8 +18,8 @@ const sessionService = getSessionStorageService();
 export const videoHandler = createVideoHandler({
   auth: {
     authType: 'jwt',
-    applicationId: getRequiredEnv('VONAGE_APP_ID'),
-    privateKey: getRequiredEnv('VONAGE_PRIVATE_KEY'),
+    applicationId: process.env.VONAGE_APP_ID!,
+    privateKey: process.env.VONAGE_PRIVATE_KEY!,
   },
   videoParams: {
     videoHost: process.env.VONAGE_VIDEO_HOST,

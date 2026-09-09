@@ -10,6 +10,7 @@ export type FeedbackConfig = {
   epicUrl?: string;
   severityId?: string;
   gollumUrl?: string;
+  attachmentMaxBase64Length: number;
 };
 
 export type VonageConfig = {

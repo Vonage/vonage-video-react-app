@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import { Config, FeedbackConfig } from '../types/config';
+import type { Config, FeedbackConfig } from '../types/config';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -15,6 +15,22 @@ if (process.env.__IS_CJS__) {
 }
 
 dotenv.config({ path: path.join(runtimeDir, '.env') });
+
+const DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH = 2_000_000;
+
+const readAttachmentMaxBase64Length = (): number => {
+  const value = process.env.JIRA_ATTACHMENT_MAX_BASE64_LENGTH;
+
+  if (!value) return DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH;
+
+  const parsedValue = Number(value);
+
+  if (!Number.isSafeInteger(parsedValue) || parsedValue <= 0) {
+    throw new Error('Invalid JIRA_ATTACHMENT_MAX_BASE64_LENGTH. Expected a positive integer.');
+  }
+
+  return parsedValue;
+};
 
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
@@ -34,6 +50,7 @@ const loadConfig = (): Config => {
     epicUrl: process.env.JIRA_EPIC_URL,
     severityId: process.env.JIRA_SEVERITY_ID,
     gollumUrl: process.env.GOLLUM_BASE_URL,
+    attachmentMaxBase64Length: readAttachmentMaxBase64Length(),
   };
 
   if (provider === 'vonage') {

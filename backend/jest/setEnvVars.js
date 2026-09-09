@@ -6,6 +6,7 @@ process.env.JIRA_iOS_COMPONENT_ID = 'iOSComponentId';
 process.env.JIRA_ANDROID_COMPONENT_ID = 'androidComponentId';
 process.env.JIRA_EPIC_LINK = 'jiraEpicLink';
 process.env.JIRA_EPIC_URL = 'jiraEpicUrl';
+process.env.JIRA_ATTACHMENT_MAX_BASE64_LENGTH = '2000000';
 process.env.VONAGE_APP_ID = 'vonageAppId';
 process.env.VONAGE_PRIVATE_KEY = 'vonagePrivateKey';
 process.env.OT_API_KEY = 'someOpenTokKey';
