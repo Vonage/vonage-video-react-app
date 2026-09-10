@@ -231,15 +231,15 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 
 ## UI Customization
 
-The app theme is configured through the root `designTokens.json` file.
+The app theme is configured through the root `theme.json` file.
 
 ### Customize your theme
 
-1. Edit `designTokens.json` at the project root with your palette/theme values.
+1. Edit `theme.json` at the project root with your palette/theme values.
 2. Sync theme artifacts:
 
 ```bash
 yarn sync:theme-tokens
 ```
 
-This command always regenerates `designTokens.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `designTokens.json` when present, creates root `designTokens.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
+This command always regenerates `theme.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `theme.json` when present, creates root `theme.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
