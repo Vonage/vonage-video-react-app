@@ -29,11 +29,6 @@ const AdvancedSettingsCodecPriorityField = ({
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', codec);
 
-      /**
-       * The row is draggable as a whole so it stays easy to grab, but the number is the position
-       * in the list rather than part of the codec - dragging it away with the card reads as a bug.
-       * Snapshot the card alone, keeping it under the cursor where the drag was started.
-       */
       const cardElement = cardElementsByCodec.current.get(codec);
 
       if (cardElement) {
