@@ -104,4 +104,20 @@ describe('InMemorySessionStorage', () => {
       );
     });
   });
+
+  describe('setSession idempotency', () => {
+    it('preserves archiveIds and captionsId when setSession is called again for the same room', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setArchiveIds({ sessionId, archiveIds: ['archive-1'] });
+      await storage.setCaptionsId({ sessionId, captionsId: 'captions-1' });
+
+      // A later participant joining re-triggers setSession for the same room; it must
+      // not wipe the tracked archives/captions, which still need to be stopped on
+      // sessionDestroyed.
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+
+      expect(await storage.getArchiveIds({ sessionId })).toEqual(['archive-1']);
+      expect(await storage.getCaptionsId({ sessionId })).toBe('captions-1');
+    });
+  });
 });
