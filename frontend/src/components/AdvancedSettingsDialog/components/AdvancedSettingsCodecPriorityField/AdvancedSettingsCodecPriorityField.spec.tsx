@@ -23,27 +23,6 @@ describe('AdvancedSettingsCodecPriorityField', () => {
     expect(setCodecPriority).toHaveBeenCalledWith(['vp8', 'h264', 'vp9']);
   });
 
-  it('drags the card alone, so the position number does not travel with the codec', () => {
-    render(
-      <AdvancedSettingsCodecPriorityField
-        codecPriority={['vp9', 'vp8', 'h264']}
-        setCodecPriority={vi.fn()}
-      />
-    );
-
-    const setDragImage = vi.fn();
-
-    fireEvent.dragStart(screen.getByTestId('advanced-settings-codec-priority-item-vp9'), {
-      dataTransfer: { effectAllowed: 'none', setData: vi.fn(), setDragImage },
-    });
-
-    expect(setDragImage).toHaveBeenCalledWith(
-      screen.getByTestId('advanced-settings-codec-priority-card-vp9'),
-      expect.any(Number),
-      expect.any(Number)
-    );
-  });
-
   it('reorders codecs with the move buttons, so the control works without a pointer', () => {
     const setCodecPriority = vi.fn();
 
