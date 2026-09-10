@@ -14,7 +14,9 @@ describe('AdvancedSettingsSidebar', () => {
     expect(screen.getByTestId('advanced-settings-tab-screenSharing')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-screen-sharing-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-audio')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-audio-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-statistics')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-statistics-icon')).toBeInTheDocument();
   });
 
   it('updates selected tab when clicking another tab', async () => {

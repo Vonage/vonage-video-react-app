@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { Field, SelectField, SettingsSection, VividIcon } from '@ui';
+import { Field, SelectField } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type {
@@ -114,11 +114,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
         {t('advancedSettings.tabs.video')}
       </h2>
 
-      <SettingsSection
-        title={t('advancedSettings.video.sections.camera.label')}
-        icon={<VividIcon name="video-solid" customSize={-5} />}
-        data-testid="advanced-settings-video-camera-section"
-      >
+      <section className="flex flex-col gap-6" data-testid="advanced-settings-video-camera-section">
         <Field>
           <Field.Label htmlFor="advanced-settings-video-self-view-mirroring">
             {t('advancedSettings.video.selfViewMirroring.label')}
@@ -209,7 +205,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
             {t('advancedSettings.video.statsOverlay.description')}
           </Field.Description>
         </Field>
-      </SettingsSection>
+      </section>
     </div>
   );
 };

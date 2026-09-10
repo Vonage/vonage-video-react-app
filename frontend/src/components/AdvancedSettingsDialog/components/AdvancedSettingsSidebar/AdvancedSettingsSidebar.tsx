@@ -46,6 +46,20 @@ const AdvancedSettingsSidebar = (): ReactElement => {
                 customSize={-5}
               />
             )}
+            {tab === 'audio' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-audio-icon"
+                name="microphone-solid"
+                customSize={-5}
+              />
+            )}
+            {tab === 'statistics' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-statistics-icon"
+                name="cell-reception-line"
+                customSize={-5}
+              />
+            )}
             {t(`advancedSettings.tabs.${tab}`)}
           </button>
         );

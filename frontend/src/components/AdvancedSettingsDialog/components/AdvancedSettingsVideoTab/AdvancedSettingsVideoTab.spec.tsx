@@ -35,11 +35,12 @@ describe('AdvancedSettingsVideoTab', () => {
     ).toBeInTheDocument();
   });
 
-  it('groups every existing control under the Camera section', () => {
+  it('groups every existing control under the Video tab without a Camera heading', () => {
     render(<AdvancedSettingsVideoTab />);
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
+    expect(within(cameraSection).queryByTestId('settings-section-title')).not.toBeInTheDocument();
     expect(
       within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')
     ).toBeInTheDocument();
