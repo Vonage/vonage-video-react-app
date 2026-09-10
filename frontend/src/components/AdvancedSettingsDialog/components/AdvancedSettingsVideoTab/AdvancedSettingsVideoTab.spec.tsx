@@ -41,7 +41,7 @@ describe('AdvancedSettingsVideoTab', () => {
     expect(within(cameraSection).getByTestId('advanced-settings-video-stats-overlay')).toBeInTheDocument();
   });
 
-  it('leads the Camera section with Mirror my video', () => {
+  it('leads the Camera section with Mirror my preview', () => {
     render(<AdvancedSettingsVideoTab />);
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');

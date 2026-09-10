@@ -60,7 +60,7 @@
   "advancedSettings.video.scalableScreenshare.label": "Compartir pantalla escalable",
   "advancedSettings.video.scalableScreenshare.description": "Envía varias capas de calidad para que cada participante reciba la mejor que permita su conexión. Se aplica la próxima vez que empieces a compartir.",
   "advancedSettings.video.screenShare.useDefault": "Valor predeterminado del navegador",
-  "advancedSettings.video.selfViewMirroring.label": "Reflejar mi vídeo",
+  "advancedSettings.video.selfViewMirroring.label": "Reflejar mi vista previa",
   "advancedSettings.video.selfViewMirroring.description": "Refleja horizontalmente la vista previa de tu vídeo, como un espejo. Solo lo ves tú: los demás participantes no se ven afectados.",
   "advancedSettings.video.statsOverlay.label": "Mostrar resolución y velocidad de fotogramas",
   "advancedSettings.video.statsOverlay.description": "Muestra en la vista previa de tu vídeo una etiqueta con la resolución y la velocidad de fotogramas capturadas.",

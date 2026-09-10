@@ -60,7 +60,7 @@
   "advancedSettings.video.scalableScreenshare.label": "Skalierbare Bildschirmfreigabe",
   "advancedSettings.video.scalableScreenshare.description": "Sendet mehrere Qualitätsebenen, damit jeder Teilnehmer die beste für seine Verbindung erhält. Wird beim nächsten Start der Freigabe wirksam.",
   "advancedSettings.video.screenShare.useDefault": "Browser-Standard",
-  "advancedSettings.video.selfViewMirroring.label": "Mein Video spiegeln",
+  "advancedSettings.video.selfViewMirroring.label": "Meine Vorschau spiegeln",
   "advancedSettings.video.selfViewMirroring.description": "Spiegelt Ihre eigene Videovorschau horizontal. Das sehen nur Sie - andere Teilnehmer sind nicht betroffen.",
   "advancedSettings.video.statsOverlay.label": "Auflösung und Bildrate anzeigen",
   "advancedSettings.video.statsOverlay.description": "Zeigt in Ihrer Videovorschau ein Feld mit der aufgenommenen Auflösung und Bildrate an.",
