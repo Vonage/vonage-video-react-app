@@ -4,7 +4,7 @@ This document covers the environment variables, feature flags, theming, and Stor
 
 ## Environment Configuration
 
-The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`env.sh`](../env.sh).
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`env.json`](../env.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`.
 
 For initial setup instructions (creating `.env` files, obtaining credentials), see [Getting Started](./GETTING_STARTED.md).
 
@@ -105,20 +105,45 @@ Both web and mobile clients authenticate the same way: a token in the configured
 
 `/feedback` is not currently excluded and is not yet reviewed for whether it should be.
 
-### Frontend (`env.sh`)
+### Frontend (`env.json` → `env.sh`)
 
 Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.
 
-All frontend configuration lives in [`env.sh`](../env.sh). To change a setting, update the relevant `export` line and restart the app or trigger a new build.
+The source of truth is [`env.json`](../env.json), a unified, platform-agnostic config shared across the Vonage Video web, iOS, and Android apps. The build tooling (dev/build/test) reads [`env.sh`](../env.sh), which is **generated** from `env.json`. Do not edit `env.sh` by hand — it is overwritten on every sync.
 
-```bash
-# env.sh
-export ALLOW_CHAT=false
-export DEFAULT_LAYOUT_MODE='grid'
-export I18N_SUPPORTED_LANGUAGES='en|es'
+To change a setting:
+
+1. Edit the relevant value in [`env.json`](../env.json).
+2. Regenerate `env.sh`:
+
+   ```bash
+   yarn sync:env
+   ```
+
+3. Restart the app or trigger a new build.
+
+`env.json` uses grouped, nested keys instead of flat variable names. For example:
+
+```json
+{
+  "meetingRoomSettings": {
+    "allowChat": false,
+    "defaultLayoutMode": "activeSpeaker"
+  },
+  "localizationSettings": {
+    "supportedLanguages": ["en", "es"]
+  }
+}
 ```
 
-> **Note:** Changes to [`env.sh`](../env.sh) are applied at build time. Restart `yarn dev` locally or create a new build/deployment for the changes to take effect.
+The generator maps each key to its `env.sh` variable, joins lists with `|`, and serializes types into shell format. The tables below use the `env.sh` variable names.
+
+> **Note:** Changes are applied at build time. After `yarn sync:env`, restart `yarn dev` locally or create a new build/deployment for them to take effect.
+
+#### Things to know about the mapping
+
+- **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `env.json`.
+- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `env.json`. They are emitted by the generator as fixed values and can be changed in [`scripts/generateEnv.ts`](../scripts/generateEnv.ts): `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
 
 #### Value types
 
