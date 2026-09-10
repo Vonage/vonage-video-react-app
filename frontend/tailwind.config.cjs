@@ -3,7 +3,7 @@ const veraUI = require('../libs/ui/src/theme/helpers/tailwind/veraUI.cjs');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const validateVeraThemeTokens = require('../libs/ui/src/theme/helpers/tailwind/validateVeraThemeTokens.cjs');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const designTokens = validateVeraThemeTokens(require('../designTokens.json'));
+const designTokens = validateVeraThemeTokens(require('../theme.json'));
 
 const VIDEO_CONTAINER_HEIGHT_WR = 360;
 

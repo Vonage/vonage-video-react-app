@@ -151,7 +151,7 @@ function unwrapValue(obj: unknown): unknown {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  tokensToJson('.', 'designTokens.example.json');
+  tokensToJson('.', 'theme.example.json');
 }
 
 export default tokensToJson;
