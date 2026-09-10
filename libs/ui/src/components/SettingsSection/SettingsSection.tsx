@@ -21,10 +21,20 @@ const SettingsSection = ({
     <div className="flex flex-col gap-1.5">
       <div className="flex flex-row items-center gap-2">
         {icon}
-        <h4 className="font-vera-plain text-vera-heading-4 text-vera-secondary">{title}</h4>
+        <h4
+          className="font-vera-plain text-vera-heading-4 text-vera-secondary"
+          data-testid="settings-section-title"
+        >
+          {title}
+        </h4>
       </div>
       {description ? (
-        <p className="font-vera-plain text-vera-body-base text-vera-tertiary">{description}</p>
+        <p
+          className="font-vera-plain text-vera-body-base text-vera-tertiary"
+          data-testid="settings-section-description"
+        >
+          {description}
+        </p>
       ) : null}
     </div>
     <div className="flex flex-col gap-6">{children}</div>

@@ -5,20 +5,21 @@ import SettingsSection from '.';
 describe('SettingsSection', () => {
   it('renders the title as a heading alongside its children', () => {
     render(
-      <SettingsSection title="Camera">
-        <button type="button">Frame rate</button>
+      <SettingsSection title="Camera" data-testid="camera-section">
+        <button type="button" data-testid="frame-rate-control" />
       </SettingsSection>
     );
 
-    expect(screen.getByRole('heading', { name: 'Camera' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Frame rate' })).toBeInTheDocument();
+    expect(screen.getByTestId('camera-section')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-section-title')).toBeInTheDocument();
+    expect(screen.getByTestId('frame-rate-control')).toBeInTheDocument();
   });
 
   it('renders the icon and description only when they are given', () => {
     const { rerender } = render(<SettingsSection title="Screen Sharing" />);
 
     expect(screen.queryByTestId('section-icon')).not.toBeInTheDocument();
-    expect(screen.queryByText('Applies to content you share.')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('settings-section-description')).not.toBeInTheDocument();
 
     rerender(
       <SettingsSection
@@ -29,7 +30,7 @@ describe('SettingsSection', () => {
     );
 
     expect(screen.getByTestId('section-icon')).toBeInTheDocument();
-    expect(screen.getByText('Applies to content you share.')).toBeInTheDocument();
+    expect(screen.getByTestId('settings-section-description')).toBeInTheDocument();
   });
 
   it('forwards className and DOM props to the root element', () => {

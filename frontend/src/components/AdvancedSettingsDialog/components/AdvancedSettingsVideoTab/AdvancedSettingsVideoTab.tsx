@@ -201,6 +201,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           <Field.Input
             variant="switch"
             id="advanced-settings-video-self-view-mirroring"
+            data-testid="advanced-settings-video-self-view-mirroring"
             checked={selfViewMirroringEnabled}
             onChange={(event) => setSelfViewMirroringEnabled(event.currentTarget.checked)}
           />
@@ -211,6 +212,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-bitrate"
+          data-testid="advanced-settings-video-camera-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
           value={bitrateMode}
           options={bitrateOptions}
@@ -224,6 +226,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-codec"
+          data-testid="advanced-settings-video-camera-codec"
           label={t('advancedSettings.video.codec.label')}
           value={codecMode}
           options={codecOptions}
@@ -240,6 +243,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-frame-rate"
+          data-testid="advanced-settings-video-camera-frame-rate"
           label={t('advancedSettings.video.frameRate.label')}
           value={frameRate}
           options={frameRateOptions}
@@ -257,6 +261,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-camera-content-hint"
+          data-testid="advanced-settings-video-camera-content-hint"
           label={t('advancedSettings.video.contentHint.label')}
           value={cameraContentHint}
           options={cameraContentHintOptions}
@@ -271,6 +276,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           <Field.Input
             variant="switch"
             id="advanced-settings-video-stats-overlay"
+            data-testid="advanced-settings-video-stats-overlay"
             checked={videoStatsOverlayEnabled}
             onChange={(event) => setVideoStatsOverlayEnabled(event.currentTarget.checked)}
           />
@@ -288,6 +294,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
       >
         <SelectField
           id="advanced-settings-video-screen-share-content-hint"
+          data-testid="advanced-settings-video-screen-share-content-hint"
           label={t('advancedSettings.video.contentHint.label')}
           value={screenShareContentHint}
           options={screenShareContentHintOptions}
@@ -297,6 +304,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-screen-share-codec"
+          data-testid="advanced-settings-video-screen-share-codec"
           label={t('advancedSettings.video.codec.label')}
           value={screenShareCodecMode}
           options={screenShareCodecOptions}
@@ -314,6 +322,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-screen-share-frame-rate"
+          data-testid="advanced-settings-video-screen-share-frame-rate"
           label={t('advancedSettings.video.frameRate.label')}
           value={String(screenShareFrameRate ?? DEFAULT_OPTION_VALUE)}
           options={screenShareFrameRateOptions}
@@ -326,6 +335,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-screen-share-resolution"
+          data-testid="advanced-settings-video-screen-share-resolution"
           label={t('advancedSettings.video.resolution.label')}
           value={String(screenShareResolution ?? DEFAULT_OPTION_VALUE)}
           options={screenShareResolutionOptions}
@@ -338,6 +348,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-screen-share-bitrate"
+          data-testid="advanced-settings-video-screen-share-bitrate"
           label={t('advancedSettings.video.bitrate.label')}
           value={String(screenShareBitrateMode ?? DEFAULT_OPTION_VALUE)}
           options={screenShareBitrateOptions}
@@ -363,6 +374,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
           <Field.Input
             variant="switch"
             id="advanced-settings-video-scalable-screenshare"
+            data-testid="advanced-settings-video-scalable-screenshare"
             checked={scalableScreenshareEnabled}
             onChange={(event) => setScalableScreenshareEnabled(event.currentTarget.checked)}
           />

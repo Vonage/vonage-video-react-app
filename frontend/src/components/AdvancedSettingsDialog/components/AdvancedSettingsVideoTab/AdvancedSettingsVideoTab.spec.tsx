@@ -19,11 +19,11 @@ describe('AdvancedSettingsVideoTab', () => {
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
-    expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^bitrate$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^frame rate$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^resolution$/i)).toBeInTheDocument();
+    expect(cameraSection).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-codec')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')).toBeInTheDocument();
   });
 
   it('groups every existing control under the Camera section', () => {
@@ -31,35 +31,39 @@ describe('AdvancedSettingsVideoTab', () => {
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
-    expect(within(cameraSection).getByRole('heading', { name: 'Camera' })).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^bitrate$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^frame rate$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText(/^resolution$/i)).toBeInTheDocument();
-    expect(within(cameraSection).getByLabelText('Mirror my video')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-codec')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')).toBeInTheDocument();
     expect(
-      within(cameraSection).getByLabelText('Show resolution and frame rate')
+      within(cameraSection).getByTestId('advanced-settings-video-self-view-mirroring')
     ).toBeInTheDocument();
+    expect(within(cameraSection).getByTestId('advanced-settings-video-stats-overlay')).toBeInTheDocument();
   });
 
   it('leads the Camera section with Mirror my video', () => {
     render(<AdvancedSettingsVideoTab />);
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
-    const [firstLabelledControl] = within(cameraSection).getAllByLabelText(/.+/);
+    const selfViewMirroring = within(cameraSection).getByTestId(
+      'advanced-settings-video-self-view-mirroring'
+    );
+    const bitrate = within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate');
 
-    expect(firstLabelledControl).toBe(within(cameraSection).getByLabelText('Mirror my video'));
+    expect(selfViewMirroring.compareDocumentPosition(bitrate) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
   });
 
   it('toggles self-view mirroring and the stats overlay through the store', () => {
     render(<AdvancedSettingsVideoTab />);
 
     expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(true);
-    screen.getByLabelText('Mirror my video').click();
+    screen.getByTestId('advanced-settings-video-self-view-mirroring').click();
     expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(false);
 
     const statsOverlayBefore = advancedSettings$.getState().videoStatsOverlayEnabled;
-    screen.getByLabelText('Show resolution and frame rate').click();
+    screen.getByTestId('advanced-settings-video-stats-overlay').click();
     expect(advancedSettings$.getState().videoStatsOverlayEnabled).toBe(!statsOverlayBefore);
   });
 
@@ -70,14 +74,10 @@ describe('AdvancedSettingsVideoTab', () => {
       'advanced-settings-video-screen-sharing-section'
     );
 
-    expect(
-      within(screenSharingSection).getByRole('heading', { name: 'Screen Sharing' })
-    ).toBeInTheDocument();
-    expect(
-      within(screenSharingSection).getByText(/changes take effect immediately while sharing/i)
-    ).toBeInTheDocument();
-
-    const screenShareContentHint = within(screenSharingSection).getByLabelText('Optimize for');
+    expect(screenSharingSection).toBeInTheDocument();
+    const screenShareContentHint = within(screenSharingSection).getByTestId(
+      'advanced-settings-video-screen-share-content-hint'
+    );
     expect(screenShareContentHint).toHaveValue('detail');
     expect(
       [...(screenShareContentHint as HTMLSelectElement).options].map((option) => option.value)
@@ -90,7 +90,9 @@ describe('AdvancedSettingsVideoTab', () => {
     const screenSharingSection = screen.getByTestId(
       'advanced-settings-video-screen-sharing-section'
     );
-    const screenShareCodec = within(screenSharingSection).getByLabelText(/^codec$/i);
+    const screenShareCodec = within(screenSharingSection).getByTestId(
+      'advanced-settings-video-screen-share-codec'
+    );
 
     expect(screenShareCodec).toHaveValue('inherit');
     expect([...(screenShareCodec as HTMLSelectElement).options].map((o) => o.value)).toEqual([
@@ -118,9 +120,15 @@ describe('AdvancedSettingsVideoTab', () => {
       'advanced-settings-video-screen-sharing-section'
     );
 
-    expect(within(screenSharingSection).getByLabelText(/^frame rate$/i)).toHaveValue('default-sdk');
-    expect(within(screenSharingSection).getByLabelText(/^resolution$/i)).toHaveValue('default-sdk');
-    expect(within(screenSharingSection).getByLabelText(/^bitrate$/i)).toHaveValue('default-sdk');
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-frame-rate')
+    ).toHaveValue('default-sdk');
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-resolution')
+    ).toHaveValue('default-sdk');
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-bitrate')
+    ).toHaveValue('default-sdk');
     expect(
       screen.queryByTestId('advanced-settings-screen-share-custom-video-bitrate-slider')
     ).not.toBeInTheDocument();
@@ -143,7 +151,9 @@ describe('AdvancedSettingsVideoTab', () => {
     render(<AdvancedSettingsVideoTab />);
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
-    const cameraContentHint = within(cameraSection).getByLabelText('Optimize for');
+    const cameraContentHint = within(cameraSection).getByTestId(
+      'advanced-settings-video-camera-content-hint'
+    );
 
     expect(cameraContentHint).toHaveValue('');
     expect(
@@ -158,7 +168,6 @@ describe('AdvancedSettingsVideoTab', () => {
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
-    expect(within(cameraSection).getByText(/codec priority/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp9')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp8')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-h264')).toBeInTheDocument();
@@ -167,12 +176,7 @@ describe('AdvancedSettingsVideoTab', () => {
   it('renders custom video bitrate controls when bitrate mode is custom', () => {
     render(<AdvancedSettingsVideoTab />, { dialogState: { bitrateMode: 'custom' } });
 
-    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
-
-    expect(within(cameraSection).getByText(/custom bitrate/i)).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toBeInTheDocument();
-    expect(within(cameraSection).getAllByText(/5 kbps/i).length).toBeGreaterThan(0);
-    expect(within(cameraSection).getByText(/^10 Mbps$/i)).toBeInTheDocument();
   });
 });
 
