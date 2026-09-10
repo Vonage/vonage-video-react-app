@@ -285,15 +285,11 @@ describe('setupDeviceStore', () => {
       );
     });
 
-    it('should request permissions when on Firefox and device labels are empty', async () => {
+    it('should NOT request permissions at init even on Firefox when labels are empty (deferred to when required)', async () => {
       vi.spyOn(isFirefoxModule, 'default').mockReturnValue(true);
 
-      const mockStream = {
-        getTracks: vi.fn().mockReturnValue([{ stop: vi.fn() }, { stop: vi.fn() }]),
-      };
-
       const getUserMediaSpy = vi.fn(() =>
-        Promise.resolve(mockStream)
+        Promise.resolve({ getTracks: () => [] })
       ) as unknown as typeof navigator.mediaDevices.getUserMedia;
 
       setupWindowNavigatorMock({
@@ -313,18 +309,9 @@ describe('setupDeviceStore', () => {
 
       setupDeviceStore(api$);
 
-      await waitFor(
-        () => {
-          expect(getUserMediaSpy).toHaveBeenCalledWith({
-            audio: true,
-            video: true,
-          });
-        },
-        { timeout: 200 }
-      );
-
-      // Verify tracks were stopped after getting permissions
-      expect(mockStream.getTracks).toHaveBeenCalled();
+      // Wait for the store to become ready, then assert media was never acquired at init.
+      await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
+      expect(getUserMediaSpy).not.toHaveBeenCalled();
     });
 
     it('should NOT request permissions when on Firefox and device labels are present', async () => {
