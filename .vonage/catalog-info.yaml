@@ -7,11 +7,12 @@ metadata:
   description: Vonage Video API JS React reference application
   annotations:
     vonage.com/jira-id: VPF # video general projects
-    business-criticality: Tier-3
     vonage.com/maintainers: |
       - Hossein Movahed @Hossein-Movahed
       - Johnny Esteban Quesada @johnny-quesada-developer
       - Oscar Fava @OscarFava
+  tags:
+    - tier3
 spec:
   type: library
   owner: group:orgdata/vdk # helm "owner" orgdata squad id or general orgdata/vid
