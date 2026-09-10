@@ -42,7 +42,7 @@ const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
             {messages.map((msg) => {
               return (
                 <ChatMessage
-                  key={msg.timestamp}
+                  key={msg.id}
                   name={msg.participantName}
                   message={msg.message}
                   initials={getInitials(msg.participantName)}
