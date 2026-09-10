@@ -248,6 +248,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
         <SelectField
           id="advanced-settings-video-resolution"
+          data-testid="advanced-settings-video-camera-resolution"
           label={t('advancedSettings.video.resolution.label')}
           value={resolution}
           options={resolutionOptions}
