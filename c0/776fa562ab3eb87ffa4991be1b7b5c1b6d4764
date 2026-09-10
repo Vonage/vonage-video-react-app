@@ -1,0 +1,24 @@
+docs/CONFIGURATION.md
+  h_737cf808c1c597 201,205,212
+frontend/tailwind.config.cjs
+  h_737cf808c1c597 6
+libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson.ts
+  h_737cf808c1c597 154
+libs/ui/tailwind.config.cjs
+  h_737cf808c1c597 6
+package.json
+  h_737cf808c1c597 39
+scripts/generateTokens.ts
+  h_737cf808c1c597 16,26,28,34,44,60-62,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c0776fa562ab3eb87ffa4991be1b7b5c1b6d4764",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
