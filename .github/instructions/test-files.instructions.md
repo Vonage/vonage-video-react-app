@@ -16,6 +16,10 @@ These instructions apply to all test files across the codebase (unit, integratio
   - Does it validate real functionality?
   - Or is it mostly validating test tooling, mocks, or framework internals?
 - Avoid tests that only check a mocked value was returned because it was mocked.
+- A test must set up the state its own description claims to exercise. If the name says a value is restored, migrated or applied, arrange that starting state — a test that passes without it proves nothing and should be deleted rather than kept for coverage.
+- Do not wrap a single test in its own `describe` block.
+- A presentational component with no logic of its own gets one render test, not a suite. Asserting that MUI and React rendered the props you passed tests the framework, not your code, and it lengthens every CI run for nothing.
+- Test file naming follows the project you are in: `frontend` uses `*.spec.ts(x)`; `libs` and `backend` follow the existing convention of the package.
 
 ## What to mock
 
@@ -40,6 +44,26 @@ These instructions apply to all test files across the codebase (unit, integratio
 - Compose only the providers strictly necessary for the scenario. Every extra provider increases test setup cost and coupling.
 - Initialize provider state using provider options to prepare the use case.
 - Use returned public contexts to inspect values and interact with exposed actions.
+
+### Global stores are not contexts
+
+`makeTestProvider` is for **real React context providers only**. Global stores created with `react-global-state-hooks/createGlobalState` — the `$` stores such as `advancedSettings$` — have no provider and must not be routed through it. Prepare them directly:
+
+```tsx
+beforeEach(() => {
+  advancedSettings$.reset();
+});
+
+it('renders the custom audio bitrate slider when custom mode is selected', () => {
+  advancedSettings$.actions.setAudioBitrateMode('custom');
+
+  render(<AdvancedSettingsAudioTab />);
+
+  expect(screen.getByTestId('advanced-settings-custom-audio-bitrate-slider')).toBeInTheDocument();
+});
+```
+
+The presence of a key in the `providers` enum is not proof that the thing behind it is a context — check how it is created before reaching for a wrapper.
 
 When a component requires providers, compose only what is needed:
 
@@ -129,6 +153,12 @@ setupCancelablePromiseHook();
 ```
 
 Duplicating these calls in test files adds noise and can cause double-invocation side effects.
+
+Also avoid, for the same reason:
+
+- `vi.resetModules()` — almost never needed. If a test only works with a freshly imported module, question the test rather than reaching for this.
+- Cleanup in `afterEach` that repeats what `beforeEach` already does. A test must never depend on the previous test having cleaned up after it; prepare the state you need in `beforeEach` instead.
+- Section-banner comments (`// Mock dependencies`, `// Arrange`). If a test needs signposting, split it.
   - Useful for event-driven async tests.
 - `libs/common/testBrowser/renderAsyncComponent.ts`
   - Use for components that resolve async behavior with Suspense boundaries.
