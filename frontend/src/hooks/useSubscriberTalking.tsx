@@ -55,11 +55,11 @@ const useSubscriberTalking = ({ subscriber, isActiveSpeaker }: SubscriberTalking
       if (subscriber) {
         subscriber.off('audioLevelUpdated', audioLevelUpdateHandler);
       }
-      if (isTalking) {
-        setIsTalking(false);
-      }
+      // Reset unconditionally on teardown. Depending on isTalking here would re-run this effect
+      // on every talking toggle, churning the audioLevelUpdated listener (off/on) per subscriber.
+      setIsTalking(false);
     };
-  }, [subscriber, audioLevelUpdateHandler, isActiveSpeaker, isTalking]);
+  }, [subscriber, audioLevelUpdateHandler, isActiveSpeaker]);
 
   return isTalking;
 };
