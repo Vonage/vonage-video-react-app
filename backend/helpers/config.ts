@@ -98,11 +98,12 @@ function loadAuthConfig(): AuthConfig {
     authEnabled: true,
     oidcIssuerUrl: process.env.OIDC_ISSUER_URL,
     oidcClientId: process.env.OIDC_CLIENT_ID,
-    // Pass through undefined for unset optional fields so the schema-level defaults apply
-    // (env.sh / .env / VCR manifest may override them, but they are not required).
+    oidcWebRedirectUri: process.env.OIDC_WEB_REDIRECT_URI,
     authHeaderName: process.env.AUTH_HEADER_NAME,
     authScheme: process.env.AUTH_SCHEME,
     introspectPath: process.env.OIDC_INTROSPECT_PATH,
+    authorizePath: process.env.OIDC_AUTHORIZE_PATH,
+    tokenPath: process.env.OIDC_TOKEN_PATH,
     introspectionTimeoutMs: introspectionTimeoutMs ? Number(introspectionTimeoutMs) : undefined,
   });
 }
