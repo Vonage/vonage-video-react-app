@@ -13,13 +13,13 @@ const config = {
       keyframes: {
         'fade-in': { '0%': { opacity: '20%' }, '100%': { opacity: '1' } },
         'contributors-crawl': {
-          '0%': { transform: 'rotateX(45deg) translateY(0)' },
-          '100%': { transform: 'rotateX(45deg) translateY(-50%)' },
+          '0%': { transform: 'translateY(-60%) rotateX(45deg) scale(0.45)' },
+          '100%': { transform: 'translateY(8%) rotateX(45deg) scale(1.25)' },
         },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-in-out',
-        'contributors-crawl': 'contributors-crawl 30s linear infinite',
+        'contributors-crawl': 'contributors-crawl 24s linear infinite',
       },
       height: {
         'video-container': `${VIDEO_CONTAINER_HEIGHT_WR}px`,

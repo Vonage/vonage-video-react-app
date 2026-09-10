@@ -11,6 +11,10 @@ describe('AdvancedSettingsAboutTab', () => {
       'https://developer.vonage.com/en/video/react-reference-app/overview'
     );
     expect(screen.getByTestId('app-version')).toBeVisible();
+    expect(screen.getByTestId('footer-links')).toHaveClass('justify-center');
+    expect(screen.getByTestId('advanced-settings-about-vonage-link')).toHaveTextContent(
+      'Learn more'
+    );
     expect(
       screen.getByTestId('advanced-settings-about-contributor-Hossein-Movahed')
     ).toHaveAttribute('href', 'https://github.com/Hossein-Movahed');
