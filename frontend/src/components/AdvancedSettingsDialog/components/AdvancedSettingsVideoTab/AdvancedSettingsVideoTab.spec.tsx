@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
+import { AdvancedSettingsScreenSharingTab } from '../AdvancedSettingsScreenSharingTab';
 
 type RenderOptions = {
   dialogState?: Partial<advancedSettings>;
@@ -20,10 +21,18 @@ describe('AdvancedSettingsVideoTab', () => {
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
     expect(cameraSection).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-codec')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-codec')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')
+    ).toBeInTheDocument();
   });
 
   it('groups every existing control under the Camera section', () => {
@@ -31,14 +40,24 @@ describe('AdvancedSettingsVideoTab', () => {
 
     const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-codec')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-codec')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-frame-rate')
+    ).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-camera-resolution')
+    ).toBeInTheDocument();
     expect(
       within(cameraSection).getByTestId('advanced-settings-video-self-view-mirroring')
     ).toBeInTheDocument();
-    expect(within(cameraSection).getByTestId('advanced-settings-video-stats-overlay')).toBeInTheDocument();
+    expect(
+      within(cameraSection).getByTestId('advanced-settings-video-stats-overlay')
+    ).toBeInTheDocument();
   });
 
   it('leads the Camera section with Mirror my preview', () => {
@@ -50,9 +69,9 @@ describe('AdvancedSettingsVideoTab', () => {
     );
     const bitrate = within(cameraSection).getByTestId('advanced-settings-video-camera-bitrate');
 
-    expect(selfViewMirroring.compareDocumentPosition(bitrate) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
-      Node.DOCUMENT_POSITION_FOLLOWING
-    );
+    expect(
+      selfViewMirroring.compareDocumentPosition(bitrate) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it('toggles self-view mirroring and the stats overlay through the store', () => {
@@ -68,11 +87,9 @@ describe('AdvancedSettingsVideoTab', () => {
   });
 
   it('renders the Screen Sharing section with its own Optimize for control', () => {
-    render(<AdvancedSettingsVideoTab />);
+    render(<AdvancedSettingsScreenSharingTab />);
 
-    const screenSharingSection = screen.getByTestId(
-      'advanced-settings-video-screen-sharing-section'
-    );
+    const screenSharingSection = screen.getByTestId('advanced-settings-screen-sharing-tab');
 
     expect(screenSharingSection).toBeInTheDocument();
     const screenShareContentHint = within(screenSharingSection).getByTestId(
@@ -85,11 +102,9 @@ describe('AdvancedSettingsVideoTab', () => {
   });
 
   it('defaults the screen share to following the camera codec, and reveals its own list on manual', () => {
-    render(<AdvancedSettingsVideoTab />);
+    render(<AdvancedSettingsScreenSharingTab />);
 
-    const screenSharingSection = screen.getByTestId(
-      'advanced-settings-video-screen-sharing-section'
-    );
+    const screenSharingSection = screen.getByTestId('advanced-settings-screen-sharing-tab');
     const screenShareCodec = within(screenSharingSection).getByTestId(
       'advanced-settings-video-screen-share-codec'
     );
@@ -104,7 +119,7 @@ describe('AdvancedSettingsVideoTab', () => {
       screen.queryByTestId('advanced-settings-screen-share-codec-priority-list')
     ).not.toBeInTheDocument();
 
-    render(<AdvancedSettingsVideoTab />, {
+    render(<AdvancedSettingsScreenSharingTab />, {
       dialogState: { screenShareCodecMode: 'manual' },
     });
 
@@ -114,11 +129,9 @@ describe('AdvancedSettingsVideoTab', () => {
   });
 
   it('defaults every screen-share constraint to the browser default, so shares stay unconstrained', () => {
-    render(<AdvancedSettingsVideoTab />);
+    render(<AdvancedSettingsScreenSharingTab />);
 
-    const screenSharingSection = screen.getByTestId(
-      'advanced-settings-video-screen-sharing-section'
-    );
+    const screenSharingSection = screen.getByTestId('advanced-settings-screen-sharing-tab');
 
     expect(
       within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-frame-rate')
@@ -135,7 +148,7 @@ describe('AdvancedSettingsVideoTab', () => {
   });
 
   it('shows a separate custom bitrate slider for the screen share', () => {
-    render(<AdvancedSettingsVideoTab />, {
+    render(<AdvancedSettingsScreenSharingTab />, {
       dialogState: { screenShareBitrateMode: 'custom', screenShareCustomVideoBitrate: 750_000 },
     });
 
@@ -165,8 +178,6 @@ describe('AdvancedSettingsVideoTab', () => {
     render(<AdvancedSettingsVideoTab />, {
       dialogState: { codecMode: 'manual', codecPriority: ['vp9', 'vp8', 'h264'] },
     });
-
-    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
 
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp9')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-codec-priority-item-vp8')).toBeInTheDocument();

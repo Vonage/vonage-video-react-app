@@ -9,6 +9,7 @@ import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneral
 import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
 import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
 import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab';
+import { AdvancedSettingsScreenSharingTab } from './components/AdvancedSettingsScreenSharingTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
+    if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
     return <AdvancedSettingsStatisticsTab />;
   })();

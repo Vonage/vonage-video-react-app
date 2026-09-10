@@ -8,19 +8,22 @@ describe('AdvancedSettingsSidebar', () => {
   it('renders all tabs', () => {
     render(<AdvancedSettingsSidebar />);
 
-    expect(screen.getByRole('button', { name: /general/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /audio/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /statistics/i })).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-general')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-video')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-video-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-screenSharing')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-screen-sharing-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-audio')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-statistics')).toBeInTheDocument();
   });
 
   it('updates selected tab when clicking another tab', async () => {
     const user = userEvent.setup();
     render(<AdvancedSettingsSidebar />);
 
-    await user.click(screen.getByRole('button', { name: /statistics/i }));
+    await user.click(screen.getByTestId('advanced-settings-tab-statistics'));
 
-    expect(screen.getByRole('button', { name: /statistics/i })).toHaveClass('bg-vera-surface');
+    expect(screen.getByTestId('advanced-settings-tab-statistics')).toHaveClass('bg-vera-surface');
   });
 });
 

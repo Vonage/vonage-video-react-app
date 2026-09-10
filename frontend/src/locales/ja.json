@@ -15,6 +15,7 @@
   "advancedSettings.ariaLabel": "設定を開く",
   "advancedSettings.tabs.general": "一般",
   "advancedSettings.tabs.video": "ビデオ",
+  "advancedSettings.tabs.screenSharing": "画面共有",
   "advancedSettings.tabs.audio": "オーディオ",
   "advancedSettings.tabs.statistics": "統計",
   "advancedSettings.general.resetButton": "デフォルト値にリセット",

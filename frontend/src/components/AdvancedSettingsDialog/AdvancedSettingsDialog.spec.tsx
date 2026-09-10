@@ -37,6 +37,15 @@ describe('AdvancedSettingsDialog', () => {
     expect(within(cameraSection).getByLabelText(/^codec$/i)).toBeInTheDocument();
   });
 
+  it('switches to the screen sharing tab', async () => {
+    const user = userEvent.setup();
+    render(<AdvancedSettingsDialog />);
+
+    await user.click(screen.getByTestId('advanced-settings-tab-screenSharing'));
+
+    expect(screen.getByTestId('advanced-settings-screen-sharing-tab')).toBeInTheDocument();
+  });
+
   it('switches to the audio tab', async () => {
     const user = userEvent.setup();
     render(<AdvancedSettingsDialog />);

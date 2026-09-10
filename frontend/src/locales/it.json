@@ -15,6 +15,7 @@
   "advancedSettings.ariaLabel": "apri impostazioni",
   "advancedSettings.tabs.general": "Generale",
   "advancedSettings.tabs.video": "Video",
+  "advancedSettings.tabs.screenSharing": "Condivisione schermo",
   "advancedSettings.tabs.audio": "Audio",
   "advancedSettings.tabs.statistics": "Statistiche",
   "advancedSettings.general.resetButton": "Ripristina valori predefiniti",

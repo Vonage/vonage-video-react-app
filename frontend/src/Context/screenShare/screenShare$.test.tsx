@@ -7,6 +7,7 @@ import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
 import screenShare$ from './screenShare$';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { Resolution } from '@common/types';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -108,12 +109,12 @@ describe('screenShare$', () => {
   it('applies stored video constraints when screen sharing starts', async () => {
     mockPublisher = {
       ...mockPublisher,
-      getVideoSource: vi.fn(() => ({ track: {} })),
+      getVideoSource: vi.fn(() => ({ deviceId: null, type: null, track: {} as MediaStreamTrack })),
       setVideoBitratePreset: vi.fn(),
     };
     vi.mocked(initPublisher).mockReturnValue(mockPublisher as Publisher);
     advancedSettings$.actions.setScreenShareFrameRate(7);
-    advancedSettings$.actions.setScreenShareResolution('1280x720');
+    advancedSettings$.actions.setScreenShareResolution(Resolution.HD_LANDSCAPE);
     advancedSettings$.actions.setScreenShareBitrateMode('bw_saver');
 
     const { result } = render({
