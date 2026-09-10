@@ -144,11 +144,6 @@ const AdvancedSettingsCodecPriorityField = ({
                 }}
                 className={classNames(
                   'flex grow items-center gap-3 rounded-vera-medium border bg-vera-surface px-4 py-3',
-                  /**
-                   * The card the pointer carries is a snapshot taken at dragstart, so it stays
-                   * solid. What is left behind is the placeholder for where the codec came from -
-                   * an outlined, faded slot rather than a second solid card.
-                   */
                   isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
                   isDropTarget ? 'border-vera-primary' : null
                 )}
