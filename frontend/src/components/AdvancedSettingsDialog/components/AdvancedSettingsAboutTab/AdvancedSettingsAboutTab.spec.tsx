@@ -21,5 +21,16 @@ describe('AdvancedSettingsAboutTab', () => {
       'href',
       'https://github.com/OscarFava'
     );
+    expect(
+      screen.getByTestId('advanced-settings-about-contributor-masayukimiyazawa')
+    ).toHaveAttribute('href', 'https://github.com/masayukimiyazawa');
+    expect(screen.getByTestId('advanced-settings-about-contributor-czoli1976')).toHaveAttribute(
+      'href',
+      'https://github.com/czoli1976'
+    );
+    expect(
+      screen.getByTestId('advanced-settings-about-contributor-mend-for-github-com[bot]')
+    ).toHaveAttribute('href', 'https://github.com/mend-for-github-com[bot]');
+    expect(screen.getAllByTestId(/^advanced-settings-about-contributor-/)).toHaveLength(20);
   });
 });
