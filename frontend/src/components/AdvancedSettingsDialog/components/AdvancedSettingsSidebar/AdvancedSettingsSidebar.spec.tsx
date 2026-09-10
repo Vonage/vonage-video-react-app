@@ -9,6 +9,7 @@ describe('AdvancedSettingsSidebar', () => {
     render(<AdvancedSettingsSidebar />);
 
     expect(screen.getByTestId('advanced-settings-tab-general')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-general-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-video')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-video-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-screenSharing')).toBeInTheDocument();
@@ -17,6 +18,8 @@ describe('AdvancedSettingsSidebar', () => {
     expect(screen.getByTestId('advanced-settings-tab-audio-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-statistics')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-statistics-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-about')).toBeInTheDocument();
+    expect(screen.getByTestId('advanced-settings-tab-about-icon')).toBeInTheDocument();
   });
 
   it('updates selected tab when clicking another tab', async () => {

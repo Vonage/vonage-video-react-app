@@ -5,7 +5,14 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import { VividIcon } from '@ui';
 import type { AdvancedSettingsTab } from '../../types/types';
 
-const tabs: AdvancedSettingsTab[] = ['general', 'video', 'screenSharing', 'audio', 'statistics'];
+const tabs: AdvancedSettingsTab[] = [
+  'general',
+  'video',
+  'screenSharing',
+  'audio',
+  'statistics',
+  'about',
+];
 const { setSelectedTab } = advancedSettings$.actions;
 
 const AdvancedSettingsSidebar = (): ReactElement => {
@@ -39,6 +46,13 @@ const AdvancedSettingsSidebar = (): ReactElement => {
                 customSize={-5}
               />
             )}
+            {tab === 'general' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-general-icon"
+                name="gear-line"
+                customSize={-5}
+              />
+            )}
             {tab === 'screenSharing' && (
               <VividIcon
                 data-testid="advanced-settings-tab-screen-sharing-icon"
@@ -57,6 +71,13 @@ const AdvancedSettingsSidebar = (): ReactElement => {
               <VividIcon
                 data-testid="advanced-settings-tab-statistics-icon"
                 name="cell-reception-line"
+                customSize={-5}
+              />
+            )}
+            {tab === 'about' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-about-icon"
+                name="info-line"
                 customSize={-5}
               />
             )}

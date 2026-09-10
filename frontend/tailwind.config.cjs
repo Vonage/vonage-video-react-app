@@ -12,9 +12,14 @@ const config = {
       // Project-specific overrides and additions
       keyframes: {
         'fade-in': { '0%': { opacity: '20%' }, '100%': { opacity: '1' } },
+        'contributors-scroll': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-in-out',
+        'contributors-scroll': 'contributors-scroll 30s linear infinite',
       },
       height: {
         'video-container': `${VIDEO_CONTAINER_HEIGHT_WR}px`,

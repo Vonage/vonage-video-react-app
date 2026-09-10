@@ -61,7 +61,7 @@ export type advancedSettings = typeof INITIAL_STATE;
 
 const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   isOpen: z.boolean(),
-  selectedTab: z.enum(['general', 'video', 'screenSharing', 'audio', 'statistics']),
+  selectedTab: z.enum(['general', 'video', 'screenSharing', 'audio', 'statistics', 'about']),
   bitrateMode: z.enum(['default', 'bw_saver', 'extra_bw_saver', 'custom']),
   customVideoBitrate: z
     .number()
