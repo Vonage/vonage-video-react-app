@@ -81,7 +81,7 @@ Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication 
 | `AUTH_ENABLED` | opt-in | Set to `true` to enable token validation. |
 | `OIDC_CLIENT_ID` | if enabled — DEV defaults in `env.sh` | OIDC application client ID — one shared app registration used both for Bearer-token introspection (Mobile) and the `/auth/signin` → `/api/auth/callback/okta` login flow (Web). |
 | `OIDC_ISSUER_URL` | if enabled — DEV defaults in `env.sh` | Provider org root URL. Must be a valid URL. Introspection uses `${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}`. |
-| `OIDC_WEB_REDIRECT_URI` | if enabled — DEV defaults in `env.sh` | Must exactly match the redirect URI registered with the provider for the Web app (`http://localhost:5173/api/auth/callback/okta` for DEV, already defaulted; `https://meet.vonagenetworks.net/api/auth/callback/okta` for PROD, set via `backend/.env`). |
+| `OIDC_WEB_REDIRECT_URI` | if enabled — DEV defaults in `env.sh` | Must exactly match the redirect URI registered with the provider for the Web app (`http://localhost:5173/api/auth/callback/okta` for DEV, already defaulted; your deployment's own origin + `/api/auth/callback/okta` for PROD, set via `backend/.env`). |
 | `AUTH_HEADER_NAME` | set in `env.sh` (default `authorization`) | Which request header carries the token. |
 | `AUTH_SCHEME` | set in `env.sh` (default `Bearer`) | Scheme prefix on that header, matched case-insensitively. |
 | `OIDC_INTROSPECT_PATH` | set in `env.sh` (default `/oauth2/v1/introspect`) | Path appended to `OIDC_ISSUER_URL` for introspection calls. |
