@@ -90,7 +90,7 @@ const AudioIndicator = ({
           {hasAudio ? (
             <VividIcon
               customSize={-5}
-              name="microphone-2-solid"
+              name="microphone-solid"
               data-testid="MicIcon"
               style={styles}
             />

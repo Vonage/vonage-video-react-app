@@ -2,7 +2,7 @@
 
 export ENABLE_REPORT_ISSUE=true
 export I18N_FALLBACK_LANGUAGE='en'
-export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de'
+export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de|ja'
 export ALLOW_BACKGROUND_EFFECTS=true
 export ALLOW_CAMERA_CONTROL=true
 export ALLOW_VIDEO_ON_JOIN=true
@@ -28,3 +28,9 @@ export SHOW_PARTICIPANT_LIST=true
 export MEETING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export WAITING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export SHOW_VIDEO_STATS=false
+
+# Auth OIDC configuration
+export AUTH_HEADER_NAME='authorization'
+export AUTH_SCHEME='Bearer'
+export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'
+export AUTH_INTROSPECTION_TIMEOUT_MS=5000
