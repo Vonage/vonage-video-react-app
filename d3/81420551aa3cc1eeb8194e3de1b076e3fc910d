@@ -1,0 +1,20 @@
+libs/api/tsconfig.spec.json
+  h_6029769cf9ac60 18
+libs/common/tsconfig.lib.json
+  h_6029769cf9ac60 21
+libs/core/tsconfig.lib.json
+  h_6029769cf9ac60 27
+libs/core/tsconfig.spec.json
+  h_6029769cf9ac60 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d381420551aa3cc1eeb8194e3de1b076e3fc910d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
