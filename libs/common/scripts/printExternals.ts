@@ -9,11 +9,11 @@ const ROOT = path.resolve(__dirname, '..');
 
 const sourceGroups = [
   { sourceRoot: 'src', alias: '@common' },
-  { sourceRoot: 'srcBrowser', alias: '@web' },
-  { sourceRoot: 'srcNode', alias: '@node' },
+  { sourceRoot: 'web', alias: '@web' },
+  { sourceRoot: 'node', alias: '@node' },
   { sourceRoot: 'test', alias: '@common-test' },
-  { sourceRoot: 'testBrowser', alias: '@web-test' },
-  { sourceRoot: 'testNode', alias: '@node-test' },
+  { sourceRoot: 'web-test', alias: '@web-test' },
+  { sourceRoot: 'node-test', alias: '@node-test' },
 ];
 
 const packages = scanExternalPackages({

@@ -2,16 +2,21 @@
  * Builds and publishes video-common as a personal dev package to GitHub Packages.
  *
  * Usage:
- *   GH_TOKEN=<token> npx tsx scripts/publishPackage.dev.ts   (recommended)
- *   npx tsx scripts/publishPackage.dev.ts <token>            (discouraged, visible in shell history/process list)
+ *   GH_TOKEN=<token> npx tsx scripts/publishPackage.dev.ts                    (recommended)
+ *   GH_TOKEN=<token> npx tsx scripts/publishPackage.dev.ts --owner=vonage     (publish under an org)
+ *   GH_OWNER=vonage GH_TOKEN=<token> npx tsx scripts/publishPackage.dev.ts    (publish under an org)
+ *   npx tsx scripts/publishPackage.dev.ts <token>                             (discouraged, visible in shell history/process list)
  *
  * Flow:
  * - Reads the GitHub token from the GH_TOKEN env var, or a CLI argument as fallback
- * - Resolves the current GitHub user from the token and target package scope: @<user>/video-common
+ * - Reads an optional owner from the --owner=<org> CLI flag or the GH_OWNER env var
+ * - Resolves the target scope: @<owner>/video-common when an owner is provided,
+ *   otherwise @<current-github-user>/video-common resolved from the token
  * - Computes the next available <base>-dev.N version from registry
  * - Publishes that version once with the "dev" dist-tag
  * - Persists the published version to manifest.json and package.json
  */
+
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as child_process from 'node:child_process';
@@ -68,6 +73,26 @@ function execWithStatus(args: { command: string; cwd: string; env?: NodeJS.Proce
   };
 }
 
+function resolveOwner(): string | null {
+  const ownerFromFlag = (() => {
+    const ownerArgument = process.argv.find((argument) => argument.startsWith('--owner='));
+
+    if (!ownerArgument) {
+      return null;
+    }
+
+    return ownerArgument.slice('--owner='.length).trim();
+  })();
+
+  const owner = ownerFromFlag || process.env.GH_OWNER?.trim() || null;
+
+  if (owner === '') {
+    return null;
+  }
+
+  return owner;
+}
+
 function resolveToken(): string {
   const tokenFromEnv = process.env.GH_TOKEN;
 
@@ -75,7 +100,7 @@ function resolveToken(): string {
     return tokenFromEnv;
   }
 
-  const tokenFromArgs = process.argv[2];
+  const tokenFromArgs = process.argv.slice(2).find((argument) => !argument.startsWith('--'));
 
   if (!tokenFromArgs) {
     console.error('Missing GitHub token.');
@@ -123,11 +148,11 @@ async function requestGitHubApi(args: { endpoint: string; token: string }): Prom
 }
 
 async function getPublishedVersions(args: {
-  owner: string;
+  orgOwner: string | null;
   packageName: string;
   token: string;
 }): Promise<string[]> {
-  const { packageName, token } = args;
+  const { orgOwner, packageName, token } = args;
   // GitHub API expects the unscoped package name (e.g. "video-common", not "@user/video-common")
   const unscopedName = packageName.includes('/') ? packageName.split('/')[1] : packageName;
   const encodedPackageName = encodeURIComponent(unscopedName);
@@ -135,10 +160,21 @@ async function getPublishedVersions(args: {
   let page = 1;
 
   while (true) {
-    // Use the authenticated-user endpoint (not /users/{owner}/...), since the
-    // latter only lists publicly-visible packages and silently 404s for a
-    // package that defaults to private visibility on GitHub Packages.
-    const endpoint = `/user/packages/npm/${encodedPackageName}/versions?per_page=${GITHUB_PACKAGES_PAGE_SIZE}&page=${page}`;
+    const endpoint = (() => {
+      // When publishing under an org, list versions from the org endpoint.
+      if (orgOwner) {
+        return (
+          `/orgs/${orgOwner}/packages/npm/${encodedPackageName}/versions` +
+          `?per_page=${GITHUB_PACKAGES_PAGE_SIZE}&page=${page}`
+        );
+      }
+
+      // Otherwise use the authenticated-user endpoint (not /users/{owner}/...),
+      // since the latter only lists publicly-visible packages and silently 404s
+      // for a package that defaults to private visibility on GitHub Packages.
+      return `/user/packages/npm/${encodedPackageName}/versions?per_page=${GITHUB_PACKAGES_PAGE_SIZE}&page=${page}`;
+    })();
+
     const response = await requestGitHubApi({ endpoint, token });
 
     if (response.status === 404) {
@@ -178,14 +214,14 @@ function resolveBaseVersion(version: string): string {
 }
 
 async function resolveNextDevVersion(args: {
-  owner: string;
+  orgOwner: string | null;
   packageName: string;
   currentVersion: string;
   token: string;
 }): Promise<string> {
-  const { owner, packageName, currentVersion, token } = args;
+  const { orgOwner, packageName, currentVersion, token } = args;
   const baseVersion = resolveBaseVersion(currentVersion);
-  const publishedVersions = await getPublishedVersions({ owner, packageName, token });
+  const publishedVersions = await getPublishedVersions({ orgOwner, packageName, token });
 
   const devVersionRegex = new RegExp(`^${escapeRegExp(baseVersion)}-dev\\.(\\d+)$`);
 
@@ -220,10 +256,14 @@ function persistResolvedDevVersion(args: {
 async function main(): Promise<void> {
   const isDryRun = process.env.PUBLISH_DRY_RUN === '1';
 
-  // Step 1: Resolve token and current GitHub username
+  // Step 1: Resolve token, optional owner, and target package scope.
   const token = resolveToken();
-  const githubUsername = await resolveGitHubUsernameFromToken(token);
-  const devName = `@${githubUsername}/video-common`;
+  const orgOwner = resolveOwner();
+
+  // Use the provided owner (org) when supplied, otherwise fall back to the
+  // GitHub user resolved from the token for a personal dev publish.
+  const scopeOwner = orgOwner ?? (await resolveGitHubUsernameFromToken(token));
+  const devName = `@${scopeOwner}/video-common`;
 
   console.log(`Publishing as ${devName}...`);
 
@@ -260,7 +300,7 @@ async function main(): Promise<void> {
   const distPackageJson = JSON.parse(fs.readFileSync(DIST_PACKAGE_JSON_PATH, 'utf-8'));
 
   const devVersion = await resolveNextDevVersion({
-    owner: githubUsername,
+    orgOwner,
     packageName: devName,
     currentVersion: manifest.version,
     token,

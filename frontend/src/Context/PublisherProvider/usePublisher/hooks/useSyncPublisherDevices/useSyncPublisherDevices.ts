@@ -27,7 +27,7 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
               if (didChanged) void attempt(() => publisherRef.current?.setVideoSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }
@@ -48,7 +48,7 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
               if (didChanged) void attempt(() => publisherRef.current?.setAudioSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }

@@ -41,13 +41,14 @@ const createStoreApiAssertion = <T extends StoreTools<Any, Any, Any>>(storeName:
     assertRecord(value, `value should be an object for ${storeName} assertion`);
 
     const api = value as T;
+    const metadata = api.metadata ?? (api as { getMetadata: () => T['metadata'] })?.getMetadata();
 
-    if (isNil(api.getMetadata) || !api.getMetadata()[__brand]) {
+    if (isNil(metadata) || !metadata[__brand]) {
       throw new TypeError(`value metadata does not have the correct ${storeName} brand`);
     }
   }
 
-  const mark = (metadata: ReturnType<T['getMetadata']>) => {
+  const mark = (metadata: T['metadata']) => {
     Object.assign(metadata, { [__brand]: true });
   };
 

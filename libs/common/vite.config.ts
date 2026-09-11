@@ -9,52 +9,33 @@ import scanExternalPackages from './scripts/helpers/scanExternalPackages';
 /**
  * Generates the public package outputs from the source folders.
  *
- * Examples:
- * - src/index.ts -> dist/index.js
- * - src/assertions/index.ts -> dist/assertions.js
- * - src/assertions/assertNotNil/index.ts -> dist/assertions/assertNotNil.js
- * - src/helpers/kebabToCamel.ts -> dist/helpers/kebabToCamel.js
+ * Every source folder is published verbatim under the same path, so the source
+ * tree, the emitted JS, and the emitted declarations all line up one-to-one:
+ * - src/index.ts                     -> dist/src/index.{js,d.ts}
+ * - src/assertions/index.ts          -> dist/src/assertions/index.{js,d.ts}
+ * - web/hooks/use/index.ts           -> dist/web/hooks/use/index.{js,d.ts}
+ * - node/index.ts                    -> dist/node/index.{js,d.ts}
+ *
+ * The bare package entry (".") is aliased to the `src` barrel via the exports
+ * map, so consumers can import the shared surface without typing "/src", while
+ * environment-specific consumers alias directly to a folder (e.g. "/web").
  *
  * Files deeper than that are bundled as internal code, not exported directly.
  */
 const sourceGroups = [
-  {
-    sourceRoot: 'src',
-    rootEntryName: 'index',
-    publicPrefix: '',
-    alias: '@common',
-  },
-  {
-    sourceRoot: 'srcBrowser',
-    rootEntryName: 'web/index',
-    publicPrefix: 'web',
-    alias: '@web',
-  },
-  {
-    sourceRoot: 'srcNode',
-    rootEntryName: 'node/index',
-    publicPrefix: 'node',
-    alias: '@node',
-  },
-  {
-    sourceRoot: 'test',
-    rootEntryName: 'test/index',
-    publicPrefix: 'test',
-    alias: '@common-test',
-  },
-  {
-    sourceRoot: 'testBrowser',
-    rootEntryName: 'web/test/index',
-    publicPrefix: 'web/test',
-    alias: '@web-test',
-  },
-  {
-    sourceRoot: 'testNode',
-    rootEntryName: 'node/test/index',
-    publicPrefix: 'node/test',
-    alias: '@node-test',
-  },
-] as const satisfies readonly SourceGroup[];
+  { sourceRoot: 'src', alias: '@common' },
+  { sourceRoot: 'web', alias: '@web' },
+  { sourceRoot: 'node', alias: '@node' },
+  { sourceRoot: 'test', alias: '@common-test' },
+  { sourceRoot: 'web-test', alias: '@web-test' },
+  { sourceRoot: 'node-test', alias: '@node-test' },
+].map((group) => ({
+  ...group,
+  // The public prefix mirrors the source folder verbatim (including "src"), so
+  // no source-to-output remapping is needed and declarations co-locate with JS.
+  publicPrefix: group.sourceRoot,
+  rootEntryName: `${group.sourceRoot}/index`,
+})) satisfies readonly SourceGroup[];
 
 // ─── Non-optional packages ─────────────────────────────────────
 // These go into both "dependencies" AND "peerDependencies" (optional: false).
@@ -138,15 +119,21 @@ const buildConfig = defineConfig({
         }
 
         // ─── Assemble dist/package.json ──────────────────────────────────
+        // Derive the legacy top-level fields (types/main/module) from the
+        // generated "." export so they always point at the real root barrel
+        // (dist/src/index.*). Tools that ignore the "exports" map and fall back
+        // to these fields must still resolve to files that exist, otherwise
+        // consumers are forced to work around it (e.g. Vitest `deps.inline`).
+        const rootExport = generatedExports['.'];
         const distPackageJson = {
           name: sourcePackageJson.name,
           version: sourcePackageJson.version,
           type: sourcePackageJson.type,
           license: sourcePackageJson.license,
           sideEffects: sourcePackageJson.sideEffects,
-          types: generatedExports['.']?.types ?? sourcePackageJson.types,
-          main: sourcePackageJson.main,
-          module: sourcePackageJson.module,
+          types: rootExport?.types ?? sourcePackageJson.types,
+          main: rootExport?.require ?? sourcePackageJson.main,
+          module: rootExport?.import ?? sourcePackageJson.module,
           exports: generatedExports,
           dependencies,
           peerDependencies,
@@ -182,14 +169,18 @@ const buildConfig = defineConfig({
     lib: {
       entry: libraryEntries,
       formats: ['es', 'cjs'],
-      fileName: (format, entryName) =>
-        `${entryName.replaceAll('$', '_')}.${format === 'es' ? 'js' : 'cjs'}`,
+      fileName: (format, entryName) => `${entryName}.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
       external: isExternal,
-      output: {
-        chunkFileNames: '_chunks/[name]-[hash].js',
-      },
+      // Shared chunks must carry the same extension as their format. The package
+      // is "type": "module", so a ".js" chunk is parsed as ESM — emitting CJS
+      // chunks as ".js" makes their internal require() calls fail under Node's
+      // CJS/ESM resolution. Give ES chunks ".js" and CJS chunks ".cjs".
+      output: [
+        { format: 'es', chunkFileNames: '_chunks/[name]-[hash].js' },
+        { format: 'cjs', chunkFileNames: '_chunks/[name]-[hash].cjs' },
+      ],
     },
   },
   test: {
@@ -198,14 +189,14 @@ const buildConfig = defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './test/setup.ts',
-    include: ['{src,srcBrowser,srcNode,test,testBrowser,testNode}/**/*.{test,spec}.{ts,tsx}'],
+    include: ['{src,web,node,test,web-test,node-test}/**/*.{test,spec}.{ts,tsx}'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: './coverage',
       provider: 'v8' as const,
       reporter: ['text', 'lcov'],
-      include: ['src/**/*.{ts,tsx}', 'srcBrowser/**/*.{ts,tsx}', 'srcNode/**/*.{ts,tsx}'],
-      exclude: ['test/**', 'testBrowser/**', 'testNode/**', '**/index.ts'],
+      include: ['src/**/*.{ts,tsx}', 'web/**/*.{ts,tsx}', 'node/**/*.{ts,tsx}'],
+      exclude: ['test/**', 'web-test/**', 'node-test/**', '**/index.ts'],
     },
   },
 });
@@ -365,33 +356,36 @@ type JoinEntryNameParams = {
   entryPath: string;
 };
 
-function generateExportsFromEntries(
-  entries: Record<string, string>
-): Record<string, { types: string; import: string; require: string }> {
-  const exports: Record<string, { types: string; import: string; require: string }> = {};
+type ExportEntry = { types: string; import: string; require: string };
 
-  for (const [entryName, sourceFile] of Object.entries(entries).sort(([a], [b]) =>
-    a.localeCompare(b)
-  )) {
-    const normalizedEntryName = entryName.replaceAll(path.sep, '/');
-    const declarationPath = path
-      .relative(__dirname, sourceFile)
-      .replace(/\.(ts|tsx)$/, '.d.ts')
-      .replaceAll(path.sep, '/');
+function generateExportsFromEntries(entries: Record<string, string>): Record<string, ExportEntry> {
+  const exports: Record<string, ExportEntry> = {};
+
+  for (const entryName of Object.keys(entries).sort((a, b) => a.localeCompare(b))) {
+    // The source folder is published verbatim, so every artifact (JS, CJS and
+    // declaration) sits at the entry's path on disk. Deriving all three from the
+    // same entry name keeps them in lockstep and co-located.
+    const publicName = entryName.replaceAll(path.sep, '/');
 
     const exportKey = (() => {
-      if (normalizedEntryName === 'index') return '.';
-      if (normalizedEntryName.endsWith('/index')) {
-        return `./${normalizedEntryName.replace(/\/index$/, '')}`;
+      if (publicName.endsWith('/index')) {
+        return `./${publicName.replace(/\/index$/, '')}`;
       }
-      return `./${normalizedEntryName}`;
+      return `./${publicName}`;
     })();
 
     exports[exportKey] = {
-      types: `./${declarationPath}`,
-      import: `./${normalizedEntryName}.js`,
-      require: `./${normalizedEntryName}.cjs`,
+      types: `./${publicName}.d.ts`,
+      import: `./${publicName}.js`,
+      require: `./${publicName}.cjs`,
     };
+  }
+
+  // Alias the bare package entry (".") to the shared "src" barrel so consumers
+  // can import the common surface without spelling out "/src".
+  const srcBarrel = exports['./src'];
+  if (srcBarrel) {
+    exports['.'] = srcBarrel;
   }
 
   return exports;

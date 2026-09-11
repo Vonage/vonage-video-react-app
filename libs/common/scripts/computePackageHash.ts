@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 const COMMON_ROOT = path.resolve(__dirname, '..');
 
-const SOURCE_DIRECTORIES = ['src', 'srcBrowser', 'srcNode', 'test', 'testBrowser', 'testNode'];
+const SOURCE_DIRECTORIES = ['src', 'web', 'node', 'test', 'web-test', 'node-test'];
 
 function walkTsFiles(dirPath: string): string[] {
   if (!fs.existsSync(dirPath)) return [];
