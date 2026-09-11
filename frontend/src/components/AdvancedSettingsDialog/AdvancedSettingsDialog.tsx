@@ -5,10 +5,12 @@ import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/components/VividIcon';
 import { AdvancedSettingsAudioTab } from './components/AdvancedSettingsAudioTab';
+import { AdvancedSettingsAboutTab } from './components/AdvancedSettingsAboutTab';
 import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneralTab';
 import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
 import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
 import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab';
+import { AdvancedSettingsScreenSharingTab } from './components/AdvancedSettingsScreenSharingTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
@@ -18,8 +20,10 @@ const AdvancedSettingsDialog = (): ReactElement => {
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
+    if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
-    return <AdvancedSettingsStatisticsTab />;
+    if (selectedTab === 'statistics') return <AdvancedSettingsStatisticsTab />;
+    return <AdvancedSettingsAboutTab />;
   })();
 
   return (

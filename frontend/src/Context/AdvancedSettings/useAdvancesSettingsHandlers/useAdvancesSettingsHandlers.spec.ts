@@ -6,6 +6,7 @@ import type { PublisherContextType } from '@Context/PublisherProvider';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import { makeTestProvider, providers } from '@test/providers';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { handleClientApplicationError } from '@ui/helpers';
 import useAdvancesSettingsHandlers from './useAdvancesSettingsHandlers';
@@ -13,6 +14,7 @@ import { Resolution } from '@common/types';
 
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@hooks/usePreviewPublisherContext');
+
 vi.mock('@ui/helpers', () => ({
   handleClientApplicationError: vi.fn(),
 }));
@@ -261,6 +263,126 @@ describe('useAdvancesSettingsHandlers', () => {
       });
 
       expect(advancedSettings$.getState().customVideoBitrate).toBe(initialCustomVideoBitrate);
+    });
+  });
+
+  describe('screen-share handlers', () => {
+    const renderWithScreenShare = (publisher: Publisher | null) => {
+      advancedSettings$.actions.setScreenShareBitrateMode('custom');
+      advancedSettings$.actions.setScreenShareCustomVideoBitrate(500_000);
+
+      const { wrapper, screenShareContext } = makeTestProvider([
+        providers.runtime,
+        providers.user,
+        providers.session,
+        providers.screenShare,
+      ]);
+      const rendered = renderHook(() => useAdvancesSettingsHandlers(), { wrapper });
+
+      act(() => {
+        screenShareContext.current?.setState((state) => ({ ...state, publisher }));
+      });
+
+      return rendered;
+    };
+
+    it('applies frame rate to the share publisher, not the camera', async () => {
+      const sharePublisher = createMockPublisher();
+      const cameraPublisher = createMockPublisher();
+      mockUsePublisherContext.mockReturnValue({
+        publisher: cameraPublisher,
+      } as PublisherContextType);
+
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareFrameRateChange(7);
+      });
+
+      await waitFor(() => {
+        expect(sharePublisher.setPreferredFrameRate).toHaveBeenCalledWith(7);
+        expect(advancedSettings$.getState().screenShareFrameRate).toBe(7);
+      });
+
+      expect(cameraPublisher.setPreferredFrameRate).not.toHaveBeenCalled();
+    });
+
+    it('stores Browser default without touching the publisher', async () => {
+      const sharePublisher = createMockPublisher();
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareFrameRateChange(null);
+      });
+
+      await waitFor(() => {
+        expect(advancedSettings$.getState().screenShareFrameRate).toBeNull();
+      });
+
+      expect(sharePublisher.setPreferredFrameRate).not.toHaveBeenCalled();
+    });
+
+    it('applies resolution to the share publisher then updates the store', async () => {
+      const sharePublisher = createMockPublisher();
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareResolutionChange(Resolution.HD_LANDSCAPE);
+      });
+
+      await waitFor(() => {
+        expect(sharePublisher.setPreferredResolution).toHaveBeenCalledWith({
+          width: 1280,
+          height: 720,
+        });
+        expect(advancedSettings$.getState().screenShareResolution).toBe('1280x720');
+      });
+    });
+
+    it('applies the bitrate mode to the share publisher then updates the store', async () => {
+      const sharePublisher = createMockPublisher();
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareBitrateModeChange('bw_saver');
+      });
+
+      await waitFor(() => {
+        expect(advancedSettings$.getState().screenShareBitrateMode).toBe('bw_saver');
+      });
+
+      expect(sharePublisher.setVideoBitratePreset).toHaveBeenCalled();
+    });
+
+    it('applies a custom bitrate only while the share is in custom mode', async () => {
+      const sharePublisher = createMockPublisher();
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareCustomVideoBitrateChange(750_000);
+      });
+
+      await waitFor(() => {
+        expect(sharePublisher.setMaxVideoBitrate).toHaveBeenCalledWith(750_000);
+        expect(advancedSettings$.getState().screenShareCustomVideoBitrate).toBe(750_000);
+      });
+    });
+
+    it('leaves the store alone when the share publisher rejects the change', async () => {
+      const sharePublisher = createMockPublisher();
+      (sharePublisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('unsupported'));
+
+      const { result } = renderWithScreenShare(sharePublisher);
+
+      await act(async () => {
+        await result.current.handleScreenShareFrameRateChange(15);
+      });
+
+      await waitFor(() => {
+        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
+      });
+
+      expect(advancedSettings$.getState().screenShareFrameRate).toBeNull();
     });
   });
 });

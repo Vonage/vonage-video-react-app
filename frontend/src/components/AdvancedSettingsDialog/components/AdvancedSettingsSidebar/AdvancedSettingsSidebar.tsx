@@ -2,9 +2,17 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { VividIcon } from '@ui';
 import type { AdvancedSettingsTab } from '../../types/types';
 
-const tabs: AdvancedSettingsTab[] = ['general', 'video', 'audio', 'statistics'];
+const tabs: AdvancedSettingsTab[] = [
+  'general',
+  'video',
+  'screenSharing',
+  'audio',
+  'statistics',
+  'about',
+];
 const { setSelectedTab } = advancedSettings$.actions;
 
 const AdvancedSettingsSidebar = (): ReactElement => {
@@ -20,9 +28,10 @@ const AdvancedSettingsSidebar = (): ReactElement => {
           <button
             key={tab}
             type="button"
+            data-testid={`advanced-settings-tab-${tab}`}
             onClick={() => setSelectedTab(tab)}
             className={classNames(
-              'shrink-0 rounded-xl px-4 py-3 text-center font-vera-plain text-vera-body-base-semibold transition-colors md:text-left',
+              'flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-3 text-center font-vera-plain text-vera-body-base-semibold transition-colors md:justify-start md:text-left',
               {
                 'bg-vera-surface text-vera-secondary': isSelected,
                 'bg-transparent text-vera-tertiary hover:bg-vera-surface hover:text-vera-secondary':
@@ -30,6 +39,48 @@ const AdvancedSettingsSidebar = (): ReactElement => {
               }
             )}
           >
+            {tab === 'video' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-video-icon"
+                name="video-solid"
+                customSize={-5}
+              />
+            )}
+            {tab === 'general' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-general-icon"
+                name="gear-line"
+                customSize={-5}
+              />
+            )}
+            {tab === 'screenSharing' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-screen-sharing-icon"
+                name="screen-share-solid"
+                customSize={-5}
+              />
+            )}
+            {tab === 'audio' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-audio-icon"
+                name="microphone-solid"
+                customSize={-5}
+              />
+            )}
+            {tab === 'statistics' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-statistics-icon"
+                name="cell-reception-line"
+                customSize={-5}
+              />
+            )}
+            {tab === 'about' && (
+              <VividIcon
+                data-testid="advanced-settings-tab-about-icon"
+                name="info-line"
+                customSize={-5}
+              />
+            )}
             {t(`advancedSettings.tabs.${tab}`)}
           </button>
         );

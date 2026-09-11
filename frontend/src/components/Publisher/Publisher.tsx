@@ -8,6 +8,7 @@ import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
+import useSelfViewMirroring from '../../hooks/useSelfViewMirroring';
 import toRemValue from '@common/helpers/toRemValue';
 
 export type PublisherProps = {
@@ -43,11 +44,12 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       element.style.position = 'absolute';
       element.style.objectFit = 'contain';
       element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
-      element.style.transform = 'scaleX(-1)'; // -scale-x-100 (mirror the publisher)
 
       pubContainerRef.current.appendChild(element);
     }
   }, [element]);
+
+  useSelfViewMirroring(element);
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';

@@ -5,6 +5,7 @@ import { makeApplicationErrorMapper } from '@core/errors';
 import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/types/types';
 import type {
   AdvancedSettingsBitrateMode,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
 } from '@components/AdvancedSettingsDialog/types/types';
@@ -40,6 +41,17 @@ export const applyResolution = async (
   );
 };
 
+export const applyContentHint = async (
+  publisher: Publisher | null,
+  contentHint: AdvancedSettingsContentHint
+): Promise<void> => {
+  if (!publisher) return;
+  const hasVideoTrack = publisher?.getVideoSource()?.track;
+  if (!hasVideoTrack) return;
+
+  await publisher.setVideoContentHint(contentHint);
+};
+
 export const applyBitrate = async (
   publisher: Publisher | null,
   bitrateMode: AdvancedSettingsBitrateMode,
@@ -69,9 +81,10 @@ const applyAdvancedSettingsToPublisher = async (
     resolution: Resolution;
     bitrateMode: AdvancedSettingsBitrateMode;
     customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
+    contentHint: AdvancedSettingsContentHint;
   }
 ): Promise<void> => {
-  const { frameRate, resolution, bitrateMode, customVideoBitrate } = args;
+  const { frameRate, resolution, bitrateMode, customVideoBitrate, contentHint } = args;
 
   const { error: frameRateError } = await tryCatch(() => applyFrameRate(publisher, frameRate));
 
@@ -96,6 +109,13 @@ const applyAdvancedSettingsToPublisher = async (
         : 'setVideoBitratePreset';
     console.error(`applyAdvancedSettingsToPublisher: ${methodName} failed`, bitrateError);
   }
+
+  const { error: contentHintError } = await tryCatch(() =>
+    applyContentHint(publisher, contentHint)
+  );
+
+  if (contentHintError)
+    console.error('applyAdvancedSettingsToPublisher: setVideoContentHint failed', contentHintError);
 };
 
 export default applyAdvancedSettingsToPublisher;
