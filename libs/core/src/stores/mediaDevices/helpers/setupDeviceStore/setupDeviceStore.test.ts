@@ -278,7 +278,7 @@ describe('setupDeviceStore', () => {
 
       await waitFor(
         async () => {
-          await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
+          await expect(api$.metadata.isStoreReady).resolves.toBeUndefined();
           expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith();
         },
         { timeout: 200 }
@@ -443,8 +443,8 @@ describe('setupDeviceStore', () => {
 });
 
 function makeApiClone() {
-  const { getMetadata, getState, setMetadata, setState, actions } = mediaDevices$;
-  const clone = { getMetadata, getState, setMetadata, setState, actions };
+  const { getState, setMetadata, setState, actions, metadata } = mediaDevices$;
+  const clone = { getState, setMetadata, setState, actions, metadata: { ...metadata } };
 
   setupPartialMock('mediaDevices$.actions', mediaDevices$.actions, {
     syncMediaDevicesInfo: SPY_MARK,
@@ -453,7 +453,6 @@ function makeApiClone() {
   });
 
   setupPartialMock('mediaDevices$', clone, {
-    getMetadata: SPY_MARK,
     getState: SPY_MARK,
     setMetadata: SPY_MARK,
   });

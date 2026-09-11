@@ -34,9 +34,9 @@ module.exports = (env, options) => {
       alias: {
         '@src': path.resolve(__dirname, 'src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
-        '@node': path.resolve(__dirname, '../libs/common/srcNode'),
+        '@node': path.resolve(__dirname, '../libs/common/node'),
         '@common-test/*': ['../libs/common/test/*'],
-        '@node-test/*': ['../libs/common/srcNode/test/*'],
+        '@node-test/*': ['../libs/common/node-test/*'],
         '@api-lib': path.resolve(__dirname, '../libs/api/src'),
       },
     },

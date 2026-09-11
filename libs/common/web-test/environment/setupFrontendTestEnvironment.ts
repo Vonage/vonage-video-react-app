@@ -43,7 +43,9 @@ export const mandatoryAfterEachCleanup = () => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
-  cancelablePromiseTracker.mockClear();
+  // Only present once setupCancelablePromiseHook has run and the optional
+  // easy-cancelable-promise dependency is installed; guard for both cases.
+  cancelablePromiseTracker?.mockClear();
 };
 
 export { cancelablePromiseTracker } from '../../test/environment';
