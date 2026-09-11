@@ -1,5 +1,5 @@
 import React from 'react';
-import use$ from '../use$';
+import use$ from '../use';
 import useStableRef from '../useStableRef';
 import useAssertSuspense from '../useAssertSuspense';
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
-import use$ from './';
+import use$ from '.';
 import SuspenseBoundary from '../../components/SuspenseBoundary';
 
 describe('use$', () => {

@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { render, renderHook } from '@testing-library/react';
 import React, { FC } from 'react';
 import SuspenseBoundary, { suspenseContext, suspenseToken } from './';
-import { makeGenericProviderWrapper } from '../../../testBrowser';
+import { makeGenericProviderWrapper } from '../../../web-test';
 import defer from '@common/execution/defer';
-import use$ from '@web/hooks/use$';
+import { use$ } from '@web/hooks';
 
 describe('SuspenseBoundary', () => {
   it('should render children without errors', () => {

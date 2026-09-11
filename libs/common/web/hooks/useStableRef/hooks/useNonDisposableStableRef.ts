@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { RefCreator } from '../useStableRef.types';
 import { stable_ref_unique_symbol } from '../useStableRef.types';
-import shallowCompare from 'react-global-state-hooks/shallowCompare';
+import { shallowCompare } from 'react-global-state-hooks';
 import { isFunction } from '@common/assertions';
 
 /**
