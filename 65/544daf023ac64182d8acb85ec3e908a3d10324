@@ -1,0 +1,102 @@
+README.md
+  h_c939f8fae0de97 123
+backend/routes/video/constants/joinSession.test.ts
+  h_c939f8fae0de97 3,6,9-13,15,18-52
+backend/routes/video/constants/joinSession.ts
+  h_c939f8fae0de97 4,7-24
+backend/routes/video/video.ts
+  h_c939f8fae0de97 4,6,73-79,84,95-97,102-112,116,135-137,143-149,153-157,159,161-162,164-166,168-169,171-172,174-176
+backend/tests/session.test.ts
+  h_c939f8fae0de97 234-259
+env.sh
+  h_c939f8fae0de97 42-43
+frontend/src/App.tsx
+  h_c939f8fae0de97 25,55-57
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_c939f8fae0de97 42-45,65
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_c939f8fae0de97 180
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_c939f8fae0de97 40-43,61
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_c939f8fae0de97 184
+frontend/src/Context/index.ts
+  h_c939f8fae0de97 1
+frontend/src/Context/screenShare/constants/index.ts
+  h_c939f8fae0de97 1
+frontend/src/Context/screenShare/constants/initialState.ts
+  h_c939f8fae0de97 1,8-9,14,17-24,26
+frontend/src/Context/screenShare/index.tsx
+  h_c939f8fae0de97 1
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 1,8,14,35,57-58,95-97,100-101,123-124,137-139,161-162,175-176,198-199,212-214,220-223,245-246,267-268,271,290-291,301-302,305-310,312,316-317,323
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 1-206
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  h_c939f8fae0de97 56
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.spec.tsx
+  h_c939f8fae0de97 363-368
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  h_c939f8fae0de97 48
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  h_c939f8fae0de97 27
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.spec.tsx
+  h_c939f8fae0de97 13-16,29-32,128,132-147,152
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  h_c939f8fae0de97 15,42-44
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_c939f8fae0de97 2,162-168,176-177
+frontend/src/hooks/useMeetingRoom.ts
+  h_c939f8fae0de97 14,64-68
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_c939f8fae0de97 555-561,575
+frontend/src/test/providers/makeScreenShareProviderWrapper.tsx
+  h_c939f8fae0de97 1-11
+frontend/src/test/providers/makeTestProvider.ts
+  h_c939f8fae0de97 9,16,29,39,53-55,73,183-186
+frontend/src/test/providers/makersIndex.ts
+  h_c939f8fae0de97 30-34
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 470,525
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.spec.ts
+  h_c939f8fae0de97 24
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  h_c939f8fae0de97 35
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_c939f8fae0de97 209
+libs/core/src/hooks/usePublisherStats/helpers/index.ts
+  h_c939f8fae0de97 1-2
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerFrameRate.spec.ts
+  h_c939f8fae0de97 1-31
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerFrameRate.ts
+  h_c939f8fae0de97 1-11
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerResolution.spec.ts
+  h_c939f8fae0de97 1-37
+libs/core/src/hooks/usePublisherStats/helpers/readHighestLayerResolution.ts
+  h_c939f8fae0de97 1-19
+libs/core/src/hooks/usePublisherStats/usePublisherStats.spec.ts
+  h_c939f8fae0de97 55-88,117-143
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_c939f8fae0de97 20,85-89,91-98,164-169
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_c939f8fae0de97 157-162
+package.json
+  h_c939f8fae0de97 149,158,171,178-179,187,194,202
+specs/app-config.schema.json
+  h_c939f8fae0de97 1-286
+specs/theme.schema.json
+  h_c939f8fae0de97 1-130
+yarn.lock
+  h_c939f8fae0de97 5097-5100,5130-5138,5951-5954,5957,6161-6176,6268,6669-6673,8297-8300,8305-8306,8722-8728,8854,8969-8975,10402,10781-10784,11066,11668-11671,11673-11676,12306-12313,12353-12362,12449-12452,12454,12456-12459,13070-13077,13110-13120,13950-13958,14291
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "65544daf023ac64182d8acb85ec3e908a3d10324",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+frontend/tailwind.config.cjs
+  h_737cf808c1c597 4-6,8
+libs/ui/src/theme/helpers/tailwind/validateVeraThemeTokens.cjs
+  h_737cf808c1c597 1-131
+libs/ui/tailwind.config.cjs
+  h_737cf808c1c597 4-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "a0450cd0ec79758c083851824cb8550abe603d04",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

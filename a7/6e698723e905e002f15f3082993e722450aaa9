@@ -1,0 +1,24 @@
+frontend/.env.example
+  h_737cf808c1c597 2-3
+env.json
+  h_737cf808c1c597 1-51
+package.json
+  h_737cf808c1c597 14,41
+scripts/generateEnv.ts
+  h_737cf808c1c597 1-193
+docs/GETTING_STARTED.md
+  h_737cf808c1c597 57,119-128,131,134
+docs/CONFIGURATION.md
+  h_737cf808c1c597 7,75,79,81-103,106-113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "a76e698723e905e002f15f3082993e722450aaa9",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

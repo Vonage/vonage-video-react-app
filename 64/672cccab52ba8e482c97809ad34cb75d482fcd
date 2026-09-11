@@ -1,0 +1,61 @@
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_c939f8fae0de97 1-2,7-8,10-14,27-28,30-34,36-41,44-45,47,52,55-61,69-70,76-80,95-97,107,109,118-119,130
+  s_60c46e90bd91ea::t_2ef74a364a53eb 35,62-65,134-137,148,153-154,160
+  s_60c46e90bd91ea::t_1eb1305177ecb1 46,53-54,108,120
+vcr-gha.yml
+  s_60c46e90bd91ea::t_bd10dcae70adaa 53-56
+  s_60c46e90bd91ea::t_c5b45ee9d9a5c8 50-52
+  s_60c46e90bd91ea::t_cbcc53cde83561 57-58
+  h_c939f8fae0de97 47-49
+backend/helpers/config.test.ts
+  s_60c46e90bd91ea::t_6a0085caea8fb6 95,99
+  s_60c46e90bd91ea::t_6a46d1a0f1300c 2,79,84
+backend/helpers/config.ts
+  s_60c46e90bd91ea::t_78e6f1eb9f63f9 101,105-106
+  h_c939f8fae0de97 3-4,95,97,99-100,102-104,107-108
+backend/.env.example
+  s_60c46e90bd91ea::t_efd8d44c50702d 64-65,69-70
+  h_c939f8fae0de97 66-68,71
+backend/types/config.ts
+  h_c939f8fae0de97 28-30
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  s_60c46e90bd91ea::t_264020c98a362c 17-23
+  s_60c46e90bd91ea::t_3abacc9be8a1ec 14-16
+  s_60c46e90bd91ea::t_5b65a89ce66f7d 24-26
+  s_60c46e90bd91ea::t_4276fecafbf2f3 1-13,27-29
+backend/eslint.config.mjs
+  h_c939f8fae0de97 12-26
+backend/helpers/__mocks__/config.ts
+  h_c939f8fae0de97 14
+backend/jest.config.js
+  h_c939f8fae0de97 11-12
+backend/jest/setEnvVars.js
+  h_c939f8fae0de97 11
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_c939f8fae0de97 96-98
+backend/tests/helpers/doPartialMock.ts
+  h_c939f8fae0de97 1-43
+backend/tests/helpers/index.ts
+  h_c939f8fae0de97 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "64672cccab52ba8e482c97809ad34cb75d482fcd",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_60c46e90bd91ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b85d267-a76c-4b3b-b027-a3ae009e8719",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
