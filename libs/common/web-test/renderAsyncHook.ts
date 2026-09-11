@@ -1,5 +1,5 @@
 import { renderHook as renderHookBase, act } from '@testing-library/react';
-import composeProviders from '../srcBrowser/helpers/composeProviders';
+import composeProviders from '../web/helpers/composeProviders';
 
 type HookResult<Result, Props> = ReturnType<typeof renderHookBase<Result, Props>>;
 

@@ -1,4 +1,4 @@
-export { default as use$ } from './use$';
+export { default as use$ } from './use';
 export { default as useAccumulator } from './useAccumulator';
 export { default as useAssertSuspense } from './useAssertSuspense';
 export { default as useDebouncedValue } from './useDebouncedValue';

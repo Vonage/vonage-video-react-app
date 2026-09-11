@@ -6,7 +6,7 @@ import {
   type queries,
   type RenderOptions,
 } from '@testing-library/react';
-import { composeProviders } from '../srcBrowser/helpers';
+import { composeProviders } from '../web/helpers';
 
 type RendererableContainer = ReactDOMClient.Container;
 type HydrateableContainer = Parameters<(typeof ReactDOMClient)['hydrateRoot']>[0];
