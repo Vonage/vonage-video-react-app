@@ -1,5 +1,41 @@
-import type { SingleArchiveResponse, SingleArchiveResponseBase } from '@vonage/video';
 import uniqueId from 'react-global-state-hooks/uniqueId';
+
+type ArchiveStatus = 'available' | 'started' | 'stopped' | 'uploaded' | 'paused' | 'failed';
+
+type ArchiveOutputMode = 'composed' | 'individual';
+
+type ArchiveStreamMode = 'auto' | 'manual';
+
+type TranscriptionProperties = {
+  primaryLanguageCode: string;
+  hasSummary: boolean;
+};
+
+type SingleArchiveResponseBase = {
+  id: string;
+  status: ArchiveStatus;
+  name: string;
+  reason: string;
+  sessionId: string;
+  projectId: string;
+  createdAt: number;
+  size: number;
+  duration: number;
+  outputMode: ArchiveOutputMode;
+  streamMode: ArchiveStreamMode;
+  hasAudio: boolean;
+  hasVideo: boolean;
+  resolution: string;
+  url: string;
+  streams: string[];
+};
+
+type SingleArchiveResponse = SingleArchiveResponseBase & {
+  hasTranscription: boolean;
+  transcriptionProperties: TranscriptionProperties;
+  maxBitrate: number;
+  quantizationParameter: number;
+};
 
 type ArchiveVariant =
   | 'available'

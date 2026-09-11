@@ -16,10 +16,10 @@
       "@common/*": ["../libs/common/src/*"],
       "@common-test": ["../libs/common/test"],
       "@common-test/*": ["../libs/common/test/*"],
-      "@node": ["../libs/common/srcNode"],
-      "@node/*": ["../libs/common/srcNode/*"],
-      "@node-test": ["../libs/common/testNode"],
-      "@node-test/*": ["../libs/common/testNode/*"]
+      "@node": ["../libs/common/node"],
+      "@node/*": ["../libs/common/node/*"],
+      "@node-test": ["../libs/common/node-test"],
+      "@node-test/*": ["../libs/common/node-test/*"]
     }
   }
 }

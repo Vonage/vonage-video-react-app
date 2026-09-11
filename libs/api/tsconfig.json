@@ -20,12 +20,12 @@
       "@api-lib/*": ["./src/*"],
       "@common": ["../common/src"],
       "@common/*": ["../common/src/*"],
-      "@node": ["../common/srcNode"],
-      "@node/*": ["../common/srcNode/*"],
+      "@node": ["../common/node"],
+      "@node/*": ["../common/node/*"],
       "@common-test": ["../common/test"],
       "@common-test/*": ["../common/test/*"],
-      "@node-test": ["../common/testNode"],
-      "@node-test/*": ["../common/testNode/*"]
+      "@node-test": ["../common/node-test"],
+      "@node-test/*": ["../common/node-test/*"]
     },
     "lib": ["ESNext"]
   }
