@@ -21,6 +21,7 @@ import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
+import { withSafariWebGlRendering } from '@core/videoFilters';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -183,7 +184,7 @@ const useBackgroundPublisher = (
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
-      videoFilter,
+      videoFilter: withSafariWebGlRendering(videoFilter),
       resolution: env.DEFAULT_RESOLUTION,
       videoSource: mediaDevices$.getState().videoinput,
       publishAudio: false,
