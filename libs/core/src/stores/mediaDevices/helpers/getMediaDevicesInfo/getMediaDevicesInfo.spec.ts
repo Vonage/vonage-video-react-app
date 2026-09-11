@@ -67,4 +67,22 @@ describe('getMediaDevicesInfo', () => {
 
     expect(videoInputDevices.every((device) => device.inferredFacingMode === null)).toBe(true);
   });
+
+  it('does not deadlock when skipStoreReady is set while isStoreReady is still pending', async () => {
+    expect.assertions(1);
+
+    const metadata = mediaDevices$.getMetadata();
+
+    // Firefox bootstrap is parked on the permission prompt: isStoreReady is still pending, and a
+    // concurrent getUserMedia-driven sync already consumed the single-use first-query flag. The
+    // bootstrap's own sync must skip readiness explicitly, or it awaits the promise it must resolve.
+    metadata.isStoreReady = new Promise<void>(() => {}) as never;
+    (
+      metadata as unknown as { isFirstMediaDevicesInfoQuery: boolean }
+    ).isFirstMediaDevicesInfoQuery = false;
+
+    const result = await getMediaDevicesInfo({ skipStoreReady: true });
+
+    expect(result).toHaveLength(makeMediaDeviceInfos().length);
+  });
 });
