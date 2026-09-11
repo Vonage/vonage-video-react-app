@@ -1,0 +1,32 @@
+libs/common/web/components/SuspenseBoundary/SuspenseBoundary.test.tsx
+  h_6029769cf9ac60 5,7
+libs/common/web/hooks/use/use$.test.tsx
+  h_6029769cf9ac60 4
+libs/common/web-test/renderAsyncHook.ts
+  h_6029769cf9ac60 2
+libs/common/web/hooks/useSuspenseMemo/useSuspenseMemo.ts
+  h_6029769cf9ac60 2
+libs/common/web-test/fixtures/mockPlatformModule.ts
+  h_6029769cf9ac60 3-5
+frontend/src/utils/SpeakingDetector/speakingDetector.spec.ts
+  h_6029769cf9ac60 4
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.spec.ts
+  h_6029769cf9ac60 5
+libs/common/web/hooks/useStableRef/hooks/useNonDisposableStableRef.ts
+  h_6029769cf9ac60 4
+libs/common/web/hooks/index.ts
+  h_6029769cf9ac60 1
+libs/common/web-test/renderAsyncComponent.ts
+  h_6029769cf9ac60 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3322618a4d34e0aada66618f33fe634850421a2d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
