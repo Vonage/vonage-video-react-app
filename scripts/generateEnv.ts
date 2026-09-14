@@ -158,7 +158,7 @@ function resolvePath(config: Record<string, unknown>, sourcePath: string): unkno
 }
 
 function escapeSingleQuoted(value: string): string {
-  return value.replaceAll("'", "'\\''");
+  return value.replaceAll("'", String.raw`'\''`);
 }
 
 function serializeValue(value: unknown, args: { format: ValueFormat; join?: string }): string {
