@@ -1,0 +1,92 @@
+.vonage/catalog-info.yaml
+  h_737cf808c1c597 14-15
+README.md
+  h_737cf808c1c597 121-124
+backend/.env.example
+  h_737cf808c1c597 45-50
+backend/eslint.config.mjs
+  h_737cf808c1c597 12-26
+backend/helpers/__mocks__/config.ts
+  h_737cf808c1c597 14
+backend/helpers/config.test.ts
+  h_737cf808c1c597 2,58-115
+backend/helpers/config.ts
+  h_737cf808c1c597 3-4,18,26-27,53,73,86-108
+backend/jest.config.js
+  h_737cf808c1c597 11-12
+backend/jest/setEnvVars.js
+  h_737cf808c1c597 11
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_737cf808c1c597 1-123
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_737cf808c1c597 1-139
+backend/middleware/authMiddleware/index.ts
+  h_737cf808c1c597 1
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_737cf808c1c597 1-26
+backend/middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema.ts
+  h_737cf808c1c597 1-17
+backend/middleware/index.ts
+  h_737cf808c1c597 4
+backend/routes/video/constants/joinSession.test.ts
+  h_737cf808c1c597 3,6,9-13,15,18-52
+backend/routes/video/constants/joinSession.ts
+  h_737cf808c1c597 4,7-24
+backend/server.ts
+  h_737cf808c1c597 11,38-51
+backend/tests/helpers/doPartialMock.ts
+  h_737cf808c1c597 1-43
+backend/tests/helpers/index.ts
+  h_737cf808c1c597 1
+backend/types/config.ts
+  h_737cf808c1c597 28-31,33-34
+docs/CONFIGURATION.md
+  h_737cf808c1c597 73-106,262,266,273
+env.sh
+  h_737cf808c1c597 31-37
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_737cf808c1c597 223
+frontend/tailwind.config.cjs
+  h_737cf808c1c597 4-6,8
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_737cf808c1c597 209
+libs/ui/src/theme/helpers/designTokens/designTokens.json
+  h_737cf808c1c597 2-6,8-98,100-106,108-233
+libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson.ts
+  h_737cf808c1c597 5,8-9,15,18-20,25-47,49-50,52,55-57,60,64,66-86,88-96,98-105,107,109-111,115-116,118-135,154
+libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts
+  h_737cf808c1c597 5-6,20-34,36-41,43-48,50-52,54,57-64,66-69,71-79,81-89,91,93,101-102,104,106-114,116-122,124-125,127-142,146-147,152-153,159,161-164,168-174,176-177,179-184,187-188,191-202,205,209-212,214,225-226,228-229,232-238,241-244,262-265,286-287,301-302,365,367
+libs/ui/src/theme/helpers/tailwind/validateVeraThemeTokens.cjs
+  h_737cf808c1c597 1-131
+libs/ui/src/theme/helpers/tailwind/veraUI.cjs
+  h_737cf808c1c597 9-10,12-23,25,27-38,40-41,43-47,50-53,68-276,279-768,771-828
+libs/ui/src/theme/helpers/veraUI.types.ts
+  h_737cf808c1c597 149-153,155,157-180
+libs/ui/tailwind.config.cjs
+  h_737cf808c1c597 4-6
+package.json
+  h_737cf808c1c597 40
+scripts/generateTokens.ts
+  h_737cf808c1c597 16,26,28,34,44,60-62,71
+specs/app-config.schema.json
+  h_737cf808c1c597 1-286
+specs/theme.schema.json
+  h_737cf808c1c597 1-130
+theme.example.json
+  h_737cf808c1c597 1-235
+theme.json
+  h_737cf808c1c597 1-235
+vcr-gha.yml
+  h_737cf808c1c597 47-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6822ea5d3cc24b944a257c389e837dececae6b84",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
