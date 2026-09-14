@@ -143,13 +143,25 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
 
-        it('returns a 502 when stopping an invalid archive in a room', async () => {
-          const archiveId = 'b8-c9-d10';
+        it('returns 404 when stopping an archive that does not belong to the room', async () => {
+          // 'b8-c9-d10' is not among the room's archives (searchArchives returns archive1/2),
+          // so the authorization check rejects it before ever calling stopArchive — otherwise
+          // any caller could stop another room's archive by id.
+          const foreignArchiveId = 'b8-c9-d10';
           const res = await request(server)
-            .post(`/session/${roomName}/${archiveId}/stopArchive`)
+            .post(`/session/${roomName}/${foreignArchiveId}/stopArchive`)
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json');
-          expect(res.statusCode).toEqual(502);
+          expect(res.statusCode).toEqual(404);
+        });
+
+        it('returns 200 when stopping an archive that belongs to the room', async () => {
+          const ownArchiveId = 'archive1'; // present in this session's searchArchives result
+          const res = await request(server)
+            .post(`/session/${roomName}/${ownArchiveId}/stopArchive`)
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json');
+          expect(res.statusCode).toEqual(200);
         });
       });
 
@@ -177,14 +189,16 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
 
-        it('returns a 502 when stopping an invalid caption in a room', async () => {
-          const invalidCaptionId = 'wrongCaptionId';
+        it('returns 404 when disabling captions that do not belong to the room', async () => {
+          // A captionsId that does not match this room's stored captionsId must be rejected
+          // before calling disableCaptions, so a caller can't disable another room's captions.
+          const foreignCaptionsId = 'wrongCaptionId';
           const res = await request(server)
-            .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
+            .post(`/session/${roomName}/${foreignCaptionsId}/disableCaptions`)
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json');
 
-          expect(res.statusCode).toEqual(502);
+          expect(res.statusCode).toEqual(404);
         });
 
         it('returns a 404 when stopping captions in a non-existent room', async () => {
