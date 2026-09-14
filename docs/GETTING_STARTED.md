@@ -54,7 +54,7 @@ Then, open **backend/.env** and fill in the required configuration:
 - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
 - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
 
-Frontend feature flags and display settings are defined in [`env.json`](../env.json) and compiled into [`env.sh`](../env.sh) by running `yarn sync:env`. The defaults work out of the box — edit `env.json` only when you need to customise behaviour, then re-run `yarn sync:env`. Do not edit `env.sh` directly; it is generated. See [Configuration](./CONFIGURATION.md) for the full list of available options.
+Frontend feature flags and display settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) by running `yarn sync:env`. The defaults work out of the box — edit `app-config.json` only when you need to customise behaviour, then re-run `yarn sync:env`. Do not edit `env.sh` directly; it is generated. See [Configuration](./CONFIGURATION.md) for the full list of available options.
 
 ### Start in Development Mode
 
@@ -116,22 +116,14 @@ To test the video API across multiple devices on your local network, you can use
     <img src="./assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
     </details>
 
-5. **Copy the domains** from both outputs and set them in [`env.json`](../env.json), then run `yarn sync:env` to regenerate `env.sh`:
-
-    ```json
-    {
-      "baseApiUrl": "https://your-backend-domain.ngrok.io",
-      "connectionSettings": {
-        "tunnelDomain": "your-frontend-domain.ngrok.io"
-      }
-    }
-    ```
+5. **Copy the domains** from both outputs and set them in [`frontend/.env`](../frontend/.env.example) (create it from `.env.example` if it doesn't exist). `API_URL` and `TUNNEL_DOMAIN` are runtime/environment values and are not part of `app-config.json`, so they are configured here rather than via `yarn sync:env`:
 
     ```bash
-    yarn sync:env
+    API_URL=https://your-backend-domain.ngrok.io
+    TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
     ```
 
-    **Note:** ngrok assigns temporary domains. You'll need to update these values (and re-run `yarn sync:env`) each time the domains change.
+    **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change. No `yarn sync:env` is required — restart the dev server to pick them up.
 
 6. **Open the provided frontend Forwarding URL** in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
 

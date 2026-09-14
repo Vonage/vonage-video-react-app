@@ -4,7 +4,7 @@ This document covers the environment variables, feature flags, theming, and Stor
 
 ## Environment Configuration
 
-The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`env.json`](../env.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`.
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`.
 
 For initial setup instructions (creating `.env` files, obtaining credentials), see [Getting Started](./GETTING_STARTED.md).
 
@@ -72,15 +72,15 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 ---
 
-### Frontend (`env.json` → `env.sh`)
+### Frontend (`app-config.json` → `env.sh`)
 
 Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.
 
-The source of truth is [`env.json`](../env.json), a unified, platform-agnostic config shared across the Vonage Video web, iOS, and Android apps. The build tooling (dev/build/test) reads [`env.sh`](../env.sh), which is **generated** from `env.json`. Do not edit `env.sh` by hand — it is overwritten on every sync.
+The source of truth is [`app-config.json`](../app-config.json), a unified, platform-agnostic config shared across the Vonage Video web, iOS, and Android apps. The build tooling (dev/build/test) reads [`env.sh`](../env.sh), which is **generated** from `app-config.json`. Do not edit `env.sh` by hand — it is overwritten on every sync.
 
 To change a setting:
 
-1. Edit the relevant value in [`env.json`](../env.json).
+1. Edit the relevant value in [`app-config.json`](../app-config.json).
 2. Regenerate `env.sh`:
 
    ```bash
@@ -89,7 +89,7 @@ To change a setting:
 
 3. Restart the app or trigger a new build.
 
-`env.json` uses grouped, nested keys instead of flat variable names. For example:
+`app-config.json` uses grouped, nested keys instead of flat variable names. For example:
 
 ```json
 {
@@ -109,8 +109,9 @@ The generator maps each key to its `env.sh` variable, joins lists with `|`, and 
 
 #### Things to know about the mapping
 
-- **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `env.json`.
-- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `env.json`. They are emitted by the generator as fixed values and can be changed in [`scripts/generateEnv.ts`](../scripts/generateEnv.ts): `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
+- **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `app-config.json`.
+- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They are emitted by the generator as fixed values and can be changed in [`scripts/generateEnv.ts`](../scripts/generateEnv.ts): `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
+- **Network settings.** `API_URL`, `TUNNEL_DOMAIN`, and `VONAGE_VIDEO_HOST` are **not** generated from `app-config.json` by `yarn sync:env`. They are runtime/environment values, so set them via [`frontend/.env`](../frontend/.env.example) (which layers over `env.sh`) or by exporting them in your shell before running the app. See the [Network](#network) table below.
 
 #### Value types
 
@@ -124,6 +125,8 @@ The generator maps each key to its `env.sh` variable, joins lists with `|`, and 
 ---
 
 #### Network
+
+These are runtime/environment values and are **not** generated from `app-config.json`. Set them in [`frontend/.env`](../frontend/.env.example) or export them in your shell before running the app.
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
