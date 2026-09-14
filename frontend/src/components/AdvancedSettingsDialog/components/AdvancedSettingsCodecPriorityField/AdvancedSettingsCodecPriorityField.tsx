@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { DragEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
+import { VividIcon } from '@ui';
 import type {
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsVideoCodec,
@@ -10,20 +11,35 @@ import type {
 type AdvancedSettingsCodecPriorityFieldProps = {
   codecPriority: AdvancedSettingsManualCodecOrder;
   setCodecPriority: (value: AdvancedSettingsManualCodecOrder) => void;
+  idPrefix?: string;
 };
 
 const AdvancedSettingsCodecPriorityField = ({
   codecPriority,
   setCodecPriority,
+  idPrefix = 'advanced-settings-codec-priority',
 }: AdvancedSettingsCodecPriorityFieldProps): ReactElement => {
   const { t } = useTranslation();
   const [draggedCodec, setDraggedCodec] = useState<AdvancedSettingsVideoCodec | null>(null);
   const [dropTargetCodec, setDropTargetCodec] = useState<AdvancedSettingsVideoCodec | null>(null);
+  const cardElementsByCodec = useRef(new Map<AdvancedSettingsVideoCodec, HTMLDivElement>());
 
   const handleDragStart = (event: DragEvent<HTMLLIElement>, codec: AdvancedSettingsVideoCodec) => {
     if (event.dataTransfer) {
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', codec);
+
+      const cardElement = cardElementsByCodec.current.get(codec);
+
+      if (cardElement) {
+        const cardBounds = cardElement.getBoundingClientRect();
+
+        event.dataTransfer.setDragImage(
+          cardElement,
+          event.clientX - cardBounds.left,
+          event.clientY - cardBounds.top
+        );
+      }
     }
 
     setDraggedCodec(codec);
@@ -69,6 +85,14 @@ const AdvancedSettingsCodecPriorityField = ({
     handleDragEnd();
   };
 
+  const moveCodec = (codec: AdvancedSettingsVideoCodec, offset: -1 | 1) => {
+    const targetCodec = codecPriority[codecPriority.indexOf(codec) + offset];
+
+    if (!targetCodec) return;
+
+    setCodecPriority(reorderCodecPriority({ codecPriority, draggedCodec: codec, targetCodec }));
+  };
+
   return (
     <div className="flex flex-col gap-3 rounded-vera-medium  border-vera-border bg-vera-background px-4 py-3">
       <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
@@ -79,10 +103,13 @@ const AdvancedSettingsCodecPriorityField = ({
         {t('advancedSettings.video.codec.priority.description')}
       </p>
 
-      <ol className="flex flex-col gap-2" data-testid="advanced-settings-codec-priority-list">
+      <ol className="flex flex-col gap-2" data-testid={`${idPrefix}-list`}>
         {codecPriority.map((codec, index) => {
           const isDraggedCodec = draggedCodec === codec;
           const isDropTarget = dropTargetCodec === codec && draggedCodec !== codec;
+          const codecLabel = t(`advancedSettings.video.codec.priority.options.${codec}`);
+          const isFirstCodec = index === 0;
+          const isLastCodec = index === codecPriority.length - 1;
 
           return (
             <li
@@ -98,20 +125,84 @@ const AdvancedSettingsCodecPriorityField = ({
               onDrop={(event) => {
                 handleDrop(event, codec);
               }}
-              className={classNames(
-                'flex cursor-grab items-center gap-3 rounded-vera-medium border bg-vera-surface px-4 py-3',
-                isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
-                isDropTarget ? 'border-vera-primary' : null
-              )}
-              data-testid={`advanced-settings-codec-priority-item-${codec}`}
+              className="flex cursor-grab select-none items-center gap-3 active:cursor-grabbing"
+              data-testid={`${idPrefix}-item-${codec}`}
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-secondary">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-vera-border font-vera-plain text-vera-caption text-vera-secondary">
                 {index + 1}
               </span>
 
-              <span className="font-vera-plain text-vera-body-base text-vera-secondary">
-                {t(`advancedSettings.video.codec.priority.options.${codec}`)}
-              </span>
+              {/* The card is the visual row; the <li> around it keeps the number draggable too. */}
+              <div
+                ref={(element) => {
+                  if (!element) {
+                    cardElementsByCodec.current.delete(codec);
+                    return;
+                  }
+
+                  cardElementsByCodec.current.set(codec, element);
+                }}
+                className={classNames(
+                  'flex grow items-center gap-3 rounded-vera-medium border bg-vera-surface px-4 py-3',
+                  isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
+                  isDropTarget ? 'border-vera-primary' : null
+                )}
+                data-testid={`${idPrefix}-card-${codec}`}
+              >
+                <VividIcon
+                  name="reorder-vertical-line"
+                  customSize={-5}
+                  aria-hidden="true"
+                  className="pointer-events-none text-vera-tertiary"
+                  data-testid={`${idPrefix}-drag-handle-${codec}`}
+                />
+
+                <span className="font-vera-plain text-vera-body-base text-vera-secondary">
+                  {codecLabel}
+                </span>
+
+                <div className="ml-auto flex flex-row items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      moveCodec(codec, -1);
+                    }}
+                    aria-disabled={isFirstCodec}
+                    aria-label={t('advancedSettings.video.codec.priority.moveUp', {
+                      codec: codecLabel,
+                    })}
+                    className={classNames(
+                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                      isFirstCodec
+                        ? 'cursor-not-allowed opacity-40'
+                        : 'cursor-pointer hover:bg-vera-background'
+                    )}
+                    data-testid={`${idPrefix}-move-up-${codec}`}
+                  >
+                    <VividIcon name="chevron-up-line" customSize={-5} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      moveCodec(codec, 1);
+                    }}
+                    aria-disabled={isLastCodec}
+                    aria-label={t('advancedSettings.video.codec.priority.moveDown', {
+                      codec: codecLabel,
+                    })}
+                    className={classNames(
+                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                      isLastCodec
+                        ? 'cursor-not-allowed opacity-40'
+                        : 'cursor-pointer hover:bg-vera-background'
+                    )}
+                    data-testid={`${idPrefix}-move-down-${codec}`}
+                  >
+                    <VividIcon name="chevron-down-line" customSize={-5} />
+                  </button>
+                </div>
+              </div>
             </li>
           );
         })}
