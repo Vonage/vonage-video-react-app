@@ -274,7 +274,10 @@ const SessionProvider = ({
         // When passing the sort function callback, the initial value of activeSpeakerId is captured when the listener is added. Updates to the
         // activeSpeakerId are not reflected when it is accessed. A workaround is to use useRef to store state.
         // See: https://stackoverflow.com/questions/53845595/wrong-react-hooks-behaviour-with-event-listener
-        return prevSubscriberWrappers.sort(sortByDisplayPriority(id));
+        // toSorted (not sort) so we return a new array instead of mutating state in
+        // place — an in-place sort returns the same reference, so setState bails and
+        // the reorder is applied inconsistently. Matches handleSubscriberVideoElementCreated.
+        return prevSubscriberWrappers.toSorted(sortByDisplayPriority(id));
       }
       return prevSubscriberWrappers;
     });
