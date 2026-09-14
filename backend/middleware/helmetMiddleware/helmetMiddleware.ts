@@ -11,12 +11,15 @@ const helmetHandler = helmet({
           // Allow scripts from self and Vonage/OpenTok static assets.
           // Needed by the Vonage/OpenTok SDK to load MediaPipe transformer assets,
           // including task-vision.js and worker-side scripts loaded through importScripts(...).
+          // Note: 'data:' is intentionally NOT allowed here — it would permit
+          // <script src="data:text/javascript,...">, negating CSP as an XSS defense. The SDK's
+          // data: usage is a fallback Worker (see 'worker-src') and inline images ('img-src'),
+          // not scripts.
           'script-src': [
             "'self'",
             // required for web assembly
             "'unsafe-eval'",
             'blob:',
-            'data:',
             'https://static.opentok.com',
           ],
 
