@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
 import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
-import {
+import OT, {
   initPublisher,
   Publisher,
   Stream,
@@ -389,6 +389,59 @@ describe('usePublisher', () => {
       });
 
       expect(mockedSessionPublish).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('OT exception handling (sustained network/session failures)', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('surfaces a blocking error after repeated 1500 failures even while the session never fully reconnects', () => {
+      vi.useFakeTimers();
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+
+      // The session stays disconnected throughout, exactly like the real incident where the
+      // signaling connection dropped and never recovered ("connected" never becomes true again).
+      const { result } = renderHook(() => usePublisher(), {
+        sessionContext: {
+          __interceptor: (ctx) => {
+            if (ctx) {
+              ctx.connected = false;
+            }
+          },
+        },
+      });
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      const exceptionHandler = vi
+        .mocked(OT.on)
+        .mock.calls.find(([event]) => event === 'exception')?.[1] as (event: {
+        code: number;
+      }) => void;
+      expect(exceptionHandler).toBeDefined();
+
+      expect(result.current.publishingError).toBeNull();
+
+      // 3 failures spanning past the grace period, mirroring the real incident's ~76s span.
+      act(() => {
+        exceptionHandler({ code: 1500 });
+      });
+      act(() => {
+        vi.advanceTimersByTime(51_000);
+        exceptionHandler({ code: 1500 });
+      });
+      act(() => {
+        vi.advanceTimersByTime(25_000);
+        exceptionHandler({ code: 1500 });
+      });
+
+      // Even though the session never stopped looking "transient" (still disconnected), the
+      // user must eventually be told rather than left stuck silently and indefinitely.
+      expect(result.current.publishingError).not.toBeNull();
     });
   });
 
