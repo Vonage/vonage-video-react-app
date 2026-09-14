@@ -2,7 +2,6 @@ import { setAudioOutputDevice as setVonageAudioOutputDevice } from '@vonage/clie
 import debounce from '@common/execution/debounce';
 import { assertDevicesAPI } from '../../assertions';
 import { attempt } from '@common/execution';
-import isFirefox from '@web/platform/isFirefox';
 import CancelablePromise from 'easy-cancelable-promise';
 import { mediaDevicesEnvelop } from '@core/interceptors';
 
@@ -41,35 +40,16 @@ function setupDeviceStore(api: unknown) {
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
 
-  meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
-    const syncDevicesAndResolve = () => {
-      void api.actions
-        .syncMediaDevicesInfo()
-        .then(() => {
-          resolve();
-        })
-        .catch(reject);
-    };
-
-    if (!isFirefox()) {
-      void syncDevicesAndResolve();
-      return;
-    }
-
-    void navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        if (isCanceled()) return;
-
-        const hasLabels = devices.some((device) => device.label);
-        if (hasLabels) return;
-
-        //we should request permissions to be able to see the devices labels.
-        return getUserMedia({ audio: true, video: true }).then((stream) => {
-          stream.getTracks().forEach((track) => track.stop());
-        });
+  // Do NOT acquire media here: this runs at store init (i.e. on the landing page). On Firefox
+  // that would light the camera LED before it is needed. Revealing device labels on Firefox is
+  // deferred to the requestDeviceLabels action, called when media is actually required (e.g. the
+  // Waiting Room). See https://github.com/Vonage/vonage-video-react-app/issues/723.
+  meta.isStoreReady = new CancelablePromise((resolve, reject) => {
+    void api.actions
+      .syncMediaDevicesInfo()
+      .then(() => {
+        resolve();
       })
-      .then(() => syncDevicesAndResolve())
       .catch(reject);
   });
 
