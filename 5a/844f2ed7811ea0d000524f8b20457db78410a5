@@ -1,0 +1,58 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_a9e1730597f75c::t_02bec7f195b77c 55-58
+  s_a9e1730597f75c::t_ad223459c6b328 9
+  s_a9e1730597f75c::t_1d7f06babc02fc 118-134
+  s_a9e1730597f75c::t_c6cd9ff7273740 35
+backend/routes/video/helpers/restartArchivingAfterServerRotation.test.ts
+  s_a9e1730597f75c::t_d8950939954fdc 1-9,11-16,20-26,28,30-38,40-54,56,58-66,68-78
+  s_a9e1730597f75c::t_653a333f27dd50 10,17-19,27,29,39,55,57,67
+backend/storage/vcrSessionStorage.ts
+  s_a9e1730597f75c::t_446e829d36ed38 38-47,51,62-68
+  s_a9e1730597f75c::t_8d64ecbb990a9b 5,9,13
+  s_a9e1730597f75c::t_2525b3025d4266 141-164
+backend/routes/video/video.ts
+  s_a9e1730597f75c::t_14599fd08e2a99 14
+  s_a9e1730597f75c::t_45206f31a5001c 175-182
+  s_a9e1730597f75c::t_66dc89398640c5 71-112
+  s_a9e1730597f75c::t_9c5ca21534657f 196,205-217
+  s_a9e1730597f75c::t_06af0d6a8b88a6 218
+libs/api/src/handlers/stopArchive.ts
+  s_a9e1730597f75c::t_1a9fdaf3ca935e 14-16
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  s_a9e1730597f75c::t_60fe497cb2305f 5-7
+backend/routes/video/constants/defaultArchiveOptions.ts
+  s_a9e1730597f75c::t_d9822cacd22f4c 1-19
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_a9e1730597f75c::t_5cd01d0bd8fe45 1,7
+  s_a9e1730597f75c::t_6b1100d1d4edf3 4
+  s_a9e1730597f75c::t_b0a4baea98a5b9 37,39-40
+  s_a9e1730597f75c::t_cd878406fb8b24 2-3,5-6,8-36,41-52
+  s_a9e1730597f75c::t_4468508c8cff40 38
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_a9e1730597f75c::t_c9ebc4b409bcf5 107-141
+backend/routes/video/constants/startArchive.ts
+  s_a9e1730597f75c::t_55a006c602ffb6 2,8
+backend/storage/sessionStorage.ts
+  s_a9e1730597f75c::t_75628631c0588e 3,14-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5a844f2ed7811ea0d000524f8b20457db78410a5",
+  "prompts": {},
+  "humans": {
+    "h_2499cc15b3806e": {
+      "author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_a9e1730597f75c": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_4b07f4ea-3ba1-420a-a13d-55d6c4884c5e",
+        "model": "auto"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
