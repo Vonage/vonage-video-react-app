@@ -118,6 +118,10 @@ This application provides features for common conferencing use cases, such as:
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
 
+### OIDC token authentication (optional)
+
+The backend can validate OIDC access tokens on every route (minus a small exclusion list for health checks, webhooks, and well-known files) via `AUTH_ENABLED` (opt-in, `false`/unset by default), `OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Web and mobile clients authenticate the same way — a token in the configured header, default `Authorization: Bearer <token>`. See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional) for the full variable reference.
+
 ## Documentation
 
 | Document | Description |
