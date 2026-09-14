@@ -1,0 +1,14 @@
+scripts/generateEnv.ts
+  h_737cf808c1c597 161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4a9ec3691431f37e9b14937225fe3616b1026a76",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
