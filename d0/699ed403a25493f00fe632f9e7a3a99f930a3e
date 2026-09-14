@@ -1,0 +1,38 @@
+libs/common/node-test/fixtures/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/errors/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node-test/environment/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/execution/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web-test/helpers/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/constants/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node/logger/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+yarn.lock
+  h_6029769cf9ac60 10338,12401-12404,12406-12407,12409-12412,12414
+package.json
+  h_6029769cf9ac60 200
+libs/common/node-test/helpers/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node/constants/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/logger/index.ts
+  h_6029769cf9ac60 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d0699ed403a25493f00fe632f9e7a3a99f930a3e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+libs/core/tsconfig.lib.json
+  h_6029769cf9ac60 27
+libs/common/package.json
+  h_6029769cf9ac60 3
+libs/common/manifest.json
+  h_6029769cf9ac60 2
+  h_6029769cf9ac60 4
+yarn.lock
+  h_6029769cf9ac60 10338-10341,12401-12404,12406-12407,12409-12412,12414
+libs/core/tsconfig.spec.json
+  h_6029769cf9ac60 20
+libs/common/tsconfig.lib.json
+  h_6029769cf9ac60 21
+libs/api/tsconfig.spec.json
+  h_6029769cf9ac60 18
+package.json
+  h_6029769cf9ac60 190,200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "37491a1da63beea460bb63236731cf500261ee2d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

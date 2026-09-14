@@ -1,0 +1,26 @@
+libs/common/manifest.json
+  h_6029769cf9ac60 2
+libs/common/package.json
+  h_6029769cf9ac60 3
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 5-8,12-14,19,76-95,103,151,155,163-177,217,222,224,259,261-266,303
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 65
+libs/common/srcBrowser/hooks/useStableRef/hooks/useNonDisposableStableRef.ts
+  h_6029769cf9ac60 4
+package.json
+  h_6029769cf9ac60 49
+scripts/publishPackage.ts
+  h_6029769cf9ac60 6,14,16,114-125,158-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "71e35a5913582abd96e3a90658cd3f366796642a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

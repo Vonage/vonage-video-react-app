@@ -1,0 +1,34 @@
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/node-test/environment/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node-test/fixtures/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node-test/helpers/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node/constants/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/node/logger/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web-test/helpers/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/constants/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/errors/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/execution/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/logger/index.ts
+  h_6029769cf9ac60 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e4154991ea2fd074144e49e7ea25a97b954efee8",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
