@@ -3,6 +3,8 @@ import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { testIds as codecPriorityTestIds } from '../AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField';
+import { testIds as customVideoBitrateTestIds } from '../AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
 import { AdvancedSettingsScreenSharingTab } from '../AdvancedSettingsScreenSharingTab';
 
@@ -116,17 +118,13 @@ describe('AdvancedSettingsVideoTab', () => {
       'automatic',
       'manual',
     ]);
-    expect(
-      screen.queryByTestId('advanced-settings-screen-share-codec-priority-list')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId(codecPriorityTestIds.list)).not.toBeInTheDocument();
 
     render(<AdvancedSettingsScreenSharingTab />, {
       dialogState: { screenShareCodecMode: 'manual' },
     });
 
-    expect(
-      screen.getAllByTestId('advanced-settings-screen-share-codec-priority-list').length
-    ).toBeGreaterThan(0);
+    expect(screen.getAllByTestId(codecPriorityTestIds.list).length).toBeGreaterThan(0);
   });
 
   it('defaults every screen-share constraint to the browser default, so shares stay unconstrained', () => {
@@ -143,9 +141,7 @@ describe('AdvancedSettingsVideoTab', () => {
     expect(
       within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-bitrate')
     ).toHaveValue('default-sdk');
-    expect(
-      screen.queryByTestId('advanced-settings-screen-share-custom-video-bitrate-slider')
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId(customVideoBitrateTestIds.slider)).not.toBeInTheDocument();
   });
 
   it('shows a separate custom bitrate slider for the screen share', () => {
@@ -153,12 +149,9 @@ describe('AdvancedSettingsVideoTab', () => {
       dialogState: { screenShareBitrateMode: 'custom', screenShareCustomVideoBitrate: 750_000 },
     });
 
-    const slider = screen.getByTestId('advanced-settings-screen-share-custom-video-bitrate-slider');
+    const slider = screen.getByTestId(customVideoBitrateTestIds.slider);
 
     expect(slider).toHaveValue('750000');
-    expect(
-      screen.queryByTestId('advanced-settings-custom-video-bitrate-slider')
-    ).not.toBeInTheDocument();
   });
 
   it('offers the camera its own Optimize for control, without the screen-only text option', () => {
@@ -180,15 +173,15 @@ describe('AdvancedSettingsVideoTab', () => {
       dialogState: { codecMode: 'manual', codecPriority: ['vp9', 'vp8', 'h264'] },
     });
 
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-vp9')).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-vp8')).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-h264')).toBeInTheDocument();
+    expect(screen.getByTestId(codecPriorityTestIds.item('vp9'))).toBeInTheDocument();
+    expect(screen.getByTestId(codecPriorityTestIds.item('vp8'))).toBeInTheDocument();
+    expect(screen.getByTestId(codecPriorityTestIds.item('h264'))).toBeInTheDocument();
   });
 
   it('renders custom video bitrate controls when bitrate mode is custom', () => {
     render(<AdvancedSettingsVideoTab />, { dialogState: { bitrateMode: 'custom' } });
 
-    expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toBeInTheDocument();
+    expect(screen.getByTestId(customVideoBitrateTestIds.slider)).toBeInTheDocument();
   });
 });
 

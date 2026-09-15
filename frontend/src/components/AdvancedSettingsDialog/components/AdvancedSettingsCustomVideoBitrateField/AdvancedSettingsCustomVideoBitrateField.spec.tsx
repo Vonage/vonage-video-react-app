@@ -3,7 +3,9 @@ import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import AdvancedSettingsCustomVideoBitrateField, { testIds } from './AdvancedSettingsCustomVideoBitrateField';
+import AdvancedSettingsCustomVideoBitrateField, {
+  testIds,
+} from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
   afterEach(() => {

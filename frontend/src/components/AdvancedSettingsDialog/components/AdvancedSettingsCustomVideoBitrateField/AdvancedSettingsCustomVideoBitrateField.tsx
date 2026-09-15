@@ -15,10 +15,7 @@ type Props = {
   value?: AdvancedSettingsCustomVideoBitrate;
 };
 
-const AdvancedSettingsCustomVideoBitrateField = ({
-  onChange,
-  value,
-}: Props): ReactElement => {
+const AdvancedSettingsCustomVideoBitrateField = ({ onChange, value }: Props): ReactElement => {
   const { t } = useTranslation();
   const cameraCustomVideoBitrate = advancedSettings$.use.select(
     (state) => state.customVideoBitrate
