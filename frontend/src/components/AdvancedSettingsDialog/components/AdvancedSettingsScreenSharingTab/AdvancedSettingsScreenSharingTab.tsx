@@ -151,7 +151,6 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
         <AdvancedSettingsCodecPriorityField
           codecPriority={screenShareCodecPriority}
           setCodecPriority={setScreenShareCodecPriority}
-          idPrefix="advanced-settings-screen-share-codec-priority"
         />
       )}
       <SelectField
@@ -194,7 +193,6 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
         <AdvancedSettingsCustomVideoBitrateField
           onChange={handleScreenShareCustomVideoBitrateChange}
           value={screenShareCustomVideoBitrate}
-          idPrefix="advanced-settings-screen-share-custom-video-bitrate"
         />
       )}
       <Field>

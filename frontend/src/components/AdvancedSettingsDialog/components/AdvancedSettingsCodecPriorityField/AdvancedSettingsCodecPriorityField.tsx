@@ -7,8 +7,12 @@ import type {
   AdvancedSettingsVideoCodec,
 } from '../../types/types';
 
+export const testIds = {
+  list: 'advanced-settings-codec-priority-list',
+  item: (codec: AdvancedSettingsVideoCodec) => `advanced-settings-codec-priority-item-${codec}`,
+} as const;
+
 type AdvancedSettingsCodecPriorityFieldProps = {
-  idPrefix?: string;
   codecPriority: AdvancedSettingsManualCodecOrder;
   setCodecPriority: (value: AdvancedSettingsManualCodecOrder) => void;
 };
@@ -16,7 +20,6 @@ type AdvancedSettingsCodecPriorityFieldProps = {
 const AdvancedSettingsCodecPriorityField = ({
   codecPriority,
   setCodecPriority,
-  idPrefix = 'advanced-settings-codec-priority',
 }: AdvancedSettingsCodecPriorityFieldProps): ReactElement => {
   const { t } = useTranslation();
   const [draggedCodec, setDraggedCodec] = useState<AdvancedSettingsVideoCodec | null>(null);
@@ -81,7 +84,7 @@ const AdvancedSettingsCodecPriorityField = ({
         {t('advancedSettings.video.codec.priority.description')}
       </p>
 
-      <ol className="flex flex-col gap-2" data-testid={`${idPrefix}-list`}>
+      <ol className="flex flex-col gap-2" data-testid={testIds.list}>
         {codecPriority.map((codec, index) => {
           const isDraggedCodec = draggedCodec === codec;
           const isDropTarget = dropTargetCodec === codec && draggedCodec !== codec;
@@ -105,7 +108,7 @@ const AdvancedSettingsCodecPriorityField = ({
                 isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
                 isDropTarget ? 'border-vera-primary' : null
               )}
-              data-testid={`${idPrefix}-item-${codec}`}
+              data-testid={testIds.item(codec)}
             >
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-secondary">
                 {index + 1}
