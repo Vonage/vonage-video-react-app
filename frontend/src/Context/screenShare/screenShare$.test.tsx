@@ -65,6 +65,7 @@ describe('screenShare$', () => {
         insertDefaultUI: false,
         videoContentHint: 'detail',
         name: "TestUser's screen",
+        constraints: { video: { displaySurface: 'monitor' } },
       },
       expect.any(Function)
     );
