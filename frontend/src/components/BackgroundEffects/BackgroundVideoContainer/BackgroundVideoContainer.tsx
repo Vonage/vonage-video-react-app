@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import waitUntilPlaying from '../../../utils/waitUntilPlaying';
 import useIsTabletViewport from '../../../hooks/useIsTabletViewport';
+import useSelfViewMirroring from '../../../hooks/useSelfViewMirroring';
 
 export type BackgroundVideoContainerProps = {
   isFixedWidth?: boolean;
@@ -58,7 +59,6 @@ const BackgroundVideoContainer = ({
         marginLeft: 'auto',
         marginRight: 'auto',
         marginBottom: '1px',
-        transform: 'scaleX(-1)',
         objectFit: 'contain',
         aspectRatio: '16 / 9',
       });
@@ -76,6 +76,8 @@ const BackgroundVideoContainer = ({
     isParentVideoEnabled,
     isLGViewport,
   ]);
+
+  useSelfViewMirroring(publisherVideoElement);
 
   let containerWidth = '100%';
   if (isFixedWidth) {
