@@ -1,10 +1,4 @@
-export type AdvancedSettingsTab =
-  | 'general'
-  | 'video'
-  | 'screenSharing'
-  | 'audio'
-  | 'statistics'
-  | 'about';
+export type AdvancedSettingsTab = 'general' | 'video' | 'screenSharing' | 'audio' | 'statistics';
 
 export type AdvancedSettingsBitrateMode = 'default' | 'bw_saver' | 'extra_bw_saver' | 'custom';
 

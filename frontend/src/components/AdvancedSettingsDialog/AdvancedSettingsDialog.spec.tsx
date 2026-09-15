@@ -46,15 +46,6 @@ describe('AdvancedSettingsDialog', () => {
     expect(screen.getByTestId('advanced-settings-screen-sharing-tab')).toBeInTheDocument();
   });
 
-  it('switches to the about tab', async () => {
-    const user = userEvent.setup();
-    render(<AdvancedSettingsDialog />);
-
-    await user.click(screen.getByTestId('advanced-settings-tab-about'));
-
-    expect(screen.getByTestId('advanced-settings-about-tab')).toBeInTheDocument();
-  });
-
   it('switches to the audio tab', async () => {
     const user = userEvent.setup();
     render(<AdvancedSettingsDialog />);

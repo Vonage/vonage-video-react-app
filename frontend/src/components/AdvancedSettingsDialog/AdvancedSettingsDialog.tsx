@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/components/VividIcon';
 import { AdvancedSettingsAudioTab } from './components/AdvancedSettingsAudioTab';
-import { AdvancedSettingsAboutTab } from './components/AdvancedSettingsAboutTab';
 import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneralTab';
 import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
 import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
@@ -22,8 +21,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
     if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
-    if (selectedTab === 'statistics') return <AdvancedSettingsStatisticsTab />;
-    return <AdvancedSettingsAboutTab />;
+    return <AdvancedSettingsStatisticsTab />;
   })();
 
   return (
