@@ -16,6 +16,18 @@ const AdvancedSettingsSidebar = (): ReactElement => {
     <div className="flex w-full flex-row gap-1 overflow-x-auto border-b border-vera-border bg-vera-background p-1 md:h-full md:w-55 md:flex-col md:gap-0.5 md:overflow-x-visible md:border-b-0 md:border-r">
       {tabs.map((tab) => {
         const isSelected = selectedTab === tab;
+        const tabIcon = (() => {
+          if (tab === 'video') return 'video-solid';
+          if (tab === 'screenSharing') return 'screen-share-solid';
+          if (tab === 'audio') return 'microphone-solid';
+          if (tab === 'statistics') return 'cell-reception-line';
+          return null;
+        })();
+        const tabIconTestId = (() => {
+          if (tab === 'screenSharing') return 'advanced-settings-tab-screen-sharing-icon';
+          if (tabIcon) return `advanced-settings-tab-${tab}-icon`;
+          return null;
+        })();
 
         return (
           <button
@@ -32,33 +44,8 @@ const AdvancedSettingsSidebar = (): ReactElement => {
               }
             )}
           >
-            {tab === 'video' && (
-              <VividIcon
-                data-testid="advanced-settings-tab-video-icon"
-                name="video-solid"
-                customSize={-5}
-              />
-            )}
-            {tab === 'screenSharing' && (
-              <VividIcon
-                data-testid="advanced-settings-tab-screen-sharing-icon"
-                name="screen-share-solid"
-                customSize={-5}
-              />
-            )}
-            {tab === 'audio' && (
-              <VividIcon
-                data-testid="advanced-settings-tab-audio-icon"
-                name="microphone-solid"
-                customSize={-5}
-              />
-            )}
-            {tab === 'statistics' && (
-              <VividIcon
-                data-testid="advanced-settings-tab-statistics-icon"
-                name="cell-reception-line"
-                customSize={-5}
-              />
+            {tabIcon && (
+              <VividIcon data-testid={tabIconTestId ?? undefined} name={tabIcon} customSize={-5} />
             )}
             {t(`advancedSettings.tabs.${tab}`)}
           </button>
