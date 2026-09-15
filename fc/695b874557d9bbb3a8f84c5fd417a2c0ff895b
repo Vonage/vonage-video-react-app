@@ -1,0 +1,42 @@
+.vonage/catalog-info.yaml
+  h_c939f8fae0de97 14-15
+docs/CONFIGURATION.md
+  h_c939f8fae0de97 246,250,257
+frontend/tailwind.config.cjs
+  h_c939f8fae0de97 4-6,8
+libs/ui/src/theme/helpers/designTokens/designTokens.json
+  h_c939f8fae0de97 2-6,8-98,100-106,108-233
+libs/ui/src/theme/helpers/designTokens/helpers/tokensToJson.ts
+  h_c939f8fae0de97 5,8-9,15,18-20,25-47,49-50,52,55-57,60,64,66-86,88-96,98-105,107,109-111,115-116,118-135,154
+libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts
+  h_c939f8fae0de97 5-6,20-34,36-41,43-48,50-52,54,57-64,66-69,71-79,81-89,91,93,101-102,104,106-114,116-122,124-125,127-142,146-147,152-153,159,161-164,168-174,176-177,179-184,187-188,191-202,205,209-212,214,225-226,228-229,232-238,241-244,262-265,286-287,301-302,365,367
+libs/ui/src/theme/helpers/tailwind/validateVeraThemeTokens.cjs
+  h_c939f8fae0de97 1-131
+libs/ui/src/theme/helpers/tailwind/veraUI.cjs
+  h_c939f8fae0de97 9-10,12-23,25,27-38,40-41,43-47,50-53,68-276,279-768,771-828
+libs/ui/src/theme/helpers/veraUI.types.ts
+  h_c939f8fae0de97 149-153,155,157-180
+libs/ui/tailwind.config.cjs
+  h_c939f8fae0de97 4-6
+package.json
+  h_c939f8fae0de97 39
+scripts/generateTokens.ts
+  h_c939f8fae0de97 16,26,28,34,44,60-62,71
+specs/app-config.schema.json
+  h_c939f8fae0de97 15
+theme.example.json
+  h_c939f8fae0de97 1-235
+theme.json
+  h_c939f8fae0de97 1-235
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fc695b874557d9bbb3a8f84c5fd417a2c0ff895b",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
