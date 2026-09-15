@@ -1,0 +1,82 @@
+frontend/src/components/AdvancedSettingsDialog/schemas/bitrateMode.schema.ts
+  h_6029769cf9ac60 1-19
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField.tsx
+  h_6029769cf9ac60 5
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.spec.ts
+  h_6029769cf9ac60 9,57,69-71,77,79,91-93,97,99,111-113
+frontend/src/components/AdvancedSettingsDialog/schemas/contentHint.schema.ts
+  h_6029769cf9ac60 1-2,4-7,16-21,23
+frontend/src/components/AdvancedSettingsDialog/schemas/index.ts
+  h_6029769cf9ac60 1-12
+frontend/src/components/AdvancedSettingsDialog/schemas/videoCodec.schema.ts
+  h_6029769cf9ac60 1-21
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_6029769cf9ac60 5
+frontend/src/components/AdvancedSettingsDialog/schemas/audioBitrateMode.schema.ts
+  h_6029769cf9ac60 1-15
+frontend/src/components/AdvancedSettingsDialog/types/AdvancedSettingsSelectOption.ts
+  h_6029769cf9ac60 1-4
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettingsTab.schema.ts
+  h_6029769cf9ac60 1-21
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.ts
+  h_6029769cf9ac60 2,5-6,12,15,91-103,106-113,115-121,124-131
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_6029769cf9ac60 8
+frontend/src/components/AdvancedSettingsDialog/schemas/frameRate.schema.ts
+  h_6029769cf9ac60 1-26
+libs/common/src/execution/attempt/attempt.ts
+  h_6029769cf9ac60 3,11-24,29
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  h_6029769cf9ac60 1-48
+frontend/src/components/AdvancedSettingsDialog/schemas/customAudioBitrate.schema.ts
+  h_6029769cf9ac60 1-14
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/index.ts
+  h_6029769cf9ac60 8
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.ts
+  h_6029769cf9ac60 21-22
+frontend/src/components/AdvancedSettingsDialog/schemas/customVideoBitrate.schema.ts
+  h_6029769cf9ac60 1-12
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_6029769cf9ac60 6
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_6029769cf9ac60 4,15,22-23,27-29,31-33,35-36,39,50-53,55-58,68,70,72,238,245
+frontend/src/components/AdvancedSettingsDialog/schemas/codecMode.schema.ts
+  h_6029769cf9ac60 1-15
+frontend/src/components/AdvancedSettingsDialog/schemas/screenShareCodecMode.schema.ts
+  h_6029769cf9ac60 1-18
+frontend/src/Context/screenShare/helpers/resolveScreenSharePreferredVideoCodecs.ts
+  h_6029769cf9ac60 1-48
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.tsx
+  h_6029769cf9ac60 7-8,14-15,78,161
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_6029769cf9ac60 7-8,13-14,101-105
+frontend/src/components/AdvancedSettingsDialog/schemas/manualCodecOrder.schema.ts
+  h_6029769cf9ac60 1-12
+frontend/src/Context/AdvancedSettings/index.ts
+  h_6029769cf9ac60 2
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_6029769cf9ac60 1,12-17,87-92,94,104-105,110-116,179-185
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/handleApplyAdvancedSettingsError.ts
+  h_6029769cf9ac60 1-33
+frontend/src/logger/index.ts
+  h_6029769cf9ac60 3-7
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/execution/attempt/attempt.test.ts
+  h_6029769cf9ac60 20-22,31
+libs/core/src/stores/mediaDevices/actions/selectDevice/selectDevice.ts
+  h_6029769cf9ac60 55
+libs/core/src/stores/mediaDevices/actions/syncMediaDevicesInfo.ts
+  h_6029769cf9ac60 47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1d67f09c3f6c59ed7b66184fe43f1133198c875b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
