@@ -18,8 +18,8 @@ import type {
   AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
-} from '@components/AdvancedSettingsDialog/types/types';
-import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/types/types';
+} from '@components/AdvancedSettingsDialog/schemas';
+import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/schemas';
 import { Resolution } from '@common/types';
 
 const {

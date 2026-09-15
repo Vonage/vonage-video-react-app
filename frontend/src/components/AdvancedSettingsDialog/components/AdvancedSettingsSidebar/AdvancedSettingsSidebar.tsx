@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { VividIcon } from '@ui';
-import type { AdvancedSettingsTab } from '../../types/types';
+import type { AdvancedSettingsTab } from '../../schemas';
 
 const tabs: AdvancedSettingsTab[] = ['general', 'video', 'screenSharing', 'audio', 'statistics'];
 const { setSelectedTab } = advancedSettings$.actions;

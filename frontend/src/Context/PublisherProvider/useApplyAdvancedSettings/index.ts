@@ -5,3 +5,4 @@ export {
   applyBitrate,
   applyContentHint,
 } from './applyAdvancedSettingsToPublisher';
+export { default as handleApplyAdvancedSettingsError } from './handleApplyAdvancedSettingsError';

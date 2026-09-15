@@ -1,20 +1,17 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { Field, SelectField } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import type {
-  AdvancedSettingsContentHint,
-  AdvancedSettingsFrameRate,
-  AdvancedSettingsSelectOption,
-} from '../../types/types';
+import type { AdvancedSettingsSelectOption } from '../../types/AdvancedSettingsSelectOption';
+import type { AdvancedSettingsContentHint, AdvancedSettingsFrameRate } from '../../schemas';
 import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
-} from '../../types/types';
+  getSupportedFrameRates,
+} from '../../schemas';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { Resolution } from '@common/types';
 
@@ -101,12 +98,11 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
     },
   ];
 
-  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] = (
-    env.SUPPORTED_FRAME_RATES as AdvancedSettingsFrameRate[]
-  ).map((supportedFrameRate) => ({
-    value: supportedFrameRate,
-    label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
-  }));
+  const frameRateOptions: AdvancedSettingsSelectOption<AdvancedSettingsFrameRate>[] =
+    getSupportedFrameRates().map((supportedFrameRate) => ({
+      value: supportedFrameRate,
+      label: t(`advancedSettings.video.frameRate.options.${supportedFrameRate}`),
+    }));
 
   return (
     <div className="flex flex-col gap-6">

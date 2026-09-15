@@ -2,10 +2,7 @@ import { useState } from 'react';
 import type { DragEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import type {
-  AdvancedSettingsManualCodecOrder,
-  AdvancedSettingsVideoCodec,
-} from '../../types/types';
+import type { AdvancedSettingsManualCodecOrder, AdvancedSettingsVideoCodec } from '../../schemas';
 
 export const testIds = {
   list: 'advanced-settings-codec-priority-list',

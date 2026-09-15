@@ -1,4 +1,4 @@
-import { initPublisher, type PublisherProperties } from '@vonage/client-sdk-video';
+import { initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
 import { initialState } from './constants';
@@ -8,12 +8,13 @@ import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { applyBitrate } from '@Context/PublisherProvider/useApplyAdvancedSettings';
-import tryCatch from '@common/execution/tryCatch';
 import {
-  ADVANCED_SETTINGS_CODEC_MODE,
-  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
-} from '@components/AdvancedSettingsDialog/types/types';
+  applyBitrate,
+  handleApplyAdvancedSettingsError,
+} from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import { attempt } from '@common/execution';
+import { isNil } from 'json-storage-formatter';
+import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -83,19 +84,14 @@ const screenShare$ = createContext(initialState, {
             codecPriority,
           } = advancedSettings$.getState();
 
-          const preferredVideoCodecs = ((): PublisherProperties['preferredVideoCodecs'] => {
-            if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit) {
-              return codecMode === ADVANCED_SETTINGS_CODEC_MODE.automatic
-                ? 'automatic'
-                : codecPriority;
-            }
+          const preferredVideoCodecs = resolveScreenSharePreferredVideoCodecs({
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            codecMode,
+            codecPriority,
+          });
 
-            if (screenShareCodecMode === ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.automatic) {
-              return 'automatic';
-            }
-
-            return screenShareCodecPriority;
-          })();
+          const partnerId = session.sessionDetails?.applicationId ?? null;
 
           const publisher = initPublisher(
             undefined,
@@ -105,12 +101,19 @@ const screenShare$ = createContext(initialState, {
               videoContentHint: screenShareContentHint,
               preferredVideoCodecs,
               scalableScreenshare: scalableScreenshareEnabled,
-              ...(screenShareFrameRate !== null && { frameRate: screenShareFrameRate }),
-              ...(screenShareResolution !== null && { resolution: screenShareResolution }),
+              ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
+              ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
             },
             (err) => {
               if (!err) return;
+
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to initialize screen share publisher',
+                eventSource: 'screenShare$.toggleShareScreen.initPublisher',
+                partnerId,
+              })(err);
+
               actions$.onScreenShareStopped();
             }
           );
@@ -173,11 +176,14 @@ const screenShare$ = createContext(initialState, {
           await publish(publisher);
 
           if (screenShareBitrateMode !== null) {
-            const { error } = await tryCatch(() =>
-              applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate)
+            await attempt(
+              () => applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate),
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to apply screen share bitrate',
+                eventSource: 'screenShare$.toggleShareScreen.applyBitrate',
+                partnerId,
+              })
             );
-
-            if (error) console.error('Screen-share bitrate could not be applied', error);
           }
 
           vonageVideoClient?.on('screenshareStreamCreated', actions$.handleStreamCreated);

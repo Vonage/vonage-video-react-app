@@ -4,18 +4,15 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import { Field, SelectField } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
-import type {
-  AdvancedSettingsBitrateMode,
-  AdvancedSettingsContentHint,
-  AdvancedSettingsFrameRate,
-  AdvancedSettingsSelectOption,
-} from '../../types/types';
+import type { AdvancedSettingsSelectOption } from '../../types/AdvancedSettingsSelectOption';
+import type { AdvancedSettingsBitrateMode, AdvancedSettingsContentHint } from '../../schemas';
 import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
-} from '../../types/types';
+  frameRateSchema,
+} from '../../schemas';
 import { Resolution } from '@common/types';
 import { env } from '../../../../env';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
@@ -78,7 +75,7 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
   };
   const frameRateOptions = [
     defaultOption,
-    ...(env.SUPPORTED_FRAME_RATES as AdvancedSettingsFrameRate[]).map((value) => ({
+    ...env.SUPPORTED_FRAME_RATES.map((value) => ({
       value: String(value),
       label: t(`advancedSettings.video.frameRate.options.${value}`),
     })),
@@ -161,7 +158,7 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
         options={frameRateOptions}
         onChange={(value) =>
           void handleScreenShareFrameRateChange(
-            value === DEFAULT_OPTION_VALUE ? null : (Number(value) as AdvancedSettingsFrameRate)
+            value === DEFAULT_OPTION_VALUE ? null : frameRateSchema.parse(Number(value))
           )
         }
       />

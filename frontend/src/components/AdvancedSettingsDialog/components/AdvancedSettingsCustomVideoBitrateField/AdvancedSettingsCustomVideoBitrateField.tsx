@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import type { AdvancedSettingsCustomVideoBitrate } from '../../types/types';
+import type { AdvancedSettingsCustomVideoBitrate } from '../../schemas';
 
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
 
