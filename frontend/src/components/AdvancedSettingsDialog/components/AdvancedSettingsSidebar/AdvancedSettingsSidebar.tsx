@@ -17,6 +17,7 @@ const AdvancedSettingsSidebar = (): ReactElement => {
       {tabs.map((tab) => {
         const isSelected = selectedTab === tab;
         const tabIcon = (() => {
+          if (tab === 'general') return 'gear-solid';
           if (tab === 'video') return 'video-solid';
           if (tab === 'screenSharing') return 'screen-share-solid';
           if (tab === 'audio') return 'microphone-solid';
