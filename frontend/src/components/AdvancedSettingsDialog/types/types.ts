@@ -18,6 +18,15 @@ export const ADVANCED_SETTINGS_CODEC_MODE = {
   manual: 'manual' as AdvancedSettingsCodecMode,
 };
 
+export type AdvancedSettingsScreenShareSurface = 'default' | 'monitor' | 'window' | 'browser';
+
+export const ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE = {
+  default: 'default',
+  browser: 'browser',
+  window: 'window',
+  monitor: 'monitor',
+} as const satisfies Record<string, AdvancedSettingsScreenShareSurface>;
+
 export type AdvancedSettingsVideoCodec = 'vp8' | 'vp9' | 'h264';
 
 export type AdvancedSettingsManualCodecOrder = [

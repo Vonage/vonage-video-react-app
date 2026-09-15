@@ -1,6 +1,7 @@
 import { initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { initialState } from './constants';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
@@ -62,6 +63,14 @@ const screenShare$ = createContext(initialState, {
         if (!vonageVideoClient) return;
 
         if (!getState().isSharingScreen) {
+          // Pre-selecting the screen sharing surface the user chose in Advanced Settings
+          const { screenShareSurface } = advancedSettings$.getState();
+
+          const screenShareConstraints = (() => {
+            if (screenShareSurface === 'default') return undefined;
+            return { video: { displaySurface: screenShareSurface } };
+          })();
+
           // Initializing the publisher for screen sharing
           const publisher = initPublisher(
             undefined,
@@ -70,6 +79,7 @@ const screenShare$ = createContext(initialState, {
               insertDefaultUI: false,
               videoContentHint: 'detail',
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
+              constraints: screenShareConstraints,
             },
             (err) => {
               if (!err) return;

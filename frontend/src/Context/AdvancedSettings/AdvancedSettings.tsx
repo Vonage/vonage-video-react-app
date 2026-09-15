@@ -10,11 +10,13 @@ import type {
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsTab,
+  AdvancedSettingsScreenShareSurface,
 } from '@components/AdvancedSettingsDialog/types/types';
 import {
   ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
+  ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE,
 } from '@components/AdvancedSettingsDialog/types/types';
 import { env } from '../../env';
 import { ResolutionSchema } from '@common/schemas';
@@ -39,6 +41,8 @@ const INITIAL_STATE = {
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
+  screenShareSurface:
+    ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.monitor as AdvancedSettingsScreenShareSurface,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -76,6 +80,7 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
   echoCancellationEnabled: z.boolean(),
   noiseSuppressionEnabled: z.boolean(),
   autoGainControlEnabled: z.boolean(),
+  screenShareSurface: z.enum(['default', 'browser', 'window', 'monitor']),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -194,6 +199,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setAutoGainControlEnabled(value: boolean) {
       return () => {
         partialUpdate({ autoGainControlEnabled: value });
+      };
+    },
+    setScreenShareSurface(value: AdvancedSettingsScreenShareSurface) {
+      return () => {
+        partialUpdate({ screenShareSurface: value });
       };
     },
   },
