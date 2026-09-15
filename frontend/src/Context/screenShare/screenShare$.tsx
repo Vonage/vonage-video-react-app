@@ -30,11 +30,11 @@ const screenShare$ = createContext(initialState, {
     },
 
     unpublishScreenshare: () => {
-      return ({ getState, getMetadata, setState }) => {
+      return ({ getState, metadata, setState }) => {
         const { publisher } = getState();
         if (!publisher) return;
 
-        const { session } = getMetadata();
+        const { session } = metadata;
 
         session.unpublish(publisher);
 
@@ -54,8 +54,8 @@ const screenShare$ = createContext(initialState, {
     },
 
     toggleShareScreen: () => {
-      return async ({ getState, getMetadata, setState, actions }) => {
-        const { user, session, t } = getMetadata();
+      return async ({ getState, metadata, setState, actions }) => {
+        const { user, session, t } = metadata;
         const { vonageVideoClient, publish } = session;
         const actions$ = actions as ScreenShare['actions'];
 

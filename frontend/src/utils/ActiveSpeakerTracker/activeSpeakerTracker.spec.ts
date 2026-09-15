@@ -2,7 +2,7 @@ import throttle from '@common/execution/throttle';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import ActiveSpeakerTracker from './activeSpeakerTracker';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { waitForEvent } from '../../../../libs/common/testNode/helpers';
+import { waitForEvent } from '../../../../libs/common/node-test/helpers';
 
 vi.mock('@common/execution/throttle');
 
