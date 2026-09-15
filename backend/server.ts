@@ -45,6 +45,8 @@ app.use(
       '/v2/hooks/archive',
       '/.well-known/apple-app-site-association',
       '/.well-known/assetlinks.json',
+      '/auth/signin',
+      '/api/auth/callback/okta',
     ],
   })
 );
