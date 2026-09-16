@@ -1,0 +1,19 @@
+start-dev-environment.sh
+  s_db51e709d0e197::t_1742f4f2882cfa 1-286
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ffc48edcd52018231db15881b4049690d5ec9a9c",
+  "prompts": {},
+  "sessions": {
+    "s_db51e709d0e197": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1789388501681462000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
