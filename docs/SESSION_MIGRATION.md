@@ -14,6 +14,8 @@ OT.initSession(applicationId, sessionId, { sessionMigration: true });
 
 **Backend** — the webhook handlers (`/hooks/session`, `/hooks/archive`, `/hooks/captions`) must be reachable by Vonage. Configure the webhook URLs in the [Vonage API Dashboard](https://dashboard.vonage.com/applications) under your application settings, pointing to your deployed backend (e.g. `https://your-backend.example.com/v2/hooks/session`).
 
+> **Developing this feature?** The recovery logic lives entirely in these webhook handlers, so iterating on it means editing the hooks and having Vonage call your **local** backend. Vonage can't reach `localhost`, so you need to expose it with a public tunnel. See [Testing Webhooks Locally with ngrok](#testing-webhooks-locally-with-ngrok) for the local setup.
+
 ### Affected Features
 
 When a server rotation occurs, the following features are affected:
@@ -60,27 +62,26 @@ The backend will receive the rotation webhooks and automatically restart the arc
 
 ---
 
-## Testing on Multiple Devices
+## Testing Webhooks Locally with ngrok
 
-To test the video API across multiple devices on your local network, you can use **ngrok** to expose your frontend and backend publicly.
+Session migration recovery is driven entirely by Vonage's webhooks (`/hooks/session`, `/hooks/archive`, `/hooks/captions`). Because Vonage's infrastructure calls these endpoints from the public internet, it cannot reach a backend running on `localhost`. To develop and test this feature locally, use **ngrok** to expose your local backend publicly and register that public URL as the webhook target in the Vonage Dashboard.
 
-1. Create an account at [ngrok](https://dashboard.ngrok.com/signup) if you haven't already.
+This is how we work on this feature: run everything locally, tunnel the backend through ngrok, point the application's webhooks at the tunnel, and then trigger a server rotation manually to watch the recovery flow run end to end against your local code.
 
-2. Follow the [Setup and Installation instructions](https://dashboard.ngrok.com/get-started/setup/) for your operating system to install and configure ngrok.
+1. Create an account at [ngrok](https://dashboard.ngrok.com/signup) if you haven't already, then follow the [Setup and Installation instructions](https://dashboard.ngrok.com/get-started/setup/) for your operating system.
 
-3. **Start the application locally first:**
+2. **Start the application locally first:**
 
     ``` bash
     yarn dev
     ```
 
-    Make sure both the backend server (port 3345) and frontend dev server (port 5173) are running before proceeding to the next step.
+    Make sure both the backend server (port 3345) and frontend dev server (port 5173) are running before proceeding.
 
-4. Create secure tunnels for both frontend and backend:
+3. **Create secure tunnels for both frontend and backend.**
 
-    **Set up ngrok configuration:**
-    
     First, find your ngrok config file location:
+
     ``` bash
     ngrok config check
     ```
@@ -98,29 +99,44 @@ To test the video API across multiple devices on your local network, you can use
         proto: http
     ```
 
+    The **backend** tunnel is the important one for webhooks — it is the public URL Vonage will call. The **frontend** tunnel is only needed if you also want to test across multiple devices.
+
     **Start both tunnels:**
+
     ``` bash
     ngrok start backend frontend
     ```
 
-    This command will create publicly accessible HTTPS URLs for both your frontend and backend. The output will appear in your terminal, similar to the image below:
+    This creates publicly accessible HTTPS URLs for your frontend and backend. The output appears in your terminal, similar to the image below:
 
     <details close>
     <summary>ngrok output example</summary>
-    <img src="./docs/assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
+    <img src="./assets/readme/4-forwarding.png" alt="ngrok tunnel example" style="max-width: 100%; height: auto;" />
     </details>
 
     </br>
 
-5. Copy the domains from both outputs and update [`vcrBuild.env.sh`](vcrBuild.env.sh):
+4. **Register the backend tunnel as your webhook (hooks) target in the Vonage Dashboard.**
+
+    Open your application in the [Vonage API Dashboard](https://dashboard.vonage.com/applications) and set the webhook URLs to point at your backend ngrok domain, using the `/v2` prefix:
+
+    | Webhook   | URL                                                        |
+    | --------- | ---------------------------------------------------------- |
+    | Session   | `https://your-backend-domain.ngrok.io/v2/hooks/session`    |
+    | Archive   | `https://your-backend-domain.ngrok.io/v2/hooks/archive`    |
+    | Captions  | `https://your-backend-domain.ngrok.io/v2/hooks/captions`   |
+
+    With these in place, Vonage will deliver `sessionDestroyed` / `serverRotation`, archive `stopped`, and captions events straight to your local backend so you can step through the recovery logic.
+
+    **Note:** ngrok assigns temporary domains on the free tier. You'll need to update these dashboard URLs each time the backend domain changes.
+
+5. **Point the frontend at the tunnels** by updating [`vcrBuild.env.sh`](vcrBuild.env.sh):
 
     ``` bash
     export TUNNEL_DOMAIN=your-frontend-domain.ngrok.io
     export API_URL=https://your-backend-domain.ngrok.io
     ```
 
-    **Note:** ngrok assigns temporary domains. You'll need to update these values each time the domains change.
+6. **Trigger a server rotation** using the [Vonage Video Playground](https://tools.vonage.com/video/playground) (see [Triggering a server rotation manually](#triggering-a-server-rotation-manually-for-testing) above) and watch the webhook calls arrive.
 
-  </br>
-
-6. Open the provided frontend **Forwarding** URL in your browser. This exposes your entire application publicly, allowing devices on any network to access it.
+    Inspect the incoming requests in real time from the ngrok web inspector at [http://localhost:4040](http://localhost:4040), and correlate them with your backend logs to confirm the archive is restarted automatically.
