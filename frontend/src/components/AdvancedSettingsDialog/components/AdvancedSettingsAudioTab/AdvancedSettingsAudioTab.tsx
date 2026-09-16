@@ -5,7 +5,7 @@ import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { SelectField, Field } from '@ui/components';
-import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../schemas';
 
 const {
   setAudioBitrateMode,

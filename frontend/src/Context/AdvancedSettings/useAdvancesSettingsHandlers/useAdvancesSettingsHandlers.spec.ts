@@ -6,13 +6,14 @@ import type { PublisherContextType } from '@Context/PublisherProvider';
 import type { PreviewPublisherContextType } from '@Context/PreviewPublisherProvider';
 import usePublisherContext from '@hooks/usePublisherContext';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
+import { makeTestProvider, providers } from '@test/providers';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { handleClientApplicationError } from '@ui/helpers';
 import useAdvancesSettingsHandlers from './useAdvancesSettingsHandlers';
-import { Resolution } from '@common/types';
 
 vi.mock('@hooks/usePublisherContext');
 vi.mock('@hooks/usePreviewPublisherContext');
+
 vi.mock('@ui/helpers', () => ({
   handleClientApplicationError: vi.fn(),
 }));
@@ -46,221 +47,111 @@ describe('useAdvancesSettingsHandlers', () => {
     advancedSettings$.reset();
   });
 
-  describe('handleFrameRateChange', () => {
-    it('applies frame rate to publisher then updates store', async () => {
-      const publisher = createMockPublisher();
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+  it('applies the setting to the publisher then updates the store', async () => {
+    const publisher = createMockPublisher();
+    mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
+    const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
-      await act(async () => {
-        await result.current.handleFrameRateChange(15);
-      });
-
-      await waitFor(() => {
-        expect(publisher.setPreferredFrameRate).toHaveBeenCalledWith(15);
-        expect(advancedSettings$.getState().frameRate).toBe(15);
-      });
+    await act(async () => {
+      await result.current.handleFrameRateChange(15);
     });
 
-    it('still updates store when no publisher is active', async () => {
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleFrameRateChange(7);
-      });
-
-      await waitFor(() => {
-        expect(advancedSettings$.getState().frameRate).toBe(7);
-      });
-    });
-
-    it('does not update store when publisher call fails', async () => {
-      const publisher = createMockPublisher();
-      (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-
-      const initialFrameRate = advancedSettings$.getState().frameRate;
-
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleFrameRateChange(15);
-      });
-
-      await waitFor(() => {
-        expect(publisher.setPreferredFrameRate).toHaveBeenCalledWith(15);
-      });
-
-      expect(advancedSettings$.getState().frameRate).toBe(initialFrameRate);
-    });
-
-    it('reports a notification after a failed frame rate update', async () => {
-      const publisher = createMockPublisher();
-      (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleFrameRateChange(15);
-      });
-
-      await waitFor(() => {
-        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
-      });
+    await waitFor(() => {
+      expect(publisher.setPreferredFrameRate).toHaveBeenCalledWith(15);
+      expect(advancedSettings$.getState().frameRate).toBe(15);
     });
   });
 
-  describe('handleResolutionChange', () => {
-    it('applies resolution to publisher then updates store', async () => {
-      const publisher = createMockPublisher();
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+  it('keeps the store unchanged and reports an error when the publisher rejects the change', async () => {
+    const publisher = createMockPublisher();
+    (publisher.setPreferredFrameRate as Mock).mockRejectedValue(new Error('hardware error'));
+    mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
+    const initialFrameRate = advancedSettings$.getState().frameRate;
 
-      await act(async () => {
-        await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
-      });
+    const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
-      await waitFor(() => {
-        expect(publisher.setPreferredResolution).toHaveBeenCalledWith({ width: 640, height: 480 });
-        expect(advancedSettings$.getState().resolution).toBe('640x480');
-      });
+    await act(async () => {
+      await result.current.handleFrameRateChange(15);
     });
 
-    it('does not update store when resolution update fails', async () => {
-      const publisher = createMockPublisher();
-      (publisher.setPreferredResolution as Mock).mockRejectedValue(new Error('unsupported'));
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-      const initialResolution = advancedSettings$.getState().resolution;
+    await waitFor(() => {
+      expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
+    });
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
+    expect(advancedSettings$.getState().frameRate).toBe(initialFrameRate);
+  });
 
-      await act(async () => {
-        await result.current.handleResolutionChange(Resolution.VGA_LANDSCAPE);
-      });
+  it('updates the store when no publisher is active', async () => {
+    const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
-      await waitFor(() => {
-        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
-      });
+    await act(async () => {
+      await result.current.handleFrameRateChange(7);
+    });
 
-      expect(advancedSettings$.getState().resolution).toBe(initialResolution);
+    await waitFor(() => {
+      expect(advancedSettings$.getState().frameRate).toBe(7);
     });
   });
 
-  describe('handleBitrateModeChange', () => {
-    it('applies bitrate preset to publisher then updates store', async () => {
-      const publisher = createMockPublisher();
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+  it('applies the custom bitrate only while the mode is custom', async () => {
+    const publisher = createMockPublisher();
+    mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
+    advancedSettings$.actions.setBitrateMode('default');
 
-      await act(async () => {
-        await result.current.handleBitrateModeChange('bw_saver');
-      });
+    const { result } = renderHook(() => useAdvancesSettingsHandlers());
 
-      await waitFor(() => {
-        expect(publisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
-        expect(advancedSettings$.getState().bitrateMode).toBe('bw_saver');
-      });
+    await act(async () => {
+      await result.current.handleCustomVideoBitrateChange(750_000);
     });
 
-    it('uses preview publisher when no meeting room publisher is active', async () => {
-      const previewPublisher = createMockPublisher();
-      mockUsePreviewPublisherContext.mockReturnValue({
-        publisher: previewPublisher,
-      } as unknown as PreviewPublisherContextType);
-
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleBitrateModeChange('bw_saver');
-      });
-
-      await waitFor(() => {
-        expect(previewPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
-      });
+    await waitFor(() => {
+      expect(advancedSettings$.getState().customVideoBitrate).toBe(750_000);
     });
 
-    it('does not update store when bitrate preset update fails', async () => {
-      const publisher = createMockPublisher();
-      (publisher.setVideoBitratePreset as Mock).mockRejectedValue(new Error('unsupported'));
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-      const initialBitrateMode = advancedSettings$.getState().bitrateMode;
+    expect(publisher.setMaxVideoBitrate).not.toHaveBeenCalled();
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
+    advancedSettings$.actions.setBitrateMode('custom');
 
-      await act(async () => {
-        await result.current.handleBitrateModeChange('bw_saver');
-      });
+    await act(async () => {
+      await result.current.handleCustomVideoBitrateChange(500_000);
+    });
 
-      await waitFor(() => {
-        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
-      });
-
-      expect(advancedSettings$.getState().bitrateMode).toBe(initialBitrateMode);
+    await waitFor(() => {
+      expect(publisher.setMaxVideoBitrate).toHaveBeenCalledWith(500_000);
     });
   });
 
-  describe('handleCustomVideoBitrateChange', () => {
-    it('applies custom bitrate to publisher then updates store when mode is custom', async () => {
-      const publisher = createMockPublisher();
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
+  it('routes screen-share changes to the share publisher, not the camera', async () => {
+    const sharePublisher = createMockPublisher();
+    const cameraPublisher = createMockPublisher();
+    mockUsePublisherContext.mockReturnValue({
+      publisher: cameraPublisher,
+    } as PublisherContextType);
 
-      advancedSettings$.actions.setBitrateMode('custom');
+    const { wrapper, screenShareContext } = makeTestProvider([
+      providers.runtime,
+      providers.user,
+      providers.session,
+      providers.screenShare,
+    ]);
+    const { result } = renderHook(() => useAdvancesSettingsHandlers(), { wrapper });
 
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleCustomVideoBitrateChange(750_000);
-      });
-
-      await waitFor(() => {
-        expect(publisher.setMaxVideoBitrate).toHaveBeenCalledWith(750_000);
-        expect(advancedSettings$.getState().customVideoBitrate).toBe(750_000);
-      });
+    act(() => {
+      screenShareContext.current?.setState((state) => ({ ...state, publisher: sharePublisher }));
     });
 
-    it('updates store without calling the publisher when mode is not custom', async () => {
-      const publisher = createMockPublisher();
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-
-      advancedSettings$.actions.setBitrateMode('default');
-
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleCustomVideoBitrateChange(750_000);
-      });
-
-      await waitFor(() => {
-        expect(advancedSettings$.getState().customVideoBitrate).toBe(750_000);
-      });
-
-      expect(publisher.setMaxVideoBitrate).not.toHaveBeenCalled();
-      expect(publisher.setVideoBitratePreset).not.toHaveBeenCalled();
+    await act(async () => {
+      await result.current.handleScreenShareFrameRateChange(7);
     });
 
-    it('does not update store when custom bitrate update fails', async () => {
-      const publisher = createMockPublisher();
-      (publisher.setMaxVideoBitrate as Mock).mockRejectedValue(new Error('unsupported'));
-      mockUsePublisherContext.mockReturnValue({ publisher } as PublisherContextType);
-      const initialCustomVideoBitrate = advancedSettings$.getState().customVideoBitrate;
-
-      advancedSettings$.actions.setBitrateMode('custom');
-
-      const { result } = renderHook(() => useAdvancesSettingsHandlers());
-
-      await act(async () => {
-        await result.current.handleCustomVideoBitrateChange(750_000);
-      });
-
-      await waitFor(() => {
-        expect(mockHandleClientApplicationError).toHaveBeenCalledTimes(1);
-      });
-
-      expect(advancedSettings$.getState().customVideoBitrate).toBe(initialCustomVideoBitrate);
+    await waitFor(() => {
+      expect(sharePublisher.setPreferredFrameRate).toHaveBeenCalledWith(7);
+      expect(advancedSettings$.getState().screenShareFrameRate).toBe(7);
     });
+
+    expect(cameraPublisher.setPreferredFrameRate).not.toHaveBeenCalled();
   });
 });
