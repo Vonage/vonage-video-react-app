@@ -2,7 +2,7 @@
 
 This document describes how the Reference App handles server migration and how the archive recovery flow is implemented.
 
-> For what session migration (server rotation) is and how it behaves at the platform level, see the [Vonage Video Developer Center](https://developer.vonage.com/en/video/overview). This document only covers **how this Reference App implements recovery** when a rotation happens.
+> For what session migration (server rotation) is and how it behaves at the platform level, see the [Vonage Session Migration guide](https://developer.vonage.com/en/video/guides/session-migration). This document only covers **how this Reference App implements recovery** when a rotation happens.
 
 When Vonage rotates the media server of an active session, it stops any in-progress archive. This app detects that rotation and restarts archiving automatically, so recording continues without any action from participants.
 
@@ -48,7 +48,7 @@ On the frontend, participants who already accepted the recording consent are **n
 
 ### Testing the recovery flow locally
 
-Because Vonage calls the webhooks from the public internet, it can't reach a backend on `localhost`. Use **ngrok** to expose your local backend and register that URL as the webhook target.
+Because Vonage calls the webhooks from the public internet, it can't reach a backend on `localhost`. Use **ngrok** (or an equivalent tunneling service) to expose your local backend and register that URL as the webhook target.
 
 1. Start the app locally (`yarn dev`) — backend on port `3345`, frontend on `5173`.
 
