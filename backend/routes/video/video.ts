@@ -9,6 +9,7 @@ import CaptionsHookPayloadSchema from './schemas/CaptionsHookPayload.schema';
 import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
 import { VideoSessionDetails } from '@common/types';
 import { assertResult } from '@api-lib/executions';
+import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
 
@@ -50,6 +51,33 @@ export const videoHandler = createVideoHandler({
 
 export const { makeVideoClient$ } = videoHandler.router$;
 
+const videoClient = makeVideoClient$();
+
+/**
+ * Middleware to inject archiveId when not provided in stopArchive calls.
+ * This handles server rotation scenarios where the frontend has a stale archiveId.
+ */
+videoHandler.use$('stopArchive', async ({ input, next }) => {
+  let { archiveId } = input as { sessionKey: string; archiveId?: string };
+  const { sessionKey } = input as { sessionKey: string };
+
+  // If archiveId is not provided, retrieve it from storage
+  if (!archiveId && sessionKey) {
+    const { decodeSessionKey } = await import('@common/helpers');
+    const { sessionId } = decodeSessionKey({ sessionKey });
+
+    const archiveIds = await sessionService.getArchiveIds({ sessionId });
+
+    if (archiveIds.length > 0) {
+      archiveId = archiveIds[0];
+      // Inject the archiveId into the input
+      (input as { archiveId: string }).archiveId = archiveId;
+    }
+  }
+
+  return next();
+});
+
 /**
  * Middleware for storing the sessionKey per SessionId and roomName.
  */
@@ -65,6 +93,24 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   const { sessionId, sessionKey, roomName } = result as VideoSessionDetails;
 
   await sessionService.setSession({ sessionId, sessionKey, roomName: roomName! });
+});
+
+/**
+ * Middleware for storing archiveId immediately after starting archive.
+ * This ensures stopArchive middleware can find it without waiting for webhook.
+ */
+videoHandler.onSettled$(async ({ videoAction, error, result }) => {
+  if (error) return;
+  if (videoAction !== VideoAction.startArchive) return;
+
+  const archive = result as { id: string; sessionId: string };
+  const existingArchiveIds = await sessionService.getArchiveIds({ sessionId: archive.sessionId });
+  const archiveIds = [...new Set([...existingArchiveIds, archive.id])];
+
+  await sessionService.setArchiveIds({
+    sessionId: archive.sessionId,
+    archiveIds,
+  });
 });
 
 /**
@@ -97,7 +143,7 @@ videoRouter.post(
 );
 
 /**
- * Listen to archive started/stopped events
+ * Listen to archive started/stopped events and restart recording after server rotation.
  */
 videoRouter.post(
   '/hooks/archive',
@@ -129,7 +175,13 @@ videoRouter.post(
 
       const archiveIds = existingArchiveIds.filter((id) => id !== archiveId);
 
-      return sessionService.setArchiveIds({ sessionId, archiveIds });
+      await sessionService.setArchiveIds({ sessionId, archiveIds });
+
+      await restartArchivingAfterServerRotation({
+        sessionId,
+        sessionService,
+        videoClient,
+      });
     }, makeInternalErrorHandler('Failed to process archive event'));
 
     return res.status(200).send();
@@ -143,7 +195,7 @@ videoRouter.post(
 videoRouter.post(
   '/hooks/session',
   httpHandler(async (req: Request, res: Response) => {
-    const { sessionId, event } = assertResult(
+    const { sessionId, event, reason } = assertResult(
       () => SessionHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid session hook payload')
     );
@@ -152,24 +204,34 @@ videoRouter.post(
 
     if (!shouldProcessSessionEvent) return res.status(200).send();
 
-    await assertResult(async () => {
-      const captionsId = await sessionService.getCaptionsId({ sessionId });
-      const archiveIds = await sessionService.getArchiveIds({ sessionId });
+    const isServerRotation = reason === 'serverRotation';
 
-      const videoClient = makeVideoClient$();
+    if (isServerRotation) {
+      // Mark this session as pending migration restart so the next archive stopped
+      // event knows to restart archiving automatically.
+      await sessionService.setServerRotationPending({ sessionId, pending: true });
+    }
 
-      await Promise.allSettled([
-        captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
+    const captionsId = await sessionService.getCaptionsId({ sessionId });
+    const archiveIds = await sessionService.getArchiveIds({ sessionId });
 
-        // stop all the archives related to the session.
-        ...archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId)),
-      ]);
+    // On a server rotation the archives must be left alone: Vonage stops them itself and we
+    // want them to restart. For any other reason all pending archives are stopped.
+    const pendingArchiveStops = (() => {
+      if (isServerRotation) return [];
 
-      // cleanup session data
+      return archiveIds.map((archiveId) => videoClient.video.stopArchive(archiveId));
+    })();
+
+    await Promise.allSettled([
+      captionsId ? videoClient.video.disableCaptions(captionsId) : Promise.resolve(),
+      ...pendingArchiveStops,
+    ]);
+
+    if (!isServerRotation) {
       await sessionService.setCaptionsId({ sessionId, captionsId: null });
-
-      return sessionService.setArchiveIds({ sessionId, archiveIds: [] });
-    }, makeInternalErrorHandler('Failed to process session event'));
+      await sessionService.setArchiveIds({ sessionId, archiveIds: [] });
+    }
 
     return res.status(200).send();
   })
