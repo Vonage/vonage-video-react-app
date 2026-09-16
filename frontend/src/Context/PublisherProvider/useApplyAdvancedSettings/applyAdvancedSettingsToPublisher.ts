@@ -7,9 +7,9 @@ import type {
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
-  AdvancedSettingsResolution,
 } from '@components/AdvancedSettingsDialog/types/types';
 import { t } from 'i18next';
+import { Resolution } from '@common/types';
 
 export const applyFrameRate = async (
   publisher: Publisher | null,
@@ -27,7 +27,7 @@ export const applyFrameRate = async (
 
 export const applyResolution = async (
   publisher: Publisher | null,
-  resolution: AdvancedSettingsResolution
+  resolution: Resolution
 ): Promise<void> => {
   if (!publisher) return;
   const hasVideoTrack = publisher?.getVideoSource()?.track;
@@ -66,7 +66,7 @@ const applyAdvancedSettingsToPublisher = async (
   publisher: Publisher | null,
   args: {
     frameRate: AdvancedSettingsFrameRate;
-    resolution: AdvancedSettingsResolution;
+    resolution: Resolution;
     bitrateMode: AdvancedSettingsBitrateMode;
     customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
   }

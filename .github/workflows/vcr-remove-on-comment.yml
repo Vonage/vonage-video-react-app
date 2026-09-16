@@ -55,7 +55,7 @@ jobs:
           exit 1
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install VCR CLI
         uses: ./.github/actions/install-vcr-cli

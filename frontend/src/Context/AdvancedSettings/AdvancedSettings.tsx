@@ -9,7 +9,6 @@ import type {
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
-  AdvancedSettingsResolution,
   AdvancedSettingsTab,
 } from '@components/AdvancedSettingsDialog/types/types';
 import {
@@ -17,7 +16,9 @@ import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
 } from '@components/AdvancedSettingsDialog/types/types';
-import { env, RESOLUTIONS } from '../../env';
+import { env } from '../../env';
+import { ResolutionSchema } from '@common/schemas';
+import { Resolution } from '@common/types';
 
 const INITIAL_STATE = {
   isOpen: false,
@@ -27,13 +28,17 @@ const INITIAL_STATE = {
   codecMode: ADVANCED_SETTINGS_CODEC_MODE.automatic,
   codecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
   frameRate: 30 as AdvancedSettingsFrameRate,
-  resolution: env.DEFAULT_RESOLUTION ?? '1280x720',
+  resolution: env.DEFAULT_RESOLUTION,
   audioBitrateMode: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
   customAudioBitrate: 128 as AdvancedSettingsCustomAudioBitrate,
   enableDtx: true,
   publisherAudioFallbackEnabled: false,
   subscriberAudioFallbackEnabled: false,
   publisherStatisticsEnabled: false,
+  advancedNoiseSuppressionEnabled: false,
+  echoCancellationEnabled: true,
+  noiseSuppressionEnabled: true,
+  autoGainControlEnabled: true,
 };
 
 export type advancedSettings = typeof INITIAL_STATE;
@@ -60,13 +65,17 @@ const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
       env.SUPPORTED_FRAME_RATES.includes(value),
     { message: 'Unsupported frame rate' }
   ),
-  resolution: z.enum(RESOLUTIONS),
+  resolution: ResolutionSchema,
   audioBitrateMode: z.enum(['automatic', 'custom']),
   customAudioBitrate: z.number().int().min(6).max(510),
   enableDtx: z.boolean(),
   publisherAudioFallbackEnabled: z.boolean(),
   subscriberAudioFallbackEnabled: z.boolean(),
   publisherStatisticsEnabled: z.boolean(),
+  advancedNoiseSuppressionEnabled: z.boolean(),
+  echoCancellationEnabled: z.boolean(),
+  noiseSuppressionEnabled: z.boolean(),
+  autoGainControlEnabled: z.boolean(),
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -132,7 +141,7 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
         partialUpdate({ frameRate: value });
       };
     },
-    setResolution(value: AdvancedSettingsResolution) {
+    setResolution(value: Resolution) {
       return () => {
         partialUpdate({ resolution: value });
       };
@@ -165,6 +174,26 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setPublisherStatisticsEnabled(value: boolean) {
       return () => {
         partialUpdate({ publisherStatisticsEnabled: value });
+      };
+    },
+    setAdvancedNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ advancedNoiseSuppressionEnabled: value });
+      };
+    },
+    setEchoCancellationEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ echoCancellationEnabled: value });
+      };
+    },
+    setNoiseSuppressionEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ noiseSuppressionEnabled: value });
+      };
+    },
+    setAutoGainControlEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ autoGainControlEnabled: value });
       };
     },
   },

@@ -13,7 +13,7 @@ const BannerLogo = (): ReactElement => {
   const isTablet = useIsTabletViewport();
   const navigate = useNavigate();
   const handleClick = () => {
-    navigate('..');
+    void navigate('..');
   };
 
   return (

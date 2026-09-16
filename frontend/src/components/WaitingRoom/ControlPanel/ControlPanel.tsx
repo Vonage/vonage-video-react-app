@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useIsSmallViewport from '@hooks/useIsSmallViewport';
 import Box from '@mui/material/Box';
 import type { SxProps } from '@mui/material';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevices from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';

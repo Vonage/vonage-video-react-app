@@ -1,7 +1,7 @@
-import useMediaDeviceInfoByKind$ from '@core/stores/devices/hooks/useMediaDeviceInfoByKind$';
+import useMediaDeviceInfoByKind$ from '@core/stores/mediaDevices/hooks/useMediaDeviceInfoByKind$';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { cleanAndDedupeDeviceLabels } from './helpers';
-import { mediaDevicesMap$ } from '@core/stores/devices/observables';
+import { mediaDevicesMap$ } from '@core/stores/mediaDevices/observables';
 import type { Any, UseHookOptions } from 'react-global-state-hooks';
 
 /**

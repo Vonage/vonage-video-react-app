@@ -7,7 +7,7 @@ import {
 } from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
-import { useDeviceId } from '@core/stores/devices/hooks';
+import { useDeviceId } from '@core/stores/mediaDevices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
@@ -35,9 +35,21 @@ const usePublisherOptions = ({
   const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
     (state) => state.subscriberAudioFallbackEnabled
   );
+  const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
+    (state) => state.advancedNoiseSuppressionEnabled
+  );
+  const echoCancellationEnabled = advancedSettings$.use.select(
+    (state) => state.echoCancellationEnabled
+  );
+  const noiseSuppressionEnabled = advancedSettings$.use.select(
+    (state) => state.noiseSuppressionEnabled
+  );
+  const autoGainControlEnabled = advancedSettings$.use.select(
+    (state) => state.autoGainControlEnabled
+  );
 
   // Extract individual properties to avoid object reference changes
-  const { name, noiseSuppression, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
+  const { name, backgroundFilter, publishAudio, publishVideo, publishCaptions } =
     user.defaultSettings;
 
   const videoSource = useDeviceId('videoinput');
@@ -47,12 +59,12 @@ const usePublisherOptions = ({
     const initials = getInitials(name);
 
     const audioFilter: AudioFilter | undefined =
-      noiseSuppression && hasMediaProcessorSupport('both')
+      advancedNoiseSuppressionEnabled && hasMediaProcessorSupport('audio')
         ? { type: 'advancedNoiseSuppression' }
         : undefined;
 
     const videoFilter: VideoFilter | undefined =
-      backgroundFilter && hasMediaProcessorSupport('both') ? backgroundFilter : undefined;
+      backgroundFilter && hasMediaProcessorSupport('video') ? backgroundFilter : undefined;
 
     const options = {
       audioFallback: {
@@ -61,10 +73,13 @@ const usePublisherOptions = ({
       },
       audioFilter,
       audioSource,
+      autoGainControl: autoGainControlEnabled,
+      echoCancellation: echoCancellationEnabled,
       enableDtx,
       initials,
       insertDefaultUI: false,
       name,
+      noiseSuppression: noiseSuppressionEnabled,
       publishAudio: env.ALLOW_AUDIO_ON_JOIN && publishAudio && isAudioEnabled,
       publishCaptions,
       publishVideo: env.ALLOW_VIDEO_ON_JOIN && publishVideo && isVideoEnabled,
@@ -75,6 +90,7 @@ const usePublisherOptions = ({
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       videoFilter,
       videoSource,
+      publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
     };
 
     return options;
@@ -89,7 +105,6 @@ const usePublisherOptions = ({
       backgroundFilter,
       enableDtx,
       name,
-      noiseSuppression,
       publishAudio,
       publishCaptions,
       publishVideo,
@@ -101,6 +116,10 @@ const usePublisherOptions = ({
       codecPriority,
       publisherAudioFallbackEnabled,
       subscriberAudioFallbackEnabled,
+      advancedNoiseSuppressionEnabled,
+      echoCancellationEnabled,
+      noiseSuppressionEnabled,
+      autoGainControlEnabled,
     ]
   );
 };

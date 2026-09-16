@@ -22,6 +22,11 @@ const helmetHandler = helmet({
 
           // Allow connections to self and Vonage/OpenTok backend services.
           // Needed for signaling, logging, REST calls, and WebSocket traffic.
+          // `data:` and `blob:` are required because the MediaProcessor (background
+          // replacement) loads background images via fetch() — including custom
+          // uploaded images stored as data: URLs — which is governed by connect-src,
+          // not img-src. Without them, applying a custom background fails in
+          // production with "Refused to connect … TypeError: Failed to fetch".
           'connect-src': [
             "'self'",
             'https://*.opentok.com',
@@ -31,6 +36,8 @@ const helmetHandler = helmet({
             'wss://*.tokbox.com',
             'wss://*.vonage.com',
             'https://static.opentok.com',
+            'data:',
+            'blob:',
           ],
 
           // Allow images from self, inline/base64 images, blob URLs, and any HTTPS image source.

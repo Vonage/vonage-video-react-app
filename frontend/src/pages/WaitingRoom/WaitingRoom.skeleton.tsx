@@ -4,7 +4,7 @@ import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/Video
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import classNames from 'classnames';
 import Box from '@mui/material/Box';
-import PageLayout from '@ui/PageLayout';
+import { PageLayout } from '@ui';
 import Footer from '@components/Footer/Footer';
 
 type WaitingRoomSkeletonProps = ComponentProps<'div'>;

@@ -7,7 +7,7 @@ import Menu from '@mui/material/Menu';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import { useTranslation } from 'react-i18next';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';

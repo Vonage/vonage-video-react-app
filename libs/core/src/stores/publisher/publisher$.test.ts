@@ -1,6 +1,6 @@
 import type { Publisher } from '@vonage/client-sdk-video';
 import { FacingMode } from '@common/types';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import publisher$ from './publisher$';
 import { isMobile } from '@web/platform';

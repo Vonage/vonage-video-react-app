@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import PageLayout from '@ui/PageLayout';
+import { PageLayout } from '@ui';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import SupportedBrowsers from '../../components/UnsupportedBrowser/SupportedBrowsers';

@@ -5,7 +5,7 @@ import ArchiveOptionsWithQuantizationParameterSchema from './ArchiveOptionsWithQ
 import ArchiveWithTranscriptionSchema from './ArchiveWithTranscription.schema';
 import ArchiveWithoutTranscriptionSchema from './ArchiveWithoutTranscription.schema';
 
-export const ArchiveOptionsSchema: z.ZodType<ArchiveOptions> = z.union([
+export const ArchiveOptionsSchema = z.union([
   ArchiveOptionsWithMaxBitrateSchema,
   ArchiveOptionsWithMaxBitrateSchema.and(ArchiveWithTranscriptionSchema),
   ArchiveOptionsWithMaxBitrateSchema.and(ArchiveWithoutTranscriptionSchema),
@@ -14,6 +14,6 @@ export const ArchiveOptionsSchema: z.ZodType<ArchiveOptions> = z.union([
   ArchiveOptionsWithQuantizationParameterSchema.and(ArchiveWithoutTranscriptionSchema),
   ArchiveWithTranscriptionSchema,
   ArchiveWithoutTranscriptionSchema,
-]);
+]) as z.ZodType<ArchiveOptions>;
 
 export default ArchiveOptionsSchema;

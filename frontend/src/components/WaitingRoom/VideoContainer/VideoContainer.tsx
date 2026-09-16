@@ -1,5 +1,4 @@
 import { useRef, useEffect, ReactElement } from 'react';
-import { VIDEO_CONTAINER_HEIGHT_WR } from '@utils/constants';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
@@ -72,10 +71,9 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           'child:w-dvw',
           'child:rounded-none',
           'md:child:w-146.25',
-          `child:md:h-[${VIDEO_CONTAINER_HEIGHT_WR}px]`,
+          `child:md:h-video-container`,
           'md:child:rounded-vera-large',
           'bg-vera-secondary',
-
           {
             hidden: isBackgroundEffectsOpen,
           }

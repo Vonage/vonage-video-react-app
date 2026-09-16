@@ -27,6 +27,9 @@ const customWordList = [
   'hsts',
   'clickjacking',
   'COEP',
+  'SXGA',
+  'QVGA',
+  'webcredentials',
 ];
 
 export default customWordList;

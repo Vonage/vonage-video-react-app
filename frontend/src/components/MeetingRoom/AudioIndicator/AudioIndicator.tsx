@@ -6,7 +6,7 @@ import VoiceIndicatorIcon from '../VoiceIndicator/VoiceIndicator';
 import useSessionContext from '../../../hooks/useSessionContext';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;
@@ -90,7 +90,7 @@ const AudioIndicator = ({
           {hasAudio ? (
             <VividIcon
               customSize={-5}
-              name="microphone-2-solid"
+              name="microphone-solid"
               data-testid="MicIcon"
               style={styles}
             />

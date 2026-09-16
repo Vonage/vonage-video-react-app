@@ -10,7 +10,7 @@
       "outputs": ["{projectRoot}/dist"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vite build && nx run frontend:cp-build'"
+        "command": "bash -c 'source ../env.sh && vite build && nx run frontend:cp-build'"
       }
     },
     "build-room": {
@@ -18,11 +18,11 @@
       "outputs": ["{projectRoot}/distRoom"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && BUILD_TARGET=vcr vite build --config src/VeraRoom/vite.veraroom.config.ts'"
+        "command": "bash -c 'source ../env.sh && BUILD_TARGET=vcr vite build --config src/VeraRoom/vite.veraroom.config.ts'"
       },
       "configurations": {
         "standalone": {
-          "command": "bash -c 'source ../vcrBuild.env.sh && BUILD_TARGET=standalone vite build --config src/VeraRoom/vite.veraroom.config.ts && find distRoom/assets -type f ! -name \"*.js\" ! -name \"*.mp3\" -delete'"
+          "command": "bash -c 'source ../env.sh && BUILD_TARGET=standalone vite build --config src/VeraRoom/vite.veraroom.config.ts && find distRoom/assets -type f ! -name \"*.js\" ! -name \"*.mp3\" -delete'"
         }
       }
     },
@@ -31,28 +31,28 @@
       "outputs": ["{projectRoot}/distRoom"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vite build --config src/VeraRoom/example/vite.example.config.ts'"
+        "command": "bash -c 'source ../env.sh && vite build --config src/VeraRoom/example/vite.example.config.ts'"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && concurrently \"nx run frontend:ts-check:watch\" \"vite --host\"'"
+        "command": "bash -c 'source ../env.sh && concurrently \"nx run frontend:ts-check:watch\" \"vite --host\"'"
       }
     },
     "serve": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vite --host'"
+        "command": "bash -c 'source ../env.sh && vite --host'"
       }
     },
     "preview": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vite preview'"
+        "command": "bash -c 'source ../env.sh && vite preview'"
       }
     },
     "lint": {
@@ -71,11 +71,11 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && vitest run'"
+        "command": "bash -c 'source ../env.sh && vitest run'"
       },
       "configurations": {
         "coverage": {
-          "command": "bash -c 'source ../vcrBuild.env.sh && vitest run --coverage'"
+          "command": "bash -c 'source ../env.sh && vitest run --coverage'"
         }
       }
     },
@@ -118,7 +118,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && storybook dev -p 6006'"
+        "command": "bash -c 'source ../env.sh && storybook dev -p 6006'"
       }
     },
     "build-storybook": {
@@ -126,7 +126,7 @@
       "outputs": ["{projectRoot}/storybook-static"],
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../vcrBuild.env.sh && storybook build'"
+        "command": "bash -c 'source ../env.sh && storybook build'"
       }
     }
   },

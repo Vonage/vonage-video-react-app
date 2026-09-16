@@ -1,4 +1,4 @@
-import VividIcon, { VividIconProps } from '@ui/VividIcon';
+import VividIcon, { VividIconProps } from '@ui/components/VividIcon';
 import collapsible$ from '../collapsible$';
 
 type IconProps = Omit<VividIconProps, 'name'>;

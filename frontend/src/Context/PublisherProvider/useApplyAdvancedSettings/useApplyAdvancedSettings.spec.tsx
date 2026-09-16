@@ -4,6 +4,7 @@ import type { Publisher } from '@vonage/client-sdk-video';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from './useApplyAdvancedSettings';
+import { Resolution } from '@common/types';
 
 const createMockPublisher = () =>
   ({
@@ -27,7 +28,7 @@ describe('useApplyAdvancedSettings', () => {
     const publisher = createMockPublisher();
 
     renderHook(() => useApplyAdvancedSettings(publisher), {
-      dialogState: { frameRate: 15, resolution: '640x480', bitrateMode: 'default' },
+      dialogState: { frameRate: 15, resolution: Resolution.VGA_LANDSCAPE, bitrateMode: 'default' },
     });
 
     await waitFor(() => {

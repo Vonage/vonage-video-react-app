@@ -1,4 +1,4 @@
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { EventEmitter } from 'events';
 
 export type SpeakingDetectorOptions = {
@@ -101,7 +101,7 @@ class SpeakingDetector extends EventEmitter {
         if (!this.analyser) {
           return;
         }
-        if (document.visibilityState === 'visible') {
+        if (globalThis.document.visibilityState === 'visible') {
           this.analyser.getByteTimeDomainData(timeDomainData);
 
           let max = 0;

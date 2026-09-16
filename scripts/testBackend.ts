@@ -35,7 +35,7 @@ function runSpecificTest(testFilePath: string) {
 
 /**
  * Runs backend tests in watch mode, re-running on file changes.
- * Sources vcrBuild.env.sh for environment variables.
+ * Sources env.sh for environment variables.
  * Uses Jest's watch mode with coverage enabled.
  * Optionally watches a specific test file.
  */
@@ -44,7 +44,7 @@ function runWatch(testFilePath?: string) {
   console.log(`\n👀 Watch mode activated for ${target}\n`);
   const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
   execSync(
-    `bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS="--experimental-vm-modules" jest --maxWorkers=1 --coverage --watch${testPattern}'`,
+    `bash -c 'source ../env.sh && NODE_OPTIONS="--experimental-vm-modules" jest --maxWorkers=1 --coverage --watch${testPattern}'`,
     { stdio: 'inherit', cwd: 'backend' }
   );
 }
@@ -59,7 +59,7 @@ function runDebug(testFilePath?: string) {
   console.log(`\n🐛 Debug mode activated for ${target}\n`);
   const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
   execSync(
-    `bash -c 'source ../vcrBuild.env.sh && NODE_OPTIONS="--experimental-vm-modules --inspect-brk" jest --runInBand --detectOpenHandles --verbose${testPattern}'`,
+    `bash -c 'source ../env.sh && NODE_OPTIONS="--experimental-vm-modules --inspect-brk" jest --runInBand --detectOpenHandles --verbose${testPattern}'`,
     { stdio: 'inherit', cwd: 'backend' }
   );
 }

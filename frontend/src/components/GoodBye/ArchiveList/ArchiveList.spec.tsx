@@ -1,45 +1,99 @@
+import { ReactElement, StrictMode } from 'react';
 import { describe, expect, it } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render as renderBase, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+
 import ArchiveList from './ArchiveList';
-import {
-  availableArchive,
-  failedArchive,
-  pendingArchive,
-  archives as testArchives,
-} from '../../../api/archiving/tests/data';
+import { ProviderOptions, makeTestProvider, providers } from '@test/providers';
+import { composeProviders } from '@web/helpers';
+import { makeVideoClientMock } from '@core-test/fixtures';
+import { makeArchive } from '@common-test/fixtures';
 
 describe('ArchiveList', () => {
-  it('should display message if there are no archives', () => {
-    render(<ArchiveList archives={[]} />);
-    expect(screen.getByText("The meeting hasn't been recorded")).toBeVisible();
-  });
+  it('should display an error state when recordings cannot be loaded', async () => {
+    expect.assertions(1);
 
-  it('should display message if there is an error fetching archives', () => {
-    render(<ArchiveList archives="error" />);
+    const videoClient = makeVideoClientMock({
+      searchArchives: Promise.reject(new Error('Failed to fetch archives')),
+    });
+
+    render(<ArchiveList queryOptions={{ retry: false }} />, {
+      runtimeContext: { videoClient },
+    });
+
     expect(
-      screen.getByText('There was an error loading recordings for this meeting')
+      await screen.findByText('There was an error loading recordings for this meeting')
     ).toBeVisible();
   });
 
-  it('should render a download button for available archives', () => {
-    render(<ArchiveList archives={testArchives} />);
-    const listItem = screen.getByTestId(`archive-list-item-${availableArchive.id}`);
-    expect(within(listItem).getByTestId('archive-download-button')).toBeVisible();
-    expect(within(listItem).getByRole('link')).toHaveAttribute(
-      'href',
-      'https://example.com.com/tokbox.com.archive2.eu/46969164/c32509e3-24a9-4d1f-98a0-66a0f0fdbca6/archive.mp4'
-    );
+  it('should display an empty state when there are no recordings', async () => {
+    expect.assertions(1);
+
+    const videoClient = makeVideoClientMock({
+      searchArchives: Promise.resolve({
+        count: 0,
+        items: [],
+      }),
+    });
+
+    render(<ArchiveList queryOptions={{ retry: false }} />, {
+      runtimeContext: { videoClient },
+    });
+
+    expect(await screen.findByTestId('archive-list-empty')).toBeVisible();
   });
 
-  it('should render an error icon for failed archives', () => {
-    render(<ArchiveList archives={testArchives} />);
-    const listItem = screen.getByTestId(`archive-list-item-${failedArchive.id}`);
-    expect(within(listItem).getByTestId('archive-error-icon')).toBeVisible();
-  });
+  it('should render the right user action for available, pending, and failed recordings', async () => {
+    expect.assertions(3);
 
-  it('should render a spinner for pending archives', () => {
-    render(<ArchiveList archives={testArchives} />);
-    const listItem = screen.getByTestId(`archive-list-item-${pendingArchive.id}`);
-    expect(within(listItem).getByTestId('archive-loading-spinner')).toBeVisible();
+    const availableArchive = makeArchive('available');
+    const pendingArchive = makeArchive('pending');
+    const failedArchive = makeArchive('failed');
+
+    const videoClient = makeVideoClientMock({
+      searchArchives: Promise.resolve({
+        count: 3,
+        items: [availableArchive, pendingArchive, failedArchive],
+      }),
+    });
+
+    render(<ArchiveList queryOptions={{ retry: false }} />, {
+      runtimeContext: { videoClient },
+    });
+
+    const downloadLink = await screen.findByRole('link', {
+      name: /download/i,
+    });
+
+    expect(downloadLink).toHaveAttribute('href', availableArchive.url);
+    expect(await screen.findByTestId('archive-loading-spinner')).toBeVisible();
+    expect(screen.getByTestId('archive-error-icon')).toBeVisible();
   });
 });
+
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+};
+
+function render(
+  ui: ReactElement,
+  { userContext, sessionContext, runtimeContext }: RenderOptions = {}
+) {
+  const { wrapper: ContextWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      userContext,
+      sessionContext,
+      runtimeContext,
+    }
+  );
+
+  const wrapper = composeProviders(StrictMode, MemoryRouter, ContextWrapper);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
+}

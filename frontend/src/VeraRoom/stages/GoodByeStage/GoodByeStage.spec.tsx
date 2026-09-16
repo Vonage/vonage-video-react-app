@@ -1,106 +1,46 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
-import useGoodByePage from '@hooks/useGoodByePage';
+import { describe, expect, it } from 'vitest';
+import { render as renderBase, screen } from '@testing-library/react';
 import GoodByeStage from './GoodByeStage';
-
-vi.mock('@hooks/useGoodByePage');
-
-vi.mock('@components/GoodBye/ArchiveList', () => ({
-  default: ({ archives }: { archives: unknown[] | 'error' }) => (
-    <div data-testid="archive-list" data-value={JSON.stringify(archives)} />
-  ),
-}));
-
-vi.mock('@components/GoodBye/GoodbyeMessage', () => ({
-  default: ({ header, message }: { header: string; message: string }) => (
-    <div data-testid="goodbye-message" data-header={header} data-message={message} />
-  ),
-}));
-
-vi.mock('@components/GoodBye/ReenterRoomButton', () => ({
-  default: () => <div data-testid="reenter-room-button" />,
-}));
-
-vi.mock('@ui', async () => {
-  const actual = await vi.importActual<typeof import('@ui')>('@ui');
-  return {
-    ...actual,
-    Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-      <div className={className}>{children}</div>
-    ),
-    PageLayoutEmbed: Object.assign(
-      ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      {
-        Left: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-        Right: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      }
-    ),
-  };
-});
-
-const mockUseGoodByePage = useGoodByePage as Mock;
+import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
+import composeProviders from '@web/helpers/composeProviders';
+import { StrictMode, ReactElement } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('GoodByeStage', () => {
-  beforeEach(() => {
-    mockUseGoodByePage.mockReturnValue({
-      sessionKey: 'test-session-key',
-      archives: [],
-      header: 'You have left the meeting',
-      caption: 'Thank you for joining!',
-    });
-  });
+  it('should render correctly with default props', () => {
+    render(<GoodByeStage />);
 
-  it('renders the goodbye message with header and caption from the hook', () => {
-    renderStage();
-    const message = screen.getByTestId('goodbye-message');
-    expect(message).toHaveAttribute('data-header', 'You have left the meeting');
-    expect(message).toHaveAttribute('data-message', 'Thank you for joining!');
-  });
-
-  it('renders the ReenterRoomButton', () => {
-    renderStage();
-    expect(screen.getByTestId('reenter-room-button')).toBeInTheDocument();
-  });
-
-  it('renders the ArchiveList with archives from the hook', () => {
-    const archives = [{ id: 'archive-1', status: 'available' }];
-    mockUseGoodByePage.mockReturnValue({
-      sessionKey: 'test-session-key',
-      archives,
-      header: 'Gone',
-      caption: 'Bye',
-    });
-
-    renderStage();
-    const archiveList = screen.getByTestId('archive-list');
-    expect(archiveList).toHaveAttribute('data-value', JSON.stringify(archives));
-  });
-
-  it('renders the ArchiveList with "error" when archives failed to load', () => {
-    mockUseGoodByePage.mockReturnValue({
-      sessionKey: 'test-session-key',
-      archives: 'error',
-      header: 'Gone',
-      caption: 'Bye',
-    });
-
-    renderStage();
-    const archiveList = screen.getByTestId('archive-list');
-    expect(archiveList).toHaveAttribute('data-value', '"error"');
-  });
-
-  it('renders the archive list label', () => {
-    renderStage();
-    // The label is rendered from i18n key 'archiveList.label' which in test env falls back to the key
-    expect(screen.getByTestId('archive-list')).toBeInTheDocument();
+    expect(screen.getByText('You have left the meeting')).toBeVisible();
+    expect(screen.getByText('Thank you for joining!')).toBeVisible();
+    expect(screen.getByText('Rejoining the room')).toBeVisible();
+    expect(screen.getByText('Download recordings')).toBeVisible();
+    expect(screen.getByText("The meeting hasn't been recorded")).toBeVisible();
   });
 });
 
-function renderStage() {
-  render(
-    <MemoryRouter>
-      <GoodByeStage />
-    </MemoryRouter>
+type RenderOptions = {
+  userContext?: ProviderOptions['UserContext'];
+  sessionContext?: ProviderOptions['SessionContext'];
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+};
+
+function render(
+  ui: ReactElement,
+  { userContext, sessionContext, runtimeContext }: RenderOptions = {}
+) {
+  const { wrapper: ContextWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime],
+    {
+      userContext,
+      sessionContext,
+      runtimeContext,
+    }
   );
+
+  const wrapper = composeProviders(StrictMode, MemoryRouter, ContextWrapper);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
 }

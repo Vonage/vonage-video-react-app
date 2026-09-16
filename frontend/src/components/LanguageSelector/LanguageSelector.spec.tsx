@@ -5,7 +5,7 @@ import LanguageSelector from './LanguageSelector';
 import { env } from '../../env';
 
 // Mock VividIcon component
-vi.mock('@ui/VividIcon', () => ({
+vi.mock('@ui/components/VividIcon', () => ({
   default: ({ name, customSize }: { name: string; customSize: number }) => (
     <div data-testid={`vivid-icon-${name}`} data-size={customSize}>
       {name}
@@ -22,6 +22,7 @@ const mockT = vi.fn((key: string) => {
     'languages.spanish': 'Español',
     'languages.spanishMX': 'Español (México)',
     'languages.italian': 'Italiano',
+    'languages.japanese': '日本語',
   };
   return translations[key] || key;
 });
@@ -102,7 +103,7 @@ describe('LanguageSelector', () => {
     });
 
     it('shows all languages when all are supported', async () => {
-      env.setSupportedLanguages('en|es|es-MX|it|en-US|de');
+      env.setSupportedLanguages('en|es|es-MX|it|en-US|de|ja');
 
       render(<LanguageSelector />);
 
@@ -116,20 +117,7 @@ describe('LanguageSelector', () => {
         expect(screen.getByTestId('language-option-it')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-en-US')).toBeInTheDocument();
         expect(screen.getByTestId('language-option-de')).toBeInTheDocument();
-      });
-    });
-
-    it('falls back to en when no supported languages env var', async () => {
-      env.setSupportedLanguages('');
-
-      render(<LanguageSelector />);
-
-      const selectButton = screen.getByRole('combobox');
-      fireEvent.mouseDown(selectButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('language-option-en')).toBeInTheDocument();
-        expect(screen.queryByTestId('language-option-es')).not.toBeInTheDocument();
+        expect(screen.getByTestId('language-option-ja')).toBeInTheDocument();
       });
     });
   });
@@ -185,6 +173,23 @@ describe('LanguageSelector', () => {
 
       expect(mockChangeLanguage).toHaveBeenCalledWith('en-US');
     });
+
+    it('changes language to ja when selected', async () => {
+      env.setSupportedLanguages('en|ja');
+
+      render(<LanguageSelector />);
+
+      const selectButton = screen.getByRole('combobox');
+      fireEvent.mouseDown(selectButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('language-option-ja')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('language-option-ja'));
+
+      expect(mockChangeLanguage).toHaveBeenCalledWith('ja');
+    });
   });
 
   describe('Current Language Display', () => {
@@ -238,14 +243,22 @@ describe('LanguageSelector', () => {
       expect(screen.getByTestId('vivid-icon-flag-germany')).toBeInTheDocument();
     });
 
-    it('handles unsupported language gracefully', () => {
+    it('throws when the selected language is not supported', () => {
       env.setSupportedLanguages('en|es');
       mockI18n.language = 'fr';
 
-      render(<LanguageSelector />);
-
-      expect(screen.getByDisplayValue('fr')).toBeInTheDocument();
+      expect(() => render(<LanguageSelector />)).toThrow();
     });
+  });
+
+  it('displays Japanese correctly', () => {
+    env.setSupportedLanguages('en|ja');
+    mockI18n.language = 'ja';
+
+    render(<LanguageSelector />);
+
+    expect(screen.getByText('日本語')).toBeInTheDocument();
+    expect(screen.getByTestId('vivid-icon-flag-japan')).toBeInTheDocument();
   });
 
   describe('Fallback Language Handling', () => {

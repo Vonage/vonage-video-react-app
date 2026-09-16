@@ -23,7 +23,7 @@ const runCommand = (command: string) => {
 };
 
 const runCommandWithVcrEnv = (command: string) => {
-  runCommand(`. ./vcrBuild.env.sh && ${command}`);
+  runCommand(`. ./env.sh && ${command}`);
 };
 
 /**
@@ -48,7 +48,7 @@ const runSpecificTest = (testFilePath: string) => {
 
 /**
  * Runs tests in watch mode, re-running on file changes.
- * Sources vcrBuild.env.sh for environment variables.
+ * Sources env.sh for environment variables.
  * Optionally watches a specific test file.
  */
 const runWatch = (testFilePath?: string) => {

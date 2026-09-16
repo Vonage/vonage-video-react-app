@@ -15,7 +15,7 @@ import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgrou
 import useImageStorage, { StoredImage } from '../../../utils/useImageStorage/useImageStorage';
 import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getInitialBackgroundFilter/getInitialBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
 import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
 import attempt from '@common/execution/attempt/attempt';
@@ -253,7 +253,7 @@ const useBackgroundPublisher = (
       // If the deleted image was the currently applied background filter, clear it
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
-        changeBackground(backgroundSelected).catch(() => {
+        changeBackground('none').catch(() => {
           throw new Error('Failed to reset background filter after deleting custom image');
         });
       }

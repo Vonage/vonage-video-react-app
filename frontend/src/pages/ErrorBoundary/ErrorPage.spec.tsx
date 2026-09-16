@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import BrowserRouter from '@test/RouterWrapper';
 import ErrorPage from './ErrorPage';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('ErrorPage', () => {
   it('should render', () => {
     render(
-      <BrowserRouter>
+      <MemoryRouter>
         <ErrorPage error={new Error('Test error')} />
-      </BrowserRouter>
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('error-page')).toBeInTheDocument();

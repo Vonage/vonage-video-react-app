@@ -1,4 +1,4 @@
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import Button from '@mui/material/Button';
 import { ReactElement } from 'react';
@@ -17,7 +17,7 @@ const ReenterRoomButton = (): ReactElement | string => {
   const { sessionKey } = useSessionKeyParam();
 
   const handleReenter = () => {
-    navigate(`/waiting-room/${sessionKey}`);
+    void navigate(`/waiting-room/${sessionKey}`);
   };
   return (
     sessionKey && (

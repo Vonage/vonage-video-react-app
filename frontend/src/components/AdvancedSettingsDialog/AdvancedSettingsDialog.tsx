@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { AdvancedSettingsAudioTab } from './components/AdvancedSettingsAudioTab';
 import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneralTab';
 import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
