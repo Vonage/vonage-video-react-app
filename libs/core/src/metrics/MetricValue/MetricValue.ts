@@ -89,7 +89,7 @@ export abstract class MetricValue implements IMetricValue<number> {
   }
 
   protected formatNumber(value = this.value, options = this.options): string {
-    return new Intl.NumberFormat(this.locales, options).format(value);
+    return new Intl.NumberFormat(this.locales ?? 'en-US', options).format(value);
   }
 
   protected formatInteger(value = this.value): string {
