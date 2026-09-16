@@ -1,0 +1,19 @@
+backend/routes/video/video.ts
+  s_4096f3d81b4cd9::t_03d1aa63857d50 57-67,70-73,75,77-78,80-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "513fcc3e0d7a9b8f92f56e800443923623b4b41d",
+  "prompts": {},
+  "sessions": {
+    "s_4096f3d81b4cd9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_64af132b-96f3-4d50-a0be-44fe4bda4eaf",
+        "model": "auto"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
