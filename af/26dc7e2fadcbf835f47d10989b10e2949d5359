@@ -1,0 +1,20 @@
+docs/SESSION_MIGRATION.md
+  s_4f6a46d2f6aabc::t_173e0b37d284a9 5,7,9-11,17,19,21,23-36,38-39,41,43,45,47,49,51,53,55,58,61,63-66,68,70,72
+  s_4f6a46d2f6aabc::t_50c9ea07daf97c 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "af26dc7e2fadcbf835f47d10989b10e2949d5359",
+  "prompts": {},
+  "sessions": {
+    "s_4f6a46d2f6aabc": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_249ffb84-a31a-4b1d-b730-1d8d95aad298",
+        "model": "auto"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
