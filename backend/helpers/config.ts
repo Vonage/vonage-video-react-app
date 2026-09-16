@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import { Config, FeedbackConfig } from '../types/config';
+import type { AuthConfig, Config, FeedbackConfig } from '../types/config';
+import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -14,13 +15,15 @@ if (process.env.__IS_CJS__) {
   runtimeDir = path.dirname(fileURLToPath(import.meta.url));
 }
 
-dotenv.config({ path: path.join(runtimeDir, '.env') });
+dotenv.config({ path: path.join(runtimeDir, '.env'), override: true });
 
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
   const sessionKeySecret = process.env.SESSION_KEY_SECRET ?? '';
 
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
+
+  const authConfig = loadAuthConfig();
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -47,6 +50,7 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...authConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
@@ -66,6 +70,7 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...authConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
@@ -78,3 +83,26 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+/**
+ * Reads only the auth-related env vars, validated here since this is the single
+ * schema-validated source of truth for config in the app (consumers must go through
+ * loadConfig, not re-derive this independently).
+ */
+function loadAuthConfig(): AuthConfig {
+  if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
+
+  const introspectionTimeoutMs = process.env.AUTH_INTROSPECTION_TIMEOUT_MS;
+
+  return AuthConfigSchema.parse({
+    authEnabled: true,
+    oidcIssuerUrl: process.env.OIDC_ISSUER_URL,
+    oidcClientId: process.env.OIDC_CLIENT_ID,
+    // Pass through undefined for unset optional fields so the schema-level defaults apply
+    // (env.sh / .env / VCR manifest may override them, but they are not required).
+    authHeaderName: process.env.AUTH_HEADER_NAME,
+    authScheme: process.env.AUTH_SCHEME,
+    introspectPath: process.env.OIDC_INTROSPECT_PATH,
+    introspectionTimeoutMs: introspectionTimeoutMs ? Number(introspectionTimeoutMs) : undefined,
+  });
+}
