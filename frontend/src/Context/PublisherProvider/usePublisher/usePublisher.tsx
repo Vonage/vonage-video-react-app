@@ -241,20 +241,23 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     }
   }, [assignPublisher]);
 
-  const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
-    const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-    isInitializingPublisherRef.current = false;
-    // We check the first word of the message to see if the microphone or camera was denied access.
-    setDeviceAccess((prev) => ({
-      ...prev,
-      [deviceDeniedAccess]: false,
-    }));
+  const handleAccessDenied = useCallback(
+    (event: AccessDeniedEvent) => {
+      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
+      isInitializingPublisherRef.current = false;
+      // We check the first word of the message to see if the microphone or camera was denied access.
+      setDeviceAccess((prev) => ({
+        ...prev,
+        [deviceDeniedAccess]: false,
+      }));
 
-    if (publisherRef.current) {
-      publisherRef.current.destroy();
-    }
-    assignPublisher(null);
-  }, [assignPublisher]);
+      if (publisherRef.current) {
+        publisherRef.current.destroy();
+      }
+      assignPublisher(null);
+    },
+    [assignPublisher]
+  );
 
   /**
    * Method to unpublish from session and destroy publisher
