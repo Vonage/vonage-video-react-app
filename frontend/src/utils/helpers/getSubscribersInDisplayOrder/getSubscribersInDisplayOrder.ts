@@ -88,11 +88,13 @@ const getSubscribersIdsInDisplayOrder = (
   const newIds = subscribersToDisplay.filter((id) => !previousDisplayOrderSet.has(id));
   const removedIds = previousDisplayOrder.filter((id) => !subscribersToDisplaySet.has(id));
 
+  const removedIdsSet = new Set(removedIds);
+
   // Loop through previous order
   const previousOrderMapped = previousDisplayOrder
     .map((id) => {
       // If the id hasn't been removed, keep the same index
-      if (!removedIds.includes(id)) {
+      if (!removedIdsSet.has(id)) {
         return id;
       }
       // If the id has been removed, fill in gaps with new ids
@@ -109,8 +111,9 @@ const getSubscribersIdsInDisplayOrder = (
 
 const toId = ({ id }: SubscriberWrapper) => id;
 
-const toSubscriberWrapper = (subscriberWrappers: SubscriberWrapper[]) => (subId: string) => {
-  return subscriberWrappers.find(({ id }) => id === subId) as SubscriberWrapper;
+const toSubscriberWrapper = (subscriberWrappers: SubscriberWrapper[]) => {
+  const wrapperById = new Map(subscriberWrappers.map((wrapper) => [wrapper.id, wrapper]));
+  return (subId: string) => wrapperById.get(subId) as SubscriberWrapper;
 };
 
 /**

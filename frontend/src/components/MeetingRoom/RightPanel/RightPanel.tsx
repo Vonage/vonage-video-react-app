@@ -1,13 +1,15 @@
-import { ReactElement } from 'react';
+import { lazy, ReactElement } from 'react';
 import ParticipantList from '../ParticipantList/ParticipantList';
 import Chat from '../Chat';
-import ReportIssue from '../ReportIssue';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
 import BackgroundEffectsLayout from '../../BackgroundEffects/BackgroundEffectsLayout';
 import Box from '@mui/material/Box';
 import type { BoxProps } from '@mui/material/Box';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import classNames from 'classnames';
 import { twMerge } from 'tailwind-merge';
+
+const ReportIssue = lazy(() => import('../ReportIssue'));
 
 export type RightPanelProps = {
   handleClose: () => void;
@@ -34,22 +36,15 @@ const RightPanel = ({
       data-testid="right-panel"
       className={twMerge(
         classNames([
+          'absolute top-0 overflow-hidden transition-[right_0.3s] rounded-2xl',
           'w-dvw vera-desktop:w-[350px]',
           'h-[calc(100dvh-80px)] vera-desktop:h-[calc(100dvh-96px)]',
           'mr-0 vera-desktop:mr-4 mt-0 vera-desktop:mt-4',
           'bg-vera-surface',
+          activeTab === 'closed' ? 'right-[-380px] hidden' : 'right-0 block',
           className,
         ])
       )}
-      sx={{
-        position: 'absolute',
-        top: 0,
-        right: activeTab === 'closed' ? '-380px' : 0,
-        display: activeTab === 'closed' ? 'none' : 'block',
-        overflow: 'hidden',
-        transition: 'right 0.3s',
-        borderRadius: 2,
-      }}
       {...boxProps}
     >
       <ParticipantList handleClose={handleClose} isOpen={activeTab === 'participant-list'} />
@@ -59,7 +54,9 @@ const RightPanel = ({
         isOpen={activeTab === 'background-effects'}
       />
       <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
-      <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
+      <SuspenseBoundary fallback={null}>
+        <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
+      </SuspenseBoundary>
     </Box>
   );
 };

@@ -15,6 +15,18 @@ import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
 
+const audioIndicatorStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  height: '1.5rem',
+  width: '1.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: 'auto',
+};
+
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
   isHidden: boolean;
@@ -93,17 +105,6 @@ const Subscriber = ({
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
-  const audioIndicatorStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    height: '1.5rem',
-    width: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 'auto',
-  };
 
   return isScreenShare ? (
     <ScreenshareVideoTile
