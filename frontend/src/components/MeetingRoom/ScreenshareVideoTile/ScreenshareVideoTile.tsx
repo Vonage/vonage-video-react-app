@@ -69,7 +69,6 @@ const ScreenshareVideoTile = forwardRef(
     // Auto re-center when zoom returns to 100%
     useEffect(() => {
       if (zoomLevel === 1) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPanOffset({ x: 0, y: 0 });
         setIsDragging(false);
       }
