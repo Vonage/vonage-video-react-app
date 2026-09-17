@@ -9,11 +9,11 @@ import { Key, ReactElement } from 'react';
  * @param {Array<ReactElement | false>} toolbarButtons - Toolbar buttons in display order. Defaults to `buttons`.
  * @returns {Array<ReactElement | false>} - The buttons for the toolbar overflow menu
  */
-export default (
+function getOverflowMenuButtons(
   buttons: Array<ReactElement | false>,
   toolbarButtonsCount: number,
   toolbarButtons: Array<ReactElement | false> = buttons
-): Array<ReactElement | false> => {
+): Array<ReactElement | false> {
   const shownKeys = new Set<Key | null>(
     toolbarButtons
       .slice(0, toolbarButtonsCount)
@@ -24,4 +24,6 @@ export default (
   return buttons.filter(
     (button) => Boolean(button) && !shownKeys.has((button as ReactElement).key)
   );
-};
+}
+
+export default getOverflowMenuButtons;
