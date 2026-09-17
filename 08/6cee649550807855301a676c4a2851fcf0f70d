@@ -1,0 +1,39 @@
+README.md
+  s_a54a3e5d673119::t_9f67dfb6d1bb7d 133
+skills/session-migration-archiving-backend/SKILL.md
+  s_0b4611ac56fe56::t_ec59b0b679f0fc 1-318
+.github/copilot-instructions.md
+  h_2499cc15b3806e 1660-1681
+skills/README.md
+  s_a54a3e5d673119::t_5877505b94b174 1-12,17-22,26-29,32-37,39-44,46-50,52-54,56-59,61-63
+  s_0b4611ac56fe56::t_ec59b0b679f0fc 13-16,23-25,30-31,38,45,51,55,60,64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "086cee649550807855301a676c4a2851fcf0f70d",
+  "prompts": {},
+  "humans": {
+    "h_2499cc15b3806e": {
+      "author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_0b4611ac56fe56": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1789628006880269000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    },
+    "s_a54a3e5d673119": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_ff9211c2-9542-4d81-a2b7-6b733bed5d32",
+        "model": "auto"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
