@@ -69,7 +69,7 @@ describe('usePublisher', () => {
   });
 
   describe('initializeLocalPublisher', () => {
-    it('exposes the publisher immediately so quality listeners can attach', async () => {
+    it('exposes the publisher immediately so quality listeners can attach', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
 
