@@ -35,18 +35,27 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (element && pubContainerRef.current) {
-      element.classList.add('video__element', 'rounded-vera-large');
-
-      // eslint-disable-next-line react-hooks/immutability
-      element.style.width = '100%';
-      element.style.height = '100%';
-      element.style.position = 'absolute';
-      element.style.objectFit = 'contain';
-      element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
-
-      pubContainerRef.current.appendChild(element);
+    const container = pubContainerRef.current;
+    if (!element || !container) {
+      return undefined;
     }
+
+    element.classList.add('video__element', 'rounded-vera-large');
+
+    // eslint-disable-next-line react-hooks/immutability
+    element.style.width = '100%';
+    element.style.height = '100%';
+    element.style.position = 'absolute';
+    element.style.objectFit = 'contain';
+    element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
+
+    container.appendChild(element);
+
+    return () => {
+      if (container.contains(element)) {
+        container.removeChild(element);
+      }
+    };
   }, [element]);
 
   useSelfViewMirroring(element);

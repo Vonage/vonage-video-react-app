@@ -101,8 +101,14 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     HTMLVideoElement | HTMLObjectElement | null
   >(initialValue?.publisherVideoElement ?? null);
 
-  const publisherRef = useRef<Publisher | null>(initialValue.publisher ?? null);
-  const quality = usePublisherQuality(publisherRef.current);
+  const [publisher, setPublisher] = useState<Publisher | null>(initialValue.publisher ?? null);
+  const publisherRef = useRef<Publisher | null>(publisher);
+  const quality = usePublisherQuality(publisher);
+
+  const assignPublisher = useCallback((nextPublisher: Publisher | null) => {
+    publisherRef.current = nextPublisher;
+    setPublisher(nextPublisher);
+  }, []);
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
 
@@ -169,8 +175,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const handleDestroyed = useCallback(() => {
     frontendLogger.log('usePublisher: handle destroyed');
 
-    publisherRef.current = null;
-  }, []);
+    assignPublisher(null);
+  }, [assignPublisher]);
 
   /**
    * Change background replacement or blur effect
@@ -231,9 +237,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
     if (publisherRef?.current) {
       publisherRef.current.destroy();
-      publisherRef.current = null;
+      assignPublisher(null);
     }
-  }, []);
+  }, [assignPublisher]);
 
   const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
     const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
@@ -247,8 +253,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     if (publisherRef.current) {
       publisherRef.current.destroy();
     }
-    publisherRef.current = null;
-  }, []);
+    assignPublisher(null);
+  }, [assignPublisher]);
 
   /**
    * Method to unpublish from session and destroy publisher
@@ -327,7 +333,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         const publisher = initPublisher(undefined, options);
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
-        publisherRef.current = publisher;
+        assignPublisher(publisher);
 
         frontendLogger.log('usePublisher: initialize local publisher');
 
@@ -341,7 +347,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         }
       }
     },
-    [addPublisherListeners]
+    [addPublisherListeners, assignPublisher]
   );
 
   /**
@@ -450,7 +456,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         const shouldTreatAsTransient = reconnectingRef.current || !connected || !isBrowserOnline;
 
         const publisherToCleanup = publisherRef.current;
-        publisherRef.current = null;
+        assignPublisher(null);
 
         try {
           publisherToCleanup?.destroy();
@@ -482,7 +488,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     return () => {
       OT.off('exception', exceptionHandler);
     };
-  }, [connected, handlePublishingError]);
+  }, [assignPublisher, connected, handlePublishingError]);
 
   return {
     initializeLocalPublisher,
@@ -492,7 +498,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     publishingError,
     isVideoEnabled,
     publish,
-    publisher: publisherRef.current,
+    publisher,
     publisherVideoElement,
     quality,
     stream,
