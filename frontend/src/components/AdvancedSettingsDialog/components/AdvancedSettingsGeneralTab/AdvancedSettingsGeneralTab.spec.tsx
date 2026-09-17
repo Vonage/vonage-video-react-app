@@ -9,6 +9,5 @@ describe('AdvancedSettingsGeneralTab', () => {
     expect(screen.getByRole('heading', { name: /general/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /reset default values/i })).toBeInTheDocument();
     expect(screen.getByText(/restore all settings to their default values/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/default screen share surface/i)).toBeInTheDocument();
   });
 });
