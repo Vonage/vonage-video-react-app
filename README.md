@@ -130,6 +130,7 @@ The backend can validate OIDC access tokens on every route (minus a small exclus
 | [Architecture](./docs/ARCHITECTURE.md) | Nx workspace structure, projects, and library boundaries |
 | [Configuration](./docs/CONFIGURATION.md) | Environment variables, feature flags, theming, and Storybook |
 | [Session Migration](./docs/SESSION_MIGRATION.md) | Server rotation support, archiving recovery, and testing |
+| [Agent Skills](./skills/README.md) | Reusable AI agent skills (`SKILL.md`) and per-tool setup |
 | [Testing](./docs/TESTING.md) | Integration tests, screenshot tests, and unit test suites |
 | [Code Style](./docs/CODE_STYLE.md) | Linting, formatting, naming conventions, and doc generation |
 | [Contributing](./docs/CONTRIBUTING.md) | How to contribute to the project |

@@ -1658,3 +1658,24 @@ const Component = () => {
     );
 };
 ```
+
+---
+
+# Agent Skills
+
+This repository ships reusable **agent skills** in the root `skills/` folder. They use the open
+`SKILL.md` format (markdown with `name` + `description` front-matter) and are IDE-agnostic, so they
+work with any AI coding assistant (Copilot, Claude Code, Cursor, Windsurf, Kiro, ...). The `skills/`
+folder is the single source of truth; see `skills/README.md` for the catalog and per-tool setup.
+
+- **Rule:** When a task matches a skill's scope, follow that skill's `SKILL.md` as the authoritative
+  guide for that work.
+- **Rule:** Keep skills product-agnostic (agnostic of Vera) and IDE-agnostic so they remain valid if
+  the described code moves to another repository.
+
+Available skills:
+
+- **`session-migration-archiving-backend`** — `skills/session-migration-archiving-backend/SKILL.md`.
+  Backend + `libs/api` support for Vonage Video API session migration (server rotation) as it relates
+  to archiving: the `/hooks/session` and `/hooks/archive` webhooks, `serverRotationPending` state, the
+  `stopArchive` `archiveId` fallback, and restarting archiving after a server rotation.
