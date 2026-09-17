@@ -1,0 +1,24 @@
+libs/core/src/metrics/MetricValue/MetricValue.ts
+  s_fbb6e59cee6886::t_0b0d8c564515e5 92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "472d8b1f3a8fb2c0c0d100baef28c63c08e76043",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_fbb6e59cee6886": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_2e57f831-77a8-4a9b-8793-56f2734fe5da",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
