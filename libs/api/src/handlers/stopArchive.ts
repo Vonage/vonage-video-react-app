@@ -7,11 +7,11 @@ async function stopArchive(
   this: IVideoClient,
   payload: StopArchivePayload
 ): Promise<SingleArchiveResponse> {
-  try {
-    const { archiveId } = payload;
+  const { archiveId } = payload;
 
+  try {
     const archiveResponse = await assertResult(
-      () => this.video.stopArchive(archiveId),
+      () => this.video.stopArchive(archiveId!),
       makeThirdPartyErrorHandler('Failed to stop archive')
     );
 

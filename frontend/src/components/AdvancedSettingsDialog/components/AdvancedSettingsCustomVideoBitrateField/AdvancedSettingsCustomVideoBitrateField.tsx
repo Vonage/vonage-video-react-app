@@ -2,17 +2,25 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import type { AdvancedSettingsCustomVideoBitrate } from '../../types/types';
+import type { AdvancedSettingsCustomVideoBitrate } from '../../schemas';
 
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
 
+export const testIds = {
+  slider: 'advanced-settings-custom-video-bitrate-slider',
+} as const;
+
 type Props = {
   onChange: (value: AdvancedSettingsCustomVideoBitrate) => void;
+  value?: AdvancedSettingsCustomVideoBitrate;
 };
 
-const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElement => {
+const AdvancedSettingsCustomVideoBitrateField = ({ onChange, value }: Props): ReactElement => {
   const { t } = useTranslation();
-  const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
+  const cameraCustomVideoBitrate = advancedSettings$.use.select(
+    (state) => state.customVideoBitrate
+  );
+  const customVideoBitrate = value ?? cameraCustomVideoBitrate;
   const currentCustomVideoBitrate = Number(customVideoBitrate);
 
   return (
@@ -36,7 +44,7 @@ const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElem
             onChange(clampCustomVideoBitrate(Number(event.target.value)));
           }}
           className="w-full accent-vera-primary"
-          data-testid="advanced-settings-custom-video-bitrate-slider"
+          data-testid={testIds.slider}
           aria-label={t('advancedSettings.video.customBitrate.label')}
         />
 

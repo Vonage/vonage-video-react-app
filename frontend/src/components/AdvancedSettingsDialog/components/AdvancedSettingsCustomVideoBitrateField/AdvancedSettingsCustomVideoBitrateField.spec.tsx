@@ -3,7 +3,9 @@ import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import AdvancedSettingsCustomVideoBitrateField from './AdvancedSettingsCustomVideoBitrateField';
+import AdvancedSettingsCustomVideoBitrateField, {
+  testIds,
+} from './AdvancedSettingsCustomVideoBitrateField';
 
 describe('AdvancedSettingsCustomVideoBitrateField', () => {
   afterEach(() => {
@@ -14,10 +16,7 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
     render(<AdvancedSettingsCustomVideoBitrateField onChange={vi.fn()} />);
 
     expect(screen.getByText(/custom bitrate/i)).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toHaveAttribute(
-      'type',
-      'range'
-    );
+    expect(screen.getByTestId(testIds.slider)).toHaveAttribute('type', 'range');
     expect(screen.getAllByText(/5 kbps/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/^10 Mbps$/i)).toBeInTheDocument();
     expect(screen.getByText(/^500 kbps$/i)).toBeInTheDocument();
@@ -30,7 +29,7 @@ describe('AdvancedSettingsCustomVideoBitrateField', () => {
       dialogState: { customVideoBitrate: 9_995_000 },
     });
 
-    const slider = screen.getByTestId('advanced-settings-custom-video-bitrate-slider');
+    const slider = screen.getByTestId(testIds.slider);
 
     fireEvent.change(slider, { target: { value: '20000000' } });
 
