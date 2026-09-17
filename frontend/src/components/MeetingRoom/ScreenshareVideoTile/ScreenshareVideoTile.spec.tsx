@@ -308,8 +308,8 @@ describe('ScreenshareVideoTile', () => {
       render(<ScreenshareVideoTile {...defaultProps} />);
 
       const tile = screen.getByTestId('screenshare-tile');
-      expect(tile).toHaveStyle({ position: 'absolute' });
-      expect(tile).toHaveStyle({ display: 'flex' });
+      expect(tile).toHaveClass('absolute');
+      expect(tile).toHaveClass('flex');
     });
 
     it('has correct id attribute', () => {

@@ -1,8 +1,9 @@
+import { lazy, useMemo } from 'react';
 import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
+import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
@@ -30,6 +31,8 @@ import { isMobile } from '@web/platform';
 type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
+
+const AdvancedSettingsDialog = lazy(() => import('@components/AdvancedSettings/Dialog'));
 
 const isMobileDevice = isMobile();
 
@@ -64,6 +67,11 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     handleRecordingNotified,
   } = useMeetingRoom();
   const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
+
+  const participantCount = useMemo(
+    () => subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1,
+    [subscriberWrappers]
+  );
 
   return (
     <Box
@@ -119,12 +127,14 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
         toggleBackgroundEffects={toggleBackgroundEffects}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
-        participantCount={
-          subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
-        }
+        participantCount={participantCount}
         captionsState={captionsState}
       />
-      {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
+      {isAdvancedSettingsOpen && (
+        <SuspenseBoundary fallback={null}>
+          <AdvancedSettingsDialog />
+        </SuspenseBoundary>
+      )}
       {recordingAlreadyNotified &&
         !archiveIdStartedBySelf &&
         isRecording &&

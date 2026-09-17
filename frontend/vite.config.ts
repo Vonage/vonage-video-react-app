@@ -215,6 +215,46 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       minify: 'terser',
       cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // React ecosystem — stable across app changes
+            'vendor-react': [
+              'react',
+              'react-dom',
+              'react-router-dom',
+              'react-i18next',
+              'react-global-state-hooks',
+            ],
+            // MUI + Vivid UI components
+            'vendor-ui': [
+              '@mui/material',
+              '@mui/icons-material',
+              '@vonage/vivid',
+              '@emotion/react',
+              '@emotion/styled',
+              'tailwind-merge',
+              'tailwind-variants',
+            ],
+            // Vonage / TokBox video SDKs — large, rarely change
+            'vendor-vonage': [
+              '@vonage/client-sdk-video',
+              '@vonage/video',
+              '@vonage/video-client-network-test',
+              'opentok',
+              'opentok-layout-js',
+              'opentok-jwt',
+              'opentok-solutions-logging',
+              '@vonage/vcr-sdk',
+              '@vonage/auth',
+              '@vonage/server-sdk',
+            ],
+            // Other network / utility vendors
+            'vendor-axios': ['axios'],
+            'vendor-syntax': ['react-syntax-highlighter'],
+          },
+        },
+      },
       terserOptions: {
         format: {
           comments: false,

@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
@@ -55,57 +55,94 @@ const VideoTileCanvas = ({
   const getLayout = useLayoutManager();
   const { connected, reconnecting, subscriberWrappers, layoutMode } = useSessionContext();
 
-  // Determine if we will display a large video tile based on current layout mode and screenshare presence
-  const pinnedSubscriberCount = subscriberWrappers.filter(
-    (subWrapper) => subWrapper.isPinned
-  ).length;
-  const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+  // Memoize subscriber-derived values to avoid recomputing on every render
+  const pinnedSubscriberCount = useMemo(
+    () => subscriberWrappers.filter((subWrapper) => subWrapper.isPinned).length,
+    [subscriberWrappers]
+  );
+  const isViewingScreenshare = useMemo(
+    () => subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare),
+    [subscriberWrappers]
+  );
   const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
   const isViewingLargeTile =
     sessionHasScreenshare || layoutMode === 'active-speaker' || !!pinnedSubscriberCount;
 
   // Check which subscribers we will display, in large calls we will hide some subscribers
-  const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay({
-    subscriberWrappers,
-    isViewingLargeTile,
-    isSharingScreen: !!screensharingPublisher,
-    pinnedSubscriberCount,
-  });
+  const { hiddenSubscribers, subscribersOnScreen } = useMemo(
+    () =>
+      getSubscribersToDisplay({
+        subscriberWrappers,
+        isViewingLargeTile,
+        isSharingScreen: !!screensharingPublisher,
+        pinnedSubscriberCount,
+      }),
+    [subscriberWrappers, isViewingLargeTile, screensharingPublisher, pinnedSubscriberCount]
+  );
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen
   const subscribersInDisplayOrder = useSubscribersInDisplayOrder(subscribersOnScreen);
 
   // Get the layout Boxes which specify exact position, height, and width for all video tiles
-
-  const layoutBoxes = getLayoutBoxes({
-    activeSpeakerId,
-    getLayout,
-    pinnedSubscriberCount,
-    hiddenSubscribers,
-    isSharingScreen,
-    layoutMode,
-    publisher,
-    screensharingPublisher,
-    sessionHasScreenshare,
-    subscribersInDisplayOrder,
-    wrapDimensions,
-    wrapRef,
-  });
+  const layoutBoxes = useMemo(
+    () =>
+      getLayoutBoxes({
+        activeSpeakerId,
+        getLayout,
+        pinnedSubscriberCount,
+        hiddenSubscribers,
+        isSharingScreen,
+        layoutMode,
+        publisher,
+        screensharingPublisher,
+        sessionHasScreenshare,
+        subscribersInDisplayOrder,
+        wrapDimensions,
+        wrapRef,
+      }),
+    [
+      activeSpeakerId,
+      getLayout,
+      pinnedSubscriberCount,
+      hiddenSubscribers,
+      isSharingScreen,
+      layoutMode,
+      publisher,
+      screensharingPublisher,
+      sessionHasScreenshare,
+      subscribersInDisplayOrder,
+      wrapDimensions,
+    ]
+  );
 
   const isSmallViewport = useIsSmallViewport();
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const wrapperHeight = (() => {
-    if (fullSize) return isSmallViewport ? 'calc(100% - 184px)' : 'calc(100% - 104px)';
-    return isSmallViewport ? 'calc(100dvh - 184px)' : 'calc(100dvh - 104px)';
-  })();
+  const wrapperHeight = useMemo(
+    () =>
+      fullSize
+        ? isSmallViewport
+          ? 'calc(100% - 184px)'
+          : 'calc(100% - 104px)'
+        : isSmallViewport
+          ? 'calc(100dvh - 184px)'
+          : 'calc(100dvh - 104px)',
+    [fullSize, isSmallViewport]
+  );
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
-  const wrapperWidth = (() => {
-    if (fullSize) return isRightPanelOpen ? 'calc(100% - 392px)' : 'calc(100% - 24px)';
-    return isRightPanelOpen ? 'calc(100vw - 392px)' : 'calc(100vw - 24px)';
-  })();
+  const wrapperWidth = useMemo(
+    () =>
+      fullSize
+        ? isRightPanelOpen
+          ? 'calc(100% - 392px)'
+          : 'calc(100% - 24px)'
+        : isRightPanelOpen
+          ? 'calc(100vw - 392px)'
+          : 'calc(100vw - 24px)',
+    [fullSize, isRightPanelOpen]
+  );
 
   const shouldShowProgress = connected !== true || reconnecting === true;
   const progressTestId =

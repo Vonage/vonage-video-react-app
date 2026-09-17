@@ -20,13 +20,17 @@ type ThrottleOptions = {
  * @param options - Control leading/trailing behavior.
  * @param options.leading - Fire on the leading edge of the interval. Defaults to `true`.
  * @param options.trailing - Fire on the trailing edge of the interval. Defaults to `true`.
- * @returns A throttled version of the callback with the same parameter signature.
+ * @returns A throttled version of the callback with the same parameter signature, augmented with a `cancel` method.
  */
+type ThrottledFunction<T extends (...args: Any[]) => void> = ((...args: Parameters<T>) => void) & {
+  cancel: () => void;
+};
+
 function throttle<T extends (...args: Any[]) => void>(
   callback: T,
   wait: number,
   options: ThrottleOptions = {}
-): (...args: Parameters<T>) => void {
+): ThrottledFunction<T> {
   const { leading = true, trailing = true } = options;
 
   let trailingCallTimer: ReturnType<typeof setTimeout> | null = null;
@@ -41,10 +45,11 @@ function throttle<T extends (...args: Any[]) => void>(
   };
 
   const cancelTrailingCall = () => {
-    if (!trailingCallTimer) return;
-
-    clearTimeout(trailingCallTimer);
-    trailingCallTimer = null;
+    if (trailingCallTimer) {
+      clearTimeout(trailingCallTimer);
+      trailingCallTimer = null;
+    }
+    latestTrailingArgs = null;
   };
 
   const scheduleTrailingCall = (delay: number) => {
@@ -59,7 +64,7 @@ function throttle<T extends (...args: Any[]) => void>(
     }, delay);
   };
 
-  return (...args: Parameters<T>) => {
+  const throttled = (...args: Parameters<T>) => {
     const now = Date.now();
     const timeSinceLastExecution = now - lastCallbackExecutionTime;
     const canExecuteImmediately = timeSinceLastExecution >= wait;
@@ -78,6 +83,10 @@ function throttle<T extends (...args: Any[]) => void>(
 
     scheduleTrailingCall(remainingWaitTime);
   };
+
+  throttled.cancel = cancelTrailingCall;
+
+  return throttled;
 }
 
 export default throttle;
