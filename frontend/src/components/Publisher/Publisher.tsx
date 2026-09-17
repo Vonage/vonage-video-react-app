@@ -53,7 +53,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
 
     return () => {
       if (container.contains(element)) {
-        container.removeChild(element);
+        element.remove();
       }
     };
   }, [element]);
