@@ -119,30 +119,20 @@ const VideoTileCanvas = ({
 
   // Height is 100dvh - toolbar height (80px) and header height (80px) - 24px wrapper margin on small viewport device
   // Height is 100dvh - toolbar height (80px) - 24px wrapper margin on desktop
-  const wrapperHeight = useMemo(
-    () =>
-      fullSize
-        ? isSmallViewport
-          ? 'calc(100% - 184px)'
-          : 'calc(100% - 104px)'
-        : isSmallViewport
-          ? 'calc(100dvh - 184px)'
-          : 'calc(100dvh - 104px)',
-    [fullSize, isSmallViewport]
-  );
+  const wrapperHeight = useMemo(() => {
+    if (fullSize && isSmallViewport) return 'calc(100% - 184px)';
+    if (fullSize) return 'calc(100% - 104px)';
+    if (isSmallViewport) return 'calc(100dvh - 184px)';
+    return 'calc(100dvh - 104px)';
+  }, [fullSize, isSmallViewport]);
 
   // Width is 100vw - 360px panel width - 24px panel right margin - 24px wrapper margin
-  const wrapperWidth = useMemo(
-    () =>
-      fullSize
-        ? isRightPanelOpen
-          ? 'calc(100% - 392px)'
-          : 'calc(100% - 24px)'
-        : isRightPanelOpen
-          ? 'calc(100vw - 392px)'
-          : 'calc(100vw - 24px)',
-    [fullSize, isRightPanelOpen]
-  );
+  const wrapperWidth = useMemo(() => {
+    if (fullSize && isRightPanelOpen) return 'calc(100% - 392px)';
+    if (fullSize) return 'calc(100% - 24px)';
+    if (isRightPanelOpen) return 'calc(100vw - 392px)';
+    return 'calc(100vw - 24px)';
+  }, [fullSize, isRightPanelOpen]);
 
   const shouldShowProgress = connected !== true || reconnecting === true;
   const progressTestId =

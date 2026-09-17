@@ -126,22 +126,20 @@ const ScreenshareVideoTile = forwardRef(
 
       pendingMouseMove.current = { x: event.clientX, y: event.clientY };
 
-      if (rafId.current === null) {
-        rafId.current = requestAnimationFrame(() => {
-          const position = pendingMouseMove.current;
-          if (position) {
-            const deltaX = position.x - lastMousePosition.x;
-            const deltaY = position.y - lastMousePosition.y;
-            setPanOffset((prev) => ({
-              x: prev.x + deltaX,
-              y: prev.y + deltaY,
-            }));
-            setLastMousePosition({ x: position.x, y: position.y });
-          }
-          pendingMouseMove.current = null;
-          rafId.current = null;
-        });
-      }
+      rafId.current ??= requestAnimationFrame(() => {
+        const position = pendingMouseMove.current;
+        if (position) {
+          const deltaX = position.x - lastMousePosition.x;
+          const deltaY = position.y - lastMousePosition.y;
+          setPanOffset((prev) => ({
+            x: prev.x + deltaX,
+            y: prev.y + deltaY,
+          }));
+          setLastMousePosition({ x: position.x, y: position.y });
+        }
+        pendingMouseMove.current = null;
+        rafId.current = null;
+      });
     };
 
     const handleMouseUp = () => {
