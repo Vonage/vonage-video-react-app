@@ -1,0 +1,31 @@
+backend/helpers/redactSensitiveKeys.ts
+  h_6029769cf9ac60 3-5,7-13,40
+  h_6029769cf9ac60 1-2,6
+.gitignore
+  h_6029769cf9ac60 67
+.husky/pre-push
+  h_6029769cf9ac60 8
+frontend/project.json
+  h_6029769cf9ac60 74
+libs/api/project.json
+  h_6029769cf9ac60 26
+libs/common/project.json
+  h_6029769cf9ac60 26
+libs/core/project.json
+  h_6029769cf9ac60 26
+libs/ui/project.json
+  h_6029769cf9ac60 24
+scripts/testLibs.ts
+  h_6029769cf9ac60 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6df2f429ffb9dce04f43f84922421cb18da96dc6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
