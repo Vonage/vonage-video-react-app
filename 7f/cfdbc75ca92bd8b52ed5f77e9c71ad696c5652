@@ -1,0 +1,25 @@
+.github/copilot-instructions.md
+  s_70fe9d63046ec9::t_ff80e26a1a2640 1660-1681
+README.md
+  s_70fe9d63046ec9::t_ff80e26a1a2640 133
+skills/README.md
+  s_70fe9d63046ec9::t_ff80e26a1a2640 1-64
+skills/session-migration-archiving-backend/SKILL.md
+  s_70fe9d63046ec9::t_ff80e26a1a2640 1-318
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7fcfdbc75ca92bd8b52ed5f77e9c71ad696c5652",
+  "prompts": {},
+  "sessions": {
+    "s_70fe9d63046ec9": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1789629010403764000",
+        "model": "unknown"
+      },
+      "human_author": "jorgesanmartin-vng <jorge.sanmartin@vonage.com>"
+    }
+  }
+}
