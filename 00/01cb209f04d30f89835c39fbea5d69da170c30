@@ -1,0 +1,26 @@
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.spec.ts
+  s_b242e465d84fa6::t_fc590950266498 50-52,54,56-57,60-62,66-69,71,73,75-76,79-80,83-84,86-87,89-90,93-94,98-100,102,104,106-107,110-111,114,116,118-119,122-123,125,127-132,134-140,142-143,146-147,150-152,155
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_737cf808c1c597 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0001cb209f04d30f89835c39fbea5d69da170c30",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_b242e465d84fa6": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_ed0ed94c-f7f8-4924-9fe5-64c00b497a35",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+libs/common/srcNode/errors/ApplicationServerError.ts
+  45c80389bcc169c9 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "0aace62a6f99cef6e3da73f27a7c55d57dd0570a",
+  "prompts": {
+    "45c80389bcc169c9": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "10ecc075-b948-4a63-a011-c9e7d6b2a362",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
