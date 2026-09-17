@@ -8,7 +8,6 @@ import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
-import advancedSettings$ from '@Context/AdvancedSettings';
 import {
   applyBitrate,
   handleApplyAdvancedSettingsError,
