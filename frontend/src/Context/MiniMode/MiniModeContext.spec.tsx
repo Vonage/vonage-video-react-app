@@ -167,7 +167,11 @@ describe('buildPipWindowTitle', () => {
     expect(buildPipWindowTitle('Team Standup', true)).toBe('Team Standup ⏺');
   });
 
-  it('returns empty string when no room name and not recording', () => {
-    expect(buildPipWindowTitle('', false)).toBe('');
+  it('falls back to Mini Mode when no room name and not recording', () => {
+    expect(buildPipWindowTitle('', false)).toBe('Mini Mode');
+  });
+
+  it('falls back to Mini Mode with recording indicator when no room name', () => {
+    expect(buildPipWindowTitle('', true)).toBe('Mini Mode ⏺');
   });
 });

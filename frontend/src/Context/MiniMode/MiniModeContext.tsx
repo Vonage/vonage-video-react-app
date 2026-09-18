@@ -38,7 +38,7 @@ const PIP_WINDOW_SIZE = { width: 360, height: 260 };
  * @returns The formatted window title
  */
 export function buildPipWindowTitle(roomName: string, isRecording: boolean): string {
-  const baseTitle = roomName || '';
+  const baseTitle = roomName || 'Mini Mode';
   return isRecording ? `${baseTitle} ⏺` : baseTitle;
 }
 
@@ -136,7 +136,10 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
       const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
       copyStylesToDocument(document, nextWindow.document);
-      nextWindow.document.title = buildPipWindowTitle(sessionDetails?.roomName ?? '', !!archiveId);
+      nextWindow.document.title = buildPipWindowTitle(
+        sessionDetails?.roomName ?? publisher?.stream?.name ?? '',
+        !!archiveId
+      );
       nextWindow.document.documentElement.style.height = '100%';
       nextWindow.document.body.style.margin = '0';
       nextWindow.document.body.style.width = '100%';
@@ -189,8 +192,9 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     if (!window || window.closed) {
       return;
     }
-    window.document.title = buildPipWindowTitle(sessionDetails?.roomName ?? '', !!archiveId);
-  }, [archiveId, sessionDetails?.roomName]);
+    const meetingName = sessionDetails?.roomName ?? publisher?.stream?.name ?? '';
+    window.document.title = buildPipWindowTitle(meetingName, !!archiveId);
+  }, [archiveId, sessionDetails?.roomName, publisher, sessionKey]);
 
   const leave = useCallback(() => {
     exit();
