@@ -14,9 +14,14 @@ const loadIconSvg = async (name: string): Promise<string> => {
   if (!response.ok) {
     throw new Error(`Failed to load Vivid icon: ${name}`);
   }
-  const svgText = await response.text();
-  iconSvgCache.set(name, svgText);
-  return svgText;
+  const rawSvg = await response.text();
+  // Normalize dimensions so every icon fills its container uniformly,
+  // regardless of the source SVG's intrinsic width/height attributes.
+  const svgContent = rawSvg
+    .replace(/\swidth="[^"]*"/, ' width="100%"')
+    .replace(/\sheight="[^"]*"/, ' height="100%"');
+  iconSvgCache.set(name, svgContent);
+  return svgContent;
 };
 
 export type MiniModeIconProps = {
