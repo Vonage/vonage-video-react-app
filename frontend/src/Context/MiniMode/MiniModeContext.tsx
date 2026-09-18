@@ -4,6 +4,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -28,6 +29,18 @@ import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
 import resolveMiniModeParticipant, { type MiniModeParticipant } from './resolveMiniModeParticipant';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
+
+/**
+ * Builds the title shown in the Picture-in-Picture window title bar.
+ * Appends a recording indicator when the meeting is being recorded.
+ * @param roomName - The meeting room name
+ * @param isRecording - Whether recording is active
+ * @returns The formatted window title
+ */
+export function buildPipWindowTitle(roomName: string, isRecording: boolean): string {
+  const baseTitle = roomName || '';
+  return isRecording ? `${baseTitle} ⏺` : baseTitle;
+}
 
 export type MiniModeContextType = {
   isSupported: boolean;
@@ -57,7 +70,8 @@ export type MiniModeProviderProps = {
  */
 export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElement => {
   const navigate = useNavigate();
-  const { subscriberWrappers, activeSpeakerId, disconnect, sessionKey } = useSessionContext();
+  const { subscriberWrappers, activeSpeakerId, disconnect, sessionKey, sessionDetails, archiveId } =
+    useSessionContext();
   const {
     publisherVideoElement,
     publisher,
@@ -122,6 +136,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
       const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
       copyStylesToDocument(document, nextWindow.document);
+      nextWindow.document.title = buildPipWindowTitle(sessionDetails?.roomName ?? '', !!archiveId);
       nextWindow.document.documentElement.style.height = '100%';
       nextWindow.document.body.style.margin = '0';
       nextWindow.document.body.style.width = '100%';
@@ -158,12 +173,24 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     });
   }, [
     activeSpeakerId,
+    archiveId,
     isSupported,
     publisher,
     publisherVideoElement,
     restoreHostedElement,
+    sessionDetails,
     subscriberWrappers,
   ]);
+
+  // Keep the PiP window title bar in sync with recording state so the
+  // user always sees whether the meeting is being recorded.
+  useEffect(() => {
+    const window = pipWindowRef.current;
+    if (!window || window.closed) {
+      return;
+    }
+    window.document.title = buildPipWindowTitle(sessionDetails?.roomName ?? '', !!archiveId);
+  }, [archiveId, sessionDetails?.roomName]);
 
   const leave = useCallback(() => {
     exit();

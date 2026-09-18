@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { requestDocumentPictureInPictureWindow } from '../../utils/documentPictureInPicture';
-import { MiniModeProvider, useMiniMode } from './MiniModeContext';
+import { MiniModeProvider, useMiniMode, buildPipWindowTitle } from './MiniModeContext';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
@@ -14,6 +14,8 @@ vi.mock('@hooks/useSessionContext', () => ({
     activeSpeakerId: null,
     disconnect: vi.fn(),
     sessionKey: 'test-session',
+    sessionDetails: null,
+    archiveId: null,
   }),
 }));
 
@@ -153,5 +155,19 @@ describe('MiniModeContext', () => {
     // enter() returns early when the PiP API is unsupported, so
     // requestDocumentPictureInPictureWindow must never be called
     expect(requestDocumentPictureInPictureWindow).not.toHaveBeenCalled();
+  });
+});
+
+describe('buildPipWindowTitle', () => {
+  it('returns the room name when not recording', () => {
+    expect(buildPipWindowTitle('Team Standup', false)).toBe('Team Standup');
+  });
+
+  it('appends a recording indicator to the room name when recording', () => {
+    expect(buildPipWindowTitle('Team Standup', true)).toBe('Team Standup ⏺');
+  });
+
+  it('returns empty string when no room name and not recording', () => {
+    expect(buildPipWindowTitle('', false)).toBe('');
   });
 });
