@@ -21,6 +21,7 @@ import {
   isDocumentPictureInPictureSupported,
   restoreNodeOrigin,
   requestDocumentPictureInPictureWindow,
+  syncStylesToWindow,
   type NodeOrigin,
 } from '../../utils/documentPictureInPicture';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
@@ -77,6 +78,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   const originRef = useRef<NodeOrigin | null>(null);
   const pipWindowRef = useRef<Window | null>(null);
   const hostedElementRef = useRef<HTMLVideoElement | HTMLObjectElement | null>(null);
+  const stopStyleSyncRef = useRef<(() => void) | null>(null);
 
   const isSupported = env.ALLOW_MINI_MODE && isDocumentPictureInPictureSupported();
   const isOpen = pipWindow !== null;
@@ -95,6 +97,8 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
   const exit = useCallback(() => {
     restoreHostedElement();
+    stopStyleSyncRef.current?.();
+    stopStyleSyncRef.current = null;
     const currentWindow = pipWindowRef.current;
     pipWindowRef.current = null;
     setPipWindow(null);
@@ -118,6 +122,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
       const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
       copyStylesToDocument(document, nextWindow.document);
+      nextWindow.document.documentElement.style.height = '100%';
       nextWindow.document.body.style.margin = '0';
       nextWindow.document.body.style.width = '100%';
       nextWindow.document.body.style.height = '100%';
@@ -140,7 +145,11 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
       setPipWindow(nextWindow);
       setMountNode(mount);
 
+      stopStyleSyncRef.current = syncStylesToWindow(document, nextWindow.document);
+
       nextWindow.addEventListener('pagehide', () => {
+        stopStyleSyncRef.current?.();
+        stopStyleSyncRef.current = null;
         restoreHostedElement();
         pipWindowRef.current = null;
         setPipWindow(null);

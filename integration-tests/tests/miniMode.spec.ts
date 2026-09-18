@@ -2,8 +2,12 @@ import { expect, Page } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
-
-const joinMeeting = async (page: Page, roomName: string, username: string, browserName?: string) => {
+const joinMeeting = async (
+  page: Page,
+  roomName: string,
+  username: string,
+  browserName?: string
+) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
   await page.waitForTimeout(browserName === 'firefox' ? 3000 : 1000);
   await page.getByLabel('Name').fill(username);

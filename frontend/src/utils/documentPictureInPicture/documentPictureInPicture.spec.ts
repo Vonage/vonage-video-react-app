@@ -61,5 +61,25 @@ describe('documentPictureInPicture helpers', () => {
       expect(target.body.className).toBe('app');
       expect(target.head.querySelector('style')?.textContent).toBe('.x { color: red; }');
     });
+
+    it('resolves relative stylesheet hrefs to absolute URLs in the target', () => {
+      const source = document.implementation.createHTMLDocument('source');
+      const target = document.implementation.createHTMLDocument('target');
+      const link = source.createElement('link');
+      link.rel = 'stylesheet';
+      // createElement does not resolve href against a base URI, so simulate
+      // the value the browser would expose on an element in the main document
+      Object.defineProperty(link, 'href', {
+        get: () => 'https://example.com/styles/main.css',
+        configurable: true,
+      });
+      link.setAttribute('href', '/styles/main.css');
+      source.head.appendChild(link);
+
+      copyStylesToDocument(source, target);
+
+      const clonedLink = target.head.querySelector('link');
+      expect(clonedLink?.getAttribute('href')).toBe('https://example.com/styles/main.css');
+    });
   });
 });

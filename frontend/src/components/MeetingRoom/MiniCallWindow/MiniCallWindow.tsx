@@ -2,7 +2,7 @@ import { ReactElement, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/components/VividIcon';
+import MiniModeIcon from './MiniModeIcon';
 import AvatarInitials from '../../AvatarInitials';
 import { moveNode } from '../../../utils/documentPictureInPicture';
 import type { MiniModeParticipant } from '../../../Context/MiniMode/resolveMiniModeParticipant';
@@ -91,12 +91,9 @@ const MiniCallWindow = ({
             aria-label={isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip')}
             className="bg-vera-dark-background!"
           >
-            <VividIcon
+            <MiniModeIcon
               name={isAudioEnabled ? 'microphone-solid' : 'mic-mute-solid'}
-              customSize={-5}
-              style={{
-                color: isAudioEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)',
-              }}
+              color={isAudioEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
             />
           </IconButton>
         </Tooltip>
@@ -112,12 +109,9 @@ const MiniCallWindow = ({
             }
             className="bg-vera-dark-background!"
           >
-            <VividIcon
+            <MiniModeIcon
               name={isVideoEnabled ? 'video-solid' : 'video-off-solid'}
-              customSize={-5}
-              style={{
-                color: isVideoEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)',
-              }}
+              color={isVideoEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
             />
           </IconButton>
         </Tooltip>
@@ -129,11 +123,7 @@ const MiniCallWindow = ({
             aria-label={t('miniMode.expand.ariaLabel')}
             className="bg-vera-primary!"
           >
-            <VividIcon
-              name="open-line"
-              customSize={-5}
-              style={{ color: 'var(--vera-on-primary)' }}
-            />
+            <MiniModeIcon name="open-line" color="var(--vera-on-primary)" />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('miniMode.leave.tooltip')}>
@@ -144,11 +134,7 @@ const MiniCallWindow = ({
             aria-label={t('miniMode.leave.ariaLabel')}
             className="bg-vera-error!"
           >
-            <VividIcon
-              name="end-call-solid"
-              customSize={-5}
-              style={{ color: 'var(--vera-on-secondary-light)' }}
-            />
+            <MiniModeIcon name="end-call-solid" color="var(--vera-on-secondary-light)" />
           </IconButton>
         </Tooltip>
       </div>
