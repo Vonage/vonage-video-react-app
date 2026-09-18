@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
+import { requestDocumentPictureInPictureWindow } from '../../utils/documentPictureInPicture';
 import { MiniModeProvider, useMiniMode } from './MiniModeContext';
 
 vi.mock('react-router-dom', () => ({
@@ -145,7 +146,12 @@ describe('MiniModeContext', () => {
     );
 
     screen.getByTestId('enter-btn').click();
+
     // No window should be opened — enter should simply return
     await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // enter() returns early when the PiP API is unsupported, so
+    // requestDocumentPictureInPictureWindow must never be called
+    expect(requestDocumentPictureInPictureWindow).not.toHaveBeenCalled();
   });
 });
