@@ -121,7 +121,7 @@ const MiniCallWindow = ({
             onClick={onExpand}
             size="small"
             aria-label={t('miniMode.expand.ariaLabel')}
-            className="bg-vera-primary!"
+            className="bg-vera-dark-background!"
           >
             <MiniModeIcon
               name="export-solid"
