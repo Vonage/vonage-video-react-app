@@ -31,6 +31,8 @@ export type MiniModeIconProps = {
   color?: string;
   /** Pixel size of the square icon. */
   size?: number;
+  /** Extra tailwind/utility classes for the root element. */
+  className?: string;
 };
 
 /**
@@ -47,6 +49,7 @@ const MiniModeIcon = ({
   name,
   color = 'currentColor',
   size = 20,
+  className,
 }: MiniModeIconProps): ReactElement => {
   const [svgContent, setSvgContent] = useState('');
 
@@ -72,6 +75,7 @@ const MiniModeIcon = ({
 
   return (
     <div
+      className={className}
       data-testid={`mini-mode-icon-${name}`}
       style={{
         display: 'inline-flex',

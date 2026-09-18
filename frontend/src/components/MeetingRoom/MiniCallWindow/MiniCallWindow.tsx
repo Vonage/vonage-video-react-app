@@ -123,7 +123,11 @@ const MiniCallWindow = ({
             aria-label={t('miniMode.expand.ariaLabel')}
             className="bg-vera-primary!"
           >
-            <MiniModeIcon name="open-line" color="var(--vera-on-primary)" />
+            <MiniModeIcon
+              name="export-solid"
+              color="var(--vera-on-secondary-light)"
+              className="rotate-180"
+            />
           </IconButton>
         </Tooltip>
         <Tooltip title={t('miniMode.leave.tooltip')}>
