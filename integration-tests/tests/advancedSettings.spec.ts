@@ -86,6 +86,21 @@ test('should persist publisher audio fallback toggle after reopening settings', 
   await expect(publisherFallbackCheckbox).toBeChecked();
 });
 
+test('should persist screen share surface selection after reopening settings', async ({ page }) => {
+  await openScreenSharingTab(page);
+
+  const surfaceSelect = page.getByTestId('advanced-settings-video-screen-share-surface');
+  await expect(surfaceSelect).toHaveValue('monitor');
+
+  await surfaceSelect.selectOption('browser');
+  await expect(surfaceSelect).toHaveValue('browser');
+
+  await page.getByRole('button', { name: 'Close' }).click();
+  await openScreenSharingTab(page);
+
+  await expect(surfaceSelect).toHaveValue('browser');
+});
+
 async function openAudioTab(page) {
   await getMoreOptionsButton(page).click();
   await expect(page.getByTestId('menu-more-options')).toBeVisible();
@@ -98,6 +113,20 @@ async function openAudioTab(page) {
   await advancedSettingsOption.click();
   await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Audio' }).click();
+}
+
+async function openScreenSharingTab(page) {
+  await getMoreOptionsButton(page).click();
+  await expect(page.getByTestId('menu-more-options')).toBeVisible();
+
+  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
+  if ((await advancedSettingsOption.count()) === 0) {
+    return;
+  }
+
+  await advancedSettingsOption.click();
+  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Screen Sharing' }).click();
 }
 
 function getMoreOptionsButton(page) {

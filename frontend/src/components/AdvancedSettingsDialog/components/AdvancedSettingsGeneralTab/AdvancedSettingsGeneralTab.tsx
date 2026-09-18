@@ -9,6 +9,7 @@ const AdvancedSettingsGeneralTab = (): ReactElement => {
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
         {t('advancedSettings.tabs.general')}
       </h2>
+
       <div>
         <button
           type="button"
