@@ -13,6 +13,7 @@ import {
   NetworkConditionReasonValue,
 } from '@core/metrics';
 import type { Subscriber, SubscriberStats } from '@vonage/client-sdk-video';
+import attempt from '@common/execution/attempt';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -154,14 +155,14 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
 
 function getSubscriberStats(subscriber: Subscriber): Promise<SubscriberStats | null> {
   return new Promise((resolve) => {
-    try {
-      subscriber.getStats((error, stats) => {
-        if (error) return resolve(null);
-        resolve(stats ?? null);
-      });
-    } catch {
-      resolve(null);
-    }
+    attempt(
+      () =>
+        subscriber.getStats((error, stats) => {
+          if (error) return resolve(null);
+          resolve(stats ?? null);
+        }),
+      () => resolve(null)
+    );
   });
 }
 

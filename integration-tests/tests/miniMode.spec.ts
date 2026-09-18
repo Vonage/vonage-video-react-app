@@ -2,16 +2,11 @@ import { expect, Page } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
-const joinMeeting = async (
-  page: Page,
-  roomName: string,
-  username: string,
-  browserName?: string
-) => {
+const joinMeeting = async (page: Page, roomName: string, username: string) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
-  await page.waitForTimeout(browserName === 'firefox' ? 3000 : 1000);
+  await page.getByLabel('Name').waitFor({ state: 'visible' });
   await page.getByLabel('Name').fill(username);
-  await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
+  await page.getByRole('button', { name: 'Join meeting' }).click();
 };
 
 test.describe('Mini Mode', () => {
@@ -20,10 +15,12 @@ test.describe('Mini Mode', () => {
     browserName,
     isMobile,
   }) => {
+    // Non-regression: Document Picture-in-Picture API is Chromium-only
     test.skip(browserName !== 'chromium', 'Document PiP is Chromium-only');
+    // Non-regression: Mini Mode v1 is desktop toolbar only
     test.skip(!!isMobile, 'Mini Mode v1 is desktop toolbar');
 
-    await joinMeeting(page, randomBytes(5).toString('hex'), 'Mini Chrome', browserName);
+    await joinMeeting(page, randomBytes(5).toString('hex'), 'Mini Chrome');
 
     await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
     const miniButton = page.getByTestId('mini-mode-button');
@@ -34,7 +31,7 @@ test.describe('Mini Mode', () => {
     );
     expect(supported).toBe(true);
 
-    await miniButton.click({ force: true });
+    await miniButton.click();
 
     await expect
       .poll(async () =>
@@ -65,10 +62,12 @@ test.describe('Mini Mode', () => {
     browserName,
     isMobile,
   }) => {
+    // Non-regression: Document Picture-in-Picture API is Chromium-only
     test.skip(browserName === 'chromium', 'Chromium supports Mini Mode');
+    // Non-regression: Mini Mode v1 is desktop toolbar only
     test.skip(!!isMobile, 'Mini Mode v1 is desktop toolbar');
 
-    await joinMeeting(page, randomBytes(5).toString('hex'), `Mini ${browserName}`, browserName);
+    await joinMeeting(page, randomBytes(5).toString('hex'), `Mini ${browserName}`);
 
     await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('mini-mode-button')).toHaveCount(0);
