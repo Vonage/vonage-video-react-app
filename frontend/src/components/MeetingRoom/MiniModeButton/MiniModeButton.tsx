@@ -46,7 +46,9 @@ const MiniModeButton = ({
         isOverflowButton={isOverflowButton}
         icon={
           <VividIcon
-            name="picture-in-picture-solid"
+            // picture-in-picture-solid does not exist in the Vivid v4.11.0 icon set;
+            // export-solid is the standard "pop out" icon
+            name="export-solid"
             customSize={-5}
             style={{ color: 'var(--vera-on-secondary-light)' }}
           />
