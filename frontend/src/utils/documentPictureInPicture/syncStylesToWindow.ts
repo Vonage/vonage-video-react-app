@@ -56,7 +56,9 @@ const syncStylesToWindow = (source: Document, target: Document): (() => void) =>
         const targetNode =
           element.tagName === 'LINK'
             ? target.querySelector(`link[href="${(element as HTMLLinkElement).href}"]`)
-            : null;
+            : Array.from(target.head.querySelectorAll('style')).find(
+                (style) => style.textContent === element.textContent
+              );
         targetNode?.remove();
       });
     }
