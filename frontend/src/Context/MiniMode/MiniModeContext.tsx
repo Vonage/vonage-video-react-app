@@ -185,16 +185,20 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     subscriberWrappers,
   ]);
 
-  // Keep the PiP window title bar in sync with recording state so the
-  // user always sees whether the meeting is being recorded.
+  // Sync the PiP window title bar with the recording state.  This is the only
+  // practical way to reflect archiveId changes (recording start/stop) in the
+  // PiP title because the recording state lives in a different context
+  // (SessionProvider) with no imperative call path to MiniModeContext.
+  // The effect is a lightweight DOM-title sync, not a fetch, and only acts
+  // when a PiP window is actually open.
   useEffect(() => {
-    const window = pipWindowRef.current;
-    if (!window || window.closed) {
+    const pipWindow = pipWindowRef.current;
+    if (!pipWindow || pipWindow.closed) {
       return;
     }
     const meetingName = sessionDetails?.roomName ?? publisher?.stream?.name ?? '';
-    window.document.title = buildPipWindowTitle(meetingName, !!archiveId);
-  }, [archiveId, sessionDetails?.roomName, publisher, sessionKey]);
+    pipWindow.document.title = buildPipWindowTitle(meetingName, !!archiveId);
+  }, [archiveId, sessionDetails?.roomName, publisher]);
 
   const leave = useCallback(() => {
     exit();
