@@ -16,6 +16,20 @@ type VeraRoomAttributes = {
   language?: string;
 };
 
+type DocumentPictureInPicture = {
+  requestWindow: (options?: {
+    width?: number;
+    height?: number;
+    disallowReturnToOpener?: boolean;
+  }) => Promise<Window>;
+};
+
+declare global {
+  interface Window {
+    documentPictureInPicture?: DocumentPictureInPicture;
+  }
+}
+
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {

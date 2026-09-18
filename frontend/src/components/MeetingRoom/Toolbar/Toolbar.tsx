@@ -19,6 +19,7 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import MiniModeButton from '../MiniModeButton';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -100,6 +101,7 @@ const Toolbar = ({
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
     />,
+    <MiniModeButton key="MiniModeButton" />,
     <EmojiGridButton
       isEmojiGridOpen={openEmojiGridDesktop}
       setIsEmojiGridOpen={setOpenEmojiGridDesktop}
