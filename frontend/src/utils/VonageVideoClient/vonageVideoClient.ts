@@ -471,7 +471,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     }
 
     attempt(() => {
-      this.clientSession.disconnect();
+      void this.clientSession.disconnect();
     });
     this.clientSession = null as unknown as Session;
   };
@@ -528,7 +528,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   signal = (data: SignalType) => {
     attempt(() => {
-      this.clientSession.signal(data);
+      void this.clientSession.signal(data);
     });
   };
 
