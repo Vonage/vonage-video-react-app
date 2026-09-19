@@ -470,9 +470,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
-    attempt(() => {
-      void this.clientSession.disconnect();
-    });
+    void attempt(
+      () => this.clientSession.disconnect(),
+      (error) =>
+        frontendLogger.reportError(error, {
+          eventSource: 'vonageVideoClient.disconnect.error',
+          partnerId: this.applicationId,
+        })
+    );
     this.clientSession = null as unknown as Session;
   };
 
@@ -527,9 +532,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    attempt(() => {
-      void this.clientSession.signal(data);
-    });
+    void attempt(
+      () => this.clientSession.signal(data),
+      (error) =>
+        frontendLogger.reportError(error, {
+          eventSource: 'vonageVideoClient.signal.error',
+          partnerId: this.applicationId,
+        })
+    );
   };
 
   /**

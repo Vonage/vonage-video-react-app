@@ -2,7 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { requestDocumentPictureInPictureWindow } from '../../utils/documentPictureInPicture';
-import { MiniModeProvider, useMiniMode, buildPipWindowTitle } from './MiniModeContext';
+import { MiniModeProvider, useMiniMode } from './MiniModeContext';
+import { buildPipWindowTitle } from './buildPipWindowTitle';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),

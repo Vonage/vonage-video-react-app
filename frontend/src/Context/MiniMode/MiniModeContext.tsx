@@ -25,23 +25,14 @@ import {
   syncStylesToWindow,
   type NodeOrigin,
 } from '../../utils/documentPictureInPicture';
+import frontendLogger from '../../logger';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
+import buildPipWindowTitle from './buildPipWindowTitle';
 import resolveMiniModeParticipant, { type MiniModeParticipant } from './resolveMiniModeParticipant';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
 
-/**
- * Builds the title shown in the Picture-in-Picture window title bar.
- * Appends a recording indicator when the meeting is being recorded.
- * @param roomName - The meeting room name
- * @param isRecording - Whether recording is active
- * @returns The formatted window title
- */
-export function buildPipWindowTitle(roomName: string, isRecording: boolean): string {
-  const baseTitle = roomName || 'Mini Mode';
-  return isRecording ? `${baseTitle} ⏺` : baseTitle;
-}
-
+export { buildPipWindowTitle };
 export type MiniModeContextType = {
   isSupported: boolean;
   isOpen: boolean;
@@ -127,53 +118,60 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
       return;
     }
 
-    await attempt(async () => {
-      const nextParticipant = resolveMiniModeParticipant(subscriberWrappers, activeSpeakerId, {
-        element: publisherVideoElement,
-        name: publisher?.stream?.name ?? '',
-        initials: publisher?.stream?.initials ?? '',
-      });
+    await attempt(
+      async () => {
+        const nextParticipant = resolveMiniModeParticipant(subscriberWrappers, activeSpeakerId, {
+          element: publisherVideoElement,
+          name: publisher?.stream?.name ?? '',
+          initials: publisher?.stream?.initials ?? '',
+        });
 
-      const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
-      copyStylesToDocument(document, nextWindow.document);
-      nextWindow.document.title = buildPipWindowTitle(
-        sessionDetails?.roomName ?? publisher?.stream?.name ?? '',
-        !!archiveId
-      );
-      nextWindow.document.documentElement.style.height = '100%';
-      nextWindow.document.body.style.margin = '0';
-      nextWindow.document.body.style.width = '100%';
-      nextWindow.document.body.style.height = '100%';
-      nextWindow.document.body.style.backgroundColor = 'var(--vera-dark-grey, #2c2c2c)';
+        const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
+        copyStylesToDocument(document, nextWindow.document);
+        nextWindow.document.title = buildPipWindowTitle(
+          sessionDetails?.roomName ?? publisher?.stream?.name ?? '',
+          !!archiveId
+        );
+        nextWindow.document.documentElement.style.height = '100%';
+        nextWindow.document.body.style.margin = '0';
+        nextWindow.document.body.style.width = '100%';
+        nextWindow.document.body.style.height = '100%';
+        nextWindow.document.body.style.backgroundColor = 'var(--vera-dark-grey, #2c2c2c)';
 
-      const mount = nextWindow.document.createElement('div');
-      mount.id = 'mini-mode-root';
-      mount.style.width = '100%';
-      mount.style.height = '100%';
-      nextWindow.document.body.appendChild(mount);
+        const mount = nextWindow.document.createElement('div');
+        mount.id = 'mini-mode-root';
+        mount.style.width = '100%';
+        mount.style.height = '100%';
+        nextWindow.document.body.appendChild(mount);
 
-      if (nextParticipant.element) {
-        originRef.current = captureNodeOrigin(nextParticipant.element);
-        hostedElementRef.current = nextParticipant.element;
-        setHostedElement(nextParticipant.element);
+        if (nextParticipant.element) {
+          originRef.current = captureNodeOrigin(nextParticipant.element);
+          hostedElementRef.current = nextParticipant.element;
+          setHostedElement(nextParticipant.element);
+        }
+
+        pipWindowRef.current = nextWindow;
+        setParticipant(nextParticipant);
+        setPipWindow(nextWindow);
+        setMountNode(mount);
+
+        stopStyleSyncRef.current = syncStylesToWindow(document, nextWindow.document);
+
+        nextWindow.addEventListener('pagehide', () => {
+          stopStyleSyncRef.current?.();
+          stopStyleSyncRef.current = null;
+          restoreHostedElement();
+          pipWindowRef.current = null;
+          setPipWindow(null);
+          setMountNode(null);
+        });
+      },
+      (error) => {
+        frontendLogger.reportError(error, {
+          eventSource: 'miniMode.enter.error',
+        });
       }
-
-      pipWindowRef.current = nextWindow;
-      setParticipant(nextParticipant);
-      setPipWindow(nextWindow);
-      setMountNode(mount);
-
-      stopStyleSyncRef.current = syncStylesToWindow(document, nextWindow.document);
-
-      nextWindow.addEventListener('pagehide', () => {
-        stopStyleSyncRef.current?.();
-        stopStyleSyncRef.current = null;
-        restoreHostedElement();
-        pipWindowRef.current = null;
-        setPipWindow(null);
-        setMountNode(null);
-      });
-    });
+    );
   }, [
     activeSpeakerId,
     archiveId,
@@ -198,7 +196,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     }
     const meetingName = sessionDetails?.roomName ?? publisher?.stream?.name ?? '';
     pipWindow.document.title = buildPipWindowTitle(meetingName, !!archiveId);
-  }, [archiveId, sessionDetails?.roomName, publisher]);
+  }, [archiveId, sessionDetails, publisher]);
 
   const leave = useCallback(() => {
     exit();

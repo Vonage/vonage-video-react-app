@@ -1,28 +1,5 @@
-import { ReactElement, useEffect, useState } from 'react';
-
-const VIVID_ICON_BASE_URL = 'https://icon.resources.vonage.com/v4.11.0';
-
-const iconSvgCache = new Map<string, string>();
-
-const loadIconSvg = async (name: string): Promise<string> => {
-  const cached = iconSvgCache.get(name);
-  if (cached) {
-    return cached;
-  }
-
-  const response = await fetch(`${VIVID_ICON_BASE_URL}/${name}.svg`);
-  if (!response.ok) {
-    throw new Error(`Failed to load Vivid icon: ${name}`);
-  }
-  const rawSvg = await response.text();
-  // Normalize dimensions so every icon fills its container uniformly,
-  // regardless of the source SVG's intrinsic width/height attributes.
-  const svgContent = rawSvg
-    .replace(/\swidth="[^"]*"/, ' width="100%"')
-    .replace(/\sheight="[^"]*"/, ' height="100%"');
-  iconSvgCache.set(name, svgContent);
-  return svgContent;
-};
+import { ReactElement } from 'react';
+import useIconSvg from './useIconSvg';
 
 export type MiniModeIconProps = {
   /** Vivid icon name, e.g. `microphone-solid`. */
@@ -42,6 +19,12 @@ export type MiniModeIconProps = {
  * custom-element registry, so the `<vwc-icon>` web component never upgrades
  * there. This component fetches the same SVG sprites the web component uses
  * and renders them as inline `<svg>` content, which works in any document.
+ *
+ * @security The SVG source is the trusted Vonage CDN and icon names are
+ * hardcoded, so `dangerouslySetInnerHTML` is an acceptable rendering path here.
+ * Browsers do not execute `<script>` injected via `innerHTML`, and the CDN
+ * serves static `image/svg+xml` content.
+ *
  * @param {MiniModeIconProps} props - Icon name, color, and size
  * @returns {ReactElement} Inline SVG icon
  */
@@ -51,27 +34,7 @@ const MiniModeIcon = ({
   size = 20,
   className,
 }: MiniModeIconProps): ReactElement => {
-  const [svgContent, setSvgContent] = useState('');
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void loadIconSvg(name)
-      .then((svg) => {
-        if (!cancelled) {
-          setSvgContent(svg);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setSvgContent('');
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [name]);
+  const svgContent = useIconSvg(name);
 
   return (
     <div
@@ -83,6 +46,8 @@ const MiniModeIcon = ({
         height: size,
         color,
       }}
+      // The SVG comes from the trusted Vonage CDN (VIVID icon set) and icon
+      // names are hardcoded constants — no user-supplied HTML is ever injected.
       dangerouslySetInnerHTML={{ __html: svgContent }}
     />
   );

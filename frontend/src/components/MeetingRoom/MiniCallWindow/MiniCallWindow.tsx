@@ -18,6 +18,17 @@ export type MiniCallWindowProps = {
   onLeave: () => void;
 };
 
+type MiniModeButtonConfig = {
+  testId: string;
+  tooltip: string;
+  ariaLabel: string;
+  iconName: string;
+  iconColor: string;
+  iconClassName?: string;
+  buttonClassName: string;
+  onClick: () => void;
+};
+
 /**
  * Contents of the Mini Mode Picture-in-Picture window: active-speaker video
  * (or avatar), name chip, and mute / camera / expand / leave controls.
@@ -45,16 +56,56 @@ const MiniCallWindow = ({
     }
 
     moveNode(hostedElement, host);
-    const videoEl = hostedElement;
+    const videoElement = hostedElement;
     // eslint-disable-next-line react-hooks/immutability -- video element is a DOM node we own
-    videoEl.style.width = '100%';
-    videoEl.style.height = '100%';
-    videoEl.style.objectFit = 'cover';
-    videoEl.style.position = 'absolute';
-    videoEl.style.inset = '0';
+    videoElement.style.width = '100%';
+    videoElement.style.height = '100%';
+    videoElement.style.objectFit = 'cover';
+    videoElement.style.position = 'absolute';
+    videoElement.style.inset = '0';
 
     return undefined;
   }, [hostedElement]);
+
+  const buttons: MiniModeButtonConfig[] = [
+    {
+      testId: 'mini-mode-mute',
+      tooltip: isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip'),
+      ariaLabel: isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip'),
+      iconName: isAudioEnabled ? 'microphone-solid' : 'mic-mute-solid',
+      iconColor: isAudioEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)',
+      buttonClassName: 'bg-vera-dark-background! rounded-full overflow-hidden',
+      onClick: onToggleAudio,
+    },
+    {
+      testId: 'mini-mode-camera',
+      tooltip: isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip'),
+      ariaLabel: isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip'),
+      iconName: isVideoEnabled ? 'video-solid' : 'video-off-solid',
+      iconColor: isVideoEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)',
+      buttonClassName: 'bg-vera-dark-background! rounded-full overflow-hidden',
+      onClick: onToggleVideo,
+    },
+    {
+      testId: 'mini-mode-expand',
+      tooltip: t('miniMode.expand.tooltip'),
+      ariaLabel: t('miniMode.expand.ariaLabel'),
+      iconName: 'export-solid',
+      iconColor: 'var(--vera-on-secondary-light)',
+      iconClassName: 'rotate-180',
+      buttonClassName: 'bg-vera-dark-background! rounded-full overflow-hidden',
+      onClick: onExpand,
+    },
+    {
+      testId: 'mini-mode-leave',
+      tooltip: t('miniMode.leave.tooltip'),
+      ariaLabel: t('miniMode.leave.ariaLabel'),
+      iconName: 'end-call-solid',
+      iconColor: 'var(--vera-on-secondary-light)',
+      buttonClassName: 'bg-vera-error! rounded-full overflow-hidden',
+      onClick: onLeave,
+    },
+  ];
 
   return (
     <div
@@ -83,64 +134,30 @@ const MiniCallWindow = ({
         )}
       </div>
       <div className="flex items-center justify-center gap-2 px-3 py-2">
-        <Tooltip title={isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-mute"
-            onClick={onToggleAudio}
-            size="small"
-            aria-label={isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip')}
-            className="bg-vera-dark-background!"
-          >
-            <MiniModeIcon
-              name={isAudioEnabled ? 'microphone-solid' : 'mic-mute-solid'}
-              color={isAudioEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip
-          title={isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip')}
-        >
-          <IconButton
-            data-testid="mini-mode-camera"
-            onClick={onToggleVideo}
-            size="small"
-            aria-label={
-              isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip')
-            }
-            className="bg-vera-dark-background!"
-          >
-            <MiniModeIcon
-              name={isVideoEnabled ? 'video-solid' : 'video-off-solid'}
-              color={isVideoEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('miniMode.expand.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-expand"
-            onClick={onExpand}
-            size="small"
-            aria-label={t('miniMode.expand.ariaLabel')}
-            className="bg-vera-dark-background!"
-          >
-            <MiniModeIcon
-              name="export-solid"
-              color="var(--vera-on-secondary-light)"
-              className="rotate-180"
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('miniMode.leave.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-leave"
-            onClick={onLeave}
-            size="small"
-            aria-label={t('miniMode.leave.ariaLabel')}
-            className="bg-vera-error!"
-          >
-            <MiniModeIcon name="end-call-solid" color="var(--vera-on-secondary-light)" />
-          </IconButton>
-        </Tooltip>
+        {buttons.map(
+          ({
+            testId,
+            tooltip,
+            ariaLabel,
+            iconName,
+            iconColor,
+            iconClassName,
+            buttonClassName,
+            onClick,
+          }) => (
+            <Tooltip key={testId} title={tooltip}>
+              <IconButton
+                data-testid={testId}
+                onClick={onClick}
+                size="small"
+                aria-label={ariaLabel}
+                className={buttonClassName}
+              >
+                <MiniModeIcon name={iconName} color={iconColor} className={iconClassName} />
+              </IconButton>
+            </Tooltip>
+          )
+        )}
       </div>
     </div>
   );
