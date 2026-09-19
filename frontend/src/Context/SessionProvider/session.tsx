@@ -59,7 +59,9 @@ export type SessionContextType = {
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
   registerActiveSpeakerChangeHandler: (handler: (subscriberId: string | undefined) => void) => void;
-  unregisterActiveSpeakerChangeHandler: (handler: (subscriberId: string | undefined) => void) => void;
+  unregisterActiveSpeakerChangeHandler: (
+    handler: (subscriberId: string | undefined) => void
+  ) => void;
   layoutMode: LayoutMode;
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
@@ -226,9 +228,9 @@ const SessionProvider = ({
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
   // External consumers (e.g. Mini Mode) can register a callback that fires
   // on every activeSpeakerChanged event, alongside the existing handler below.
-  const activeSpeakerChangeHandlersRef = useRef<
-    Set<(subscriberId: string | undefined) => void>
-  >(new Set());
+  const activeSpeakerChangeHandlersRef = useRef<Set<(subscriberId: string | undefined) => void>>(
+    new Set()
+  );
   const registerActiveSpeakerChangeHandler = useCallback(
     (handler: (subscriberId: string | undefined) => void) => {
       activeSpeakerChangeHandlersRef.current.add(handler);

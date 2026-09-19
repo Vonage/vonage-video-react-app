@@ -185,44 +185,38 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   // Stable handler that re-resolves the active-speaker participant and
   // switches the hosted video element inside the PiP window.
   // Always captures the latest subscriberWrappers / publisher via useStableCallback.
-  const handleActiveSpeakerChange = useStableCallback(
-    (subscriberId: string | undefined) => {
-      if (!isOpen) {
-        return;
-      }
-
-      const nextParticipant = resolveMiniModeParticipant(
-        subscriberWrappers,
-        subscriberId,
-        {
-          element: publisherVideoElement,
-          name: publisher?.stream?.name ?? '',
-          initials: publisher?.stream?.initials ?? '',
-        }
-      );
-
-      const currentElement = hostedElementRef.current;
-      if (nextParticipant.element === currentElement) {
-        return;
-      }
-
-      // Restore the previously hosted element to its original position
-      const origin = originRef.current;
-      if (currentElement && origin) {
-        restoreNodeOrigin(currentElement, origin);
-      }
-
-      // Capture the new element's origin; MiniCallWindow's useLayoutEffect
-      // will move it into the PiP window's video host div
-      if (nextParticipant.element) {
-        originRef.current = captureNodeOrigin(nextParticipant.element);
-        hostedElementRef.current = nextParticipant.element;
-      }
-
-      setHostedElement(nextParticipant.element ?? null);
-      setParticipant(nextParticipant);
+  const handleActiveSpeakerChange = useStableCallback((subscriberId: string | undefined) => {
+    if (!isOpen) {
+      return;
     }
-  );
+
+    const nextParticipant = resolveMiniModeParticipant(subscriberWrappers, subscriberId, {
+      element: publisherVideoElement,
+      name: publisher?.stream?.name ?? '',
+      initials: publisher?.stream?.initials ?? '',
+    });
+
+    const currentElement = hostedElementRef.current;
+    if (nextParticipant.element === currentElement) {
+      return;
+    }
+
+    // Restore the previously hosted element to its original position
+    const origin = originRef.current;
+    if (currentElement && origin) {
+      restoreNodeOrigin(currentElement, origin);
+    }
+
+    // Capture the new element's origin; MiniCallWindow's useLayoutEffect
+    // will move it into the PiP window's video host div
+    if (nextParticipant.element) {
+      originRef.current = captureNodeOrigin(nextParticipant.element);
+      hostedElementRef.current = nextParticipant.element;
+    }
+
+    setHostedElement(nextParticipant.element ?? null);
+    setParticipant(nextParticipant);
+  });
 
   // Register the handler with SessionProvider's activeSpeakerTracker so that
   // it fires on the same activeSpeakerChanged event (lifecycle subscription,
