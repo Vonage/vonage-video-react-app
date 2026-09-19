@@ -19,6 +19,8 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import MiniModeButton from '../MiniModeButton';
+import { useMiniMode } from '../../../Context/MiniMode';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -74,6 +76,7 @@ const Toolbar = ({
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+  const { exit: exitMiniMode } = useMiniMode();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
@@ -81,9 +84,10 @@ const Toolbar = ({
     if (!disconnect) {
       return;
     }
+    exitMiniMode();
     disconnect();
     destroyBackgroundPublisher();
-  }, [destroyBackgroundPublisher, disconnect]);
+  }, [destroyBackgroundPublisher, disconnect, exitMiniMode]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
@@ -100,6 +104,7 @@ const Toolbar = ({
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
     />,
+    <MiniModeButton key="MiniModeButton" />,
     <EmojiGridButton
       isEmojiGridOpen={openEmojiGridDesktop}
       setIsEmojiGridOpen={setOpenEmojiGridDesktop}

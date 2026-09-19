@@ -16,6 +16,7 @@ import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
 import { env } from '../../../env';
 import AdvancedSettingsButton from '../AdvancedSettingsButton';
+import MiniModeButton from '../MiniModeButton';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -95,6 +96,7 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
+    <MiniModeButton isOverflowButton handleClick={closeMenu} key="MiniModeButton" />,
     <CaptionsButton
       isOverflowButton
       handleClick={closeMenu}

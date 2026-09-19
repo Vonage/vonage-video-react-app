@@ -13,6 +13,22 @@ import { makeTestProvider, providers } from '@test/providers';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 
+vi.mock('../../../Context/MiniMode', () => ({
+  useMiniMode: () => ({
+    isSupported: false,
+    isOpen: false,
+    hostedElement: null,
+    enter: () => Promise.resolve(),
+    exit: () => undefined,
+    toggleAudio: () => undefined,
+    toggleVideo: () => undefined,
+    leave: () => undefined,
+    isAudioEnabled: true,
+    isVideoEnabled: true,
+    participant: null,
+  }),
+}));
+
 const mockedRoomName = { roomName: 'test-room-name' };
 
 vi.mock('react-router-dom', () => ({

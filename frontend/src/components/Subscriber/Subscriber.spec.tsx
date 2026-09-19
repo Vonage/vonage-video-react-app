@@ -6,6 +6,22 @@ import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import Subscriber from './Subscriber';
 
+vi.mock('../../Context/MiniMode', () => ({
+  useMiniMode: () => ({
+    isSupported: false,
+    isOpen: false,
+    hostedElement: null,
+    enter: () => Promise.resolve(),
+    exit: () => undefined,
+    toggleAudio: () => undefined,
+    toggleVideo: () => undefined,
+    leave: () => undefined,
+    isAudioEnabled: true,
+    isVideoEnabled: true,
+    participant: null,
+  }),
+}));
+
 describe('Subscriber', () => {
   afterEach(() => {
     cleanup();
