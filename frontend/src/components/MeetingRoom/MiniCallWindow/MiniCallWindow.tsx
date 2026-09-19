@@ -146,9 +146,19 @@ const MiniCallWindow = ({
               <IconButton
                 data-testid={testId}
                 onClick={onClick}
-                size="small"
                 aria-label={ariaLabel}
                 className={buttonClassName}
+                /* Inline styles ensure the button stays a perfect 32×32 circle
+                   even when Tailwind/MUI CSS hasn't finished loading in the
+                   PiP document. size="small" only sets padding/min-width,
+                   leaving height content-driven (28px) → oval. */
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '9999px',
+                  boxSizing: 'border-box',
+                  padding: 4,
+                }}
               >
                 <MiniModeIcon name={iconName} color={iconColor} className={iconClassName} />
               </IconButton>
