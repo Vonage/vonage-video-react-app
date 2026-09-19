@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import MiniModeIcon from './MiniModeIcon';
 import AvatarInitials from '../../AvatarInitials';
-import { moveNode } from '../../../utils/documentPictureInPicture';
+import { moveNode } from '@common/documentPictureInPicture';
 import type { MiniModeParticipant } from '../../../Context/MiniMode/resolveMiniModeParticipant';
 
 export type MiniCallWindowProps = {
@@ -124,9 +124,6 @@ const MiniCallWindow = ({
             />
           </div>
         )}
-        <span className="absolute right-2 top-2 rounded-full bg-vera-dark-grey-opacity px-2 py-0.5 text-xs">
-          {t('miniMode.badge')}
-        </span>
         {participant?.name && (
           <span className="absolute bottom-2 left-2 rounded-full bg-vera-dark-grey-opacity px-2 py-0.5 text-xs">
             {participant.name}

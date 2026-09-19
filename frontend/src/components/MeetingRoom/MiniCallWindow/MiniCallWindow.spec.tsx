@@ -23,7 +23,6 @@ describe('MiniCallWindow', () => {
     );
 
     expect(screen.getByTestId('mini-call-window')).toBeVisible();
-    expect(screen.getByText('Mini mode')).toBeVisible();
     expect(screen.getByText('Maya Adeyemi')).toBeVisible();
 
     screen.getByTestId('mini-mode-mute').click();
