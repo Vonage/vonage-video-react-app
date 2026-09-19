@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
-import { requestDocumentPictureInPictureWindow } from '@common/documentPictureInPicture';
+import { useDocumentPictureInPicture } from '@common/documentPictureInPicture';
 import { MiniModeProvider, useMiniMode } from './MiniModeContext';
 
 vi.mock('react-router-dom', () => ({
@@ -38,19 +38,16 @@ vi.mock('@hooks/useBackgroundPublisherContext', () => ({
 
 vi.mock('@common/documentPictureInPicture', () => ({
   isDocumentPictureInPictureSupported: vi.fn(() => false),
-  requestDocumentPictureInPictureWindow: vi.fn(),
-  copyStylesToDocument: vi.fn(),
-  syncStylesToWindow: vi.fn(() => () => undefined),
-  captureNodeOrigin: vi.fn(),
-  restoreNodeOrigin: vi.fn(),
+  useDocumentPictureInPicture: vi.fn(() => ({
+    window: null,
+    mountNode: null,
+    open: vi.fn(),
+    close: vi.fn(),
+  })),
 }));
 
 vi.mock('../../components/MeetingRoom/MiniCallWindow', () => ({
   default: () => <div data-testid="mini-call-window" />,
-}));
-
-vi.mock('./resolveMiniModeParticipant', () => ({
-  default: vi.fn(() => ({ element: null, name: 'Test', initials: 'T' })),
 }));
 
 describe('MiniModeContext', () => {
@@ -87,6 +84,14 @@ describe('MiniModeContext', () => {
   });
 
   it('enter is a no-op when the Document PiP API is unavailable', async () => {
+    const mockOpen = vi.fn();
+    vi.mocked(useDocumentPictureInPicture).mockReturnValue({
+      window: null,
+      mountNode: null,
+      open: mockOpen,
+      close: vi.fn(),
+    });
+
     const Probe = (): ReactElement => {
       const ctx = useMiniMode();
       return (
@@ -108,7 +113,7 @@ describe('MiniModeContext', () => {
     await new Promise((resolve) => setTimeout(resolve, 50));
 
     // enter() returns early when the PiP API is unsupported, so
-    // requestDocumentPictureInPictureWindow must never be called
-    expect(requestDocumentPictureInPictureWindow).not.toHaveBeenCalled();
+    // open must never be called
+    expect(mockOpen).not.toHaveBeenCalled();
   });
 });

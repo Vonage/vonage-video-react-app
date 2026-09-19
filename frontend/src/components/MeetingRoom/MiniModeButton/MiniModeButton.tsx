@@ -11,13 +11,11 @@ export type MiniModeButtonProps = {
 };
 
 /**
- * Toolbar control that opens or closes Mini Mode (Document Picture-in-Picture).
+ * Simplified toolbar control for Mini Mode (Document Picture-in-Picture).
  * Hidden when the API is missing or ALLOW_MINI_MODE is false.
- * @param {MiniModeButtonProps} props - Overflow placement and optional close handler
- * @returns {ReactElement | false} The toolbar button, or false when unsupported
  */
 const MiniModeButton = ({
-  isOverflowButton = false,
+  isOverflowButton,
   handleClick,
 }: MiniModeButtonProps): ReactElement | false => {
   const { t } = useTranslation();
@@ -26,8 +24,6 @@ const MiniModeButton = ({
   if (!isSupported) {
     return false;
   }
-
-  const title = isOpen ? t('miniMode.expand.tooltip') : t('miniMode.enter.tooltip');
 
   const onClick = () => {
     if (isOpen) {
@@ -39,15 +35,16 @@ const MiniModeButton = ({
   };
 
   return (
-    <Tooltip title={title} aria-label={t('miniMode.enter.ariaLabel')}>
+    <Tooltip
+      title={isOpen ? t('miniMode.expand.tooltip') : t('miniMode.enter.tooltip')}
+      aria-label={t('miniMode.enter.ariaLabel')}
+    >
       <ToolbarButton
         onClick={onClick}
-        data-testid="mini-mode-button"
         isOverflowButton={isOverflowButton}
+        data-testid="mini-mode-button"
         icon={
           <VividIcon
-            // picture-in-picture-solid does not exist in the Vivid v4.11.0 icon set;
-            // export-solid is the standard "pop out" icon
             name="export-solid"
             customSize={-5}
             style={{ color: 'var(--vera-on-secondary-light)' }}

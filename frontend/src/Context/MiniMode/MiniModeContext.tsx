@@ -4,6 +4,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,23 +15,22 @@ import attempt from '@common/execution/attempt';
 import useSessionContext from '@hooks/useSessionContext';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
-import useMountEffect from '@web/hooks/useMountEffect';
-import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../env';
 import {
-  captureNodeOrigin,
-  copyStylesToDocument,
   isDocumentPictureInPictureSupported,
-  restoreNodeOrigin,
-  requestDocumentPictureInPictureWindow,
-  syncStylesToWindow,
-  type NodeOrigin,
+  useDocumentPictureInPicture,
 } from '@common/documentPictureInPicture';
 import frontendLogger from '../../logger';
+import type { SubscriberWrapper } from '../../types/session';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
-import resolveMiniModeParticipant, { type MiniModeParticipant } from './resolveMiniModeParticipant';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
+
+type MiniModeParticipant = {
+  element: HTMLVideoElement | HTMLObjectElement | null;
+  name: string;
+  initials: string;
+};
 
 export type MiniModeContextType = {
   isSupported: boolean;
@@ -46,6 +46,8 @@ export type MiniModeContextType = {
   participant: MiniModeParticipant | null;
 };
 
+export type { MiniModeParticipant };
+
 const MiniModeContext = createContext<MiniModeContextType | null>(null);
 
 export type MiniModeProviderProps = {
@@ -53,10 +55,40 @@ export type MiniModeProviderProps = {
 };
 
 /**
- * Owns Document Picture-in-Picture for Mini Mode: opens the floating window,
- * re-parents the active-speaker video, and restores it on close.
- * @param {MiniModeProviderProps} props - Provider children
- * @returns {ReactElement} Context provider plus the Mini Call portal
+ * Resolves which participant to show in Mini Mode.
+ * Inline simplified version of the previous separate function.
+ */
+const resolveMiniModeParticipant = (
+  subscriberWrappers: SubscriberWrapper[],
+  activeSpeakerId: string | undefined,
+  publisher: {
+    element: HTMLVideoElement | HTMLObjectElement | null;
+    name: string;
+    initials: string;
+  }
+): MiniModeParticipant => {
+  const cameraSubscribers = subscriberWrappers.filter((wrapper) => !wrapper.isScreenshare);
+  const activeSpeaker =
+    cameraSubscribers.find((wrapper) => wrapper.id === activeSpeakerId) ?? cameraSubscribers[0];
+
+  if (activeSpeaker) {
+    return {
+      element: activeSpeaker.element,
+      name: activeSpeaker.subscriber.stream?.name ?? '',
+      initials: activeSpeaker.subscriber.stream?.initials ?? '',
+    };
+  }
+
+  return {
+    element: publisher.element,
+    name: publisher.name,
+    initials: publisher.initials,
+  };
+};
+
+/**
+ * Simplified Mini Mode Context - owns Document Picture-in-Picture lifecycle.
+ * Opens floating window, re-parents active-speaker video, restores on close.
  */
 export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElement => {
   const navigate = useNavigate();
@@ -67,6 +99,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     unregisterActiveSpeakerChangeHandler,
     disconnect,
     sessionKey,
+    archiveId,
   } = useSessionContext();
   const {
     publisherVideoElement,
@@ -78,28 +111,43 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   } = usePublisherContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
 
-  const [pipWindow, setPipWindow] = useState<Window | null>(null);
-  const [mountNode, setMountNode] = useState<HTMLElement | null>(null);
+  const {
+    window: pipWindow,
+    mountNode,
+    open: openPipWindow,
+    close: closePipWindow,
+  } = useDocumentPictureInPicture();
+
   const [hostedElement, setHostedElement] = useState<HTMLVideoElement | HTMLObjectElement | null>(
     null
   );
   const [participant, setParticipant] = useState<MiniModeParticipant | null>(null);
-
-  const originRef = useRef<NodeOrigin | null>(null);
-  const pipWindowRef = useRef<Window | null>(null);
+  const originalParentRef = useRef<HTMLElement | null>(null);
   const hostedElementRef = useRef<HTMLVideoElement | HTMLObjectElement | null>(null);
-  const stopStyleSyncRef = useRef<(() => void) | null>(null);
+  const subscriberWrappersRef = useRef(subscriberWrappers);
+  const publisherVideoElementRef = useRef(publisherVideoElement);
+  const publisherRef = useRef(publisher);
+  const isOpenRef = useRef(pipWindow !== null);
 
   const isSupported = env.ALLOW_MINI_MODE && isDocumentPictureInPictureSupported();
   const isOpen = pipWindow !== null;
 
+  // Keep refs in sync with latest values
+  useEffect(() => {
+    hostedElementRef.current = hostedElement;
+    subscriberWrappersRef.current = subscriberWrappers;
+    publisherVideoElementRef.current = publisherVideoElement;
+    publisherRef.current = publisher;
+    isOpenRef.current = isOpen;
+  }, [hostedElement, subscriberWrappers, publisherVideoElement, publisher, isOpen]);
+
   const restoreHostedElement = useCallback(() => {
     const element = hostedElementRef.current;
-    const origin = originRef.current;
-    if (element && origin) {
-      restoreNodeOrigin(element, origin);
+    const parent = originalParentRef.current;
+    if (element && parent) {
+      parent.appendChild(element);
     }
-    originRef.current = null;
+    originalParentRef.current = null;
     hostedElementRef.current = null;
     setHostedElement(null);
     setParticipant(null);
@@ -107,19 +155,11 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
   const exit = useCallback(() => {
     restoreHostedElement();
-    stopStyleSyncRef.current?.();
-    stopStyleSyncRef.current = null;
-    const currentWindow = pipWindowRef.current;
-    pipWindowRef.current = null;
-    setPipWindow(null);
-    setMountNode(null);
-    if (currentWindow && !currentWindow.closed) {
-      currentWindow.close();
-    }
-  }, [restoreHostedElement]);
+    closePipWindow();
+  }, [restoreHostedElement, closePipWindow]);
 
   const enter = useCallback(async () => {
-    if (!isSupported || pipWindowRef.current) {
+    if (!isSupported || isOpenRef.current) {
       return;
     }
 
@@ -131,41 +171,14 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
           initials: publisher?.stream?.initials ?? '',
         });
 
-        const nextWindow = await requestDocumentPictureInPictureWindow(PIP_WINDOW_SIZE); // user-gesture required
-        copyStylesToDocument(document, nextWindow.document);
-        nextWindow.document.documentElement.style.height = '100%';
-        nextWindow.document.body.style.margin = '0';
-        nextWindow.document.body.style.width = '100%';
-        nextWindow.document.body.style.height = '100%';
-        nextWindow.document.body.style.backgroundColor = 'var(--vera-dark-grey, #2c2c2c)';
-
-        const mount = nextWindow.document.createElement('div');
-        mount.id = 'mini-mode-root';
-        mount.style.width = '100%';
-        mount.style.height = '100%';
-        nextWindow.document.body.appendChild(mount);
+        await openPipWindow(PIP_WINDOW_SIZE);
 
         if (nextParticipant.element) {
-          originRef.current = captureNodeOrigin(nextParticipant.element);
-          hostedElementRef.current = nextParticipant.element;
+          originalParentRef.current = nextParticipant.element.parentElement;
           setHostedElement(nextParticipant.element);
         }
 
-        pipWindowRef.current = nextWindow;
         setParticipant(nextParticipant);
-        setPipWindow(nextWindow);
-        setMountNode(mount);
-
-        stopStyleSyncRef.current = syncStylesToWindow(document, nextWindow.document);
-
-        nextWindow.addEventListener('pagehide', () => {
-          stopStyleSyncRef.current?.();
-          stopStyleSyncRef.current = null;
-          restoreHostedElement();
-          pipWindowRef.current = null;
-          setPipWindow(null);
-          setMountNode(null);
-        });
       },
       (error) => {
         frontendLogger.reportError(error, {
@@ -178,55 +191,51 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     isSupported,
     publisher,
     publisherVideoElement,
-    restoreHostedElement,
     subscriberWrappers,
+    openPipWindow,
   ]);
 
-  // Stable handler that re-resolves the active-speaker participant and
-  // switches the hosted video element inside the PiP window.
-  // Always captures the latest subscriberWrappers / publisher via useStableCallback.
-  const handleActiveSpeakerChange = useStableCallback((subscriberId: string | undefined) => {
-    if (!isOpen) {
-      return;
-    }
+  // Simplified active speaker switching - direct DOM manipulation
+  const handleActiveSpeakerChange = useCallback(
+    (subscriberId: string | undefined) => {
+      if (!isOpenRef.current) return;
 
-    const nextParticipant = resolveMiniModeParticipant(subscriberWrappers, subscriberId, {
-      element: publisherVideoElement,
-      name: publisher?.stream?.name ?? '',
-      initials: publisher?.stream?.initials ?? '',
-    });
+      const nextParticipant = resolveMiniModeParticipant(
+        subscriberWrappersRef.current,
+        subscriberId,
+        {
+          element: publisherVideoElementRef.current,
+          name: publisherRef.current?.stream?.name ?? '',
+          initials: publisherRef.current?.stream?.initials ?? '',
+        }
+      );
 
-    const currentElement = hostedElementRef.current;
-    if (nextParticipant.element === currentElement) {
-      return;
-    }
+      if (nextParticipant.element === hostedElementRef.current) return;
 
-    // Restore the previously hosted element to its original position
-    const origin = originRef.current;
-    if (currentElement && origin) {
-      restoreNodeOrigin(currentElement, origin);
-    }
+      // Restore current element
+      restoreHostedElement();
 
-    // Capture the new element's origin; MiniCallWindow's useLayoutEffect
-    // will move it into the PiP window's video host div
-    if (nextParticipant.element) {
-      originRef.current = captureNodeOrigin(nextParticipant.element);
-      hostedElementRef.current = nextParticipant.element;
-    }
+      // Set up new element
+      if (nextParticipant.element) {
+        originalParentRef.current = nextParticipant.element.parentElement;
+        setHostedElement(nextParticipant.element);
+      }
 
-    setHostedElement(nextParticipant.element ?? null);
-    setParticipant(nextParticipant);
-  });
+      setParticipant(nextParticipant);
+    },
+    [restoreHostedElement]
+  );
 
-  // Register the handler with SessionProvider's activeSpeakerTracker so that
-  // it fires on the same activeSpeakerChanged event (lifecycle subscription,
-  // not a reactive effect — the handler is stable via useStableCallback).
-  useMountEffect(() => {
+  useEffect(() => {
     registerActiveSpeakerChangeHandler(handleActiveSpeakerChange);
     return () => {
       unregisterActiveSpeakerChangeHandler(handleActiveSpeakerChange);
     };
-  });
+  }, [
+    handleActiveSpeakerChange,
+    registerActiveSpeakerChangeHandler,
+    unregisterActiveSpeakerChangeHandler,
+  ]);
 
   const leave = useCallback(() => {
     exit();
@@ -276,6 +285,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
             hostedElement={hostedElement}
             isAudioEnabled={isAudioEnabled}
             isVideoEnabled={isVideoEnabled}
+            isRecording={!!archiveId}
             onToggleAudio={toggleAudio}
             onToggleVideo={toggleVideo}
             onExpand={exit}
@@ -287,12 +297,6 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   );
 };
 
-/**
- * Access Mini Mode enter/exit and the currently hosted video element.
- * Must be used within a `MiniModeProvider`.
- * @returns {MiniModeContextType} Mini Mode API
- * @throws {Error} If used outside a `MiniModeProvider`
- */
 export const useMiniMode = (): MiniModeContextType => {
   const context = useContext(MiniModeContext);
   if (!context) {
