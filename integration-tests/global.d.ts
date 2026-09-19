@@ -1,15 +1,4 @@
-type DocumentPictureInPicture = {
-  requestWindow: (options?: {
-    width?: number;
-    height?: number;
-    disallowReturnToOpener?: boolean;
-  }) => Promise<Window>;
-};
-
-declare global {
-  interface Window {
-    documentPictureInPicture?: DocumentPictureInPicture;
-  }
-}
+// Global type augmentations live in libs/common/src/types/
+// (included via tsconfig include, not duplicated here)
 
 export {};
