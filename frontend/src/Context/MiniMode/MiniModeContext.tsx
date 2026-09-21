@@ -243,14 +243,21 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
 
   // Automatic Picture-in-Picture: Chromium invokes this action when the user
   // switches tabs while we capture camera/mic, allowing enter() without a gesture.
+  // Registered once per publisher and dispatched through a ref so the handler
+  // is not torn down every time enter() is recreated (active speaker changes etc).
+  const enterRef = useRef(enter);
+  useEffect(() => {
+    enterRef.current = enter;
+  }, [enter]);
+
   useEffect(() => {
     if (!isSupported || !publisher) {
       return undefined;
     }
     return registerEnterPictureInPictureAction(() => {
-      void enter();
+      void enterRef.current();
     });
-  }, [enter, isSupported, publisher]);
+  }, [isSupported, publisher]);
 
   const leave = useCallback(() => {
     exit();
