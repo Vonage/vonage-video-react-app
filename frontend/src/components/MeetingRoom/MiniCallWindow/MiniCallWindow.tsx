@@ -5,6 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MiniModeIcon from './MiniModeIcon';
 import AvatarInitials from '../../AvatarInitials';
 import RecordingIndicator from '../RecordingIndicator';
+import NameDisplay from '../NameDisplay';
 import type {
   MiniModeHostedElement,
   MiniModeParticipant,
@@ -13,6 +14,7 @@ import type {
 export type MiniCallWindowProps = {
   participant: MiniModeParticipant | null;
   hostedElement: MiniModeHostedElement;
+  containerWidth: number;
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
   isRecording: boolean;
@@ -29,6 +31,7 @@ export type MiniCallWindowProps = {
 const MiniCallWindow = ({
   participant,
   hostedElement,
+  containerWidth,
   isAudioEnabled,
   isVideoEnabled,
   isRecording,
@@ -85,9 +88,7 @@ const MiniCallWindow = ({
           </div>
         )}
         {participant?.name && (
-          <span className="absolute bottom-2 left-2 rounded-full bg-vera-dark-grey-opacity px-2 py-0.5 text-xs">
-            {participant.name}
-          </span>
+          <NameDisplay name={participant.name} containerWidth={containerWidth} />
         )}
       </div>
       <div className="flex items-center justify-center gap-2 px-3 py-2">

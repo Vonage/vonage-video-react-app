@@ -11,6 +11,7 @@ vi.mock('./MiniModeIcon', () => ({
 const makeProps = (overrides: Partial<MiniCallWindowProps> = {}): MiniCallWindowProps => ({
   participant: { element: null, name: 'Maya Adeyemi', initials: 'MA' },
   hostedElement: null,
+  containerWidth: 360,
   isAudioEnabled: true,
   isVideoEnabled: true,
   isRecording: false,
@@ -67,11 +68,19 @@ describe('MiniCallWindow', () => {
     expect(screen.queryByTestId('mini-mode-recording-indicator')).not.toBeInTheDocument();
   });
 
-  it('shows the avatar fallback and participant name chip when there is no hosted element', () => {
+  it('shows the avatar fallback and participant name when there is no hosted element', () => {
     render(<MiniCallWindow {...makeProps({ hostedElement: null })} />);
 
     expect(screen.getByText('MA')).toBeInTheDocument();
     expect(screen.getByText('Maya Adeyemi')).toBeInTheDocument();
+  });
+
+  it('renders the participant name with the same NameDisplay as the main meeting UI', () => {
+    render(<MiniCallWindow {...makeProps({ containerWidth: 360 })} />);
+
+    const nameContainer = screen.getByText('Maya Adeyemi').parentElement;
+    expect(nameContainer).toHaveClass('bg-vera-dark-grey-opacity', 'text-vera-accent');
+    expect(nameContainer).toHaveStyle({ maxWidth: '328px' });
   });
 
   it('shows the avatar fallback when video is disabled even with a hosted element', () => {

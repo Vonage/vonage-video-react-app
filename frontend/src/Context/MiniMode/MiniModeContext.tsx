@@ -283,6 +283,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
           <MiniCallWindow
             participant={participant}
             hostedElement={hostedElement}
+            containerWidth={PIP_WINDOW_SIZE.width}
             isAudioEnabled={isAudioEnabled}
             isVideoEnabled={isVideoEnabled}
             isRecording={!!archiveId}
