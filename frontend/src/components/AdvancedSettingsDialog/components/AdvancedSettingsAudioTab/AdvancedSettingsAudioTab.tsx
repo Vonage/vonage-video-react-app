@@ -63,7 +63,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.audio')}
       </h2>
 
@@ -83,7 +83,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
 
         {audioBitrateMode === ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.custom && (
           <div className="flex flex-col gap-3 rounded-vera-medium border-vera-border bg-vera-background px-4 py-3">
-            <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+            <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
               {t('advancedSettings.audio.bitrate.customLabel')}
             </p>
 
@@ -100,9 +100,9 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
                 data-testid="advanced-settings-custom-audio-bitrate-slider"
                 aria-label={t('advancedSettings.audio.bitrate.customLabel')}
               />
-              <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
+              <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-text-tertiary">
                 <span>{t('advancedSettings.audio.bitrate.minimum')}</span>
-                <span className="rounded-full bg-vera-surface px-1 py-1 text-vera-secondary">
+                <span className="rounded-full bg-vera-surface px-1 py-1 text-vera-text-secondary">
                   {t('advancedSettings.audio.bitrate.currentValue', {
                     value: customAudioBitrate,
                   })}
