@@ -1,39 +1,36 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
-import { ReactElement } from 'react';
-import { useDocumentPictureInPicture } from '@common/documentPictureInPicture';
-import { MiniModeProvider, useMiniMode } from './MiniModeContext';
+import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useEffect, useLayoutEffect, useRef, type ReactElement } from 'react';
+import useSessionContext from '@hooks/useSessionContext';
+import usePublisherContext from '@hooks/usePublisherContext';
+import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import {
+  isDocumentPictureInPictureSupported,
+  useDocumentPictureInPicture,
+} from '@common/documentPictureInPicture';
+import type { Subscriber } from '@vonage/client-sdk-video';
+import frontendLogger from '../../logger';
+import { env } from '../../env';
+import { MiniModeProvider, useMiniMode, type MiniModeContextType } from './MiniModeContext';
+import type { MiniCallWindowProps } from '../../components/MeetingRoom/MiniCallWindow/MiniCallWindow';
+import type { SubscriberWrapper } from '../../types/session';
+
+const mockNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 vi.mock('@hooks/useSessionContext', () => ({
-  default: () => ({
-    subscriberWrappers: [],
-    activeSpeakerId: null,
-    registerActiveSpeakerChangeHandler: vi.fn(),
-    unregisterActiveSpeakerChangeHandler: vi.fn(),
-    disconnect: vi.fn(),
-    sessionKey: 'test-session',
-  }),
+  default: vi.fn(),
 }));
 
 vi.mock('@hooks/usePublisherContext', () => ({
-  default: () => ({
-    publisherVideoElement: null,
-    publisher: null,
-    isAudioEnabled: true,
-    isVideoEnabled: true,
-    toggleAudio: vi.fn(),
-    toggleVideo: vi.fn(),
-  }),
+  default: vi.fn(),
 }));
 
 vi.mock('@hooks/useBackgroundPublisherContext', () => ({
-  default: () => ({
-    destroyBackgroundPublisher: vi.fn(),
-  }),
+  default: vi.fn(),
 }));
 
 vi.mock('@common/documentPictureInPicture', () => ({
@@ -46,11 +43,143 @@ vi.mock('@common/documentPictureInPicture', () => ({
   })),
 }));
 
+vi.mock('../../logger', () => {
+  const reportError = vi.fn();
+  return {
+    default: { reportError },
+    frontendLogger: { reportError },
+  };
+});
+
+// Mirrors the real component's re-parenting behavior so tests can assert
+// that hosted elements move into (and out of) the Mini Mode window.
 vi.mock('../../components/MeetingRoom/MiniCallWindow', () => ({
-  default: () => <div data-testid="mini-call-window" />,
+  default: function MiniCallWindowMock({ hostedElement }: MiniCallWindowProps) {
+    const hostRef = useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+      if (hostRef.current && hostedElement) {
+        hostRef.current.appendChild(hostedElement);
+      }
+    }, [hostedElement]);
+    return (
+      <div data-testid="mini-call-window">
+        <div data-testid="mini-call-window-host" ref={hostRef} />
+      </div>
+    );
+  },
 }));
 
+type ActiveSpeakerHandler = (subscriberId: string | undefined) => void;
+
+let activeSpeakerHandler: ActiveSpeakerHandler | undefined;
+const mockDisconnect = vi.fn();
+const mockDestroyBackgroundPublisher = vi.fn();
+const mockOpen = vi.fn();
+const mockClose = vi.fn();
+
+const pipState: { window: Window | null; mountNode: HTMLElement | null } = {
+  window: null,
+  mountNode: null,
+};
+
+const makeSubscriberWrapper = (
+  id: string,
+  name: string,
+  isScreenshare = false
+): SubscriberWrapper => ({
+  id,
+  element: document.createElement('video'),
+  subscriber: {
+    stream: { name, initials: name.slice(0, 2).toUpperCase() },
+  } as unknown as Subscriber,
+  isScreenshare,
+  isPinned: false,
+});
+
+const makeSessionContext = (overrides: Record<string, unknown> = {}) =>
+  ({
+    subscriberWrappers: [],
+    activeSpeakerId: undefined,
+    registerActiveSpeakerChangeHandler: vi.fn((handler: ActiveSpeakerHandler) => {
+      activeSpeakerHandler = handler;
+    }),
+    unregisterActiveSpeakerChangeHandler: vi.fn(),
+    disconnect: mockDisconnect,
+    sessionKey: 'test-session',
+    archiveId: null,
+    ...overrides,
+  }) as unknown as ReturnType<typeof useSessionContext>;
+
+const makePublisherContext = (overrides: Record<string, unknown> = {}) =>
+  ({
+    publisherVideoElement: null,
+    publisher: { stream: { name: 'Publisher Name', initials: 'PN' } },
+    isAudioEnabled: true,
+    isVideoEnabled: true,
+    toggleAudio: vi.fn(),
+    toggleVideo: vi.fn(),
+    ...overrides,
+  }) as unknown as ReturnType<typeof usePublisherContext>;
+
+const renderProvider = (): { current: MiniModeContextType | null } => {
+  const contextRef: { current: MiniModeContextType | null } = { current: null };
+  const Probe = (): null => {
+    const context = useMiniMode();
+    useEffect(() => {
+      contextRef.current = context;
+    });
+    return null;
+  };
+
+  render(
+    <MiniModeProvider>
+      <Probe />
+    </MiniModeProvider>
+  );
+
+  return contextRef;
+};
+
 describe('MiniModeContext', () => {
+  beforeEach(() => {
+    activeSpeakerHandler = undefined;
+    pipState.window = null;
+    pipState.mountNode = null;
+
+    env.partialUpdate({ ALLOW_MINI_MODE: true });
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(false);
+
+    vi.mocked(useSessionContext).mockReturnValue(makeSessionContext());
+    vi.mocked(usePublisherContext).mockReturnValue(makePublisherContext());
+    vi.mocked(useBackgroundPublisherContext).mockReturnValue({
+      destroyBackgroundPublisher: mockDestroyBackgroundPublisher,
+    } as unknown as ReturnType<typeof useBackgroundPublisherContext>);
+
+    vi.mocked(useDocumentPictureInPicture).mockImplementation(() => ({
+      window: pipState.window,
+      mountNode: pipState.mountNode,
+      open: mockOpen,
+      close: mockClose,
+    }));
+    mockOpen.mockImplementation(() => {
+      const mount = document.createElement('div');
+      document.body.appendChild(mount);
+      pipState.window = { closed: false, close: vi.fn() } as unknown as Window;
+      pipState.mountNode = mount;
+      return Promise.resolve();
+    });
+    mockClose.mockImplementation(() => {
+      pipState.window = null;
+      pipState.mountNode = null;
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    mockOpen.mockReset();
+    mockClose.mockReset();
+  });
+
   it('useMiniMode throws when used outside of a MiniModeProvider', () => {
     const Probe = (): ReactElement | null => {
       useMiniMode();
@@ -60,14 +189,14 @@ describe('MiniModeContext', () => {
     expect(() => render(<Probe />)).toThrow('useMiniMode must be used within a MiniModeProvider');
   });
 
-  it('renders children and exposes supported=false inside the provider', () => {
+  it('renders children and exposes supported=false when the PiP API is missing', () => {
     const Probe = (): ReactElement => {
-      const ctx = useMiniMode();
+      const context = useMiniMode();
       return (
         <>
           <div data-testid="child">Content</div>
-          <span data-testid="supported">{String(ctx.isSupported)}</span>
-          <span data-testid="isOpen">{String(ctx.isOpen)}</span>
+          <span data-testid="supported">{String(context.isSupported)}</span>
+          <span data-testid="isOpen">{String(context.isOpen)}</span>
         </>
       );
     };
@@ -84,36 +213,197 @@ describe('MiniModeContext', () => {
   });
 
   it('enter is a no-op when the Document PiP API is unavailable', async () => {
-    const mockOpen = vi.fn();
-    vi.mocked(useDocumentPictureInPicture).mockReturnValue({
-      window: null,
-      mountNode: null,
-      open: mockOpen,
-      close: vi.fn(),
+    const contextRef = renderProvider();
+
+    await act(async () => {
+      await contextRef.current?.enter();
     });
 
-    const Probe = (): ReactElement => {
-      const ctx = useMiniMode();
-      return (
-        <button data-testid="enter-btn" onClick={() => void ctx.enter()}>
-          enter
-        </button>
-      );
-    };
+    expect(mockOpen).not.toHaveBeenCalled();
+    expect(contextRef.current?.isOpen).toBe(false);
+  });
 
-    render(
-      <MiniModeProvider>
-        <Probe />
-      </MiniModeProvider>
+  it('enter opens a 360x260 PiP window and shows the publisher when there are no subscribers', async () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    const publisherVideoElement = document.createElement('video');
+    vi.mocked(usePublisherContext).mockReturnValue(makePublisherContext({ publisherVideoElement }));
+
+    const contextRef = renderProvider();
+    expect(contextRef.current?.isSupported).toBe(true);
+
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    expect(mockOpen).toHaveBeenCalledWith({ width: 360, height: 260 });
+    expect(contextRef.current?.isOpen).toBe(true);
+    expect(contextRef.current?.participant?.name).toBe('Publisher Name');
+    expect(contextRef.current?.participant?.initials).toBe('PN');
+    expect(contextRef.current?.hostedElement).toBe(publisherVideoElement);
+  });
+
+  it('renders the MiniCallWindow portal into the PiP mount node when open', async () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    const contextRef = renderProvider();
+
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    const mountNode = pipState.mountNode;
+    expect(mountNode).not.toBeNull();
+    expect(mountNode?.querySelector('[data-testid="mini-call-window"]')).not.toBeNull();
+  });
+
+  it('picks the active speaker camera subscriber, skipping screenshares', async () => {
+    const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({
+        subscriberWrappers: [screenshare, cameraA, cameraB],
+        activeSpeakerId: 'camera-b',
+      })
     );
 
-    screen.getByTestId('enter-btn').click();
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
 
-    // No window should be opened — enter should simply return
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(contextRef.current?.participant?.name).toBe('Bob B');
+    expect(contextRef.current?.hostedElement).toBe(cameraB.element);
+  });
 
-    // enter() returns early when the PiP API is unsupported, so
-    // open must never be called
-    expect(mockOpen).not.toHaveBeenCalled();
+  it('falls back to the first camera subscriber when no active speaker is set', async () => {
+    const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({ subscriberWrappers: [screenshare, cameraA, cameraB] })
+    );
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    expect(contextRef.current?.participant?.name).toBe('Alice A');
+    expect(contextRef.current?.hostedElement).toBe(cameraA.element);
+  });
+
+  it('re-parents the hosted element when the active speaker changes while open', async () => {
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({ subscriberWrappers: [cameraA, cameraB] })
+    );
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+    expect(contextRef.current?.hostedElement).toBe(cameraA.element);
+
+    act(() => {
+      activeSpeakerHandler?.('camera-b');
+    });
+
+    expect(contextRef.current?.participant?.name).toBe('Bob B');
+    expect(contextRef.current?.hostedElement).toBe(cameraB.element);
+    // The new element is moved into the Mini Mode window host
+    expect(pipState.mountNode?.contains(cameraB.element)).toBe(true);
+  });
+
+  it('ignores the active speaker handler for the current element or while closed', async () => {
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({ subscriberWrappers: [cameraA, cameraB] })
+    );
+
+    const contextRef = renderProvider();
+
+    // While closed the handler is a no-op
+    act(() => {
+      activeSpeakerHandler?.('camera-b');
+    });
+    expect(contextRef.current?.participant).toBeNull();
+
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+    expect(contextRef.current?.hostedElement).toBe(cameraA.element);
+
+    // Invoking with the currently-hosted element is a no-op
+    act(() => {
+      activeSpeakerHandler?.('camera-a');
+    });
+    expect(contextRef.current?.participant?.name).toBe('Alice A');
+    expect(contextRef.current?.hostedElement).toBe(cameraA.element);
+  });
+
+  it('exit restores the hosted element to its original parent and closes the window', async () => {
+    const originalParent = document.createElement('div');
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    originalParent.appendChild(cameraA.element);
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({ subscriberWrappers: [cameraA] })
+    );
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    // Sanity check: the element was re-parented into the Mini Mode window
+    expect(cameraA.element.parentElement).not.toBe(originalParent);
+
+    act(() => {
+      contextRef.current?.exit();
+    });
+
+    expect(cameraA.element.parentElement).toBe(originalParent);
+    expect(mockClose).toHaveBeenCalledOnce();
+    expect(contextRef.current?.isOpen).toBe(false);
+    expect(contextRef.current?.participant).toBeNull();
+  });
+
+  it('leave exits, disconnects, destroys the background publisher, and navigates to goodbye', async () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    act(() => {
+      contextRef.current?.leave();
+    });
+
+    expect(mockClose).toHaveBeenCalledOnce();
+    expect(mockDisconnect).toHaveBeenCalledOnce();
+    expect(mockDestroyBackgroundPublisher).toHaveBeenCalledOnce();
+    expect(mockNavigate).toHaveBeenCalledWith('/goodbye/test-session');
+  });
+
+  it('reports an error and stays closed when opening the PiP window fails', async () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    mockOpen.mockRejectedValue(new Error('denied'));
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+
+    expect(frontendLogger.reportError).toHaveBeenCalledWith(expect.any(Error), {
+      eventSource: 'miniMode.enter.error',
+    });
+    expect(contextRef.current?.isOpen).toBe(false);
   });
 });

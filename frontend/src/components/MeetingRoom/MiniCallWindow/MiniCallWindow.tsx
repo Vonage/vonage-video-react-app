@@ -5,11 +5,14 @@ import Tooltip from '@mui/material/Tooltip';
 import MiniModeIcon from './MiniModeIcon';
 import AvatarInitials from '../../AvatarInitials';
 import RecordingIndicator from '../RecordingIndicator';
-import type { MiniModeParticipant } from '../../../Context/MiniMode/MiniModeContext';
+import type {
+  MiniModeHostedElement,
+  MiniModeParticipant,
+} from '../../../Context/MiniMode/MiniModeContext';
 
 export type MiniCallWindowProps = {
   participant: MiniModeParticipant | null;
-  hostedElement: HTMLVideoElement | HTMLObjectElement | null;
+  hostedElement: MiniModeHostedElement;
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
   isRecording: boolean;

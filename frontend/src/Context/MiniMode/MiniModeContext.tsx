@@ -26,8 +26,10 @@ import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
 
+export type MiniModeHostedElement = HTMLVideoElement | HTMLObjectElement | null;
+
 type MiniModeParticipant = {
-  element: HTMLVideoElement | HTMLObjectElement | null;
+  element: MiniModeHostedElement;
   name: string;
   initials: string;
 };
@@ -35,7 +37,7 @@ type MiniModeParticipant = {
 export type MiniModeContextType = {
   isSupported: boolean;
   isOpen: boolean;
-  hostedElement: HTMLVideoElement | HTMLObjectElement | null;
+  hostedElement: MiniModeHostedElement;
   enter: () => Promise<void>;
   exit: () => void;
   toggleAudio: () => void;
@@ -62,7 +64,7 @@ const resolveMiniModeParticipant = (
   subscriberWrappers: SubscriberWrapper[],
   activeSpeakerId: string | undefined,
   publisher: {
-    element: HTMLVideoElement | HTMLObjectElement | null;
+    element: MiniModeHostedElement;
     name: string;
     initials: string;
   }
@@ -118,12 +120,10 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     close: closePipWindow,
   } = useDocumentPictureInPicture();
 
-  const [hostedElement, setHostedElement] = useState<HTMLVideoElement | HTMLObjectElement | null>(
-    null
-  );
+  const [hostedElement, setHostedElement] = useState<MiniModeHostedElement>(null);
   const [participant, setParticipant] = useState<MiniModeParticipant | null>(null);
   const originalParentRef = useRef<HTMLElement | null>(null);
-  const hostedElementRef = useRef<HTMLVideoElement | HTMLObjectElement | null>(null);
+  const hostedElementRef = useRef<MiniModeHostedElement>(null);
   const subscriberWrappersRef = useRef(subscriberWrappers);
   const publisherVideoElementRef = useRef(publisherVideoElement);
   const publisherRef = useRef(publisher);
