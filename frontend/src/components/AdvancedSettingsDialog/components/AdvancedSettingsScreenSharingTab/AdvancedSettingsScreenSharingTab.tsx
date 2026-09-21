@@ -120,10 +120,10 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-6" data-testid="advanced-settings-screen-sharing-tab">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.screenSharing')}
       </h2>
-      <p className="font-vera-plain text-vera-body-base text-vera-tertiary">
+      <p className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
         {t('advancedSettings.video.sections.screenSharing.description')}
       </p>
       <SelectField

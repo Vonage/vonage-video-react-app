@@ -106,7 +106,7 @@ const AdvancedSettingsVideoTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.video')}
       </h2>
 

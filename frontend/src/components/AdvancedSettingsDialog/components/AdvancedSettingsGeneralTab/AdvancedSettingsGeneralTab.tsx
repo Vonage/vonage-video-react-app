@@ -6,7 +6,7 @@ const AdvancedSettingsGeneralTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.general')}
       </h2>
       <div>
@@ -16,7 +16,7 @@ const AdvancedSettingsGeneralTab = (): ReactElement => {
         >
           {t('advancedSettings.general.resetButton')}
         </button>
-        <p className="pt-2 font-vera-plain text-vera-body-base text-vera-tertiary">
+        <p className="pt-2 font-vera-plain text-vera-body-base text-vera-text-tertiary">
           {t('advancedSettings.general.resetDescription')}
         </p>
       </div>

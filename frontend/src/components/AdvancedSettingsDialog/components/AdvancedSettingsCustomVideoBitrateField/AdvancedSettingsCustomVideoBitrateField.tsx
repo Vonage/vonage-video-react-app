@@ -25,11 +25,11 @@ const AdvancedSettingsCustomVideoBitrateField = ({ onChange, value }: Props): Re
 
   return (
     <div className="flex flex-col gap-3 rounded-vera-medium border-vera-border bg-vera-background px-4 py-3">
-      <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+      <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
         {t('advancedSettings.video.customBitrate.label')}
       </p>
 
-      <p className="font-vera-plain text-vera-caption text-vera-tertiary">
+      <p className="font-vera-plain text-vera-caption text-vera-text-tertiary">
         {t('advancedSettings.video.customBitrate.description')}
       </p>
 
@@ -48,9 +48,9 @@ const AdvancedSettingsCustomVideoBitrateField = ({ onChange, value }: Props): Re
           aria-label={t('advancedSettings.video.customBitrate.label')}
         />
 
-        <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
+        <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-text-tertiary">
           <span>{t('advancedSettings.video.customBitrate.minimum')}</span>
-          <span className="rounded-full bg-vera-surface px-2 py-1 text-vera-secondary">
+          <span className="rounded-full bg-vera-surface px-2 py-1 text-vera-text-secondary">
             {formatVideoBitrateLabel({
               customVideoBitrate: currentCustomVideoBitrate,
               lowerUnitLabel: t('advancedSettings.video.customBitrate.units.lower'),

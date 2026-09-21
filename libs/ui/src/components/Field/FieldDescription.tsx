@@ -8,7 +8,7 @@ const FieldDescription: FC<FieldDescriptionProps> = ({ className, ...props }) =>
   return (
     <p
       className={twMerge(
-        classNames('font-vera-plain text-vera-body-base text-vera-tertiary', className)
+        classNames('font-vera-plain text-vera-body-base text-vera-text-tertiary', className)
       )}
       {...props}
     />
