@@ -1,0 +1,74 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  s_15941c4fc7c644::t_61789c3b1cd5d4 42-43
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  s_15941c4fc7c644::t_f37cc5fcc1f1ad 61
+  h_737cf808c1c597 75
+  h_737cf808c1c597 76-77
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_15941c4fc7c644::t_24b8be0fc93900 96
+  h_737cf808c1c597 125,129
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_737cf808c1c597 70
+  h_737cf808c1c597 71-72
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_737cf808c1c597 82
+  h_737cf808c1c597 81,83-84
+libs/ui/src/helpers/handleClientApplicationError/handleClientApplicationError.tsx
+  s_15941c4fc7c644::t_99574933fbf284 55
+  h_737cf808c1c597 63
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  s_15941c4fc7c644::t_6eb171458ab146 43
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  h_737cf808c1c597 31,38
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  h_737cf808c1c597 45
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_737cf808c1c597 66,86,103,105
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_737cf808c1c597 76,80,110,114
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField.tsx
+  h_737cf808c1c597 28,32,51,53
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.tsx
+  h_737cf808c1c597 9,19
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.tsx
+  h_737cf808c1c597 123,126
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.tsx
+  h_737cf808c1c597 70,103,115
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_737cf808c1c597 27,49
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_737cf808c1c597 109
+frontend/src/components/AdvancedSettingsDialog/components/LabeledValueList/LabeledValueList.tsx
+  h_737cf808c1c597 16,26,29
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_737cf808c1c597 32,39
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_737cf808c1c597 36,46
+libs/ui/src/components/Field/FieldDescription.tsx
+  h_737cf808c1c597 11
+libs/ui/src/components/Field/FieldLabel.tsx
+  h_737cf808c1c597 10
+libs/ui/src/components/SelectField/SelectField.tsx
+  h_737cf808c1c597 42,51,74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "cf07f8a6fdb3e19607bf7bb3bdcde0c1250f5888",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_15941c4fc7c644": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_9a2800d9-7e3d-4467-b059-26e980d526ee",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
