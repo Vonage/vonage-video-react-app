@@ -1,16 +1,12 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE } from '../../schemas';
 import AdvancedSettingsScreenSharingTab from './AdvancedSettingsScreenSharingTab';
 
 describe('AdvancedSettingsScreenSharingTab', () => {
-  beforeEach(() => {
-    advancedSettings$.reset();
-  });
-
   afterEach(() => {
     advancedSettings$.reset();
   });
