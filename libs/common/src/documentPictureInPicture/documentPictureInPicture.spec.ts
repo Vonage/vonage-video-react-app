@@ -125,6 +125,62 @@ describe('documentPictureInPicture helpers', () => {
       expect(fakePipWindow.close).toHaveBeenCalledOnce();
     });
 
+    it('invokes onClose after closing when the PiP window fires pagehide', async () => {
+      const fakePipWindow = makeFakePipWindow();
+      const onClose = vi.fn();
+      stubDocumentPictureInPicture({
+        requestWindow: vi.fn().mockResolvedValue(fakePipWindow as unknown as Window),
+      });
+
+      const { result } = renderHook(() => useDocumentPictureInPicture({ onClose }));
+      await act(async () => {
+        await result.current.open({ width: 360, height: 260 });
+      });
+
+      const pagehideHandler = fakePipWindow.addEventListener.mock.calls.find(
+        ([eventName]) => eventName === 'pagehide'
+      )?.[1] as (() => void) | undefined;
+
+      act(() => {
+        pagehideHandler?.();
+      });
+
+      expect(fakePipWindow.close).toHaveBeenCalledOnce();
+      expect(onClose).toHaveBeenCalledOnce();
+      expect(result.current.window).toBeNull();
+      expect(result.current.mountNode).toBeNull();
+    });
+
+    it('uses the latest onClose callback when the window closes', async () => {
+      const fakePipWindow = makeFakePipWindow();
+      const firstOnClose = vi.fn();
+      const latestOnClose = vi.fn();
+      stubDocumentPictureInPicture({
+        requestWindow: vi.fn().mockResolvedValue(fakePipWindow as unknown as Window),
+      });
+
+      const { result, rerender } = renderHook(
+        ({ onClose }) => useDocumentPictureInPicture({ onClose }),
+        { initialProps: { onClose: firstOnClose } }
+      );
+      rerender({ onClose: latestOnClose });
+
+      await act(async () => {
+        await result.current.open({ width: 360, height: 260 });
+      });
+
+      const pagehideHandler = fakePipWindow.addEventListener.mock.calls.find(
+        ([eventName]) => eventName === 'pagehide'
+      )?.[1] as (() => void) | undefined;
+
+      act(() => {
+        pagehideHandler?.();
+      });
+
+      expect(firstOnClose).not.toHaveBeenCalled();
+      expect(latestOnClose).toHaveBeenCalledOnce();
+    });
+
     it('close is a no-op when no window is open', () => {
       const { result } = renderHook(() => useDocumentPictureInPicture());
 

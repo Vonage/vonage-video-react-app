@@ -18,6 +18,7 @@ import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext'
 import { env } from '../../env';
 import {
   isDocumentPictureInPictureSupported,
+  registerEnterPictureInPictureAction,
   useDocumentPictureInPicture,
 } from '@common/documentPictureInPicture';
 import frontendLogger from '../../logger';
@@ -113,17 +114,32 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   } = usePublisherContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
 
+  const [hostedElement, setHostedElement] = useState<MiniModeHostedElement>(null);
+  const [participant, setParticipant] = useState<MiniModeParticipant | null>(null);
+  const originalParentRef = useRef<HTMLElement | null>(null);
+  const hostedElementRef = useRef<MiniModeHostedElement>(null);
+
+  const restoreHostedElement = useCallback(() => {
+    const element = hostedElementRef.current;
+    const parent = originalParentRef.current;
+    if (element && parent) {
+      parent.appendChild(element);
+    }
+    originalParentRef.current = null;
+    hostedElementRef.current = null;
+    setHostedElement(null);
+    setParticipant(null);
+  }, []);
+
+  // onClose also covers closes we did not initiate: the user closing the window,
+  // or the browser auto-closing it when the tab becomes visible again.
   const {
     window: pipWindow,
     mountNode,
     open: openPipWindow,
     close: closePipWindow,
-  } = useDocumentPictureInPicture();
+  } = useDocumentPictureInPicture({ onClose: restoreHostedElement });
 
-  const [hostedElement, setHostedElement] = useState<MiniModeHostedElement>(null);
-  const [participant, setParticipant] = useState<MiniModeParticipant | null>(null);
-  const originalParentRef = useRef<HTMLElement | null>(null);
-  const hostedElementRef = useRef<MiniModeHostedElement>(null);
   const subscriberWrappersRef = useRef(subscriberWrappers);
   const publisherVideoElementRef = useRef(publisherVideoElement);
   const publisherRef = useRef(publisher);
@@ -140,18 +156,6 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     publisherRef.current = publisher;
     isOpenRef.current = isOpen;
   }, [hostedElement, subscriberWrappers, publisherVideoElement, publisher, isOpen]);
-
-  const restoreHostedElement = useCallback(() => {
-    const element = hostedElementRef.current;
-    const parent = originalParentRef.current;
-    if (element && parent) {
-      parent.appendChild(element);
-    }
-    originalParentRef.current = null;
-    hostedElementRef.current = null;
-    setHostedElement(null);
-    setParticipant(null);
-  }, []);
 
   const exit = useCallback(() => {
     restoreHostedElement();
@@ -236,6 +240,17 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     registerActiveSpeakerChangeHandler,
     unregisterActiveSpeakerChangeHandler,
   ]);
+
+  // Automatic Picture-in-Picture: Chromium invokes this action when the user
+  // switches tabs while we capture camera/mic, allowing enter() without a gesture.
+  useEffect(() => {
+    if (!isSupported || !publisher) {
+      return undefined;
+    }
+    return registerEnterPictureInPictureAction(() => {
+      void enter();
+    });
+  }, [enter, isSupported, publisher]);
 
   const leave = useCallback(() => {
     exit();

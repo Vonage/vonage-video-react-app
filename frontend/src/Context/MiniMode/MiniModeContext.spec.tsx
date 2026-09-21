@@ -6,6 +6,7 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import {
   isDocumentPictureInPictureSupported,
+  registerEnterPictureInPictureAction,
   useDocumentPictureInPicture,
 } from '@common/documentPictureInPicture';
 import type { Subscriber } from '@vonage/client-sdk-video';
@@ -35,6 +36,7 @@ vi.mock('@hooks/useBackgroundPublisherContext', () => ({
 
 vi.mock('@common/documentPictureInPicture', () => ({
   isDocumentPictureInPictureSupported: vi.fn(() => false),
+  registerEnterPictureInPictureAction: vi.fn(() => vi.fn()),
   useDocumentPictureInPicture: vi.fn(() => ({
     window: null,
     mountNode: null,
@@ -72,6 +74,9 @@ vi.mock('../../components/MeetingRoom/MiniCallWindow', () => ({
 type ActiveSpeakerHandler = (subscriberId: string | undefined) => void;
 
 let activeSpeakerHandler: ActiveSpeakerHandler | undefined;
+let enterPictureInPictureHandler: (() => void) | undefined;
+let capturedOnClose: (() => void) | undefined;
+const mockUnregisterEnterPictureInPicture = vi.fn();
 const mockDisconnect = vi.fn();
 const mockDestroyBackgroundPublisher = vi.fn();
 const mockOpen = vi.fn();
@@ -143,10 +148,18 @@ const renderProvider = (): { current: MiniModeContextType | null } => {
 describe('MiniModeContext', () => {
   beforeEach(() => {
     activeSpeakerHandler = undefined;
+    enterPictureInPictureHandler = undefined;
+    capturedOnClose = undefined;
     pipState.window = null;
     pipState.mountNode = null;
 
     env.partialUpdate({ ALLOW_MINI_MODE: true });
+
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(false);
+    vi.mocked(registerEnterPictureInPictureAction).mockImplementation((handler) => {
+      enterPictureInPictureHandler = handler;
+      return mockUnregisterEnterPictureInPicture;
+    });
     vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(false);
 
     vi.mocked(useSessionContext).mockReturnValue(makeSessionContext());
@@ -155,12 +168,15 @@ describe('MiniModeContext', () => {
       destroyBackgroundPublisher: mockDestroyBackgroundPublisher,
     } as unknown as ReturnType<typeof useBackgroundPublisherContext>);
 
-    vi.mocked(useDocumentPictureInPicture).mockImplementation(() => ({
-      window: pipState.window,
-      mountNode: pipState.mountNode,
-      open: mockOpen,
-      close: mockClose,
-    }));
+    vi.mocked(useDocumentPictureInPicture).mockImplementation((options) => {
+      capturedOnClose = options?.onClose;
+      return {
+        window: pipState.window,
+        mountNode: pipState.mountNode,
+        open: mockOpen,
+        close: mockClose,
+      };
+    });
     mockOpen.mockImplementation(() => {
       const mount = document.createElement('div');
       document.body.appendChild(mount);
@@ -405,5 +421,81 @@ describe('MiniModeContext', () => {
       eventSource: 'miniMode.enter.error',
     });
     expect(contextRef.current?.isOpen).toBe(false);
+  });
+
+  it('registers the automatic picture-in-picture action and enters Mini Mode when invoked', async () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+
+    const contextRef = renderProvider();
+
+    expect(registerEnterPictureInPictureAction).toHaveBeenCalledOnce();
+    expect(enterPictureInPictureHandler).toBeDefined();
+
+    await act(async () => {
+      // The handler enters Mini Mode fire-and-forget; flush its async chain
+      enterPictureInPictureHandler?.();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(mockOpen).toHaveBeenCalledWith({ width: 360, height: 260 });
+    expect(contextRef.current?.isOpen).toBe(true);
+  });
+
+  it('does not register the automatic action when Mini Mode is unsupported', () => {
+    renderProvider();
+
+    expect(registerEnterPictureInPictureAction).not.toHaveBeenCalled();
+  });
+
+  it('does not register the automatic action without a publisher', () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(usePublisherContext).mockReturnValue(makePublisherContext({ publisher: null }));
+
+    renderProvider();
+
+    expect(registerEnterPictureInPictureAction).not.toHaveBeenCalled();
+  });
+
+  it('unregisters the automatic action on unmount', () => {
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+
+    const Probe = (): null => null;
+    const { unmount } = render(
+      <MiniModeProvider>
+        <Probe />
+      </MiniModeProvider>
+    );
+
+    expect(registerEnterPictureInPictureAction).toHaveBeenCalledOnce();
+
+    unmount();
+
+    expect(mockUnregisterEnterPictureInPicture).toHaveBeenCalledOnce();
+  });
+
+  it('restores the hosted element when the window is closed externally', async () => {
+    const originalParent = document.createElement('div');
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    originalParent.appendChild(cameraA.element);
+    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
+    vi.mocked(useSessionContext).mockReturnValue(
+      makeSessionContext({ subscriberWrappers: [cameraA] })
+    );
+
+    const contextRef = renderProvider();
+    await act(async () => {
+      await contextRef.current?.enter();
+    });
+    expect(cameraA.element.parentElement).not.toBe(originalParent);
+
+    // Simulates the hook's pagehide path: the window closes and onClose fires
+    act(() => {
+      mockClose();
+      capturedOnClose?.();
+    });
+
+    expect(cameraA.element.parentElement).toBe(originalParent);
+    expect(contextRef.current?.participant).toBeNull();
+    expect(contextRef.current?.hostedElement).toBeNull();
   });
 });
