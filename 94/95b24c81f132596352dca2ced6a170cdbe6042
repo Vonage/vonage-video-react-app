@@ -1,0 +1,224 @@
+.gitignore
+  h_c939f8fae0de97 76
+.husky/pre-push
+  h_c939f8fae0de97 12
+README.md
+  h_c939f8fae0de97 132
+backend/helpers/redactSensitiveKeys.ts
+  h_c939f8fae0de97 1-34
+backend/routes/video/helpers/index.ts
+  h_c939f8fae0de97 1
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  h_c939f8fae0de97 1-48
+backend/routes/video/schemas/ArchiveHookPayload.schema.ts
+  h_c939f8fae0de97 24,27-28
+backend/routes/video/video.ts
+  h_c939f8fae0de97 12,54-80,98-115,146,178-184,198,207,209-213,215-216,218-221,223-224,226-234
+backend/services/loggerService.ts
+  h_c939f8fae0de97 4,13-27,64,112
+backend/services/tests/loggerService.test.ts
+  h_c939f8fae0de97 92-112
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_c939f8fae0de97 15-16,18-19,23-24,26-27,31-32,39,45,54-55,57-60,63,65-67,71-74,77,123-151
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_c939f8fae0de97 9,25-28,43,162-177
+backend/storage/sessionStorage.ts
+  h_c939f8fae0de97 3,31,33-34
+backend/storage/vcrSessionStorage.ts
+  h_c939f8fae0de97 10,16,44-49,53,59-65,192-214
+backend/tests/redactSensitiveKeys.test.ts
+  h_c939f8fae0de97 1-30
+backend/tests/session.test.ts
+  h_c939f8fae0de97 91-104,168-186,205,213,393-480,486-491
+docs/SESSION_MIGRATION.md
+  h_c939f8fae0de97 1-72
+frontend/project.json
+  h_c939f8fae0de97 74
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_c939f8fae0de97 4,9,13,15,20-23,27-29,31-33,35-36,39,48-58,68,70,72,179-233,238,245
+frontend/src/Context/AdvancedSettings/index.ts
+  h_c939f8fae0de97 2
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.spec.ts
+  h_c939f8fae0de97 9,16,50-52,54,56-57,60-62,64,66-69,71,73,75-76,79-80,83-84,86-87,89-90,93-94,98-100,102,104,106-107,110-111,114,116,118-120,122-123,127-143,146-147,150-152,154-155
+frontend/src/Context/AdvancedSettings/useAdvancesSettingsHandlers/useAdvancesSettingsHandlers.ts
+  h_c939f8fae0de97 4-5,12,18,21-22,31-36,45-52,63-65,132-203,210-215
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_c939f8fae0de97 188,195
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.spec.ts
+  h_c939f8fae0de97 9,18,57,66,69-71,77,79,88,91-93,97,99,108,111-113
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/applyAdvancedSettingsToPublisher.ts
+  h_c939f8fae0de97 2,5-6,9,12,15,46-56,86,89,91-95,97-104,106-113,115-121,124-131
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/handleApplyAdvancedSettingsError.ts
+  h_c939f8fae0de97 1-33
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/index.ts
+  h_c939f8fae0de97 2-8
+frontend/src/Context/PublisherProvider/useApplyAdvancedSettings/useApplyAdvancedSettings.tsx
+  h_c939f8fae0de97 10-11,18
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.spec.tsx
+  h_c939f8fae0de97 67,142
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  h_c939f8fae0de97 32,92
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  h_c939f8fae0de97 1-249
+frontend/src/Context/SessionProvider/session.tsx
+  h_c939f8fae0de97 37,208-209,341-348,367-370,375,379-382,386
+frontend/src/Context/screenShare/helpers/resolveScreenSharePreferredVideoCodecs.ts
+  h_c939f8fae0de97 1-48
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 9-10,24,70-71,109-151
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 10-17,74-95,101-105,110-116,178-188
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  h_c939f8fae0de97 31,38
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  h_c939f8fae0de97 45
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.spec.tsx
+  h_c939f8fae0de97 1,35-46
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_c939f8fae0de97 12,22,43
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_c939f8fae0de97 8,66,86,103,105
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.spec.tsx
+  h_c939f8fae0de97 3,16-17,34
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_c939f8fae0de97 5-10,76,80,84,108,110,114
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField.spec.tsx
+  h_c939f8fae0de97 6-8,19,32
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField.tsx
+  h_c939f8fae0de97 5,9-12,15,18,20-23,28,32,47,51,53
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.tsx
+  h_c939f8fae0de97 9,19
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.tsx
+  h_c939f8fae0de97 1-214
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/index.tsx
+  h_c939f8fae0de97 1
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.spec.tsx
+  h_c939f8fae0de97 11-19,26,28
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_c939f8fae0de97 5-6,8,19-31,37,40,42-43,48-50
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsGroup/AdvancedSettingsStatisticsGroup.tsx
+  h_c939f8fae0de97 70,103,115
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsStatisticsTab/AdvancedSettingsStatisticsTab.tsx
+  h_c939f8fae0de97 27,49
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.spec.tsx
+  h_c939f8fae0de97 1,6,8,19,22-43,46-49,51-60,63-69,71-74
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsVideoTab/AdvancedSettingsVideoTab.tsx
+  h_c939f8fae0de97 4,7-14,18-19,35-44,50,53-70,101-105,109,113-129,132,146,163,172,178-204
+frontend/src/components/AdvancedSettingsDialog/components/LabeledValueList/LabeledValueList.tsx
+  h_c939f8fae0de97 16,26,29
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  h_c939f8fae0de97 1-48
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettingsTab.schema.ts
+  h_c939f8fae0de97 1-21
+frontend/src/components/AdvancedSettingsDialog/schemas/audioBitrateMode.schema.ts
+  h_c939f8fae0de97 1-15
+frontend/src/components/AdvancedSettingsDialog/schemas/bitrateMode.schema.ts
+  h_c939f8fae0de97 1,8,10-15,17,19
+frontend/src/components/AdvancedSettingsDialog/schemas/codecMode.schema.ts
+  h_c939f8fae0de97 1-15
+frontend/src/components/AdvancedSettingsDialog/schemas/contentHint.schema.ts
+  h_c939f8fae0de97 1-23
+frontend/src/components/AdvancedSettingsDialog/schemas/customAudioBitrate.schema.ts
+  h_c939f8fae0de97 1-14
+frontend/src/components/AdvancedSettingsDialog/schemas/customVideoBitrate.schema.ts
+  h_c939f8fae0de97 1-12
+frontend/src/components/AdvancedSettingsDialog/schemas/frameRate.schema.ts
+  h_c939f8fae0de97 1-26
+frontend/src/components/AdvancedSettingsDialog/schemas/index.ts
+  h_c939f8fae0de97 1-12
+frontend/src/components/AdvancedSettingsDialog/schemas/manualCodecOrder.schema.ts
+  h_c939f8fae0de97 1-12
+frontend/src/components/AdvancedSettingsDialog/schemas/screenShareCodecMode.schema.ts
+  h_c939f8fae0de97 1-18
+frontend/src/components/AdvancedSettingsDialog/schemas/videoCodec.schema.ts
+  h_c939f8fae0de97 1-21
+frontend/src/components/AdvancedSettingsDialog/types/AdvancedSettingsSelectOption.ts
+  h_c939f8fae0de97 1-4
+frontend/src/components/BackgroundEffects/BackgroundVideoContainer/BackgroundVideoContainer.tsx
+  h_c939f8fae0de97 9,80-81
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_c939f8fae0de97 89-91
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_c939f8fae0de97 70-72
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_c939f8fae0de97 81-84
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_c939f8fae0de97 61,75-77
+frontend/src/components/Publisher/Publisher.tsx
+  h_c939f8fae0de97 11,52-53
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_c939f8fae0de97 32,39
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_c939f8fae0de97 96,125,129
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_c939f8fae0de97 37-42,73,91
+frontend/src/hooks/useSelfViewMirroring.ts
+  h_c939f8fae0de97 1-19
+frontend/src/locales/de.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/locales/en.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/locales/es-MX.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/locales/es.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/locales/it.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/locales/ja.json
+  h_c939f8fae0de97 18,23-25,53-67
+frontend/src/logger/index.ts
+  h_c939f8fae0de97 3-7
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_c939f8fae0de97 36,46
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 81-83
+integration-tests/tests/advancedSettings.spec.ts
+  h_c939f8fae0de97 26
+libs/api/project.json
+  h_c939f8fae0de97 26
+libs/api/src/handlers/stopArchive.ts
+  h_c939f8fae0de97 10,12,14
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  h_c939f8fae0de97 5
+libs/common/manifest.json
+  h_c939f8fae0de97 4
+libs/common/project.json
+  h_c939f8fae0de97 26
+libs/common/src/execution/attempt/attempt.test.ts
+  h_c939f8fae0de97 20-22,31
+libs/common/src/execution/attempt/attempt.ts
+  h_c939f8fae0de97 3,11-24,29
+libs/common/srcNode/errors/ApplicationServerError.test.ts
+  h_c939f8fae0de97 34-77
+libs/common/srcNode/errors/ApplicationServerError.ts
+  h_c939f8fae0de97 65-90,123,127
+libs/core/project.json
+  h_c939f8fae0de97 26
+libs/core/src/stores/mediaDevices/actions/selectDevice/selectDevice.ts
+  h_c939f8fae0de97 55
+libs/core/src/stores/mediaDevices/actions/syncMediaDevicesInfo.ts
+  h_c939f8fae0de97 47
+libs/ui/project.json
+  h_c939f8fae0de97 24
+libs/ui/src/components/Field/FieldDescription.tsx
+  h_c939f8fae0de97 11
+libs/ui/src/components/Field/FieldLabel.tsx
+  h_c939f8fae0de97 10
+libs/ui/src/components/SelectField/SelectField.tsx
+  h_c939f8fae0de97 42,51,74
+libs/ui/src/helpers/handleClientApplicationError/handleClientApplicationError.tsx
+  h_c939f8fae0de97 55,63
+scripts/testLibs.ts
+  h_c939f8fae0de97 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9495b24c81f132596352dca2ced6a170cdbe6042",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
