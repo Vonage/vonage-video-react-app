@@ -1,36 +1,42 @@
 import createGlobalState from 'react-global-state-hooks/createGlobalState';
 import actions from 'react-global-state-hooks/actions';
-import { z } from 'zod';
 import type {
+  AdvancedSettings,
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
+  AdvancedSettingsScreenShareCodecMode,
   AdvancedSettingsTab,
-} from '@components/AdvancedSettingsDialog/types/types';
+} from '@components/AdvancedSettingsDialog/schemas';
 import {
   ADVANCED_SETTINGS_AUDIO_BITRATE_MODE,
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
-} from '@components/AdvancedSettingsDialog/types/types';
+  ADVANCED_SETTINGS_CONTENT_HINT,
+  ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
+  advancedSettingsSchema,
+} from '@components/AdvancedSettingsDialog/schemas';
 import { env } from '../../env';
-import { ResolutionSchema } from '@common/schemas';
 import { Resolution } from '@common/types';
 
-const INITIAL_STATE = {
+export type { AdvancedSettings };
+
+const INITIAL_STATE = advancedSettingsSchema.parse({
   isOpen: false,
-  selectedTab: 'general' as AdvancedSettingsTab,
-  bitrateMode: ADVANCED_SETTINGS_BITRATE_MODE.default as AdvancedSettingsBitrateMode,
-  customVideoBitrate: 500_000 as AdvancedSettingsCustomVideoBitrate,
+  selectedTab: 'general',
+  bitrateMode: ADVANCED_SETTINGS_BITRATE_MODE.default,
+  customVideoBitrate: 500_000,
   codecMode: ADVANCED_SETTINGS_CODEC_MODE.automatic,
-  codecPriority: ['vp9', 'vp8', 'h264'] as AdvancedSettingsManualCodecOrder,
-  frameRate: 30 as AdvancedSettingsFrameRate,
+  codecPriority: ['vp9', 'vp8', 'h264'],
+  frameRate: 30,
   resolution: env.DEFAULT_RESOLUTION,
   audioBitrateMode: ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.automatic,
-  customAudioBitrate: 128 as AdvancedSettingsCustomAudioBitrate,
+  customAudioBitrate: 128,
   enableDtx: true,
   publisherAudioFallbackEnabled: false,
   subscriberAudioFallbackEnabled: false,
@@ -39,43 +45,17 @@ const INITIAL_STATE = {
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
-};
-
-export type advancedSettings = typeof INITIAL_STATE;
-
-const advancedSettingsSchema: z.ZodType<advancedSettings> = z.object({
-  isOpen: z.boolean(),
-  selectedTab: z.enum(['general', 'video', 'audio', 'statistics']),
-  bitrateMode: z.enum(['default', 'bw_saver', 'extra_bw_saver', 'custom']),
-  customVideoBitrate: z
-    .number()
-    .int()
-    .min(env.MIN_CUSTOM_VIDEO_BITRATE_BPS)
-    .max(env.MAX_CUSTOM_VIDEO_BITRATE_BPS),
-  codecMode: z.enum(['automatic', 'manual']),
-  codecPriority: z.tuple([
-    z.enum(['vp8', 'vp9', 'h264']),
-    z.enum(['vp8', 'vp9', 'h264']),
-    z.enum(['vp8', 'vp9', 'h264']),
-  ]),
-  frameRate: z.custom<AdvancedSettingsFrameRate>(
-    (value): value is AdvancedSettingsFrameRate =>
-      typeof value === 'number' &&
-      Number.isInteger(value) &&
-      env.SUPPORTED_FRAME_RATES.includes(value),
-    { message: 'Unsupported frame rate' }
-  ),
-  resolution: ResolutionSchema,
-  audioBitrateMode: z.enum(['automatic', 'custom']),
-  customAudioBitrate: z.number().int().min(6).max(510),
-  enableDtx: z.boolean(),
-  publisherAudioFallbackEnabled: z.boolean(),
-  subscriberAudioFallbackEnabled: z.boolean(),
-  publisherStatisticsEnabled: z.boolean(),
-  advancedNoiseSuppressionEnabled: z.boolean(),
-  echoCancellationEnabled: z.boolean(),
-  noiseSuppressionEnabled: z.boolean(),
-  autoGainControlEnabled: z.boolean(),
+  selfViewMirroringEnabled: true,
+  videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
+  cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic,
+  screenShareContentHint: ADVANCED_SETTINGS_CONTENT_HINT.detail,
+  screenShareCodecMode: ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit,
+  screenShareCodecPriority: ['vp9', 'vp8', 'h264'],
+  scalableScreenshareEnabled: false,
+  screenShareFrameRate: null,
+  screenShareResolution: null,
+  screenShareBitrateMode: null,
+  screenShareCustomVideoBitrate: 500_000,
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -85,11 +65,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
       ({
         ...state,
         isOpen: false,
-      }) as advancedSettings,
+      }) as AdvancedSettings,
 
-    validator: ({ restored, initial }): advancedSettings => {
+    validator: ({ restored, initial }): AdvancedSettings => {
       const restoredState = advancedSettingsSchema.safeParse(restored);
-      const fallbackState = initial as advancedSettings;
+      const fallbackState = initial as AdvancedSettings;
 
       if (restoredState.success) {
         return restoredState.data;
@@ -196,18 +176,73 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
         partialUpdate({ autoGainControlEnabled: value });
       };
     },
+    setSelfViewMirroringEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ selfViewMirroringEnabled: value });
+      };
+    },
+    setVideoStatsOverlayEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ videoStatsOverlayEnabled: value });
+      };
+    },
+    setCameraContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ cameraContentHint: value });
+      };
+    },
+    setScreenShareContentHint(value: AdvancedSettingsContentHint) {
+      return () => {
+        partialUpdate({ screenShareContentHint: value });
+      };
+    },
+    setScreenShareCodecMode(value: AdvancedSettingsScreenShareCodecMode) {
+      return () => {
+        partialUpdate({ screenShareCodecMode: value });
+      };
+    },
+    setScreenShareCodecPriority(value: AdvancedSettingsManualCodecOrder) {
+      return () => {
+        partialUpdate({ screenShareCodecPriority: value });
+      };
+    },
+    setScalableScreenshareEnabled(value: boolean) {
+      return () => {
+        partialUpdate({ scalableScreenshareEnabled: value });
+      };
+    },
+    setScreenShareFrameRate(value: AdvancedSettingsFrameRate | null) {
+      return () => {
+        partialUpdate({ screenShareFrameRate: value });
+      };
+    },
+    setScreenShareResolution(value: Resolution | null) {
+      return () => {
+        partialUpdate({ screenShareResolution: value });
+      };
+    },
+    setScreenShareBitrateMode(value: AdvancedSettingsBitrateMode | null) {
+      return () => {
+        partialUpdate({ screenShareBitrateMode: value });
+      };
+    },
+    setScreenShareCustomVideoBitrate(value: AdvancedSettingsCustomVideoBitrate) {
+      return () => {
+        partialUpdate({ screenShareCustomVideoBitrate: value });
+      };
+    },
   },
 });
 
 const internals = actions(advancedSettings$, {
-  update: (updatedValues: Partial<advancedSettings>) => {
+  update: (updatedValues: Partial<AdvancedSettings>) => {
     return ({ setState }) => {
       setState((state) => ({ ...state, ...updatedValues }));
     };
   },
 });
 
-function partialUpdate(partialState: Partial<advancedSettings>) {
+function partialUpdate(partialState: Partial<AdvancedSettings>) {
   internals.update(partialState);
 }
 

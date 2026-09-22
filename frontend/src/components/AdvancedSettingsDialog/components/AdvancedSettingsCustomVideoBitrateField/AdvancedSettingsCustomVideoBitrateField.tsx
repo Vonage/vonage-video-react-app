@@ -2,26 +2,34 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { env } from '../../../../env';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import type { AdvancedSettingsCustomVideoBitrate } from '../../types/types';
+import type { AdvancedSettingsCustomVideoBitrate } from '../../schemas';
 
 const CUSTOM_VIDEO_BITRATE_STEP_BPS = 5_000;
 
+export const testIds = {
+  slider: 'advanced-settings-custom-video-bitrate-slider',
+} as const;
+
 type Props = {
   onChange: (value: AdvancedSettingsCustomVideoBitrate) => void;
+  value?: AdvancedSettingsCustomVideoBitrate;
 };
 
-const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElement => {
+const AdvancedSettingsCustomVideoBitrateField = ({ onChange, value }: Props): ReactElement => {
   const { t } = useTranslation();
-  const customVideoBitrate = advancedSettings$.use.select((state) => state.customVideoBitrate);
+  const cameraCustomVideoBitrate = advancedSettings$.use.select(
+    (state) => state.customVideoBitrate
+  );
+  const customVideoBitrate = value ?? cameraCustomVideoBitrate;
   const currentCustomVideoBitrate = Number(customVideoBitrate);
 
   return (
     <div className="flex flex-col gap-3 rounded-vera-medium border-vera-border bg-vera-background px-4 py-3">
-      <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+      <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
         {t('advancedSettings.video.customBitrate.label')}
       </p>
 
-      <p className="font-vera-plain text-vera-caption text-vera-tertiary">
+      <p className="font-vera-plain text-vera-caption text-vera-text-tertiary">
         {t('advancedSettings.video.customBitrate.description')}
       </p>
 
@@ -36,13 +44,13 @@ const AdvancedSettingsCustomVideoBitrateField = ({ onChange }: Props): ReactElem
             onChange(clampCustomVideoBitrate(Number(event.target.value)));
           }}
           className="w-full accent-vera-primary"
-          data-testid="advanced-settings-custom-video-bitrate-slider"
+          data-testid={testIds.slider}
           aria-label={t('advancedSettings.video.customBitrate.label')}
         />
 
-        <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
+        <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-text-tertiary">
           <span>{t('advancedSettings.video.customBitrate.minimum')}</span>
-          <span className="rounded-full bg-vera-surface px-2 py-1 text-vera-secondary">
+          <span className="rounded-full bg-vera-surface px-2 py-1 text-vera-text-secondary">
             {formatVideoBitrateLabel({
               customVideoBitrate: currentCustomVideoBitrate,
               lowerUnitLabel: t('advancedSettings.video.customBitrate.units.lower'),

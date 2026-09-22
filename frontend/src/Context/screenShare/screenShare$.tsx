@@ -7,6 +7,14 @@ import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import {
+  applyBitrate,
+  handleApplyAdvancedSettingsError,
+} from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import { attempt } from '@common/execution';
+import { isNil } from 'json-storage-formatter';
+import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -63,16 +71,49 @@ const screenShare$ = createContext(initialState, {
 
         if (!getState().isSharingScreen) {
           // Initializing the publisher for screen sharing
+          const {
+            screenShareContentHint,
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            scalableScreenshareEnabled,
+            screenShareFrameRate,
+            screenShareResolution,
+            screenShareBitrateMode,
+            screenShareCustomVideoBitrate,
+            codecMode,
+            codecPriority,
+          } = advancedSettings$.getState();
+
+          const preferredVideoCodecs = resolveScreenSharePreferredVideoCodecs({
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            codecMode,
+            codecPriority,
+          });
+
+          const partnerId = session.sessionDetails?.applicationId ?? null;
+
           const publisher = initPublisher(
             undefined,
             {
               videoSource: 'screen',
               insertDefaultUI: false,
-              videoContentHint: 'detail',
+              videoContentHint: screenShareContentHint,
+              preferredVideoCodecs,
+              scalableScreenshare: scalableScreenshareEnabled,
+              ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
+              ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
             },
             (err) => {
               if (!err) return;
+
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to initialize screen share publisher',
+                eventSource: 'screenShare$.toggleShareScreen.initPublisher',
+                partnerId,
+              })(err);
+
               actions$.onScreenShareStopped();
             }
           );
@@ -133,6 +174,17 @@ const screenShare$ = createContext(initialState, {
 
           // Publishing the screen sharing stream
           await publish(publisher);
+
+          if (screenShareBitrateMode !== null) {
+            await attempt(
+              () => applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate),
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to apply screen share bitrate',
+                eventSource: 'screenShare$.toggleShareScreen.applyBitrate',
+                partnerId,
+              })
+            );
+          }
 
           vonageVideoClient?.on('screenshareStreamCreated', actions$.handleStreamCreated);
 

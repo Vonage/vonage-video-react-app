@@ -23,7 +23,7 @@ test('should keep the selected resolution after reopening settings in the waitin
 
   await page.getByRole('button', { name: 'Video' }).click();
 
-  const resolutionSelect = page.getByLabel('Resolution');
+  const resolutionSelect = page.getByTestId('advanced-settings-video-camera-resolution');
 
   await resolutionSelect.selectOption('640x480');
   await expect(resolutionSelect).toHaveValue('640x480');
