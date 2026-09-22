@@ -1,0 +1,21 @@
+.github/workflows/upload-source-to-s3.yml
+  s_f25c9b9f2c8c83::t_640b235d51fd81 11-13,27
+  s_f25c9b9f2c8c83::t_2a3c2879eff641 9-10
+  s_f25c9b9f2c8c83::t_cfe3dc5a87cf5e 40-41,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b28b677cedc49d0010cfa68b4c457affe5226ca9",
+  "prompts": {},
+  "sessions": {
+    "s_f25c9b9f2c8c83": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ff206048-8a19-463f-bfda-f1de5045615a",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
