@@ -11,6 +11,14 @@ describe('FormattedMessageBody', () => {
     expect(screen.getByText(message)).toBeInTheDocument();
   });
 
+  it('renders duplicate links without colliding React keys', () => {
+    const message = 'https://example.com https://example.com';
+
+    render(<FormattedMessageBody message={message} />);
+
+    expect(screen.getAllByRole('link', { name: 'example.com' })).toHaveLength(2);
+  });
+
   describe('when messages contain URLs, correctly renders', () => {
     it('messages with a single link', () => {
       const message = 'https://developer.vonage.com/en/video/client-sdks/web/overview';

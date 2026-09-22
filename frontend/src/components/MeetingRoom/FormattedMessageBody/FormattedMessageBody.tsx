@@ -16,13 +16,13 @@ export type FormattedMessageBodyProps = {
  */
 const FormattedMessageBody = ({ message }: FormattedMessageBodyProps): ReactElement => {
   const transformedMessage = linkGroupsParser(message);
-  const messageFragments = transformedMessage.map((messageGroup) => {
+  const messageFragments = transformedMessage.map((messageGroup, index) => {
     const isTextOnlyMessage = messageGroup.length === 1;
     const isLinkOnlyMessage = messageGroup.length === 2;
 
     if (isTextOnlyMessage) {
       const messageText = [...messageGroup].join('');
-      return <span key={messageText}>{messageText}</span>;
+      return <span key={`${index}-${messageText}`}>{messageText}</span>;
     }
 
     if (isLinkOnlyMessage) {
@@ -30,14 +30,14 @@ const FormattedMessageBody = ({ message }: FormattedMessageBodyProps): ReactElem
       const messageTextToDisplay = messageGroup[1];
 
       return (
-        <Link key={messageTextToDisplay} href={messageUrl} target="_blank">
+        <Link key={`${index}-${messageTextToDisplay}`} href={messageUrl} target="_blank">
           {messageTextToDisplay}
         </Link>
       );
     }
     // if length of 3, it's text, and a link
     return (
-      <span key={`${messageGroup[0]}-${messageGroup[1]}`}>
+      <span key={`${index}-${messageGroup[0]}-${messageGroup[1]}`}>
         <span>{messageGroup[0]}</span>
         <Link href={messageGroup[1]} target="_blank">
           {messageGroup[2]}
@@ -48,8 +48,8 @@ const FormattedMessageBody = ({ message }: FormattedMessageBodyProps): ReactElem
 
   return (
     <>
-      {messageFragments.map((messageFragment) => (
-        <span key={messageFragment.key}>{messageFragment} </span>
+      {messageFragments.map((messageFragment, index) => (
+        <span key={`${messageFragment.key}-${index}`}>{messageFragment} </span>
       ))}
     </>
   );
