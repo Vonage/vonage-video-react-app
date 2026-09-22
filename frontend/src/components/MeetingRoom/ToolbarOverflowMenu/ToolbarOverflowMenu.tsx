@@ -31,6 +31,7 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
+  toolbarButtons?: Array<ReactElement | false>;
   captionsState: CaptionsState;
 };
 
@@ -46,6 +47,7 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
+ *  @property {Array<ReactElement | false>} [toolbarButtons] - toolbar buttons in display order, used to split overflow by key
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
@@ -57,6 +59,7 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
+  toolbarButtons,
   captionsState,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
@@ -95,18 +98,18 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
-    <CaptionsButton
-      isOverflowButton
-      handleClick={closeMenu}
-      key="CaptionsButton"
-      captionsState={captionsState}
-    />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
       setIsEmojiGridOpen={setIsEmojiGridOpen}
       isParentOpen={isOpen}
       isOverflowButton
       key="EmojiGridButton"
+    />,
+    <CaptionsButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="CaptionsButton"
+      captionsState={captionsState}
     />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
@@ -157,7 +160,7 @@ const ToolbarOverflowMenu = ({
               bottom: '80px',
             }}
           >
-            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount)}
+            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount, toolbarButtons)}
           </Box>
         </Grow>
       </ClickAwayListener>
