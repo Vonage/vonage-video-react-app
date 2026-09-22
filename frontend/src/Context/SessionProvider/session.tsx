@@ -15,6 +15,7 @@ import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
 import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
+import useRaiseHand from '@components/MeetingRoom/RaiseHand/useRaiseHand';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
@@ -38,7 +39,7 @@ import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { runtime$ } from '@core/stores';
+import { runtime$, raiseHand$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -77,6 +78,8 @@ export type SessionContextType = {
   ownCaptions: string | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
+  raiseHand: () => void;
+  lowerHand: () => void;
   publish: (publisher: Publisher) => Promise<void>;
   unpublish: (publisher: Publisher) => void;
   lastStreamUpdate: StreamPropertyChangedEvent | null;
@@ -119,6 +122,8 @@ export const SessionContext = createContext<SessionContextType>({
   ownCaptions: null,
   sendEmoji: () => {},
   emojiQueue: [],
+  raiseHand: () => {},
+  lowerHand: () => {},
   publish: async () => Promise.resolve(),
   unpublish: () => {},
   lastStreamUpdate: null,
@@ -230,6 +235,11 @@ const SessionProvider = ({
     signal: vonageVideoClient.current?.signal,
     getConnectionId,
   });
+  const { raiseHand, lowerHand, onRaiseHandSignal, onConnectionCreated, onConnectionDestroyed } =
+    useRaiseHand({
+      signal: vonageVideoClient.current?.signal,
+      getConnectionId,
+    });
   const {
     closeRightPanel,
     toggleParticipantList,
@@ -344,6 +354,7 @@ const SessionProvider = ({
     if (!isServerRotation) {
       vonageVideoClient.current = null;
       setConnected(false);
+      raiseHand$.actions.lowerAllHands();
     }
   });
 
@@ -478,6 +489,9 @@ const SessionProvider = ({
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
       vonageVideoClient.current.on('signal:chat', handleChatSignal);
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
+      vonageVideoClient.current.on('signal:raiseHand', onRaiseHandSignal);
+      vonageVideoClient.current.on('connectionCreated', onConnectionCreated);
+      vonageVideoClient.current.on('connectionDestroyed', onConnectionDestroyed);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
         handleSubscriberAudioLevelUpdated
@@ -532,6 +546,8 @@ const SessionProvider = ({
 
       setConnected(false);
     }
+
+    raiseHand$.actions.lowerAllHands();
   }, []);
 
   /**
@@ -603,6 +619,8 @@ const SessionProvider = ({
       ownCaptions,
       sendEmoji,
       emojiQueue,
+      raiseHand,
+      lowerHand,
       publish,
       unpublish,
       lastStreamUpdate,
@@ -641,6 +659,8 @@ const SessionProvider = ({
       ownCaptions,
       sendEmoji,
       emojiQueue,
+      raiseHand,
+      lowerHand,
       publish,
       unpublish,
       lastStreamUpdate,

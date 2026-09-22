@@ -348,5 +348,11 @@
   "zoom.current": "Current zoom",
   "errorPage.title": "Something went wrong",
   "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
-  "notification.dismiss": "Dismiss notification"
+  "notification.dismiss": "Dismiss notification",
+  "raiseHand.toggle": "Raise hand",
+  "raiseHand.ariaLabel": "Raise or lower hand",
+  "raiseHand.yourHandIsRaised": "Your hand is raised",
+  "raiseHand.handRaised": "Hand raised",
+  "raiseHand.handRaisedPosition": "Hand raised, {{position}} in queue",
+  "raiseHand.lowerHand": "Lower hand"
 }

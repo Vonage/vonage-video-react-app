@@ -39,7 +39,7 @@ export type ParticipantListProps = {
  */
 const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactElement | false => {
   const { t } = useTranslation();
-  const { subscriberWrappers } = useSessionContext();
+  const { subscriberWrappers, vonageVideoClient } = useSessionContext();
   const publisherAudio = useAudioLevels();
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
@@ -159,6 +159,7 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
             <ParticipantListItem
               key="you"
               dataTestId="participant-list-item-you"
+              connectionId={vonageVideoClient?.connectionId}
               hasAudio={isAudioEnabled}
               audioLevel={isAudioEnabled ? publisherAudio : undefined}
               name={`${name} (${t('user.you')})`}

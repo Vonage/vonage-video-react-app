@@ -335,5 +335,11 @@
   "zoom.current": "現在のズーム",
   "errorPage.title": "問題が発生しました",
   "errorPage.description": "アプリケーションを起動できませんでした。ページをリロードするか、問題が解決しない場合はサポートにお問い合わせください。",
-  "notification.dismiss": "通知を閉じる"
+  "notification.dismiss": "通知を閉じる",
+  "raiseHand.toggle": "手を挙げる",
+  "raiseHand.ariaLabel": "手を挙げるまたは下げる",
+  "raiseHand.yourHandIsRaised": "あなたの手が挙がっています",
+  "raiseHand.handRaised": "挙手中",
+  "raiseHand.handRaisedPosition": "挙手中、順番 {{position}}",
+  "raiseHand.lowerHand": "手を下げる"
 }
