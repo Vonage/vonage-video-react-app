@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   upload:
-    runs-on: vcp-runner
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       id-token: write # required for OIDC
