@@ -1,0 +1,46 @@
+# TODO: Once validated on develop, consider moving the trigger to main
+# or a release tag for production uploads.
+name: Upload Source ZIP to S3
+
+on:
+  push:
+    branches:
+      - develop
+      - hossein/VIDSOL-1256-prebuilts-ci-s3-workflow # ← temp, remove before merge
+
+concurrency:
+  group: upload-source-to-s3-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write # required for OIDC
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.VONAGE_AWS_ACCOUNT_NUMBER_QA }}:role/cerebro-gh-actions-role
+          aws-region: eu-west-1
+
+      - name: Create source ZIP
+        run: |
+          zip -r vonage-video-react-app.zip . \
+            --exclude "*.git*" \
+            --exclude "node_modules/*" \
+            --exclude ".github/*"
+
+      - name: Upload to S3
+        env:
+          S3_BUCKET: ${{ secrets.PREBUILTS_S3_BUCKET }}
+        run: |
+          aws s3 cp vonage-video-react-app.zip \
+            "s3://$S3_BUCKET/prebuilts/artifacts/vonage-video-react-app.zip" \
+            --sse AES256 \
+            --acl bucket-owner-full-control
