@@ -36,12 +36,24 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
   }, []);
 
   useEffect(() => {
-    if (publisher) {
-      publisher.on('videoDisabled', handleVideoDisabled);
-      publisher.on('videoEnabled', handleVideoEnabled);
-      publisher.on('videoDisableWarning', handleVideoWarning);
-      publisher.on('videoDisableWarningLifted', handleVideoWarningLifted);
+    if (!publisher) {
+      return undefined;
     }
+
+    publisher.on('videoDisabled', handleVideoDisabled);
+    publisher.on('videoEnabled', handleVideoEnabled);
+    publisher.on('videoDisableWarning', handleVideoWarning);
+    publisher.on('videoDisableWarningLifted', handleVideoWarningLifted);
+
+    // Remove the listeners when the publisher is re-created (reconnect/device change) or
+    // on unmount — otherwise stale publishers keep driving quality and the shared
+    // user.issues.audioFallbacks counter.
+    return () => {
+      publisher.off('videoDisabled', handleVideoDisabled);
+      publisher.off('videoEnabled', handleVideoEnabled);
+      publisher.off('videoDisableWarning', handleVideoWarning);
+      publisher.off('videoDisableWarningLifted', handleVideoWarningLifted);
+    };
   }, [
     handleVideoDisabled,
     handleVideoEnabled,
