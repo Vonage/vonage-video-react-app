@@ -279,7 +279,10 @@ describe('setupDeviceStore', () => {
       await waitFor(
         async () => {
           await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
-          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith();
+          // The bootstrap sync skips readiness so it doesn't await the promise it resolves.
+          expect(mediaDevices$.actions.syncMediaDevicesInfo).toHaveBeenCalledWith({
+            skipStoreReady: true,
+          });
         },
         { timeout: 200 }
       );
