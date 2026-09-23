@@ -1,0 +1,24 @@
+.github/workflows/release-notification.yml
+  s_91e51ad03bc65e::t_acde2e192c9a47 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "7f5287af7e99481fb39d8807f6b86401b2600178",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_91e51ad03bc65e": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_47cc8f45-3a60-4b3a-b162-6258896df70b",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
