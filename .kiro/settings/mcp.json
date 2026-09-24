@@ -1,0 +1,73 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "disabled": false,
+      "autoApprove": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--browser",
+        "chrome",
+        "--isolated"
+      ]
+    },
+    "context7": {
+      "disabled": false,
+      "autoApprove": [],
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "github": {
+      "disabled": false,
+      "autoApprove": [],
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "figma": {
+      "disabled": false,
+      "autoApprove": [],
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "nx": {
+      "disabled": false,
+      "autoApprove": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "nx-mcp@latest",
+        ".",
+        "--no-minimal",
+        "--disableTelemetry",
+        "--tools",
+        "nx_workspace",
+        "nx_workspace_path",
+        "nx_project_details",
+        "nx_docs",
+        "nx_generators",
+        "nx_generator_schema",
+        "nx_current_running_tasks_details",
+        "nx_current_running_task_output"
+      ]
+    },
+    "chrome-devtools": {
+      "disabled": false,
+      "autoApprove": [],
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--isolated",
+        "--no-usage-statistics",
+        "--no-performance-crux"
+      ]
+    },
+    "codegraphcontext": {
+      "disabled": false,
+      "autoApprove": [],
+      "command": "/Users/jquesadachaves/.venvs/codegraphcontext/bin/cgc",
+      "args": ["mcp", "start"],
+      "env": {
+        "CGC_OUTPUT_FORMAT": "gcf"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+# Dependencies and generated output
+node_modules/
+dist/
+distRoom/
+coverage/
+.nx/
+.scannerwork/
+.tmp/
+playwright-report/
+test-results/
+
+# Generated and local artifacts
+*.log
+*.tsbuildinfo
+graph.json
+room.zip
+libs/common/tarball/
