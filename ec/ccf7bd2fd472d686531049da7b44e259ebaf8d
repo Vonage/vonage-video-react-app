@@ -1,0 +1,14 @@
+.github/workflows/upload-source-to-s3.yml
+  h_c939f8fae0de97 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ecccf7bd2fd472d686531049da7b44e259ebaf8d",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
