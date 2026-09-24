@@ -21,6 +21,7 @@ import {
 import { Resolution } from '@common/types';
 import { env } from '../../../../env';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
+import { isFirefox, isWebKit } from '@web/platform';
 
 const DEFAULT_OPTION_VALUE = 'default-sdk';
 
@@ -137,6 +138,8 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
       label: t(`advancedSettings.video.screenShareSurface.options.${surface}`),
     }));
 
+  const isScreenShareSurfaceSupported = !isFirefox() && !isWebKit();
+
   return (
     <div className="flex flex-col gap-6" data-testid="advanced-settings-screen-sharing-tab">
       <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
@@ -145,6 +148,7 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
       <p className="font-vera-plain text-vera-body-base text-vera-tertiary">
         {t('advancedSettings.video.sections.screenSharing.description')}
       </p>
+      {isScreenShareSurfaceSupported && (
       <SelectField
         id="advanced-settings-video-screen-share-surface"
         data-testid="advanced-settings-video-screen-share-surface"
@@ -153,6 +157,7 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
         options={screenShareSurfaceOptions}
         onChange={setScreenShareSurface}
       />
+      )}
       <SelectField
         id="advanced-settings-video-screen-share-content-hint"
         data-testid="advanced-settings-video-screen-share-content-hint"
