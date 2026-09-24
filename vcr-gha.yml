@@ -46,6 +46,12 @@ instance:
       secret: SESSION_KEY_SECRET
 
     # Auth OIDC configuration
+    - name: AUTH_ENABLED
+      value: 'true'
+    - name: OIDC_ISSUER_URL
+      secret: OIDC_ISSUER_URL
+    - name: OIDC_CLIENT_ID
+      secret: OIDC_CLIENT_ID
     - name: AUTH_HEADER_NAME
       value: 'authorization'
     - name: AUTH_SCHEME
