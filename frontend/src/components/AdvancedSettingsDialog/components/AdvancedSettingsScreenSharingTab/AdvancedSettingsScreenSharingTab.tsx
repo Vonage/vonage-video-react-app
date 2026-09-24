@@ -149,14 +149,14 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
         {t('advancedSettings.video.sections.screenSharing.description')}
       </p>
       {isScreenShareSurfaceSupported && (
-      <SelectField
-        id="advanced-settings-video-screen-share-surface"
-        data-testid="advanced-settings-video-screen-share-surface"
-        label={t('advancedSettings.video.screenShareSurface.label')}
-        value={screenShareSurface}
-        options={screenShareSurfaceOptions}
-        onChange={setScreenShareSurface}
-      />
+        <SelectField
+          id="advanced-settings-video-screen-share-surface"
+          data-testid="advanced-settings-video-screen-share-surface"
+          label={t('advancedSettings.video.screenShareSurface.label')}
+          value={screenShareSurface}
+          options={screenShareSurfaceOptions}
+          onChange={setScreenShareSurface}
+        />
       )}
       <SelectField
         id="advanced-settings-video-screen-share-content-hint"
