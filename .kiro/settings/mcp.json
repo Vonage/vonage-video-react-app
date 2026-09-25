@@ -63,11 +63,10 @@
     "codegraphcontext": {
       "disabled": false,
       "autoApprove": [],
-      "command": "/Users/jquesadachaves/.venvs/codegraphcontext/bin/cgc",
-      "args": ["mcp", "start"],
-      "env": {
-        "CGC_OUTPUT_FORMAT": "gcf"
-      }
+      "command": "sh",
+      "args": [
+        ".kiro/scripts/codegraph.sh"
+      ]
     }
   }
 }

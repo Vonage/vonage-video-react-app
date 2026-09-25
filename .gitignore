@@ -74,3 +74,6 @@ graph.json
 # Kiro
 .kiro/specs/
 .kiro/settings.json
+
+# Local code graph database
+/.codegraphcontext/

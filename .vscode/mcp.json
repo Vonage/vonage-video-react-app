@@ -50,12 +50,9 @@
     },
     "codegraphcontext": {
       "type": "stdio",
-      "command": "/Users/jquesadachaves/.venvs/codegraphcontext/bin/cgc",
+      "command": "sh",
       "cwd": "${workspaceFolder}",
-      "args": ["mcp", "start"],
-      "env": {
-        "CGC_OUTPUT_FORMAT": "gcf"
-      }
+      "args": ["${workspaceFolder}/.kiro/scripts/codegraph.sh"]
     }
   }
 }
