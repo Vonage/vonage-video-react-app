@@ -62,6 +62,10 @@ export type SessionContextType = {
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
   archiveIdStartedBySelf: string | null;
+  recordingArchiveId: string | null;
+  setRecordingArchiveId: Dispatch<SetStateAction<string | null>>;
+  transcriptionArchiveId: string | null;
+  setTranscriptionArchiveId: Dispatch<SetStateAction<string | null>>;
   recordingAlreadyNotified: boolean;
   setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
   markArchiveStartRequestedBySelf: () => void;
@@ -104,6 +108,10 @@ export const SessionContext = createContext<SessionContextType>({
   setLayoutMode: () => {},
   archiveId: null,
   archiveIdStartedBySelf: null,
+  recordingArchiveId: null,
+  setRecordingArchiveId: () => {},
+  transcriptionArchiveId: null,
+  setTranscriptionArchiveId: () => {},
   recordingAlreadyNotified: false,
   setRecordingAlreadyNotified: () => {},
   markArchiveStartRequestedBySelf: () => {},
@@ -201,6 +209,8 @@ const SessionProvider = ({
   const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
     initialValue?.archiveIdStartedBySelf ?? null
   );
+  const [recordingArchiveId, setRecordingArchiveId] = useState<string | null>(null);
+  const [transcriptionArchiveId, setTranscriptionArchiveId] = useState<string | null>(null);
   const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
     initialValue?.recordingAlreadyNotified ?? false
   );
@@ -574,6 +584,10 @@ const SessionProvider = ({
       activeSpeakerId,
       archiveId,
       archiveIdStartedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
       markArchiveStartRequestedBySelf,
       resetArchiveStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
@@ -612,6 +626,10 @@ const SessionProvider = ({
       activeSpeakerId,
       archiveId,
       archiveIdStartedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
       markArchiveStartRequestedBySelf,
       resetArchiveStartRequestedBySelf,
       setRecordingAlreadyNotified,
