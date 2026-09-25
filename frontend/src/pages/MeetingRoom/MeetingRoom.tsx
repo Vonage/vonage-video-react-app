@@ -17,6 +17,7 @@ import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator'
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 import { isMobile } from '@web/platform';
+import { MiniModeProvider } from '@Context/MiniMode';
 
 /**
  * MeetingRoom Component
@@ -66,92 +67,94 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
   const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
 
   return (
-    <Box
-      data-testid="meetingRoom"
-      {...boxProps}
-      className={classNames(
-        twMerge('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', className),
-        {
-          recording: isRecording,
-        }
-      )}
-    >
-      {isRecording && !isMobileDevice && (
-        <Box
-          data-testid="meetingRoomRecordingIndicatorContainer"
-          className="pointer-events-none absolute left-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
-        >
-          <RecordingIndicator />
-        </Box>
-      )}
+    <MiniModeProvider>
+      <Box
+        data-testid="meetingRoom"
+        {...boxProps}
+        className={classNames(
+          twMerge('h-[calc(100dvh-80px)] w-screen bg-vera-dark-background', className),
+          {
+            recording: isRecording,
+          }
+        )}
+      >
+        {isRecording && !isMobileDevice && (
+          <Box
+            data-testid="meetingRoomRecordingIndicatorContainer"
+            className="pointer-events-none absolute left-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
+          >
+            <RecordingIndicator />
+          </Box>
+        )}
 
-      {isMobileDevice && <SmallViewportHeader />}
+        {isMobileDevice && <SmallViewportHeader />}
 
-      <VideoTileCanvas
-        isSharingScreen={isSharingScreen}
-        isEntireScreen={isEntireScreen}
-        screensharingPublisher={screensharingPublisher}
-        screenshareVideoElement={screenshareVideoElement}
-        isRightPanelOpen={rightPanelActiveTab !== 'closed'}
-        fullSize={fullSize}
-      />
-
-      <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
-      <EmojisOrigin />
-      {isUserCaptionsEnabled && <CaptionsBox />}
-      {captionsErrorResponse && (
-        <CaptionsError
-          captionsErrorResponse={captionsErrorResponse}
-          setCaptionsErrorResponse={setCaptionsErrorResponse}
+        <VideoTileCanvas
+          isSharingScreen={isSharingScreen}
+          isEntireScreen={isEntireScreen}
+          screensharingPublisher={screensharingPublisher}
+          screenshareVideoElement={screenshareVideoElement}
+          isRightPanelOpen={rightPanelActiveTab !== 'closed'}
+          fullSize={fullSize}
         />
-      )}
-      {!recordingAlreadyNotified && (
-        <RecordingPopUpIndicator
-          shouldPromptRecordingConsent={shouldPromptRecordingConsent}
-          onNotified={handleRecordingNotified}
-        />
-      )}
-      <Toolbar
-        isSharingScreen={isSharingScreen}
-        toggleShareScreen={toggleShareScreen}
-        rightPanelActiveTab={rightPanelActiveTab}
-        toggleParticipantList={toggleParticipantList}
-        toggleBackgroundEffects={toggleBackgroundEffects}
-        toggleChat={toggleChat}
-        toggleReportIssue={toggleReportIssue}
-        participantCount={
-          subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
-        }
-        captionsState={captionsState}
-      />
-      {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
-      {recordingAlreadyNotified &&
-        !archiveIdStartedBySelf &&
-        isRecording &&
-        archiveId !== latestNotifiedArchiveId && (
-          <PopupAlert
-            title={t('recording.popup.title')}
-            message={t('recording.popup.subtitle')}
-            severity="info"
-            timeout={RECORDING_POPUP_TIMEOUT_MS}
+
+        <RightPanel activeTab={rightPanelActiveTab} handleClose={closeRightPanel} />
+        <EmojisOrigin />
+        {isUserCaptionsEnabled && <CaptionsBox />}
+        {captionsErrorResponse && (
+          <CaptionsError
+            captionsErrorResponse={captionsErrorResponse}
+            setCaptionsErrorResponse={setCaptionsErrorResponse}
           />
         )}
-      {reconnecting && (
-        <PopupAlert
-          title={t('connectionAlert.reconnecting.title')}
-          message={t('connectionAlert.reconnecting.message')}
-          severity="error"
+        {!recordingAlreadyNotified && (
+          <RecordingPopUpIndicator
+            shouldPromptRecordingConsent={shouldPromptRecordingConsent}
+            onNotified={handleRecordingNotified}
+          />
+        )}
+        <Toolbar
+          isSharingScreen={isSharingScreen}
+          toggleShareScreen={toggleShareScreen}
+          rightPanelActiveTab={rightPanelActiveTab}
+          toggleParticipantList={toggleParticipantList}
+          toggleBackgroundEffects={toggleBackgroundEffects}
+          toggleChat={toggleChat}
+          toggleReportIssue={toggleReportIssue}
+          participantCount={
+            subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
+          }
+          captionsState={captionsState}
         />
-      )}
-      {!reconnecting && quality !== 'good' && isVideoEnabled && (
-        <PopupAlert
-          closable
-          title={t('connectionAlert.quality.title')}
-          message={t('connectionAlert.quality.message')}
-          severity="warning"
-        />
-      )}
-    </Box>
+        {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
+        {recordingAlreadyNotified &&
+          !archiveIdStartedBySelf &&
+          isRecording &&
+          archiveId !== latestNotifiedArchiveId && (
+            <PopupAlert
+              title={t('recording.popup.title')}
+              message={t('recording.popup.subtitle')}
+              severity="info"
+              timeout={RECORDING_POPUP_TIMEOUT_MS}
+            />
+          )}
+        {reconnecting && (
+          <PopupAlert
+            title={t('connectionAlert.reconnecting.title')}
+            message={t('connectionAlert.reconnecting.message')}
+            severity="error"
+          />
+        )}
+        {!reconnecting && quality !== 'good' && isVideoEnabled && (
+          <PopupAlert
+            closable
+            title={t('connectionAlert.quality.title')}
+            message={t('connectionAlert.quality.message')}
+            severity="warning"
+          />
+        )}
+      </Box>
+    </MiniModeProvider>
   );
 }
 
