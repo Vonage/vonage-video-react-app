@@ -1,8 +1,11 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stream } from '@vonage/client-sdk-video';
 import AudioIndicator from '../AudioIndicator';
 import ParticipantListItemMenu from '../ParticipantListItemMenu';
 import { SubscriberWrapper } from '../../../types/session';
+import { raiseHand$ } from '@core/stores';
+import { env } from '../../../env';
 import ListItem from '@mui/material/ListItem';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
@@ -12,6 +15,7 @@ import Box from '@mui/material/Box';
 
 export type ParticipantListItemProps = {
   stream?: Stream;
+  connectionId?: string;
   initials: string;
   hasAudio?: boolean;
   audioLevel?: number;
@@ -30,6 +34,7 @@ export type ParticipantListItemProps = {
  *  @property {string} initials - participant initials
  *  @property {boolean} hasAudio - participant's audio enabled status
  *  @property {Stream} stream - participant's stream
+ *  @property {string} [connectionId] - participant's connection ID (falls back to the stream's connection)
  *  @property {string} name - participant name
  *  @property {string} dataTestId - ID for testing
  * @returns {ReactElement} ParticipantListItem
@@ -37,6 +42,7 @@ export type ParticipantListItemProps = {
 const ParticipantListItem = ({
   audioLevel,
   avatarColor,
+  connectionId,
   dataTestId,
   hasAudio,
   initials,
@@ -44,6 +50,11 @@ const ParticipantListItem = ({
   stream,
   subscriberWrapper,
 }: ParticipantListItemProps): ReactElement => {
+  const participantConnectionId = connectionId ?? stream?.connection?.connectionId ?? '';
+  const raisedHandPosition = raiseHand$.useRaisedHandPosition(participantConnectionId);
+  const isHandRaised = env.ALLOW_RAISE_HAND && raisedHandPosition > 0;
+  const { t } = useTranslation();
+
   return (
     <ListItem
       sx={{ height: '56px', paddingRight: '68px' }}
@@ -53,6 +64,18 @@ const ParticipantListItem = ({
           className="text-vera-secondary"
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
+          {isHandRaised && (
+            <Box
+              className="flex items-center gap-1 pr-1 text-vera-accent"
+              aria-label={t('raiseHand.handRaisedPosition', { position: raisedHandPosition })}
+              data-testid="participant-list-item-raised-hand"
+            >
+              <VividIcon name="hand-solid" customSize={-4} className="text-vera-accent" />
+              <Typography variant="body2" component="span" className="text-vera-accent">
+                ({raisedHandPosition})
+              </Typography>
+            </Box>
+          )}
           <AudioIndicator
             audioLevel={audioLevel}
             hasAudio={hasAudio}

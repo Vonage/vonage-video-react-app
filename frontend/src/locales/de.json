@@ -353,5 +353,11 @@
   "zoom.current": "Aktueller Zoom",
   "errorPage.title": "Etwas ist schiefgelaufen",
   "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.",
-  "notification.dismiss": "Benachrichtigung schließen"
+  "notification.dismiss": "Benachrichtigung schließen",
+  "raiseHand.toggle": "Hand heben",
+  "raiseHand.ariaLabel": "Hand heben oder senken",
+  "raiseHand.yourHandIsRaised": "Ihre Hand ist gehoben",
+  "raiseHand.handRaised": "Hand gehoben",
+  "raiseHand.handRaisedPosition": "Hand gehoben, Position {{position}} in der Warteschlange",
+  "raiseHand.lowerHand": "Hand senken"
 }

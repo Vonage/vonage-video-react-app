@@ -353,5 +353,11 @@
   "zoom.current": "Zoom actual",
   "errorPage.title": "Algo salió mal",
   "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste.",
-  "notification.dismiss": "Descartar notificación"
+  "notification.dismiss": "Descartar notificación",
+  "raiseHand.toggle": "Levantar la mano",
+  "raiseHand.ariaLabel": "Levantar o bajar la mano",
+  "raiseHand.yourHandIsRaised": "Tu mano está levantada",
+  "raiseHand.handRaised": "Mano levantada",
+  "raiseHand.handRaisedPosition": "Mano levantada, {{position}} en la cola",
+  "raiseHand.lowerHand": "Bajar la mano"
 }

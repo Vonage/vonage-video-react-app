@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box } from 'opentok-layout-js';
 import usePublisherContext from '../../hooks/usePublisherContext';
 import VoiceIndicatorIcon from '../MeetingRoom/VoiceIndicator';
@@ -7,6 +8,10 @@ import AvatarInitials from '../AvatarInitials';
 import NameDisplay from '../MeetingRoom/NameDisplay';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
 import VideoTile from '../MeetingRoom/VideoTile';
+import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
+import useSessionContext from '../../hooks/useSessionContext';
+import { raiseHand$ } from '@core/stores';
+import { env } from '../../env';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import useSelfViewMirroring from '../../hooks/useSelfViewMirroring';
 import toRemValue from '@common/helpers/toRemValue';
@@ -31,6 +36,10 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     publisher,
     isAudioEnabled,
   } = usePublisherContext();
+  const { t } = useTranslation();
+  const { vonageVideoClient } = useSessionContext();
+  const localConnectionId = vonageVideoClient?.connectionId ?? '';
+  const isHandRaised = raiseHand$.useIsHandRaised(localConnectionId) && env.ALLOW_RAISE_HAND;
   const audioLevel = useAudioLevels();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
@@ -75,6 +84,7 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
       ref={pubContainerRef}
       hasVideo={hasVideo}
     >
+      {isHandRaised && <RaiseHandBadge ariaLabel={t('raiseHand.yourHandIsRaised')} />}
       {!hasVideo && (
         <AvatarInitials
           initials={initials}
