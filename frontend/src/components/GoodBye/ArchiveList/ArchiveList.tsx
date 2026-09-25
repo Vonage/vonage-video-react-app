@@ -77,9 +77,14 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
               >
                 {isArchivePending
                   ? t('archiveList.loading')
-                  : t('archiveList.archive.index', {
-                      index: archives.length - index,
-                    })}
+                  : t(
+                      isTranscription(archive)
+                        ? 'archiveList.transcription.index'
+                        : 'archiveList.archive.index',
+                      {
+                        index: archives.length - index,
+                      }
+                    )}
               </p>
 
               <p className="text-vera-text-tertiary text-vera-caption">
@@ -165,6 +170,15 @@ function ArchiveStatus({ status, url }: SingleArchiveResponse) {
 
 function isPending(status: string) {
   return ['started', 'stopped', 'uploaded', 'paused'].includes(status);
+}
+
+/**
+ * A post-call transcription is started as an individual-stream archive with transcription
+ * enabled, whereas a plain recording is a composed archive. See the startArchive backend
+ * defaults where this distinction is applied.
+ */
+function isTranscription(archive: SingleArchiveResponse) {
+  return archive.outputMode === 'individual' && Boolean(archive.hasTranscription);
 }
 
 export default ArchiveList;
