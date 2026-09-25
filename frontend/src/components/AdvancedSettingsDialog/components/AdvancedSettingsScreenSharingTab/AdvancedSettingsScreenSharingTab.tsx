@@ -5,17 +5,13 @@ import { Field, SelectField } from '@ui';
 import { AdvancedSettingsCodecPriorityField } from '../AdvancedSettingsCodecPriorityField';
 import { AdvancedSettingsCustomVideoBitrateField } from '../AdvancedSettingsCustomVideoBitrateField';
 import type { AdvancedSettingsSelectOption } from '../../types/AdvancedSettingsSelectOption';
-import type {
-  AdvancedSettingsBitrateMode,
-  AdvancedSettingsContentHint,
-  AdvancedSettingsScreenShareSurface,
-} from '../../schemas';
+import type { AdvancedSettingsBitrateMode, AdvancedSettingsContentHint } from '../../schemas';
 import {
   ADVANCED_SETTINGS_BITRATE_MODE,
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
-  ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE,
+  AdvancedSettingsScreenShareSurface,
   frameRateSchema,
 } from '../../schemas';
 import { Resolution } from '@common/types';
@@ -131,9 +127,7 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
     },
   ];
   const screenShareSurfaceOptions: AdvancedSettingsSelectOption<AdvancedSettingsScreenShareSurface>[] =
-    (
-      Object.values(ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE) as AdvancedSettingsScreenShareSurface[]
-    ).map((surface) => ({
+    Object.values(AdvancedSettingsScreenShareSurface).map((surface) => ({
       value: surface,
       label: t(`advancedSettings.video.screenShareSurface.options.${surface}`),
     }));

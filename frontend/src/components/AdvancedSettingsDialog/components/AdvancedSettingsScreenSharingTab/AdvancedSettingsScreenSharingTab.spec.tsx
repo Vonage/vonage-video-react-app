@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE } from '../../schemas';
+import { AdvancedSettingsScreenShareSurface } from '../../schemas';
 import AdvancedSettingsScreenSharingTab from './AdvancedSettingsScreenSharingTab';
 
 describe('AdvancedSettingsScreenSharingTab', () => {
@@ -16,7 +16,7 @@ describe('AdvancedSettingsScreenSharingTab', () => {
 
     const surfaceSelect = screen.getByTestId('advanced-settings-video-screen-share-surface');
     expect(surfaceSelect).toBeInTheDocument();
-    expect(surfaceSelect).toHaveValue(ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.monitor);
+    expect(surfaceSelect).toHaveValue(AdvancedSettingsScreenShareSurface.monitor);
   });
 
   it('updates the store when screen share surface is changed', async () => {
@@ -27,11 +27,11 @@ describe('AdvancedSettingsScreenSharingTab', () => {
 
     const surfaceSelect = screen.getByTestId('advanced-settings-video-screen-share-surface');
 
-    await user.selectOptions(surfaceSelect, ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.browser);
+    await user.selectOptions(surfaceSelect, AdvancedSettingsScreenShareSurface.browser);
 
-    expect(surfaceSelect).toHaveValue(ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.browser);
+    expect(surfaceSelect).toHaveValue(AdvancedSettingsScreenShareSurface.browser);
     expect(advancedSettings$.getState().screenShareSurface).toBe(
-      ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.browser
+      AdvancedSettingsScreenShareSurface.browser
     );
   });
 

@@ -11,7 +11,6 @@ import type {
   AdvancedSettingsFrameRate,
   AdvancedSettingsManualCodecOrder,
   AdvancedSettingsScreenShareCodecMode,
-  AdvancedSettingsScreenShareSurface,
   AdvancedSettingsTab,
 } from '@components/AdvancedSettingsDialog/schemas';
 import {
@@ -20,8 +19,8 @@ import {
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
-  ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE,
   advancedSettingsSchema,
+  AdvancedSettingsScreenShareSurface,
 } from '@components/AdvancedSettingsDialog/schemas';
 import { env } from '../../env';
 import { Resolution } from '@common/types';
@@ -58,8 +57,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   screenShareResolution: null,
   screenShareBitrateMode: null,
   screenShareCustomVideoBitrate: 500_000,
-  screenShareSurface:
-    ADVANCED_SETTINGS_SCREEN_SHARE_SURFACE.monitor as AdvancedSettingsScreenShareSurface,
+  screenShareSurface: AdvancedSettingsScreenShareSurface.monitor,
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {

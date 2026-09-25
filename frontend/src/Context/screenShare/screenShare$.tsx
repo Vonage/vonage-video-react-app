@@ -15,6 +15,7 @@ import {
 import { attempt } from '@common/execution';
 import { isNil } from 'json-storage-formatter';
 import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
+import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -74,7 +75,7 @@ const screenShare$ = createContext(initialState, {
           const { screenShareSurface } = advancedSettings$.getState();
 
           const screenShareConstraints = (() => {
-            if (screenShareSurface === 'default') return undefined;
+            if (screenShareSurface === AdvancedSettingsScreenShareSurface.default) return undefined;
             return { video: { displaySurface: screenShareSurface } };
           })();
 
