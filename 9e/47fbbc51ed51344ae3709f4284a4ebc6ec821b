@@ -1,0 +1,25 @@
+.gitignore
+  s_97d945692fbce8::t_1c05653506b09e 77-79
+.kiro/scripts/codegraph.sh
+  s_97d945692fbce8::t_84ac08c6f738b7 1-20
+.kiro/settings/mcp.json
+  s_97d945692fbce8::t_cd9f1fccb4e62b 66-69
+.kiro/steering/codegraph.md
+  s_97d945692fbce8::t_373bd35b5fe598 15-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9e47fbbc51ed51344ae3709f4284a4ebc6ec821b",
+  "prompts": {},
+  "sessions": {
+    "s_97d945692fbce8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ce1d-67dd-7723-860a-24cbdc23c131",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_6029769cf9ac60 23,60
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_6029769cf9ac60 10,348,381
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_6029769cf9ac60 18,78
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.spec.tsx
+  h_6029769cf9ac60 6,19,30,32,34
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.tsx
+  h_6029769cf9ac60 8,14,130
+frontend/src/components/AdvancedSettingsDialog/schemas/screenShareSurface.schema.ts
+  h_6029769cf9ac60 3-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "894b29340afe3d71ddbdf2f1908c011ed59f2ce1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

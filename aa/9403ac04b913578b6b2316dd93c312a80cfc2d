@@ -1,0 +1,40 @@
+.cgcignore
+  s_5d339d35dcc85b::t_093236f54e9475 1-17
+.github/copilot-instructions.md
+  s_5d339d35dcc85b::t_093236f54e9475 4-9,1666
+.kiro/steering/codegraph.md
+  s_5d339d35dcc85b::t_093236f54e9475 1-14
+.vscode/mcp.json
+  s_5d339d35dcc85b::t_093236f54e9475 1-61
+.kiro/settings/mcp.json
+  s_5d339d35dcc85b::t_093236f54e9475 1-73
+scripts/codegraph.sh
+  s_5d339d35dcc85b::t_061aa3a05b88fb 5-6
+  s_5d339d35dcc85b::t_093236f54e9475 1-4,7-27
+.codex/config.toml
+  s_aeb382b097bd66::t_1e70e8b7a5bff0 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "aa9403ac04b913578b6b2316dd93c312a80cfc2d",
+  "prompts": {},
+  "sessions": {
+    "s_5d339d35dcc85b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c8fb-8819-73d2-8f80-16ed62c77891",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_aeb382b097bd66": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0afb0-4fab-7180-81fe-2daa9c264c9c",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
