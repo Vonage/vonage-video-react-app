@@ -27,7 +27,8 @@ describe('ArchivingButton', () => {
     vi.clearAllMocks();
     sessionContext = {
       subscriberWrappers: [],
-      archiveId: null,
+      recordingArchiveId: null,
+      setRecordingArchiveId: vi.fn(),
       markArchiveStartRequestedBySelf: vi.fn(),
       resetArchiveStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
@@ -50,7 +51,7 @@ describe('ArchivingButton', () => {
 
   it('triggers the start archiving when button is pressed', async () => {
     vi.useFakeTimers();
-    (mockVideoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
+    (mockVideoClient.startArchive as Mock).mockResolvedValue({ id: testArchiveId });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     act(() => screen.getByTestId('archiving-button').click());
@@ -71,7 +72,8 @@ describe('ArchivingButton', () => {
   it('shows stop recording dialog when archiving is active', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: 'test-archive-id',
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
       markArchiveStartRequestedBySelf: vi.fn(),
       resetArchiveStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
@@ -85,7 +87,8 @@ describe('ArchivingButton', () => {
     vi.useFakeTimers();
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: testArchiveId,
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
       markArchiveStartRequestedBySelf: vi.fn(),
       resetArchiveStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
@@ -104,8 +107,10 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
+    // We now pass the explicit archive id so the correct archive is stopped.
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
+      archiveId: testArchiveId,
     });
 
     vi.useRealTimers();
