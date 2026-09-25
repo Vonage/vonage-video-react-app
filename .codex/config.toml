@@ -1,0 +1,20 @@
+# Project-specific MCP servers. No application dependencies are added.
+# Figma and Context7 are managed through Codex plugins.
+[mcp_servers.nx]
+command = "/usr/local/bin/npx"
+args = ["-y", "nx-mcp@latest", "--no-minimal", "--disableTelemetry", "--tools", "nx_workspace", "nx_workspace_path", "nx_project_details", "nx_docs", "nx_generators", "nx_generator_schema", "nx_current_running_tasks_details", "nx_current_running_task_output"]
+cwd = "/Users/jquesadachaves/Documents/Github/vonage/vonage-video-react-app"
+startup_timeout_sec = 120
+tool_timeout_sec = 120
+
+[mcp_servers.chrome_devtools]
+command = "/usr/local/bin/npx"
+args = ["-y", "chrome-devtools-mcp@latest", "--isolated", "--no-usage-statistics", "--no-performance-crux"]
+startup_timeout_sec = 120
+tool_timeout_sec = 120
+
+[mcp_servers.playwright]
+command = "/usr/local/bin/npx"
+args = ["-y", "@playwright/mcp@latest", "--browser", "chrome", "--isolated"]
+startup_timeout_sec = 120
+tool_timeout_sec = 120

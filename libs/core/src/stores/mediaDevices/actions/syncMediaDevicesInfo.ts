@@ -12,13 +12,12 @@ import { isSinkIdSupported } from '@web/platform';
  */
 function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
   return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
-    const meta = store.getMetadata();
     const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     // cancel ongoing update
-    void meta.loadingMediaDevices?.cancel();
+    void store.metadata.loadingMediaDevices?.cancel();
 
-    meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
+    store.metadata.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
       async (resolve, reject, { isCanceled }) => {
         try {
           const mediaDeviceInfo = await getMediaDevicesInfo();
@@ -54,7 +53,7 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
       }
     );
 
-    return meta.loadingMediaDevices;
+    return store.metadata.loadingMediaDevices;
   };
 }
 

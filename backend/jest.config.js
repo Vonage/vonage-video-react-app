@@ -28,8 +28,8 @@ export default {
     '^@common/(.*)$': '<rootDir>/../libs/common/src/$1',
     '^@common-test$': '<rootDir>/../libs/common/test',
     '^@common-test/(.*)$': '<rootDir>/../libs/common/test/$1',
-    '^@node$': '<rootDir>/../libs/common/srcNode',
-    '^@node/(.*)$': '<rootDir>/../libs/common/srcNode/$1',
+    '^@node$': '<rootDir>/../libs/common/node',
+    '^@node/(.*)$': '<rootDir>/../libs/common/node/$1',
   },
   transform: {
     '^.+\\.tsx?$': [
