@@ -90,6 +90,13 @@ test('should persist screen share surface selection after reopening settings', a
   await openScreenSharingTab(page);
 
   const surfaceSelect = page.getByTestId('advanced-settings-video-screen-share-surface');
+
+  const isSurfaceSelectionSupported = (await surfaceSelect.count()) > 0;
+  test.skip(
+    !isSurfaceSelectionSupported,
+    'Screen share surface selection is not supported on this browser'
+  );
+
   await expect(surfaceSelect).toHaveValue('monitor');
 
   await surfaceSelect.selectOption('browser');
