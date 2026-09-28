@@ -1,0 +1,16 @@
+.codex/config.toml
+  h_6029769cf9ac60 4-5,10,16
+integration-tests/tests/advancedSettings.spec.ts
+  h_6029769cf9ac60 93-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8b0d272fc823d293b5b9bc228253c6fbb2b2cd6a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
