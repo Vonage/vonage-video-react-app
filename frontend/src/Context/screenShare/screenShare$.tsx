@@ -1,12 +1,21 @@
 import { initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { initialState } from './constants';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
+import {
+  applyBitrate,
+  handleApplyAdvancedSettingsError,
+} from '@Context/PublisherProvider/useApplyAdvancedSettings';
+import { attempt } from '@common/execution';
+import { isNil } from 'json-storage-formatter';
+import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
+import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -30,11 +39,11 @@ const screenShare$ = createContext(initialState, {
     },
 
     unpublishScreenshare: () => {
-      return ({ getState, getMetadata, setState }) => {
+      return ({ getState, metadata, setState }) => {
         const { publisher } = getState();
         if (!publisher) return;
 
-        const { session } = getMetadata();
+        const { session } = metadata;
 
         session.unpublish(publisher);
 
@@ -54,25 +63,67 @@ const screenShare$ = createContext(initialState, {
     },
 
     toggleShareScreen: () => {
-      return async ({ getState, getMetadata, setState, actions }) => {
-        const { user, session, t } = getMetadata();
+      return async ({ getState, metadata, setState, actions }) => {
+        const { user, session, t } = metadata;
         const { vonageVideoClient, publish } = session;
         const actions$ = actions as ScreenShare['actions'];
 
         if (!vonageVideoClient) return;
 
         if (!getState().isSharingScreen) {
+          // Pre-selecting the screen sharing surface the user chose in Advanced Settings
+          const { screenShareSurface } = advancedSettings$.getState();
+
+          const screenShareConstraints = (() => {
+            if (screenShareSurface === AdvancedSettingsScreenShareSurface.default) return undefined;
+            return { video: { displaySurface: screenShareSurface } };
+          })();
+
           // Initializing the publisher for screen sharing
+          const {
+            screenShareContentHint,
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            scalableScreenshareEnabled,
+            screenShareFrameRate,
+            screenShareResolution,
+            screenShareBitrateMode,
+            screenShareCustomVideoBitrate,
+            codecMode,
+            codecPriority,
+          } = advancedSettings$.getState();
+
+          const preferredVideoCodecs = resolveScreenSharePreferredVideoCodecs({
+            screenShareCodecMode,
+            screenShareCodecPriority,
+            codecMode,
+            codecPriority,
+          });
+
+          const partnerId = session.sessionDetails?.applicationId ?? null;
+
           const publisher = initPublisher(
             undefined,
             {
               videoSource: 'screen',
               insertDefaultUI: false,
-              videoContentHint: 'detail',
+              videoContentHint: screenShareContentHint,
+              preferredVideoCodecs,
+              scalableScreenshare: scalableScreenshareEnabled,
+              ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
+              ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
               name: t('participants.screen', { participantName: user.defaultSettings.name }),
+              constraints: screenShareConstraints,
             },
             (err) => {
               if (!err) return;
+
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to initialize screen share publisher',
+                eventSource: 'screenShare$.toggleShareScreen.initPublisher',
+                partnerId,
+              })(err);
+
               actions$.onScreenShareStopped();
             }
           );
@@ -133,6 +184,17 @@ const screenShare$ = createContext(initialState, {
 
           // Publishing the screen sharing stream
           await publish(publisher);
+
+          if (screenShareBitrateMode !== null) {
+            await attempt(
+              () => applyBitrate(publisher, screenShareBitrateMode, screenShareCustomVideoBitrate),
+              handleApplyAdvancedSettingsError({
+                message: 'Failed to apply screen share bitrate',
+                eventSource: 'screenShare$.toggleShareScreen.applyBitrate',
+                partnerId,
+              })
+            );
+          }
 
           vonageVideoClient?.on('screenshareStreamCreated', actions$.handleStreamCreated);
 

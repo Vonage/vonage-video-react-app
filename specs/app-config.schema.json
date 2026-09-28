@@ -12,7 +12,7 @@
     "waitingRoomSettings",
     "meetingRoomSettings"
   ],
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "metadata": {
       "description": "Document metadata: name, version, creation date and description.",

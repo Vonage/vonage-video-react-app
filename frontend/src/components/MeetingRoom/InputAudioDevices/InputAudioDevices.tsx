@@ -54,7 +54,6 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
     env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
-          className="text-vera-tertiary"
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -68,7 +67,9 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
             customSize={-6}
             style={{ color: 'var(--vera-text-secondary) !important' }}
           />
-          <p className="text-vera-body-extended ml-4">{t('devices.audio.microphone.full')}</p>
+          <p className="text-vera-body-extended text-vera-text-tertiary ml-4">
+            {t('devices.audio.microphone.full')}
+          </p>
         </Box>
         <MenuList>
           {audioInputDevices.map((device) => {

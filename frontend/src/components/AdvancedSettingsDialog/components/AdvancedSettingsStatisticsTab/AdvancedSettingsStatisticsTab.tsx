@@ -24,7 +24,7 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-8">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.statistics')}
       </h2>
       <Field>
@@ -46,7 +46,7 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
         {publisher && <PublisherStatistics publisher={publisher} />}
 
         {subscriberWrappers.length > 0 && (
-          <h4 className="font-vera-plain text-vera-heading-4 text-vera-secondary">
+          <h4 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary">
             {t('advancedSettings.statistics.groups.subscribers')}
           </h4>
         )}

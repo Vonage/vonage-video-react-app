@@ -6,6 +6,9 @@ import EventEmitter from 'events';
 import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
 import screenShare$ from './screenShare$';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
+import { Resolution } from '@common/types';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -19,6 +22,7 @@ describe('screenShare$', () => {
   const mockUnpublish = vi.fn();
 
   beforeEach(() => {
+    advancedSettings$.reset();
     handlers = {};
     mockVonageVideoClient = Object.assign(new EventEmitter(), {
       on: vi.fn(),
@@ -64,7 +68,10 @@ describe('screenShare$', () => {
         videoSource: 'screen',
         insertDefaultUI: false,
         videoContentHint: 'detail',
+        preferredVideoCodecs: 'automatic',
+        scalableScreenshare: false,
         name: "TestUser's screen",
+        constraints: { video: { displaySurface: 'monitor' } },
       },
       expect.any(Function)
     );
@@ -99,6 +106,49 @@ describe('screenShare$', () => {
 
     const [state] = result.current;
     expect(state.isSharingScreen).toBe(false);
+  });
+
+  it('applies stored video constraints when screen sharing starts', async () => {
+    mockPublisher = {
+      ...mockPublisher,
+      getVideoSource: vi.fn(() => ({ deviceId: null, type: null, track: {} as MediaStreamTrack })),
+      setVideoBitratePreset: vi.fn(),
+    };
+    vi.mocked(initPublisher).mockReturnValue(mockPublisher as Publisher);
+    advancedSettings$.actions.setScreenShareFrameRate(7);
+    advancedSettings$.actions.setScreenShareResolution(Resolution.HD_LANDSCAPE);
+    advancedSettings$.actions.setScreenShareBitrateMode('bw_saver');
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
+    });
+
+    expect(initPublisher).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({
+        frameRate: 7,
+        resolution: '1280x720',
+      }),
+      expect.any(Function)
+    );
+    expect(mockPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
   });
 
   it('sets isEntireScreen to true when displaySurface is monitor', async () => {
@@ -292,6 +342,72 @@ describe('screenShare$', () => {
     });
 
     expect(initPublisher).not.toHaveBeenCalled();
+  });
+
+  it('passes undefined constraints when screenShareSurface is default', async () => {
+    advancedSettings$.actions.setScreenShareSurface(AdvancedSettingsScreenShareSurface.default);
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
+    });
+
+    expect(initPublisher).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({
+        constraints: undefined,
+      }),
+      expect.any(Function)
+    );
+  });
+
+  it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {
+    advancedSettings$.actions.setScreenShareSurface(AdvancedSettingsScreenShareSurface.browser);
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      const [, actions] = result.current;
+      await actions.toggleShareScreen();
+    });
+
+    expect(initPublisher).toHaveBeenCalledWith(
+      undefined,
+      expect.objectContaining({
+        constraints: { video: { displaySurface: 'browser' } },
+      }),
+      expect.any(Function)
+    );
   });
 });
 

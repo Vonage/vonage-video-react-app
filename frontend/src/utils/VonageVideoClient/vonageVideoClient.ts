@@ -78,7 +78,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.applicationId = applicationId;
     this.sessionId = sessionId;
 
-    this.clientSession = initSession(applicationId, sessionId);
+    this.clientSession = initSession(applicationId, sessionId, {
+      sessionMigration: true,
+    });
 
     this.attachEventListeners();
   }

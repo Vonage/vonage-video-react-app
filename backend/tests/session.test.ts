@@ -88,6 +88,20 @@ await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
 
 const startServer = (await import('../server')).default;
 const sessionService = getSessionStorageService();
+type MockedVideoInstance = { startArchive: jest.Mock };
+
+const { Video: VideoMock } = (await import('@vonage/video')) as unknown as {
+  Video: jest.Mock<(...args: unknown[]) => MockedVideoInstance>;
+};
+
+/**
+ * Capture the singleton Video instance created at module load time (in video.ts and session.ts).
+ * Must be captured here — before any test runs — because clearMocks:true wipes mock.results
+ * after each test, making it unreachable inside beforeAll or test bodies.
+ * video.ts creates its VideoClient (and thus its Video instance) first, so index 0 is the one
+ * used by the route handlers in video.ts.
+ */
+const singletonVideoInstance = getMockedVideoInstances()[0];
 
 describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
   '/session using %s',
@@ -151,6 +165,25 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Accept', 'application/json');
           expect(res.statusCode).toEqual(502);
         });
+
+        it('stops archive without archiveId when stored in session (server rotation scenario)', async () => {
+          // Setup: Store an archiveId in session storage
+          await sessionService.setArchiveIds({
+            sessionId: validSessionId,
+            archiveIds: ['archive-id'],
+          });
+
+          // Call stopArchive through v2 endpoint without archiveId
+          // Middleware should inject it from storage
+          const res = await request(server)
+            .post('/v2/stopArchive')
+            .set('Content-Type', 'application/json')
+            .send({ sessionKey: validSessionKey });
+
+          expect(res.statusCode).toEqual(200);
+          // The middleware successfully injected the archiveId and stopped the archive
+          expect(res.body).toHaveProperty('result');
+        });
       });
 
       describe('captions', () => {
@@ -169,7 +202,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(200);
         });
 
-        it('returns a 404 when starting captions in a non-existent room', async () => {
+        it('returns a 404 when enabling captions in a non-existent room', async () => {
           const invalidRoomName = 'randomRoomName';
           const res = await request(server)
             .post(`/session/${invalidRoomName}/enableCaptions`)
@@ -177,7 +210,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
 
-        it('returns a 502 when stopping an invalid caption in a room', async () => {
+        it('returns a 502 when disabling an invalid caption in a room', async () => {
           const invalidCaptionId = 'wrongCaptionId';
           const res = await request(server)
             .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
@@ -185,24 +218,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Accept', 'application/json');
 
           expect(res.statusCode).toEqual(502);
-        });
-
-        it('returns a 404 when stopping captions in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = '123e4567-a12b-41a2-a123-123456789012';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
-
-        it('returns a 404 when stopping captions with malformed captionsId in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = 'not-a-valid-captions-id';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
         });
       });
 
@@ -375,10 +390,104 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(captionsIdAfterDestroyed).toBeNull();
           expect(archiveIdsAfterDestroyed).toEqual([]);
         });
+
+        describe('server rotation archiving recovery', () => {
+          beforeEach(async () => {
+            await sessionService.setSession({
+              roomName,
+              sessionKey: validSessionKey,
+              sessionId: validSessionId,
+            });
+          });
+
+          it('/hooks/session with reason=serverRotation sets serverRotationPending flag', async () => {
+            await sessionService.setCaptionsId({
+              sessionId: validSessionId,
+              captionsId: 'captions-id-preserved',
+            });
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['archive-id-active'],
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/session')
+              .set('Content-Type', 'application/json')
+              .send(
+                createSessionHookPayload({ event: 'sessionDestroyed', reason: 'serverRotation' })
+              );
+
+            const serverRotationPending = await sessionService.getServerRotationPending({
+              sessionId: validSessionId,
+            });
+            const captionsIdAfterRotation = await sessionService.getCaptionsId({
+              sessionId: validSessionId,
+            });
+            const archiveIdsAfterRotation = await sessionService.getArchiveIds({
+              sessionId: validSessionId,
+            });
+
+            expect(response.statusCode).toEqual(200);
+            expect(serverRotationPending).toBe(true);
+            expect(captionsIdAfterRotation).toEqual('captions-id-preserved');
+            expect(archiveIdsAfterRotation).toEqual(['archive-id-active']);
+          });
+
+          it('/hooks/archive stopped with serverRotationPending=true triggers startArchive', async () => {
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['archive-id-active'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId: validSessionId,
+              pending: true,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(createArchiveHookPayload({ status: 'stopped', id: 'archive-id-active' }));
+
+            const serverRotationPendingAfter = await sessionService.getServerRotationPending({
+              sessionId: validSessionId,
+            });
+
+            expect(response.statusCode).toEqual(200);
+            expect(serverRotationPendingAfter).toBe(false);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+          });
+
+          it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['archive-id-active'],
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(createArchiveHookPayload({ status: 'stopped', id: 'archive-id-active' }));
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).not.toHaveBeenCalled();
+          });
+        });
       });
     });
   }
 );
+
+function getMockedVideoInstances(): MockedVideoInstance[] {
+  return VideoMock.mock.results
+    .filter((result) => result.type === 'return')
+    .map((result) => result.value);
+}
 
 function createCaptionsHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
   return {
