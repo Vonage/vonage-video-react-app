@@ -69,6 +69,19 @@ describe('usePublisher', () => {
   });
 
   describe('initializeLocalPublisher', () => {
+    it('exposes the publisher immediately so quality listeners can attach', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      expect(result.current.publisher).toBeNull();
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      expect(result.current.publisher).toBe(mockPublisher);
+    });
+
     it('should initialize publisher and update state when access is allowed', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
