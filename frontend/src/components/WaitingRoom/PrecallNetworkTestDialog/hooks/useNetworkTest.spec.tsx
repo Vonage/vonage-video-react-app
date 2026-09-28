@@ -144,6 +144,9 @@ describe('useNetworkTest', () => {
       message: 'Network test failed',
       name: 'NetworkError',
     });
+    // On the error path the test must also be stopped — otherwise its OT session and
+    // publisher (camera/mic) keep running in the background.
+    expect(mockNetworkTest.stop).toHaveBeenCalled();
   });
 
   /**
