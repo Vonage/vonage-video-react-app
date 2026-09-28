@@ -7,6 +7,7 @@ import type VonageVideoClient from '../../utils/VonageVideoClient';
 import { type UserContextType } from '../../Context/user';
 import screenShare$ from './screenShare$';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 import { Resolution } from '@common/types';
 
 vi.mock('@vonage/client-sdk-video', () => ({
@@ -344,7 +345,7 @@ describe('screenShare$', () => {
   });
 
   it('passes undefined constraints when screenShareSurface is default', async () => {
-    advancedSettings$.actions.setScreenShareSurface('default');
+    advancedSettings$.actions.setScreenShareSurface(AdvancedSettingsScreenShareSurface.default);
 
     const { result } = render({
       userContext: {
@@ -377,7 +378,7 @@ describe('screenShare$', () => {
   });
 
   it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {
-    advancedSettings$.actions.setScreenShareSurface('browser');
+    advancedSettings$.actions.setScreenShareSurface(AdvancedSettingsScreenShareSurface.browser);
 
     const { result } = render({
       userContext: {

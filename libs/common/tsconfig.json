@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
-  "include": ["eslint.config.mjs", "./test/**/*", "./testBrowser/**/*", "./testNode/**/*"],
+  "include": ["eslint.config.mjs", "./test/**/*", "web-test/**/*", "node-test/**/*"],
   "references": [{ "path": "./tsconfig.lib.json" }, { "path": "./tsconfig.spec.json" }],
   "compilerOptions": {
     "rootDir": "..",
@@ -10,16 +10,16 @@
     "paths": {
       "@common": ["./src"],
       "@common/*": ["./src/*"],
-      "@web": ["./srcBrowser"],
-      "@web/*": ["./srcBrowser/*"],
-      "@node": ["./srcNode"],
-      "@node/*": ["./srcNode/*"],
+      "@web": ["./web"],
+      "@web/*": ["./web/*"],
+      "@node": ["./node"],
+      "@node/*": ["./node/*"],
       "@common-test": ["./test"],
       "@common-test/*": ["./test/*"],
-      "@web-test": ["./testBrowser"],
-      "@web-test/*": ["./testBrowser/*"],
-      "@node-test": ["./testNode"],
-      "@node-test/*": ["./testNode/*"]
+      "@web-test": ["web-test"],
+      "@web-test/*": ["web-test/*"],
+      "@node-test": ["node-test"],
+      "@node-test/*": ["node-test/*"]
     },
     "composite": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"]

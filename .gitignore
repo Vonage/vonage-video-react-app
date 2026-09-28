@@ -65,12 +65,15 @@ vcr-dev.yml
 /frontend/distRoom
 room.zip
 
-# Kiro
-.kiro/specs/
-.kiro/steering/
-.kiro/settings/
-.kiro/settings.json
-.kiro/skills/
 libs/common/tarball/
 graph.json
-.codex/
+
+# Keep Codex personal configuration local, but share repository skills.
+.codex/settings.json
+
+# Kiro
+.kiro/specs/
+.kiro/settings.json
+
+# Local code graph database
+/.codegraphcontext/
