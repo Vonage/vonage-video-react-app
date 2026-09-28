@@ -7,35 +7,56 @@ vi.mock('../constants', () => ({
 }));
 
 const fakeToolbarButtons = [
-  'Button1',
-  'Button2',
-  'Button3',
-  'Button4',
-  'Button5',
+  { key: 'Button1' },
+  { key: 'Button2' },
+  { key: 'Button3' },
+  { key: 'Button4' },
+  { key: 'Button5' },
 ] as unknown as Array<ReactElement | false>;
+
+const keysOf = (buttons: Array<ReactElement | false>) =>
+  buttons.map((button) => (button as ReactElement).key);
 
 describe('getOverflowMenuButtons', () => {
   it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {
-    const expectedResults: Array<string | null> = ['Button4', 'Button5'];
-
-    expect(getOverflowMenuButtons(fakeToolbarButtons, 3)).toEqual(expectedResults);
+    expect(keysOf(getOverflowMenuButtons(fakeToolbarButtons, 3))).toEqual(['Button4', 'Button5']);
   });
 
   it('returns an array with no buttons when all are displayed in the toolbar', () => {
-    const expectedResults: Array<string | null> = [];
-
-    expect(getOverflowMenuButtons(fakeToolbarButtons, 5)).toEqual(expectedResults);
+    expect(keysOf(getOverflowMenuButtons(fakeToolbarButtons, 5))).toEqual([]);
   });
 
   it('returns all buttons for the overflow menu if none are displayed in the toolbar', () => {
-    const expectedResults: Array<string | null> = [
+    expect(keysOf(getOverflowMenuButtons(fakeToolbarButtons, 0))).toEqual([
       'Button1',
       'Button2',
       'Button3',
       'Button4',
       'Button5',
-    ];
+    ]);
+  });
 
-    expect(getOverflowMenuButtons(fakeToolbarButtons, 0)).toEqual(expectedResults);
+  it('splits by button key so a swapped overflow order cannot drop or duplicate a control', () => {
+    const toolbarButtons = [
+      { key: 'ScreenSharingButton' },
+      { key: 'LayoutButton' },
+      { key: 'EmojiGridButton' },
+      { key: 'CaptionsButton' },
+      { key: 'ArchivingButton' },
+    ] as unknown as Array<ReactElement | false>;
+    const overflowButtons = [
+      { key: 'ScreenSharingButton' },
+      { key: 'LayoutButton' },
+      { key: 'CaptionsButton' },
+      { key: 'EmojiGridButton' },
+      { key: 'ArchivingButton' },
+    ] as unknown as Array<ReactElement | false>;
+
+    const overflow = getOverflowMenuButtons(overflowButtons, 3, toolbarButtons);
+
+    expect(overflow.map((button) => (button as ReactElement).key)).toEqual([
+      'CaptionsButton',
+      'ArchivingButton',
+    ]);
   });
 });
