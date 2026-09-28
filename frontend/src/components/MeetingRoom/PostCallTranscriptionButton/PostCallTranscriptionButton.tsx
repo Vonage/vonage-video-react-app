@@ -116,7 +116,7 @@ const PostCallTranscriptionButton = ({
             className={classNames({ transcribing: isTranscribing })}
             icon={
               <VividIcon
-                name={isTranscribing ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
+                name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
                 customSize={-5}
                 style={{
                   color: 'var(--vera-on-secondary-light)',
