@@ -1,0 +1,14 @@
+.codex/config.toml
+  h_6029769cf9ac60 4-5,10,16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7668d525ee084c7a91c8757f106f592429abbce6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
