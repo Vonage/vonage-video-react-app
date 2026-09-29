@@ -3,10 +3,11 @@ import { render as renderBase, screen, fireEvent, cleanup } from '@testing-libra
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ChatInput from './ChatInput';
-import { ChatMessageType } from '../../../types/chat';
+import type { ChatMessageType, ChatMessageId } from '../../../types/chat';
 
 const testMessages: ChatMessageType[] = [
   {
+    id: 'message-1' as ChatMessageId,
     participantName: 'User One',
     timestamp: 1726587657728,
     message: 'Hello all',

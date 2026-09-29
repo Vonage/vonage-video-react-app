@@ -93,10 +93,11 @@ class VideoClient implements IVideoClient {
       }
 
       const defaultsSrc = this._handlersDefaults?.[videoAction as keyof HandlersDefaults];
-      const defaults = (isFunction(defaultsSrc) ? defaultsSrc(payload) : defaultsSrc) as Record<
-        string,
-        unknown
-      >;
+      const defaults = (
+        isFunction(defaultsSrc)
+          ? (defaultsSrc as (input: Any) => Record<string, unknown>)(payload)
+          : defaultsSrc
+      ) as Record<string, unknown>;
 
       return callback({
         ...defaults,

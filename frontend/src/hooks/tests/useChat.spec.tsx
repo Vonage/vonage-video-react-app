@@ -24,6 +24,30 @@ describe('useChat', () => {
     });
   });
 
+  it('onChatMessage should use the unknown user label when the participant name is missing', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('{"text":"Hello!"}');
+    });
+
+    expect(result.current.messages[0]).toMatchObject({
+      participantName: 'unknown user',
+      message: 'Hello!',
+    });
+  });
+
+  it('onChatMessage should ignore empty or invalid data', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('');
+      result.current.onChatMessage('invalid JSON');
+    });
+
+    expect(result.current.messages).toHaveLength(0);
+  });
+
   it('sendChatMessage should send message via signal', () => {
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
       userContext: {
@@ -41,6 +65,14 @@ describe('useChat', () => {
       type: 'chat',
       data: '{"participantName":"Local User","text":"Hello there!"}',
     });
+  });
+
+  it('sendChatMessage should do nothing when signal is unavailable', () => {
+    const { result } = renderHook(() => useChat({ signal: undefined }));
+
+    result.current.sendChatMessage('Hello there!');
+
+    expect(mockSignal).not.toHaveBeenCalled();
   });
 });
 
