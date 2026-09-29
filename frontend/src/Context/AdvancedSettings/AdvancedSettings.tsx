@@ -20,6 +20,7 @@ import {
   ADVANCED_SETTINGS_CONTENT_HINT,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
   advancedSettingsSchema,
+  AdvancedSettingsScreenShareSurface,
 } from '@components/AdvancedSettingsDialog/schemas';
 import { env } from '../../env';
 import { Resolution } from '@common/types';
@@ -56,6 +57,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   screenShareResolution: null,
   screenShareBitrateMode: null,
   screenShareCustomVideoBitrate: 500_000,
+  screenShareSurface: AdvancedSettingsScreenShareSurface.monitor,
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -229,6 +231,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setScreenShareCustomVideoBitrate(value: AdvancedSettingsCustomVideoBitrate) {
       return () => {
         partialUpdate({ screenShareCustomVideoBitrate: value });
+      };
+    },
+    setScreenShareSurface(value: AdvancedSettingsScreenShareSurface) {
+      return () => {
+        partialUpdate({ screenShareSurface: value });
       };
     },
   },
