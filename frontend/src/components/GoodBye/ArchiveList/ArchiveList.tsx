@@ -79,9 +79,13 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
 
       {archives.map((archive, index) => {
         const isArchivePending = isPending(getDownloadStatus(archive));
+        const isTranscriptionArchive = isTranscription(archive);
         return (
           <ListElement key={archive.id} data-testid={`archive-list-item-${archive.id}`}>
-            <VividIcon name="video-active-line" customSize={-4} />
+            <VividIcon
+              name={isTranscriptionArchive ? 'text-line' : 'video-active-line'}
+              customSize={-4}
+            />
 
             <div className="flex flex-col">
               <p
@@ -94,9 +98,13 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
                 )}
               >
                 {isArchivePending
-                  ? t('archiveList.loading')
+                  ? t(
+                      isTranscriptionArchive
+                        ? 'archiveList.loading.transcription'
+                        : 'archiveList.loading.recording'
+                    )
                   : t(
-                      isTranscription(archive)
+                      isTranscriptionArchive
                         ? 'archiveList.transcription.index'
                         : 'archiveList.archive.index',
                       {
@@ -108,11 +116,11 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
               <p className="text-vera-text-tertiary text-vera-caption">
                 {isArchivePending && t('archiveList.loading.subtitle')}
 
-                {archive.status === 'available' && (
+                {!isArchivePending && (
                   <>
-                    {Boolean(archive.duration) && formatDuration(archive.duration)}
-                    {Boolean(archive.size) && ` • ${formatFileSize(archive.size)}`}
-                    {` • ${t('archiveList.archive.createdAt', {
+                    {Boolean(archive.duration) && `${formatDuration(archive.duration)} `}
+                    {Boolean(archive.size) && `• ${formatFileSize(archive.size)} `}
+                    {`• ${t('archiveList.archive.createdAt', {
                       createdAt: archive.createdAtFormatted,
                     })}`}
                   </>

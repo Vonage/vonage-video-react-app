@@ -22,7 +22,7 @@ describe('ArchiveList', () => {
     });
 
     expect(
-      await screen.findByText('There was an error loading recordings for this meeting')
+      await screen.findByText('There was an error loading content for this meeting')
     ).toBeVisible();
   });
 
