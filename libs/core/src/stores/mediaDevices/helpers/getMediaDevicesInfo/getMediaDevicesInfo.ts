@@ -11,8 +11,7 @@ import { isMobile } from '@web/platform';
  */
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
   getMediaDevicesInfo() {
-    return ({ getMetadata }): Promise<MediaDeviceInfoJSON[]> => {
-      const metadata = getMetadata();
+    return ({ metadata }): Promise<MediaDeviceInfoJSON[]> => {
       const shouldSkipStoreReady = metadata.isFirstMediaDevicesInfoQuery;
 
       metadata.isFirstMediaDevicesInfoQuery = false;

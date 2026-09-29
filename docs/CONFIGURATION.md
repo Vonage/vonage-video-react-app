@@ -81,7 +81,7 @@ Disabled by default. When `AUTH_ENABLED` is unset or not `true`, authentication 
 | `AUTH_ENABLED` | opt-in | Set to `true` to enable token validation. |
 | `OIDC_CLIENT_ID` | if enabled — DEV defaults in `env.sh` | OIDC application client ID — one shared app registration used both for Bearer-token introspection (Mobile) and the `/auth/signin` → `/api/auth/callback/okta` login flow (Web). |
 | `OIDC_ISSUER_URL` | if enabled — DEV defaults in `env.sh` | Provider org root URL. Must be a valid URL. Introspection uses `${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}`. |
-| `OIDC_WEB_REDIRECT_URI` | if enabled — DEV defaults in `env.sh` | Must exactly match the redirect URI registered with the provider for the Web app (`http://localhost:5173/api/auth/callback/okta` for DEV, already defaulted; `https://meet.vonagenetworks.net/api/auth/callback/okta` for PROD, set via `backend/.env`). |
+| `OIDC_WEB_REDIRECT_URI` | if enabled — DEV defaults in `env.sh` | Must exactly match the redirect URI registered with the provider for the Web app (`http://localhost:5173/api/auth/callback/okta` for DEV, already defaulted; your deployment's own origin + `/api/auth/callback/okta` for PROD, set via `backend/.env`). |
 | `AUTH_HEADER_NAME` | set in `env.sh` (default `authorization`) | Which request header carries the token. |
 | `AUTH_SCHEME` | set in `env.sh` (default `Bearer`) | Scheme prefix on that header, matched case-insensitively. |
 | `OIDC_INTROSPECT_PATH` | set in `env.sh` (default `/oauth2/v1/introspect`) | Path appended to `OIDC_ISSUER_URL` for introspection calls. |
@@ -243,15 +243,15 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 
 ## UI Customization
 
-The app theme is configured through the root `designTokens.json` file.
+The app theme is configured through the root `theme.json` file.
 
 ### Customize your theme
 
-1. Edit `designTokens.json` at the project root with your palette/theme values.
+1. Edit `theme.json` at the project root with your palette/theme values.
 2. Sync theme artifacts:
 
 ```bash
 yarn sync:theme-tokens
 ```
 
-This command always regenerates `designTokens.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `designTokens.json` when present, creates root `designTokens.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
+This command always regenerates `theme.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `theme.json` when present, creates root `theme.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.

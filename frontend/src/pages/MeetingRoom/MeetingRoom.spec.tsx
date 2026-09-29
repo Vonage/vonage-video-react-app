@@ -9,7 +9,6 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector, { UseSpeakingDetectorOptions } from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
-import useScreenShare, { UseScreenShareType } from '@hooks/useScreenShare';
 import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import useToolbarButtons, {
   UseToolbarButtons,
@@ -69,7 +68,6 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@hooks/useLayoutManager');
 vi.mock('@hooks/useActiveSpeaker');
-vi.mock('@hooks/useScreenShare.tsx');
 vi.mock('@hooks/useToolbarButtons');
 
 vi.mock('@web/platform', async (importOriginal) => {
@@ -111,7 +109,6 @@ vi.mock('opentok-layout-js', async () => {
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[UseSpeakingDetectorOptions], boolean>;
 const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
-const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
 const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
   UseToolbarButtons
@@ -187,13 +184,6 @@ describe('MeetingRoom', () => {
       }) as Box[];
     });
     mockUseActiveSpeaker.mockReturnValue(undefined);
-    mockUseScreenShare.mockReturnValue({
-      toggleShareScreen: () => Promise.resolve(),
-      isSharingScreen: false,
-      isEntireScreen: false,
-      screenshareVideoElement: undefined,
-      screensharingPublisher: null,
-    });
     (useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
       ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
@@ -562,7 +552,13 @@ function render(
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.runtime],
+    [
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+      providers.screenShare,
+    ],
     {
       userContext: {
         ...userContext,
@@ -576,6 +572,7 @@ function render(
       sessionContext,
       publisherContext,
       runtimeContext: { videoClient: mockVideoClient },
+      screenShareContext: undefined,
     }
   );
 

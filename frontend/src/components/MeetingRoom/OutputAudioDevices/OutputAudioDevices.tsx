@@ -65,7 +65,6 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
       <>
         <DropdownSeparator />
         <Box
-          className="text-vera-tertiary"
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -79,7 +78,10 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
             customSize={-5}
             style={{ color: 'var(--vera-text-secondary) !important' }}
           />
-          <p className="text-vera-body-extended ml-4" data-testid="output-device-title">
+          <p
+            className="text-vera-body-extended text-vera-text-tertiary ml-4"
+            data-testid="output-device-title"
+          >
             {t('devices.audio.speakers.full')}
           </p>
         </Box>

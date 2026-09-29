@@ -67,7 +67,7 @@ const AdvancedSettingsStatisticsGroup = ({
       className="rounded-vera-medium border border-vera-border bg-vera-background flex flex-col p-3"
     >
       <Collapsible.Summary className="justify-between">
-        <span className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
+        <span className="font-vera-plain text-vera-body-extended-semibold text-vera-text-secondary">
           {title}
         </span>
 
@@ -100,7 +100,7 @@ const AdvancedSettingsStatisticsGroup = ({
 
             {networkDisabledMessage && (
               <div className="flex flex-col gap-2">
-                <span className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+                <span className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
                   {t('advancedSettings.statistics.sections.network')}
                 </span>
                 <p className="rounded-vera-medium border border-vera-warning bg-vera-warning/10 px-3 py-2 font-vera-plain text-vera-caption text-vera-warning">
@@ -112,7 +112,7 @@ const AdvancedSettingsStatisticsGroup = ({
         )}
 
         {!hasStatistics && (
-          <p className="font-vera-plain text-vera-body-base text-vera-tertiary">
+          <p className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
             {t('advancedSettings.statistics.empty')}
           </p>
         )}
