@@ -1,0 +1,40 @@
+.husky/pre-push
+  h_6029769cf9ac60 14
+libs/common/README.md
+  h_6029769cf9ac60 1,13,18,29-31,37-52,59-62,71-73,78-81,84-85,88-90
+libs/common/docs/node.md
+  h_6029769cf9ac60 3,12,23,47,69,89,110,137,145-146
+libs/common/docs/node.test.md
+  h_6029769cf9ac60 3,16,51,71
+libs/common/docs/universal.md
+  h_6029769cf9ac60 3,10,16-17,35,55,78,99,118,138,163,183,199,212,235,261,284,299,307,350,356,377,392,418,433,450,465,487,529,538
+libs/common/docs/universal.test.md
+  h_6029769cf9ac60 3,12,20,32,47,55,58-59,71,87
+libs/common/docs/web.md
+  h_6029769cf9ac60 3,12,22,37,54,76,110,124,139,154,166,179,197,212,228,239,255-256,281,296
+libs/common/docs/web.test.md
+  h_6029769cf9ac60 3,20,37,57,71,82,95,128
+libs/common/package.json
+  h_6029769cf9ac60 2
+libs/common/scripts/checkPackageHash.ts
+  h_6029769cf9ac60 23,37
+libs/common/scripts/compareRegistryHash.ts
+  h_6029769cf9ac60 17
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 2,13-14,144,156,266
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 65-67
+scripts/build.ts
+  h_6029769cf9ac60 85,98,106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "35b7a8dbbef6f2c2ed465b17af23e892ca1aee10",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
