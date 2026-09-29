@@ -3,8 +3,10 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
+import Box from '@mui/material/Box';
 import VividIcon from '@ui/components/VividIcon';
 import { env } from '../../../env';
+import { raiseHand$ } from '@core/stores';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -31,6 +33,7 @@ const ParticipantListButton = ({
   isOverflowButton = false,
 }: ParticipantListButtonProps): ReactElement | false => {
   const { t } = useTranslation();
+  const raisedHandCount = raiseHand$.useRaisedHandCount();
 
   return (
     env.SHOW_PARTICIPANT_LIST && (
@@ -47,25 +50,36 @@ const ParticipantListButton = ({
           }}
           overlap="circular"
         >
-          <ToolbarButton
-            data-testid="participant-list-button"
-            sx={{
-              marginTop: '0px',
-              marginRight: '0px',
-            }}
-            onClick={handleClick}
-            icon={
-              <VividIcon
-                name="group-solid"
-                customSize={-4}
-                data-testid="PeopleIcon"
-                style={{
-                  color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
-                }}
-              />
-            }
-            isOverflowButton={isOverflowButton}
-          />
+          <Box className="relative inline-flex">
+            <ToolbarButton
+              data-testid="participant-list-button"
+              sx={{
+                marginTop: '0px',
+                marginRight: '0px',
+              }}
+              onClick={handleClick}
+              icon={
+                <VividIcon
+                  name="group-solid"
+                  customSize={-4}
+                  data-testid="PeopleIcon"
+                  style={{
+                    color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
+                  }}
+                />
+              }
+              isOverflowButton={isOverflowButton}
+            />
+            {env.ALLOW_RAISE_HAND && raisedHandCount > 0 && (
+              <Box
+                className="absolute bottom-0 right-0 flex h-4 min-w-[0.875rem] items-center justify-center gap-[0.35rem] rounded-full bg-vera-primary px-1 text-[10px] font-bold text-vera-on-primary"
+                data-testid="participant-list-raised-hand-badge"
+              >
+                <VividIcon name="hand-solid" customSize={-6} className="text-vera-on-primary" />
+                <span>{raisedHandCount}</span>
+              </Box>
+            )}
+          </Box>
         </Badge>
       </Tooltip>
     )

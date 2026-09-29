@@ -1,4 +1,5 @@
 import {
+  type Connection,
   initSession,
   OTError,
   Publisher,
@@ -28,6 +29,8 @@ import { decodeSessionKey } from '@common/helpers';
 type VonageVideoClientEvents = {
   archiveStarted: [string];
   archiveStopped: [];
+  connectionCreated: [Connection];
+  connectionDestroyed: [string];
   screenshareStreamCreated: [];
   sessionDisconnected: [{ reason?: string }];
   sessionReconnected: [];
@@ -36,6 +39,7 @@ type VonageVideoClientEvents = {
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
   'signal:captions': [SignalEvent];
+  'signal:raiseHand': [SignalEvent];
   streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
@@ -93,6 +97,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   private attachEventListeners = () => {
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
     this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
+    this.clientSession.on('connectionCreated', (event) => this.handleConnectionCreated(event));
+    this.clientSession.on('connectionDestroyed', (event) => this.handleConnectionDestroyed(event));
     this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
@@ -360,7 +366,12 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleSignal = (event: SignalEvent) => {
     const { type } = event;
-    if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
+    if (
+      type === 'signal:chat' ||
+      type === 'signal:emoji' ||
+      type === 'signal:captions' ||
+      type === 'signal:raiseHand'
+    ) {
       this.emit(type, event);
     }
   };
@@ -419,6 +430,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private handleArchiveStopped = () => {
     this.emit('archiveStopped');
+  };
+
+  private handleConnectionCreated = ({ connection }: { connection: Connection }) => {
+    this.emit('connectionCreated', connection);
+  };
+
+  private handleConnectionDestroyed = ({ connection }: { connection: Connection }) => {
+    this.emit('connectionDestroyed', connection.connectionId);
   };
 
   /**

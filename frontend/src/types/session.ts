@@ -40,8 +40,9 @@ export type SignalEvent = {
 };
 
 export type SignalType = {
-  type: 'emoji' | 'chat' | 'captions';
+  type: 'emoji' | 'chat' | 'captions' | 'raiseHand';
   data: string;
+  to?: Connection;
 };
 
 export type SubscriberAudioLevelUpdatedEvent = { movingAvg: number; subscriberId: string };

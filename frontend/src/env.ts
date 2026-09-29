@@ -37,6 +37,7 @@ const EnvironmentVariablesSchema = z.object({
   WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_ARCHIVING: boolean({ default: true }),
   ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
+  ALLOW_RAISE_HAND: boolean({ default: false }),
   ALLOW_CAPTIONS: boolean({ default: true }),
   ALLOW_CHAT: boolean({ default: true }),
   MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
@@ -94,6 +95,7 @@ export class Env implements IEnvironmentVariables {
   public MODE!: Mode;
   public VONAGE_VIDEO_HOST!: string | null;
   public ARCHIVES_REFRESH_INTERVAL_MS!: number;
+  public ALLOW_RAISE_HAND!: boolean;
 
   constructor(env: IEnvironmentVariablesArgs) {
     const parsed = EnvironmentVariablesSchema.parse(env);

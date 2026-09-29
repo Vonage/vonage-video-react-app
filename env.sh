@@ -34,3 +34,4 @@ export AUTH_HEADER_NAME='authorization'
 export AUTH_SCHEME='Bearer'
 export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'
 export AUTH_INTROSPECTION_TIMEOUT_MS=5000
+export ALLOW_RAISE_HAND=true

@@ -5,6 +5,8 @@ import ParticipantListItem, { ParticipantListItemProps } from './ParticipantList
 import useAudioLevels from '../../../hooks/useAudioLevels';
 import usePublisherContext from '../../../hooks/usePublisherContext';
 import { PublisherContextType } from '../../../Context/PublisherProvider';
+import { raiseHand$ } from '@core/stores';
+import { env } from '../../../env';
 
 vi.mock('../../../hooks/useAudioLevels');
 vi.mock('../../../hooks/usePublisherContext');
@@ -123,6 +125,29 @@ describe('ParticipantListItem', () => {
 
       const micOffIcon = screen.getByTestId('vivid-icon-mic-mute-solid');
       expect(micOffIcon).toBeInTheDocument();
+    });
+  });
+  describe('raised hand', () => {
+    it('shows the hand icon with the queue position before the audio indicator', () => {
+      env.partialUpdate({ ALLOW_RAISE_HAND: true });
+      raiseHand$.actions.raiseHand({ connectionId: 'someone-else', raisedAt: 1 });
+      raiseHand$.actions.raiseHand({ connectionId: 'you', raisedAt: 2 });
+
+      render(<ParticipantListItem {...defaultProps} audioLevel={undefined} connectionId="you" />);
+
+      const raisedHand = screen.getByTestId('participant-list-item-raised-hand');
+      expect(raisedHand).toHaveTextContent('(2)');
+      expect(raisedHand.nextElementSibling).toBe(screen.getByTestId('audio-indicator'));
+
+      raiseHand$.actions.lowerAllHands();
+    });
+
+    it('shows nothing when the hand is down', () => {
+      env.partialUpdate({ ALLOW_RAISE_HAND: true });
+
+      render(<ParticipantListItem {...defaultProps} />);
+
+      expect(screen.queryByTestId('participant-list-item-raised-hand')).not.toBeInTheDocument();
     });
   });
 });

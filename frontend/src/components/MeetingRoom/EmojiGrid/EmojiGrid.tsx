@@ -15,7 +15,9 @@ import {
 } from 'react';
 import useIsSmallViewport from '../../../hooks/useIsSmallViewport';
 import SendEmojiButton from '../SendEmojiButton';
+import RaiseHandButton from '../RaiseHand/RaiseHandButton';
 import emojiMap from '../../../utils/emojis';
+import { env } from '../../../env';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -107,6 +109,10 @@ const EmojiGrid = ({
                     <SendEmojiButton key={emoji} emoji={emoji} />
                   ))}
                 </Grid>
+
+                {env.ALLOW_RAISE_HAND && (
+                  <RaiseHandButton data-testid="emoji-panel-raise-hand-button" />
+                )}
               </Paper>
             </ClickAwayListener>
           </Box>

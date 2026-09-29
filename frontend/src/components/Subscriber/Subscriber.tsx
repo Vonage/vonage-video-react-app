@@ -1,4 +1,5 @@
 import { MouseEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -11,9 +12,12 @@ import PinButton from '../MeetingRoom/PinButton';
 import useSessionContext from '../../hooks/useSessionContext';
 import isMouseEventInsideBox from '../../utils/isMouseEventInsideBox';
 import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
+import RaiseHandBadge from '../MeetingRoom/RaiseHand/RaiseHandBadge';
+import { raiseHand$ } from '@core/stores';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
+import { env } from '../../env';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
@@ -40,9 +44,12 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
+  const { t } = useTranslation();
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
+  const subscriberConnectionId = subscriber?.stream?.connection?.connectionId ?? '';
+  const isHandRaised = raiseHand$.useIsHandRaised(subscriberConnectionId) && env.ALLOW_RAISE_HAND;
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
   const [isTileHovered, setIsTileHovered] = useState<boolean>(false);
@@ -130,6 +137,7 @@ const Subscriber = ({
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
     >
+      {isHandRaised && <RaiseHandBadge ariaLabel={t('raiseHand.handRaised')} />}
       <PinButton
         isPinned={isPinned}
         isTileHovered={isTileHovered}
