@@ -1,6 +1,6 @@
 # Universal Test Utilities
 
-Exports available from `@vonage/video-common/test`. For use in test environments only.
+Exports available from `@vonage/video-reference-apps-common/test`. For use in test environments only.
 
 ---
 
@@ -9,7 +9,7 @@ Exports available from `@vonage/video-common/test`. For use in test environments
 Test environment setup hooks.
 
 ```ts
-import { setupCancelablePromiseHook, cancelablePromiseTracker } from '@vonage/video-common/test';
+import { setupCancelablePromiseHook, cancelablePromiseTracker } from '@vonage/video-reference-apps-common/test';
 ```
 
 ### setupCancelablePromiseHook
@@ -17,7 +17,7 @@ import { setupCancelablePromiseHook, cancelablePromiseTracker } from '@vonage/vi
 Patches `CancelablePromise.prototype.cancel` to track cancelled promises during tests. Requires `easy-cancelable-promise` as an optional dependency — if the package is not installed, the hook is a no-op (no crash).
 
 ```ts
-import { setupCancelablePromiseHook } from '@vonage/video-common/test';
+import { setupCancelablePromiseHook } from '@vonage/video-reference-apps-common/test';
 
 beforeAll(() => {
   setupCancelablePromiseHook();
@@ -29,7 +29,7 @@ beforeAll(() => {
 A Vitest mock function (`vi.fn()`) that records every `CancelablePromise` instance that was cancelled during the test run. Use it to assert that cleanup happened.
 
 ```ts
-import { cancelablePromiseTracker } from '@vonage/video-common/test';
+import { cancelablePromiseTracker } from '@vonage/video-reference-apps-common/test';
 
 afterEach(() => {
   expect(cancelablePromiseTracker).toHaveBeenCalled();
@@ -44,7 +44,7 @@ afterEach(() => {
 Shared test data.
 
 ```ts
-import { VALID_SESSION_ID, INVALID_SESSION_IDS } from '@vonage/video-common/test';
+import { VALID_SESSION_ID, INVALID_SESSION_IDS } from '@vonage/video-reference-apps-common/test';
 ```
 
 | Export | Description |
@@ -52,11 +52,11 @@ import { VALID_SESSION_ID, INVALID_SESSION_IDS } from '@vonage/video-common/test
 | `VALID_SESSION_ID` | A structurally valid session ID string for testing |
 | `INVALID_SESSION_IDS` | Array of invalid session ID strings |
 
-> `makeArchive` now lives in the web test surface: `@vonage/video-common/web-test`.
+> `makeArchive` now lives in the web test surface: `@vonage/video-reference-apps-common/web-test`.
 
 ```ts
-import { VALID_SESSION_ID } from '@vonage/video-common/test';
-import { makeArchive } from '@vonage/video-common/web-test';
+import { VALID_SESSION_ID } from '@vonage/video-reference-apps-common/test';
+import { makeArchive } from '@vonage/video-reference-apps-common/web-test';
 
 const archive = makeArchive('started', { sessionId: VALID_SESSION_ID });
 ```
@@ -68,7 +68,7 @@ const archive = makeArchive('started', { sessionId: VALID_SESSION_ID });
 Utilities for creating mocks and partial module overrides.
 
 ```ts
-import { makeGenericMock, setupPartialMock, mockModule } from '@vonage/video-common/test';
+import { makeGenericMock, setupPartialMock, mockModule } from '@vonage/video-reference-apps-common/test';
 ```
 
 ### makeGenericMock
@@ -84,7 +84,7 @@ Applies partial mock overrides to an object instance — each key replaces the c
 Merges a real module with partial mock overrides. Used inside `vi.mock()` factory functions.
 
 ```ts
-import { mockModule } from '@vonage/video-common/test';
+import { mockModule } from '@vonage/video-reference-apps-common/test';
 
 vi.mock('@vonage/video', async () => {
   const actual = await vi.importActual('@vonage/video');
