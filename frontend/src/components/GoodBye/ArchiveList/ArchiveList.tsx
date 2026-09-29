@@ -80,6 +80,19 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
       {archives.map((archive, index) => {
         const isArchivePending = isPending(getDownloadStatus(archive));
         const isTranscriptionArchive = isTranscription(archive);
+
+        // Determine the loading message based on archive type
+        const loadingMessage = isTranscriptionArchive
+          ? 'archiveList.loading.transcription'
+          : 'archiveList.loading.recording';
+
+        // Determine the title translation key and params based on archive type
+        const titleKey = isTranscriptionArchive
+          ? 'archiveList.transcription.index'
+          : 'archiveList.archive.index';
+
+        const titleParams = { index: archives.length - index };
+
         return (
           <ListElement key={archive.id} data-testid={`archive-list-item-${archive.id}`}>
             <VividIcon
@@ -97,20 +110,7 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
                   'text-left'
                 )}
               >
-                {isArchivePending
-                  ? t(
-                      isTranscriptionArchive
-                        ? 'archiveList.loading.transcription'
-                        : 'archiveList.loading.recording'
-                    )
-                  : t(
-                      isTranscriptionArchive
-                        ? 'archiveList.transcription.index'
-                        : 'archiveList.archive.index',
-                      {
-                        index: archives.length - index,
-                      }
-                    )}
+                {isArchivePending ? t(loadingMessage) : t(titleKey, titleParams)}
               </p>
 
               <p className="text-vera-text-tertiary text-vera-caption">

@@ -14,6 +14,22 @@ export type UseArchivesProps<TData = SearchArchivesResult> = Input & {
 };
 
 /**
+ * The Vonage REST API returns a `transcription` object on the archive when transcription is
+ * enabled, but the `@vonage/video` SDK type does not model it.
+ */
+type ArchiveTranscription = {
+  status?: string;
+  url?: string;
+  reason?: string;
+  hasSummary?: boolean;
+  primaryLanguageCode?: string;
+};
+
+type ArchiveWithTranscription = SingleArchiveResponse & {
+  transcription?: ArchiveTranscription;
+};
+
+/**
  * Hook to search for archives.
  *
  * @example
@@ -61,7 +77,28 @@ const useArchives = <Selected = SearchArchivesResult>({
 };
 
 function hasPending<T extends SingleArchiveResponse>(archives: T[]): boolean {
-  return archives.some((archive) => !['available', 'failed'].includes(archive.status));
+  return archives.some((archive) => {
+    // Check if the main archive is still pending
+    const isArchivePending = !['available', 'failed', 'expired', 'uploaded'].includes(
+      archive.status
+    );
+
+    // For archives with transcription, also check transcription status
+    if (archive.hasTranscription && 'transcription' in archive) {
+      const transcription = (archive as ArchiveWithTranscription).transcription;
+      const transcriptionStatus = transcription?.status;
+
+      // If transcription exists, check if it's still processing
+      if (transcriptionStatus) {
+        const isTranscriptionPending = !['available', 'failed', 'uploaded'].includes(
+          transcriptionStatus
+        );
+        return isArchivePending || isTranscriptionPending;
+      }
+    }
+
+    return isArchivePending;
+  });
 }
 
 export default useArchives;

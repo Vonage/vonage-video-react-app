@@ -96,14 +96,18 @@ const PostCallTranscriptionButton = ({
       // Pass the explicit transcription archive id so we stop the transcription specifically. This
       // matters because a recording and a transcription can run at the same time, so we must target
       // the right one rather than let the backend pick.
-      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId: transcriptionArchiveId });
+      videoClient
+        .stopArchive({ sessionKey: sessionKey!, archiveId: transcriptionArchiveId })
+        .catch((err) => {
+          console.error('Failed to stop transcription:', err);
+        });
       setTranscriptionArchiveId(null);
     }
   };
 
   const handleActionClick = () => {
     handleClose();
-    void handleDialogClick(isTranscribing ? 'stop' : 'start');
+    handleDialogClick(isTranscribing ? 'stop' : 'start');
   };
 
   return (
