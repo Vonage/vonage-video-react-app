@@ -1,0 +1,19 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsScreenSharingTab/AdvancedSettingsScreenSharingTab.tsx
+  s_1056c7a5eee4f6::t_88123871d57f5e 14,20,24-29,33-35,129-135,145-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1bfc02d860e4883b694fcf7f55f8be8c589a81ae",
+  "prompts": {},
+  "sessions": {
+    "s_1056c7a5eee4f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f89c451e-d532-4daa-a4ba-a04f3b331fd3",
+        "model": "unknown"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
