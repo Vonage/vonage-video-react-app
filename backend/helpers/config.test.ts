@@ -71,6 +71,8 @@ describe('loadConfig', () => {
     process.env.OT_API_KEY = 'test-key';
     process.env.OT_API_SECRET = 'test-secret';
     process.env.AUTH_ENABLED = 'true';
+    delete process.env.OIDC_CLIENT_ID;
+    delete process.env.OIDC_ISSUER_URL;
 
     expect(() => loadConfig()).toThrow(/oidcIssuerUrl|oidcClientId/);
 
