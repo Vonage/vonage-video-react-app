@@ -12,7 +12,7 @@ vi.mock('@hooks/useSessionContext');
 
 const mockVideoClient: VideoClient = {
   startArchive: vi.fn(),
-  stopArchive: vi.fn(),
+  stopArchive: vi.fn().mockResolvedValue(undefined),
 } as unknown as VideoClient;
 
 describe('PostCallTranscriptionButton', () => {
@@ -25,6 +25,9 @@ describe('PostCallTranscriptionButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Ensure stopArchive always returns a Promise
+    (mockVideoClient.stopArchive as Mock).mockResolvedValue(undefined);
+
     sessionContext = {
       subscriberWrappers: [],
       transcriptionArchiveId: null,
