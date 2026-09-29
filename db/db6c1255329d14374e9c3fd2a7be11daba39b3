@@ -1,0 +1,23 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_0e1fca60fa4f77::t_7d4365ec250eb5 162
+  s_0e1fca60fa4f77::t_ef1739448db081 163-165
+backend/storage/vcrSessionStorage.ts
+  s_0e1fca60fa4f77::t_b84cde6845c352 192
+  s_0e1fca60fa4f77::t_bbc1dc30a7562f 193-195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "dbdb6c1255329d14374e9c3fd2a7be11daba39b3",
+  "prompts": {},
+  "sessions": {
+    "s_0e1fca60fa4f77": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e51e88f-4596-4fad-b7fe-915d576cb3e4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
