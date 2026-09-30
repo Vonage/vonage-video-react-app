@@ -1,0 +1,23 @@
+backend/tests/helpers/mockVonageVideoSdk.ts
+  s_29e9c0d87ab671::t_0fd34f2eb01a26 22-23
+backend/tests/session.auth.test.ts
+  s_29e9c0d87ab671::t_04a3ec138d7828 31,40
+  s_29e9c0d87ab671::t_91494648a70fc1 30
+  s_29e9c0d87ab671::t_ce27c397fd7fbd 68-70,72-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "62f6a66c00ee638e1f97f397cbaf387b528e95a5",
+  "prompts": {},
+  "sessions": {
+    "s_29e9c0d87ab671": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "206f500a-aca9-454f-9087-b9851ac44da4",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
