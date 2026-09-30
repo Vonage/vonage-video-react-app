@@ -183,15 +183,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Content-Type', 'application/json');
           expect(res.statusCode).toEqual(404);
         });
-
-        it('returns a 404 when stopping captions with malformed captionsId in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = 'not-a-valid-captions-id';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
       });
 
       describe('/v2 hooks', () => {

@@ -27,9 +27,8 @@ const startServer = (await import('../server')).default;
 const sessionService = getSessionStorageService();
 
 /**
- * Proves the 5 v1 `session.ts` routes are actually wired into the app-wide `authMiddleware`
- * gate from server.ts — introspection logic itself (inactive token, client_id mismatch, etc.)
- * is already covered by authMiddleware.test.ts and is not re-tested here.
+ * Proves the v1 `session.ts` routes are wired into the app-wide `authMiddleware` gate from
+ * server.ts.
  */
 describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=true', () => {
   let server: Server;
@@ -38,6 +37,7 @@ describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=tr
   const archiveId = 'archive-1';
 
   const routes: Array<{ name: string; method: 'get' | 'post'; path: string }> = [
+    { name: 'GET /session/:room', method: 'get', path: `/session/${roomName}` },
     {
       name: 'POST /session/:room/startArchive',
       method: 'post',
@@ -64,13 +64,13 @@ describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=tr
   beforeAll(async () => {
     server = await startServer(0);
 
-    // Primes the room the same way the app would — a real join creates the session and
-    // registers the sessionId → sessionKey mapping (via videoHandler's onSettled$ hook) — rather
-    // than hand-crafting storage state that could drift out of sync with what decodeSessionKey
-    // actually returns.
     mockPost.mockResolvedValueOnce(introspectionResponse);
-    await request(server).get(`/session/${roomName}`).set('Authorization', 'Bearer valid-token');
+    const primeResponse = await request(server)
+      .get(`/session/${roomName}`)
+      .set('Authorization', 'Bearer valid-token');
     mockPost.mockReset();
+
+    expect(primeResponse.statusCode).toEqual(200);
   });
 
   afterAll((done) => {

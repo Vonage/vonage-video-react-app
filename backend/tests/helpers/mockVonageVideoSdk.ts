@@ -19,18 +19,8 @@ type VideoSdkOverrides = Partial<{
 }>;
 
 /**
- * Registers the same third-party SDK mocks (`@vonage/auth`, `@vonage/video`, and the legacy
- * `opentokVideoService`) that any test importing `../server` needs, since `makeVideoClient$()`
- * constructs a real SDK client at module load time. Must be awaited before `../server` is
- * imported — jest.unstable_mockModule only takes effect on modules imported afterwards.
- *
- * Uses `jest.unstable_mockModule` directly rather than `doPartialMock`: these SDKs export
- * classes, and a jest mock function isn't structurally assignable to a class's constructor
- * type, which `doPartialMock`'s generic (built for plain function/object modules like
- * `config.ts`) can't accommodate.
- *
- * `videoOverrides` lets a suite override specific SDK methods (e.g. to reject for a
- * particular id) while keeping the rest of the happy-path defaults below.
+ * Must be awaited before `../server` is imported — jest.unstable_mockModule only takes effect
+ * on modules imported afterwards.
  *
  * jest.unstable_mockModule resolves relative specifiers against the calling *test* file, not
  * this file — hence `../videoService/...` below, not `../../videoService/...`. That means this
