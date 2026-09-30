@@ -73,6 +73,40 @@ describe('authMiddleware', () => {
     expect(res.statusCode).toEqual(401);
   });
 
+  it('redirects an unauthenticated HTML page navigation to sign-in, preserving the original URL', async () => {
+    expect.assertions(2);
+
+    const res = await request(buildApp())
+      .get('/protected?room=abc')
+      .set('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8');
+
+    expect(res.statusCode).toEqual(302);
+    expect(res.headers.location).toEqual(
+      `/auth/signin?returnTo=${encodeURIComponent('/protected?room=abc')}`
+    );
+  });
+
+  it('does not redirect an HTML page request when the identity provider call fails', async () => {
+    expect.assertions(1);
+
+    mockPost.mockRejectedValue(new Error('network error'));
+
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Accept', 'text/html')
+      .set('Authorization', 'Bearer some-token');
+
+    expect(res.statusCode).toEqual(401);
+  });
+
+  it('returns 401 instead of redirecting when the unauthenticated request expects JSON', async () => {
+    expect.assertions(1);
+
+    const res = await request(buildApp()).get('/protected').set('Accept', 'application/json');
+
+    expect(res.statusCode).toEqual(401);
+  });
+
   it('returns 200 with a valid Bearer token issued to this client', async () => {
     expect.assertions(1);
 

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextFunction, Request, Response } from 'express';
+import { isRecord } from '@common/assertions';
 import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
 import { isApplicationError } from '@common/errors/assertions';
@@ -7,8 +8,10 @@ import { getCookieValue } from '@node/helpers';
 import loadConfig from '../../helpers/config';
 import getSessionStorageService from '../../sessionStorageService';
 import type { SessionStorage } from '../../storage/sessionStorage';
-import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
+import { SESSION_COOKIE_NAME, SIGN_IN_PATH } from '../../routes/auth/constants';
+import resolveResponseFormat from '../../helpers/resolveResponseFormat';
 import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
+import { makeSignInRequiredErrorHandler } from './errors/SignInRequiredError';
 
 type ActiveTokenIntrospectionResponse = {
   active: true;
@@ -25,6 +28,10 @@ type RequestWithTokenAuth = Request & {
  * Builds an Express middleware that validates the caller's OIDC access token against
  * the configured provider's introspection endpoint. Opt-in via AUTH_ENABLED — a no-op
  * otherwise, preserving current behavior for deployments not yet on OIDC auth.
+ *
+ * Unauthenticated HTML page requests (GET, resolved via resolveResponseFormat) are
+ * redirected to the sign-in flow; other unauthenticated requests are rejected with 401.
+ * Identity-provider failures are never redirected, so an outage cannot cause a sign-in loop.
  *
  * Reads config.ts once, at construction time (not per request), so a misconfigured
  * deployment fails to start instead of 500ing on every request.
@@ -55,7 +62,7 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
   return async function handleRequest(
     req: Request,
-    _res: Response,
+    res: Response,
     next: NextFunction
   ): Promise<void> {
     if (excludedPaths.has(req.path)) {
@@ -71,9 +78,9 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
       });
 
       if (!accessToken) {
-        throw makeUnauthorizedErrorHandler('Missing access token')(
-          new Error(`No access token in the "${authHeaderName}" header`)
-        );
+        throw makeSignInRequiredErrorHandler(
+          `Missing access token in the "${authHeaderName}" header`
+        )(null);
       }
 
       const introspectionResponse = await assertResult(
@@ -110,12 +117,23 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
           ? 'Token issued for a different client_id'
           : 'Token inactive or expired';
 
-        throw makeUnauthorizedErrorHandler(rejectionReason)(new Error(rejectionReason));
+        throw makeSignInRequiredErrorHandler(rejectionReason)(null);
       }
 
       (req as RequestWithTokenAuth).user = introspectionData;
       next();
     } catch (error) {
+      const isSignInRequiredPageRequest =
+        isRecord(error) &&
+        error.isSignInRequired === true &&
+        req.method === 'GET' &&
+        resolveResponseFormat(req) === 'html';
+
+      if (isSignInRequiredPageRequest) {
+        res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
+        return;
+      }
+
       if (isApplicationError(error)) {
         next(error);
         return;

@@ -11,3 +11,5 @@ export const TRANSACTION_COOKIE_MAX_AGE_MS = TEN_MINUTES_MS;
 export const DEFAULT_SESSION_COOKIE_MAX_AGE_MS = ONE_HOUR_MS;
 
 export const DEFAULT_RETURN_TO = '/';
+
+export const SIGN_IN_PATH = '/auth/signin';
