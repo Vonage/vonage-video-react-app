@@ -1,13 +1,13 @@
 import { initPublisher } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
-import advancedSettings$ from '@Context/AdvancedSettings';
 import { initialState } from './constants';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import {
   applyBitrate,
   handleApplyAdvancedSettingsError,

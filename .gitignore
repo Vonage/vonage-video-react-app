@@ -67,6 +67,7 @@ room.zip
 
 libs/common/tarball/
 graph.json
+.codex/
 
 # Keep Codex personal configuration local, but share repository skills.
 .codex/settings.json

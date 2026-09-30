@@ -28,9 +28,16 @@ export SHOW_PARTICIPANT_LIST=true
 export MEETING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export WAITING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export SHOW_VIDEO_STATS=false
-
-# Auth OIDC configuration
 export AUTH_HEADER_NAME='authorization'
 export AUTH_SCHEME='Bearer'
 export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'
+export OIDC_AUTHORIZE_PATH='/oauth2/v1/authorize'
+export OIDC_TOKEN_PATH='/oauth2/v1/token'
 export AUTH_INTROSPECTION_TIMEOUT_MS=5000
+# DEV Okta tenant (SPA/public client — issuer URL and client ID are non-secret), one shared
+# app registration for Mobile + Web. Override via backend/.env for PROD, which has its own
+# issuer and client ID (see docs/CONFIGURATION.md).
+export OIDC_ISSUER_URL='https://launchpadtest.vonage.com'
+export OIDC_CLIENT_ID='0oa2sp68ck6PDehU40h8'
+export OIDC_WEB_REDIRECT_URI='http://localhost:5173/api/auth/callback/okta'
+

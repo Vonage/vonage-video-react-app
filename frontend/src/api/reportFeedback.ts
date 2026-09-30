@@ -22,7 +22,7 @@ type ResponseType = {
 const reportIssue = async (submissionData: SubmissionData) => {
   return axios.post<{
     feedbackData: ResponseType;
-  }>(`${API_URL}/feedback/report`, submissionData);
+  }>(`${API_URL}/feedback/report`, submissionData, { withCredentials: true });
 };
 
 export default reportIssue;
