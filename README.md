@@ -91,6 +91,10 @@ This application provides features for common conferencing use cases, such as:
     <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
   </details>
 - <details>
+    <summary>Individual archiving capabilities to transcript your meetings.</summary>
+    <img src="docs/assets/Transcribing.png" alt="Screenshot of transcript dialog box">
+  </details>
+- <details>
     <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
     <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
   </details>
