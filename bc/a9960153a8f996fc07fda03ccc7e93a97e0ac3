@@ -1,0 +1,36 @@
+app-config.json
+  h_c939f8fae0de97 1-51
+docs/CONFIGURATION.md
+  h_c939f8fae0de97 7,120,124,126-148,151-159,174-175
+docs/GETTING_STARTED.md
+  h_c939f8fae0de97 57,119,122-123,126
+env.sh
+  h_c939f8fae0de97 20
+frontend/.env.example
+  h_c939f8fae0de97 2-3
+frontend/src/components/WaitingRoom/ControlPanel/ControlPanel.spec.tsx
+  h_c939f8fae0de97 11,34,143-164
+frontend/src/components/WaitingRoom/ControlPanel/ControlPanel.tsx
+  h_c939f8fae0de97 10,100-118,120-125,127-141,143-148,150-164,166-173
+frontend/src/hooks/tests/useWaitingRoom.spec.tsx
+  h_c939f8fae0de97 85,89
+frontend/src/hooks/useWaitingRoom.ts
+  h_c939f8fae0de97 80
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  h_c939f8fae0de97 242,247,251,256-258
+package.json
+  h_c939f8fae0de97 14,41
+scripts/generateEnv.ts
+  h_c939f8fae0de97 1-202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bca9960153a8f996fc07fda03ccc7e93a97e0ac3",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
