@@ -33,14 +33,15 @@ const ArchivingButton = ({
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
-    archiveId,
+    recordingArchiveId,
+    setRecordingArchiveId,
     markArchiveStartRequestedBySelf,
     resetArchiveStartRequestedBySelf,
     sessionKey,
     connected,
   } = useSessionContext();
 
-  const isRecording = !!archiveId;
+  const isRecording = !!recordingArchiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
@@ -74,21 +75,25 @@ const ArchivingButton = ({
 
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
-      if (!archiveId && connected) {
+      if (!recordingArchiveId && connected) {
         markArchiveStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            await videoClient.startArchive({ sessionKey: sessionKey! });
+            // A recording is a composed archive (the backend default when no transcription intent).
+            const archive = await videoClient.startArchive({ sessionKey: sessionKey! });
+            setRecordingArchiveId(archive.id);
           } catch (err) {
             resetArchiveStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);
       }
-    } else if (archiveId) {
-      // Call stopArchive without archiveId - backend middleware will inject it from storage
-      // This handles server rotation where frontend has old archiveId
-      void videoClient.stopArchive({ sessionKey: sessionKey! });
+    } else if (recordingArchiveId) {
+      // Pass the explicit recording archive id so we stop the recording specifically. This matters
+      // because a recording and a transcription can run at the same time, so we must target the
+      // right one rather than let the backend pick.
+      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId: recordingArchiveId });
+      setRecordingArchiveId(null);
     }
   };
 

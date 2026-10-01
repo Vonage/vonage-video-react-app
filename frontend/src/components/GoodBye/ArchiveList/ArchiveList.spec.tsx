@@ -22,7 +22,7 @@ describe('ArchiveList', () => {
     });
 
     expect(
-      await screen.findByText('There was an error loading recordings for this meeting')
+      await screen.findByText('There was an error loading content for this meeting')
     ).toBeVisible();
   });
 
@@ -68,6 +68,57 @@ describe('ArchiveList', () => {
     expect(downloadLink).toHaveAttribute('href', availableArchive.url);
     expect(await screen.findByTestId('archive-loading-spinner')).toBeVisible();
     expect(screen.getByTestId('archive-error-icon')).toBeVisible();
+  });
+
+  it('links a transcription row to the transcript url, not the media archive url', async () => {
+    expect.assertions(1);
+
+    const transcriptUrl = 'https://example.com/transcription.zip';
+    const transcriptionArchive = makeArchive('available', {
+      outputMode: 'individual',
+      hasTranscription: true,
+      // The media archive url differs from the transcript url; we must link to the transcript.
+      url: 'https://example.com/media-archive.zip',
+      transcription: { status: 'available', url: transcriptUrl },
+    } as Parameters<typeof makeArchive>[1]);
+
+    const videoClient = makeVideoClientMock({
+      searchArchives: Promise.resolve({
+        count: 1,
+        items: [transcriptionArchive],
+      }),
+    });
+
+    render(<ArchiveList queryOptions={{ retry: false }} />, {
+      runtimeContext: { videoClient },
+    });
+
+    const downloadLink = await screen.findByRole('link', { name: /download/i });
+    expect(downloadLink).toHaveAttribute('href', transcriptUrl);
+  });
+
+  it('shows a transcription row as pending until the transcript is available', async () => {
+    expect.assertions(1);
+
+    // Media archive is already available, but the transcript is still processing.
+    const transcriptionArchive = makeArchive('available', {
+      outputMode: 'individual',
+      hasTranscription: true,
+      transcription: { status: 'started' },
+    } as Parameters<typeof makeArchive>[1]);
+
+    const videoClient = makeVideoClientMock({
+      searchArchives: Promise.resolve({
+        count: 1,
+        items: [transcriptionArchive],
+      }),
+    });
+
+    render(<ArchiveList queryOptions={{ retry: false }} />, {
+      runtimeContext: { videoClient },
+    });
+
+    expect(await screen.findByTestId('archive-loading-spinner')).toBeVisible();
   });
 });
 

@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
 import { twMerge } from 'tailwind-merge';
 import RecordingIndicator from '../../components/MeetingRoom/RecordingIndicator';
+import TranscriptionIndicator from '../../components/MeetingRoom/TranscriptionIndicator';
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 import { isMobile } from '@web/platform';
@@ -52,6 +53,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     quality,
     isVideoEnabled,
     isRecording,
+    isTranscribing,
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
@@ -82,6 +84,21 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
           className="pointer-events-none absolute left-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm"
         >
           <RecordingIndicator />
+        </Box>
+      )}
+
+      {isTranscribing && !isMobileDevice && (
+        <Box
+          data-testid="meetingRoomTranscriptionIndicatorContainer"
+          className={classNames(
+            'pointer-events-none absolute top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-vera-dark-grey-opacity backdrop-blur-sm',
+            {
+              'left-16': isRecording,
+              'left-4': !isRecording,
+            }
+          )}
+        >
+          <TranscriptionIndicator />
         </Box>
       )}
 

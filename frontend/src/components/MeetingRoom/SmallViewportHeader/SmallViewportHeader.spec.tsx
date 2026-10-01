@@ -216,7 +216,12 @@ describe('SmallViewportHeader component', () => {
 
 function render(
   component: React.ReactElement,
-  sessionContext?: { initialValue?: { sessionKey?: string; archiveId?: string | null } }
+  sessionContext?: {
+    initialValue?: {
+      sessionKey?: string;
+      archiveId?: string | null;
+    };
+  }
 ) {
   const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
     userContext: undefined,
