@@ -1,0 +1,25 @@
+integration-tests/tests/waitingRoom.spec.ts
+  s_7c55de64b43457::t_994d35e50ce7ff 70-73,85
+  s_7c55de64b43457::t_f5de27114ad879 30-33,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "98cd22ee352fc62a9f53aef7c2c36e8cae21ab3a",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_7c55de64b43457": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a1d6096f-abbf-4998-9ec7-ab35483de984",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
