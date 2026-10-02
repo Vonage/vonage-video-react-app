@@ -1,0 +1,14 @@
+README.md
+  h_6c0124248e0f80 93-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "375caf90a8e66716e7bcbe0970dbedf4de2c123f",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

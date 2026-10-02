@@ -1,0 +1,14 @@
+libs/common/manifest.json
+  h_c939f8fae0de97 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "11bae23c63b046606578d1e6d46fb8c945e4a482",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

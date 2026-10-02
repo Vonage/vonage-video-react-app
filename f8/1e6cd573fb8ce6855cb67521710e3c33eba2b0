@@ -1,0 +1,76 @@
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  s_f92daa513faed0::t_1e8d1f05b9d30d 3
+  s_f92daa513faed0::t_9d93b9d3b73f2b 1-2
+frontend/src/locales/ja.json
+  s_1a11517907bfcf::t_45f0b5edc7990b 12
+  s_f92daa513faed0::t_d8730c5d15290e 103-104
+  s_f92daa513faed0::t_9d40f4989c27e4 82-89
+  s_f92daa513faed0::t_113a897d149709 302-316
+  s_f92daa513faed0::t_7f2dc01b8e08b7 354
+frontend/src/Context/SessionProvider/session.tsx
+  s_1a11517907bfcf::t_c78bfbefcfdd6c 629-632
+  s_1a11517907bfcf::t_dd10ff04e286ac 111-114
+  s_1a11517907bfcf::t_887917a4f420fd 212-213
+  s_1a11517907bfcf::t_fccec3697df0aa 65-68
+  s_1a11517907bfcf::t_4ce675db437a55 587-590
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_1a11517907bfcf::t_3f9ce335354fee 36-44
+  s_1a11517907bfcf::t_b0564047dbd6d8 78,84-95,99-100
+  s_1a11517907bfcf::t_702f51324c0cef 82-83
+  s_1a11517907bfcf::t_92dc624b1cedc1 96-98
+  s_1a11517907bfcf::t_6c19e724002600 33-35
+  s_1a11517907bfcf::t_c0fbfe83b34d82 45-47,75-77
+  s_1a11517907bfcf::t_67502c5f2b1c78 79-81
+  s_1a11517907bfcf::t_1157f8208059b9 101-103
+backend/routes/video/constants/startArchive.ts
+  s_1a11517907bfcf::t_0f25f4a75777df 2-16,30,41
+  s_1a11517907bfcf::t_01309688621ef1 17-29,31-40,42,45,48
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_1a11517907bfcf::t_b81d91ded3beec 80-87
+  s_1a11517907bfcf::t_b998e43c6c06cc 175-183
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_1a11517907bfcf::t_f17a614e980e64 36-37,44
+  s_1a11517907bfcf::t_fbbea2d7a060a5 78,82-84,91,95-96
+  s_1a11517907bfcf::t_461a82256bead9 92-94
+frontend/src/locales/es-MX.json
+  s_1a11517907bfcf::t_4085d780c5e384 12
+  s_f92daa513faed0::t_a30dc71f8da6c1 302-316
+frontend/src/locales/en.json
+  s_f92daa513faed0::t_4f49d95b361103 302-316
+  s_1a11517907bfcf::t_190b7d7a0fb446 12
+frontend/src/locales/es.json
+  s_1a11517907bfcf::t_519d832a431afe 12
+  s_f92daa513faed0::t_ca2c5bec43b947 302-316
+frontend/src/locales/it.json
+  s_1a11517907bfcf::t_cf34afcc44eb0b 12
+  s_f92daa513faed0::t_2a1aba84d82a30 302-316
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  s_1a11517907bfcf::t_0331024c6f387e 7
+frontend/src/locales/de.json
+  s_1a11517907bfcf::t_53f2f0e0e1e256 12
+  s_f92daa513faed0::t_49ef6d4adb3537 302-316
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f81e6cd573fb8ce6855cb67521710e3c33eba2b0",
+  "prompts": {},
+  "sessions": {
+    "s_1a11517907bfcf": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_37f7f9fe-92e0-4102-a4da-77918f405d14",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    },
+    "s_f92daa513faed0": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a4ec46be-7425-47b9-bcb2-f18394fdcf0d",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

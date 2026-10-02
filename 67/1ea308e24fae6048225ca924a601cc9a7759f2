@@ -1,0 +1,22 @@
+backend/helpers/config.test.ts
+  s_1f22dba22e072c::t_d882e8d85a93a1 74-75
+libs/core/src/stores/mediaDevices/actions/syncMediaDevicesInfo.ts
+  s_1f22dba22e072c::t_783fdc02601024 56-58
+  s_1f22dba22e072c::t_8695a225335e9d 14,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "671ea308e24fae6048225ca924a601cc9a7759f2",
+  "prompts": {},
+  "sessions": {
+    "s_1f22dba22e072c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3dcfa540-11c6-42e4-989a-8ae04f7fb557",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

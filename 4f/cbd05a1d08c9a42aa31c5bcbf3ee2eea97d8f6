@@ -1,0 +1,20 @@
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  s_1a11517907bfcf::t_aa1b3bd628d6d8 15
+  s_1a11517907bfcf::t_6376cefde8545e 28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4fcbd05a1d08c9a42aa31c5bcbf3ee2eea97d8f6",
+  "prompts": {},
+  "sessions": {
+    "s_1a11517907bfcf": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_37f7f9fe-92e0-4102-a4da-77918f405d14",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
