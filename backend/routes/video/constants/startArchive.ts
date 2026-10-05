@@ -35,6 +35,7 @@ const transcriptionOptions: ArchiveOptionsWithTag = {
   outputMode: ArchiveOutputMode.INDIVIDUAL,
   multiArchiveTag: TRANSCRIPTION_ARCHIVE_TAG,
   hasAudio: true,
+  hasVideo: false,
   hasTranscription: true,
   transcriptionProperties: {
     hasSummary: true,
