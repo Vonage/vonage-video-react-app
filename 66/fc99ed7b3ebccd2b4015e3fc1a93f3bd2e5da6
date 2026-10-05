@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  s_18384736469ef3::t_416227442cd0b6 106-110
+  s_18384736469ef3::t_241cfdee5386f3 19
+  s_18384736469ef3::t_e4a19fdbfa016e 111,113-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "66fc99ed7b3ebccd2b4015e3fc1a93f3bd2e5da6",
+  "prompts": {},
+  "sessions": {
+    "s_18384736469ef3": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_5cfca89f-0b6c-4a64-bf2e-54316d70ad7e",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
