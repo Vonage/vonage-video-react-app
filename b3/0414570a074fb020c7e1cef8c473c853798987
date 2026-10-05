@@ -1,0 +1,37 @@
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_fb95bc110ae3c8::t_9e6a541962bf63 10
+  s_fb95bc110ae3c8::t_eadb7dd1f50641 56
+  s_fb95bc110ae3c8::t_9bf652f9736c46 115,118-120,140
+libs/core/src/types/index.ts
+  s_fb95bc110ae3c8::t_32902ade88a166 2
+libs/core/src/hooks/useArchives/useArchives.ts
+  s_fb95bc110ae3c8::t_2efbf394a155af 44
+  s_fb95bc110ae3c8::t_cc0de05ab3e793 4
+libs/core/src/types/archive.ts
+  s_f92daa513faed0::t_78452195525137 1-58
+  s_fb95bc110ae3c8::t_6b00f5c78dd860 59-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b30414570a074fb020c7e1cef8c473c853798987",
+  "prompts": {},
+  "sessions": {
+    "s_f92daa513faed0": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a4ec46be-7425-47b9-bcb2-f18394fdcf0d",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    },
+    "s_fb95bc110ae3c8": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_96a41e32-a758-4f9c-bc3a-1c8d7e7de388",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

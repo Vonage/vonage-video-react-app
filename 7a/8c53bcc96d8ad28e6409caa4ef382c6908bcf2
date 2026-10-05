@@ -1,0 +1,14 @@
+docs/AUTHENTICATION.md
+  h_c939f8fae0de97 59,112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7a8c53bcc96d8ad28e6409caa4ef382c6908bcf2",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
