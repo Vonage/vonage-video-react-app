@@ -56,7 +56,7 @@ A fixed set of paths bypass the middleware entirely (passed in as `excludedPaths
 Two kinds of auth data live there:
 
 - **Auth transactions** (`state`, `codeVerifier`, `returnTo`), written by `/auth/signin`, read and deleted by the callback. On VCR these expire after 10 minutes, matching the transaction cookie's own `maxAge`.
-- **Access tokens**, written by the callback after a successful token exchange. On VCR these expire after the token response's `expires_in` (falling back to 1 hour if the provider omits it).
+- **Access tokens**, written by the callback after a successful token exchange. On VCR these expire after the token response's `expires_in`, which is required: a token response without it is rejected with `401`.
 
 ### 2.5 PKCE flow
 
@@ -109,7 +109,7 @@ OIDC_WEB_REDIRECT_URI='<your-redirect-uri>'
 
 1. Copy `backend/.env.example` to `backend/.env`.
 2. Set `AUTH_ENABLED=true`.
-3. Set `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI`, DEV values for all three already default in [`env.sh`](../env.sh), so this step is only needed to override them.
+3. Set `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` in `backend/.env`. The copied `.env.example` leaves them empty, and the backend dev server does not source [`env.sh`](../env.sh), so the DEV values listed there must be copied in explicitly.
 4. `yarn dev`.
 5. Open the app in an **incognito window**, avoids a cached session from a previous run.
 6. Trigger a protected action (create or join a room).
