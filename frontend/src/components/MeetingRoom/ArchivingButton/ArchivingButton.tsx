@@ -86,7 +86,9 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (archiveId) {
-      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId });
+      // Call stopArchive without archiveId - backend middleware will inject it from storage
+      // This handles server rotation where frontend has old archiveId
+      void videoClient.stopArchive({ sessionKey: sessionKey! });
     }
   };
 

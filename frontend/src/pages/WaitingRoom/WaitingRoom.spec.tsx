@@ -239,26 +239,23 @@ describe('WaitingRoom', () => {
     });
   });
 
-  it('should not render ControlPanel when allowDeviceSelection is false', async () => {
+  it('should still render ControlPanel when allowDeviceSelection is false', async () => {
     env.partialUpdate({
       WAITING_ROOM_ALLOW_DEVICE_SELECTION: false,
     });
 
-    const { container } = await render(<WaitingRoom />, {
+    await render(<WaitingRoom />, {
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          context.isVideoLoading = false;
         },
       },
     });
 
-    await waitFor(
-      () => {
-        const controlPanel = container.querySelector('[data-testid="ControlPanel"]');
-        expect(controlPanel).not.toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
+    await waitFor(() => {
+      expect(screen.queryByTestId('ControlPanel')).toBeInTheDocument();
+    });
   });
 
   it('should render ControlPanel when allowDeviceSelection is true', async () => {

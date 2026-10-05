@@ -44,19 +44,21 @@ afterEach(() => {
 Shared test data.
 
 ```ts
-import { VALID_SESSION_ID, INVALID_SESSION_IDS, makeArchive } from '@vonage/video-common/test';
+import { VALID_SESSION_ID, INVALID_SESSION_IDS } from '@vonage/video-common/test';
 ```
 
 | Export | Description |
 |---|---|
 | `VALID_SESSION_ID` | A structurally valid session ID string for testing |
 | `INVALID_SESSION_IDS` | Array of invalid session ID strings |
-| `makeArchive(overrides?)` | Factory that creates a mock `SingleArchiveResponse` object |
+
+> `makeArchive` now lives in the web test surface: `@vonage/video-common/web-test`.
 
 ```ts
-import { VALID_SESSION_ID, makeArchive } from '@vonage/video-common/test';
+import { VALID_SESSION_ID } from '@vonage/video-common/test';
+import { makeArchive } from '@vonage/video-common/web-test';
 
-const archive = makeArchive({ status: 'started', sessionId: VALID_SESSION_ID });
+const archive = makeArchive('started', { sessionId: VALID_SESSION_ID });
 ```
 
 ---

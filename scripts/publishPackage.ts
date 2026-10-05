@@ -3,6 +3,7 @@
  *
  * Usage:
  *   yarn publish:package <target>
+ *   yarn publish:package <target> --owner=<org>   (publish under an org, e.g. vonage)
  *   yarn publish:package <target> <token>   (discouraged, visible in shell history/process list)
  *   GH_TOKEN=... yarn publish:package <target>   (recommended for CI)
  *
@@ -10,8 +11,9 @@
  * - Reads target project name from CLI arguments
  * - Resolves the GitHub token from GH_TOKEN env var, a CLI argument, or an
  *   interactive hidden prompt (input is not echoed to the terminal)
+ * - Reads an optional owner from the --owner=<org> CLI flag or the GH_OWNER env var
  * - Resolves the target's dev publish script path
- * - Delegates to that script, forwarding the token via an env var (never argv)
+ * - Delegates to that script, forwarding the token and owner via env vars (never argv)
  */
 import * as path from 'node:path';
 import * as child_process from 'node:child_process';
@@ -109,7 +111,18 @@ async function resolveToken(tokenFromArgs: string | undefined): Promise<string> 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const isDryRun = args.includes('dry');
-  const positionalArgs = args.filter((arg) => arg !== 'dry');
+
+  const owner = (() => {
+    const ownerArgument = args.find((arg) => arg.startsWith('--owner='));
+
+    if (ownerArgument) {
+      return ownerArgument.slice('--owner='.length).trim();
+    }
+
+    return process.env.GH_OWNER?.trim() || '';
+  })();
+
+  const positionalArgs = args.filter((arg) => arg !== 'dry' && !arg.startsWith('--'));
 
   const target = positionalArgs[0];
   const tokenFromArgs = positionalArgs[1];
@@ -141,6 +154,10 @@ async function main(): Promise<void> {
   // in the process list (e.g. `ps aux`) for the child process.
   const childEnv = { ...process.env, GH_TOKEN: token } as NodeJS.ProcessEnv;
   delete childEnv.NODE_OPTIONS;
+
+  if (owner) {
+    childEnv.GH_OWNER = owner;
+  }
 
   if (isDryRun) {
     childEnv.PUBLISH_DRY_RUN = '1';

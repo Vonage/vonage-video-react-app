@@ -34,6 +34,7 @@ import {
 } from '@utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
@@ -204,6 +205,8 @@ const SessionProvider = ({
     initialValue?.recordingAlreadyNotified ?? false
   );
   const archiveStartRequestedBySelfRef = useRef<boolean>(false);
+  // Tracks if this client initiated the archive (persists through server rotation)
+  const wasArchiveInitiatorRef = useRef<boolean>(false);
 
   const markArchiveStartRequestedBySelf = useCallback(() => {
     archiveStartRequestedBySelfRef.current = true;
@@ -335,10 +338,14 @@ const SessionProvider = ({
   };
 
   // handle the disconnect from session and clean up of the session object
-  const handleSessionDisconnected = () => {
-    vonageVideoClient.current = null;
-    setConnected(false);
-  };
+  const handleSessionDisconnected = useStableCallback(({ reason }: { reason?: string }) => {
+    const isServerRotation = reason === 'serverRotation';
+
+    if (!isServerRotation) {
+      vonageVideoClient.current = null;
+      setConnected(false);
+    }
+  });
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
   // this reconnection count can be then used in the UI to provide user feedback or for post-call analytics
@@ -357,19 +364,26 @@ const SessionProvider = ({
   const handleArchiveStarted = (id: string) => {
     setArchiveId(id);
 
-    if (!archiveStartRequestedBySelfRef.current) {
+    const isInitiatedBySelf =
+      archiveStartRequestedBySelfRef.current || wasArchiveInitiatorRef.current;
+
+    if (!isInitiatedBySelf) {
       return;
     }
 
     setArchiveIdStartedBySelf(id);
+    wasArchiveInitiatorRef.current = true;
     archiveStartRequestedBySelfRef.current = false;
   };
 
-  const handleArchiveStopped = () => {
+  const handleArchiveStopped = useStableCallback(() => {
+    // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
+    wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
+
     setArchiveId(null);
     setArchiveIdStartedBySelf(null);
     archiveStartRequestedBySelfRef.current = false;
-  };
+  });
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
     setSubscriberWrappers((previousSubscriberWrappers) =>
