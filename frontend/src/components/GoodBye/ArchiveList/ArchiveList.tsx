@@ -6,7 +6,12 @@ import { VividIcon } from '@ui/components';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
-import { useArchives, type UseArchivesProps, type ArchiveWithTranscription } from '@core/hooks';
+import {
+  useArchives,
+  type UseArchivesProps,
+  type ArchiveWithTranscription,
+  isPendingStatus,
+} from '@core/hooks';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { twMerge } from 'tailwind-merge';
 import type { SingleArchiveResponse } from '@vonage/video';
@@ -60,7 +65,7 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
       )}
 
       {archives.map((archive, index) => {
-        const isArchivePending = isPending(getDownloadStatus(archive));
+        const isArchivePending = isPendingStatus(getDownloadStatus(archive));
         const isTranscriptionArchive = isTranscription(archive);
 
         const loadingMessage = isTranscriptionArchive
@@ -159,7 +164,7 @@ function ArchiveStatus({ archive }: { archive: SingleArchiveResponse }) {
     );
   }
 
-  if (isPending(status)) {
+  if (isPendingStatus(status)) {
     return (
       <CircularProgress
         size={20}
@@ -179,10 +184,6 @@ function ArchiveStatus({ archive }: { archive: SingleArchiveResponse }) {
       />
     </Tooltip>
   );
-}
-
-function isPending(status: string) {
-  return ['requested', 'started', 'stopped', 'uploaded', 'paused'].includes(status);
 }
 
 function getDownloadStatus(archive: SingleArchiveResponse): string {

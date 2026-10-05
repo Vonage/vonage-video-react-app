@@ -8,3 +8,4 @@ export type {
   ArchiveTranscription,
   ArchiveWithTranscription,
 } from './useArchives';
+export { isPendingStatus } from './useArchives';

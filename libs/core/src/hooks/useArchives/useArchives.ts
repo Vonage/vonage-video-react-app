@@ -29,6 +29,10 @@ export type ArchiveWithTranscription = SingleArchiveResponse & {
   transcription?: ArchiveTranscription;
 };
 
+export function isPendingStatus(status: string): boolean {
+  return ['requested', 'started', 'stopped', 'uploaded', 'paused'].includes(status);
+}
+
 /**
  * Hook to search for archives.
  *
@@ -78,21 +82,14 @@ const useArchives = <Selected = SearchArchivesResult>({
 
 function hasPending<T extends SingleArchiveResponse>(archives: T[]): boolean {
   return archives.some((archive) => {
-    // Check if the main archive is still pending
-    const isArchivePending = !['available', 'failed', 'expired', 'uploaded'].includes(
-      archive.status
-    );
+    const isArchivePending = isPendingStatus(archive.status);
 
-    // For archives with transcription, also check transcription status
     if (archive.hasTranscription && 'transcription' in archive) {
       const transcription = (archive as ArchiveWithTranscription).transcription;
       const transcriptionStatus = transcription?.status;
 
-      // If transcription exists, check if it's still processing
       if (transcriptionStatus) {
-        const isTranscriptionPending = !['available', 'failed', 'uploaded'].includes(
-          transcriptionStatus
-        );
+        const isTranscriptionPending = isPendingStatus(transcriptionStatus);
         return isArchivePending || isTranscriptionPending;
       }
     }
