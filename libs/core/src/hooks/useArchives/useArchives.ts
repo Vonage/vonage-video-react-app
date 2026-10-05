@@ -17,7 +17,7 @@ export type UseArchivesProps<TData = SearchArchivesResult> = Input & {
  * The Vonage REST API returns a `transcription` object on the archive when transcription is
  * enabled, but the `@vonage/video` SDK type does not model it.
  */
-type ArchiveTranscription = {
+export type ArchiveTranscription = {
   status?: string;
   url?: string;
   reason?: string;
@@ -25,7 +25,7 @@ type ArchiveTranscription = {
   primaryLanguageCode?: string;
 };
 
-type ArchiveWithTranscription = SingleArchiveResponse & {
+export type ArchiveWithTranscription = SingleArchiveResponse & {
   transcription?: ArchiveTranscription;
 };
 

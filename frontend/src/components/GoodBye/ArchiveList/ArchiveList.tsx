@@ -6,28 +6,10 @@ import { VividIcon } from '@ui/components';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
-import { useArchives, type UseArchivesProps } from '@core/hooks';
+import { useArchives, type UseArchivesProps, type ArchiveWithTranscription } from '@core/hooks';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { twMerge } from 'tailwind-merge';
 import type { SingleArchiveResponse } from '@vonage/video';
-
-/**
- * The Vonage REST API returns a `transcription` object on the archive when transcription is
- * enabled, but the `@vonage/video` SDK type does not model it. We augment the archive locally so
- * we can link to the transcript file (`transcription.url`) instead of the media archive (`url`).
- * See: https://developer.vonage.com/en/video/guides/transcriptions
- */
-type ArchiveTranscription = {
-  status?: string;
-  url?: string;
-  reason?: string;
-  hasSummary?: boolean;
-  primaryLanguageCode?: string;
-};
-
-type ArchiveWithTranscription = SingleArchiveResponse & {
-  transcription?: ArchiveTranscription;
-};
 
 export type ArchiveListProps = ComponentProps<'ul'> & {
   queryOptions?: UseArchivesProps['queryOptions'];
@@ -81,17 +63,19 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
         const isArchivePending = isPending(getDownloadStatus(archive));
         const isTranscriptionArchive = isTranscription(archive);
 
-        // Determine the loading message based on archive type
         const loadingMessage = isTranscriptionArchive
           ? 'archiveList.loading.transcription'
           : 'archiveList.loading.recording';
 
-        // Determine the title translation key and params based on archive type
         const titleKey = isTranscriptionArchive
           ? 'archiveList.transcription.index'
           : 'archiveList.archive.index';
 
-        const titleParams = { index: archives.length - index };
+        const archivesOfSameType = archives.filter((a) =>
+          isTranscriptionArchive ? isTranscription(a) : !isTranscription(a)
+        );
+        const indexInType = archivesOfSameType.findIndex((a) => a.id === archive.id);
+        const titleParams = { index: archivesOfSameType.length - indexInType };
 
         return (
           <ListElement key={archive.id} data-testid={`archive-list-item-${archive.id}`}>
@@ -201,11 +185,6 @@ function isPending(status: string) {
   return ['requested', 'started', 'stopped', 'uploaded', 'paused'].includes(status);
 }
 
-/**
- * For a transcription archive the downloadable artifact is the transcript file, whose lifecycle is
- * tracked by `transcription.status` (not the media archive `status`). For a plain recording we use
- * the archive's own status. Falls back to the media archive status when transcription data is absent.
- */
 function getDownloadStatus(archive: SingleArchiveResponse): string {
   if (!isTranscription(archive)) return archive.status;
 
@@ -213,10 +192,6 @@ function getDownloadStatus(archive: SingleArchiveResponse): string {
   return transcription?.status ?? archive.status;
 }
 
-/**
- * The transcript file lives at `transcription.url`; the media archive lives at `url`. Transcription
- * rows must link to the transcript, everything else to the media archive.
- */
 function getDownloadUrl(archive: SingleArchiveResponse): string | undefined {
   if (!isTranscription(archive)) return archive.url;
 
@@ -224,11 +199,6 @@ function getDownloadUrl(archive: SingleArchiveResponse): string | undefined {
   return transcription?.url;
 }
 
-/**
- * A post-call transcription is started as an individual-stream archive with transcription
- * enabled, whereas a plain recording is a composed archive. See the startArchive backend
- * defaults where this distinction is applied.
- */
 function isTranscription(archive: SingleArchiveResponse) {
   return archive.outputMode === 'individual' && Boolean(archive.hasTranscription);
 }
