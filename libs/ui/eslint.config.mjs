@@ -15,6 +15,7 @@ export default [
     settings: {
       tailwindcss: {
         config: path.join(__dirname, 'src/styles.css'),
+        callees: ['twMerge', 'cn', 'classNames'],
       },
     },
     rules: {
@@ -22,12 +23,13 @@ export default [
         'error',
         {
           whitelist: [
-            'bg-primary-dark',
-            'text-darkGray',
+            // allow component names to be used as class names
+            // this helps to identify components in the DOM
+            '^[A-Z][A-Za-z0-9_-]*$',
+
             'publisher',
             'subscriber',
             'screen-subscriber',
-            'bg-notVeryGray-100',
           ],
         },
       ],

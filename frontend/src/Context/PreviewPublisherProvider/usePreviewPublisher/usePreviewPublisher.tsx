@@ -181,17 +181,18 @@ const usePreviewPublisher = (
     }
 
     let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
+    if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
       videoFilter = initialBackgroundRef.current;
     }
 
-    const { frameRate, codecMode, codecPriority } = advancedSettings$.getState();
+    const { frameRate, codecMode, codecPriority, cameraContentHint } = advancedSettings$.getState();
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       frameRate,
+      videoContentHint: cameraContentHint,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,

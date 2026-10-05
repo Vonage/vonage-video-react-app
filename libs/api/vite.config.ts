@@ -9,9 +9,9 @@ export default defineConfig(() => ({
     alias: {
       '@api-lib': path.resolve(__dirname, './src'),
       '@common': path.resolve(__dirname, '../common/src'),
-      '@node': path.resolve(__dirname, '../common/srcNode'),
+      '@node': path.resolve(__dirname, '../common/node'),
       '@common-test': path.resolve(__dirname, '../common/test'),
-      '@node-test': path.resolve(__dirname, '../common/testNode'),
+      '@node-test': path.resolve(__dirname, '../common/node-test'),
     },
   },
   test: {
@@ -30,7 +30,7 @@ export default defineConfig(() => ({
       include: [
         `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../common/src')}/**/*.{ts,tsx}`,
-        `${path.resolve(__dirname, '../common/srcNode')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/node')}/**/*.{ts,tsx}`,
       ],
       exclude: ['test/**', '**/index.ts'],
     },

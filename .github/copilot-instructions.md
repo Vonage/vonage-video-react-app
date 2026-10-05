@@ -1,6 +1,12 @@
 
 # Instruction
 
+## Code graph navigation
+
+Use CodeGraphContext before broad repository exploration. Start with narrow, path-scoped symbol queries, inspect callers/callees/imports only when relevant, and then read the smallest necessary source ranges. Treat dead-code and relationship results as candidates requiring verification in source and tests.
+
+The index is one graph for the full monorepo. Distinguish projects by their paths (`frontend/`, `backend/`, `integration-tests/`, and `libs/*/`) while retaining cross-project relationships.
+
 All rules in this document should be treated as strict coding and architectural requirements for this repository.  
 When generating or editing code, always choose the option that is consistent with these rules.  
 When reviewing code, Copilot must also evaluate changes according to these rules and suggest corrections whenever the submitted code violates any of them.
@@ -174,8 +180,8 @@ const vc = new VideoClient();
 const videoClient = new VonageVideoClient();
 ```
 
-- **Rule:** Prefer linear `tryCatch` helpers instead of nested `try/catch`.
-- **Rule:** Nested `try/catch` blocks are banned.
+- **Rule:** Nested `try/catch` blocks are banned. Prefer linear `tryCatch` helpers instead of nested `try/catch`.
+- **Rule:** Preserve the original error as the cause when wrapping it.
 
 **Violation:**
 

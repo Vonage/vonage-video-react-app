@@ -1,9 +1,11 @@
-import { render as renderBase, screen } from '@testing-library/react';
+import { render as renderBase, screen, within } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
+import { testIds as customVideoBitrateTestIds } from '../AdvancedSettingsCustomVideoBitrateField/AdvancedSettingsCustomVideoBitrateField';
 import AdvancedSettingsVideoTab from './AdvancedSettingsVideoTab';
+import { AdvancedSettingsScreenSharingTab } from '../AdvancedSettingsScreenSharingTab';
 
 type RenderOptions = {
   dialogState?: Partial<advancedSettings>;
@@ -14,34 +16,62 @@ describe('AdvancedSettingsVideoTab', () => {
     advancedSettings$.reset();
   });
 
-  it('renders all video sections', () => {
+  it('toggles self-view mirroring and the stats overlay through the store', () => {
     render(<AdvancedSettingsVideoTab />);
 
-    expect(screen.getByRole('heading', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/bitrate/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/codec/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/frame rate/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/resolution/i)).toBeInTheDocument();
+    expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(true);
+    screen.getByTestId('advanced-settings-video-self-view-mirroring').click();
+    expect(advancedSettings$.getState().selfViewMirroringEnabled).toBe(false);
+
+    const statsOverlayBefore = advancedSettings$.getState().videoStatsOverlayEnabled;
+    screen.getByTestId('advanced-settings-video-stats-overlay').click();
+    expect(advancedSettings$.getState().videoStatsOverlayEnabled).toBe(!statsOverlayBefore);
   });
 
-  it('renders codec priority drag and drop when codec mode is manual', () => {
-    render(<AdvancedSettingsVideoTab />, {
-      dialogState: { codecMode: 'manual', codecPriority: ['vp9', 'vp8', 'h264'] },
-    });
+  it('renders the Screen Sharing section with its own Optimize for control', () => {
+    render(<AdvancedSettingsScreenSharingTab />);
 
-    expect(screen.getByText(/codec priority/i)).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-vp9')).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-vp8')).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-codec-priority-item-h264')).toBeInTheDocument();
+    const screenSharingSection = screen.getByTestId('advanced-settings-screen-sharing-tab');
+
+    expect(screenSharingSection).toBeInTheDocument();
+    const screenShareContentHint = within(screenSharingSection).getByTestId(
+      'advanced-settings-video-screen-share-content-hint'
+    );
+    expect(screenShareContentHint).toHaveValue('detail');
+    expect(
+      [...(screenShareContentHint as HTMLSelectElement).options].map((option) => option.value)
+    ).toEqual(['', 'motion', 'detail', 'text']);
   });
 
-  it('renders custom video bitrate controls when bitrate mode is custom', () => {
-    render(<AdvancedSettingsVideoTab />, { dialogState: { bitrateMode: 'custom' } });
+  it('defaults every screen-share constraint to the browser default, so shares stay unconstrained', () => {
+    render(<AdvancedSettingsScreenSharingTab />);
 
-    expect(screen.getByText(/custom bitrate/i)).toBeInTheDocument();
-    expect(screen.getByTestId('advanced-settings-custom-video-bitrate-slider')).toBeInTheDocument();
-    expect(screen.getAllByText(/5 kbps/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/^10 Mbps$/i)).toBeInTheDocument();
+    const screenSharingSection = screen.getByTestId('advanced-settings-screen-sharing-tab');
+
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-frame-rate')
+    ).toHaveValue('default-sdk');
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-resolution')
+    ).toHaveValue('default-sdk');
+    expect(
+      within(screenSharingSection).getByTestId('advanced-settings-video-screen-share-bitrate')
+    ).toHaveValue('default-sdk');
+    expect(screen.queryByTestId(customVideoBitrateTestIds.slider)).not.toBeInTheDocument();
+  });
+
+  it('offers the camera its own Optimize for control, without the screen-only text option', () => {
+    render(<AdvancedSettingsVideoTab />);
+
+    const cameraSection = screen.getByTestId('advanced-settings-video-camera-section');
+    const cameraContentHint = within(cameraSection).getByTestId(
+      'advanced-settings-video-camera-content-hint'
+    );
+
+    expect(cameraContentHint).toHaveValue('');
+    expect(
+      [...(cameraContentHint as HTMLSelectElement).options].map((option) => option.value)
+    ).toEqual(['', 'motion', 'detail']);
   });
 });
 

@@ -59,7 +59,7 @@ const EnvironmentVariablesSchema = z.object({
 });
 
 export class Env implements IEnvironmentVariables {
-  private initial: Partial<IEnvironmentVariables>;
+  private readonly initial: Partial<IEnvironmentVariables>;
 
   public ENABLE_REPORT_ISSUE!: boolean;
   public I18N_FALLBACK_LANGUAGE!: Lang;

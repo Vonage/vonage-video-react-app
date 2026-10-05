@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCode } from 'status-code-enum';
 import { errorHandler } from '../middleware/errorHandler';
-import ApplicationServerError from '@api-lib/errors/ApplicationServerError';
+import { ApplicationServerError } from '@api-lib/errors';
 
 function createMockRequest(overrides: Partial<Request> = {}): Request {
   return {

@@ -29,6 +29,8 @@ const customWordList = [
   'COEP',
   'SXGA',
   'QVGA',
+  'webcredentials',
+  'PKCE',
 ];
 
 export default customWordList;

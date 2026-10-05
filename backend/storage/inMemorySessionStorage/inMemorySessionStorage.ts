@@ -6,15 +6,24 @@ interface SessionData {
   captionsId: string | null;
   captionsUserCount: number;
   archiveIds: string[];
+  serverRotationPending: boolean;
 }
 
 class InMemorySessionStorage implements SessionStorage {
   private sessions: { [key: string]: SessionData } = {};
   private roomNameBySessionKey: { [sessionKey: string]: string } = {};
   private sessionKeyBySessionId: { [sessionId: string]: string } = {};
+  private authTransactions: {
+    [transactionId: string]: { state: string; codeVerifier: string; returnTo: string };
+  } = {};
+  private accessTokensBySessionId: { [sessionId: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
     return this.sessions[roomName]?.sessionKey || null;
+  }
+
+  async getSessionKeyBySessionId({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.sessionKeyBySessionId[sessionId] ?? null;
   }
 
   async setSession({
@@ -38,6 +47,7 @@ class InMemorySessionStorage implements SessionStorage {
           captionsId: null,
           captionsUserCount: 0,
           archiveIds: [],
+          serverRotationPending: false,
         };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
@@ -115,6 +125,62 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getArchiveIds({ sessionId }: { sessionId: string }): Promise<string[]> {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
+  }
+
+  async setAuthTransaction({
+    transactionId,
+    state,
+    codeVerifier,
+    returnTo,
+  }: {
+    transactionId: string;
+    state: string;
+    codeVerifier: string;
+    returnTo: string;
+  }): Promise<void> {
+    this.authTransactions[transactionId] = { state, codeVerifier, returnTo };
+  }
+
+  async getAuthTransaction({
+    transactionId,
+  }: {
+    transactionId: string;
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null> {
+    return this.authTransactions[transactionId] ?? null;
+  }
+
+  async deleteAuthTransaction({ transactionId }: { transactionId: string }): Promise<void> {
+    delete this.authTransactions[transactionId];
+  }
+
+  async setAccessToken({
+    sessionId,
+    accessToken,
+  }: {
+    sessionId: string;
+    accessToken: string;
+  }): Promise<void> {
+    this.accessTokensBySessionId[sessionId] = accessToken;
+  }
+
+  async getAccessToken({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.accessTokensBySessionId[sessionId] ?? null;
+  }
+
+  async setServerRotationPending({
+    sessionId,
+    pending,
+  }: {
+    sessionId: string;
+    pending: boolean;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.serverRotationPending = pending;
+  }
+
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<boolean> {
+    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? false;
   }
 }
 export default InMemorySessionStorage;

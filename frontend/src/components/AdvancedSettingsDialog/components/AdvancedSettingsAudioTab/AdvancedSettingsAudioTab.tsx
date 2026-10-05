@@ -1,9 +1,11 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import { SelectField, SwitchField } from '@ui/components';
-import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../types/types';
+import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
+import { SelectField, Field } from '@ui/components';
+import { ADVANCED_SETTINGS_AUDIO_BITRATE_MODE } from '../../schemas';
 
 const {
   setAudioBitrateMode,
@@ -11,10 +13,14 @@ const {
   setEnableDtx,
   setPublisherAudioFallbackEnabled,
   setSubscriberAudioFallbackEnabled,
+  setEchoCancellationEnabled,
+  setNoiseSuppressionEnabled,
+  setAutoGainControlEnabled,
 } = advancedSettings$.actions;
 
 const AdvancedSettingsAudioTab = (): ReactElement => {
   const { t } = useTranslation();
+  const { handleAdvancedNoiseSuppressionChange } = useAdvancesSettingsHandlers();
   const { pathname } = useLocation();
   const isInWaitingRoom = pathname.startsWith('/waiting-room');
   const nextCallWarningKey = isInWaitingRoom
@@ -31,6 +37,18 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
   const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
     ({ subscriberAudioFallbackEnabled }) => subscriberAudioFallbackEnabled
   );
+  const advancedNoiseSuppressionEnabled = advancedSettings$.use.select(
+    ({ advancedNoiseSuppressionEnabled }) => advancedNoiseSuppressionEnabled
+  );
+  const echoCancellationEnabled = advancedSettings$.use.select(
+    ({ echoCancellationEnabled }) => echoCancellationEnabled
+  );
+  const noiseSuppressionEnabled = advancedSettings$.use.select(
+    ({ noiseSuppressionEnabled }) => noiseSuppressionEnabled
+  );
+  const autoGainControlEnabled = advancedSettings$.use.select(
+    ({ autoGainControlEnabled }) => autoGainControlEnabled
+  );
 
   const audioBitrateOptions = [
     {
@@ -45,7 +63,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.audio')}
       </h2>
 
@@ -65,7 +83,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
 
         {audioBitrateMode === ADVANCED_SETTINGS_AUDIO_BITRATE_MODE.custom && (
           <div className="flex flex-col gap-3 rounded-vera-medium border-vera-border bg-vera-background px-4 py-3">
-            <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+            <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
               {t('advancedSettings.audio.bitrate.customLabel')}
             </p>
 
@@ -82,9 +100,9 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
                 data-testid="advanced-settings-custom-audio-bitrate-slider"
                 aria-label={t('advancedSettings.audio.bitrate.customLabel')}
               />
-              <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-tertiary">
+              <div className="mt-2 flex items-center justify-between font-vera-plain text-vera-caption text-vera-text-tertiary">
                 <span>{t('advancedSettings.audio.bitrate.minimum')}</span>
-                <span className="rounded-full bg-vera-surface px-1 py-1 text-vera-secondary">
+                <span className="rounded-full bg-vera-surface px-1 py-1 text-vera-text-secondary">
                   {t('advancedSettings.audio.bitrate.currentValue', {
                     value: customAudioBitrate,
                   })}
@@ -96,29 +114,109 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         )}
       </div>
 
-      <SwitchField
-        id="advanced-settings-audio-enable-dtx"
-        label={t('advancedSettings.audio.enableDtx.label')}
-        checked={enableDtx}
-        onChange={setEnableDtx}
-        description={t('advancedSettings.audio.enableDtx.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-advanced-noise-suppression">
+          {t('advancedSettings.audio.advancedNoiseSuppression.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-advanced-noise-suppression"
+          checked={advancedNoiseSuppressionEnabled}
+          onChange={(event) => handleAdvancedNoiseSuppressionChange(event.currentTarget.checked)}
+          disabled={!hasMediaProcessorSupport('audio')}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.advancedNoiseSuppression.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-publisher-fallback"
-        label={t('advancedSettings.audio.publisherAudioFallback.label')}
-        checked={publisherAudioFallbackEnabled}
-        onChange={setPublisherAudioFallbackEnabled}
-        description={t('advancedSettings.audio.publisherAudioFallback.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-echo-cancellation">
+          {t('advancedSettings.audio.echoCancellation.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-echo-cancellation"
+          checked={echoCancellationEnabled}
+          onChange={(event) => setEchoCancellationEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.echoCancellation.description')}
+        </Field.Description>
+      </Field>
 
-      <SwitchField
-        id="advanced-settings-audio-subscriber-fallback"
-        label={t('advancedSettings.audio.subscriberAudioFallback.label')}
-        checked={subscriberAudioFallbackEnabled}
-        onChange={setSubscriberAudioFallbackEnabled}
-        description={t('advancedSettings.audio.subscriberAudioFallback.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-noise-suppression">
+          {t('advancedSettings.audio.noiseSuppression.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-noise-suppression"
+          checked={noiseSuppressionEnabled}
+          onChange={(event) => setNoiseSuppressionEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.noiseSuppression.description')}
+        </Field.Description>
+      </Field>
+
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-auto-gain-control">
+          {t('advancedSettings.audio.autoGainControl.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-auto-gain-control"
+          checked={autoGainControlEnabled}
+          onChange={(event) => setAutoGainControlEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.autoGainControl.description')}
+        </Field.Description>
+      </Field>
+
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-enable-dtx">
+          {t('advancedSettings.audio.enableDtx.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-enable-dtx"
+          checked={enableDtx}
+          onChange={(event) => setEnableDtx(event.currentTarget.checked)}
+        />
+        <Field.Description>{t('advancedSettings.audio.enableDtx.description')}</Field.Description>
+      </Field>
+
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-publisher-fallback">
+          {t('advancedSettings.audio.publisherAudioFallback.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-publisher-fallback"
+          checked={publisherAudioFallbackEnabled}
+          onChange={(event) => setPublisherAudioFallbackEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.publisherAudioFallback.description')}
+        </Field.Description>
+      </Field>
+
+      <Field>
+        <Field.Label htmlFor="advanced-settings-audio-subscriber-fallback">
+          {t('advancedSettings.audio.subscriberAudioFallback.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-audio-subscriber-fallback"
+          checked={subscriberAudioFallbackEnabled}
+          onChange={(event) => setSubscriberAudioFallbackEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.audio.subscriberAudioFallback.description')}
+        </Field.Description>
+      </Field>
     </div>
   );
 };

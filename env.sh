@@ -2,7 +2,7 @@
 
 export ENABLE_REPORT_ISSUE=true
 export I18N_FALLBACK_LANGUAGE='en'
-export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de'
+export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de|ja'
 export ALLOW_BACKGROUND_EFFECTS=true
 export ALLOW_CAMERA_CONTROL=true
 export ALLOW_VIDEO_ON_JOIN=true
@@ -17,6 +17,7 @@ export ALLOW_AUDIO_ON_JOIN=true
 export ALLOW_MICROPHONE_CONTROL=true
 export MEETING_ROOM_ALLOW_DEVICE_SELECTION=true
 export WAITING_ROOM_ALLOW_DEVICE_SELECTION=true
+export BYPASS_WAITING_ROOM=false
 export ALLOW_ARCHIVING=true
 export ALLOW_CAPTIONS=true
 export ALLOW_CHAT=true
@@ -28,3 +29,16 @@ export SHOW_PARTICIPANT_LIST=true
 export MEETING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export WAITING_ROOM_ALLOW_ADVANCED_SETTINGS=true
 export SHOW_VIDEO_STATS=false
+export AUTH_HEADER_NAME='authorization'
+export AUTH_SCHEME='Bearer'
+export OIDC_INTROSPECT_PATH='/oauth2/v1/introspect'
+export OIDC_AUTHORIZE_PATH='/oauth2/v1/authorize'
+export OIDC_TOKEN_PATH='/oauth2/v1/token'
+export AUTH_INTROSPECTION_TIMEOUT_MS=5000
+# DEV Okta tenant (SPA/public client — issuer URL and client ID are non-secret), one shared
+# app registration for Mobile + Web. Override via backend/.env for PROD, which has its own
+# issuer and client ID (see docs/CONFIGURATION.md).
+export OIDC_ISSUER_URL='https://launchpadtest.vonage.com'
+export OIDC_CLIENT_ID='0oa2sp68ck6PDehU40h8'
+export OIDC_WEB_REDIRECT_URI='http://localhost:5173/api/auth/callback/okta'
+

@@ -79,6 +79,23 @@ describe('RecordingPopUpIndicator', () => {
     );
   });
 
+  it('does not redirect when the dialog is dismissed via Escape or backdrop click', () => {
+    render(<RecordingPopUpIndicator shouldPromptRecordingConsent />);
+
+    // Escape key — must not be treated as an explicit decline
+    fireEvent.keyDown(screen.getByText(translationsByKey['recording.consent.dialog.title']), {
+      key: 'Escape',
+      code: 'Escape',
+    });
+
+    // Backdrop click — likewise must not eject the participant
+    const backdrop = document.querySelector('.MuiBackdrop-root');
+    expect(backdrop).not.toBeNull();
+    fireEvent.click(backdrop as Element);
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it('closes the dialog without redirect when the user consents', async () => {
     render(<RecordingPopUpIndicator shouldPromptRecordingConsent />);
 

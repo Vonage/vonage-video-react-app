@@ -63,6 +63,7 @@ const RecordingPopUpIndicator = ({
       handleClose={handleDecline}
       handleActionClick={handleActionClick}
       actionText={actionText}
+      disableDismiss
     />
   );
 };
