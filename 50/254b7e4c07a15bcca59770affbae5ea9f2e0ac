@@ -1,0 +1,14 @@
+backend/routes/video/constants/startArchive.ts
+  h_6c0124248e0f80 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "50254b7e4c07a15bcca59770affbae5ea9f2e0ac",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
