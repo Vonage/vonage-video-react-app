@@ -66,7 +66,6 @@ const PostCallTranscriptionButton = ({
   const handleClose = () => {
     setIsModalOpen(false);
 
-    // If the PostCallTranscriptionButton is in the ToolbarOverflowMenu, we close the modal and the menu
     if (isOverflowButton && handleClick) {
       handleClick();
     }
@@ -78,9 +77,6 @@ const PostCallTranscriptionButton = ({
         markTranscriptionStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            // Signal transcription intent only. The backend translates this into the
-            // concrete Vonage archive options (individual output mode, audio, transcription).
-            // The transcriptionArchiveId will be set by the session-wide archiveStarted event.
             await videoClient.startArchive({
               sessionKey: sessionKey!,
               withTranscription: true,
@@ -92,10 +88,6 @@ const PostCallTranscriptionButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (transcriptionArchiveId) {
-      // Pass the explicit transcription archive id so we stop the transcription specifically. This
-      // matters because a recording and a transcription can run at the same time, so we must target
-      // the right one rather than let the backend pick.
-      // The transcriptionArchiveId will be cleared by the session-wide archiveStopped event.
       videoClient
         .stopArchive({ sessionKey: sessionKey!, archiveId: transcriptionArchiveId })
         .catch((err) => {

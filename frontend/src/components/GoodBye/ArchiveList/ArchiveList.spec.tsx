@@ -77,7 +77,6 @@ describe('ArchiveList', () => {
     const transcriptionArchive = makeArchive('available', {
       outputMode: 'individual',
       hasTranscription: true,
-      // The media archive url differs from the transcript url; we must link to the transcript.
       url: 'https://example.com/media-archive.zip',
       transcription: { status: 'available', url: transcriptUrl },
     } as Parameters<typeof makeArchive>[1]);
@@ -100,7 +99,6 @@ describe('ArchiveList', () => {
   it('shows a transcription row as pending until the transcript is available', async () => {
     expect.assertions(1);
 
-    // Media archive is already available, but the transcript is still processing.
     const transcriptionArchive = makeArchive('available', {
       outputMode: 'individual',
       hasTranscription: true,

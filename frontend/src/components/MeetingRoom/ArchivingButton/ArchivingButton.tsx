@@ -66,7 +66,6 @@ const ArchivingButton = ({
   const handleClose = () => {
     setIsModalOpen(false);
 
-    // If the ArchivingButton is in the ToolbarOverflowMenu, we close the modal and the menu
     if (isOverflowButton && handleClick) {
       handleClick();
     }
@@ -78,8 +77,6 @@ const ArchivingButton = ({
         markRecordingStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            // A recording is a composed archive (the backend default when no transcription intent).
-            // The recordingArchiveId will be set by the session-wide archiveStarted event.
             await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
             resetRecordingStartRequestedBySelf();
@@ -88,10 +85,6 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (recordingArchiveId) {
-      // Pass the explicit recording archive id so we stop the recording specifically. This matters
-      // because a recording and a transcription can run at the same time, so we must target the
-      // right one rather than let the backend pick.
-      // The recordingArchiveId will be cleared by the session-wide archiveStopped event.
       void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId: recordingArchiveId });
     }
   };

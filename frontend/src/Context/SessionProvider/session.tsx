@@ -219,12 +219,9 @@ const SessionProvider = ({
     initialValue?.recordingAlreadyNotified ?? false
   );
 
-  // Track self-initiation separately for recording and transcription
   const recordingStartRequestedBySelfRef = useRef<boolean>(false);
   const transcriptionStartRequestedBySelfRef = useRef<boolean>(false);
-  // Tracks if this client initiated the recording (persists through server rotation)
   const wasRecordingInitiatorRef = useRef<boolean>(false);
-  // Tracks if this client initiated the transcription (persists through server rotation)
   const wasTranscriptionInitiatorRef = useRef<boolean>(false);
 
   const markRecordingStartRequestedBySelf = useCallback(() => {
@@ -388,8 +385,6 @@ const SessionProvider = ({
     setSubscriptionError(null);
   };
 
-  // Archive names are set by the backend to identify archive type from session-wide events.
-  // See: backend/routes/video/constants/startArchive.ts
   const RECORDING_ARCHIVE_NAME = 'recording';
   const TRANSCRIPTION_ARCHIVE_NAME = 'transcription';
 
@@ -424,17 +419,13 @@ const SessionProvider = ({
   };
 
   const handleArchiveStopped = useStableCallback(({ name }: { id: string; name: string }) => {
-    // Clear the appropriate archive id based on archive name/type
     if (name === RECORDING_ARCHIVE_NAME) {
       setRecordingArchiveId(null);
-      // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
       wasRecordingInitiatorRef.current = reconnecting && wasRecordingInitiatorRef.current;
       recordingStartRequestedBySelfRef.current = false;
 
-      // Reset consent state when no captures are active (transcription might still be running)
       setTranscriptionArchiveId((currentTranscriptionId) => {
         if (currentTranscriptionId === null) {
-          // All captures stopped — reset for next capture session
           setArchiveIdStartedBySelf(null);
           setRecordingAlreadyNotified(false);
         }
@@ -442,14 +433,11 @@ const SessionProvider = ({
       });
     } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
       setTranscriptionArchiveId(null);
-      // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
       wasTranscriptionInitiatorRef.current = reconnecting && wasTranscriptionInitiatorRef.current;
       transcriptionStartRequestedBySelfRef.current = false;
 
-      // Reset consent state when no captures are active (recording might still be running)
       setRecordingArchiveId((currentRecordingId) => {
         if (currentRecordingId === null) {
-          // All captures stopped — reset for next capture session
           setArchiveIdStartedBySelf(null);
           setRecordingAlreadyNotified(false);
         }
@@ -457,7 +445,6 @@ const SessionProvider = ({
       });
     }
 
-    // Clear legacy archiveId state
     setArchiveId(null);
   });
 

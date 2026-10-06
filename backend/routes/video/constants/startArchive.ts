@@ -10,32 +10,19 @@ import { ArchiveOptions, ArchiveOutputMode, LayoutType, Resolution } from '@vona
 export const RECORDING_ARCHIVE_TAG = 'recording';
 export const TRANSCRIPTION_ARCHIVE_TAG = 'transcription';
 
-// multiArchiveTag is a valid REST archive field but is not present on the SDK's ArchiveOptions
-// type, so we extend it locally for a type-safe options object.
 type ArchiveOptionsWithTag = ArchiveOptions & { multiArchiveTag?: string };
 
-// A recording is a composed archive; resolution and layout are valid (and only valid) here.
-// The `name` field encodes the archive type so that all participants can identify archive kind
-// from the session-wide archiveStarted event (which only exposes id and name).
 const recordingOptions: ArchiveOptionsWithTag = {
   name: RECORDING_ARCHIVE_TAG,
   outputMode: ArchiveOutputMode.COMPOSED,
   multiArchiveTag: RECORDING_ARCHIVE_TAG,
   resolution: Resolution.FHD_LANDSCAPE,
   layout: {
-    // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
-    // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
-    // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
     type: LayoutType.BEST_FIT,
     screenshareType: 'horizontalPresentation',
   },
 };
 
-// A post-call transcription is an individual-stream archive with audio + transcription. Vonage
-// rejects `resolution` and `layout` for individual archives (400 Bad Request), so they are omitted.
-// See: https://developer.vonage.com/en/video/guides/transcriptions
-// The `name` field encodes the archive type so that all participants can identify archive kind
-// from the session-wide archiveStarted event (which only exposes id and name).
 const transcriptionOptions: ArchiveOptionsWithTag = {
   name: TRANSCRIPTION_ARCHIVE_TAG,
   outputMode: ArchiveOutputMode.INDIVIDUAL,

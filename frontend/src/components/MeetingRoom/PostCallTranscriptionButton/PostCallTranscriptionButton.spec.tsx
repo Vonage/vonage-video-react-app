@@ -25,7 +25,6 @@ describe('PostCallTranscriptionButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // Ensure stopArchive always returns a Promise
     (mockVideoClient.stopArchive as Mock).mockResolvedValue(undefined);
 
     sessionContext = {
@@ -60,14 +59,12 @@ describe('PostCallTranscriptionButton', () => {
     act(() => screen.getByTestId('post-call-transcription-button').click());
     expect(screen.getByText('Start Transcription?')).toBeInTheDocument();
 
-    // click the button to start the transcription
     act(() => screen.getByTestId('popup-dialog-primary-button').click());
 
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
-    // The frontend only signals intent; the backend maps this to the individual-mode archive options.
     expect(mockVideoClient.startArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       withTranscription: true,
@@ -107,14 +104,12 @@ describe('PostCallTranscriptionButton', () => {
     act(() => screen.getByTestId('post-call-transcription-button').click());
     expect(screen.getByText('Stop Transcription?')).toBeInTheDocument();
 
-    // click the button to stop the transcription
     act(() => screen.getByTestId('popup-dialog-primary-button').click());
 
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
-    // We pass the explicit archive id so the transcription (not the recording) is stopped.
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       archiveId: testArchiveId,
