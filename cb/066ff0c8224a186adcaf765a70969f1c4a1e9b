@@ -1,0 +1,30 @@
+frontend/src/locales/ja.json
+  s_1084ad9f585be1::t_5876d122ef8c5f 343
+  s_1084ad9f585be1::t_ef00368a6eb935 90-97
+  s_1084ad9f585be1::t_29956b558a425b 118-119
+  s_1084ad9f585be1::t_8b2861cc976591 107-108
+frontend/src/locales/localeParity.spec.ts
+  s_1084ad9f585be1::t_b2935203a76d5f 7
+  s_1084ad9f585be1::t_44ea7ff0c9a70e 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cb066ff0c8224a186adcaf765a70969f1c4a1e9b",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_1084ad9f585be1": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_9ca48129-54d3-4f45-bc84-438fc70446f6",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

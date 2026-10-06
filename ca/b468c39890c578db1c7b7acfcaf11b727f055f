@@ -1,0 +1,31 @@
+docs/AUTHENTICATION.md
+  s_9e15e8ddd8683c::t_738e909f2b17c8 8
+  s_9e15e8ddd8683c::t_80d9ac85b7a1c3 158
+  s_9e15e8ddd8683c::t_3eb935efbe69d4 86-89
+  s_9e15e8ddd8683c::t_7aca46ec8d646d 16-21,23
+  s_9e15e8ddd8683c::t_3371833a2c65e7 58,66
+  s_9e15e8ddd8683c::t_7b464e2780ff5a 30
+  s_9e15e8ddd8683c::t_febdf5f016d6f1 111
+  s_9e15e8ddd8683c::t_95c46c67813d46 1-6,9-15,22,24-29,31-57,59-63,68-85,90-110,112-134,138-157,159-161
+  s_9e15e8ddd8683c::t_f34fb47614e108 135-137
+  s_9e15e8ddd8683c::t_f991bbfeb09042 7
+  s_9e15e8ddd8683c::t_c58764df73cdd8 64-65
+  s_9e15e8ddd8683c::t_b177d990481bba 67
+  s_9e15e8ddd8683c::t_e3369293293796 162-164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cab468c39890c578db1c7b7acfcaf11b727f055f",
+  "prompts": {},
+  "sessions": {
+    "s_9e15e8ddd8683c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3777d5e9-8f85-4145-824b-d6553d46cfd1",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

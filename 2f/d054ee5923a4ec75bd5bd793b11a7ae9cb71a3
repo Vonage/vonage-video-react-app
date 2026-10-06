@@ -1,0 +1,28 @@
+libs/core/src/hooks/useArchives/index.ts
+  s_18384736469ef3::t_0ef8489bd1de28 8
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_18384736469ef3::t_8b97d6efb9fdc6 167
+  s_18384736469ef3::t_741738648cfd60 68
+  s_18384736469ef3::t_2ab0df6ee77df9 9-14
+libs/core/src/hooks/index.ts
+  s_18384736469ef3::t_fbfc36233ccc2e 11
+libs/core/src/hooks/useArchives/useArchives.ts
+  s_18384736469ef3::t_1220321ba29d64 32-35
+  s_18384736469ef3::t_67f86c82e2696a 85,92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2fd054ee5923a4ec75bd5bd793b11a7ae9cb71a3",
+  "prompts": {},
+  "sessions": {
+    "s_18384736469ef3": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_5cfca89f-0b6c-4a64-bf2e-54316d70ad7e",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
