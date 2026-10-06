@@ -5289,10 +5289,10 @@
     "@vonage/server-client" "1.18.1"
     "@vonage/vetch" "1.9.1"
 
-"@vonage/vivid@5.23.1":
-  version "5.23.1"
-  resolved "https://npm.pkg.github.com/download/@Vonage/vivid/5.23.1/afc4b39a7aedade3b8d00a3c5c9fa6a6cdee6761#afc4b39a7aedade3b8d00a3c5c9fa6a6cdee6761"
-  integrity sha512-u92vYg4/2QvGoVC2Z2RwMEGeKu8JEawmKUAPAXZz80w26Vk97dlMjd75isQWkUSQGMqlsK4Bgw3BR7c11vk9OQ==
+"@vonage/vivid@5.23.0":
+  version "5.23.0"
+  resolved "https://npm.pkg.github.com/download/@Vonage/vivid/5.23.0/20bb8394286fa3d6692553695d962bcd5e4bc855#20bb8394286fa3d6692553695d962bcd5e4bc855"
+  integrity sha512-LYj7ygG7jMFRcxtwuXduCzJa4EX883QLXs3lVCDQrAasKmFXaXTjk7mgIbvCgDp4Q8gguaF3sIIbiIWsX4n83A==
   dependencies:
     "@floating-ui/dom" "^1.7.6"
     "@microsoft/fast-element" "^2.10.4"
