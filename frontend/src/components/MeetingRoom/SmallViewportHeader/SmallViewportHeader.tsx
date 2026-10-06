@@ -22,8 +22,9 @@ import { useSwitchCameraFacingModeHandler } from './hooks';
  */
 const SmallViewportHeader = (): ReactElement => {
   const { t } = useTranslation();
-  const { archiveId, transcriptionArchiveId, sessionDetails } = useSessionContext();
-  const isRecording = !!archiveId;
+  const { archiveId, recordingArchiveId, transcriptionArchiveId, sessionDetails } =
+    useSessionContext();
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
   const isTranscribing = !!transcriptionArchiveId;
 
   // Get preferred video input devices (cameras)
