@@ -194,6 +194,7 @@ const useMeetingRoom = () => {
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
     archiveId,
+    recordingArchiveId,
     shouldPromptRecordingConsent,
     handleRecordingNotified,
     latestNotifiedArchiveId,

@@ -33,7 +33,7 @@ describe('SessionProvider — session migration archiving recovery', () => {
       reconnecting,
       archiveId,
       archiveIdStartedBySelf,
-      markArchiveStartRequestedBySelf,
+      markRecordingStartRequestedBySelf,
     } = useSessionContext();
 
     useEffect(() => {
@@ -46,7 +46,7 @@ describe('SessionProvider — session migration archiving recovery', () => {
       <div>
         <button
           data-testid="markInitiator"
-          onClick={() => markArchiveStartRequestedBySelf()}
+          onClick={() => markRecordingStartRequestedBySelf()}
           type="button"
         >
           Mark Initiator

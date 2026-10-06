@@ -60,7 +60,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     captionsState,
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
-    archiveId,
+    recordingArchiveId,
     shouldPromptRecordingConsent,
     latestNotifiedArchiveId,
     handleRecordingNotified,
@@ -145,7 +145,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
       {recordingAlreadyNotified &&
         !archiveIdStartedBySelf &&
         isRecording &&
-        archiveId !== latestNotifiedArchiveId && (
+        recordingArchiveId !== latestNotifiedArchiveId && (
           <PopupAlert
             title={t('recording.popup.title')}
             message={t('recording.popup.subtitle')}

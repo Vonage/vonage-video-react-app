@@ -68,8 +68,10 @@ export type SessionContextType = {
   setTranscriptionArchiveId: Dispatch<SetStateAction<string | null>>;
   recordingAlreadyNotified: boolean;
   setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
-  markArchiveStartRequestedBySelf: () => void;
-  resetArchiveStartRequestedBySelf: () => void;
+  markRecordingStartRequestedBySelf: () => void;
+  resetRecordingStartRequestedBySelf: () => void;
+  markTranscriptionStartRequestedBySelf: () => void;
+  resetTranscriptionStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleBackgroundEffects: () => void;
@@ -114,8 +116,10 @@ export const SessionContext = createContext<SessionContextType>({
   setTranscriptionArchiveId: () => {},
   recordingAlreadyNotified: false,
   setRecordingAlreadyNotified: () => {},
-  markArchiveStartRequestedBySelf: () => {},
-  resetArchiveStartRequestedBySelf: () => {},
+  markRecordingStartRequestedBySelf: () => {},
+  resetRecordingStartRequestedBySelf: () => {},
+  markTranscriptionStartRequestedBySelf: () => {},
+  resetTranscriptionStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
   toggleBackgroundEffects: () => {},
@@ -214,16 +218,29 @@ const SessionProvider = ({
   const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
     initialValue?.recordingAlreadyNotified ?? false
   );
-  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
-  // Tracks if this client initiated the archive (persists through server rotation)
-  const wasArchiveInitiatorRef = useRef<boolean>(false);
 
-  const markArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = true;
+  // Track self-initiation separately for recording and transcription
+  const recordingStartRequestedBySelfRef = useRef<boolean>(false);
+  const transcriptionStartRequestedBySelfRef = useRef<boolean>(false);
+  // Tracks if this client initiated the recording (persists through server rotation)
+  const wasRecordingInitiatorRef = useRef<boolean>(false);
+  // Tracks if this client initiated the transcription (persists through server rotation)
+  const wasTranscriptionInitiatorRef = useRef<boolean>(false);
+
+  const markRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = true;
   }, []);
 
-  const resetArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = false;
+  const resetRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = false;
+  }, []);
+
+  const markTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = true;
+  }, []);
+
+  const resetTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = false;
   }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
@@ -382,37 +399,66 @@ const SessionProvider = ({
     // Set the appropriate archive id based on archive name/type
     if (name === RECORDING_ARCHIVE_NAME) {
       setRecordingArchiveId(id);
+
+      const isRecordingInitiatedBySelf =
+        recordingStartRequestedBySelfRef.current || wasRecordingInitiatorRef.current;
+
+      if (isRecordingInitiatedBySelf) {
+        setArchiveIdStartedBySelf(id);
+        wasRecordingInitiatorRef.current = true;
+        recordingStartRequestedBySelfRef.current = false;
+      }
     } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
       setTranscriptionArchiveId(id);
+
+      const isTranscriptionInitiatedBySelf =
+        transcriptionStartRequestedBySelfRef.current || wasTranscriptionInitiatorRef.current;
+
+      if (isTranscriptionInitiatedBySelf) {
+        // Also set archiveIdStartedBySelf for transcription — suppresses consent for the initiator
+        setArchiveIdStartedBySelf(id);
+        wasTranscriptionInitiatorRef.current = true;
+        transcriptionStartRequestedBySelfRef.current = false;
+      }
     }
-
-    const isInitiatedBySelf =
-      archiveStartRequestedBySelfRef.current || wasArchiveInitiatorRef.current;
-
-    if (!isInitiatedBySelf) {
-      return;
-    }
-
-    setArchiveIdStartedBySelf(id);
-    wasArchiveInitiatorRef.current = true;
-    archiveStartRequestedBySelfRef.current = false;
   };
 
   const handleArchiveStopped = useStableCallback(({ name }: { id: string; name: string }) => {
-    // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
-    wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
-
     // Clear the appropriate archive id based on archive name/type
     if (name === RECORDING_ARCHIVE_NAME) {
       setRecordingArchiveId(null);
+      // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
+      wasRecordingInitiatorRef.current = reconnecting && wasRecordingInitiatorRef.current;
+      recordingStartRequestedBySelfRef.current = false;
+
+      // Reset consent state when no captures are active (transcription might still be running)
+      setTranscriptionArchiveId((currentTranscriptionId) => {
+        if (currentTranscriptionId === null) {
+          // All captures stopped — reset for next capture session
+          setArchiveIdStartedBySelf(null);
+          setRecordingAlreadyNotified(false);
+        }
+        return currentTranscriptionId;
+      });
     } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
       setTranscriptionArchiveId(null);
+      // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
+      wasTranscriptionInitiatorRef.current = reconnecting && wasTranscriptionInitiatorRef.current;
+      transcriptionStartRequestedBySelfRef.current = false;
+
+      // Reset consent state when no captures are active (recording might still be running)
+      setRecordingArchiveId((currentRecordingId) => {
+        if (currentRecordingId === null) {
+          // All captures stopped — reset for next capture session
+          setArchiveIdStartedBySelf(null);
+          setRecordingAlreadyNotified(false);
+        }
+        return currentRecordingId;
+      });
     }
 
     // Clear legacy archiveId state
     setArchiveId(null);
-    setArchiveIdStartedBySelf(null);
-    archiveStartRequestedBySelfRef.current = false;
   });
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
@@ -608,8 +654,10 @@ const SessionProvider = ({
       setRecordingArchiveId,
       transcriptionArchiveId,
       setTranscriptionArchiveId,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
@@ -650,8 +698,10 @@ const SessionProvider = ({
       setRecordingArchiveId,
       transcriptionArchiveId,
       setTranscriptionArchiveId,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       setRecordingAlreadyNotified,
       recordingAlreadyNotified,
       vonageVideoClient,

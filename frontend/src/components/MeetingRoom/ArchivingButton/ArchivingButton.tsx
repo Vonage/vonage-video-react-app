@@ -34,8 +34,8 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const {
     recordingArchiveId,
-    markArchiveStartRequestedBySelf,
-    resetArchiveStartRequestedBySelf,
+    markRecordingStartRequestedBySelf,
+    resetRecordingStartRequestedBySelf,
     sessionKey,
     connected,
   } = useSessionContext();
@@ -75,14 +75,14 @@ const ArchivingButton = ({
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
       if (!recordingArchiveId && connected) {
-        markArchiveStartRequestedBySelf();
+        markRecordingStartRequestedBySelf();
         setTimeout(async () => {
           try {
             // A recording is a composed archive (the backend default when no transcription intent).
             // The recordingArchiveId will be set by the session-wide archiveStarted event.
             await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
-            resetArchiveStartRequestedBySelf();
+            resetRecordingStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);

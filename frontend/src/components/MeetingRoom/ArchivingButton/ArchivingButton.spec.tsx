@@ -29,8 +29,8 @@ describe('ArchivingButton', () => {
       subscriberWrappers: [],
       recordingArchiveId: null,
       setRecordingArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType;
@@ -74,8 +74,8 @@ describe('ArchivingButton', () => {
       subscriberWrappers: [],
       recordingArchiveId: testArchiveId,
       setRecordingArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
@@ -89,8 +89,8 @@ describe('ArchivingButton', () => {
       subscriberWrappers: [],
       recordingArchiveId: testArchiveId,
       setRecordingArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType);

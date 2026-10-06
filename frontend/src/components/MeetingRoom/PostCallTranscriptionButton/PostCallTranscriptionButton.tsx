@@ -34,8 +34,8 @@ const PostCallTranscriptionButton = ({
   const { t } = useTranslation();
   const {
     transcriptionArchiveId,
-    markArchiveStartRequestedBySelf,
-    resetArchiveStartRequestedBySelf,
+    markTranscriptionStartRequestedBySelf,
+    resetTranscriptionStartRequestedBySelf,
     sessionKey,
     connected,
   } = useSessionContext();
@@ -75,7 +75,7 @@ const PostCallTranscriptionButton = ({
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
       if (!transcriptionArchiveId && connected) {
-        markArchiveStartRequestedBySelf();
+        markTranscriptionStartRequestedBySelf();
         setTimeout(async () => {
           try {
             // Signal transcription intent only. The backend translates this into the
@@ -86,7 +86,7 @@ const PostCallTranscriptionButton = ({
               withTranscription: true,
             });
           } catch (err) {
-            resetArchiveStartRequestedBySelf();
+            resetTranscriptionStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);

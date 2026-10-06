@@ -32,8 +32,8 @@ describe('PostCallTranscriptionButton', () => {
       subscriberWrappers: [],
       transcriptionArchiveId: null,
       setTranscriptionArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markTranscriptionStartRequestedBySelf: vi.fn(),
+      resetTranscriptionStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType;
@@ -81,8 +81,8 @@ describe('PostCallTranscriptionButton', () => {
       subscriberWrappers: [],
       transcriptionArchiveId: testArchiveId,
       setTranscriptionArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markTranscriptionStartRequestedBySelf: vi.fn(),
+      resetTranscriptionStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<PostCallTranscriptionButton handleClick={mockHandleCloseMenu} />);
@@ -96,8 +96,8 @@ describe('PostCallTranscriptionButton', () => {
       subscriberWrappers: [],
       transcriptionArchiveId: testArchiveId,
       setTranscriptionArchiveId: vi.fn(),
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      markTranscriptionStartRequestedBySelf: vi.fn(),
+      resetTranscriptionStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType);
