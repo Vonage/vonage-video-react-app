@@ -303,27 +303,36 @@ describe('VonageVideoClient', () => {
   describe('event handling', () => {
     it('should emit archiveStarted when an archive starts', async () => {
       const archiveId = 'archive-id';
+      const archiveName = 'recording';
 
       const archiveStartedPromise = new Promise((resolve) => {
-        vonageVideoClient?.on('archiveStarted', (id) => {
-          expect(id).toBe(archiveId);
+        vonageVideoClient?.on('archiveStarted', (event) => {
+          expect(event).toEqual({ id: archiveId, name: archiveName });
           resolve(true);
         });
 
         mockSession.emit('archiveStarted', {
           id: archiveId,
+          name: archiveName,
         });
       });
       await archiveStartedPromise;
     });
 
     it('should emit archiveStopped when an archive stops', async () => {
+      const archiveId = 'archive-id';
+      const archiveName = 'recording';
+
       const archiveStoppedPromise = new Promise((resolve) => {
-        vonageVideoClient?.on('archiveStopped', () => {
+        vonageVideoClient?.on('archiveStopped', (event) => {
+          expect(event).toEqual({ id: archiveId, name: archiveName });
           resolve(true);
         });
 
-        mockSession.emit('archiveStopped');
+        mockSession.emit('archiveStopped', {
+          id: archiveId,
+          name: archiveName,
+        });
       });
 
       return archiveStoppedPromise;

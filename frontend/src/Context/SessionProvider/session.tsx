@@ -371,8 +371,20 @@ const SessionProvider = ({
     setSubscriptionError(null);
   };
 
-  const handleArchiveStarted = (id: string) => {
+  // Archive names are set by the backend to identify archive type from session-wide events.
+  // See: backend/routes/video/constants/startArchive.ts
+  const RECORDING_ARCHIVE_NAME = 'recording';
+  const TRANSCRIPTION_ARCHIVE_NAME = 'transcription';
+
+  const handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
     setArchiveId(id);
+
+    // Set the appropriate archive id based on archive name/type
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(id);
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(id);
+    }
 
     const isInitiatedBySelf =
       archiveStartRequestedBySelfRef.current || wasArchiveInitiatorRef.current;
@@ -386,10 +398,18 @@ const SessionProvider = ({
     archiveStartRequestedBySelfRef.current = false;
   };
 
-  const handleArchiveStopped = useStableCallback(() => {
+  const handleArchiveStopped = useStableCallback(({ name }: { id: string; name: string }) => {
     // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
     wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
 
+    // Clear the appropriate archive id based on archive name/type
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(null);
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(null);
+    }
+
+    // Clear legacy archiveId state
     setArchiveId(null);
     setArchiveIdStartedBySelf(null);
     archiveStartRequestedBySelfRef.current = false;

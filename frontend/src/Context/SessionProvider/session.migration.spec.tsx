@@ -130,7 +130,7 @@ describe('SessionProvider — session migration archiving recovery', () => {
       });
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-001');
+        vonageVideoClient.emit('archiveStarted', { id: 'archive-001', name: 'recording' });
       });
 
       await waitFor(() =>
@@ -145,13 +145,13 @@ describe('SessionProvider — session migration archiving recovery', () => {
       await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
 
       act(() => {
-        vonageVideoClient.emit('archiveStopped');
+        vonageVideoClient.emit('archiveStopped', { id: 'archive-001', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveIdStartedBySelf')).toHaveTextContent('null'));
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-002');
+        vonageVideoClient.emit('archiveStarted', { id: 'archive-002', name: 'recording' });
       });
 
       // wasArchiveInitiatorRef was preserved during the rotation, so archiveIdStartedBySelf is restored
@@ -171,11 +171,11 @@ describe('SessionProvider — session migration archiving recovery', () => {
       await waitFor(() => expect(getByTestId('reconnecting')).toHaveTextContent('true'));
 
       act(() => {
-        vonageVideoClient.emit('archiveStopped');
+        vonageVideoClient.emit('archiveStopped', { id: 'archive-001', name: 'recording' });
       });
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-002');
+        vonageVideoClient.emit('archiveStarted', { id: 'archive-002', name: 'recording' });
       });
 
       // wasArchiveInitiatorRef was false, so archiveIdStartedBySelf stays null
@@ -191,7 +191,7 @@ describe('SessionProvider — session migration archiving recovery', () => {
       });
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-001');
+        vonageVideoClient.emit('archiveStarted', { id: 'archive-001', name: 'recording' });
       });
 
       await waitFor(() =>
@@ -200,14 +200,14 @@ describe('SessionProvider — session migration archiving recovery', () => {
 
       // Manual stop — no sessionReconnecting emitted first, so reconnectingRef = false
       act(() => {
-        vonageVideoClient.emit('archiveStopped');
+        vonageVideoClient.emit('archiveStopped', { id: 'archive-001', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveIdStartedBySelf')).toHaveTextContent('null'));
 
       // New archive starts — wasArchiveInitiatorRef was NOT set (manual stop), so no restoration
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'archive-002');
+        vonageVideoClient.emit('archiveStarted', { id: 'archive-002', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveIdStartedBySelf')).toHaveTextContent('null'));

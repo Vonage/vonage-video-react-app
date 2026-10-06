@@ -34,7 +34,6 @@ const PostCallTranscriptionButton = ({
   const { t } = useTranslation();
   const {
     transcriptionArchiveId,
-    setTranscriptionArchiveId,
     markArchiveStartRequestedBySelf,
     resetArchiveStartRequestedBySelf,
     sessionKey,
@@ -81,11 +80,11 @@ const PostCallTranscriptionButton = ({
           try {
             // Signal transcription intent only. The backend translates this into the
             // concrete Vonage archive options (individual output mode, audio, transcription).
-            const archive = await videoClient.startArchive({
+            // The transcriptionArchiveId will be set by the session-wide archiveStarted event.
+            await videoClient.startArchive({
               sessionKey: sessionKey!,
               withTranscription: true,
             });
-            setTranscriptionArchiveId(archive.id);
           } catch (err) {
             resetArchiveStartRequestedBySelf();
             console.log(err);
@@ -96,12 +95,12 @@ const PostCallTranscriptionButton = ({
       // Pass the explicit transcription archive id so we stop the transcription specifically. This
       // matters because a recording and a transcription can run at the same time, so we must target
       // the right one rather than let the backend pick.
+      // The transcriptionArchiveId will be cleared by the session-wide archiveStopped event.
       videoClient
         .stopArchive({ sessionKey: sessionKey!, archiveId: transcriptionArchiveId })
         .catch((err) => {
           console.error('Failed to stop transcription:', err);
         });
-      setTranscriptionArchiveId(null);
     }
   };
 

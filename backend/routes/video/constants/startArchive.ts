@@ -15,7 +15,10 @@ export const TRANSCRIPTION_ARCHIVE_TAG = 'transcription';
 type ArchiveOptionsWithTag = ArchiveOptions & { multiArchiveTag?: string };
 
 // A recording is a composed archive; resolution and layout are valid (and only valid) here.
+// The `name` field encodes the archive type so that all participants can identify archive kind
+// from the session-wide archiveStarted event (which only exposes id and name).
 const recordingOptions: ArchiveOptionsWithTag = {
+  name: RECORDING_ARCHIVE_TAG,
   outputMode: ArchiveOutputMode.COMPOSED,
   multiArchiveTag: RECORDING_ARCHIVE_TAG,
   resolution: Resolution.FHD_LANDSCAPE,
@@ -31,7 +34,10 @@ const recordingOptions: ArchiveOptionsWithTag = {
 // A post-call transcription is an individual-stream archive with audio + transcription. Vonage
 // rejects `resolution` and `layout` for individual archives (400 Bad Request), so they are omitted.
 // See: https://developer.vonage.com/en/video/guides/transcriptions
+// The `name` field encodes the archive type so that all participants can identify archive kind
+// from the session-wide archiveStarted event (which only exposes id and name).
 const transcriptionOptions: ArchiveOptionsWithTag = {
+  name: TRANSCRIPTION_ARCHIVE_TAG,
   outputMode: ArchiveOutputMode.INDIVIDUAL,
   multiArchiveTag: TRANSCRIPTION_ARCHIVE_TAG,
   hasAudio: true,

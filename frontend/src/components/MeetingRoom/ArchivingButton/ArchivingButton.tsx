@@ -34,7 +34,6 @@ const ArchivingButton = ({
   const { t } = useTranslation();
   const {
     recordingArchiveId,
-    setRecordingArchiveId,
     markArchiveStartRequestedBySelf,
     resetArchiveStartRequestedBySelf,
     sessionKey,
@@ -80,8 +79,8 @@ const ArchivingButton = ({
         setTimeout(async () => {
           try {
             // A recording is a composed archive (the backend default when no transcription intent).
-            const archive = await videoClient.startArchive({ sessionKey: sessionKey! });
-            setRecordingArchiveId(archive.id);
+            // The recordingArchiveId will be set by the session-wide archiveStarted event.
+            await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
             resetArchiveStartRequestedBySelf();
             console.log(err);
@@ -92,8 +91,8 @@ const ArchivingButton = ({
       // Pass the explicit recording archive id so we stop the recording specifically. This matters
       // because a recording and a transcription can run at the same time, so we must target the
       // right one rather than let the backend pick.
+      // The recordingArchiveId will be cleared by the session-wide archiveStopped event.
       void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId: recordingArchiveId });
-      setRecordingArchiveId(null);
     }
   };
 
