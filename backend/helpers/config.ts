@@ -92,18 +92,25 @@ export default loadConfig;
 function loadAuthConfig(): AuthConfig {
   if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
 
-  const introspectionTimeoutMs = process.env.AUTH_INTROSPECTION_TIMEOUT_MS;
-
   return AuthConfigSchema.parse({
     authEnabled: true,
-    oidcIssuerUrl: process.env.OIDC_ISSUER_URL,
     oidcClientId: process.env.OIDC_CLIENT_ID,
     oidcWebRedirectUri: process.env.OIDC_WEB_REDIRECT_URI,
+    oidcAuthorizationEndpoint: process.env.OIDC_AUTHORIZATION_ENDPOINT,
+    oidcTokenEndpoint: process.env.OIDC_TOKEN_ENDPOINT,
+    oidcIntrospectionEndpoint: process.env.OIDC_INTROSPECTION_ENDPOINT,
+    oidcRevocationEndpoint: process.env.OIDC_REVOCATION_ENDPOINT,
+    oidcEndSessionEndpoint: process.env.OIDC_END_SESSION_ENDPOINT,
+    oidcPostLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI,
+    oidcScopes: process.env.OIDC_SCOPES,
+    authCookieSecret: process.env.AUTH_COOKIE_SECRET,
+    authSessionCookieName: process.env.AUTH_SESSION_COOKIE_NAME,
+    authIdTokenCookieName: process.env.AUTH_ID_TOKEN_COOKIE_NAME,
+    authTransactionCookieName: process.env.AUTH_TRANSACTION_COOKIE_NAME,
+    authTransactionMaxAgeSeconds: process.env.AUTH_TRANSACTION_MAX_AGE_SECONDS,
+    authRefreshWindowSeconds: process.env.AUTH_REFRESH_WINDOW_SECONDS,
+    authProviderTimeoutMs: process.env.AUTH_PROVIDER_TIMEOUT_MS,
     authHeaderName: process.env.AUTH_HEADER_NAME,
     authScheme: process.env.AUTH_SCHEME,
-    introspectPath: process.env.OIDC_INTROSPECT_PATH,
-    authorizePath: process.env.OIDC_AUTHORIZE_PATH,
-    tokenPath: process.env.OIDC_TOKEN_PATH,
-    introspectionTimeoutMs: introspectionTimeoutMs ? Number(introspectionTimeoutMs) : undefined,
   });
 }

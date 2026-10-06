@@ -13,6 +13,14 @@ env:
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
   SESSION_KEY_SECRET: ${{secrets.SESSION_KEY_SECRET}}
+  OIDC_CLIENT_ID: '0oa2sp68ck6PDehU40h8'
+  OIDC_WEB_REDIRECT_URI: 'http://localhost:5173/api/auth/callback/okta'
+  OIDC_AUTHORIZATION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/authorize'
+  OIDC_TOKEN_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/token'
+  OIDC_INTROSPECTION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/introspect'
+  OIDC_REVOCATION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/revoke'
+  OIDC_END_SESSION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/logout'
+  OIDC_POST_LOGOUT_REDIRECT_URI: 'http://localhost:5173/'
 
 jobs:
   # ----------------------------------------------------
@@ -124,6 +132,51 @@ jobs:
         if: failure()
         with:
           name: playwright-report-${{ matrix.browser.name }}
+          path: integration-tests/playwright-report/
+          retention-days: 7
+
+  # ----------------------------------------------------
+  # Auth E2E (app with AUTH_ENABLED=true against apps/local-oidc)
+  # ----------------------------------------------------
+  auth-e2e:
+    name: 🔐 E2E / Auth (local-oidc)
+    runs-on: ubuntu-22.04
+    if: github.event.pull_request.head.repo.fork == false
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn install --ignore-scripts --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ hashFiles('**/package.json') }}
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run auth E2E tests
+        run: yarn test:integration auth
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-auth
           path: integration-tests/playwright-report/
           retention-days: 7
 

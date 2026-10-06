@@ -1,4 +1,5 @@
 const customWordList = [
+  'ciphertext',
   'Opentok',
   'Vonage',
   'screensharing',

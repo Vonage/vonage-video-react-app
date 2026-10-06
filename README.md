@@ -118,6 +118,8 @@ This application provides features for common conferencing use cases, such as:
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
 
+You can safely generate the backend secrets (`SESSION_KEY_SECRET`, and `AUTH_COOKIE_SECRET` when auth is enabled) with `yarn generate:secret`. Use a different value for each variable and each environment.
+
 ### OIDC token authentication (optional)
 
 See [Authentication](./docs/AUTHENTICATION.md) for the full guide.

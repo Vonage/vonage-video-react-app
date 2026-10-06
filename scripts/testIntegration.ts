@@ -6,6 +6,7 @@ const args = process.argv.slice(2);
 
 const VALID_MODES = [
   'api',
+  'auth',
   'debug',
   'inspect',
   'canon',
@@ -76,6 +77,16 @@ const runAllPlaywrightTests = () => {
     '\n🤖 Running all Playwright integration tests (Chrome, Firefox, Mobile Chrome)...\n'
   );
   runCommand('nx run integration-tests:test');
+};
+
+/**
+ * Runs the auth E2E suite: the built app with AUTH_ENABLED=true against apps/local-oidc.
+ */
+const runAuthTests = () => {
+  console.log('\n🔐 Running auth E2E tests against local-oidc...\n');
+  runCommand(
+    "cd integration-tests && bash -c 'source ../env.sh && set -a && source auth/backend.env && set +a && playwright test -c playwright.auth.config.ts'"
+  );
 };
 
 /**
@@ -172,6 +183,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  * - (no args)             - Run all tests in all browsers (headless)
  * - api                   - Run only API integration tests (Jest)
  * - playwright            - Run only Playwright tests (skip API tests)
+ * - auth                  - Run the auth E2E suite against apps/local-oidc
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)
  * - canon [test-name]     - Generate canonical screenshots (baseline for visual regression)
@@ -230,6 +242,11 @@ const main = () => {
 
   if (isPlaywrightMode) {
     runAllPlaywrightTests();
+    return;
+  }
+
+  if (firstArg === 'auth') {
+    runAuthTests();
     return;
   }
 

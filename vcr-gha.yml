@@ -44,17 +44,44 @@ instance:
       secret: JIRA_SEVERITY_ID
     - name: SESSION_KEY_SECRET
       secret: SESSION_KEY_SECRET
+    - name: AUTH_COOKIE_SECRET
+      secret: AUTH_COOKIE_SECRET
+    - name: AUTH_ENABLED
+      value: 'false'
+    - name: OIDC_CLIENT_ID
+      value: '0oa2sp68ck6PDehU40h8'
+    - name: OIDC_WEB_REDIRECT_URI
+      value: 'https://<DOMAIN>/api/auth/callback/okta'
+    - name: OIDC_POST_LOGOUT_REDIRECT_URI
+      value: 'https://<DOMAIN>/'
+    - name: OIDC_AUTHORIZATION_ENDPOINT
+      value: 'https://launchpadtest.vonage.com/oauth2/v1/authorize'
+    - name: OIDC_TOKEN_ENDPOINT
+      value: 'https://launchpadtest.vonage.com/oauth2/v1/token'
+    - name: OIDC_INTROSPECTION_ENDPOINT
+      value: 'https://launchpadtest.vonage.com/oauth2/v1/introspect'
+    - name: OIDC_REVOCATION_ENDPOINT
+      value: 'https://launchpadtest.vonage.com/oauth2/v1/revoke'
+    - name: OIDC_END_SESSION_ENDPOINT
+      value: 'https://launchpadtest.vonage.com/oauth2/v1/logout'
+    # VCR does not run env.sh, so the backend defaults from env.defaults.sh are repeated here.
+    - name: AUTH_SESSION_COOKIE_NAME
+      value: 'oidc_session'
+    - name: AUTH_ID_TOKEN_COOKIE_NAME
+      value: 'oidc_id_token'
+    - name: AUTH_TRANSACTION_COOKIE_NAME
+      value: 'oidc_transaction'
+    - name: AUTH_TRANSACTION_MAX_AGE_SECONDS
+      value: '600'
+    - name: AUTH_REFRESH_WINDOW_SECONDS
+      value: '30'
+    - name: AUTH_PROVIDER_TIMEOUT_MS
+      value: '5000'
+    - name: OIDC_SCOPES
+      value: 'openid profile email offline_access'
     - name: AUTH_HEADER_NAME
       value: 'authorization'
     - name: AUTH_SCHEME
       value: 'Bearer'
-    - name: OIDC_INTROSPECT_PATH
-      value: '/oauth2/v1/introspect'
-    - name: OIDC_AUTHORIZE_PATH
-      value: '/oauth2/v1/authorize'
-    - name: OIDC_TOKEN_PATH
-      value: '/oauth2/v1/token'
-    - name: AUTH_INTROSPECTION_TIMEOUT_MS
-      value: '5000'
 debug:
   entrypoint: [node, bundle.cjs]

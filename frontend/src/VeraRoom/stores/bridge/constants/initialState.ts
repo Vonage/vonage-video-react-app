@@ -1,4 +1,5 @@
 import type { KebabToCamel } from '@common/types';
+import type { VideoClient } from '@core/services';
 import bridgeAttributesMap from './bridgeAttributesMap';
 
 function initialValue() {
@@ -8,10 +9,13 @@ function initialValue() {
     entryPoint: bridgeAttributesMap['entry-point'].value,
     sessionIdentifier: bridgeAttributesMap['session-identifier'].value,
     language: bridgeAttributesMap['language'].value,
+    credentials: bridgeAttributesMap['credentials'].value,
   };
 
   return {
     ...htmlAttributes,
+    /** Set through the element's `videoClient` property; takes precedence over the attributes. */
+    videoClient: null as VideoClient | null,
   };
 }
 

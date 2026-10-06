@@ -2,8 +2,14 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
-import getSessionStorageService from '../../../sessionStorageService';
-import { TRANSACTION_COOKIE_NAME } from '../constants';
+import AuthTransactionCookieSchema from '../schemas/AuthTransactionCookie.schema';
+import { TEST_AUTH_COOKIE_SECRET } from '../../../tests/helpers/testAuthCookieSecret';
+import readSetCookie from '../../../tests/helpers/readSetCookie';
+import readEncryptedSetCookie from '../../../tests/helpers/readEncryptedSetCookie';
+
+const SESSION_COOKIE_NAME = 'test_session';
+const ID_TOKEN_COOKIE_NAME = 'test_id_token';
+const TRANSACTION_COOKIE_NAME = 'test_transaction';
 
 const loadConfigMock = jest.fn<() => Config>();
 
@@ -30,15 +36,24 @@ const ENABLED_CONFIG: Config = {
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
   authEnabled: true,
-  oidcIssuerUrl: 'https://example.okta.com',
   oidcClientId: 'test-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
+  oidcAuthorizationEndpoint: 'https://example.okta.com/oauth2/v1/authorize',
+  oidcTokenEndpoint: 'https://example.okta.com/oauth2/v1/token',
+  oidcIntrospectionEndpoint: 'https://example.okta.com/oauth2/v1/introspect',
+  oidcRevocationEndpoint: 'https://example.okta.com/oauth2/v1/revoke',
+  oidcEndSessionEndpoint: 'https://example.okta.com/oauth2/v1/logout',
+  oidcPostLogoutRedirectUri: 'http://localhost:3000/',
+  oidcScopes: 'openid profile email offline_access',
+  authCookieSecret: TEST_AUTH_COOKIE_SECRET,
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
-  introspectPath: '/oauth2/v1/introspect',
-  authorizePath: '/oauth2/v1/authorize',
-  tokenPath: '/oauth2/v1/token',
-  introspectionTimeoutMs: 5000,
+  authSessionCookieName: SESSION_COOKIE_NAME,
+  authIdTokenCookieName: ID_TOKEN_COOKIE_NAME,
+  authTransactionCookieName: TRANSACTION_COOKIE_NAME,
+  authTransactionMaxAgeSeconds: 600,
+  authRefreshWindowSeconds: 30,
+  authProviderTimeoutMs: 5000,
 };
 
 function buildApp(): Express {
@@ -87,22 +102,31 @@ describe('signInHandler', () => {
     expect(setCookieHeader).toContain('HttpOnly');
   });
 
-  it('stores a safe returnTo query param on the transaction', async () => {
+  it('stores state, PKCE verifier and a safe returnTo in an encrypted cookie scoped to the callback', async () => {
     const res = await request(buildApp()).get('/auth/signin?returnTo=/room/abc123');
 
-    const transactionId = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
-    const sessionService = getSessionStorageService();
-    const transaction = await sessionService.getAuthTransaction({ transactionId });
+    const transaction = readEncryptedSetCookie({
+      headers: res.headers,
+      name: TRANSACTION_COOKIE_NAME,
+      schema: AuthTransactionCookieSchema,
+    });
+    const location = new URL(res.headers.location);
 
     expect(transaction?.returnTo).toEqual('/room/abc123');
+    expect(transaction?.state).toEqual(location.searchParams.get('state'));
+    expect(readSetCookie({ headers: res.headers, name: TRANSACTION_COOKIE_NAME })).toContain(
+      'Path=/api/auth/callback/okta'
+    );
   });
 
   it('falls back to "/" when returnTo is not a safe relative path', async () => {
     const res = await request(buildApp()).get('/auth/signin?returnTo=//evil.com');
 
-    const transactionId = res.headers['set-cookie'][0].split(';')[0].split('=')[1];
-    const sessionService = getSessionStorageService();
-    const transaction = await sessionService.getAuthTransaction({ transactionId });
+    const transaction = readEncryptedSetCookie({
+      headers: res.headers,
+      name: TRANSACTION_COOKIE_NAME,
+      schema: AuthTransactionCookieSchema,
+    });
 
     expect(transaction?.returnTo).toEqual('/');
   });

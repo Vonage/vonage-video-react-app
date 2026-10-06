@@ -7,10 +7,9 @@ describe('loadConfig', () => {
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...originalEnv }; // Copy originalEnv to avoid mutation across tests
-    delete process.env.AUTH_ENABLED;
-    delete process.env.OIDC_CLIENT_ID;
-    delete process.env.OIDC_ISSUER_URL;
-    delete process.env.OIDC_WEB_REDIRECT_URI;
+    Object.keys(process.env)
+      .filter((name) => name.startsWith('AUTH_') || name.startsWith('OIDC_'))
+      .forEach((name) => delete process.env[name]);
   });
 
   test('should return defined values', () => {
@@ -70,77 +69,77 @@ describe('loadConfig', () => {
     expect(config.authEnabled).toBe(false);
   });
 
-  test('should throw when AUTH_ENABLED is true but OIDC_CLIENT_ID/OIDC_ISSUER_URL are missing or invalid', () => {
-    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-    process.env.OT_API_KEY = 'test-key';
-    process.env.OT_API_SECRET = 'test-secret';
-    process.env.AUTH_ENABLED = 'true';
-    delete process.env.OIDC_CLIENT_ID;
-    delete process.env.OIDC_ISSUER_URL;
+  describe('when AUTH_ENABLED is true', () => {
+    beforeEach(() => {
+      process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+      process.env.OT_API_KEY = 'test-key';
+      process.env.OT_API_SECRET = 'test-secret';
+      process.env.AUTH_ENABLED = 'true';
+      process.env.OIDC_CLIENT_ID = 'test-client-id';
+      process.env.OIDC_WEB_REDIRECT_URI = 'http://localhost:3000/api/auth/callback/okta';
+      process.env.OIDC_AUTHORIZATION_ENDPOINT = 'https://idp.example.com/authorize';
+      process.env.OIDC_TOKEN_ENDPOINT = 'https://idp.example.com/token';
+      process.env.OIDC_INTROSPECTION_ENDPOINT = 'https://idp.example.com/introspect';
+      process.env.OIDC_REVOCATION_ENDPOINT = 'https://idp.example.com/revoke';
+      process.env.OIDC_END_SESSION_ENDPOINT = 'https://idp.example.com/logout';
+      process.env.OIDC_POST_LOGOUT_REDIRECT_URI = 'http://localhost:3000/';
+      process.env.AUTH_COOKIE_SECRET = Buffer.alloc(32, 7).toString('base64');
+      process.env.AUTH_SESSION_COOKIE_NAME = 'oidc_session';
+      process.env.AUTH_ID_TOKEN_COOKIE_NAME = 'oidc_id_token';
+      process.env.AUTH_TRANSACTION_COOKIE_NAME = 'oidc_transaction';
+      process.env.AUTH_TRANSACTION_MAX_AGE_SECONDS = '600';
+      process.env.AUTH_REFRESH_WINDOW_SECONDS = '30';
+      process.env.AUTH_PROVIDER_TIMEOUT_MS = '5000';
+      process.env.OIDC_SCOPES = 'openid profile email offline_access';
+      process.env.AUTH_HEADER_NAME = 'authorization';
+      process.env.AUTH_SCHEME = 'Bearer';
+    });
 
-    expect(() => loadConfig()).toThrow(/oidcIssuerUrl|oidcClientId/);
+    test.each([
+      ['OIDC_CLIENT_ID', /oidcClientId/],
+      ['OIDC_WEB_REDIRECT_URI', /oidcWebRedirectUri/],
+      ['OIDC_AUTHORIZATION_ENDPOINT', /oidcAuthorizationEndpoint/],
+      ['OIDC_TOKEN_ENDPOINT', /oidcTokenEndpoint/],
+      ['OIDC_INTROSPECTION_ENDPOINT', /oidcIntrospectionEndpoint/],
+      ['OIDC_REVOCATION_ENDPOINT', /oidcRevocationEndpoint/],
+      ['OIDC_END_SESSION_ENDPOINT', /oidcEndSessionEndpoint/],
+      ['OIDC_POST_LOGOUT_REDIRECT_URI', /oidcPostLogoutRedirectUri/],
+      ['AUTH_SESSION_COOKIE_NAME', /authSessionCookieName/],
+      ['AUTH_PROVIDER_TIMEOUT_MS', /authProviderTimeoutMs/],
+    ])('should throw when the required %s is missing', (name, expectedError) => {
+      delete process.env[name];
 
-    process.env.OIDC_CLIENT_ID = 'test-client-id';
-    process.env.OIDC_ISSUER_URL = 'not-a-url';
+      expect(() => loadConfig()).toThrow(expectedError);
+    });
 
-    expect(() => loadConfig()).toThrow(/oidcIssuerUrl/);
-  });
+    test.each([
+      ['missing', undefined],
+      ['not 32 bytes', Buffer.alloc(16, 7).toString('base64')],
+    ])('should throw when AUTH_COOKIE_SECRET is %s', (_label, value) => {
+      if (value === undefined) delete process.env.AUTH_COOKIE_SECRET;
+      else process.env.AUTH_COOKIE_SECRET = value;
 
-  test('should throw when AUTH_ENABLED is true but OIDC_WEB_REDIRECT_URI is missing or invalid', () => {
-    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-    process.env.OT_API_KEY = 'test-key';
-    process.env.OT_API_SECRET = 'test-secret';
-    process.env.AUTH_ENABLED = 'true';
-    process.env.OIDC_CLIENT_ID = 'test-client-id';
-    process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
+      expect(() => loadConfig()).toThrow(/authCookieSecret/);
+    });
 
-    expect(() => loadConfig()).toThrow(/oidcWebRedirectUri/);
+    test('should throw when an endpoint is not a valid URL', () => {
+      process.env.OIDC_TOKEN_ENDPOINT = '/oauth2/v1/token';
 
-    process.env.OIDC_WEB_REDIRECT_URI = 'not-a-url';
+      expect(() => loadConfig()).toThrow(/oidcTokenEndpoint/);
+    });
 
-    expect(() => loadConfig()).toThrow(/oidcWebRedirectUri/);
-  });
+    test('should read the project values from env, parsing the numeric ones', () => {
+      process.env.AUTH_SESSION_COOKIE_NAME = 'custom_session';
+      process.env.AUTH_PROVIDER_TIMEOUT_MS = '9000';
 
-  test('should return auth config with defaults, overridable via env, when AUTH_ENABLED is true', () => {
-    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
-    process.env.OT_API_KEY = 'test-key';
-    process.env.OT_API_SECRET = 'test-secret';
-    process.env.AUTH_ENABLED = 'true';
-    process.env.OIDC_CLIENT_ID = 'test-client-id';
-    process.env.OIDC_ISSUER_URL = 'https://example.okta.com';
-    process.env.OIDC_WEB_REDIRECT_URI = 'http://localhost:3000/api/auth/callback/okta';
+      const config = loadConfig();
 
-    const config = loadConfig();
-
-    expect(config.authEnabled).toBe(true);
-    if (config.authEnabled) {
-      expect(config.oidcClientId).toBe('test-client-id');
-      expect(config.oidcWebRedirectUri).toBe('http://localhost:3000/api/auth/callback/okta');
-      expect(config.authHeaderName).toBe('authorization');
-      expect(config.authScheme).toBe('Bearer');
-      expect(config.introspectPath).toBe('/oauth2/v1/introspect');
-      expect(config.authorizePath).toBe('/oauth2/v1/authorize');
-      expect(config.tokenPath).toBe('/oauth2/v1/token');
-      expect(config.introspectionTimeoutMs).toBe(5000);
-    }
-
-    process.env.AUTH_HEADER_NAME = 'x-access-token';
-    process.env.AUTH_SCHEME = 'Token';
-    process.env.OIDC_INTROSPECT_PATH = '/custom/introspect';
-    process.env.OIDC_AUTHORIZE_PATH = '/custom/authorize';
-    process.env.OIDC_TOKEN_PATH = '/custom/token';
-    process.env.AUTH_INTROSPECTION_TIMEOUT_MS = '9000';
-
-    const overriddenConfig = loadConfig();
-
-    expect(overriddenConfig.authEnabled).toBe(true);
-    if (overriddenConfig.authEnabled) {
-      expect(overriddenConfig.authHeaderName).toBe('x-access-token');
-      expect(overriddenConfig.authScheme).toBe('Token');
-      expect(overriddenConfig.introspectPath).toBe('/custom/introspect');
-      expect(overriddenConfig.authorizePath).toBe('/custom/authorize');
-      expect(overriddenConfig.tokenPath).toBe('/custom/token');
-      expect(overriddenConfig.introspectionTimeoutMs).toBe(9000);
-    }
+      expect(config.authEnabled).toBe(true);
+      if (config.authEnabled) {
+        expect(config.authSessionCookieName).toBe('custom_session');
+        expect(config.authProviderTimeoutMs).toBe(9000);
+        expect(config.authRefreshWindowSeconds).toBe(30);
+      }
+    });
   });
 });

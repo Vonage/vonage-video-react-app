@@ -1,19 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import { makeInternalErrorHandler, makeNotFoundErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
-import isVcr from '../../../middleware/isVcr';
-import getSessionStorageService from '../../../sessionStorageService';
 import loadConfig from '../../../helpers/config';
 import generateOpaqueToken from '../helpers/generateOpaqueToken';
 import computeCodeChallenge from '../helpers/computeCodeChallenge';
 import isSafeReturnToPath from '../helpers/isSafeReturnToPath';
 import readStringQueryParam from '../helpers/readStringQueryParam';
-import {
-  DEFAULT_RETURN_TO,
-  OIDC_SCOPES,
-  TRANSACTION_COOKIE_MAX_AGE_MS,
-  TRANSACTION_COOKIE_NAME,
-} from '../constants';
+import encryptCookiePayload from '../helpers/encryptCookiePayload';
+import buildAuthCookieOptions from '../helpers/buildAuthCookieOptions';
+import readCallbackPath from '../helpers/readCallbackPath';
+import type { AuthTransactionCookie } from '../schemas/AuthTransactionCookie.schema';
+import { DEFAULT_RETURN_TO } from '../constants';
 
 function makeSignInHandler() {
   const authConfig = loadConfig();
@@ -28,14 +25,19 @@ function makeSignInHandler() {
     };
   }
 
-  const { oidcIssuerUrl, authorizePath, oidcClientId, oidcWebRedirectUri } = authConfig;
-  const sessionService = getSessionStorageService();
+  const {
+    oidcAuthorizationEndpoint,
+    oidcClientId,
+    oidcWebRedirectUri,
+    oidcScopes,
+    authCookieSecret,
+    authTransactionCookieName,
+    authTransactionMaxAgeSeconds,
+  } = authConfig;
 
-  return async function handleRequest(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  const callbackPath = readCallbackPath({ oidcWebRedirectUri });
+
+  return function handleRequest(req: Request, res: Response, next: NextFunction): void {
     try {
       const requestedReturnTo = readStringQueryParam(req.query.returnTo);
       const returnTo =
@@ -43,28 +45,31 @@ function makeSignInHandler() {
           ? requestedReturnTo
           : DEFAULT_RETURN_TO;
 
-      const transactionId = generateOpaqueToken();
-      const state = generateOpaqueToken();
-      const codeVerifier = generateOpaqueToken();
-      const codeChallenge = computeCodeChallenge({ codeVerifier });
+      const transaction: AuthTransactionCookie = {
+        state: generateOpaqueToken(),
+        codeVerifier: generateOpaqueToken(),
+        returnTo,
+      };
 
-      await sessionService.setAuthTransaction({ transactionId, state, codeVerifier, returnTo });
+      res.cookie(
+        authTransactionCookieName,
+        encryptCookiePayload({ payload: transaction, secret: authCookieSecret }),
+        buildAuthCookieOptions({
+          path: callbackPath,
+          maxAge: authTransactionMaxAgeSeconds * 1000,
+        })
+      );
 
-      res.cookie(TRANSACTION_COOKIE_NAME, transactionId, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: isVcr,
-        maxAge: TRANSACTION_COOKIE_MAX_AGE_MS,
-        path: '/api/auth',
-      });
-
-      const authorizeUrl = new URL(`${oidcIssuerUrl}${authorizePath}`);
+      const authorizeUrl = new URL(oidcAuthorizationEndpoint);
       authorizeUrl.searchParams.set('response_type', 'code');
       authorizeUrl.searchParams.set('client_id', oidcClientId);
       authorizeUrl.searchParams.set('redirect_uri', oidcWebRedirectUri);
-      authorizeUrl.searchParams.set('scope', OIDC_SCOPES);
-      authorizeUrl.searchParams.set('state', state);
-      authorizeUrl.searchParams.set('code_challenge', codeChallenge);
+      authorizeUrl.searchParams.set('scope', oidcScopes);
+      authorizeUrl.searchParams.set('state', transaction.state);
+      authorizeUrl.searchParams.set(
+        'code_challenge',
+        computeCodeChallenge({ codeVerifier: transaction.codeVerifier })
+      );
       authorizeUrl.searchParams.set('code_challenge_method', 'S256');
 
       res.redirect(authorizeUrl.toString());

@@ -2,8 +2,6 @@ import { vcr } from '@vonage/vcr-sdk';
 import { SessionStorage } from './sessionStorage';
 
 const ENTRY_EXPIRATION_TIME = 60 * 60 * 4; // 4 hours in seconds
-const AUTH_TRANSACTION_EXPIRATION_TIME = 60 * 10; // 10 minutes in seconds, single-use PKCE/CSRF handshake data
-const DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60; // 1 hour in seconds, used when the token response has no expires_in
 
 enum StorageResource {
   SessionKeyByRoomName = 'sessionKey',
@@ -11,8 +9,6 @@ enum StorageResource {
   CaptionsId = 'captionsId',
   CaptionsUserCount = 'captionsUserCount',
   ArchiveIds = 'archiveIds',
-  AuthTransaction = 'authTransaction',
-  AccessToken = 'accessToken',
   ServerRotationPending = 'serverRotationPending',
 }
 
@@ -134,60 +130,6 @@ class VcrSessionStorage implements SessionStorage {
     const key = makeKey(StorageResource.ArchiveIds, sessionId);
     const archiveIds: string[] | null = await this.dbState.get(key);
     return archiveIds ?? [];
-  }
-
-  async setAuthTransaction({
-    transactionId,
-    state,
-    codeVerifier,
-    returnTo,
-  }: {
-    transactionId: string;
-    state: string;
-    codeVerifier: string;
-    returnTo: string;
-  }): Promise<void> {
-    const key = makeKey(StorageResource.AuthTransaction, transactionId);
-    await this.dbState.set(key, { state, codeVerifier, returnTo });
-    await this.setKeyExpiry(key, AUTH_TRANSACTION_EXPIRATION_TIME);
-  }
-
-  async getAuthTransaction({
-    transactionId,
-  }: {
-    transactionId: string;
-  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null> {
-    const key = makeKey(StorageResource.AuthTransaction, transactionId);
-    const transaction: { state: string; codeVerifier: string; returnTo: string } | null =
-      await this.dbState.get(key);
-
-    return transaction ?? null;
-  }
-
-  async deleteAuthTransaction({ transactionId }: { transactionId: string }): Promise<void> {
-    const key = makeKey(StorageResource.AuthTransaction, transactionId);
-    await this.dbState.delete(key);
-  }
-
-  async setAccessToken({
-    sessionId,
-    accessToken,
-    expiresInSeconds,
-  }: {
-    sessionId: string;
-    accessToken: string;
-    expiresInSeconds?: number;
-  }): Promise<void> {
-    const key = makeKey(StorageResource.AccessToken, sessionId);
-    await this.dbState.set(key, accessToken);
-    await this.setKeyExpiry(key, expiresInSeconds ?? DEFAULT_ACCESS_TOKEN_EXPIRATION_TIME);
-  }
-
-  async getAccessToken({ sessionId }: { sessionId: string }): Promise<string | null> {
-    const key = makeKey(StorageResource.AccessToken, sessionId);
-    const accessToken: string | null = await this.dbState.get(key);
-
-    return accessToken ?? null;
   }
 
   async setServerRotationPending({

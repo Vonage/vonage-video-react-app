@@ -14,6 +14,8 @@ import veraStyles from './styles.css?inline';
 import { defer } from 'easy-cancelable-promise';
 import { BridgeAPI } from './stores/bridge/types';
 import { registerIcon } from '@vonage/vivid';
+import type { VideoClient } from '@core/services';
+import createBridgeVideoClient from './helpers/createBridgeVideoClient';
 
 type BridgeState = ReturnType<BridgeAPI['getState']>;
 type BridgeContext = ReturnType<typeof bridge$.Provider.makeProviderWrapper>['context'];
@@ -29,6 +31,23 @@ class VeraRoomElement extends HTMLElement {
   root?: ReactDOM.Root;
   context?: BridgeContext;
   isBridgeReady = defer<void>();
+  hostVideoClient: VideoClient | null = null;
+
+  /**
+   * Host-provided client (custom fetch, headers, credentials). Takes precedence over the
+   * `entry-point` and `credentials` attributes.
+   */
+  get videoClient(): VideoClient | null {
+    return this.hostVideoClient;
+  }
+
+  set videoClient(videoClient: VideoClient | null) {
+    this.hostVideoClient = videoClient;
+
+    void this.isBridgeReady.promise.then(() => {
+      this.context?.current.actions.partialUpdate({ videoClient });
+    });
+  }
 
   constructor() {
     super();
@@ -88,7 +107,16 @@ class VeraRoomElement extends HTMLElement {
 
     this.root?.render(
       <BridgeProvider value={initialState}>
-        <runtime$.Provider videoClient={initialState.entryPoint} language={initialState.language}>
+        <runtime$.Provider
+          videoClient={
+            initialState.videoClient ??
+            createBridgeVideoClient({
+              entryPoint: initialState.entryPoint,
+              credentials: initialState.credentials,
+            })
+          }
+          language={initialState.language}
+        >
           <ShadowStylesProvider shadowRoot={this.shadow}>
             <VeraRoom />
           </ShadowStylesProvider>
@@ -98,14 +126,17 @@ class VeraRoomElement extends HTMLElement {
   }
 
   readInitialAttributes() {
-    const initialValue = bridgeAttributes.reduce((acc, name) => {
-      const rawValue = this.getAttribute(name);
-      if (rawValue === null) return acc;
+    const initialValue = bridgeAttributes.reduce(
+      (acc, name) => {
+        const rawValue = this.getAttribute(name);
+        if (rawValue === null) return acc;
 
-      const value = VeraRoomElement.tryParseAttribute(name, rawValue);
+        const value = VeraRoomElement.tryParseAttribute(name, rawValue);
 
-      return { ...acc, ...value };
-    }, initialState()) as BridgeState;
+        return { ...acc, ...value };
+      },
+      { ...initialState(), videoClient: this.hostVideoClient }
+    ) as BridgeState;
 
     return initialValue;
   }

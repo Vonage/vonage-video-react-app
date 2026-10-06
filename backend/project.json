@@ -9,14 +9,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --import tsx index.ts'\""
+        "command": "bash -c 'source ../env.sh && nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"tsc --noEmit -p tsconfig.json --pretty true && node --import tsx index.ts\"'"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "node ./dist/bundle.cjs"
+        "command": "bash -c 'source ../env.sh && node ./dist/bundle.cjs'"
       },
       "dependsOn": ["build"]
     },
@@ -24,7 +24,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "node ./dist/bundle.cjs"
+        "command": "bash -c 'source ../env.sh && node ./dist/bundle.cjs'"
       },
       "dependsOn": ["build:dev"]
     },
@@ -48,14 +48,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect --import tsx index.ts'\""
+        "command": "bash -c 'source ../env.sh && nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"tsc --noEmit -p tsconfig.json --pretty true && node --inspect --import tsx index.ts\"'"
       }
     },
     "debug:wait": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "backend",
-        "command": "nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"sh -c 'tsc --noEmit -p tsconfig.json --pretty true && node --inspect-brk --import tsx index.ts'\""
+        "command": "bash -c 'source ../env.sh && nodemon --watch . --watch ../libs --ext ts,tsx,json --ignore dist --exec \"tsc --noEmit -p tsconfig.json --pretty true && node --inspect-brk --import tsx index.ts\"'"
       }
     },
     "test": {
@@ -64,7 +64,13 @@
         "cwd": "backend",
         "command": "bash -c 'source ../env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1'"
       },
-      "inputs": ["default", "^default", { "externalDependencies": ["jest", "ts-jest"] }],
+      "inputs": [
+        "default",
+        "^default",
+        {
+          "externalDependencies": ["jest", "ts-jest"]
+        }
+      ],
       "configurations": {
         "coverage": {
           "command": "bash -c 'source ../env.sh && NODE_OPTIONS=\"--experimental-vm-modules\" jest --maxWorkers=1 --coverage'"

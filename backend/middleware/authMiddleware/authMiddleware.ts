@@ -1,40 +1,37 @@
-import axios from 'axios';
 import type { NextFunction, Request, Response } from 'express';
 import { isRecord } from '@common/assertions';
-import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
-import { assertResult } from '@api-lib/executions';
+import { makeInternalErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
-import { getCookieValue } from '@node/helpers';
 import loadConfig from '../../helpers/config';
-import getSessionStorageService from '../../sessionStorageService';
-import type { SessionStorage } from '../../storage/sessionStorage';
-import { SESSION_COOKIE_NAME, SIGN_IN_PATH } from '../../routes/auth/constants';
+import { SIGN_IN_PATH } from '../../routes/auth/constants';
+import SessionCookieSchema from '../../routes/auth/schemas/SessionCookie.schema';
+import readCookiePayload from '../../routes/auth/helpers/readCookiePayload';
+import writeSessionCookies from '../../routes/auth/helpers/writeSessionCookies';
+import clearSessionCookies from '../../routes/auth/helpers/clearSessionCookies';
 import resolveResponseFormat from '../../helpers/resolveResponseFormat';
-import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
+import type { ActiveTokenIntrospectionResponse } from './schemas/TokenIntrospectionResponse.schema';
 import { makeSignInRequiredErrorHandler } from './errors/SignInRequiredError';
-
-type ActiveTokenIntrospectionResponse = {
-  active: true;
-  sub: string;
-  client_id?: string;
-  email?: string;
-};
+import readBearerToken from './helpers/readBearerToken';
+import introspectAccessToken from './helpers/introspectAccessToken';
+import verifyActiveToken from './helpers/verifyActiveToken';
+import authenticateCookieSession from './helpers/authenticateCookieSession';
 
 type RequestWithTokenAuth = Request & {
   user?: ActiveTokenIntrospectionResponse;
 };
 
 /**
- * Builds an Express middleware that validates the caller's OIDC access token against
- * the configured provider's introspection endpoint. Opt-in via AUTH_ENABLED — a no-op
- * otherwise, preserving current behavior for deployments not yet on OIDC auth.
+ * Builds an Express middleware that authenticates every request through the configured OIDC
+ * provider. Opt-in via AUTH_ENABLED — a no-op otherwise.
  *
- * Unauthenticated HTML page requests (GET, resolved via resolveResponseFormat) are
- * redirected to the sign-in flow; other unauthenticated requests are rejected with 401.
- * Identity-provider failures are never redirected, so an outage cannot cause a sign-in loop.
+ * - Bearer header (mobile): introspected on every request; never refreshed, never sets cookies.
+ * - Encrypted session cookie (web): refreshed ahead of expiry when a refresh token exists.
  *
- * Reads config.ts once, at construction time (not per request), so a misconfigured
- * deployment fails to start instead of 500ing on every request.
+ * Unauthenticated HTML page requests (GET, resolved via resolveResponseFormat) are redirected to
+ * the sign-in flow; other unauthenticated requests are rejected with 401. Identity-provider
+ * failures are never redirected, so an outage cannot cause a sign-in loop.
+ *
+ * Reads config once, at construction time, so a misconfigured deployment fails to start.
  *
  * @param options.excludedPaths - exact request paths (req.path) that skip auth entirely
  * (e.g. health checks, provider webhooks, .well-known files) — callers that structurally
@@ -50,15 +47,8 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
   }
 
   const excludedPaths = new Set(options.excludedPaths ?? []);
-  const {
-    oidcIssuerUrl,
-    oidcClientId,
-    authHeaderName,
-    authScheme,
-    introspectPath,
-    introspectionTimeoutMs,
-  } = authConfig;
-  const sessionService = getSessionStorageService();
+  const { oidcClientId, authHeaderName, authScheme, authCookieSecret, authSessionCookieName } =
+    authConfig;
 
   return async function handleRequest(
     req: Request,
@@ -70,64 +60,57 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
       return;
     }
 
+    const bearerToken = readBearerToken({ req, authHeaderName, authScheme });
+
     try {
-      const accessToken = await extractAccessToken(req, {
-        authHeaderName,
-        authScheme,
-        sessionService,
+      if (bearerToken) {
+        const introspectionData = await introspectAccessToken({
+          accessToken: bearerToken,
+          authConfig,
+        });
+
+        (req as RequestWithTokenAuth).user = verifyActiveToken({
+          introspectionData,
+          clientId: oidcClientId,
+        });
+        next();
+        return;
+      }
+
+      const session = readCookiePayload({
+        req,
+        name: authSessionCookieName,
+        secret: authCookieSecret,
+        schema: SessionCookieSchema,
       });
 
-      if (!accessToken) {
+      if (!session) {
         throw makeSignInRequiredErrorHandler(
-          `Missing access token in the "${authHeaderName}" header`
+          `Missing access token in the "${authHeaderName}" header or the session cookie`
         )(null);
       }
 
-      const introspectionResponse = await assertResult(
-        () =>
-          axios.post(
-            `${oidcIssuerUrl}${introspectPath}`,
-            new URLSearchParams({
-              token: accessToken,
-              client_id: oidcClientId,
-              token_type_hint: 'access_token',
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              timeout: introspectionTimeoutMs,
-            }
-          ),
-        makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
-      );
+      const sessionOutcome = await authenticateCookieSession({ session, authConfig });
 
-      const introspectionData = assertResult(
-        () => TokenIntrospectionResponseSchema.parse(introspectionResponse.data),
-        makeUnauthorizedErrorHandler('Token introspection response is missing or invalid')
-      );
-
-      // Beyond "active", confirm the token was actually issued to this application. This
-      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-      // signal — without this check, a valid token from a different app in the same org would
-      // pass.
-      const isTokenValidForThisApp =
-        introspectionData.active === true && introspectionData.client_id === oidcClientId;
-
-      if (!isTokenValidForThisApp) {
-        const rejectionReason = introspectionData.active
-          ? 'Token issued for a different client_id'
-          : 'Token inactive or expired';
-
-        throw makeSignInRequiredErrorHandler(rejectionReason)(null);
+      if (sessionOutcome.status === 'refreshed') {
+        writeSessionCookies({
+          res,
+          tokenResponse: sessionOutcome.tokenResponse,
+          previousRefreshToken: session.refreshToken,
+          authConfig,
+        });
+      } else {
+        (req as RequestWithTokenAuth).user = sessionOutcome.user;
       }
 
-      (req as RequestWithTokenAuth).user = introspectionData;
       next();
     } catch (error) {
+      const isSignInRequired = isRecord(error) && error.isSignInRequired === true;
+
+      if (isSignInRequired && !bearerToken) clearSessionCookies({ res, authConfig });
+
       const isSignInRequiredPageRequest =
-        isRecord(error) &&
-        error.isSignInRequired === true &&
-        req.method === 'GET' &&
-        resolveResponseFormat(req) === 'html';
+        isSignInRequired && req.method === 'GET' && resolveResponseFormat(req) === 'html';
 
       if (isSignInRequiredPageRequest) {
         res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
@@ -145,37 +128,3 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 }
 
 export default authMiddleware;
-
-/**
- * Mobile sends the token directly as a Bearer header. Web never sees the real token — the
- * browser only carries an opaque session-id cookie, which this resolves to the access token
- * the `/api/auth/callback/okta` route stored server-side via `SessionStorage`.
- */
-async function extractAccessToken(
-  req: Request,
-  {
-    authHeaderName,
-    authScheme,
-    sessionService,
-  }: {
-    authHeaderName: string;
-    authScheme: string;
-    sessionService: SessionStorage;
-  }
-): Promise<string | undefined> {
-  const headerValue = req.headers[authHeaderName.toLowerCase()];
-  const authorizationHeader = Array.isArray(headerValue) ? headerValue[0] : headerValue;
-  const schemePrefix = `${authScheme.toLowerCase()} `;
-
-  if (authorizationHeader?.toLowerCase().startsWith(schemePrefix)) {
-    return authorizationHeader.slice(schemePrefix.length).trim();
-  }
-
-  const sessionId = getCookieValue({ cookieHeader: req.headers.cookie, name: SESSION_COOKIE_NAME });
-
-  if (!sessionId) return undefined;
-
-  const accessToken = await sessionService.getAccessToken({ sessionId });
-
-  return accessToken ?? undefined;
-}

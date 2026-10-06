@@ -4,7 +4,7 @@ This document covers the environment variables, feature flags, theming, and Stor
 
 ## Environment Configuration
 
-The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`.
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`. Project defaults that are not in `app-config.json` (web-only frontend values and backend auth settings) live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources.
 
 For initial setup instructions (creating `.env` files, obtaining credentials), see [Getting Started](./GETTING_STARTED.md).
 
@@ -112,7 +112,7 @@ The generator maps each key to its `env.sh` variable, joins lists with `|`, and 
 #### Things to know about the mapping
 
 - **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `app-config.json`.
-- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They are emitted by the generator as fixed values and can be changed in [`scripts/generateEnv.ts`](../scripts/generateEnv.ts): `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
+- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources: `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
 - **Network settings.** `API_URL`, `TUNNEL_DOMAIN`, and `VONAGE_VIDEO_HOST` are **not** generated from `app-config.json` by `yarn sync:env`. They are runtime/environment values, so set them via [`frontend/.env`](../frontend/.env.example) (which layers over `env.sh`) or by exporting them in your shell before running the app. See the [Network](#network) table below.
 
 #### Value types

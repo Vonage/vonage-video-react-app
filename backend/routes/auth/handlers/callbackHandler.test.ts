@@ -2,7 +2,15 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
-import { SESSION_COOKIE_NAME, TRANSACTION_COOKIE_NAME } from '../constants';
+import SessionCookieSchema from '../schemas/SessionCookie.schema';
+import { TEST_AUTH_COOKIE_SECRET } from '../../../tests/helpers/testAuthCookieSecret';
+import makeEncryptedCookieHeader from '../../../tests/helpers/makeEncryptedCookieHeader';
+import readSetCookie from '../../../tests/helpers/readSetCookie';
+import readEncryptedSetCookie from '../../../tests/helpers/readEncryptedSetCookie';
+
+const SESSION_COOKIE_NAME = 'test_session';
+const ID_TOKEN_COOKIE_NAME = 'test_id_token';
+const TRANSACTION_COOKIE_NAME = 'test_transaction';
 
 const loadConfigMock = jest.fn<() => Config>();
 const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
@@ -12,15 +20,11 @@ jest.unstable_mockModule('../../../helpers/config', () => ({
 }));
 
 jest.unstable_mockModule('axios', () => ({
-  // `defaults` is needed because importing `./callbackHandler` transitively pulls in
-  // `getSessionStorageService` → `@vonage/vcr-sdk`, whose module-level `Bridge` construction
-  // sets `axios.defaults.httpAgent` — it would crash against a bare `{ post }` mock.
   default: { post: axiosPostMock, defaults: {} },
 }));
 
 const { default: makeCallbackHandler } = await import('./callbackHandler');
 const { errorHandler } = await import('../../../middleware/errorHandler');
-const { default: getSessionStorageService } = await import('../../../sessionStorageService');
 
 const ENABLED_CONFIG: Config = {
   provider: 'opentok',
@@ -29,137 +33,152 @@ const ENABLED_CONFIG: Config = {
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
   authEnabled: true,
-  oidcIssuerUrl: 'https://example.okta.com',
   oidcClientId: 'test-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',
+  oidcAuthorizationEndpoint: 'https://example.okta.com/oauth2/v1/authorize',
+  oidcTokenEndpoint: 'https://example.okta.com/oauth2/v1/token',
+  oidcIntrospectionEndpoint: 'https://example.okta.com/oauth2/v1/introspect',
+  oidcRevocationEndpoint: 'https://example.okta.com/oauth2/v1/revoke',
+  oidcEndSessionEndpoint: 'https://example.okta.com/oauth2/v1/logout',
+  oidcPostLogoutRedirectUri: 'http://localhost:3000/',
+  oidcScopes: 'openid profile email offline_access',
+  authCookieSecret: TEST_AUTH_COOKIE_SECRET,
   authHeaderName: 'authorization',
   authScheme: 'Bearer',
-  introspectPath: '/oauth2/v1/introspect',
-  authorizePath: '/oauth2/v1/authorize',
-  tokenPath: '/oauth2/v1/token',
-  introspectionTimeoutMs: 5000,
+  authSessionCookieName: SESSION_COOKIE_NAME,
+  authIdTokenCookieName: ID_TOKEN_COOKIE_NAME,
+  authTransactionCookieName: TRANSACTION_COOKIE_NAME,
+  authTransactionMaxAgeSeconds: 600,
+  authRefreshWindowSeconds: 30,
+  authProviderTimeoutMs: 5000,
 };
+
+const CALLBACK_PATH = '/api/auth/callback/okta';
 
 function buildApp(): Express {
   const app = express();
 
-  app.get('/api/auth/callback/okta', makeCallbackHandler());
+  app.get(CALLBACK_PATH, makeCallbackHandler());
   app.use(errorHandler);
 
   return app;
 }
 
-async function seedTransaction({
-  transactionId,
-  state,
-  codeVerifier = 'test-code-verifier',
-  returnTo = '/',
-}: {
-  transactionId: string;
-  state: string;
-  codeVerifier?: string;
-  returnTo?: string;
-}): Promise<void> {
-  const sessionService = getSessionStorageService();
-  await sessionService.setAuthTransaction({ transactionId, state, codeVerifier, returnTo });
+function transactionCookie({ state, returnTo = '/' }: { state: string; returnTo?: string }) {
+  return makeEncryptedCookieHeader({
+    name: TRANSACTION_COOKIE_NAME,
+    payload: { state, codeVerifier: 'test-code-verifier', returnTo },
+  });
 }
+
+function completeCallback({
+  tokenResponse,
+  returnTo,
+}: {
+  tokenResponse: Record<string, unknown>;
+  returnTo?: string;
+}) {
+  axiosPostMock.mockResolvedValue({ data: tokenResponse });
+
+  return request(buildApp())
+    .get(`${CALLBACK_PATH}?code=auth-code&state=state-1`)
+    .set('Cookie', transactionCookie({ state: 'state-1', returnTo }));
+}
+
+const BASE_TOKEN_RESPONSE = { access_token: 'access-1', token_type: 'Bearer', expires_in: 3600 };
 
 describe('callbackHandler', () => {
   beforeEach(() => {
     loadConfigMock.mockReturnValue(ENABLED_CONFIG);
   });
 
-  it('exchanges the code for a token, stores the session, and redirects on the happy path', async () => {
-    await seedTransaction({ transactionId: 'txn-1', state: 'state-1' });
-    axiosPostMock.mockResolvedValue({
-      data: { access_token: 'okta-access-token', token_type: 'Bearer', expires_in: 3600 },
+  it('exchanges the code with the PKCE verifier, writes the encrypted session and redirects to returnTo', async () => {
+    const res = await completeCallback({
+      tokenResponse: { ...BASE_TOKEN_RESPONSE, refresh_token: 'refresh-1', id_token: 'id-1' },
+      returnTo: '/room/abc123',
     });
 
-    const res = await request(buildApp())
-      .get('/api/auth/callback/okta?code=auth-code&state=state-1')
-      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=txn-1`);
-
     expect(res.statusCode).toEqual(302);
-    expect(res.headers.location).toEqual('/');
-
-    const setCookieHeaders = res.headers['set-cookie'] as unknown as string[];
-    const sessionCookie = setCookieHeaders.find((cookie) =>
-      cookie.startsWith(`${SESSION_COOKIE_NAME}=`)
-    );
-    expect(sessionCookie).toContain('HttpOnly');
+    expect(res.headers.location).toEqual('/room/abc123');
 
     const [tokenUrl, body] = axiosPostMock.mock.calls[0] as unknown as [string, URLSearchParams];
     expect(tokenUrl).toEqual('https://example.okta.com/oauth2/v1/token');
     expect(body.toString()).toContain('code_verifier=test-code-verifier');
-    expect(body.toString()).toContain('client_id=test-client-id');
 
-    const sessionService = getSessionStorageService();
-    const sessionId = sessionCookie!.split(';')[0].split('=')[1];
-    expect(await sessionService.getAccessToken({ sessionId })).toEqual('okta-access-token');
-    expect(await sessionService.getAuthTransaction({ transactionId: 'txn-1' })).toBeNull();
-  });
-
-  it('redirects to the transaction\'s returnTo path instead of always redirecting to "/"', async () => {
-    await seedTransaction({
-      transactionId: 'txn-return-to',
-      state: 'state-1',
-      returnTo: '/room/abc123',
+    const session = readEncryptedSetCookie({
+      headers: res.headers,
+      name: SESSION_COOKIE_NAME,
+      schema: SessionCookieSchema,
     });
-    axiosPostMock.mockResolvedValue({
-      data: { access_token: 'okta-access-token', token_type: 'Bearer', expires_in: 3600 },
+    expect(session).toEqual(
+      expect.objectContaining({ accessToken: 'access-1', refreshToken: 'refresh-1' })
+    );
+    expect(readSetCookie({ headers: res.headers, name: ID_TOKEN_COOKIE_NAME })).toContain(
+      'Path=/auth/signout'
+    );
+    expect(readSetCookie({ headers: res.headers, name: TRANSACTION_COOKIE_NAME })).toMatch(
+      /Expires=Thu, 01 Jan 1970/
+    );
+  });
+
+  it.each([
+    ['there is no refresh token', BASE_TOKEN_RESPONSE, /Max-Age=3600/],
+    [
+      'the provider reports the refresh token lifetime',
+      { ...BASE_TOKEN_RESPONSE, refresh_token: 'refresh-1', refresh_expires_in: 86400 },
+      /Max-Age=86400/,
+    ],
+  ])('bounds the session cookie lifetime when %s', async (_label, tokenResponse, expected) => {
+    const res = await completeCallback({ tokenResponse });
+
+    expect(readSetCookie({ headers: res.headers, name: SESSION_COOKIE_NAME })).toMatch(expected);
+  });
+
+  it('writes a browser-session cookie when the refresh token lifetime is not reported', async () => {
+    const res = await completeCallback({
+      tokenResponse: { ...BASE_TOKEN_RESPONSE, refresh_token: 'refresh-1' },
     });
 
-    const res = await request(buildApp())
-      .get('/api/auth/callback/okta?code=auth-code&state=state-1')
-      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=txn-return-to`);
-
-    expect(res.statusCode).toEqual(302);
-    expect(res.headers.location).toEqual('/room/abc123');
+    const sessionCookie = readSetCookie({ headers: res.headers, name: SESSION_COOKIE_NAME });
+    expect(sessionCookie).not.toMatch(/Max-Age|Expires/);
   });
 
-  it('returns 401 when the state parameter does not match the stored transaction', async () => {
-    await seedTransaction({ transactionId: 'txn-2', state: 'expected-state' });
-
+  it('returns 401 when the state parameter does not match the transaction', async () => {
     const res = await request(buildApp())
-      .get('/api/auth/callback/okta?code=auth-code&state=wrong-state')
-      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=txn-2`);
+      .get(`${CALLBACK_PATH}?code=auth-code&state=wrong-state`)
+      .set('Cookie', transactionCookie({ state: 'expected-state' }));
 
     expect(res.statusCode).toEqual(401);
     expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
-  it('returns 401 when there is no transaction cookie', async () => {
-    const res = await request(buildApp()).get('/api/auth/callback/okta?code=auth-code&state=any');
+  it.each([
+    ['there is no transaction cookie', undefined],
+    ['the transaction cookie is tampered', `${TRANSACTION_COOKIE_NAME}=v1.tampered.value.tag`],
+  ])('returns 401 when %s', async (_label, cookie) => {
+    const callbackRequest = request(buildApp()).get(`${CALLBACK_PATH}?code=auth-code&state=any`);
+
+    const res = await (cookie ? callbackRequest.set('Cookie', cookie) : callbackRequest);
 
     expect(res.statusCode).toEqual(401);
     expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
-  it('returns 401 when the transaction cookie does not resolve to a stored transaction', async () => {
-    const res = await request(buildApp())
-      .get('/api/auth/callback/okta?code=auth-code&state=any')
-      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=unknown-transaction`);
-
-    expect(res.statusCode).toEqual(401);
-    expect(axiosPostMock).not.toHaveBeenCalled();
-  });
-
-  it('returns 401 when Okta reports an error on the callback', async () => {
+  it('returns 401 when the provider reports an error on the callback', async () => {
     const res = await request(buildApp()).get(
-      '/api/auth/callback/okta?error=access_denied&error_description=user+cancelled'
+      `${CALLBACK_PATH}?error=access_denied&error_description=user+cancelled`
     );
 
     expect(res.statusCode).toEqual(401);
     expect(axiosPostMock).not.toHaveBeenCalled();
   });
 
-  it('returns a bad-gateway-style error when the token exchange call fails', async () => {
-    await seedTransaction({ transactionId: 'txn-3', state: 'state-3' });
+  it('returns a bad-gateway error when the token exchange call fails', async () => {
     axiosPostMock.mockRejectedValue(new Error('network error'));
 
     const res = await request(buildApp())
-      .get('/api/auth/callback/okta?code=auth-code&state=state-3')
-      .set('Cookie', `${TRANSACTION_COOKIE_NAME}=txn-3`);
+      .get(`${CALLBACK_PATH}?code=auth-code&state=state-1`)
+      .set('Cookie', transactionCookie({ state: 'state-1' }));
 
     expect(res.statusCode).toEqual(502);
   });

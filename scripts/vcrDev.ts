@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
  */
 function runDeploy() {
   console.log('Deploying to VCR dev instance...');
-  execSync('sh vcrBuild.dev.sh && cd ./backend/dist && vcr deploy -f vcr-dev.yml && cd ../..', {
+  execSync('bash vcrBuild.dev.sh && cd ./backend/dist && vcr deploy -f vcr-dev.yml && cd ../..', {
     stdio: 'inherit',
   });
 }

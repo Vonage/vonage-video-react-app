@@ -2,163 +2,171 @@
 
 ## 1. Introduction
 
-The backend can require a valid OIDC access token on every route, validated through the configured identity provider's OAuth 2.0 introspection endpoint. It's opt-in: set `AUTH_ENABLED=false` (or leave it unset) and the app behaves exactly as it always has, with zero overhead. Mobile and Web authenticate differently, Mobile sends a Bearer token it minted itself, while Web never sees a real token at all and instead relies on a server-side session managed by this backend.
+The backend can require a signed-in user on every route, validated through any OIDC provider that supports token introspection (RFC 7662), such as Okta or Keycloak. It's opt-in: with `AUTH_ENABLED` unset or not `true`, the app behaves exactly as before and `authMiddleware` is a no-op.
+
+Mobile and Web authenticate differently. Mobile sends a Bearer token it obtained itself. Web never sees a token at all: the backend runs the login (Backend-for-Frontend) and keeps the tokens in encrypted, `HttpOnly` cookies, so nothing is stored server side.
 
 ## 2. Architecture
 
-### 2.1 Overview diagram
+### 2.1 Overview
 
 ```text
-Browser   → GET /auth/signin                      → OIDC provider authorize URL
-OIDC provider → GET /api/auth/callback/okta?code=...
-Backend   → POST /oauth2/v1/token                  → access_token
-Backend   → stores token in SessionStorage (keyed by opaque session ID)
-Backend   → sets HttpOnly oidc_session_id cookie   → redirects browser
-Browser   → POST /v2/createSession (with cookie)
-authMiddleware → reads cookie → looks up token → introspects → 200 ✅
+Browser        → GET /auth/signin?returnTo=/waiting-room/abc
+Backend        → sets the encrypted oidc_transaction cookie → 302 to OIDC_AUTHORIZATION_ENDPOINT
+OIDC provider  → user logs in → 302 to OIDC_WEB_REDIRECT_URI?code=...&state=...
+Backend        → POST OIDC_TOKEN_ENDPOINT (code + PKCE verifier) → access, refresh and ID tokens
+Backend        → sets the encrypted oidc_session and oidc_id_token cookies → 302 to returnTo
+Browser        → API request (cookies attached)
+authMiddleware → decrypts the session cookie → introspects (or refreshes) → 200
 ```
 
-### 2.2 Backend-for-Frontend (BFF) pattern
+### 2.2 Backend-for-Frontend (BFF)
 
-The browser never sees the real OIDC access token. The Node.js backend performs the OIDC exchange itself and holds the token server-side, in `SessionStorage`, keyed by an opaque session id. The browser only ever receives that opaque id, carried in an `HttpOnly` cookie it cannot read from JavaScript, so there's nothing for XSS to steal that would authenticate as the user directly against the identity provider.
+The browser never receives a usable token. The tokens live inside cookies encrypted with AES-256-GCM using `AUTH_COOKIE_SECRET`, and the cookies are `HttpOnly`, `SameSite=Lax` and `Secure` on VCR. A modified cookie fails decryption and is treated as signed out. Because the session is in the cookie, any instance with the same secret can serve the user and there is no server-side session store.
 
-Mobile doesn't need this: a native app sends `Authorization: Bearer <token>` directly on every request, having obtained the token itself via its own OIDC SDK. There's no server-side session to manage because the token already lives safely in the OS's secure storage.
+| Cookie | Holds | Path | Lifetime |
+|---|---|---|---|
+| `AUTH_TRANSACTION_COOKIE_NAME` (`oidc_transaction`) | `state`, PKCE verifier, `returnTo` | the callback path | `AUTH_TRANSACTION_MAX_AGE_SECONDS` (600) |
+| `AUTH_SESSION_COOKIE_NAME` (`oidc_session`) | access token, its expiry, refresh token | `/` | see below |
+| `AUTH_ID_TOKEN_COOKIE_NAME` (`oidc_id_token`) | ID token, for logout | `/auth/signout` | same as the session cookie |
+
+Session cookie lifetime: without a refresh token, the access token's `expires_in`; with one, the refresh lifetime the provider reports (`refresh_expires_in` / `refresh_token_expires_in`); otherwise a browser-session cookie.
+
+Mobile doesn't use any of this: it sends `Authorization: Bearer <token>` on every request, and that path never sets cookies or refreshes.
 
 ### 2.3 `authMiddleware`
 
-`authMiddleware` (`backend/middleware/authMiddleware/authMiddleware.ts`) is applied app-wide in `server.ts`, before the router and ahead of every route it protects.
+`authMiddleware` (`backend/middleware/authMiddleware/authMiddleware.ts`) runs app-wide in `server.ts`, ahead of the router, including the legacy `backend/routes/session.ts` routes that Android still calls.
 
-It reads the access token from two possible sources, Bearer header checked first:
+1. **Bearer header** (`AUTH_HEADER_NAME` + `AUTH_SCHEME`, default `Authorization: Bearer`), checked first: introspected on every request.
+2. **Session cookie** otherwise: when the access token has less than `AUTH_REFRESH_WINDOW_SECONDS` left (or introspection reports it inactive) and a refresh token exists, the backend refreshes it and writes new cookies; otherwise it introspects.
 
-1. The configured header (`AUTH_HEADER_NAME`, default `authorization`) with the configured scheme prefix (`AUTH_SCHEME`, default `Bearer`), Mobile's path.
-2. Failing that, the `oidc_session_id` cookie, resolved to an access token via `SessionStorage.getAccessToken()`, Web's path.
+A token is accepted when introspection reports it `active` and issued to `OIDC_CLIENT_ID`, through `client_id` or, when the provider omits it, `aud`.
 
-Whichever token it finds, it's validated the same way: `POST ${OIDC_ISSUER_URL}${OIDC_INTROSPECT_PATH}` (default path `/oauth2/v1/introspect`). The response must have `active: true` *and* a `client_id` matching the configured `OIDC_CLIENT_ID`, this tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the signal that the token was actually issued to this application, not just to some other app in the same org.
+When a user isn't authenticated:
 
-The middleware is feature-flagged at construction time: when `AUTH_ENABLED` is not `'true'`, `authMiddleware()` returns a plain `(req, res, next) => next()`, a complete no-op, built once and never touching introspection, cookies, or config again.
+- **Page requests** (`GET` that accepts HTML) redirect to `/auth/signin?returnTo=<original URL>`.
+- **Other requests** get `401`.
+- **Provider failures** never redirect, so an outage can't cause a sign-in loop. A failed introspection is a `401`; a refresh that fails for any reason other than a rejected refresh token is a `502`.
+- **Rejected refresh token** (`invalid_grant`): if the access token is still live, the request goes through (a parallel request already rotated it); if it has expired, the cookies are cleared and the user signs in again.
 
-A fixed set of paths bypass the middleware entirely (passed in as `excludedPaths` when `server.ts` constructs it), because these callers structurally can't carry a user's token:
+These paths skip the middleware, because their callers can't carry a user token:
 
-| Path | Why it's excluded |
+| Path | Why |
 |---|---|
-| `/_/health` | Infra liveness/readiness probe, no user involved |
+| `/_/health` | Infra liveness/readiness probe |
 | `/v2/hooks/session`, `/v2/hooks/captions`, `/v2/hooks/archive` | Server-to-server webhooks from the video provider |
 | `/.well-known/apple-app-site-association`, `/.well-known/assetlinks.json` | Fetched anonymously by the OS for deep-link verification |
-| `/auth/signin`, `/api/auth/callback/okta` | The login routes themselves, a caller hitting these can't have a token yet |
+| `/auth/signin`, `/auth/signout`, the path of `OIDC_WEB_REDIRECT_URI` | The login and logout routes themselves |
 
-### 2.4 Session storage
+`/feedback` is not excluded and hasn't been reviewed for whether it should be.
 
-`SessionStorage` (`backend/storage/sessionStorage.ts`) is an interface, not tied to auth specifically, it's the same abstraction the app already uses for room sessions, captions, and archive ids. `getSessionStorageService()` picks the implementation once, memoized for the process lifetime:
+### 2.4 Login (Authorization Code + PKCE)
 
-- **`InMemorySessionStorage`** (local dev, when `VCR_PORT` is unset), plain in-process maps. Nothing expires; entries live until the process restarts.
-- **`VcrSessionStorage`** (Vonage Cloud Runtime, when `VCR_PORT` is set), backed by `vcr.getInstanceState()`, a cross-instance key-value store that survives an individual instance being replaced.
+Mobile and Web share one public client registration with no client secret, so PKCE proves that whoever exchanges the code started the flow.
 
-Two kinds of auth data live there:
+1. `GET /auth/signin` generates `state` and a PKCE `code_verifier` (`generateOpaqueToken`, 32 random bytes, base64url), stores them with `returnTo` in the transaction cookie, and redirects to `OIDC_AUTHORIZATION_ENDPOINT` with `code_challenge = SHA256(code_verifier)` (`S256`). `returnTo` must be a same-origin relative path (`isSafeReturnToPath`); anything else falls back to `/`.
+2. The user logs in at the provider.
+3. The callback (mounted on the path of `OIDC_WEB_REDIRECT_URI`) checks `state` against the transaction cookie, exchanges the code at `OIDC_TOKEN_ENDPOINT` with the same `redirect_uri` and the `code_verifier`, writes the session and ID token cookies, clears the transaction cookie and redirects to `returnTo`.
 
-- **Auth transactions** (`state`, `codeVerifier`, `returnTo`), written by `/auth/signin`, read and deleted by the callback. On VCR these expire after 10 minutes, matching the transaction cookie's own `maxAge`.
-- **Access tokens**, written by the callback after a successful token exchange. On VCR these expire after the token response's `expires_in`, which is required: a token response without it is rejected with `401`.
+### 2.5 Logout
 
-### 2.5 PKCE flow
+`GET /auth/signout`:
 
-Both Mobile and Web register as public, SPA-type OIDC clients, there's no client secret to protect, so PKCE's `code_verifier` is the substitute proof that the party exchanging the code is the same one that started the flow.
+1. Revokes the refresh and access tokens at `OIDC_REVOCATION_ENDPOINT` (best effort: a failure doesn't stop the logout).
+2. Clears the session cookies.
+3. Redirects the browser to `OIDC_END_SESSION_ENDPOINT` with `client_id`, `id_token_hint` and `post_logout_redirect_uri`, which ends the provider's own login session and sends the user to `OIDC_POST_LOGOUT_REDIRECT_URI`. Without this step the next page load would sign the user straight back in.
 
-- `code_verifier`, `state`, the transaction id, and the eventual session id are all the same primitive: `generateOpaqueToken()` (`backend/routes/auth/helpers/generateOpaqueToken.ts`), 32 bytes from `crypto.randomBytes`, base64url-encoded.
-- `code_challenge = SHA256(code_verifier)`, base64url-encoded (`computeCodeChallenge.ts`, RFC 7636's `S256` method), sent to the provider's authorize endpoint alongside `code_challenge_method=S256`.
-- `state` guards against CSRF: generated and stored at `/auth/signin`, compared against the callback's `state` query param. A mismatch is rejected before any token exchange happens.
+### 2.6 Frontend
 
-`state`, `code_verifier`, and `returnTo` are all written to `SessionStorage` together as one auth transaction (keyed by the transaction id in the `oidc_transaction_id` cookie) when the flow starts, and deleted together once the callback successfully exchanges the code for a token.
-
-### 2.6 Frontend integration
-
-`fetchWithAuthRedirect` (`frontend/src/services/videoClient.ts`) wraps every request the video client makes:
-
-- It always sends `credentials: 'include'`, regardless of outcome, required for the browser to attach the `oidc_session_id` cookie across origins in local dev (Vite on `localhost:5173`, backend on `localhost:3345`).
-- If the response is `401`, it builds `returnTo` from the current `window.location.pathname` + `search` and does a full-page redirect to `${API_URL}/auth/signin?returnTo=<encoded returnTo>`, an expired or missing session sends the user back through the login flow instead of surfacing a failed request.
-
-Server-side, `/auth/signin` only honors a `returnTo` that `isSafeReturnToPath` accepts: it must start with `/` and not with `//` or `/\`, rejecting protocol-relative and other open-redirect-shaped values, falling back to `/`.
+- `fetchWithAuthRedirect` (`frontend/src/services/videoClient.ts`) sends every video client request with `credentials: 'include'`. On a `401` it calls `redirectToAuthProvider`, which navigates once to `${API_URL}/auth/signin?returnTo=<current path>` and returns a promise that never settles, so the error page doesn't flash before the navigation. `reportFeedback` handles `401` the same way.
+- The banner shows a **Log out** button (`BannerLogout`) when `AUTH_ENABLED` is `true` at build time; it navigates to `/auth/signout`.
+- `<vera-room>` accepts a `credentials` attribute (default `include`) and a `videoClient` property for hosts that bring their own client. It never redirects on `401`: the host page owns sign-in.
 
 ## 3. Configuration
 
-Quick reference, see [Configuration](./CONFIGURATION.md) for how the backend's `.env` and the frontend's `env.sh` fit together, and for every other (non-auth) variable in the app.
+Every endpoint URL is in your provider's discovery document, `https://<your-provider-domain>/.well-known/openid-configuration`. With `AUTH_ENABLED='true'`, every value below is validated at startup and a missing or invalid one stops the server with an error naming it. On startup the server logs `Auth: on` or `Auth: off`.
 
-| Variable | Required | Default (DEV) | Description |
+### 3.1 Per environment
+
+Set in `backend/.env` locally, or in the deployment config. Never in `env.sh`.
+
+| Variable | Discovery field | Okta example | Description |
 |---|---|---|---|
-| `AUTH_ENABLED` | No | `false` | Set to `true` to enable auth |
-| `OIDC_CLIENT_ID` | When enabled | `<your-client-id>` | OIDC provider client ID, one shared app registration for Mobile + Web |
-| `OIDC_ISSUER_URL` | When enabled | `<your-issuer-url>` | OIDC provider issuer URL (org root, never a path like `/oauth2/default`) |
-| `OIDC_WEB_REDIRECT_URI` | When enabled | `<your-redirect-uri>` | Must match the redirect URI registered with the provider exactly |
-| `AUTH_HEADER_NAME` | No | `authorization` | Request header `authMiddleware` reads the Mobile token from |
-| `AUTH_SCHEME` | No | `Bearer` | Scheme prefix on that header, matched case-insensitively |
-| `OIDC_INTROSPECT_PATH` | No | `/oauth2/v1/introspect` | Appended to `OIDC_ISSUER_URL` for introspection calls |
-| `OIDC_AUTHORIZE_PATH` | No | `/oauth2/v1/authorize` | Appended to `OIDC_ISSUER_URL` for the Web login flow's authorize redirect |
-| `OIDC_TOKEN_PATH` | No | `/oauth2/v1/token` | Appended to `OIDC_ISSUER_URL` for the Web login flow's code-for-token exchange |
-| `AUTH_INTROSPECTION_TIMEOUT_MS` | No | `5000` | Timeout for the introspection HTTP call |
+| `AUTH_ENABLED` | | `true` | Turns authentication on |
+| `OIDC_CLIENT_ID` | | `your-client-id` | One client registration shared by Mobile and Web |
+| `OIDC_WEB_REDIRECT_URI` | | `https://<domain>/api/auth/callback/okta` | Callback on this app where the provider sends the browser after login. Any path works: the backend mounts the callback on it. Register it with the provider |
+| `OIDC_POST_LOGOUT_REDIRECT_URI` | | `https://<domain>/` | Where the provider sends the browser after logout. Register it with the provider ("Sign-out redirect URIs" in Okta) |
+| `OIDC_AUTHORIZATION_ENDPOINT` | `authorization_endpoint` | `https://your-org.okta.com/oauth2/v1/authorize` | Provider login page |
+| `OIDC_TOKEN_ENDPOINT` | `token_endpoint` | `https://your-org.okta.com/oauth2/v1/token` | Code exchange and refresh |
+| `OIDC_INTROSPECTION_ENDPOINT` | `introspection_endpoint` | `https://your-org.okta.com/oauth2/v1/introspect` | Token validation on every request |
+| `OIDC_REVOCATION_ENDPOINT` | `revocation_endpoint` | `https://your-org.okta.com/oauth2/v1/revoke` | Token revocation at logout |
+| `OIDC_END_SESSION_ENDPOINT` | `end_session_endpoint` | `https://your-org.okta.com/oauth2/v1/logout` | Ends the provider's login session at logout |
+| `AUTH_COOKIE_SECRET` | | output of `yarn generate:secret` | **Secret.** 32 random bytes, base64, that encrypt the cookies. One per environment, never committed. Changing it signs every user out |
 
-`AUTH_ENABLED`, `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` go in `backend/.env`. The rest are non-secret tuning knobs that already default in [`env.sh`](../env.sh); override them in `backend/.env` only if you need something other than the default.
+### 3.2 Project defaults
 
-```ini
-AUTH_ENABLED='true'
-OIDC_CLIENT_ID='<your-client-id>'
-OIDC_ISSUER_URL='<your-issuer-url>'
-OIDC_WEB_REDIRECT_URI='<your-redirect-uri>'
-```
+Set in [`env.defaults.sh`](../env.defaults.sh), which the generated `env.sh` sources. Override any of them in `backend/.env` or the deployment config. They're backend-only and never reach the frontend bundle.
+
+| Variable | Default | Description |
+|---|---|---|
+| `AUTH_SESSION_COOKIE_NAME` | `oidc_session` | Cookie holding the encrypted access and refresh tokens |
+| `AUTH_ID_TOKEN_COOKIE_NAME` | `oidc_id_token` | Cookie holding the encrypted ID token, sent only to `/auth/signout` |
+| `AUTH_TRANSACTION_COOKIE_NAME` | `oidc_transaction` | Cookie holding the login state between sign-in and the callback |
+| `AUTH_TRANSACTION_MAX_AGE_SECONDS` | `600` | How long the user has to finish logging in at the provider |
+| `AUTH_REFRESH_WINDOW_SECONDS` | `30` | Refresh the access token when it has this many seconds left |
+| `AUTH_PROVIDER_TIMEOUT_MS` | `5000` | Timeout for every call to the provider |
+| `OIDC_SCOPES` | `openid profile email offline_access` | Scopes requested at sign-in. `offline_access` asks for a refresh token |
+| `AUTH_HEADER_NAME` | `authorization` | Header that carries a Bearer token (Mobile) |
+| `AUTH_SCHEME` | `Bearer` | Scheme prefix on that header, matched case-insensitively |
 
 ## 4. Setup
 
 ### 4.1 Local development
 
+`yarn dev` also starts `apps/local-oidc` on `localhost:3346`, a minimal dev-only provider that approves every login without a form. [`backend/.env.example`](../backend/.env.example) is pre-filled for it.
+
 1. Copy `backend/.env.example` to `backend/.env`.
-2. Set `AUTH_ENABLED=true`.
-3. Set `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` in `backend/.env`. The copied `.env.example` leaves them empty, and the backend dev server does not source [`env.sh`](../env.sh), so the DEV values listed there must be copied in explicitly.
-4. `yarn dev`.
-5. Open the app in an **incognito window**, avoids a cached session from a previous run.
-6. Trigger a protected action (create or join a room).
-7. You're redirected to the OIDC provider's login page, sign in with your credentials.
-8. After MFA, you land back where you started and the action completes.
+2. Set `AUTH_ENABLED='true'` and fill `AUTH_COOKIE_SECRET` with `yarn generate:secret`.
+3. Set the same `OIDC_WEB_REDIRECT_URI` in `frontend/.env` ([`frontend/.env.example`](../frontend/.env.example)). The Vite dev server proxies that path, `/auth/signin` and `/auth/signout` to the backend, so you land back on the dev server after signing in.
+4. Run `yarn dev`. Opening the app sends you through local-oidc and back.
 
-`AUTH_ENABLED=false` by default, so the app works without any of this unless you opt in.
+To use a real provider instead, replace the `OIDC_*` values with its endpoints and register `http://localhost:5173/api/auth/callback/okta` and `http://localhost:5173/` with it.
 
-### 4.2 VCR deployment
+`local-oidc` doesn't check client IDs, redirect URIs or PKCE, so those checks are only exercised against a real provider.
 
-The non-secret tuning knobs (`AUTH_HEADER_NAME`, `AUTH_SCHEME`, `OIDC_INTROSPECT_PATH`, `OIDC_AUTHORIZE_PATH`, `OIDC_TOKEN_PATH`, `AUTH_INTROSPECTION_TIMEOUT_MS`) are already declared as plain values in `vcr-gha.yml`'s `environment:` block.
+### 4.2 Tests
 
-`AUTH_ENABLED`, `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` are **not** currently declared there. To enable auth on a deployment, add them following the same pattern already used for `VONAGE_APP_ID` / `VONAGE_PRIVATE_KEY`, `OIDC_CLIENT_ID` and `OIDC_ISSUER_URL` as VCR project secrets (they differ per environment and PROD's values shouldn't live in plain text), `OIDC_WEB_REDIRECT_URI` set to that instance's own URL plus `/api/auth/callback/okta`, and `AUTH_ENABLED='true'`.
+- **Backend unit tests** use their own fixed test secret and mocked provider calls.
+- **Auth E2E:** `yarn test:integration auth` runs the built app with auth on against local-oidc, loading `env.sh` and [`integration-tests/auth/backend.env`](../integration-tests/auth/backend.env) into the test runner and both servers. It covers sign-in, Bearer access, cookie flags, refresh, tampered cookies and logout. It generates a throwaway `AUTH_COOKIE_SECRET` per run and runs as its own CI job.
 
-Whatever redirect URI you configure must also be registered with the OIDC provider on the application's side. At Vonage, that means asking the IAM team to add it; if you're running this app elsewhere, register it with whoever administers your own OIDC provider instead.
+### 4.3 VCR deployment
 
-### 4.3 Vite dev-server proxy
+[`vcr-gha.yml`](../vcr-gha.yml) sets the values inline, including the project defaults, since VCR doesn't run `env.sh`. `<DOMAIN>` in the redirect URIs is filled in by the deploy workflow from the `DOMAIN` secret. `AUTH_COOKIE_SECRET` must exist as a VCR secret (`vcr secret create`), like `SESSION_KEY_SECRET`; a GitHub secret isn't visible to the instance. To turn auth on, set `AUTH_ENABLED` to `'true'` in `vcr-gha.yml` and register the `<DOMAIN>` redirect URIs with the provider.
 
-`frontend/vite.config.ts` proxies both `/auth/signin` and `/api/auth/callback/okta` to the backend (`API_URL`, default `http://localhost:3345`), nothing extra to configure. It's needed because the redirect URI registered with the provider is fixed to the Vite dev server's own origin (`http://localhost:5173`), but neither login route is actually implemented there, the backend is the only thing that handles them. Proxying both legs keeps the whole flow same-origin from the browser's point of view, which matters since `/auth/signin` sets the transaction cookie that the callback then has to read back.
+- **Per-PR instances** (`vcr:deploy` comment, or running the workflow manually) use the same values, except that `OIDC_WEB_REDIRECT_URI` points at the PR instance: `https://neru-<VCR API key>-vonage-video-react-app-vera-pr-<number>.euw1.runtime.vonage.cloud/api/auth/callback/okta`. Register that pattern in Okta as a wildcard sign-in redirect URI (`…-vera-pr-*.euw1.runtime.vonage.cloud/api/auth/callback/okta`). Okta doesn't allow wildcard sign-out URIs, so logout from a PR instance returns to `https://<DOMAIN>/`. A manual run takes an `auth` input (`config`, `on`, `off`) that overrides `AUTH_ENABLED` for that instance only; with auth on, the run fails if the deployed URL doesn't match the redirect URI it built.
+- **`yarn vcr:dev`** (personal instances) always deploys with auth off, since a personal instance has no registered redirect URI or cookie secret.
 
-## 5. Enabling / Disabling
+## 5. Troubleshooting
 
-```bash
-# Enable (opt-in)
-AUTH_ENABLED=true
-
-# Disable (default, middleware is a complete no-op)
-AUTH_ENABLED=false  # or unset
-```
-
-When disabled, `authMiddleware()` is built once at startup and immediately returns a handler that calls `next()` and nothing else, no cookie parsing, no introspection, no `SessionStorage` lookup, on every request. Zero performance impact, zero behavior change versus the app before auth existed.
-
-## 6. Troubleshooting
-
-| Error | Cause | Fix |
+| Symptom | Cause | Fix |
 |---|---|---|
-| `redirect_uri mismatch` | Redirect URI not registered with the OIDC provider | Ask your identity provider admin to add your URI (at Vonage: the IAM team) |
-| `invalid_client` | Wrong `OIDC_CLIENT_ID` or app requires client secret | Confirm the client ID with your identity provider admin |
-| `access_denied: User is not assigned` | Your account not assigned to the OIDC app | Ask your identity provider admin to assign your account |
-| `Token inactive or expired` | DEV token used against PROD introspection endpoint (or vice versa) | Match `OIDC_ISSUER_URL` to the token's issuer |
-| `401` on every request after login | Cookie not sent, missing `credentials: 'include'` on fetch call | Add `credentials: 'include'` to the fetch |
-| Infinite redirect loop | `authMiddleware` blocking its own login routes | Confirm `/auth/signin` and `/api/auth/callback/okta` are in its `excludedPaths` |
+| Server exits at startup with a config error | A required value is missing or invalid while `AUTH_ENABLED='true'` | Set the variable named in the error |
+| `authCookieSecret` startup error | `AUTH_COOKIE_SECRET` isn't 32 bytes, base64 | Regenerate it with `yarn generate:secret` |
+| VCR: `environment secret references not found` | The `AUTH_COOKIE_SECRET` VCR secret doesn't exist | `vcr secret create --name AUTH_COOKIE_SECRET --value "$(yarn -s generate:secret)"` |
+| Provider shows `redirect_uri` mismatch | The redirect URI isn't registered with the provider | Register it (at Vonage: ask the IAM team) |
+| `invalid_client` | Wrong `OIDC_CLIENT_ID` | Confirm the client ID with your provider admin |
+| `access_denied: User is not assigned` | Your account isn't assigned to the app | Ask your provider admin to assign it |
+| Log out signs you straight back in | The provider session wasn't ended | Check `OIDC_END_SESSION_ENDPOINT` and the registered sign-out URI |
+| Local sign-in lands on the backend port or 404s | `OIDC_WEB_REDIRECT_URI` missing from `frontend/.env` | Set the same value as in `backend/.env` |
 
-## 7. Mobile vs Web differences
+## 6. Mobile vs Web
 
 | | Mobile (iOS/Android) | Web |
 |---|---|---|
-| Token source | `Authorization: Bearer <token>` header | `oidc_session_id` cookie → `SessionStorage` |
+| Token source | `Authorization: Bearer <token>` header | Encrypted `oidc_session` cookie |
 | Login flow | Client-side (native OIDC SDK) | Server-side BFF (`/auth/signin` → callback) |
-| Token storage | Keychain (iOS) / encrypted Room database (Android) | `VcrSessionStorage` / `InMemorySessionStorage` |
-| Token visible to client? | Yes (native app handles it) | No, browser only sees an opaque cookie |
+| Refresh | Handled by the app | Handled by the backend, ahead of expiry |
+| Logout | Handled by the app | `/auth/signout`: revoke, clear cookies, end the provider session |
+| Token visible to client? | Yes | No |
 | PKCE | Yes (client-side) | Yes (server-side) |
