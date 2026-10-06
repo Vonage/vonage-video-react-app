@@ -1,0 +1,25 @@
+package.json
+  s_6faa20396124fc::t_a321b979d71f39 178
+  s_6faa20396124fc::t_3ad0a0a65de5dc 212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2bf6545c77367e6737deb1d9bfb0bcd9e2f2585b",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_6faa20396124fc": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_54938091-ebd3-432c-b153-68d207a4d841",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
