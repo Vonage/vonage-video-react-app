@@ -1,0 +1,34 @@
+.claude/skills/record-snapshots/SKILL.md
+  s_708e8d2b915fcc::t_d6cdfbba089471 1-65
+.claude/skills/configure/SKILL.md
+  s_708e8d2b915fcc::t_862d58a270e84b 1-98
+.claude/skills/run-tests/SKILL.md
+  s_708e8d2b915fcc::t_d474e82e94ed82 36
+  s_708e8d2b915fcc::t_f398743b573068 25
+  s_708e8d2b915fcc::t_f81541a54d0672 1-24,26-35,37-68
+.claude/skills/deploy-vcr/SKILL.md
+  s_708e8d2b915fcc::t_45f531d7d2061c 1-57
+.claude/skills/feature-flag/SKILL.md
+  s_708e8d2b915fcc::t_99956d16eb1766 32
+  s_708e8d2b915fcc::t_dd2d2430d2b8bc 1-31,33-111
+.claude/skills/setup/SKILL.md
+  s_708e8d2b915fcc::t_c85716430a3a92 1-57,59-91,93-105
+  s_708e8d2b915fcc::t_12dd1333d0d07f 58
+  s_708e8d2b915fcc::t_b3e4ebe2d05616 92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c5d1770b41206356eb85a06e82a481ca507a18f8",
+  "prompts": {},
+  "sessions": {
+    "s_708e8d2b915fcc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d2c4d69-5e90-448c-948d-1a690b8a6e42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "aos-svg <artur.osinski@vonage.com>"
+    }
+  }
+}
