@@ -85,7 +85,7 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (recordingArchiveId) {
-      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId: recordingArchiveId });
+      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveType: 'recording' });
     }
   };
 

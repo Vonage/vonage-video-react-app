@@ -89,7 +89,7 @@ const PostCallTranscriptionButton = ({
       }
     } else if (transcriptionArchiveId) {
       videoClient
-        .stopArchive({ sessionKey: sessionKey!, archiveId: transcriptionArchiveId })
+        .stopArchive({ sessionKey: sessionKey!, archiveType: 'transcription' })
         .catch((err) => {
           console.error('Failed to stop transcription:', err);
         });

@@ -56,12 +56,38 @@ const videoClient = makeVideoClient$();
 /**
  * Middleware to inject archiveId when not provided in stopArchive calls.
  * This handles server rotation scenarios where the frontend has a stale archiveId.
+ *
+ * When archiveType is provided ('recording' | 'transcription'), we search for the
+ * running archive with matching name and use its current ID. This is the preferred
+ * approach as it always gets the fresh ID even after server rotation.
  */
-videoHandler.use$('stopArchive', async ({ input, next }) => {
-  let { archiveId } = input as { sessionKey: string; archiveId?: string };
-  const { sessionKey } = input as { sessionKey: string };
+videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
+  let { archiveId } = input as {
+    sessionKey: string;
+    archiveId?: string;
+    archiveType?: 'recording' | 'transcription';
+  };
+  const { sessionKey, archiveType } = input as {
+    sessionKey: string;
+    archiveType?: 'recording' | 'transcription';
+  };
 
-  // If archiveId is not provided, retrieve it from storage
+  if (archiveType && sessionKey && !archiveId) {
+    const { decodeSessionKey } = await import('@common/helpers');
+    const { sessionId } = decodeSessionKey({ sessionKey });
+
+    const archivesResponse = await videoClient.video.searchArchives({ sessionId });
+    const matchingArchive = archivesResponse.items.find(
+      (archive) => archive.name === archiveType && archive.status === 'started'
+    );
+
+    if (matchingArchive) {
+      archiveId = matchingArchive.id;
+      (input as { archiveId: string }).archiveId = archiveId;
+    }
+  }
+
+  // Fallback: if archiveId is still not set, retrieve from storage (legacy behavior)
   if (!archiveId && sessionKey) {
     const { decodeSessionKey } = await import('@common/helpers');
     const { sessionId } = decodeSessionKey({ sessionKey });
@@ -70,7 +96,6 @@ videoHandler.use$('stopArchive', async ({ input, next }) => {
 
     if (archiveIds.length > 0) {
       archiveId = archiveIds[0];
-      // Inject the archiveId into the input
       (input as { archiveId: string }).archiveId = archiveId;
     }
   }
