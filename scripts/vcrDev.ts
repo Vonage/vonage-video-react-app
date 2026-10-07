@@ -4,12 +4,15 @@ import { execSync } from 'child_process';
 /**
  * Builds and deploys the backend to VCR dev instance.
  * Runs vcrBuild.dev.sh, then deploys using vcr CLI.
+ * Auth is always off: a personal instance has no registered redirect URI or cookie secret. The
+ * line appended to the bundled .env wins over the one copied from backend/.env.
  */
 function runDeploy() {
-  console.log('Deploying to VCR dev instance...');
-  execSync('bash vcrBuild.dev.sh && cd ./backend/dist && vcr deploy -f vcr-dev.yml && cd ../..', {
-    stdio: 'inherit',
-  });
+  console.log('Deploying to VCR dev instance (auth off)...');
+  execSync(
+    'AUTH_ENABLED=false bash vcrBuild.dev.sh && printf "\\nAUTH_ENABLED=\'false\'\\n" >> ./backend/dist/.env && cd ./backend/dist && vcr deploy -f vcr-dev.yml && cd ../..',
+    { stdio: 'inherit' }
+  );
 }
 
 /**

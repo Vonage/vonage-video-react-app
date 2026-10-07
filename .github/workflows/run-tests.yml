@@ -13,14 +13,6 @@ env:
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
   SESSION_KEY_SECRET: ${{secrets.SESSION_KEY_SECRET}}
-  OIDC_CLIENT_ID: '0oa2sp68ck6PDehU40h8'
-  OIDC_WEB_REDIRECT_URI: 'http://localhost:5173/api/auth/callback/okta'
-  OIDC_AUTHORIZATION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/authorize'
-  OIDC_TOKEN_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/token'
-  OIDC_INTROSPECTION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/introspect'
-  OIDC_REVOCATION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/revoke'
-  OIDC_END_SESSION_ENDPOINT: 'https://launchpadtest.vonage.com/oauth2/v1/logout'
-  OIDC_POST_LOGOUT_REDIRECT_URI: 'http://localhost:5173/'
 
 jobs:
   # ----------------------------------------------------

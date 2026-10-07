@@ -9,6 +9,15 @@ on:
         description: PR number to deploy
         required: true
         type: string
+      auth:
+        description: 'Login (OIDC): config = same as vcr-gha.yml, on/off = override for this PR only'
+        required: true
+        type: choice
+        default: config
+        options:
+          - config
+          - 'on'
+          - 'off'
 
 permissions:
   contents: read
@@ -17,6 +26,8 @@ permissions:
 
 env:
   DOMAIN: ${{ secrets.DOMAIN }}
+  # VCR names instance hosts neru-<API key>-<project name>-<instance name>.euw1.runtime.vonage.cloud
+  VCR_INSTANCE_HOST_PREFIX: neru-${{ secrets.VCR_API_KEY }}-vonage-video-react-app
 
 jobs:
   build-and-test:
@@ -74,6 +85,9 @@ jobs:
 
       # Create dev VCR config, patch instance name, build artefact
       - name: Building artefact
+        id: build
+        env:
+          AUTH_INPUT: ${{ inputs.auth || 'config' }}
         run: |
           # Add empty env file to avoid errors during build
           touch "${{ github.workspace }}/backend/.env"
@@ -84,13 +98,27 @@ jobs:
           # REMOVE the domain line entirely for comment-based deploys
           sed -i '/^[[:space:]]*domains:/d' "${{ github.workspace }}/vcr-dev.yml"
 
-          # Per-PR instances have no <DOMAIN>, so their redirect URI isn't registered with the provider
-          sed -i "/name: AUTH_ENABLED/{n;s/value: .*/value: 'false'/;}" "${{ github.workspace }}/vcr-dev.yml"
-
           # Patch instance name to be PR-specific
           sed -i \
             "/^instance:/ {n; s/^  name: .*/  name: vera-pr-${{ steps.pr.outputs.number }}/;}" \
             "${{ github.workspace }}/vcr-dev.yml"
+
+          # Sign-in returns to this instance; logout returns to <DOMAIN> (Okta has no wildcard post-logout URIs)
+          PR_INSTANCE_URL="https://${VCR_INSTANCE_HOST_PREFIX}-vera-pr-${{ steps.pr.outputs.number }}.euw1.runtime.vonage.cloud"
+          sed -i "s#https://<DOMAIN>/api/auth/callback/okta#${PR_INSTANCE_URL}/api/auth/callback/okta#" "${{ github.workspace }}/vcr-dev.yml"
+          sed -i "s#<DOMAIN>#${DOMAIN}#g" "${{ github.workspace }}/vcr-dev.yml"
+
+          if [ "$AUTH_INPUT" = "on" ] || [ "$AUTH_INPUT" = "off" ]; then
+            AUTH_VALUE=$([ "$AUTH_INPUT" = "on" ] && echo true || echo false)
+            sed -i "/name: AUTH_ENABLED/{n;s/value: .*/value: '${AUTH_VALUE}'/;}" "${{ github.workspace }}/vcr-dev.yml"
+          fi
+
+          # The frontend build reads AUTH_ENABLED for the logout button
+          export AUTH_ENABLED="$(grep -A1 'name: AUTH_ENABLED' "${{ github.workspace }}/vcr-dev.yml" | sed -n "s/.*value: '\(.*\)'/\1/p")"
+          echo "AUTH_ENABLED=${AUTH_ENABLED} for vera-pr-${{ steps.pr.outputs.number }}"
+
+          echo "auth_enabled=${AUTH_ENABLED}" >> "$GITHUB_OUTPUT"
+          echo "pr_instance_url=${PR_INSTANCE_URL}" >> "$GITHUB_OUTPUT"
 
           ./vcrBuild.dev.sh
 
@@ -105,6 +133,19 @@ jobs:
           api-key: ${{ secrets.VCR_API_KEY }}
           api-secret: ${{ secrets.VCR_API_SECRET }}
           filename: vcr-dev.yml
+
+      # The redirect URI is built before VCR assigns the URL
+      - name: Verify the instance URL matches the OIDC redirect URI
+        if: steps.build.outputs.auth_enabled == 'true'
+        env:
+          EXPECTED_URL: ${{ steps.build.outputs.pr_instance_url }}
+          DEPLOYED_URL: ${{ steps.deploy.outputs.instance-url }}
+        run: |
+          if [ "${DEPLOYED_URL%/}" != "$EXPECTED_URL" ]; then
+            echo "::error::Instance URL is ${DEPLOYED_URL}, but OIDC_WEB_REDIRECT_URI was built for ${EXPECTED_URL}. Update VCR_INSTANCE_HOST_PREFIX in this workflow and the wildcard sign-in redirect URI in Okta."
+            exit 1
+          fi
+          echo "Instance URL matches the OIDC redirect URI: ${EXPECTED_URL}"
 
       - name: Comment PR on success
         if: success()

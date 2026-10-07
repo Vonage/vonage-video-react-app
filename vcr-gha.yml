@@ -1,87 +1,132 @@
+# VCR config for the instance deployed by .github/workflows/deploy-to-vcr.yml.
+# `value:` entries are set inline; `secret:` entries read VCR secrets created with `vcr secret create`.
 project:
+  # VCR project that groups this app's instances.
   name: vonage-video-react-app
+
 instance:
+  # Instance name inside the project.
   name: dev
+  # Node.js runtime the bundle runs on.
   runtime: nodejs22
+  # Region the instance runs in (EU).
   region: aws.euw1
+  # Starts the bundled backend, which also serves the built frontend.
   entrypoint: [node, bundle.cjs]
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
   domains: <DOMAIN>
+
   environment:
+    # Video provider: `vonage` (Vonage Video API) or `opentok`.
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
+    # Vonage application ID and private key, used when the provider is `vonage`.
     - name: VONAGE_APP_ID
       secret: VONAGE_APP_ID
     - name: VONAGE_PRIVATE_KEY
       secret: VONAGE_PRIVATE_KEY
+    # OpenTok API key and secret, used when the provider is `opentok`.
     - name: OT_API_KEY
       secret: OT_API_KEY
     # pragma: allowlist secret
     - name: OT_API_SECRET
       # pragma: allowlist secret
       secret: OT_API_SECRET
+
+    # Feedback: shows the "Report issue" form and files the reports in Jira.
     - name: ENABLE_REPORT_ISSUE
       secret: ENABLE_REPORT_ISSUE
+    # Jira site URL, REST API URL and API token.
     - name: JIRA_URL
       secret: JIRA_URL
     - name: JIRA_API_URL
       secret: JIRA_API_URL
     - name: JIRA_TOKEN
       secret: JIRA_TOKEN
+    # Jira project the issues are filed in.
     - name: JIRA_PROJECT_KEY
       secret: JIRA_PROJECT_KEY
+    # Jira components for web, iOS and Android reports.
     - name: JIRA_COMPONENT_ID
       secret: JIRA_COMPONENT_ID
     - name: JIRA_iOS_COMPONENT_ID
       secret: JIRA_iOS_COMPONENT_ID
     - name: JIRA_ANDROID_COMPONENT_ID
       secret: JIRA_ANDROID_COMPONENT_ID
+    # Epic the issues are linked to, and its URL.
     - name: JIRA_EPIC_LINK
       secret: JIRA_EPIC_LINK
     - name: JIRA_EPIC_URL
       secret: JIRA_EPIC_URL
+    # Severity set on every filed issue.
     - name: JIRA_SEVERITY_ID
       secret: JIRA_SEVERITY_ID
+
+    # Signs and verifies the session key JWTs.
     - name: SESSION_KEY_SECRET
       secret: SESSION_KEY_SECRET
+
+    # OIDC authentication. Turning it on also needs the AUTH_COOKIE_SECRET VCR secret and the
+    # redirect URIs below registered on the provider app.
+    # Encrypts the session cookies (32 random bytes, base64).
     - name: AUTH_COOKIE_SECRET
       secret: AUTH_COOKIE_SECRET
+    # 'true' requires a signed-in user on every route except the exclusion list in server.ts.
     - name: AUTH_ENABLED
       value: 'false'
+    # Provider app the backend signs users in with.
     - name: OIDC_CLIENT_ID
       value: '0oa2sp68ck6PDehU40h8'
+    # Callback the provider sends the browser to after login.
     - name: OIDC_WEB_REDIRECT_URI
       value: 'https://<DOMAIN>/api/auth/callback/okta'
+    # Where the provider sends the browser after logout.
     - name: OIDC_POST_LOGOUT_REDIRECT_URI
       value: 'https://<DOMAIN>/'
+    # Provider login page.
     - name: OIDC_AUTHORIZATION_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/authorize'
+    # Exchanges the login code for tokens and refreshes them.
     - name: OIDC_TOKEN_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/token'
+    # Checks that an access token is active on every request.
     - name: OIDC_INTROSPECTION_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/introspect'
+    # Revokes the tokens at sign-out.
     - name: OIDC_REVOCATION_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/revoke'
+    # Ends the provider's login session at sign-out.
     - name: OIDC_END_SESSION_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/logout'
+
     # VCR does not run env.sh, so the backend defaults from env.defaults.sh are repeated here.
+    # Cookie holding the encrypted access and refresh tokens.
     - name: AUTH_SESSION_COOKIE_NAME
       value: 'oidc_session'
+    # Cookie holding the encrypted ID token, sent only to the sign-out route.
     - name: AUTH_ID_TOKEN_COOKIE_NAME
       value: 'oidc_id_token'
+    # Short-lived cookie holding the login state between sign-in and the callback.
     - name: AUTH_TRANSACTION_COOKIE_NAME
       value: 'oidc_transaction'
+    # How long the user has to finish logging in at the provider.
     - name: AUTH_TRANSACTION_MAX_AGE_SECONDS
       value: '600'
+    # Refresh the access token when it has this many seconds left.
     - name: AUTH_REFRESH_WINDOW_SECONDS
       value: '30'
+    # Timeout for every call to the provider.
     - name: AUTH_PROVIDER_TIMEOUT_MS
       value: '5000'
+    # Scopes requested at sign-in. offline_access asks for a refresh token.
     - name: OIDC_SCOPES
       value: 'openid profile email offline_access'
+    # Request header and scheme that carry a Bearer token (mobile clients).
     - name: AUTH_HEADER_NAME
       value: 'authorization'
     - name: AUTH_SCHEME
       value: 'Bearer'
+
 debug:
+  # Command `vcr debug` uses to start the app.
   entrypoint: [node, bundle.cjs]
