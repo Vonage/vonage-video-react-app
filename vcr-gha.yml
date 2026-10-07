@@ -79,10 +79,10 @@ instance:
       value: '0oa2sp68ck6PDehU40h8'
     # Callback the provider sends the browser to after login.
     - name: OIDC_WEB_REDIRECT_URI
-      value: 'https://<DOMAIN>/api/auth/callback/okta'
+      value: 'https://<APP_HOST>/api/auth/callback/okta'
     # Where the provider sends the browser after logout.
     - name: OIDC_POST_LOGOUT_REDIRECT_URI
-      value: 'https://<DOMAIN>/'
+      value: 'https://<APP_HOST>/'
     # Provider login page.
     - name: OIDC_AUTHORIZATION_ENDPOINT
       value: 'https://launchpadtest.vonage.com/oauth2/v1/authorize'

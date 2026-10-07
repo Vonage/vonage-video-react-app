@@ -38,10 +38,16 @@ function issueTokens(grant: Omit<TokenGrant, 'expiresAt'>) {
 }
 
 const app = express();
+app.disable('x-powered-by');
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/authorize', (req, res) => {
   const query = req.query as Record<string, string>;
+
+  if (!isLoopbackUrl(query.redirect_uri)) {
+    res.status(400).json({ error: 'invalid_request' });
+    return;
+  }
 
   const code = generateToken();
   authorizationCodes.set(code, { clientId: query.client_id, scope: query.scope ?? 'openid' });
@@ -99,8 +105,8 @@ app.post('/revoke', (req, res) => {
 app.get('/logout', (req, res) => {
   const postLogoutRedirectUri = req.query.post_logout_redirect_uri;
 
-  if (typeof postLogoutRedirectUri === 'string') {
-    res.redirect(postLogoutRedirectUri);
+  if (isLoopbackUrl(postLogoutRedirectUri)) {
+    res.redirect(new URL(postLogoutRedirectUri).toString());
     return;
   }
 
@@ -110,3 +116,9 @@ app.get('/logout', (req, res) => {
 app.listen(port, () => {
   console.log(`local-oidc listening on http://localhost:${port}`);
 });
+
+function isLoopbackUrl(value: unknown): value is string {
+  if (typeof value !== 'string' || !URL.canParse(value)) return false;
+
+  return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(value).hostname);
+}

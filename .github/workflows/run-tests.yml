@@ -136,6 +136,18 @@ jobs:
     if: github.event.pull_request.head.repo.fork == false
     permissions:
       contents: read
+    env:
+      AUTH_ENABLED: 'true'
+      OIDC_CLIENT_ID: 'vera-local'
+      OIDC_WEB_REDIRECT_URI: 'http://127.0.0.1:3345/api/auth/callback/okta'
+      OIDC_AUTHORIZATION_ENDPOINT: 'http://localhost:3346/authorize'
+      OIDC_TOKEN_ENDPOINT: 'http://localhost:3346/token'
+      OIDC_INTROSPECTION_ENDPOINT: 'http://localhost:3346/introspect'
+      OIDC_REVOCATION_ENDPOINT: 'http://localhost:3346/revoke'
+      OIDC_END_SESSION_ENDPOINT: 'http://localhost:3346/logout'
+      OIDC_POST_LOGOUT_REDIRECT_URI: 'http://127.0.0.1:3345/'
+      AUTH_COOKIE_SECRET: ${{ secrets.AUTH_COOKIE_SECRET }}
+      LOCAL_OIDC_ACCESS_TOKEN_TTL_SECONDS: '40'
 
     steps:
       - name: Checkout
@@ -159,7 +171,7 @@ jobs:
           key: playwright-browsers-${{ hashFiles('**/package.json') }}
 
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: yarn playwright install --with-deps chromium
 
       - name: Run auth E2E tests
         run: yarn test:integration auth

@@ -14,7 +14,7 @@ function readRequiredEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(
-      `${name} is not set. Run the auth suite with \`yarn test:integration auth\`, which loads env.sh and auth/backend.env.`
+      `${name} is not set. CI sets it in the auth-e2e job of .github/workflows/run-tests.yml; locally, export it or put it in integration-tests/auth/backend.env.`
     );
   }
   return value;

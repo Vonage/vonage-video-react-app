@@ -100,13 +100,22 @@ jobs:
 
           # Patch instance name to be PR-specific
           sed -i \
-            "/^instance:/ {n; s/^  name: .*/  name: vera-pr-${{ steps.pr.outputs.number }}/;}" \
+            "/^instance:/,/^[^ #]/ s/^  name: .*/  name: vera-pr-${{ steps.pr.outputs.number }}/" \
             "${{ github.workspace }}/vcr-dev.yml"
+          if ! grep -qx "  name: vera-pr-${{ steps.pr.outputs.number }}" "${{ github.workspace }}/vcr-dev.yml"; then
+            echo "::error::Could not set the instance name to vera-pr-${{ steps.pr.outputs.number }}; refusing to deploy."
+            exit 1
+          fi
 
-          # Sign-in returns to this instance; logout returns to <DOMAIN> (Okta has no wildcard post-logout URIs)
+          # Sign-in returns to this instance; logout returns to the main host (Okta has no wildcard post-logout URIs)
           PR_INSTANCE_URL="https://${VCR_INSTANCE_HOST_PREFIX}-vera-pr-${{ steps.pr.outputs.number }}.euw1.runtime.vonage.cloud"
-          sed -i "s#https://<DOMAIN>/api/auth/callback/okta#${PR_INSTANCE_URL}/api/auth/callback/okta#" "${{ github.workspace }}/vcr-dev.yml"
-          sed -i "s#<DOMAIN>#${DOMAIN}#g" "${{ github.workspace }}/vcr-dev.yml"
+          APP_HOST="$(printf '%s' "$DOMAIN" | sed -E 's/[][" ]//g; s/,.*//')"
+          if ! [[ "$APP_HOST" =~ ^[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::The DOMAIN secret doesn't start with a hostname, so the OIDC redirect URIs would be invalid."
+            exit 1
+          fi
+          sed -i "s#https://<APP_HOST>/api/auth/callback/okta#${PR_INSTANCE_URL}/api/auth/callback/okta#" "${{ github.workspace }}/vcr-dev.yml"
+          sed -i "s#<APP_HOST>#${APP_HOST}#g" "${{ github.workspace }}/vcr-dev.yml"
 
           if [ "$AUTH_INPUT" = "on" ] || [ "$AUTH_INPUT" = "off" ]; then
             AUTH_VALUE=$([ "$AUTH_INPUT" = "on" ] && echo true || echo false)

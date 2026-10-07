@@ -85,7 +85,7 @@ const runAllPlaywrightTests = () => {
 const runAuthTests = () => {
   console.log('\n🔐 Running auth E2E tests against local-oidc...\n');
   runCommand(
-    "cd integration-tests && bash -c 'source ../env.sh && set -a && source auth/backend.env && set +a && playwright test -c playwright.auth.config.ts'"
+    "cd integration-tests && bash -c 'source ../env.sh && if [ -f auth/backend.env ]; then set -a && source auth/backend.env && set +a; fi && playwright test -c playwright.auth.config.ts'"
   );
 };
 

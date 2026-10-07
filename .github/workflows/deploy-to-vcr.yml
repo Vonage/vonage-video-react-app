@@ -34,6 +34,15 @@ jobs:
       - name: Building artefact
         run: |
           sed -i "s/<DOMAIN>/${DOMAIN}/g" "${{ github.workspace }}/vcr-gha.yml"
+
+          # The redirect URIs need one bare host; DOMAIN is written as VCR's domains value
+          APP_HOST="$(printf '%s' "$DOMAIN" | sed -E 's/[][" ]//g; s/,.*//')"
+          if ! [[ "$APP_HOST" =~ ^[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::The DOMAIN secret doesn't start with a hostname, so the OIDC redirect URIs would be invalid."
+            exit 1
+          fi
+          sed -i "s/<APP_HOST>/${APP_HOST}/g" "${{ github.workspace }}/vcr-gha.yml"
+
           ./vcrBuild.sh
 
       - name: Install VCR CLI

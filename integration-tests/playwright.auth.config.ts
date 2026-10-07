@@ -1,9 +1,5 @@
-import { randomBytes } from 'node:crypto';
 import { defineConfig, devices } from '@playwright/test';
 import { APP_URL, LOCAL_OIDC_URL } from './tests-auth/constants';
-
-// Inherited by the webServer commands; a throwaway key per run is enough for test sessions.
-process.env.AUTH_COOKIE_SECRET ||= randomBytes(32).toString('base64');
 
 /**
  * Auth E2E suite: the built app with AUTH_ENABLED=true against apps/local-oidc.
@@ -39,7 +35,7 @@ export default defineConfig({
   ],
   // Both servers are always started fresh: this suite shares port 3345 with the main suite, and
   // reusing a server started without auth would make every test meaningless. They inherit the
-  // env.sh and auth/backend.env values loaded by `yarn test:integration auth`.
+  // environment of `yarn test:integration auth`.
   webServer: [
     {
       command: 'bash -c "cd .. && npx nx run local-oidc:start"',
