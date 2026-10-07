@@ -1,0 +1,18 @@
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 127,129
+vcr-gha.yml
+  h_6029769cf9ac60 1-2,4,6,8,10,12,14,18,20,23,28,35-36,39,46,49,56,61,64-65,68-71,74,77,80,83,86,89,92,95,98,101,103,106,109,112,115,118,121,124,129,131
+vcrBuild.dev.sh
+  h_6029769cf9ac60 7-8,10-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2f2a3e08999e8ad4d6ff5e33ba3e186271ad13f0",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

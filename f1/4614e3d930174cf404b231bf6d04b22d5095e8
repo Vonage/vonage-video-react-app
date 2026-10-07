@@ -1,0 +1,23 @@
+.vscode/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 43-46
+.kiro/scripts/codegraph.sh
+  s_5d339d35dcc85b::t_ff410406116f33 15-17
+.kiro/settings/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 55-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f14614e3d930174cf404b231bf6d04b22d5095e8",
+  "prompts": {},
+  "sessions": {
+    "s_5d339d35dcc85b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c8fb-8819-73d2-8f80-16ed62c77891",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
