@@ -112,7 +112,7 @@ describe('PostCallTranscriptionButton', () => {
 
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
-      archiveId: testArchiveId,
+      archiveType: 'transcription',
     });
 
     vi.useRealTimers();

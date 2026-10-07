@@ -107,10 +107,11 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
-    // We now pass the explicit archive id so the correct archive is stopped.
+    // We pass archiveType so the backend looks up the current archive ID,
+    // handling server rotation where the frontend's archiveId becomes stale.
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
-      archiveId: testArchiveId,
+      archiveType: 'recording',
     });
 
     vi.useRealTimers();
