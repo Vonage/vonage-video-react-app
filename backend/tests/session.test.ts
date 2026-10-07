@@ -488,8 +488,10 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             expect(response.statusCode).toEqual(200);
             expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
             expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
               expect.objectContaining({
-                withTranscription: true,
+                hasTranscription: true,
+                name: 'transcription',
               })
             );
           });
