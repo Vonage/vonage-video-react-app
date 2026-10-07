@@ -1,0 +1,24 @@
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_16343696230de9::t_cdbd0102bcdb52 4,8,20-23,28,40-41,44-46,51-52,56-59
+  s_16343696230de9::t_1d0a0274dc3bdb 60
+backend/routes/video/video.ts
+  s_16343696230de9::t_0b7db511e53811 155,183
+backend/tests/session.test.ts
+  s_16343696230de9::t_df49cfb49dea0a 464-496
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f6d8b0ee10b650fc792dc6995213c502981048d3",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
