@@ -30,7 +30,7 @@ export type ArchiveWithTranscription = SingleArchiveResponse & {
 };
 
 export function isPendingStatus(status: string): boolean {
-  return ['requested', 'started', 'stopped', 'uploaded', 'paused'].includes(status);
+  return ['requested', 'started', 'stopped', 'paused'].includes(status);
 }
 
 /**
