@@ -139,7 +139,7 @@ function ListElement({ children, className, ...props }: ComponentProps<'li'>) {
   );
 }
 
-function ArchiveStatus({ archive }: { archive: SingleArchiveResponse }) {
+function ArchiveStatus({ archive }: Readonly<{ archive: SingleArchiveResponse }>) {
   const { t } = useTranslation();
 
   const status = getDownloadStatus(archive);
