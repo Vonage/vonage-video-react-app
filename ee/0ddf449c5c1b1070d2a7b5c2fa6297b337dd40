@@ -1,0 +1,46 @@
+frontend/src/Context/SessionProvider/session.tsx
+  s_16343696230de9::t_eddc3ab87a1e21 434,437-438,449,452-453
+  s_16343696230de9::t_123521cc55a8b0 222-239,242-243
+  s_16343696230de9::t_11c74c2aae95b1 403-410,414-415,417,420-422
+  s_16343696230de9::t_298655817740d5 71-74
+  s_16343696230de9::t_0263911ad21f48 119-122
+  s_16343696230de9::t_1f03cdf5781ac3 701-704
+  s_16343696230de9::t_26cc08af78ad8e 657-660
+  s_16343696230de9::t_f54030d57afcbf 418-419
+  s_16343696230de9::t_68386c1b1f21db 402
+  s_16343696230de9::t_d22dd69069a8c3 430-432,445-447
+  s_16343696230de9::t_7fea270c111939 433,435-436,439-442,448,450-451,454-457
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  s_16343696230de9::t_8f705c73453441 36,49
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_16343696230de9::t_e1adaee11c9e3c 37-38
+  s_16343696230de9::t_dca65cf39e30d9 78,89
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  s_16343696230de9::t_6440e222ce300f 35-36
+frontend/src/hooks/useMeetingRoom.ts
+  s_16343696230de9::t_a30af8097e63fe 197
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_16343696230de9::t_46f1460e7efcb3 37-38
+  s_16343696230de9::t_fd34a7fd79b570 78,85
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_16343696230de9::t_0299492aa74d78 63
+  s_16343696230de9::t_b971dba1382900 148
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.spec.tsx
+  s_16343696230de9::t_ad478034cceb14 32-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ee0ddf449c5c1b1070d2a7b5c2fa6297b337dd40",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
