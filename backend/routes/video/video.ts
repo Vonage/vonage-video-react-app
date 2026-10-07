@@ -152,6 +152,7 @@ videoRouter.post(
       sessionId,
       id: archiveId,
       status,
+      name: archiveName,
     } = assertResult(
       () => ArchiveHookPayloadSchema.parse(req.body),
       makeBadRequestErrorHandler('Invalid archive hook payload')
@@ -179,6 +180,7 @@ videoRouter.post(
 
       await restartArchivingAfterServerRotation({
         sessionId,
+        archiveName,
         sessionService,
         videoClient,
       });
