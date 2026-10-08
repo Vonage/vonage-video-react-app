@@ -10,7 +10,19 @@ import { BrowserContext, Page, test as baseTest } from '@playwright/test';
 
 const isDebugMode = process.env.debugMode === 'true';
 
-const baseURL = isDebugMode ? 'http://localhost:5173/' : 'http://127.0.0.1:3345/';
+const normalizeBaseUrl = (url: string): string => (url.endsWith('/') ? url : `${url}/`);
+
+// Set BASE_URL to point the suite at a deployed environment (e.g. a VCR PR URL) instead of
+// the local dev/preview server.
+const baseURL = (() => {
+  if (process.env.BASE_URL) {
+    return normalizeBaseUrl(process.env.BASE_URL);
+  }
+  if (isDebugMode) {
+    return 'http://localhost:5173/';
+  }
+  return 'http://127.0.0.1:3345/';
+})();
 
 const addLogger = (page: Page, context: BrowserContext) => {
   // Get page index to help identify which tab logs are coming from

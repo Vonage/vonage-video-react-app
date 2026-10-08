@@ -7,6 +7,9 @@ const isHeadedMode = process.env.headedMode === 'true';
 const isDebugMode = process.env.debugMode === 'true';
 const isInspectMode = process.env.inspectMode === 'true';
 const snapshotPlatform = process.env.PLAYWRIGHT_SNAPSHOT_PLATFORM ?? process.platform;
+// When set (e.g. to a VCR PR URL), the suite targets that deployment instead of starting a
+// local dev/preview server. See fixtures/testWithLogging.ts for the matching baseURL used by specs.
+const remoteBaseUrl = process.env.BASE_URL;
 
 /**
  * Chromium media testing flags
@@ -63,6 +66,8 @@ export default defineConfig({
   use: {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    ...(remoteBaseUrl ? { baseURL: remoteBaseUrl } : {}),
 
     ...(isInspectMode || isDebugMode
       ? {
@@ -130,22 +135,24 @@ export default defineConfig({
       },
     },
   ],
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    reuseExistingServer: true,
-    timeout: 120 * 1000, // 2 minutes for CI builds with terser minification
-    env: {
-      BYPASS_WAITING_ROOM: 'false',
-    },
+  /* Run your local dev server before starting the tests, unless targeting a remote deployment */
+  webServer: remoteBaseUrl
+    ? undefined
+    : {
+        reuseExistingServer: true,
+        timeout: 120 * 1000, // 2 minutes for CI builds with terser minification
+        env: {
+          BYPASS_WAITING_ROOM: 'false',
+        },
 
-    ...(isDebugMode
-      ? {
-          command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn dev"',
-          url: 'http://localhost:5173/',
-        }
-      : {
-          command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn start"',
-          url: 'http://127.0.0.1:3345',
-        }),
-  },
+        ...(isDebugMode
+          ? {
+              command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn dev"',
+              url: 'http://localhost:5173/',
+            }
+          : {
+              command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn start"',
+              url: 'http://127.0.0.1:3345',
+            }),
+      },
 });
