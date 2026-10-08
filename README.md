@@ -125,7 +125,7 @@ See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonag
 
 ### OIDC token authentication (optional)
 
-The backend can validate OIDC access tokens on every route (minus a small exclusion list for health checks, webhooks, and well-known files) via `AUTH_ENABLED` (opt-in, `false`/unset by default), `OIDC_CLIENT_ID`, and `OIDC_ISSUER_URL`. Web and mobile clients authenticate the same way — a token in the configured header, default `Authorization: Bearer <token>`. See [Configuration](./docs/CONFIGURATION.md#oidc-token-authentication-optional) for the full variable reference.
+See [Authentication](./docs/AUTHENTICATION.md) for the full guide.
 
 ## Documentation
 
@@ -134,6 +134,7 @@ The backend can validate OIDC access tokens on every route (minus a small exclus
 | [Getting Started](./docs/GETTING_STARTED.md) | Environment setup, local development, and deployment guide |
 | [Architecture](./docs/ARCHITECTURE.md) | Nx workspace structure, projects, and library boundaries |
 | [Configuration](./docs/CONFIGURATION.md) | Environment variables, feature flags, theming, and Storybook |
+| [Authentication](./docs/AUTHENTICATION.md) | OIDC/BFF authentication architecture, setup, and troubleshooting |
 | [Session Migration](./docs/SESSION_MIGRATION.md) | Server rotation support, archiving recovery, and testing |
 | [Testing](./docs/TESTING.md) | Integration tests, screenshot tests, and unit test suites |
 | [Code Style](./docs/CODE_STYLE.md) | Linting, formatting, naming conventions, and doc generation |

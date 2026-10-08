@@ -14,4 +14,22 @@ export interface SessionStorage {
 
   setServerRotationPending(args: { sessionId: string; pending: number }): Promise<void>;
   getServerRotationPending(args: { sessionId: string }): Promise<number>;
+  setAuthTransaction(args: {
+    transactionId: string;
+    state: string;
+    codeVerifier: string;
+    returnTo: string;
+  }): Promise<void>;
+  getAuthTransaction(args: {
+    transactionId: string;
+  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null>;
+  deleteAuthTransaction(args: { transactionId: string }): Promise<void>;
+
+  setAccessToken(args: {
+    sessionId: string;
+    accessToken: string;
+    expiresInSeconds?: number;
+  }): Promise<void>;
+
+  getAccessToken(args: { sessionId: string }): Promise<string | null>;
 }

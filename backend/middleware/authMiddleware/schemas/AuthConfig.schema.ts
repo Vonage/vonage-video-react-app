@@ -14,10 +14,13 @@ const AuthConfigSchema = z.discriminatedUnion('authEnabled', [
     authEnabled: z.literal(true),
     oidcIssuerUrl: z.url(),
     oidcClientId: z.string().min(1),
-    authHeaderName: z.string().min(1),
-    authScheme: z.string().min(1),
-    introspectPath: z.string().min(1),
-    introspectionTimeoutMs: z.number().int().positive(),
+    oidcWebRedirectUri: z.url(),
+    authHeaderName: z.string().min(1).default('authorization'),
+    authScheme: z.string().min(1).default('Bearer'),
+    introspectPath: z.string().min(1).default('/oauth2/v1/introspect'),
+    authorizePath: z.string().min(1).default('/oauth2/v1/authorize'),
+    tokenPath: z.string().min(1).default('/oauth2/v1/token'),
+    introspectionTimeoutMs: z.number().int().positive().default(5000),
   }),
 ]);
 

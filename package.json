@@ -4,13 +4,14 @@
   "description": "React reference application for the Vonage Video web client SDK.",
   "private": true,
   "engines": {
-    "node": ">=22.x",
+    "node": "^22.13.0 || >=24",
     "npm": "9.x"
   },
   "scripts": {
     "prepare": "husky",
     "postinstall": "nx postinstall integration-tests",
     "sync:theme-tokens": "npx tsx scripts/generateTokens.ts",
+    "sync:env": "npx tsx scripts/generateEnv.ts",
     "quality-check": "npx tsx scripts/qualityCheck.ts",
     "build": "npx tsx scripts/build.ts",
     "dev": "npx tsx scripts/dev.ts",
@@ -37,6 +38,7 @@
     "build": "Build projects. Usage: 'yarn build' (frontend+backend), 'yarn build frontend', 'yarn build backend', 'yarn build room' (VeraRoom artifact), 'yarn build room zip' (zip VeraRoom artifact)",
     "dev": "Run dev servers. Usage: 'yarn dev' (frontend+backend), 'yarn dev frontend', 'yarn dev backend', 'yarn dev debug' (--inspect), 'yarn dev debug wait' (--inspect-brk), 'yarn dev room' (VeraRoom example), 'yarn dev studio' (Vera Studio + backend + Storybook)",
     "sync:theme-tokens": "Sync theme token artifacts. Usage: 'yarn sync:theme-tokens'. Always regenerates theme.example.json, uses root theme.json as source of truth when present, bootstraps root theme.json from defaults when missing, rebuilds veraUI.cjs, and runs Prettier on the generated plugin file.",
+    "sync:env": "Regenerate the frontend env.sh from app-config.json (the source of truth). Usage: 'yarn sync:env'. env.sh is a generated artifact and must not be edited by hand; update app-config.json and re-run this command.",
     "lint:fix": "Format and lint fix (workspace-wide by default). Optionally scope to a single Nx project: 'yarn lint:fix <project>'",
     "quality-check": "Run ts-check + lint + prettier check (workspace-wide by default). Optionally scope to a single project alias: 'yarn quality-check frontend', 'yarn quality-check studio'",
     "ts-check": "Run TypeScript checks (workspace-wide by default). Optionally scope to a single project alias: 'yarn ts-check frontend', 'yarn ts-check studio'",
@@ -52,13 +54,16 @@
     "type": "git",
     "url": "git+https://github.com/Vonage/vonage-video-react-app.git"
   },
-  "author": "",
+  "author": {
+    "name": "Vonage Video API",
+    "email": "support@api.vonage.com"
+  },
   "contributors": [
     "Hossein Movahed <https://github.com/Hossein-Movahed>",
     "Johnny Esteban Quesada <https://github.com/johnny-quesada-developer>",
     "Oscar Fava <https://github.com/OscarFava>"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Vonage/vonage-video-react-app/issues"
   },
@@ -143,19 +148,15 @@
     "webpack-cli": "6.0.1"
   },
   "resolutions": {
-    "wrap-ansi": "7.0.0",
-    "path-to-regexp": "0.1.12",
+    "path-to-regexp": "0.1.13",
     "express": "4.22.1",
     "axios": "1.20.0",
     "cross-spawn": "7.0.6",
     "rollup": "4.57.1",
     "vite": "5.4.21",
-    "nanoid": "3.3.11",
     "micromatch": "4.0.8",
-    "@babel/helpers": "7.28.6",
-    "@babel/runtime": "7.28.6",
-    "brace-expansion": "2.0.2",
-    "form-data": "4.0.6"
+    "form-data": "4.0.6",
+    "@babel/runtime": "^7.26.10"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "dependencies": {
@@ -187,7 +188,7 @@
     "form-data": "4.0.6",
     "helmet": "8.2.0",
     "i18next": "25.8.8",
-    "json-storage-formatter": "3.0.2",
+    "json-storage-formatter": "4.0.0",
     "jsonwebtoken": "9.0.3",
     "motion": "12.38.0",
     "normalize-range": "0.1.2",
@@ -197,7 +198,7 @@
     "opentok-solutions-logging": "1.1.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-global-state-hooks": "15.0.15",
+    "react-global-state-hooks": "^16.0.5",
     "react-i18next": "15.7.4",
     "react-router-dom": "7.18.2",
     "react-syntax-highlighter": "16.1.1",

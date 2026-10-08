@@ -78,6 +78,7 @@ export class BackendLogTransport {
       method: 'POST',
       body,
       keepalive: true,
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
     }).catch(() => {});
   }

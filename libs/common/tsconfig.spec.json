@@ -12,12 +12,15 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "srcBrowser/**/*.ts",
-    "srcBrowser/**/*.tsx",
-    "srcNode/**/*.ts",
+    "web/**/*.ts",
+    "web/**/*.tsx",
+    "node/**/*.ts",
     "test/**/*.ts",
-    "testBrowser/**/*.ts",
-    "testBrowser/**/*.tsx",
+    "web-test/**/*.ts",
+    "web-test/**/*.tsx",
+    "node-test/**/*.ts",
+    "node-test/**/*.tsx",
+    "scripts/**/*.ts",
     "vite.config.ts"
   ]
 }

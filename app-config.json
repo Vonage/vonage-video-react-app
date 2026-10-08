@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "name": "Vonage Video App Config",
+    "version": "1.0.0",
+    "created": "2026-08-21",
+    "description": "Unified application configuration (feature toggles and defaults) consolidated across the Vonage Video Android, iOS and React (web) apps. Superset of all platforms; platform-specific flags are optional. This file is the source of truth for the frontend env.sh, which is auto-generated via 'yarn sync:env'. Do not edit env.sh by hand."
+  },
+  "baseApiUrl": "${API_URL}",
+  "localizationSettings": {
+    "fallbackLanguage": "en",
+    "supportedLanguages": ["en", "en-US", "es", "es-MX", "it", "de", "ja"]
+  },
+  "appSettings": {
+    "enableReportIssue": true,
+    "showVideoStats": false
+  },
+  "connectionSettings": {
+    "tunnelDomain": "${TUNNEL_DOMAIN}",
+    "vonageVideoHost": "${VONAGE_VIDEO_HOST}"
+  },
+  "videoSettings": {
+    "allowBackgroundEffects": true,
+    "allowCameraControl": true,
+    "allowVideoOnJoin": true,
+    "defaultResolution": "1280x720"
+  },
+  "audioSettings": {
+    "allowAdvancedNoiseSuppression": true,
+    "allowAudioOnJoin": true,
+    "allowMicrophoneControl": true,
+    "allowAudioDiagnostics": true
+  },
+  "waitingRoomSettings": {
+    "allowDeviceSelection": true,
+    "allowSettings": true,
+    "bypassWaitingRoom": false
+  },
+  "meetingRoomSettings": {
+    "allowSettings": true,
+    "allowArchiving": true,
+    "allowCaptions": true,
+    "allowChat": true,
+    "allowDeviceSelection": true,
+    "allowEmojis": true,
+    "allowFeedback": true,
+    "allowPictureInPicture": true,
+    "allowScreenShare": true,
+    "defaultLayoutMode": "activeSpeaker",
+    "showParticipantList": true
+  }
+}

@@ -2,6 +2,8 @@ import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
 import express, { type Express } from 'express';
 import request from 'supertest';
+import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
+import getSessionStorageService from '../../sessionStorageService';
 import { errorHandler } from '../errorHandler';
 import authMiddleware from './authMiddleware';
 
@@ -30,6 +32,7 @@ describe('authMiddleware', () => {
       AUTH_ENABLED: 'true',
       OIDC_ISSUER_URL: 'https://example.com',
       OIDC_CLIENT_ID: CLIENT_ID,
+      OIDC_WEB_REDIRECT_URI: 'http://localhost:3000/api/auth/callback/okta',
     };
   });
 
@@ -52,6 +55,12 @@ describe('authMiddleware', () => {
   it('throws at construction when auth is enabled but a required field is missing', () => {
     delete process.env.OIDC_ISSUER_URL;
     delete process.env.OIDC_CLIENT_ID;
+
+    expect(() => authMiddleware()).toThrow();
+  });
+
+  it('throws at construction when auth is enabled but OIDC_WEB_REDIRECT_URI is missing', () => {
+    delete process.env.OIDC_WEB_REDIRECT_URI;
 
     expect(() => authMiddleware()).toThrow();
   });
@@ -118,6 +127,36 @@ describe('authMiddleware', () => {
     const res = await request(app).get('/protected');
 
     expect(res.statusCode).toEqual(200);
+    expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the session cookie when there is no Bearer header, resolving it via SessionStorage', async () => {
+    expect.assertions(2);
+
+    mockPost.mockResolvedValue({
+      data: { active: true, sub: 'user-1', client_id: CLIENT_ID },
+    });
+
+    const sessionService = getSessionStorageService();
+    await sessionService.setAccessToken({ sessionId: 'session-abc', accessToken: 'session-token' });
+
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=session-abc`);
+
+    expect(res.statusCode).toEqual(200);
+    const [, body] = mockPost.mock.calls[0] as unknown as [string, URLSearchParams];
+    expect(body.toString()).toContain('token=session-token');
+  });
+
+  it('returns 401 when the session cookie does not resolve to a stored access token', async () => {
+    expect.assertions(2);
+
+    const res = await request(buildApp())
+      .get('/protected')
+      .set('Cookie', `${SESSION_COOKIE_NAME}=unknown-session-id`);
+
+    expect(res.statusCode).toEqual(401);
     expect(mockPost).not.toHaveBeenCalled();
   });
 });

@@ -78,14 +78,14 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
       include: [
         `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/common/src')}/**/*.{ts,tsx}`,
-        `${path.resolve(__dirname, '../libs/common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/web')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/core/src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/ui/src')}/**/*.{ts,tsx}`,
       ],
       exclude: [
         '**/test/**',
         '**/index.ts',
-        '**/testBrowser/**',
+        '**/web-test/**',
         '**/*.stories.tsx',
         '**/example/main.tsx',
         '**/vite.*.config.ts',
@@ -166,6 +166,21 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       allowedHosts: ['*', env.TUNNEL_DOMAIN],
+      proxy: {
+        // Okta's registered local redirect URI is fixed to this Vite dev server's origin
+        // (http://localhost:3000/api/auth/callback/okta) — proxy it through to the backend,
+        // which is the only thing that actually implements this route. /auth/signin needs the
+        // same treatment: it sets the auth-transaction cookie that the callback validates, so
+        // both legs of the flow must be seen as same-origin by the browser.
+        '/api/auth/callback/okta': {
+          target: env.API_URL || 'http://localhost:3345',
+          changeOrigin: true,
+        },
+        '/auth/signin': {
+          target: env.API_URL || 'http://localhost:3345',
+          changeOrigin: true,
+        },
+      },
     },
     optimizeDeps: {
       include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
@@ -202,10 +217,10 @@ export default defineConfig(({ mode }) => {
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
-        '@web': path.resolve(__dirname, '../libs/common/srcBrowser'),
+        '@web': path.resolve(__dirname, '../libs/common/web'),
         '@core': path.resolve(__dirname, '../libs/core/src'),
         '@common-test': path.resolve(__dirname, '../libs/common/test'),
-        '@web-test': path.resolve(__dirname, '../libs/common/testBrowser'),
+        '@web-test': path.resolve(__dirname, '../libs/common/web-test'),
         '@core-test': path.resolve(__dirname, '../libs/core/test'),
         '@ui-test': path.resolve(__dirname, '../libs/ui/test'),
       },

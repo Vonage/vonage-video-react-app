@@ -1,13 +1,12 @@
 import { initPublisher } from '@vonage/client-sdk-video';
-import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
-import advancedSettings$ from '@Context/AdvancedSettings';
 import { initialState } from './constants';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { FC, PropsWithChildren } from 'react';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import {
   applyBitrate,
   handleApplyAdvancedSettingsError,
@@ -15,6 +14,7 @@ import {
 import { attempt } from '@common/execution';
 import { isNil } from 'json-storage-formatter';
 import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
+import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
 type ScreenShare = InferAPI<typeof screenShare$>;
 
@@ -22,7 +22,6 @@ const screenShare$ = createContext(initialState, {
   metadata: {
     user: {} as UserType,
     session: {} as SessionContextType,
-    t: (() => {}) as ReturnType<typeof useTranslation>['t'],
   },
   actions: {
     onScreenShareStopped: function (this: ScreenShare['actions']) {
@@ -38,11 +37,11 @@ const screenShare$ = createContext(initialState, {
     },
 
     unpublishScreenshare: () => {
-      return ({ getState, getMetadata, setState }) => {
+      return ({ getState, metadata, setState }) => {
         const { publisher } = getState();
         if (!publisher) return;
 
-        const { session } = getMetadata();
+        const { session } = metadata;
 
         session.unpublish(publisher);
 
@@ -62,8 +61,8 @@ const screenShare$ = createContext(initialState, {
     },
 
     toggleShareScreen: () => {
-      return async ({ getState, getMetadata, setState, actions }) => {
-        const { user, session, t } = getMetadata();
+      return async ({ getState, metadata, setState, actions }) => {
+        const { user, session } = metadata;
         const { vonageVideoClient, publish } = session;
         const actions$ = actions as ScreenShare['actions'];
 
@@ -74,7 +73,7 @@ const screenShare$ = createContext(initialState, {
           const { screenShareSurface } = advancedSettings$.getState();
 
           const screenShareConstraints = (() => {
-            if (screenShareSurface === 'default') return undefined;
+            if (screenShareSurface === AdvancedSettingsScreenShareSurface.default) return undefined;
             return { video: { displaySurface: screenShareSurface } };
           })();
 
@@ -111,7 +110,7 @@ const screenShare$ = createContext(initialState, {
               scalableScreenshare: scalableScreenshareEnabled,
               ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
               ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
-              name: t('participants.screen', { participantName: user.defaultSettings.name }),
+              name: user.defaultSettings.name,
               constraints: screenShareConstraints,
             },
             (err) => {
@@ -213,7 +212,6 @@ export default Object.assign(screenShare$, {
   Provider: (() => {
     // Keeps the metadata in sync, executes before the children are rendered
     const Synchronizer: FC<PropsWithChildren> = ({ children }) => {
-      const { t } = useTranslation();
       const { user } = useUserContext();
       const session = useSessionContext();
       const { setMetadata } = screenShare$.use.api();
@@ -222,7 +220,6 @@ export default Object.assign(screenShare$, {
         ...metadata,
         user,
         session,
-        t,
       }));
 
       return children;
