@@ -144,14 +144,11 @@ export default defineConfig({
           BYPASS_WAITING_ROOM: 'false',
         },
 
+        url: baseURL,
         ...(isDebugMode
-          ? {
-              command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn dev"',
-              url: 'http://localhost:5173/',
-            }
+          ? { command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn dev"' }
           : {
               command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn start"',
-              url: 'http://127.0.0.1:3345',
             }),
       },
 });
