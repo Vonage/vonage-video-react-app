@@ -1,7 +1,7 @@
 import tryCatch from '@common/execution/tryCatch';
 import type { SessionStorage } from '../../../storage/sessionStorage';
 import type { VideoClient } from '../video';
-import { TRANSCRIPTION_ARCHIVE_TAG } from '../constants/startArchive';
+import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
 type RestartArchivingAfterServerRotationArgs = {
   sessionId: string;
@@ -40,7 +40,7 @@ async function restartArchivingAfterServerRotation({
     return;
   }
 
-  const withTranscription = archiveName === TRANSCRIPTION_ARCHIVE_TAG;
+  const withTranscription = archiveName === TRANSCRIPTION_ARCHIVE_NAME;
 
   const { error } = await tryCatch(() =>
     videoClient.startArchive({ sessionKey, withTranscription })

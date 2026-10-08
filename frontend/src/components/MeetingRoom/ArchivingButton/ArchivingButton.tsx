@@ -9,6 +9,7 @@ import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
+import { RECORDING_ARCHIVE_NAME } from '@common/constants';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -85,7 +86,10 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (recordingArchiveId) {
-      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveType: 'recording' });
+      void videoClient.stopArchive({
+        sessionKey: sessionKey!,
+        archiveType: RECORDING_ARCHIVE_NAME,
+      });
     }
   };
 

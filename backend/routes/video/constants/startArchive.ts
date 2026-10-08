@@ -1,21 +1,13 @@
 import { HandlersConfig } from '@api-lib';
 import { ArchiveOptions, ArchiveOutputMode, LayoutType, Resolution } from '@vonage/video';
-
-/**
- * Vonage only allows more than one archive to run on a session at the same time when each archive
- * carries a distinct multiArchiveTag. A recording and a post-call transcription are two separate
- * archives, so we tag them by kind so they can coexist and be stopped independently.
- * See: https://developer.vonage.com/en/video/guides/archiving/overview#simultaneous-archives
- */
-export const RECORDING_ARCHIVE_TAG = 'recording';
-export const TRANSCRIPTION_ARCHIVE_TAG = 'transcription';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
 type ArchiveOptionsWithTag = ArchiveOptions & { multiArchiveTag?: string };
 
 const recordingOptions: ArchiveOptionsWithTag = {
-  name: RECORDING_ARCHIVE_TAG,
+  name: RECORDING_ARCHIVE_NAME,
   outputMode: ArchiveOutputMode.COMPOSED,
-  multiArchiveTag: RECORDING_ARCHIVE_TAG,
+  multiArchiveTag: RECORDING_ARCHIVE_NAME,
   resolution: Resolution.FHD_LANDSCAPE,
   layout: {
     type: LayoutType.BEST_FIT,
@@ -24,9 +16,9 @@ const recordingOptions: ArchiveOptionsWithTag = {
 };
 
 const transcriptionOptions: ArchiveOptionsWithTag = {
-  name: TRANSCRIPTION_ARCHIVE_TAG,
+  name: TRANSCRIPTION_ARCHIVE_NAME,
   outputMode: ArchiveOutputMode.INDIVIDUAL,
-  multiArchiveTag: TRANSCRIPTION_ARCHIVE_TAG,
+  multiArchiveTag: TRANSCRIPTION_ARCHIVE_NAME,
   hasAudio: true,
   hasVideo: false,
   hasTranscription: true,

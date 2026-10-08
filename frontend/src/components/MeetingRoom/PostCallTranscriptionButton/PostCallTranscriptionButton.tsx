@@ -9,6 +9,7 @@ import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
+import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
 export type PostCallTranscriptionButton = {
   isOverflowButton?: boolean;
@@ -89,7 +90,7 @@ const PostCallTranscriptionButton = ({
       }
     } else if (transcriptionArchiveId) {
       videoClient
-        .stopArchive({ sessionKey: sessionKey!, archiveType: 'transcription' })
+        .stopArchive({ sessionKey: sessionKey!, archiveType: TRANSCRIPTION_ARCHIVE_NAME })
         .catch((err) => {
           console.error('Failed to stop transcription:', err);
         });

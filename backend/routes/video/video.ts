@@ -8,6 +8,7 @@ import SessionHookPayloadSchema from './schemas/SessionHookPayload.schema';
 import CaptionsHookPayloadSchema from './schemas/CaptionsHookPayload.schema';
 import ArchiveHookPayloadSchema from './schemas/ArchiveHookPayload.schema';
 import { VideoSessionDetails } from '@common/types';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import { assertResult } from '@api-lib/executions';
 import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
@@ -53,23 +54,25 @@ export const { makeVideoClient$ } = videoHandler.router$;
 
 const videoClient = makeVideoClient$();
 
+type ArchiveType = typeof RECORDING_ARCHIVE_NAME | typeof TRANSCRIPTION_ARCHIVE_NAME;
+
 /**
  * Middleware to inject archiveId when not provided in stopArchive calls.
  * This handles server rotation scenarios where the frontend has a stale archiveId.
  *
- * When archiveType is provided ('recording' | 'transcription'), we search for the
- * running archive with matching name and use its current ID. This is the preferred
+ * When archiveType is provided (RECORDING_ARCHIVE_NAME | TRANSCRIPTION_ARCHIVE_NAME), we search
+ * for the running archive with matching name and use its current ID. This is the preferred
  * approach as it always gets the fresh ID even after server rotation.
  */
 videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
   let { archiveId } = input as {
     sessionKey: string;
     archiveId?: string;
-    archiveType?: 'recording' | 'transcription';
+    archiveType?: ArchiveType;
   };
   const { sessionKey, archiveType } = input as {
     sessionKey: string;
-    archiveType?: 'recording' | 'transcription';
+    archiveType?: ArchiveType;
   };
 
   if (archiveType && sessionKey && !archiveId) {

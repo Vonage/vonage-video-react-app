@@ -11,6 +11,7 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
@@ -384,9 +385,6 @@ const SessionProvider = ({
     setReconnecting(false);
     setSubscriptionError(null);
   };
-
-  const RECORDING_ARCHIVE_NAME = 'recording';
-  const TRANSCRIPTION_ARCHIVE_NAME = 'transcription';
 
   const handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
     setArchiveId(id);
