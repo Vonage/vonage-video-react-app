@@ -129,6 +129,7 @@ const buildConfig = defineConfig({
           name: sourcePackageJson.name,
           version: sourcePackageJson.version,
           type: sourcePackageJson.type,
+          author: sourcePackageJson.author,
           license: sourcePackageJson.license,
           sideEffects: sourcePackageJson.sideEffects,
           types: rootExport?.types ?? sourcePackageJson.types,
@@ -147,7 +148,7 @@ const buildConfig = defineConfig({
         );
 
         // ─── Copy LICENSE ────────────────────────────────────────────────
-        const licenseSrcPath = path.resolve(monorepoRoot, 'LICENSE.MIT');
+        const licenseSrcPath = path.resolve(monorepoRoot, 'LICENSE');
         fs.copyFileSync(licenseSrcPath, path.join(distDir, 'LICENSE'));
 
         // ─── Copy README and docs ───────────────────────────────────────

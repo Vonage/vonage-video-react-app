@@ -101,4 +101,4 @@ import { assertResult } from '@vonage/video-reference-apps-common/node/execution
 
 ## License
 
-MIT
+Apache-2.0

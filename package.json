@@ -54,13 +54,16 @@
     "type": "git",
     "url": "git+https://github.com/Vonage/vonage-video-react-app.git"
   },
-  "author": "",
+  "author": {
+    "name": "Vonage Video API",
+    "email": "support@api.vonage.com"
+  },
   "contributors": [
     "Hossein Movahed <https://github.com/Hossein-Movahed>",
     "Johnny Esteban Quesada <https://github.com/johnny-quesada-developer>",
     "Oscar Fava <https://github.com/OscarFava>"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Vonage/vonage-video-react-app/issues"
   },
