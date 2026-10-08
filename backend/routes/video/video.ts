@@ -78,7 +78,7 @@ videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
 
     const archivesResponse = await videoClient.video.searchArchives({ sessionId });
     const matchingArchive = archivesResponse.items.find(
-      (archive) => archive.name === archiveType && archive.status === 'started'
+      (archive) => archive.name === archiveType && ['started', 'paused'].includes(archive.status)
     );
 
     if (matchingArchive) {
@@ -87,8 +87,7 @@ videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
     }
   }
 
-  // Fallback: if archiveId is still not set, retrieve from storage (legacy behavior)
-  if (!archiveId && sessionKey) {
+  if (!archiveId && sessionKey && !archiveType) {
     const { decodeSessionKey } = await import('@common/helpers');
     const { sessionId } = decodeSessionKey({ sessionKey });
 
