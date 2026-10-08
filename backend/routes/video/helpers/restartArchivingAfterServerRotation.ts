@@ -37,10 +37,11 @@ async function restartArchivingAfterServerRotation({
 
   if (!sessionKey) return;
 
+  const remainingArchiveIds = await sessionService.getArchiveIds({ sessionId });
+  const isLastPreRotationArchive = remainingArchiveIds.length === 0;
+
   const withTranscription = archiveName === TRANSCRIPTION_ARCHIVE_TAG;
 
-  // A failed restart must not reject: the webhook handler reports errors by throwing, and an
-  // async throw surfaces as an unhandled rejection that would terminate the process.
   const { error } = await tryCatch(() =>
     videoClient.startArchive({ sessionKey, withTranscription })
   );
@@ -54,8 +55,7 @@ async function restartArchivingAfterServerRotation({
     });
   }
 
-  const remainingArchiveIds = await sessionService.getArchiveIds({ sessionId });
-  if (remainingArchiveIds.length === 0) {
+  if (isLastPreRotationArchive) {
     await sessionService.setServerRotationPending({ sessionId, pending: false });
   }
 }
