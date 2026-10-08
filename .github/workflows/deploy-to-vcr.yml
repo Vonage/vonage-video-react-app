@@ -42,6 +42,10 @@ jobs:
             exit 1
           fi
           sed -i "s/<APP_HOST>/${APP_HOST}/g" "${{ github.workspace }}/vcr-gha.yml"
+          if grep -v '^[[:space:]]*#' "${{ github.workspace }}/vcr-gha.yml" | grep -qE '<[A-Z_]+>'; then
+            echo "::error::Unfilled placeholders left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
 
           ./vcrBuild.sh
 
@@ -55,6 +59,7 @@ jobs:
           api-key: ${{ secrets.VCR_API_KEY }}
           api-secret: ${{ secrets.VCR_API_SECRET }}
           filename: vcr-gha.yml
+          instance-name: dev
 
       - name: Slack notification on success
         uses: ./.github/actions/slack-notify

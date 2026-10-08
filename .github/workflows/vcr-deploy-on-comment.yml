@@ -97,6 +97,10 @@ jobs:
 
           # REMOVE the domain line entirely for comment-based deploys
           sed -i '/^[[:space:]]*domains:/d' "${{ github.workspace }}/vcr-dev.yml"
+          if grep -q '^[[:space:]]*domains:' "${{ github.workspace }}/vcr-dev.yml"; then
+            echo "::error::Could not remove the domains line; refusing to deploy."
+            exit 1
+          fi
 
           # Patch instance name to be PR-specific
           sed -i \
@@ -116,6 +120,14 @@ jobs:
           fi
           sed -i "s#https://<APP_HOST>/api/auth/callback/okta#${PR_INSTANCE_URL}/api/auth/callback/okta#" "${{ github.workspace }}/vcr-dev.yml"
           sed -i "s#<APP_HOST>#${APP_HOST}#g" "${{ github.workspace }}/vcr-dev.yml"
+          if ! grep -qF "value: '${PR_INSTANCE_URL}/api/auth/callback/okta'" "${{ github.workspace }}/vcr-dev.yml"; then
+            echo "::error::Could not point OIDC_WEB_REDIRECT_URI at the PR instance; refusing to deploy."
+            exit 1
+          fi
+          if grep -v '^[[:space:]]*#' "${{ github.workspace }}/vcr-dev.yml" | grep -qE '<[A-Z_]+>'; then
+            echo "::error::Unfilled placeholders left in vcr-dev.yml; refusing to deploy."
+            exit 1
+          fi
 
           if [ "$AUTH_INPUT" = "on" ] || [ "$AUTH_INPUT" = "off" ]; then
             AUTH_VALUE=$([ "$AUTH_INPUT" = "on" ] && echo true || echo false)
@@ -124,6 +136,10 @@ jobs:
 
           # The frontend build reads AUTH_ENABLED for the logout button
           export AUTH_ENABLED="$(grep -A1 'name: AUTH_ENABLED' "${{ github.workspace }}/vcr-dev.yml" | sed -n "s/.*value: '\(.*\)'/\1/p")"
+          if [ -n "${AUTH_VALUE:-}" ] && [ "$AUTH_ENABLED" != "$AUTH_VALUE" ]; then
+            echo "::error::Could not set AUTH_ENABLED to ${AUTH_VALUE}; refusing to deploy."
+            exit 1
+          fi
           echo "AUTH_ENABLED=${AUTH_ENABLED} for vera-pr-${{ steps.pr.outputs.number }}"
 
           echo "auth_enabled=${AUTH_ENABLED}" >> "$GITHUB_OUTPUT"
@@ -142,6 +158,7 @@ jobs:
           api-key: ${{ secrets.VCR_API_KEY }}
           api-secret: ${{ secrets.VCR_API_SECRET }}
           filename: vcr-dev.yml
+          instance-name: vera-pr-${{ steps.pr.outputs.number }}
 
       # The redirect URI is built before VCR assigns the URL
       - name: Verify the instance URL matches the OIDC redirect URI

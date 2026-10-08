@@ -1,12 +1,10 @@
 # VCR config for the instance deployed by .github/workflows/deploy-to-vcr.yml.
 # `value:` entries are set inline; `secret:` entries read VCR secrets created with `vcr secret create`.
 project:
-  # VCR project that groups this app's instances.
-  name: vonage-video-react-app
+  name: vonage-video-react-app # VCR project that groups this app's instances.
 
 instance:
-  # Instance name inside the project.
-  name: dev
+  name: dev # Instance name inside the project; the deploy workflows patch it by position, so keep it right after `instance:`.
   # Node.js runtime the bundle runs on.
   runtime: nodejs22
   # Region the instance runs in (EU).
