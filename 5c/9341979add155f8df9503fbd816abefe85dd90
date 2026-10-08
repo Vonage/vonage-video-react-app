@@ -1,0 +1,54 @@
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_65be116865303c::t_a6c7dbfaf51618 245-250
+  h_737cf808c1c597 160
+  s_65be116865303c::t_31764a1c177854 89,116-118,141-145
+README.md
+  h_737cf808c1c597 71
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_65be116865303c::t_02ef3e8be7a4a3 188,191
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  s_65be116865303c::t_23150b2f56d3cb 1
+frontend/src/hooks/tests/useToolbarButtons.spec.tsx
+  s_65be116865303c::t_54d6a97cdee19a 188-233
+  h_737cf808c1c597 35,100,125,151,177
+frontend/src/hooks/useToolbarButtons.tsx
+  h_737cf808c1c597 85
+  s_65be116865303c::t_9112c6087eaf05 123
+  s_65be116865303c::t_dd24b81c412e09 12
+  s_65be116865303c::t_579710d5707db6 28-29,39
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_65be116865303c::t_1c4ab6adf2164e 43,46
+app-config.json
+  s_65be116865303c::t_b3d47dba36c596 14
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  s_1ea3b0841c2e1a::t_6ad8f2853cb9aa 9-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5c9341979add155f8df9503fbd816abefe85dd90",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_1ea3b0841c2e1a": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_2788d2a9-8489-499a-b51b-67e14028c691",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    },
+    "s_65be116865303c": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_34fb971c-fdba-447c-8aed-7b281555146b",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
