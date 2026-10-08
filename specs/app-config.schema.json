@@ -58,10 +58,6 @@
           "type": "boolean",
           "description": "When true, shows the 'report an issue' control so users can submit problem reports.",
           "x-envVar": "ENABLE_REPORT_ISSUE"
-        },
-        "showVideoStats": {
-          "type": "boolean",
-          "description": "When true, exposes the video statistics overlay (bitrate, resolution, packet loss) during a call."
         }
       }
     },

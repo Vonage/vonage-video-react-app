@@ -1,7 +1,6 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import throttle from '@common/execution/throttle';
 import ResizeObserverPolyfill from 'resize-observer-polyfill';
-import { RIGHT_PANEL_BUTTON_COUNT } from '../utils/constants';
 
 export type UseToolbarButtonsProps = {
   timeRoomNameRef: RefObject<HTMLDivElement | null>;
@@ -10,6 +9,7 @@ export type UseToolbarButtonsProps = {
   overflowAndExitRef: RefObject<HTMLDivElement | null>;
   rightPanelControlsRef: RefObject<HTMLDivElement | null>;
   numberOfToolbarButtons: number;
+  rightPanelButtonCount: number;
 };
 
 export type UseToolbarButtons = {
@@ -25,6 +25,8 @@ export type UseToolbarButtons = {
  *  @property {RefObject<HTMLDivElement | null>} mediaControlsRef - The ref for the audio and video controls
  *  @property {RefObject<HTMLDivElement | null>} overflowAndExitRef - The ref for the overflow and exit buttons
  *  @property {RefObject<HTMLDivElement | null>} rightPanelControlsRef - The ref for the right panel buttons
+ *  @property {number} numberOfToolbarButtons - The total number of buttons available for the toolbar
+ *  @property {number} rightPanelButtonCount - How many of those buttons control the right panel and are reserved for it
  * @returns {UseToolbarButtons} The center and right toolbar buttons' limits, and whether to display the TimeRoomNameMeetingRoom component
  */
 const useToolbarButtons = ({
@@ -34,6 +36,7 @@ const useToolbarButtons = ({
   overflowAndExitRef,
   rightPanelControlsRef,
   numberOfToolbarButtons,
+  rightPanelButtonCount,
 }: UseToolbarButtonsProps): UseToolbarButtons => {
   const observer = useRef<ResizeObserver | undefined>(undefined);
   const [displayTimeRoomName, setDisplayTimeRoomName] = useState<boolean>(false);
@@ -79,7 +82,7 @@ const useToolbarButtons = ({
           const maxButtons = Math.floor(spaceForExtraButtons / buttonWidth);
 
           // We reserve a few buttons for the right panel
-          const maxButtonsForCenter = numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT;
+          const maxButtonsForCenter = numberOfToolbarButtons - rightPanelButtonCount;
           // If there's more buttons able to be displayed, we only display the max for the center of the toolbar
           const toolbarCenterLimit =
             maxButtons > maxButtonsForCenter ? maxButtonsForCenter : maxButtons;
@@ -117,6 +120,7 @@ const useToolbarButtons = ({
     overflowAndExitRef,
     rightPanelControlsRef,
     numberOfToolbarButtons,
+    rightPanelButtonCount,
     toolbarRef,
     timeRoomNameRef,
   ]);

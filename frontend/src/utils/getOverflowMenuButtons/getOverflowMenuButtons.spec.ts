@@ -1,10 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ReactElement } from 'react';
 import getOverflowMenuButtons from './getOverflowMenuButtons';
-
-vi.mock('../constants', () => ({
-  RIGHT_PANEL_BUTTON_COUNT: 2,
-}));
 
 const fakeToolbarButtons = [
   'Button1',

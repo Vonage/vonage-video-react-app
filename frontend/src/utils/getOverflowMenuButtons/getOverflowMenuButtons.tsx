@@ -6,5 +6,9 @@ import { ReactElement } from 'react';
  * @param {number} toolbarButtonsCount - The number of buttons displayed on the toolbar, any excess are displayed in the overflow menu
  * @returns {ReactElement[]} - The buttons for the toolbar overflow menu
  */
-export default (buttons: ReactElement[], toolbarButtonsCount: number): ReactElement[] =>
-  buttons.filter((_, index) => toolbarButtonsCount <= index);
+const getOverflowMenuButtons = (
+  buttons: ReactElement[],
+  toolbarButtonsCount: number
+): ReactElement[] => buttons.filter((_, index) => toolbarButtonsCount <= index);
+
+export default getOverflowMenuButtons;

@@ -86,9 +86,7 @@ const Toolbar = ({
   }, [destroyBackgroundPublisher, disconnect]);
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
-  // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
-  // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
-  const toolbarButtons: ReactElement[] = [
+  const centerToolbarButtons: ReactElement[] = [
     shouldDisplayScreenShareButton() && (
       <ScreenSharingButton
         toggleScreenShare={toggleShareScreen}
@@ -115,6 +113,9 @@ const Toolbar = ({
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
       <AdvancedSettingsButton key="AdvancedSettingsButton" />
     ),
+  ].filter(isDisplayableToolbarButton);
+
+  const rightPanelToolbarButtons: ReactElement[] = [
     isReportIssueEnabled() && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
@@ -137,7 +138,11 @@ const Toolbar = ({
         key="ChatButton"
       />
     ),
-  ].filter((toolbarButton): toolbarButton is ReactElement => !!toolbarButton);
+  ].filter(isDisplayableToolbarButton);
+
+  // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
+  // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
+  const toolbarButtons: ReactElement[] = [...centerToolbarButtons, ...rightPanelToolbarButtons];
   // We track the toolbar and the accompanying containers so we know which toolbar buttons to display, and whether the TimeRoomName should be displayed
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
@@ -152,6 +157,7 @@ const Toolbar = ({
     overflowAndExitRef,
     rightPanelControlsRef,
     numberOfToolbarButtons: toolbarButtons.length,
+    rightPanelButtonCount: rightPanelToolbarButtons.length,
   });
 
   const toolbarButtonsDisplayed = rightButtonLimit;
@@ -235,5 +241,11 @@ const Toolbar = ({
     </Box>
   );
 };
+
+function isDisplayableToolbarButton(
+  toolbarButton: ReactElement | false
+): toolbarButton is ReactElement {
+  return !!toolbarButton;
+}
 
 export default Toolbar;

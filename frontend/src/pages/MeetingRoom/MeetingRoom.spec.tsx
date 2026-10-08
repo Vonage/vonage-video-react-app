@@ -9,7 +9,6 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector, { UseSpeakingDetectorOptions } from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
-import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
@@ -186,10 +185,10 @@ describe('MeetingRoom', () => {
     mockUseActiveSpeaker.mockReturnValue(undefined);
     (useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
-      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+      ({ numberOfToolbarButtons, rightPanelButtonCount }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
           displayTimeRoomName: true,
-          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          centerButtonLimit: numberOfToolbarButtons - rightPanelButtonCount,
           rightButtonLimit: numberOfToolbarButtons,
         };
         return renderedToolbarButtons;

@@ -1,5 +1,4 @@
 import { env } from '../env';
-import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
 
 /**
  * @constant {string} API_URL - The base URL determined by the current environment.
@@ -87,12 +86,6 @@ export const MAX_TILES_GRID_VIEW_MOBILE = 3;
  * @constant {number} MAX_TILES_SPEAKER_VIEW_MOBILE - the maximum number of subscriber video tiles in active-speaker view on mobile
  */
 export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
-
-/**
- * @constant {number} RIGHT_PANEL_BUTTON_COUNT - The number of buttons used to control the Right Panel. This value determines the number
- * of buttons shown on the right side of the Toolbar.
- */
-export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
 
 /**
  * @constant {number} CAPTION_DISPLAY_DURATION_MS - The duration in milliseconds for which captions are displayed.

@@ -8,7 +8,6 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import { makeTestProvider, providers } from '@test/providers';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
@@ -41,10 +40,10 @@ describe('Toolbar', () => {
     mockUseSpeakingDetector.mockReturnValue(false);
     mockIsReportIssueEnabled.mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
-      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+      ({ numberOfToolbarButtons, rightPanelButtonCount }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
           displayTimeRoomName: true,
-          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          centerButtonLimit: numberOfToolbarButtons - rightPanelButtonCount,
           rightButtonLimit: numberOfToolbarButtons,
         };
         return renderedToolbarButtons;
