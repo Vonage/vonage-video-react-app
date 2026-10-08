@@ -4,7 +4,6 @@ import VividIcon from '@ui/components/VividIcon';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import UnreadMessagesBadge from './UnreadMessagesBadge';
-import { env } from '../../../env';
 import ToolbarButton from '../ToolbarButton';
 const LittleButton = () => (
   <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
@@ -178,32 +177,6 @@ describe('UnreadMessagesBadge', () => {
     const updatedBadge = screen.getByTestId('chat-button-unread-count');
     expect(updatedBadge).toBeVisible();
     expect(updatedBadge.textContent).toBe('1');
-  });
-
-  it('should not show the message badge when allowChat is false', () => {
-    env.partialUpdate({
-      ALLOW_CHAT: false,
-    });
-
-    render(
-      <UnreadMessagesBadge>
-        <LittleButton />
-      </UnreadMessagesBadge>,
-      {
-        sessionContext: {
-          __interceptor: (context) => {
-            if (context) {
-              context.unreadCount = 8;
-            }
-          },
-        },
-      }
-    );
-
-    const badge = screen.getByTestId('chat-button-unread-count');
-    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
-    expect(badge.offsetHeight).toBe(0);
-    expect(badge.offsetWidth).toBe(0);
   });
 });
 

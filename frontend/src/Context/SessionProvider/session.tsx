@@ -241,6 +241,8 @@ const SessionProvider = ({
   } = useRightPanel();
 
   const handleChatSignal = ({ data }: SignalEvent) => {
+    if (!env.ALLOW_CHAT) return;
+
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();

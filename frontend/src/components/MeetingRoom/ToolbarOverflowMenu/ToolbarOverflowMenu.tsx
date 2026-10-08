@@ -7,7 +7,7 @@ import ChatButton from '../ChatButton';
 import ReportIssueButton from '../ReportIssueButton';
 import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
-import ScreenSharingButton from '../../ScreenSharingButton';
+import ScreenSharingButton, { shouldDisplayScreenShareButton } from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
 import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import Box from '@mui/material/Box';
@@ -80,14 +80,16 @@ const ToolbarOverflowMenu = ({
 
   // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
   // Toolbar to ensure a responsive layout without compromising usability.
-  const overflowButtonArray: Array<ReactElement | false> = [
-    <ScreenSharingButton
-      toggleScreenShare={toggleShareScreen}
-      isSharingScreen={isSharingScreen}
-      isViewingScreenShare={isViewingScreenShare}
-      isOverflowButton
-      key="ScreenSharingButton"
-    />,
+  const overflowButtonArray: ReactElement[] = [
+    shouldDisplayScreenShareButton() && (
+      <ScreenSharingButton
+        toggleScreenShare={toggleShareScreen}
+        isSharingScreen={isSharingScreen}
+        isViewingScreenShare={isViewingScreenShare}
+        isOverflowButton
+        key="ScreenSharingButton"
+      />
+    ),
     <LayoutButton
       isScreenSharePresent={isViewingScreenShare}
       isPinningPresent={isPinningPresent}
@@ -95,20 +97,26 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
-    <CaptionsButton
-      isOverflowButton
-      handleClick={closeMenu}
-      key="CaptionsButton"
-      captionsState={captionsState}
-    />,
-    <EmojiGridButton
-      isEmojiGridOpen={isEmojiGridOpen}
-      setIsEmojiGridOpen={setIsEmojiGridOpen}
-      isParentOpen={isOpen}
-      isOverflowButton
-      key="EmojiGridButton"
-    />,
-    <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
+    env.ALLOW_EMOJIS && (
+      <EmojiGridButton
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen={isOpen}
+        isOverflowButton
+        key="EmojiGridButton"
+      />
+    ),
+    env.ALLOW_CAPTIONS && (
+      <CaptionsButton
+        isOverflowButton
+        handleClick={closeMenu}
+        key="CaptionsButton"
+        captionsState={captionsState}
+      />
+    ),
+    env.ALLOW_ARCHIVING && (
+      <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />
+    ),
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
       <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />
     ),
@@ -120,20 +128,24 @@ const ToolbarOverflowMenu = ({
         key="ReportIssueButton"
       />
     ),
-    <ParticipantListButton
-      isOpen={rightPanelActiveTab === 'participant-list'}
-      handleClick={closeMenuWrapper(toggleParticipantList)}
-      participantCount={participantCount}
-      isOverflowButton
-      key="ParticipantListButton"
-    />,
-    <ChatButton
-      isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={closeMenuWrapper(toggleChat)}
-      isOverflowButton
-      key="ChatButton"
-    />,
-  ];
+    env.SHOW_PARTICIPANT_LIST && (
+      <ParticipantListButton
+        isOpen={rightPanelActiveTab === 'participant-list'}
+        handleClick={closeMenuWrapper(toggleParticipantList)}
+        participantCount={participantCount}
+        isOverflowButton
+        key="ParticipantListButton"
+      />
+    ),
+    env.ALLOW_CHAT && (
+      <ChatButton
+        isOpen={rightPanelActiveTab === 'chat'}
+        handleClick={closeMenuWrapper(toggleChat)}
+        isOverflowButton
+        key="ChatButton"
+      />
+    ),
+  ].filter((overflowButton): overflowButton is ReactElement => !!overflowButton);
 
   return (
     <Portal>

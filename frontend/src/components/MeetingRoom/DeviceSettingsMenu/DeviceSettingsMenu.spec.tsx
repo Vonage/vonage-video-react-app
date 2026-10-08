@@ -363,6 +363,48 @@ describe('DeviceSettingsMenu Component', () => {
       });
     });
   });
+
+  describe('the audio dropdown separator', () => {
+    it('is not left dangling at the top when allowDeviceSelection is false', async () => {
+      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: false });
+
+      render(
+        <DeviceSettingsMenuComponent
+          deviceType="audio"
+          handleToggle={mockHandleToggle}
+          handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          setIsOpen={mockSetIsOpen}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+      });
+    });
+
+    it('separates the speaker test from the device lists when they are shown', async () => {
+      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: true });
+
+      render(
+        <DeviceSettingsMenuComponent
+          deviceType="audio"
+          handleToggle={mockHandleToggle}
+          handleClose={mockHandleClose}
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+          isOpen
+          anchorRef={mockAnchorRef}
+          setIsOpen={mockSetIsOpen}
+        />
+      );
+
+      await waitFor(() => {
+        expect(screen.getAllByTestId('dropdown-separator').length).toBeGreaterThan(0);
+      });
+    });
+  });
 });
 
 function render(ui: ReactElement) {

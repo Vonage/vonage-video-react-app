@@ -128,6 +128,52 @@ describe('Toolbar', () => {
 
     expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
   });
+
+  it('splits the buttons between the toolbar and the overflow menu without repeating or losing any', () => {
+    mockUseToolbarButtons.mockReturnValue({
+      displayTimeRoomName: false,
+      centerButtonLimit: 3,
+      rightButtonLimit: 3,
+    });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.getAllByTestId('emoji-grid-button')).toHaveLength(1);
+    expect(screen.getAllByTestId('captions-button')).toHaveLength(1);
+    expect(screen.getAllByTestId('screensharing-button')).toHaveLength(1);
+    expect(screen.getAllByTestId('archiving-button')).toHaveLength(1);
+    expect(screen.getAllByTestId('chat-button')).toHaveLength(1);
+  });
+
+  it('does not render the buttons whose feature flags are disabled', () => {
+    env.partialUpdate({
+      ALLOW_SCREEN_SHARE: false,
+      ALLOW_EMOJIS: false,
+      ALLOW_CAPTIONS: false,
+      ALLOW_ARCHIVING: false,
+      SHOW_PARTICIPANT_LIST: false,
+      ALLOW_CHAT: false,
+    });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('chat-button')).not.toBeInTheDocument();
+  });
+
+  it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {
+    env.partialUpdate({ ALLOW_CHAT: false, SHOW_PARTICIPANT_LIST: false });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(mockUseToolbarButtons).toHaveBeenLastCalledWith(
+      expect.objectContaining({ numberOfToolbarButtons: 5 })
+    );
+  });
 });
 
 function render(ui: ReactElement) {

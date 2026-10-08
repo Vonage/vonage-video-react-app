@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@ui/components/VividIcon';
-import { env } from '../../../env';
 
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
@@ -22,14 +21,14 @@ export type EmojiGridProps = {
  *  @property {Dispatch<SetStateAction<boolean>>} setIsEmojiGridOpen - toggle whether the emoji grid is shown or hidden
  *  @property {boolean} isParentOpen - whether the ToolbarOverflowMenu is open
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
- * @returns {ReactElement | false} - The EmojiGridButton Component.
+ * @returns {ReactElement} - The EmojiGridButton Component.
  */
 const EmojiGridButton = ({
   isEmojiGridOpen,
   setIsEmojiGridOpen,
   isParentOpen,
   isOverflowButton = false,
-}: EmojiGridProps): ReactElement | false => {
+}: EmojiGridProps): ReactElement => {
   const { t } = useTranslation();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const handleToggle = () => {
@@ -37,37 +36,35 @@ const EmojiGridButton = ({
   };
 
   return (
-    env.ALLOW_EMOJIS && (
-      <>
-        <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleToggle}
-            icon={
-              <VividIcon
-                name="emoji-solid"
-                customSize={-5}
-                style={{
-                  color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
-                }}
-              />
-            }
-            ref={anchorRef}
-            data-testid="emoji-grid-button"
-            sx={{
-              marginTop: isOverflowButton ? '0px' : '4px',
-            }}
-            isOverflowButton={isOverflowButton}
-          />
-        </Tooltip>
-
-        <EmojiGrid
-          anchorRef={anchorRef}
-          isEmojiGridOpen={isEmojiGridOpen}
-          setIsEmojiGridOpen={setIsEmojiGridOpen}
-          isParentOpen={isParentOpen}
+    <>
+      <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleToggle}
+          icon={
+            <VividIcon
+              name="emoji-solid"
+              customSize={-5}
+              style={{
+                color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
+              }}
+            />
+          }
+          ref={anchorRef}
+          data-testid="emoji-grid-button"
+          sx={{
+            marginTop: isOverflowButton ? '0px' : '4px',
+          }}
+          isOverflowButton={isOverflowButton}
         />
-      </>
-    )
+      </Tooltip>
+
+      <EmojiGrid
+        anchorRef={anchorRef}
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen={isParentOpen}
+      />
+    </>
   );
 };
 

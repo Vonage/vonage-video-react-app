@@ -5,7 +5,6 @@ import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { makeTestProvider, providers } from '@test/providers';
 import ArchivingButton from './ArchivingButton';
-import { env } from '../../../env';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -109,15 +108,6 @@ describe('ArchivingButton', () => {
     });
 
     vi.useRealTimers();
-  });
-
-  it('is not rendered when allowArchiving is disabled', () => {
-    env.partialUpdate({
-      ALLOW_ARCHIVING: false,
-    });
-    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-
-    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
   });
 });
 

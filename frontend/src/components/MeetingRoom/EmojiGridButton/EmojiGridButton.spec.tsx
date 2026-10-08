@@ -4,7 +4,6 @@ import { ReactElement, useState } from 'react';
 import { makeTestProvider } from '@test/providers';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import EmojiGridButton from './EmojiGridButton';
-import { env } from '../../../env';
 
 vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
@@ -45,16 +44,6 @@ describe('EmojiGridButton', () => {
 
     rerender(<TestComponent />);
     expect(screen.getByTestId('emoji-grid')).toBeVisible();
-  });
-
-  it('is not rendered when allowEmojis is false', () => {
-    env.partialUpdate({
-      ALLOW_EMOJIS: false,
-    });
-
-    render(<TestComponent />);
-
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 });
 

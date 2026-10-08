@@ -4,7 +4,6 @@ import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
-import { env } from '../../../env';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
@@ -29,46 +28,44 @@ const ParticipantListButton = ({
   isOpen,
   participantCount,
   isOverflowButton = false,
-}: ParticipantListButtonProps): ReactElement | false => {
+}: ParticipantListButtonProps): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    env.SHOW_PARTICIPANT_LIST && (
-      <Tooltip
-        title={isOpen ? t('participants.list.close') : t('participants.list.open')}
-        aria-label={t('participants.list.ariaLabel')}
+    <Tooltip
+      title={isOpen ? t('participants.list.close') : t('participants.list.open')}
+      aria-label={t('participants.list.ariaLabel')}
+    >
+      <Badge
+        className="[&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
+        badgeContent={participantCount}
+        sx={{
+          marginRight: '12px',
+          zIndex: 1,
+        }}
+        overlap="circular"
       >
-        <Badge
-          className="[&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
-          badgeContent={participantCount}
+        <ToolbarButton
+          data-testid="participant-list-button"
           sx={{
-            marginRight: '12px',
-            zIndex: 1,
+            marginTop: '0px',
+            marginRight: '0px',
           }}
-          overlap="circular"
-        >
-          <ToolbarButton
-            data-testid="participant-list-button"
-            sx={{
-              marginTop: '0px',
-              marginRight: '0px',
-            }}
-            onClick={handleClick}
-            icon={
-              <VividIcon
-                name="group-solid"
-                customSize={-4}
-                data-testid="PeopleIcon"
-                style={{
-                  color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
-                }}
-              />
-            }
-            isOverflowButton={isOverflowButton}
-          />
-        </Badge>
-      </Tooltip>
-    )
+          onClick={handleClick}
+          icon={
+            <VividIcon
+              name="group-solid"
+              customSize={-4}
+              data-testid="PeopleIcon"
+              style={{
+                color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
+              }}
+            />
+          }
+          isOverflowButton={isOverflowButton}
+        />
+      </Badge>
+    </Tooltip>
   );
 };
 

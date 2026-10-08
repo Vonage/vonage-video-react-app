@@ -68,7 +68,8 @@ const DeviceControlButton = ({
           <VividIcon
             name="microphone-solid"
             customSize={-5}
-            style={{ color: 'var(--vera-disabled)' }}
+            data-testid="MicDisabledIcon"
+            style={{ color: 'var(--vera-text-disabled)' }}
           />
         );
       }
@@ -94,7 +95,12 @@ const DeviceControlButton = ({
 
     if (!env.ALLOW_CAMERA_CONTROL) {
       return (
-        <VividIcon name="video-solid" customSize={-5} style={{ color: 'var(--vera-disabled)' }} />
+        <VividIcon
+          name="video-solid"
+          customSize={-5}
+          data-testid="VideoCamDisabledIcon"
+          style={{ color: 'var(--vera-text-disabled)' }}
+        />
       );
     }
     if (isVideoEnabled) {

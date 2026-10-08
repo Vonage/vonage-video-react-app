@@ -6,7 +6,7 @@ import useToolbarButtons from '@hooks/useToolbarButtons';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 import Box from '@mui/material/Box';
 import { env } from '../../../env';
-import ScreenSharingButton from '../../ScreenSharingButton';
+import ScreenSharingButton, { shouldDisplayScreenShareButton } from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
 import LayoutButton from '../LayoutButton';
@@ -88,26 +88,30 @@ const Toolbar = ({
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
-  const toolbarButtons: Array<ReactElement | false> = [
-    <ScreenSharingButton
-      toggleScreenShare={toggleShareScreen}
-      isSharingScreen={isSharingScreen}
-      isViewingScreenShare={isViewingScreenShare}
-      key="ScreenSharingButton"
-    />,
+  const toolbarButtons: ReactElement[] = [
+    shouldDisplayScreenShareButton() && (
+      <ScreenSharingButton
+        toggleScreenShare={toggleShareScreen}
+        isSharingScreen={isSharingScreen}
+        isViewingScreenShare={isViewingScreenShare}
+        key="ScreenSharingButton"
+      />
+    ),
     <LayoutButton
       isScreenSharePresent={isScreenSharePresent}
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
     />,
-    <EmojiGridButton
-      isEmojiGridOpen={openEmojiGridDesktop}
-      setIsEmojiGridOpen={setOpenEmojiGridDesktop}
-      isParentOpen
-      key="EmojiGridButton"
-    />,
-    <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
-    <ArchivingButton key="ArchivingButton" />,
+    env.ALLOW_EMOJIS && (
+      <EmojiGridButton
+        isEmojiGridOpen={openEmojiGridDesktop}
+        setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+        isParentOpen
+        key="EmojiGridButton"
+      />
+    ),
+    env.ALLOW_CAPTIONS && <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
+    env.ALLOW_ARCHIVING && <ArchivingButton key="ArchivingButton" />,
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
       <AdvancedSettingsButton key="AdvancedSettingsButton" />
     ),
@@ -118,18 +122,22 @@ const Toolbar = ({
         key="ReportIssueButton"
       />
     ),
-    <ParticipantListButton
-      isOpen={rightPanelActiveTab === 'participant-list'}
-      handleClick={toggleParticipantList}
-      participantCount={participantCount}
-      key="ParticipantListButton"
-    />,
-    <ChatButton
-      isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={toggleChat}
-      key="ChatButton"
-    />,
-  ];
+    env.SHOW_PARTICIPANT_LIST && (
+      <ParticipantListButton
+        isOpen={rightPanelActiveTab === 'participant-list'}
+        handleClick={toggleParticipantList}
+        participantCount={participantCount}
+        key="ParticipantListButton"
+      />
+    ),
+    env.ALLOW_CHAT && (
+      <ChatButton
+        isOpen={rightPanelActiveTab === 'chat'}
+        handleClick={toggleChat}
+        key="ChatButton"
+      />
+    ),
+  ].filter((toolbarButton): toolbarButton is ReactElement => !!toolbarButton);
   // We track the toolbar and the accompanying containers so we know which toolbar buttons to display, and whether the TimeRoomName should be displayed
   const toolbarRef = useRef<HTMLDivElement | null>(null);
   const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
@@ -149,10 +157,10 @@ const Toolbar = ({
   const toolbarButtonsDisplayed = rightButtonLimit;
   // We display the overflow button when we don't have enough space to display all the toolbar buttons
   const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
-  const displayCenterToolbarButtons = (toolbarButton: ReactElement | false, index: number) =>
+  const displayCenterToolbarButtons = (toolbarButton: ReactElement, index: number) =>
     index < centerButtonLimit && toolbarButton;
   // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
-  const displayRightPanelButtons = (toolbarButton: ReactElement | false, index: number) =>
+  const displayRightPanelButtons = (toolbarButton: ReactElement, index: number) =>
     index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
   // Array of `false` or right panel button ReactElements to display.
   const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);

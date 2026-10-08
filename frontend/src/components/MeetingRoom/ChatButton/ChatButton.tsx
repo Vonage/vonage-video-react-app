@@ -4,7 +4,6 @@ import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
-import { env } from '../../../env';
 
 export type ChatButtonProps = {
   handleClick: () => void;
@@ -21,41 +20,39 @@ export type ChatButtonProps = {
  *   @property {() => void} handleClick - click handler to toggle open chat panel
  *   @property {boolean} isOpen - true if chat is currently open, false if not
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
- * @returns {ReactElement | false} - ChatButton
+ * @returns {ReactElement} - ChatButton
  */
 const ChatButton = ({
   handleClick,
   isOpen,
   isOverflowButton = false,
-}: ChatButtonProps): ReactElement | false => {
+}: ChatButtonProps): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    env.ALLOW_CHAT && (
-      <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
-        <UnreadMessagesBadge>
-          <ToolbarButton
-            data-testid="chat-button"
-            sx={{
-              marginTop: '0px',
-              marginRight: '0px',
-            }}
-            onClick={handleClick}
-            icon={
-              <VividIcon
-                customSize={-5}
-                name="chat-solid"
-                style={{
-                  color: isOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)',
-                }}
-                data-testid="ChatIcon"
-              />
-            }
-            isOverflowButton={isOverflowButton}
-          />
-        </UnreadMessagesBadge>
-      </Tooltip>
-    )
+    <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
+      <UnreadMessagesBadge>
+        <ToolbarButton
+          data-testid="chat-button"
+          sx={{
+            marginTop: '0px',
+            marginRight: '0px',
+          }}
+          onClick={handleClick}
+          icon={
+            <VividIcon
+              customSize={-5}
+              name="chat-solid"
+              style={{
+                color: isOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)',
+              }}
+              data-testid="ChatIcon"
+            />
+          }
+          isOverflowButton={isOverflowButton}
+        />
+      </UnreadMessagesBadge>
+    </Tooltip>
   );
 };
 

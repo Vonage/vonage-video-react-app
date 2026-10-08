@@ -17,7 +17,7 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
@@ -96,7 +96,7 @@ const useBackgroundPublisher = (
   );
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [customImages, setCustomImages] = useState<StoredImage[]>(

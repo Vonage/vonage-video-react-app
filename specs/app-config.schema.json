@@ -61,8 +61,7 @@
         },
         "showVideoStats": {
           "type": "boolean",
-          "description": "When true, exposes the video statistics overlay (bitrate, resolution, packet loss) during a call.",
-          "x-envVar": "SHOW_VIDEO_STATS"
+          "description": "When true, exposes the video statistics overlay (bitrate, resolution, packet loss) during a call."
         }
       }
     },

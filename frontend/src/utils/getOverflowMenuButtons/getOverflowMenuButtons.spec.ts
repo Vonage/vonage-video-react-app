@@ -12,7 +12,7 @@ const fakeToolbarButtons = [
   'Button3',
   'Button4',
   'Button5',
-] as unknown as Array<ReactElement | false>;
+] as unknown as ReactElement[];
 
 describe('getOverflowMenuButtons', () => {
   it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {
