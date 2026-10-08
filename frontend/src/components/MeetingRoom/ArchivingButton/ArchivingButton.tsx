@@ -103,7 +103,8 @@ const ArchivingButton = ({
             data-testid="archiving-button"
             className={classNames(
               { recording: isRecording },
-              isRecording && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+              isRecording &&
+                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
             )}
             icon={
               <VividIcon

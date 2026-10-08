@@ -74,7 +74,7 @@ const useMeetingRoom = () => {
 
   const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
   const handleRecordingNotified = () => {
-    setLatestNotifiedArchiveId(archiveId);
+    setLatestNotifiedArchiveId(recordingArchiveId);
   };
   const shouldPromptRecordingConsent =
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);

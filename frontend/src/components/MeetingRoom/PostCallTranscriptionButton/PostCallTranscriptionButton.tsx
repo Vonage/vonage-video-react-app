@@ -110,7 +110,8 @@ const PostCallTranscriptionButton = ({
             data-testid="post-call-transcription-button"
             className={classNames(
               { transcribing: isTranscribing },
-              isTranscribing && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+              isTranscribing &&
+                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
             )}
             icon={
               <VividIcon
