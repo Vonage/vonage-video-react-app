@@ -77,7 +77,9 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
           : 'archiveList.archive.index';
 
         const archivesOfSameType = archives.filter((candidateArchive) =>
-          isTranscriptionArchive ? isTranscription(candidateArchive) : !isTranscription(candidateArchive)
+          isTranscriptionArchive
+            ? isTranscription(candidateArchive)
+            : !isTranscription(candidateArchive)
         );
         const indexInType = archivesOfSameType.findIndex(
           (candidateArchive) => candidateArchive.id === archive.id
