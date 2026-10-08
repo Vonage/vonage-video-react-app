@@ -12,8 +12,6 @@ const isDebugMode = process.env.debugMode === 'true';
 
 const normalizeBaseUrl = (url: string): string => (url.endsWith('/') ? url : `${url}/`);
 
-// Set BASE_URL to point the suite at a deployed environment (e.g. a VCR PR URL) instead of
-// the local dev/preview server.
 const baseURL = (() => {
   if (process.env.BASE_URL) {
     return normalizeBaseUrl(process.env.BASE_URL);

@@ -7,8 +7,6 @@ const isHeadedMode = process.env.headedMode === 'true';
 const isDebugMode = process.env.debugMode === 'true';
 const isInspectMode = process.env.inspectMode === 'true';
 const snapshotPlatform = process.env.PLAYWRIGHT_SNAPSHOT_PLATFORM ?? process.platform;
-// When set (e.g. to a VCR PR URL), the suite targets that deployment instead of starting a
-// local dev/preview server. See fixtures/testWithLogging.ts for the matching baseURL used by specs.
 const remoteBaseUrl = process.env.BASE_URL;
 
 /**
