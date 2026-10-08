@@ -235,7 +235,8 @@ videoRouter.post(
     if (isServerRotation) {
       // Mark this session as pending migration restart so the next archive stopped
       // event knows to restart archiving automatically.
-      await sessionService.setServerRotationPending({ sessionId, pending: true });
+      const currentArchiveIds = await sessionService.getArchiveIds({ sessionId });
+      await sessionService.setServerRotationPending({ sessionId, pending: currentArchiveIds.length });
     }
 
     const captionsId = await sessionService.getCaptionsId({ sessionId });

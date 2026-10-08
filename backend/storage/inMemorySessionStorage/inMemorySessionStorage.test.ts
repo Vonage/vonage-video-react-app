@@ -99,13 +99,13 @@ describe('InMemorySessionStorage', () => {
   describe('setServerRotationPending / getServerRotationPending', () => {
     it('should set and retrieve the pending flag', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.setServerRotationPending({ sessionId, pending: true });
-      expect(await storage.getServerRotationPending({ sessionId })).toBe(true);
+      await storage.setServerRotationPending({ sessionId, pending: 2 });
+      expect(await storage.getServerRotationPending({ sessionId })).toBe(2);
     });
 
     it('should silently no-op for an unknown sessionId', async () => {
       await expect(
-        storage.setServerRotationPending({ sessionId, pending: true })
+        storage.setServerRotationPending({ sessionId, pending: 1 })
       ).resolves.toBeUndefined();
     });
   });

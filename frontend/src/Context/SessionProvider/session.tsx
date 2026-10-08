@@ -424,25 +424,19 @@ const SessionProvider = ({
       wasRecordingInitiatorRef.current = reconnecting && wasRecordingInitiatorRef.current;
       recordingStartRequestedBySelfRef.current = false;
 
-      setTranscriptionArchiveId((currentTranscriptionId) => {
-        if (currentTranscriptionId === null) {
-          setArchiveIdStartedBySelf(null);
-          setRecordingAlreadyNotified(false);
-        }
-        return currentTranscriptionId;
-      });
+      if (transcriptionArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
     } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
       setTranscriptionArchiveId(null);
       wasTranscriptionInitiatorRef.current = reconnecting && wasTranscriptionInitiatorRef.current;
       transcriptionStartRequestedBySelfRef.current = false;
 
-      setRecordingArchiveId((currentRecordingId) => {
-        if (currentRecordingId === null) {
-          setArchiveIdStartedBySelf(null);
-          setRecordingAlreadyNotified(false);
-        }
-        return currentRecordingId;
-      });
+      if (recordingArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
     }
 
     setArchiveId(null);

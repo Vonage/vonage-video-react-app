@@ -76,10 +76,12 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
           ? 'archiveList.transcription.index'
           : 'archiveList.archive.index';
 
-        const archivesOfSameType = archives.filter((a) =>
-          isTranscriptionArchive ? isTranscription(a) : !isTranscription(a)
+        const archivesOfSameType = archives.filter((candidateArchive) =>
+          isTranscriptionArchive ? isTranscription(candidateArchive) : !isTranscription(candidateArchive)
         );
-        const indexInType = archivesOfSameType.findIndex((a) => a.id === archive.id);
+        const indexInType = archivesOfSameType.findIndex(
+          (candidateArchive) => candidateArchive.id === archive.id
+        );
         const titleParams = { index: archivesOfSameType.length - indexInType };
 
         return (

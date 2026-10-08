@@ -429,7 +429,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPending).toBe(true);
+            expect(serverRotationPending).toBe(1);
             expect(captionsIdAfterRotation).toEqual('captions-id-preserved');
             expect(archiveIdsAfterRotation).toEqual(['archive-id-active']);
           });
@@ -444,7 +444,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
 
             await sessionService.setServerRotationPending({
               sessionId: validSessionId,
-              pending: true,
+              pending: 1,
             });
 
             const response = await request(server)
@@ -457,7 +457,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPendingAfter).toBe(false);
+            expect(serverRotationPendingAfter).toBe(0);
             expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
           });
 
@@ -471,7 +471,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
 
             await sessionService.setServerRotationPending({
               sessionId: validSessionId,
-              pending: true,
+              pending: 1,
             });
 
             const response = await request(server)

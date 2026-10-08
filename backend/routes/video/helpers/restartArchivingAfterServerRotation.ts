@@ -29,16 +29,16 @@ async function restartArchivingAfterServerRotation({
   sessionService,
   videoClient,
 }: RestartArchivingAfterServerRotationArgs): Promise<void> {
-  const isServerRotation = await sessionService.getServerRotationPending({ sessionId });
+  const pendingCount = await sessionService.getServerRotationPending({ sessionId });
 
-  if (!isServerRotation) return;
+  if (pendingCount <= 0) return;
 
   const sessionKey = await sessionService.getSessionKeyBySessionId({ sessionId });
 
-  if (!sessionKey) return;
-
-  const remainingArchiveIds = await sessionService.getArchiveIds({ sessionId });
-  const isLastPreRotationArchive = remainingArchiveIds.length === 0;
+  if (!sessionKey) {
+    await sessionService.setServerRotationPending({ sessionId, pending: 0 });
+    return;
+  }
 
   const withTranscription = archiveName === TRANSCRIPTION_ARCHIVE_TAG;
 
@@ -55,9 +55,8 @@ async function restartArchivingAfterServerRotation({
     });
   }
 
-  if (isLastPreRotationArchive) {
-    await sessionService.setServerRotationPending({ sessionId, pending: false });
-  }
+  const remaining = pendingCount - 1;
+  await sessionService.setServerRotationPending({ sessionId, pending: remaining });
 }
 
 export default restartArchivingAfterServerRotation;

@@ -134,22 +134,21 @@ class VcrSessionStorage implements SessionStorage {
     pending,
   }: {
     sessionId: string;
-    pending: boolean;
+    pending: number;
   }): Promise<void> {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
-    if (!pending) {
+    if (pending <= 0) {
       await this.dbState.delete(key);
       return;
     }
-    // Short TTL — if archive hook doesn't arrive within 30s, the flag is stale anyway.
-    await this.dbState.set(key, '1');
+    await this.dbState.set(key, String(pending));
     await this.dbState.expire(key, 30);
   }
 
-  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<boolean> {
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
     const value: string | null = await this.dbState.get(key);
-    return value === '1';
+    return value ? parseInt(value, 10) : 0;
   }
 }
 export default VcrSessionStorage;
