@@ -108,7 +108,10 @@ const PostCallTranscriptionButton = ({
           <ToolbarButton
             onClick={handleButtonClick}
             data-testid="post-call-transcription-button"
-            className={classNames({ transcribing: isTranscribing })}
+            className={classNames(
+              { transcribing: isTranscribing },
+              isTranscribing && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            )}
             icon={
               <VividIcon
                 name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
@@ -120,9 +123,6 @@ const PostCallTranscriptionButton = ({
             }
             style={{
               marginTop: isOverflowButton ? '0px' : '4px',
-              backgroundColor: isTranscribing
-                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-                : undefined,
             }}
             isOverflowButton={isOverflowButton}
           />

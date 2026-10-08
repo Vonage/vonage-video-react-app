@@ -101,7 +101,10 @@ const ArchivingButton = ({
           <ToolbarButton
             onClick={handleButtonClick}
             data-testid="archiving-button"
-            className={classNames({ recording: isRecording })}
+            className={classNames(
+              { recording: isRecording },
+              isRecording && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            )}
             icon={
               <VividIcon
                 name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
@@ -113,9 +116,6 @@ const ArchivingButton = ({
             }
             style={{
               marginTop: isOverflowButton ? '0px' : '4px',
-              backgroundColor: isRecording
-                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-                : undefined,
             }}
             isOverflowButton={isOverflowButton}
           />
