@@ -62,7 +62,9 @@ function main(): void {
     process.exit(1);
   }
 
-  console.log(`\nPublishing @vonage/video-common@${manifest.version} with tag "${channel}"...`);
+  console.log(
+    `\nPublishing @vonage/video-reference-apps-common@${manifest.version} with tag "${channel}"...`
+  );
   run({
     command: `npm publish --tag ${channel} --registry https://npm.pkg.github.com`,
     cwd: DIST_PATH,
