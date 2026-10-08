@@ -1,0 +1,36 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_16343696230de9::t_d30ce4fc93764f 102-103,108
+frontend/src/Context/SessionProvider/session.tsx
+  s_16343696230de9::t_1684052d6ffd75 427-430,436-439
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_16343696230de9::t_9b87eea98785b0 9
+backend/tests/session.test.ts
+  s_16343696230de9::t_14eb72100a1a17 432
+  s_16343696230de9::t_eff041cce180ea 447,474
+backend/routes/video/video.ts
+  s_16343696230de9::t_bd09bdbfaeaec9 238-239
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_16343696230de9::t_6a4419870d4e74 79-83
+backend/storage/sessionStorage.ts
+  s_16343696230de9::t_aca881b7315d9e 15-16
+backend/storage/vcrSessionStorage.ts
+  s_16343696230de9::t_2f3ed85753caec 137,140,144,148,151
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_16343696230de9::t_5bb126c9bedb80 32,34,38-41,58-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "070db2d9fa2aa4b89157af1718a6881d3dea2fde",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
