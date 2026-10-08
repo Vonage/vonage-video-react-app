@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import path = require('path');
 import { VIEWPORT } from './tests/utils';
+import baseURL from './baseUrl';
 
 const isHeadedMode = process.env.headedMode === 'true';
 const isDebugMode = process.env.debugMode === 'true';
@@ -65,7 +66,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
-    ...(remoteBaseUrl ? { baseURL: remoteBaseUrl } : {}),
+    baseURL,
 
     ...(isInspectMode || isDebugMode
       ? {
