@@ -26,6 +26,7 @@ const DISABLED_CONFIG: Config = {
   apiSecret: 'test-api-secret',
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
+  corsAllowedOrigins: ['*'],
   authEnabled: false,
 };
 
@@ -35,6 +36,7 @@ const ENABLED_CONFIG: Config = {
   apiSecret: 'test-api-secret',
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
+  corsAllowedOrigins: ['*'],
   authEnabled: true,
   oidcClientId: 'test-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',

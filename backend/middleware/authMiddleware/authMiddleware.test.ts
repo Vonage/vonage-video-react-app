@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
-import express, { type Express } from 'express';
+import express, { type Express, type Request } from 'express';
 import request from 'supertest';
 import SessionCookieSchema from '../../routes/auth/schemas/SessionCookie.schema';
 import { errorHandler } from '../errorHandler';
@@ -24,7 +24,9 @@ function buildApp(): Express {
   const app = express();
 
   app.use(authMiddleware());
-  app.get('/protected', (_req, res) => res.status(200).json({ ok: true }));
+  app.get('/protected', (req, res) =>
+    res.status(200).json({ subject: (req as Request & { user?: { sub?: string } }).user?.sub })
+  );
   app.use(errorHandler);
 
   return app;
@@ -54,11 +56,16 @@ function mockProvider({
   introspection,
   refresh,
 }: {
-  introspection?: unknown;
+  introspection?: Record<string, unknown> | ((token: string | null) => Record<string, unknown>);
   refresh?: { status: number; data: unknown };
 }): void {
-  mockPost.mockImplementation((url: string) => {
-    if (url === INTROSPECTION_ENDPOINT) return Promise.resolve({ data: introspection });
+  mockPost.mockImplementation((url: string, body?: unknown) => {
+    if (url === INTROSPECTION_ENDPOINT) {
+      const token = body instanceof URLSearchParams ? body.get('token') : null;
+      const data = typeof introspection === 'function' ? introspection(token) : introspection;
+
+      return Promise.resolve({ data });
+    }
     if (url === TOKEN_ENDPOINT && refresh) return Promise.resolve(refresh);
 
     return Promise.reject(new Error(`Unexpected request to ${url}`));
@@ -120,6 +127,40 @@ describe('authMiddleware', () => {
 
     expect(res.statusCode).toEqual(200);
     expect(mockPost).not.toHaveBeenCalled();
+  });
+
+  describe('request origin', () => {
+    it('rejects a Bearer request from an origin outside CORS_ALLOWED_ORIGINS', async () => {
+      process.env.CORS_ALLOWED_ORIGINS = 'https://vera.example.com';
+      mockProvider({ introspection: ACTIVE_INTROSPECTION });
+
+      const res = await request(buildApp())
+        .get('/protected')
+        .set('Origin', 'https://other.example.com')
+        .set('Authorization', 'Bearer some-token');
+
+      expect(res.statusCode).toEqual(401);
+      expect(postedUrls()).toEqual([]);
+    });
+
+    it('rejects a cookie request from an origin outside CORS_ALLOWED_ORIGINS', async () => {
+      process.env.CORS_ALLOWED_ORIGINS = 'https://vera.example.com';
+      mockProvider({ introspection: ACTIVE_INTROSPECTION });
+
+      const cookie = sessionCookieHeader({ expiresInSeconds: 600 });
+      const foreignResponse = await request(buildApp())
+        .post('/protected')
+        .set('Origin', 'https://other.example.com')
+        .set('Cookie', cookie);
+      const allowedResponse = await request(buildApp())
+        .get('/protected')
+        .set('Origin', 'https://vera.example.com')
+        .set('Cookie', cookie);
+
+      expect(foreignResponse.statusCode).toEqual(401);
+      expect(allowedResponse.statusCode).toEqual(200);
+      expect(postedUrls()).toEqual([INTROSPECTION_ENDPOINT]);
+    });
   });
 
   describe('unauthenticated requests', () => {
@@ -208,8 +249,10 @@ describe('authMiddleware', () => {
       expect(postedUrls()).toEqual([INTROSPECTION_ENDPOINT]);
     });
 
-    it('refreshes inside the 30s window without introspecting and writes the rotated session', async () => {
+    it('refreshes inside the 30s window, introspects only the new token and writes the rotated session', async () => {
       mockProvider({
+        introspection: (token: string | null) =>
+          token === 'new-access-token' ? ACTIVE_INTROSPECTION : { active: false },
         refresh: {
           status: 200,
           data: {
@@ -226,7 +269,8 @@ describe('authMiddleware', () => {
         .set('Cookie', sessionCookieHeader({ expiresInSeconds: 20, refreshToken: 'refresh-1' }));
 
       expect(res.statusCode).toEqual(200);
-      expect(postedUrls()).toEqual([TOKEN_ENDPOINT]);
+      expect(postedUrls()).toEqual([TOKEN_ENDPOINT, INTROSPECTION_ENDPOINT]);
+      expect(res.body).toEqual({ subject: 'user-1' });
 
       const session = readEncryptedSetCookie({
         headers: res.headers,
@@ -240,7 +284,8 @@ describe('authMiddleware', () => {
 
     it('refreshes when introspection reports the token inactive', async () => {
       mockProvider({
-        introspection: { active: false },
+        introspection: (token: string | null) =>
+          token === 'new-access-token' ? ACTIVE_INTROSPECTION : { active: false },
         refresh: {
           status: 200,
           data: { access_token: 'new-access-token', token_type: 'Bearer', expires_in: 3600 },
@@ -252,7 +297,11 @@ describe('authMiddleware', () => {
         .set('Cookie', sessionCookieHeader({ expiresInSeconds: 600, refreshToken: 'refresh-1' }));
 
       expect(res.statusCode).toEqual(200);
-      expect(postedUrls()).toEqual([INTROSPECTION_ENDPOINT, TOKEN_ENDPOINT]);
+      expect(postedUrls()).toEqual([
+        INTROSPECTION_ENDPOINT,
+        TOKEN_ENDPOINT,
+        INTROSPECTION_ENDPOINT,
+      ]);
     });
 
     it('keeps a live session when a parallel request already rotated the refresh token', async () => {

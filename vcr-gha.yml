@@ -64,6 +64,10 @@ instance:
     - name: SESSION_KEY_SECRET
       secret: SESSION_KEY_SECRET
 
+    # Web origins allowed to call the backend with credentials; add embedding sites here.
+    - name: CORS_ALLOWED_ORIGINS
+      value: 'https://<APP_HOST>'
+
     # OIDC authentication. Turning it on also needs the AUTH_COOKIE_SECRET VCR secret and the
     # redirect URIs below registered on the provider app.
     # Encrypts the session cookies (32 random bytes, base64).
@@ -100,13 +104,13 @@ instance:
     # VCR does not run env.sh, so the backend defaults from env.defaults.sh are repeated here.
     # Cookie holding the encrypted access and refresh tokens.
     - name: AUTH_SESSION_COOKIE_NAME
-      value: 'oidc_session'
+      value: 'vera-session'
     # Cookie holding the encrypted ID token, sent only to the sign-out route.
     - name: AUTH_ID_TOKEN_COOKIE_NAME
-      value: 'oidc_id_token'
+      value: 'vera-id-token'
     # Short-lived cookie holding the login state between sign-in and the callback.
     - name: AUTH_TRANSACTION_COOKIE_NAME
-      value: 'oidc_transaction'
+      value: 'vera-sign-in'
     # How long the user has to finish logging in at the provider.
     - name: AUTH_TRANSACTION_MAX_AGE_SECONDS
       value: '600'

@@ -119,6 +119,11 @@ jobs:
             exit 1
           fi
           sed -i "s#https://<APP_HOST>/api/auth/callback/okta#${PR_INSTANCE_URL}/api/auth/callback/okta#" "${{ github.workspace }}/vcr-dev.yml"
+          sed -i "s#value: 'https://<APP_HOST>'#value: '${PR_INSTANCE_URL}'#" "${{ github.workspace }}/vcr-dev.yml"
+          if ! grep -qF "value: '${PR_INSTANCE_URL}'" "${{ github.workspace }}/vcr-dev.yml"; then
+            echo "::error::Could not set CORS_ALLOWED_ORIGINS to the PR instance; refusing to deploy."
+            exit 1
+          fi
           sed -i "s#<APP_HOST>#${APP_HOST}#g" "${{ github.workspace }}/vcr-dev.yml"
           if ! grep -qF "value: '${PR_INSTANCE_URL}/api/auth/callback/okta'" "${{ github.workspace }}/vcr-dev.yml"; then
             echo "::error::Could not point OIDC_WEB_REDIRECT_URI at the PR instance; refusing to deploy."

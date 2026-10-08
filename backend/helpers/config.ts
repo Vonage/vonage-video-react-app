@@ -2,6 +2,9 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import type { AuthConfig, Config, FeedbackConfig } from '../types/config';
 import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+import CorsConfigSchema, {
+  type CorsConfig,
+} from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 import { fileURLToPath } from 'node:url';
 
 /**
@@ -24,6 +27,7 @@ const loadConfig = (): Config => {
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
   const authConfig = loadAuthConfig();
+  const corsConfig = loadCorsConfig();
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -51,6 +55,7 @@ const loadConfig = (): Config => {
     return {
       ...feedbackConfig,
       ...authConfig,
+      ...corsConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
@@ -71,6 +76,7 @@ const loadConfig = (): Config => {
     return {
       ...feedbackConfig,
       ...authConfig,
+      ...corsConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
@@ -83,6 +89,20 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+function loadCorsConfig(): CorsConfig {
+  const rawAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '').trim();
+
+  return CorsConfigSchema.parse({
+    corsAllowedOrigins:
+      rawAllowedOrigins === '*'
+        ? '*'
+        : rawAllowedOrigins
+            .split(',')
+            .map((origin) => origin.trim())
+            .filter((origin) => origin !== ''),
+  });
+}
 
 /**
  * Reads only the auth-related env vars, validated here since this is the single

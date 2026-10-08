@@ -12,10 +12,10 @@ Mobile and Web authenticate differently. Mobile sends a Bearer token it obtained
 
 ```text
 Browser        → GET /auth/signin?returnTo=/waiting-room/abc
-Backend        → sets the encrypted oidc_transaction cookie → 302 to OIDC_AUTHORIZATION_ENDPOINT
+Backend        → sets the encrypted vera-sign-in cookie → 302 to OIDC_AUTHORIZATION_ENDPOINT
 OIDC provider  → user logs in → 302 to OIDC_WEB_REDIRECT_URI?code=...&state=...
 Backend        → POST OIDC_TOKEN_ENDPOINT (code + PKCE verifier) → access, refresh and ID tokens
-Backend        → sets the encrypted oidc_session and oidc_id_token cookies → 302 to returnTo
+Backend        → sets the encrypted vera-session and vera-id-token cookies → 302 to returnTo
 Browser        → API request (cookies attached)
 authMiddleware → decrypts the session cookie → introspects (or refreshes) → 200
 ```
@@ -26,9 +26,9 @@ The browser never receives a usable token. The tokens live inside cookies encryp
 
 | Cookie | Holds | Path | Lifetime |
 |---|---|---|---|
-| `AUTH_TRANSACTION_COOKIE_NAME` (`oidc_transaction`) | `state`, PKCE verifier, `returnTo` | the callback path | `AUTH_TRANSACTION_MAX_AGE_SECONDS` (600) |
-| `AUTH_SESSION_COOKIE_NAME` (`oidc_session`) | access token, its expiry, refresh token | `/` | see below |
-| `AUTH_ID_TOKEN_COOKIE_NAME` (`oidc_id_token`) | ID token, for logout | `/auth/signout` | same as the session cookie |
+| `AUTH_TRANSACTION_COOKIE_NAME` (`vera-sign-in`) | `state`, PKCE verifier, `returnTo` | the callback path | `AUTH_TRANSACTION_MAX_AGE_SECONDS` (600) |
+| `AUTH_SESSION_COOKIE_NAME` (`vera-session`) | access token, its expiry, refresh token | `/` | see below |
+| `AUTH_ID_TOKEN_COOKIE_NAME` (`vera-id-token`) | ID token, for logout | `/auth/signout` | same as the session cookie |
 
 Session cookie lifetime: without a refresh token, the access token's `expires_in`; with one, the refresh lifetime the provider reports (`refresh_expires_in` / `refresh_token_expires_in`); otherwise a browser-session cookie.
 
@@ -49,6 +49,8 @@ When a user isn't authenticated:
 - **Other requests** get `401`.
 - **Provider failures** never redirect, so an outage can't cause a sign-in loop. A failed introspection is a `401`; a refresh that fails for any reason other than a rejected refresh token is a `502`.
 - **Rejected refresh token** (`invalid_grant`): if the access token is still live, the request goes through (a parallel request already rotated it); if it has expired, the cookies are cleared and the user signs in again.
+
+Cookie-authenticated requests carrying an `Origin` header outside `CORS_ALLOWED_ORIGINS` are rejected with `401`, so other sites can't use a signed-in user's cookie. Per-PR hosts need this because other VCR customers' apps also live under `vonage.cloud`, which browsers treat as the same site. The Bearer path isn't affected. See [Configuration](./CONFIGURATION.md#allowed-web-origins-cors).
 
 These paths skip the middleware, because their callers can't carry a user token:
 
@@ -110,9 +112,9 @@ Set in [`env.defaults.sh`](../env.defaults.sh), which the generated `env.sh` sou
 
 | Variable | Default | Description |
 |---|---|---|
-| `AUTH_SESSION_COOKIE_NAME` | `oidc_session` | Cookie holding the encrypted access and refresh tokens |
-| `AUTH_ID_TOKEN_COOKIE_NAME` | `oidc_id_token` | Cookie holding the encrypted ID token, sent only to `/auth/signout` |
-| `AUTH_TRANSACTION_COOKIE_NAME` | `oidc_transaction` | Cookie holding the login state between sign-in and the callback |
+| `AUTH_SESSION_COOKIE_NAME` | `vera-session` | Cookie holding the encrypted access and refresh tokens |
+| `AUTH_ID_TOKEN_COOKIE_NAME` | `vera-id-token` | Cookie holding the encrypted ID token, sent only to `/auth/signout` |
+| `AUTH_TRANSACTION_COOKIE_NAME` | `vera-sign-in` | Cookie holding the login state between sign-in and the callback |
 | `AUTH_TRANSACTION_MAX_AGE_SECONDS` | `600` | How long the user has to finish logging in at the provider |
 | `AUTH_REFRESH_WINDOW_SECONDS` | `30` | Refresh the access token when it has this many seconds left |
 | `AUTH_PROVIDER_TIMEOUT_MS` | `5000` | Timeout for every call to the provider |
@@ -164,7 +166,7 @@ To use a real provider instead, replace the `OIDC_*` values with its endpoints a
 
 | | Mobile (iOS/Android) | Web |
 |---|---|---|
-| Token source | `Authorization: Bearer <token>` header | Encrypted `oidc_session` cookie |
+| Token source | `Authorization: Bearer <token>` header | Encrypted `vera-session` cookie |
 | Login flow | Client-side (native OIDC SDK) | Server-side BFF (`/auth/signin` → callback) |
 | Refresh | Handled by the app | Handled by the backend, ahead of expiry |
 | Logout | Handled by the app | `/auth/signout`: revoke, clear cookies, end the provider session |

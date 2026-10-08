@@ -21,11 +21,11 @@ export SUPPORTED_FRAME_RATES="${SUPPORTED_FRAME_RATES:-30|15|7|1}"
 # AUTH_ENABLED, the client ID, provider endpoints, redirect URIs and AUTH_COOKIE_SECRET are per
 # environment and live in backend/.env or the deployment config.
 # Cookie holding the encrypted access and refresh tokens.
-export AUTH_SESSION_COOKIE_NAME="${AUTH_SESSION_COOKIE_NAME:-oidc_session}"
+export AUTH_SESSION_COOKIE_NAME="${AUTH_SESSION_COOKIE_NAME:-vera-session}"
 # Cookie holding the encrypted ID token, sent only to the sign-out route.
-export AUTH_ID_TOKEN_COOKIE_NAME="${AUTH_ID_TOKEN_COOKIE_NAME:-oidc_id_token}"
+export AUTH_ID_TOKEN_COOKIE_NAME="${AUTH_ID_TOKEN_COOKIE_NAME:-vera-id-token}"
 # Short-lived cookie holding the login state and PKCE verifier between sign-in and the callback.
-export AUTH_TRANSACTION_COOKIE_NAME="${AUTH_TRANSACTION_COOKIE_NAME:-oidc_transaction}"
+export AUTH_TRANSACTION_COOKIE_NAME="${AUTH_TRANSACTION_COOKIE_NAME:-vera-sign-in}"
 # How long the user has to finish logging in at the provider.
 export AUTH_TRANSACTION_MAX_AGE_SECONDS="${AUTH_TRANSACTION_MAX_AGE_SECONDS:-600}"
 # Refresh the access token when it has this many seconds left.

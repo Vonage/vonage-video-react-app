@@ -48,6 +48,19 @@ OT_API_KEY='your-api-key'
 OT_API_SECRET='your-api-secret'
 ```
 
+#### Allowed web origins (CORS)
+
+`CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only.
+
+| Environment | Value |
+|---|---|
+| Local (`backend/.env.example`) | `*` |
+| CI (`run-tests.yml`) and backend unit tests | `*` |
+| VCR main deploy (`vcr-gha.yml`) | `https://<APP_HOST>`, filled by the deploy workflow |
+| VCR per-PR deploy | The PR instance URL, set by the workflow |
+
+Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, cookie-authenticated requests from an origin outside this list are also rejected with `401`.
+
 #### Vonage Cloud Runtime (VCR)
 
 | Variable | Required | Description |

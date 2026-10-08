@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { isRecord } from '@common/assertions';
-import { makeInternalErrorHandler } from '@api-lib/errors';
+import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
+import { isAllowedOrigin } from '@common/helpers';
 import { isApplicationError } from '@common/errors/assertions';
 import loadConfig from '../../helpers/config';
 import { SIGN_IN_PATH } from '../../routes/auth/constants';
@@ -47,8 +48,14 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
   }
 
   const excludedPaths = new Set(options.excludedPaths ?? []);
-  const { oidcClientId, authHeaderName, authScheme, authCookieSecret, authSessionCookieName } =
-    authConfig;
+  const {
+    oidcClientId,
+    authHeaderName,
+    authScheme,
+    authCookieSecret,
+    authSessionCookieName,
+    corsAllowedOrigins,
+  } = authConfig;
 
   return async function handleRequest(
     req: Request,
@@ -63,6 +70,17 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
     const bearerToken = readBearerToken({ req, authHeaderName, authScheme });
 
     try {
+      const requestOrigin = req.headers.origin;
+      const isForeignOrigin =
+        requestOrigin !== undefined &&
+        !isAllowedOrigin({ origin: requestOrigin, allowedOrigins: corsAllowedOrigins });
+
+      if (isForeignOrigin) {
+        throw makeUnauthorizedErrorHandler(`Requests are not allowed from origin ${requestOrigin}`)(
+          null
+        );
+      }
+
       if (bearerToken) {
         const introspectionData = await introspectAccessToken({
           accessToken: bearerToken,
@@ -99,9 +117,9 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
           previousRefreshToken: session.refreshToken,
           authConfig,
         });
-      } else {
-        (req as RequestWithTokenAuth).user = sessionOutcome.user;
       }
+
+      (req as RequestWithTokenAuth).user = sessionOutcome.user;
 
       next();
     } catch (error) {

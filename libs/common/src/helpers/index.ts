@@ -7,3 +7,4 @@ export { default as decodeSessionKey } from './decodeSessionKey';
 export { default as decodeSessionId } from './decodeSessionId';
 export { default as decodeJwt } from './decodeJwt';
 export { default as isZodError } from './isZodError';
+export { default as isAllowedOrigin } from './isAllowedOrigin';

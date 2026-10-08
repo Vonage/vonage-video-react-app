@@ -13,6 +13,7 @@ env:
   VONAGE_APP_ID: ${{secrets.VONAGE_APP_ID}}
   VONAGE_PRIVATE_KEY: ${{secrets.VONAGE_PRIVATE_KEY}}
   SESSION_KEY_SECRET: ${{secrets.SESSION_KEY_SECRET}}
+  CORS_ALLOWED_ORIGINS: '*'
 
 jobs:
   # ----------------------------------------------------

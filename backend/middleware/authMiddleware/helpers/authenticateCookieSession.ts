@@ -9,7 +9,11 @@ import refreshAccessToken from './refreshAccessToken';
 
 export type CookieSessionOutcome =
   | { status: 'valid'; user: ActiveTokenIntrospectionResponse }
-  | { status: 'refreshed'; tokenResponse: TokenExchangeResponse };
+  | {
+      status: 'refreshed';
+      tokenResponse: TokenExchangeResponse;
+      user: ActiveTokenIntrospectionResponse;
+    };
 
 /**
  * Refreshes ahead of expiry, or when introspection reports the token inactive. Refresh errors that
@@ -78,7 +82,21 @@ async function refreshOrKeepLiveToken({
 }): Promise<CookieSessionOutcome> {
   const refreshOutcome = await refreshAccessToken({ refreshToken, authConfig });
 
-  if (refreshOutcome.status === 'refreshed') return refreshOutcome;
+  if (refreshOutcome.status === 'refreshed') {
+    const refreshedIntrospectionData = await introspectAccessToken({
+      accessToken: refreshOutcome.tokenResponse.access_token,
+      authConfig,
+    });
+
+    return {
+      status: 'refreshed',
+      tokenResponse: refreshOutcome.tokenResponse,
+      user: verifyActiveToken({
+        introspectionData: refreshedIntrospectionData,
+        clientId: authConfig.oidcClientId,
+      }),
+    };
+  }
 
   if (isAccessTokenExpired) {
     throw makeSignInRequiredErrorHandler('Refresh token rejected and the session has expired')(

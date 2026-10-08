@@ -59,6 +59,44 @@ describe('loadConfig', () => {
     }
   });
 
+  test.each([
+    ['missing', undefined],
+    ['not an origin', 'vera.example.com'],
+    ['an origin with a path', 'https://vera.example.com/app'],
+    ['"*" mixed into a list', '*,https://vera.example.com'],
+    ['a wildcard outside the first host label', 'https://vera.*.example.com'],
+    ['two wildcards', 'https://*-*.example.com'],
+  ])('should throw when CORS_ALLOWED_ORIGINS is %s', (_label, value) => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    if (value === undefined) delete process.env.CORS_ALLOWED_ORIGINS;
+    else process.env.CORS_ALLOWED_ORIGINS = value;
+
+    expect(() => loadConfig()).toThrow(/corsAllowedOrigins/);
+  });
+
+  test('should accept "*" on its own', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.CORS_ALLOWED_ORIGINS = '*';
+
+    expect(loadConfig().corsAllowedOrigins).toBe('*');
+  });
+
+  test('should parse CORS_ALLOWED_ORIGINS as a comma-separated list', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.CORS_ALLOWED_ORIGINS = 'https://vera.example.com, https://vera-pr-*.example.com';
+
+    expect(loadConfig().corsAllowedOrigins).toEqual([
+      'https://vera.example.com',
+      'https://vera-pr-*.example.com',
+    ]);
+  });
+
   test('should default authEnabled to false when AUTH_ENABLED is unset', () => {
     process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
     process.env.OT_API_KEY = 'test-key';
@@ -84,9 +122,9 @@ describe('loadConfig', () => {
       process.env.OIDC_END_SESSION_ENDPOINT = 'https://idp.example.com/logout';
       process.env.OIDC_POST_LOGOUT_REDIRECT_URI = 'http://localhost:3000/';
       process.env.AUTH_COOKIE_SECRET = Buffer.alloc(32, 7).toString('base64');
-      process.env.AUTH_SESSION_COOKIE_NAME = 'oidc_session';
-      process.env.AUTH_ID_TOKEN_COOKIE_NAME = 'oidc_id_token';
-      process.env.AUTH_TRANSACTION_COOKIE_NAME = 'oidc_transaction';
+      process.env.AUTH_SESSION_COOKIE_NAME = 'vera-session';
+      process.env.AUTH_ID_TOKEN_COOKIE_NAME = 'vera-id-token';
+      process.env.AUTH_TRANSACTION_COOKIE_NAME = 'vera-sign-in';
       process.env.AUTH_TRANSACTION_MAX_AGE_SECONDS = '600';
       process.env.AUTH_REFRESH_WINDOW_SECONDS = '30';
       process.env.AUTH_PROVIDER_TIMEOUT_MS = '5000';
