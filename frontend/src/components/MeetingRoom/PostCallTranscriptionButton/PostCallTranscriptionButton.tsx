@@ -9,60 +9,60 @@ import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
-import { RECORDING_ARCHIVE_NAME } from '@common/constants';
+import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
-export type ArchivingButtonProps = {
+export type PostCallTranscriptionButton = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
 };
 
 /**
- * ArchivingButton Component
+ * PostCallTranscriptionButton Component
  *
- * Displays a button and handles the archiving functionality. If a meeting is currently being recorded,
- * will confirm that a user wishes to stop the recording. If a meeting is not being recorded, prompts
- * the user before starting the archive.
- * @param {ArchivingButtonProps} props - the props for the component
+ * Displays a button and handles the post-call transcription functionality. If a meeting is currently being transcribed,
+ * will confirm that a user wishes to stop the post-call transcription. If a meeting is not being transcribed, prompts
+ * the user before starting the transcription.
+ * @param {PostCallTranscriptionButton} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- * @returns {ReactElement | false} - The ArchivingButton component.
+ * @returns {ReactElement | false} - The PostCallTranscriptionButton component.
  */
-const ArchivingButton = ({
+const PostCallTranscriptionButton = ({
   isOverflowButton = false,
   handleClick,
-}: ArchivingButtonProps): ReactElement | false => {
+}: PostCallTranscriptionButton): ReactElement | false => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
-    recordingArchiveId,
-    markRecordingStartRequestedBySelf,
-    resetRecordingStartRequestedBySelf,
+    transcriptionArchiveId,
+    markTranscriptionStartRequestedBySelf,
+    resetTranscriptionStartRequestedBySelf,
     sessionKey,
     connected,
   } = useSessionContext();
 
-  const isRecording = !!recordingArchiveId;
+  const isTranscribing = !!transcriptionArchiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
+  const title = isTranscribing ? t('transcribing.stop.title') : t('transcribing.start.title');
   const handleButtonClick = () => {
     setIsModalOpen((prev) => !prev);
   };
 
-  const startRecordingText: DialogTexts = {
-    title: t('recording.start.dialog.title'),
-    contents: t('recording.start.dialog.content'),
-    primaryActionText: t('recording.start.title'),
+  const startTranscribingText: DialogTexts = {
+    title: t('transcribing.start.dialog.title'),
+    contents: t('transcribing.start.dialog.content'),
+    primaryActionText: t('transcribing.start.title'),
     secondaryActionText: t('button.cancel'),
   };
 
-  const stopRecordingText: DialogTexts = {
-    title: t('recording.stop.dialog.title'),
-    contents: t('recording.stop.dialog.content'),
-    primaryActionText: t('recording.stop.title'),
+  const stopTranscribingText: DialogTexts = {
+    title: t('transcribing.stop.dialog.title'),
+    contents: t('transcribing.stop.dialog.content'),
+    primaryActionText: t('transcribing.stop.title'),
     secondaryActionText: t('button.cancel'),
   };
 
-  const actionText = isRecording ? stopRecordingText : startRecordingText;
+  const actionText = isTranscribing ? stopTranscribingText : startTranscribingText;
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -74,45 +74,49 @@ const ArchivingButton = ({
 
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
-      if (!recordingArchiveId && connected) {
-        markRecordingStartRequestedBySelf();
+      if (!transcriptionArchiveId && connected) {
+        markTranscriptionStartRequestedBySelf();
         setTimeout(async () => {
           try {
-            await videoClient.startArchive({ sessionKey: sessionKey! });
+            await videoClient.startArchive({
+              sessionKey: sessionKey!,
+              withTranscription: true,
+            });
           } catch (err) {
-            resetRecordingStartRequestedBySelf();
+            resetTranscriptionStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);
       }
-    } else if (recordingArchiveId) {
-      void videoClient.stopArchive({
-        sessionKey: sessionKey!,
-        archiveType: RECORDING_ARCHIVE_NAME,
-      });
+    } else if (transcriptionArchiveId) {
+      videoClient
+        .stopArchive({ sessionKey: sessionKey!, archiveType: TRANSCRIPTION_ARCHIVE_NAME })
+        .catch((err) => {
+          console.error('Failed to stop transcription:', err);
+        });
     }
   };
 
   const handleActionClick = () => {
     handleClose();
-    void handleDialogClick(isRecording ? 'stop' : 'start');
+    handleDialogClick(isTranscribing ? 'stop' : 'start');
   };
 
   return (
-    env.ALLOW_ARCHIVING && (
+    env.ALLOW_POST_CALL_TRANSCRIPTION && (
       <>
-        <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
+        <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
           <ToolbarButton
             onClick={handleButtonClick}
-            data-testid="archiving-button"
+            data-testid="post-call-transcription-button"
             className={classNames(
-              { recording: isRecording },
-              isRecording &&
+              { transcribing: isTranscribing },
+              isTranscribing &&
                 '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
             )}
             icon={
               <VividIcon
-                name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
+                name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
                 customSize={-5}
                 style={{
                   color: 'var(--vera-on-secondary-light)',
@@ -135,4 +139,4 @@ const ArchivingButton = ({
     )
   );
 };
-export default ArchivingButton;
+export default PostCallTranscriptionButton;

@@ -16,6 +16,7 @@ import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
 import { env } from '../../../env';
 import AdvancedSettingsButton from '../AdvancedSettingsButton';
+import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -95,12 +96,6 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
-    <CaptionsButton
-      isOverflowButton
-      handleClick={closeMenu}
-      key="CaptionsButton"
-      captionsState={captionsState}
-    />,
     <EmojiGridButton
       isEmojiGridOpen={isEmojiGridOpen}
       setIsEmojiGridOpen={setIsEmojiGridOpen}
@@ -108,7 +103,18 @@ const ToolbarOverflowMenu = ({
       isOverflowButton
       key="EmojiGridButton"
     />,
+    <CaptionsButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="CaptionsButton"
+      captionsState={captionsState}
+    />,
     <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
+    <PostCallTranscriptionButton
+      isOverflowButton
+      handleClick={closeMenu}
+      key="PostCallTranscriptionButton"
+    />,
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
       <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />
     ),

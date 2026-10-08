@@ -393,7 +393,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'abc123');
+        vonageVideoClient.emit('archiveStarted', { id: 'abc123', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveId')).toHaveTextContent('abc123'));
@@ -403,7 +403,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('archiveStopped');
+        vonageVideoClient.emit('archiveStopped', { id: 'abc123', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveId')).toHaveTextContent('null'));

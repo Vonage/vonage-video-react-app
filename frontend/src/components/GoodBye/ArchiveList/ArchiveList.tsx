@@ -6,7 +6,12 @@ import { VividIcon } from '@ui/components';
 import formatDuration from '@utils/formatDuration';
 import formatFileSize from '@utils/formatFileSize';
 import classNames from 'classnames';
-import { useArchives, type UseArchivesProps } from '@core/hooks';
+import {
+  useArchives,
+  type UseArchivesProps,
+  type ArchiveWithTranscription,
+  isPendingStatus,
+} from '@core/hooks';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { twMerge } from 'tailwind-merge';
 import type { SingleArchiveResponse } from '@vonage/video';
@@ -60,10 +65,33 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
       )}
 
       {archives.map((archive, index) => {
-        const isArchivePending = isPending(archive.status);
+        const isArchivePending = isPendingStatus(getDownloadStatus(archive));
+        const isTranscriptionArchive = isTranscription(archive);
+
+        const loadingMessage = isTranscriptionArchive
+          ? 'archiveList.loading.transcription'
+          : 'archiveList.loading.recording';
+
+        const titleKey = isTranscriptionArchive
+          ? 'archiveList.transcription.index'
+          : 'archiveList.archive.index';
+
+        const archivesOfSameType = archives.filter((candidateArchive) =>
+          isTranscriptionArchive
+            ? isTranscription(candidateArchive)
+            : !isTranscription(candidateArchive)
+        );
+        const indexInType = archivesOfSameType.findIndex(
+          (candidateArchive) => candidateArchive.id === archive.id
+        );
+        const titleParams = { index: archivesOfSameType.length - indexInType };
+
         return (
           <ListElement key={archive.id} data-testid={`archive-list-item-${archive.id}`}>
-            <VividIcon name="video-active-line" customSize={-4} />
+            <VividIcon
+              name={isTranscriptionArchive ? 'text-line' : 'video-active-line'}
+              customSize={-4}
+            />
 
             <div className="flex flex-col">
               <p
@@ -75,21 +103,17 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
                   'text-left'
                 )}
               >
-                {isArchivePending
-                  ? t('archiveList.loading')
-                  : t('archiveList.archive.index', {
-                      index: archives.length - index,
-                    })}
+                {isArchivePending ? t(loadingMessage) : t(titleKey, titleParams)}
               </p>
 
               <p className="text-vera-text-tertiary text-vera-caption">
                 {isArchivePending && t('archiveList.loading.subtitle')}
 
-                {archive.status === 'available' && (
+                {!isArchivePending && (
                   <>
-                    {Boolean(archive.duration) && formatDuration(archive.duration)}
-                    {Boolean(archive.size) && ` • ${formatFileSize(archive.size)}`}
-                    {` • ${t('archiveList.archive.createdAt', {
+                    {Boolean(archive.duration) && `${formatDuration(archive.duration)} `}
+                    {Boolean(archive.size) && `• ${formatFileSize(archive.size)} `}
+                    {`• ${t('archiveList.archive.createdAt', {
                       createdAt: archive.createdAtFormatted,
                     })}`}
                   </>
@@ -97,7 +121,7 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
               </p>
             </div>
 
-            <ArchiveStatus {...archive} />
+            <ArchiveStatus archive={archive} />
           </ListElement>
         );
       })}
@@ -119,8 +143,11 @@ function ListElement({ children, className, ...props }: ComponentProps<'li'>) {
   );
 }
 
-function ArchiveStatus({ status, url }: SingleArchiveResponse) {
+function ArchiveStatus({ archive }: Readonly<{ archive: SingleArchiveResponse }>) {
   const { t } = useTranslation();
+
+  const status = getDownloadStatus(archive);
+  const url = getDownloadUrl(archive);
 
   if (status === 'available' && url) {
     return (
@@ -141,7 +168,7 @@ function ArchiveStatus({ status, url }: SingleArchiveResponse) {
     );
   }
 
-  if (isPending(status)) {
+  if (isPendingStatus(status)) {
     return (
       <CircularProgress
         size={20}
@@ -163,8 +190,22 @@ function ArchiveStatus({ status, url }: SingleArchiveResponse) {
   );
 }
 
-function isPending(status: string) {
-  return ['started', 'stopped', 'uploaded', 'paused'].includes(status);
+function getDownloadStatus(archive: SingleArchiveResponse): string {
+  if (!isTranscription(archive)) return archive.status;
+
+  const { transcription } = archive as ArchiveWithTranscription;
+  return transcription?.status ?? archive.status;
+}
+
+function getDownloadUrl(archive: SingleArchiveResponse): string | undefined {
+  if (!isTranscription(archive)) return archive.url;
+
+  const { transcription } = archive as ArchiveWithTranscription;
+  return transcription?.url;
+}
+
+function isTranscription(archive: SingleArchiveResponse) {
+  return archive.outputMode === 'individual' && Boolean(archive.hasTranscription);
 }
 
 export default ArchiveList;

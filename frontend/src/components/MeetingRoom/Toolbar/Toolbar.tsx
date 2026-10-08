@@ -19,6 +19,7 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -108,6 +109,7 @@ const Toolbar = ({
     />,
     <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
     <ArchivingButton key="ArchivingButton" />,
+    <PostCallTranscriptionButton key="PostCallTranscriptionButton" />,
     env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
       <AdvancedSettingsButton key="AdvancedSettingsButton" />
     ),
