@@ -70,7 +70,7 @@ describe('screenShare$', () => {
         videoContentHint: 'detail',
         preferredVideoCodecs: 'automatic',
         scalableScreenshare: false,
-        name: "TestUser's screen",
+        name: 'TestUser',
         constraints: { video: { displaySurface: 'monitor' } },
       },
       expect.any(Function)
