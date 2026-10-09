@@ -21,11 +21,11 @@ jobs:
           # Check if head branch starts with 'release-'
           if [[ "$HEAD_BRANCH" == release-* ]]; then
             echo "Release branch detected: $HEAD_BRANCH"
-            if [[ "$BASE_BRANCH" == "main" ]]; then
-              echo "Release branch targeting main - VALID"
+            if [[ "$BASE_BRANCH" == "main" || "$BASE_BRANCH" == "develop" ]]; then
+              echo "Release branch targeting '$BASE_BRANCH' - VALID"
               exit 0
             else
-              echo "Release branches must target 'main', but found '$BASE_BRANCH'"
+              echo "Release branches must target 'main' or 'develop', but found '$BASE_BRANCH'"
               exit 1
             fi
           else
