@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import type { FocusEvent, MouseEvent, ReactElement } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import MenuItem from '@mui/material/MenuItem';
 import type { MenuItemProps } from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -13,6 +12,7 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useStableRef from '@web/hooks/useStableRef';
 import isFirefox from '@web/platform/isFirefox';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import { env } from '../../../env';
 
 export type MenuMoreOptionsWaitingRoomProps = {

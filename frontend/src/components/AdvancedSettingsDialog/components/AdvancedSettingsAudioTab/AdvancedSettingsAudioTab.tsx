@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
 import { SelectField, Field } from '@ui/components';
@@ -49,6 +49,7 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
   const autoGainControlEnabled = advancedSettings$.use.select(
     ({ autoGainControlEnabled }) => autoGainControlEnabled
   );
+  const isAdvancedNoiseSuppressionSupported = hasMediaProcessorSupport('audio');
 
   const audioBitrateOptions = [
     {
@@ -114,21 +115,22 @@ const AdvancedSettingsAudioTab = (): ReactElement => {
         )}
       </div>
 
-      <Field>
-        <Field.Label htmlFor="advanced-settings-audio-advanced-noise-suppression">
-          {t('advancedSettings.audio.advancedNoiseSuppression.label')}
-        </Field.Label>
-        <Field.Input
-          variant="switch"
-          id="advanced-settings-audio-advanced-noise-suppression"
-          checked={advancedNoiseSuppressionEnabled}
-          onChange={(event) => handleAdvancedNoiseSuppressionChange(event.currentTarget.checked)}
-          disabled={!hasMediaProcessorSupport('audio')}
-        />
-        <Field.Description>
-          {t('advancedSettings.audio.advancedNoiseSuppression.description')}
-        </Field.Description>
-      </Field>
+      {isAdvancedNoiseSuppressionSupported && (
+        <Field>
+          <Field.Label htmlFor="advanced-settings-audio-advanced-noise-suppression">
+            {t('advancedSettings.audio.advancedNoiseSuppression.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-audio-advanced-noise-suppression"
+            checked={advancedNoiseSuppressionEnabled}
+            onChange={(event) => handleAdvancedNoiseSuppressionChange(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.audio.advancedNoiseSuppression.description')}
+          </Field.Description>
+        </Field>
+      )}
 
       <Field>
         <Field.Label htmlFor="advanced-settings-audio-echo-cancellation">
