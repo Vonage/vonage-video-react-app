@@ -5,7 +5,6 @@ import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
-import { env } from '../../../env';
 import { runtime$ } from '@core/stores';
 
 export type CaptionsState = {
@@ -28,13 +27,13 @@ export type CaptionsButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
- * @returns {ReactElement | false} - The CaptionsButton component.
+ * @returns {ReactElement} - The CaptionsButton component.
  */
 const CaptionsButton = ({
   isOverflowButton = false,
   handleClick,
   captionsState,
-}: CaptionsButtonProps): ReactElement | false => {
+}: CaptionsButtonProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const { sessionKey } = useSessionContext();
@@ -92,33 +91,31 @@ const CaptionsButton = ({
   };
 
   return (
-    env.ALLOW_CAPTIONS && (
-      <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
-        <ToolbarButton
-          onClick={handleActionClick}
-          data-testid="captions-button"
-          icon={
-            !isUserCaptionsEnabled ? (
-              <VividIcon
-                name="closed-captioning-solid"
-                customSize={-5}
-                style={{ color: 'var(--vera-on-secondary-light)' }}
-              />
-            ) : (
-              <VividIcon
-                name="closed-captioning-off-solid"
-                customSize={-5}
-                style={{ color: 'var(--vera-error)' }}
-              />
-            )
-          }
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
-    )
+    <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
+      <ToolbarButton
+        onClick={handleActionClick}
+        data-testid="captions-button"
+        icon={
+          !isUserCaptionsEnabled ? (
+            <VividIcon
+              name="closed-captioning-solid"
+              customSize={-5}
+              style={{ color: 'var(--vera-on-secondary-light)' }}
+            />
+          ) : (
+            <VividIcon
+              name="closed-captioning-off-solid"
+              customSize={-5}
+              style={{ color: 'var(--vera-error)' }}
+            />
+          )
+        }
+        sx={{
+          marginTop: isOverflowButton ? '0px' : '4px',
+        }}
+        isOverflowButton={isOverflowButton}
+      />
+    </Tooltip>
   );
 };
 export default CaptionsButton;

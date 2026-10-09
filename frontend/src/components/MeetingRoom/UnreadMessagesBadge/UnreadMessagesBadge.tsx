@@ -1,7 +1,6 @@
 import Badge from '@mui/material/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
-import { env } from '../../../env';
 
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
@@ -23,8 +22,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
 ) {
   const { children, isToolbarOverflowMenuOpen, ...rest } = props;
   const { unreadCount } = useSessionContext();
-  // If the chat button is not shown, the unread messages badge should also be hidden
-  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen || !env.ALLOW_CHAT;
+  const isInvisible = unreadCount === 0 || isToolbarOverflowMenuOpen;
 
   return (
     <Badge

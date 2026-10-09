@@ -68,7 +68,7 @@ This application provides features for common conferencing use cases, such as:
     <summary>A post-call page to navigate users to the landing page, re-enter the left room, and display archive(s), if any.</summary>
     <img src="docs/assets/Goodbye.png" alt="Screenshot of goodbye page">
   </details>
-- A video conferencing "room" supporting up to 25 participants and the following features:
+- A video conferencing "room" supporting up to 60 participants and the following features:
 - <details>
     <summary>Input and output device selectors.</summary>
     <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">

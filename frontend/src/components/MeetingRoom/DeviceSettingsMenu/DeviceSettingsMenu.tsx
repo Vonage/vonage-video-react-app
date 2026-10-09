@@ -68,6 +68,7 @@ const DeviceSettingsMenu = ({
         <>
           <InputDevices handleToggle={handleToggle} />
           <OutputDevices handleToggle={handleToggle} />
+          {env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && <DropdownSeparator />}
           <ReduceNoiseTestSpeakers />
         </>
       );

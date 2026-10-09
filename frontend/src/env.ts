@@ -47,7 +47,6 @@ const EnvironmentVariablesSchema = z.object({
     z.enum([...LAYOUT_MODES] as [LayoutMode, ...LayoutMode[]])
   ),
   SHOW_PARTICIPANT_LIST: boolean({ default: true }),
-  SHOW_VIDEO_STATS: boolean({ default: false }),
   BYPASS_WAITING_ROOM: boolean({ default: false }),
   API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
   TUNNEL_DOMAIN: stringField({ optional: true }),
@@ -87,7 +86,6 @@ export class Env implements IEnvironmentVariables {
   public ALLOW_SCREEN_SHARE!: boolean;
   public DEFAULT_LAYOUT_MODE!: LayoutMode;
   public SHOW_PARTICIPANT_LIST!: boolean;
-  public SHOW_VIDEO_STATS!: boolean;
   public BYPASS_WAITING_ROOM!: boolean;
   public API_URL!: string;
   public TUNNEL_DOMAIN!: string | null;

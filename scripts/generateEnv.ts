@@ -17,20 +17,21 @@ const outputFilePath = path.resolve('env.sh');
 // 'string' is single-quoted; 'raw' is unquoted (booleans and numbers).
 type ValueFormat = 'string' | 'raw';
 
-type DerivedEnvVariable = {
+type BaseEnvVariable = {
   name: string;
-  sourcePath: string;
   format: ValueFormat;
   join?: string;
+  comment?: string[];
+};
+
+type DerivedEnvVariable = BaseEnvVariable & {
+  sourcePath: string;
   // Translates a shared config value to what the web app expects when the enums differ.
   valueMap?: Record<string, string>;
 };
 
-type LiteralEnvVariable = {
-  name: string;
+type LiteralEnvVariable = BaseEnvVariable & {
   literal: string | number | number[];
-  format: ValueFormat;
-  join?: string;
 };
 
 type EnvVariable = DerivedEnvVariable | LiteralEnvVariable;
@@ -95,11 +96,6 @@ const envVariables: EnvVariable[] = [
   { name: 'ALLOW_ARCHIVING', sourcePath: 'meetingRoomSettings.allowArchiving', format: 'raw' },
   { name: 'ALLOW_CAPTIONS', sourcePath: 'meetingRoomSettings.allowCaptions', format: 'raw' },
   { name: 'ALLOW_CHAT', sourcePath: 'meetingRoomSettings.allowChat', format: 'raw' },
-  {
-    name: 'DEVICE_SELECTION',
-    sourcePath: 'meetingRoomSettings.allowDeviceSelection',
-    format: 'raw',
-  },
   { name: 'ALLOW_EMOJIS', sourcePath: 'meetingRoomSettings.allowEmojis', format: 'raw' },
   { name: 'ALLOW_SCREEN_SHARE', sourcePath: 'meetingRoomSettings.allowScreenShare', format: 'raw' },
   {
@@ -124,7 +120,30 @@ const envVariables: EnvVariable[] = [
     sourcePath: 'waitingRoomSettings.allowSettings',
     format: 'raw',
   },
-  { name: 'SHOW_VIDEO_STATS', sourcePath: 'appSettings.showVideoStats', format: 'raw' },
+  // Backend auth defaults for DEV. Consumed by backend/helpers/config.ts and overridable via
+  // backend/.env (see docs/AUTHENTICATION.md).
+  { name: 'AUTH_HEADER_NAME', literal: 'authorization', format: 'string' },
+  { name: 'AUTH_SCHEME', literal: 'Bearer', format: 'string' },
+  { name: 'OIDC_INTROSPECT_PATH', literal: '/oauth2/v1/introspect', format: 'string' },
+  { name: 'OIDC_AUTHORIZE_PATH', literal: '/oauth2/v1/authorize', format: 'string' },
+  { name: 'OIDC_TOKEN_PATH', literal: '/oauth2/v1/token', format: 'string' },
+  { name: 'AUTH_INTROSPECTION_TIMEOUT_MS', literal: 5000, format: 'raw' },
+  {
+    name: 'OIDC_ISSUER_URL',
+    literal: 'https://launchpadtest.vonage.com',
+    format: 'string',
+    comment: [
+      'DEV Okta tenant (SPA/public client — issuer URL and client ID are non-secret), one shared',
+      'app registration for Mobile + Web. Override via backend/.env for PROD, which has its own',
+      'issuer and client ID (see docs/CONFIGURATION.md).',
+    ],
+  },
+  { name: 'OIDC_CLIENT_ID', literal: '0oa2sp68ck6PDehU40h8', format: 'string' },
+  {
+    name: 'OIDC_WEB_REDIRECT_URI',
+    literal: 'http://localhost:5173/api/auth/callback/okta',
+    format: 'string',
+  },
 ];
 
 function readConfig(): Record<string, unknown> {
@@ -180,12 +199,14 @@ function resolveValue(variable: EnvVariable, config: Record<string, unknown>): u
 }
 
 function buildEnvFileContents(config: Record<string, unknown>): string {
-  const exportLines = envVariables.map((variable) => {
+  const exportLines = envVariables.flatMap((variable) => {
     const value = resolveValue(variable, config);
-    return `export ${variable.name}=${serializeValue(value, variable)}`;
+    const commentLines = (variable.comment ?? []).map((line) => `# ${line}`);
+
+    return [...commentLines, `export ${variable.name}=${serializeValue(value, variable)}`];
   });
 
-  return ['#!/bin/bash', '', ...exportLines].join('\n');
+  return ['#!/bin/bash', '', ...exportLines, ''].join('\n');
 }
 
 const generateEnv = () => {

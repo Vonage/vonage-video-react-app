@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ChatButton from './ChatButton';
-import { env } from './../../../env';
 
 describe('ChatButton', () => {
   it('should show unread message number', () => {
@@ -42,15 +41,6 @@ describe('ChatButton', () => {
     render(<ChatButton handleClick={handleClick} isOpen />);
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
-  });
-
-  it('is not rendered when allowChat is false', () => {
-    env.partialUpdate({
-      ALLOW_CHAT: false,
-    });
-    render(<ChatButton handleClick={() => {}} isOpen />);
-
-    expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });
 });
 

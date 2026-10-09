@@ -8,7 +8,8 @@ import OT, {
   PublisherProperties,
 } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { getStorageItem, setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
 import usePublisherOptions from '../usePublisherOptions';
@@ -109,11 +110,11 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const [isForceMuted, setIsForceMuted] = useState<boolean>(initialValue?.isForceMuted ?? false);
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
-    initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
+    initialValue?.isAudioEnabled ?? isDeviceEnabledOnJoin('audio')
   );
 
   const publisherOptions = usePublisherOptions({ isAudioEnabled, isVideoEnabled });

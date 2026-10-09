@@ -1,11 +1,9 @@
 import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isMobile } from '@web/platform';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@ui/components/VividIcon';
-import { env } from '../../env';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -30,14 +28,10 @@ const ScreenSharingButton = ({
   isSharingScreen,
   isViewingScreenShare,
   isOverflowButton = false,
-}: ScreenShareButtonProps): ReactElement | false => {
+}: ScreenShareButtonProps): ReactElement => {
   const { t } = useTranslation();
   const title = isSharingScreen ? t('screenSharing.title.stop') : t('screenSharing.title.start');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  // Screensharing relies on the getDisplayMedia browser API which is unsupported on mobile devices
-  // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia#browser_compatibility
-  const shouldDisplayScreenShareButton = !isMobile() && env.ALLOW_SCREEN_SHARE;
 
   const handleButtonClick = () =>
     isViewingScreenShare ? setIsModalOpen((prev) => !prev) : toggleScreenShare();
@@ -59,49 +53,47 @@ const ScreenSharingButton = ({
   };
 
   return (
-    shouldDisplayScreenShareButton && (
-      <>
-        <Tooltip title={title} aria-label={t('screenSharing.tooltip.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleButtonClick}
-            data-testid="screensharing-button"
-            icon={
-              !isSharingScreen ? (
-                <VividIcon
-                  name="screen-share-solid"
-                  customSize={-5}
-                  style={{ color: 'var(--vera-on-secondary-light)' }}
-                  data-testid="ScreenShareIcon"
-                />
-              ) : (
-                <VividIcon
-                  name="screen-share-off-solid"
-                  customSize={-5}
-                  style={{ color: 'var(--vera-on-secondary-light)' }}
-                  data-testid="ScreenShareIcon"
-                />
-              )
-            }
-            sx={{
-              marginTop: isOverflowButton ? '0px' : '4px',
-              marginLeft: isOverflowButton ? '12px' : '0px',
-              backgroundColor: isSharingScreen
-                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-                : undefined,
-            }}
-            isOverflowButton={isOverflowButton}
-          />
-        </Tooltip>
-        {isViewingScreenShare && (
-          <PopupDialog
-            isOpen={isModalOpen}
-            handleClose={handleClose}
-            handleActionClick={handleActionClick}
-            actionText={actionText}
-          />
-        )}
-      </>
-    )
+    <>
+      <Tooltip title={title} aria-label={t('screenSharing.tooltip.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleButtonClick}
+          data-testid="screensharing-button"
+          icon={
+            !isSharingScreen ? (
+              <VividIcon
+                name="screen-share-solid"
+                customSize={-5}
+                style={{ color: 'var(--vera-on-secondary-light)' }}
+                data-testid="ScreenShareIcon"
+              />
+            ) : (
+              <VividIcon
+                name="screen-share-off-solid"
+                customSize={-5}
+                style={{ color: 'var(--vera-on-secondary-light)' }}
+                data-testid="ScreenShareIcon"
+              />
+            )
+          }
+          sx={{
+            marginTop: isOverflowButton ? '0px' : '4px',
+            marginLeft: isOverflowButton ? '12px' : '0px',
+            backgroundColor: isSharingScreen
+              ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
+              : undefined,
+          }}
+          isOverflowButton={isOverflowButton}
+        />
+      </Tooltip>
+      {isViewingScreenShare && (
+        <PopupDialog
+          isOpen={isModalOpen}
+          handleClose={handleClose}
+          handleActionClick={handleActionClick}
+          actionText={actionText}
+        />
+      )}
+    </>
   );
 };
 

@@ -175,7 +175,6 @@ These are runtime/environment values and are **not** generated from `app-config.
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
-| `DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Enable device selection globally |
 | `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors in the waiting room |
 | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors inside the meeting room |
 
@@ -208,7 +207,6 @@ These are runtime/environment values and are **not** generated from `app-config.
 | `SHOW_PARTICIPANT_LIST` | `boolean` | `true` | `true` \| `false` | Show the participant list panel |
 | `ENABLE_REPORT_ISSUE` | `boolean` | `false` | `true` \| `false` | Show the in-call issue reporting tool |
 | `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` | `boolean` | `true` | `true` \| `false` | Show the Advanced Settings panel inside the meeting room |
-| `SHOW_VIDEO_STATS` | `boolean` | `false` | `true` \| `false` | Show overlay video stats on the waiting room |
 | `NOTIFICATION_DURATION_MS` | `number` | `4000` | Positive integer, in milliseconds | Duration in-app notifications are displayed before auto-dismissing |
 | `AVOID_FETCHING_APP_CONFIG` | `boolean` | `true` | `true` \| `false` | Skip fetching remote app configuration on startup |
 

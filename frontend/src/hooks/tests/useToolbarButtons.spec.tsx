@@ -24,10 +24,6 @@ vi.mock('resize-observer-polyfill', () => ({
   }),
 }));
 
-vi.mock('../../utils/constants', () => ({
-  RIGHT_PANEL_BUTTON_COUNT: 2,
-}));
-
 describe('useToolbarButtons', () => {
   let toolbarRef: RefObject<HTMLDivElement>;
   let mediaControlsRef: RefObject<HTMLDivElement>;
@@ -36,6 +32,7 @@ describe('useToolbarButtons', () => {
   let timeRoomNameRef: RefObject<HTMLDivElement>;
 
   const numberOfToolbarButtons = 5;
+  const rightPanelButtonCount = 2;
 
   beforeEach(() => {
     toolbarRef = { current: document.createElement('div') };
@@ -100,6 +97,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        rightPanelButtonCount,
         timeRoomNameRef,
       })
     );
@@ -124,6 +122,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        rightPanelButtonCount,
         timeRoomNameRef,
       })
     );
@@ -149,6 +148,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        rightPanelButtonCount,
         timeRoomNameRef,
       })
     );
@@ -174,6 +174,7 @@ describe('useToolbarButtons', () => {
         overflowAndExitRef,
         rightPanelControlsRef,
         numberOfToolbarButtons,
+        rightPanelButtonCount,
         timeRoomNameRef,
       })
     );
@@ -183,5 +184,51 @@ describe('useToolbarButtons', () => {
     expect(centerButtonLimit).toBe(3);
     expect(rightButtonLimit).toBe(5);
     expect(displayTimeRoomName).toBe(true);
+  });
+
+  it('reserves only the right panel buttons that are actually displayed', () => {
+    Object.defineProperty(toolbarRef.current, 'clientWidth', {
+      configurable: true,
+      writable: true,
+      value: 826,
+    });
+
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons,
+        rightPanelButtonCount: 1,
+        timeRoomNameRef,
+      })
+    );
+
+    expect(result.current.centerButtonLimit).toBe(4);
+    expect(result.current.rightButtonLimit).toBe(5);
+  });
+
+  it('keeps the center limit non-negative when every right panel button is disabled', () => {
+    Object.defineProperty(toolbarRef.current, 'clientWidth', {
+      configurable: true,
+      writable: true,
+      value: 826,
+    });
+
+    const { result } = renderHook(() =>
+      useToolbarButtons({
+        toolbarRef,
+        mediaControlsRef,
+        overflowAndExitRef,
+        rightPanelControlsRef,
+        numberOfToolbarButtons: 1,
+        rightPanelButtonCount: 0,
+        timeRoomNameRef,
+      })
+    );
+
+    expect(result.current.centerButtonLimit).toBe(1);
+    expect(result.current.rightButtonLimit).toBe(1);
   });
 });
