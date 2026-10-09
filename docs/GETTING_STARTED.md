@@ -53,8 +53,12 @@ Then, open **backend/.env** and fill in the required configuration:
 
 - **VONAGE_APP_ID** – This is the ID of your Vonage application. You can find it on the [Applications page](https://dashboard.vonage.com/applications).
 - **VONAGE_PRIVATE_KEY** – If you've already generated a private key, use that. Otherwise, use the key you downloaded when creating the app.
+- **SESSION_KEY_SECRET** – A random secret that signs session keys. You can safely generate one with `yarn generate:secret`.
+- **AUTH_COOKIE_SECRET** – Only needed when `AUTH_ENABLED='true'`. Generate a separate one the same way.
 
-Frontend feature flags and display settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) by running `yarn sync:env`. The defaults work out of the box — edit `app-config.json` only when you need to customise behaviour, then re-run `yarn sync:env`. Do not edit `env.sh` directly; it is generated. See [Configuration](./CONFIGURATION.md) for the full list of available options.
+Generate a new secret for each variable and each environment, and never commit them.
+
+Frontend feature flags and display settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) by running `yarn sync:env`. The defaults work out of the box — edit `app-config.json` only when you need to customise behaviour, then re-run `yarn sync:env`. Do not edit `env.sh` directly; it is generated. Defaults that are not in `app-config.json` live in [`env.defaults.sh`](../env.defaults.sh), which you can edit. See [Configuration](./CONFIGURATION.md) for the full list of available options.
 
 ### Start in Development Mode
 

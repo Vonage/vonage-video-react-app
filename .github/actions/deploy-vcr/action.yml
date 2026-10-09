@@ -14,6 +14,9 @@ inputs:
   filename:
     description: VCR config filename to deploy with
     required: true
+  instance-name:
+    description: Instance the config must target; the deploy is refused if it doesn't match
+    required: true
 
 outputs:
   instance-url:
@@ -23,6 +26,21 @@ outputs:
 runs:
   using: composite
   steps:
+    # Workflows patch the config with sed; a patch that silently misses must not overwrite another instance
+    - name: Verify the target instance
+      shell: bash
+      env:
+        VCR_FILENAME: ${{ inputs.filename }}
+        EXPECTED_INSTANCE: ${{ inputs.instance-name }}
+      run: |
+        CONFIG="backend/dist/$VCR_FILENAME"
+        ACTUAL_INSTANCE=$(awk '/^instance:/{in_block=1;next} in_block&&/^[^ #]/{exit} in_block&&/^  name:/{sub(/^  name:[ ]*/,"");sub(/[ ]*#.*$/,"");print;exit}' "$CONFIG")
+        if [ -z "$EXPECTED_INSTANCE" ] || [ "$ACTUAL_INSTANCE" != "$EXPECTED_INSTANCE" ]; then
+          echo "::error::${VCR_FILENAME} targets instance '${ACTUAL_INSTANCE}', expected '${EXPECTED_INSTANCE}'; refusing to deploy."
+          exit 1
+        fi
+        echo "Deploying instance ${ACTUAL_INSTANCE}"
+
     - name: Deploy to VCR
       id: deploy
       shell: bash

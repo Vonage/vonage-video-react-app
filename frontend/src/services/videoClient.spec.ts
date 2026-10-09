@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fetchWithAuthRedirect } from './videoClient';
 
 describe('fetchWithAuthRedirect', () => {
-  const fakeLocation = { pathname: '/room/abc123', search: '?foo=bar', href: '' };
+  const fakeLocation = { pathname: '/room/abc123', search: '?foo=bar', assign: vi.fn() };
 
   beforeEach(() => {
     vi.spyOn(window, 'location', 'get').mockReturnValue(fakeLocation as unknown as Location);
-    fakeLocation.href = '';
+    fakeLocation.assign.mockReset();
   });
 
   afterEach(() => {
@@ -31,15 +31,24 @@ describe('fetchWithAuthRedirect', () => {
 
     await fetchWithAuthRedirect('https://example.com/v2');
 
-    expect(fakeLocation.href).toEqual('');
+    expect(fakeLocation.assign).not.toHaveBeenCalled();
   });
 
-  it('redirects to sign-in with the current path as returnTo on a 401', async () => {
-    vi.spyOn(global, 'fetch').mockResolvedValue(new Response(null, { status: 401 }));
+  it('navigates to sign-in once with the current path as returnTo and never settles on a 401', async () => {
+    vi.spyOn(global, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(null, { status: 401 }))
+    );
 
-    await fetchWithAuthRedirect('https://example.com/v2');
+    const settled = vi.fn();
+    void fetchWithAuthRedirect('https://example.com/v2').then(settled, settled);
+    void fetchWithAuthRedirect('https://example.com/v2').then(settled, settled);
 
-    expect(fakeLocation.href).toContain('/auth/signin?returnTo=');
-    expect(fakeLocation.href).toContain(encodeURIComponent('/room/abc123?foo=bar'));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(fakeLocation.assign).toHaveBeenCalledTimes(1);
+    expect(fakeLocation.assign.mock.calls[0][0]).toContain(
+      `/auth/signin?returnTo=${encodeURIComponent('/room/abc123?foo=bar')}`
+    );
+    expect(settled).not.toHaveBeenCalled();
   });
 });

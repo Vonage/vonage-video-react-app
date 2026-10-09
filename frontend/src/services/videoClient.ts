@@ -1,12 +1,12 @@
 import { createVideoClient } from '@core/services';
 import { env } from '../env';
-
-const AUTH_SIGNIN_PATH = '/auth/signin';
+import redirectToAuthProvider from './auth/redirectToAuthProvider';
 
 /**
  * Sends cookies cross-port to the backend (session cookie lives on the frontend's origin,
- * server CORS already allows credentialed requests) and redirects to sign-in on a 401 so an
- * expired/missing session sends the user back to Okta instead of a confusing failed request.
+ * server CORS already allows credentialed requests) and hands a 401 over to
+ * redirectToAuthProvider, which never settles, so the error page doesn't flash before the
+ * navigation.
  */
 export const fetchWithAuthRedirect = async (
   input: RequestInfo | URL,
@@ -14,10 +14,7 @@ export const fetchWithAuthRedirect = async (
 ): Promise<Response> => {
   const response = await fetch(input, { ...init, credentials: 'include' });
 
-  if (response.status === 401) {
-    const returnTo = `${window.location.pathname}${window.location.search}`;
-    window.location.href = `${env.API_URL}${AUTH_SIGNIN_PATH}?returnTo=${encodeURIComponent(returnTo)}`;
-  }
+  if (response.status === 401) return redirectToAuthProvider();
 
   return response;
 };

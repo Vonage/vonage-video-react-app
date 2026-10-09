@@ -14,6 +14,12 @@ type VeraRoomAttributes = {
    * Falls back to the browser's detected language when not provided.
    */
   language?: string;
+
+  /**
+   * Fetch credentials mode for API calls: 'include' (default), 'same-origin' or 'omit'.
+   * Ignored when a `videoClient` is set on the element.
+   */
+  credentials?: 'include' | 'same-origin' | 'omit';
 };
 
 declare module 'react' {

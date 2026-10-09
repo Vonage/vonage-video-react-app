@@ -49,6 +49,7 @@ const EnvironmentVariablesSchema = z.object({
   SHOW_PARTICIPANT_LIST: boolean({ default: true }),
   SHOW_VIDEO_STATS: boolean({ default: false }),
   BYPASS_WAITING_ROOM: boolean({ default: false }),
+  AUTH_ENABLED: boolean({ default: false }),
   API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
   TUNNEL_DOMAIN: stringField({ optional: true }),
   MODE: z.preprocess(
@@ -89,6 +90,7 @@ export class Env implements IEnvironmentVariables {
   public SHOW_PARTICIPANT_LIST!: boolean;
   public SHOW_VIDEO_STATS!: boolean;
   public BYPASS_WAITING_ROOM!: boolean;
+  public AUTH_ENABLED!: boolean;
   public API_URL!: string;
   public TUNNEL_DOMAIN!: string | null;
   public MODE!: Mode;

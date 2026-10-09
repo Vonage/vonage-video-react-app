@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import StatusCodeEnum from 'status-code-enum';
 import { isApplicationError } from '@common/errors/assertions';
 import { ApplicationServerError } from '@api-lib/errors';
+import resolveResponseFormat from '../helpers/resolveResponseFormat';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -50,21 +51,14 @@ export function errorHandler(
   const safeError = applicationError.exportSafely();
   const { statusCode } = safeError;
 
-  const accepts = req.headers.accept ?? '';
+  const responseFormat = resolveResponseFormat(req);
 
-  const isJsonRequest =
-    accepts.includes('application/json') ||
-    req.xhr ||
-    req.headers?.['content-type']?.includes('application/json');
-
-  if (isJsonRequest) {
+  if (responseFormat === 'json') {
     res.status(safeError.statusCode).json(safeError);
     return;
   }
 
-  const isHtmlRequest = accepts.includes('text/html');
-
-  if (isHtmlRequest) {
+  if (responseFormat === 'html') {
     const safeMessage = safeError.message
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

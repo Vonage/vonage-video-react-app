@@ -4,11 +4,20 @@ import './helpers/config';
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import { Server } from 'http';
 import router from './routes';
 import { fileURLToPath } from 'url';
-import { authMiddleware, errorHandler, helmetMiddleware, rateLimitMiddleware } from './middleware';
+import {
+  authMiddleware,
+  corsMiddleware,
+  errorHandler,
+  helmetMiddleware,
+  rateLimitMiddleware,
+} from './middleware';
+import logAuthFeatures from './middleware/authMiddleware/helpers/logAuthFeatures';
+import loadConfig from './helpers/config';
+import readCallbackPath from './routes/auth/helpers/readCallbackPath';
+import { SIGN_IN_PATH, SIGN_OUT_PATH } from './routes/auth/constants';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -23,13 +32,19 @@ if (process.env.__IS_CJS__) {
 
 const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
+const authCallbackPaths = (() => {
+  const authConfig = loadConfig();
+
+  return authConfig.authEnabled ? [readCallbackPath(authConfig)] : [];
+})();
+
 const app: Express = express();
 
 app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
-app.use(cors({ origin: true, credentials: true }));
+app.use(corsMiddleware());
 app.use(bodyParser.json());
 
 // Trust only the immediate reverse proxy.
@@ -45,8 +60,9 @@ app.use(
       '/v2/hooks/archive',
       '/.well-known/apple-app-site-association',
       '/.well-known/assetlinks.json',
-      '/auth/signin',
-      '/api/auth/callback/okta',
+      SIGN_IN_PATH,
+      SIGN_OUT_PATH,
+      ...authCallbackPaths,
     ],
   })
 );
@@ -74,6 +90,7 @@ const startServer: (port?: number) => Promise<Server> = (port = defaultPort) => 
       res(server);
 
       console.log('Server listening on port', port);
+      logAuthFeatures();
 
       if (process.env.FRONTEND_TARGET) {
         console.log('App listening at', process.env.FRONTEND_TARGET);

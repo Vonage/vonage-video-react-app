@@ -5,6 +5,7 @@ const TokenIntrospectionResponseSchema = z.discriminatedUnion('active', [
     active: z.literal(true),
     sub: z.string(),
     client_id: z.string().optional(),
+    aud: z.union([z.string(), z.array(z.string())]).optional(),
     email: z.string().optional(),
   }),
   z.object({
@@ -13,5 +14,10 @@ const TokenIntrospectionResponseSchema = z.discriminatedUnion('active', [
 ]);
 
 export type TokenIntrospectionResponse = z.infer<typeof TokenIntrospectionResponseSchema>;
+
+export type ActiveTokenIntrospectionResponse = Extract<
+  TokenIntrospectionResponse,
+  { active: true }
+>;
 
 export default TokenIntrospectionResponseSchema;

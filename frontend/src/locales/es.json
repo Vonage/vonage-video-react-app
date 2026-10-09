@@ -353,5 +353,6 @@
   "zoom.current": "Zoom actual",
   "errorPage.title": "Algo salió mal",
   "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste.",
-  "notification.dismiss": "Descartar notificación"
+  "notification.dismiss": "Descartar notificación",
+  "banner.logout": "Cerrar sesión"
 }
