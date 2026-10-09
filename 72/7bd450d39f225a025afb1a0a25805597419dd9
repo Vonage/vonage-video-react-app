@@ -1,0 +1,36 @@
+backend/routes/video/video.ts
+  s_16343696230de9::t_a4d6d87851cf9a 57-58,63-64,71,75
+  s_16343696230de9::t_ba17fd84f12325 11
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_16343696230de9::t_771f7b327b6759 12
+libs/common/src/constants/archiveNames.ts
+  s_16343696230de9::t_b8f2575937cb6b 1-2
+backend/routes/video/constants/startArchive.ts
+  s_16343696230de9::t_229a1631494536 3,8,10,19,21
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_16343696230de9::t_507cdc8fefea55 4
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  s_16343696230de9::t_a6de2ea4861135 3,7
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_16343696230de9::t_5c74e11c936b58 12
+libs/common/src/constants/index.ts
+  s_16343696230de9::t_8eb904066fd526 3
+frontend/src/Context/SessionProvider/session.tsx
+  s_16343696230de9::t_7a5d9ecde37e64 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "727bd450d39f225a025afb1a0a25805597419dd9",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
