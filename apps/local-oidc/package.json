@@ -1,0 +1,8 @@
+{
+  "name": "local-oidc",
+  "version": "1.5.0",
+  "description": "Minimal OAuth 2.0 / OIDC provider for local development and CI.",
+  "type": "module",
+  "license": "MIT",
+  "private": true
+}

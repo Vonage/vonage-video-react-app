@@ -94,7 +94,7 @@ Quick reference, see [Configuration](./CONFIGURATION.md) for how the backend's `
 | `OIDC_TOKEN_PATH` | No | `/oauth2/v1/token` | Appended to `OIDC_ISSUER_URL` for the Web login flow's code-for-token exchange |
 | `AUTH_INTROSPECTION_TIMEOUT_MS` | No | `5000` | Timeout for the introspection HTTP call |
 
-`AUTH_ENABLED`, `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` go in `backend/.env`. The rest are non-secret tuning knobs that already default in [`env.sh`](../env.sh); override them in `backend/.env` only if you need something other than the default.
+`AUTH_ENABLED`, `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` go in `backend/.env`. The rest are non-secret tuning knobs with defaults (`AUTH_HEADER_NAME` and `AUTH_SCHEME` in [`env.defaults.sh`](../env.defaults.sh), the paths and timeout in the backend); override them in `backend/.env` only if you need something other than the default.
 
 ```ini
 AUTH_ENABLED='true'
@@ -109,12 +109,12 @@ OIDC_WEB_REDIRECT_URI='<your-redirect-uri>'
 
 1. Copy `backend/.env.example` to `backend/.env`.
 2. Set `AUTH_ENABLED=true`.
-3. Set `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, and `OIDC_WEB_REDIRECT_URI` in `backend/.env`. The copied `.env.example` leaves them empty, and the backend dev server does not source [`env.sh`](../env.sh), so the DEV values listed there must be copied in explicitly.
-4. `yarn dev`.
+3. The copied `.env.example` points `OIDC_CLIENT_ID`, `OIDC_ISSUER_URL`, `OIDC_WEB_REDIRECT_URI` and the paths at `apps/local-oidc`, a dev-only provider that approves every login without a form. To use a real provider, replace them with its values.
+4. `yarn dev`. It also starts `apps/local-oidc` on `localhost:3346`.
 5. Open the app in an **incognito window**, avoids a cached session from a previous run.
 6. Trigger a protected action (create or join a room).
-7. You're redirected to the OIDC provider's login page, sign in with your credentials.
-8. After MFA, you land back where you started and the action completes.
+7. You're sent through the provider's login (local-oidc returns immediately; a real provider shows its login page).
+8. You land back where you started and the action completes.
 
 `AUTH_ENABLED=false` by default, so the app works without any of this unless you opt in.
 

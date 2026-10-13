@@ -40,6 +40,10 @@
     "chrome-devtools": {
       "type": "stdio",
       "command": "npx",
+      "env": {
+        "CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS": "1",
+        "CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS": "1"
+      },
       "args": [
         "-y",
         "chrome-devtools-mcp@latest",
