@@ -1,4 +1,5 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import closeServer from './helpers/closeServer';
 import axios from 'axios';
 import request from 'supertest';
 import { Server } from 'http';
@@ -18,8 +19,8 @@ process.env = {
   OIDC_WEB_REDIRECT_URI: 'http://localhost:3000/api/auth/callback/okta',
 };
 
-jest.mock('axios');
-const mockPost = jest.spyOn(axios, 'post');
+vi.mock('axios');
+const mockPost = vi.spyOn(axios, 'post');
 
 await mockVonageVideoSdk();
 
@@ -73,9 +74,9 @@ describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=tr
     expect(primeResponse.statusCode).toEqual(200);
   });
 
-  afterAll((done) => {
+  afterAll(() => {
     process.env = originalEnv;
-    server.close(done);
+    return closeServer(server);
   });
 
   afterEach(() => {

@@ -41,7 +41,7 @@ yarn test
 yarn test:backend
 ```
 
-- For additional CLI options, see [jest docs](https://jestjs.io/docs/cli).
+- For additional CLI options, see [vitest docs](https://vitest.dev/guide/cli#options).
 
 ## Frontend Suite
 

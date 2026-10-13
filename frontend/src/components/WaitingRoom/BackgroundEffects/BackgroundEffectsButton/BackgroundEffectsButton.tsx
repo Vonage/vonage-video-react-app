@@ -1,12 +1,15 @@
 import { ReactElement } from 'react';
-import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
+import VividIcon from '@ui/components/VividIcon';
 import { VIDEO_CONTAINER_BUTTON_SIZE_WR } from '@utils/constants';
 import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import VideoContainerButton from '../../VideoContainerButton';
 import { env } from '../../../../env';
+import testIds from './testIds';
+
+export { testIds };
 
 export type BackgroundEffectsButtonProps = {
   onClick: () => void;
@@ -30,6 +33,7 @@ const BackgroundEffectsButton = ({
   return (
     shouldDisplayBackgroundEffects && (
       <Box
+        data-testid={testIds.container}
         className="border border-vera-on-secondary"
         sx={{
           display: 'flex',
@@ -48,10 +52,11 @@ const BackgroundEffectsButton = ({
             onClick={onClick}
             className="hover:bg-[color-mix(in_srgb,var(--vera-on-secondary)_60%,transparent)]!"
             icon={
-              <PortraitIcon
-                sx={{ fontSize: '24px' }}
+              <VividIcon
+                name="background-blur-light-line"
+                customSize={-5}
                 className="text-vera-on-secondary"
-                data-testid="portraitIcon"
+                aria-hidden="true"
               />
             }
           />

@@ -8,7 +8,7 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@api-lib": ["../../libs/api/src"],

@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test } from 'vitest';
 
 describe('Environment Variables', () => {
   test('should have the correct JIRA_API_URL', () => {

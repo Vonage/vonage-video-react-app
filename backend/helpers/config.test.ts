@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { beforeEach, describe, expect, vi, test } from 'vitest';
 import loadConfig from './config';
 
 describe('loadConfig', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...originalEnv }; // Copy originalEnv to avoid mutation across tests
     delete process.env.AUTH_ENABLED;
     delete process.env.OIDC_CLIENT_ID;

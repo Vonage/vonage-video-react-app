@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/await-thenable */
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import closeServer from './helpers/closeServer';
 import request from 'supertest';
 import { Server } from 'http';
 import { ReportIssueReturn } from '../types/feedback';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
-await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
+vi.doMock('../helpers/config', mockOpentokConfig);
 
-const mockReportIssue = jest.fn<() => Promise<ReportIssueReturn | null>>().mockResolvedValue({
+const mockReportIssue = vi.fn<[], Promise<ReportIssueReturn | null>>().mockResolvedValue({
   message: 'Your Jira ticket has been created.',
   ticketUrl: 'https://jira.com/browse/key-123',
 });
 
-await jest.unstable_mockModule('../services/getFeedbackService.ts', () => {
+vi.doMock('../services/getFeedbackService.ts', () => {
   return {
-    default: jest.fn(() => ({
+    default: vi.fn(() => ({
       reportIssue: mockReportIssue,
     })),
   };
@@ -39,9 +39,7 @@ describe('POST /feedback/report', () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   beforeEach(() => {
     mockReportIssue.mockClear();

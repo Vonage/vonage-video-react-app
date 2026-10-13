@@ -1,12 +1,10 @@
 import type { Any } from '@common/types';
 import { isFunction } from '@common/assertions';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 /**
- * Jest cannot replace ESM dependencies with `jest.mock()` once the module graph
- * has been evaluated. ESM imports are resolved before the test body executes, so the mock
- * must be registered with `jest.unstable_mockModule()` before importing any consumer of
- * that module.
+ * `vi.doMock()` is not hoisted, so it only affects modules imported after it runs. The mock
+ * must be registered before importing any consumer of that module.
  *
  * This helper loads the real module first, creates a mutable shallow copy with the requested
  * overrides, registers that copy as the mocked ESM module, and returns the same object so
@@ -36,7 +34,7 @@ async function doPartialMock<T extends Record<string, Any>>(
     ...(isFunction(mock) ? await mock(actual) : mock),
   };
 
-  jest.unstable_mockModule(path, () => module);
+  vi.doMock(path, () => module);
   return module;
 }
 

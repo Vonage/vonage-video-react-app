@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/await-thenable */
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 type ArchiveResponse = { id: string; status: string };
 type CaptionsResponse = { captionsId: string };
@@ -19,12 +18,10 @@ type VideoSdkOverrides = Partial<{
 }>;
 
 /**
- * Must be awaited before `../server` is imported — jest.unstable_mockModule only takes effect
+ * Must be awaited before `../server` is imported — vi.doMock only takes effect
  * on modules imported afterwards.
  *
- * jest.unstable_mockModule resolves relative specifiers against the calling *test* file, not
- * this file — hence `../videoService/...` below, not `../../videoService/...`. That means this
- * helper only works from test files directly under `backend/tests/`.
+ * vi.doMock resolves relative specifiers against this file, not the calling test file.
  */
 async function mockVonageVideoSdk({
   validSessionId = DEFAULT_VALID_SESSION_ID,
@@ -36,50 +33,48 @@ async function mockVonageVideoSdk({
   const actualAuth = await import('@vonage/auth');
   const actualVideo = await import('@vonage/video');
 
-  await jest.unstable_mockModule('@vonage/auth', () => ({
+  vi.doMock('@vonage/auth', () => ({
     ...actualAuth,
-    Auth: jest.fn().mockImplementation(() => ({ applicationId: 'vonageAppId' })),
+    Auth: vi.fn().mockImplementation(() => ({ applicationId: 'vonageAppId' })),
   }));
 
-  await jest.unstable_mockModule('@vonage/video', () => ({
+  vi.doMock('@vonage/video', () => ({
     ...actualVideo,
-    Video: jest.fn().mockImplementation(() => ({
-      createSession: jest
-        .fn<() => Promise<{ sessionId: string }>>()
+    Video: vi.fn().mockImplementation(() => ({
+      createSession: vi
+        .fn<[], Promise<{ sessionId: string }>>()
         .mockResolvedValue({ sessionId: validSessionId }),
-      generateClientToken: jest.fn().mockReturnValue('someToken'),
-      startArchive: jest
-        .fn<(sessionId: string) => Promise<ArchiveResponse>>()
+      generateClientToken: vi.fn().mockReturnValue('someToken'),
+      startArchive: vi
+        .fn<[sessionId: string], Promise<ArchiveResponse>>()
         .mockResolvedValue({ id: 'archiveId', status: 'started' }),
-      stopArchive: jest
-        .fn<(archiveId: string) => Promise<ArchiveResponse>>()
+      stopArchive: vi
+        .fn<[archiveId: string], Promise<ArchiveResponse>>()
         .mockImplementation((archiveId: string) =>
           Promise.resolve({ id: archiveId, status: 'stopped' })
         ),
-      searchArchives: jest
-        .fn<() => Promise<{ items: unknown[]; count: number }>>()
+      searchArchives: vi
+        .fn<[], Promise<{ items: unknown[]; count: number }>>()
         .mockResolvedValue({ items: [], count: 0 }),
-      enableCaptions: jest
-        .fn<() => Promise<CaptionsResponse>>()
+      enableCaptions: vi
+        .fn<[], Promise<CaptionsResponse>>()
         .mockResolvedValue({ captionsId: DEFAULT_CAPTIONS_ID }),
-      disableCaptions: jest
-        .fn<(captionsId: string) => Promise<void>>()
-        .mockResolvedValue(undefined),
+      disableCaptions: vi.fn<[captionsId: string], Promise<void>>().mockResolvedValue(undefined),
       ...videoOverrides,
     })),
   }));
 
-  await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => ({
-    default: jest.fn().mockImplementation(() => ({
-      startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
-      stopArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
-      enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionsId'),
-      disableCaptions: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-      generateToken: jest
-        .fn<() => Promise<{ token: string; apiKey: string }>>()
+  vi.doMock('../../videoService/opentokVideoService.ts', () => ({
+    default: vi.fn().mockImplementation(() => ({
+      startArchive: vi.fn<[], Promise<string>>().mockResolvedValue('archiveId'),
+      stopArchive: vi.fn<[], Promise<string>>().mockResolvedValue('archiveId'),
+      enableCaptions: vi.fn<[], Promise<string>>().mockResolvedValue('captionsId'),
+      disableCaptions: vi.fn<[], Promise<void>>().mockResolvedValue(undefined),
+      generateToken: vi
+        .fn<[], Promise<{ token: string; apiKey: string }>>()
         .mockResolvedValue({ token: 'someToken', apiKey: 'someApiKey' }),
-      createSession: jest.fn<() => Promise<string>>().mockResolvedValue(validSessionId),
-      searchArchives: jest.fn<() => Promise<unknown[]>>().mockResolvedValue([]),
+      createSession: vi.fn<[], Promise<string>>().mockResolvedValue(validSessionId),
+      searchArchives: vi.fn<[], Promise<unknown[]>>().mockResolvedValue([]),
     })),
   }));
 }

@@ -1,6 +1,6 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-jest.mock('@vonage/auth');
+vi.mock('@vonage/auth');
 
 const mockSessionId = 'mockSessionId';
 const mockToken = 'mockToken';
@@ -10,30 +10,29 @@ const mockRoomName = 'awesomeRoomName';
 const mockCaptionId = 'mockCaptionId';
 const mockPrivateKey = 'mockPrivateKey';
 
-// eslint-disable-next-line @typescript-eslint/await-thenable
-await jest.unstable_mockModule('@vonage/video', () => {
+vi.doMock('@vonage/video', () => {
   return {
-    Video: jest.fn().mockImplementation(() => ({
-      createSession: jest.fn<() => Promise<{ sessionId: string }>>().mockResolvedValue({
+    Video: vi.fn().mockImplementation(() => ({
+      createSession: vi.fn<[], Promise<{ sessionId: string }>>().mockResolvedValue({
         sessionId: mockSessionId,
       }),
-      generateClientToken: jest.fn<() => { token: string; apiKey: string }>().mockReturnValue({
+      generateClientToken: vi.fn<[], { token: string; apiKey: string }>().mockReturnValue({
         token: mockToken,
         apiKey: mockApplicationId,
       }),
-      startArchive: jest.fn<() => Promise<{ id: string }>>().mockResolvedValue({
+      startArchive: vi.fn<[], Promise<{ id: string }>>().mockResolvedValue({
         id: mockArchiveId,
       }),
-      stopArchive: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
+      stopArchive: vi.fn<[], Promise<{ status: number }>>().mockResolvedValue({
         status: 200,
       }),
-      enableCaptions: jest.fn<() => Promise<{ captionsId: string }>>().mockResolvedValue({
+      enableCaptions: vi.fn<[], Promise<{ captionsId: string }>>().mockResolvedValue({
         captionsId: mockCaptionId,
       }),
-      disableCaptions: jest.fn<() => Promise<{ status: number }>>().mockResolvedValue({
+      disableCaptions: vi.fn<[], Promise<{ status: number }>>().mockResolvedValue({
         status: 200,
       }),
-      searchArchives: jest.fn<() => Promise<{ items: [] }>>().mockResolvedValue({
+      searchArchives: vi.fn<[], Promise<{ items: [] }>>().mockResolvedValue({
         items: [],
       }),
     })),
@@ -56,7 +55,7 @@ const { Video } = await import('@vonage/video');
 
 describe('VonageVideoService', () => {
   let vonageVideoService: typeof VonageVideoService.prototype;
-  const videoConstructor = jest.mocked(Video);
+  const videoConstructor = vi.mocked(Video);
 
   beforeEach(() => {
     videoConstructor.mockClear();

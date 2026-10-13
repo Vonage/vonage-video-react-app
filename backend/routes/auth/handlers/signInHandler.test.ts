@@ -1,13 +1,13 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
 import getSessionStorageService from '../../../sessionStorageService';
 import { TRANSACTION_COOKIE_NAME } from '../constants';
 
-const loadConfigMock = jest.fn<() => Config>();
+const loadConfigMock = vi.fn<[], Config>();
 
-jest.unstable_mockModule('../../../helpers/config', () => ({
+vi.doMock('../../../helpers/config', () => ({
   default: loadConfigMock,
 }));
 

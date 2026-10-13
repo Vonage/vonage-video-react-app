@@ -12,7 +12,7 @@ const isFilePath = (str: string): boolean => {
 };
 
 /**
- * Runs all backend unit tests using Jest.
+ * Runs all backend unit tests using Vitest.
  * Executes the nx test target for the backend project.
  */
 function runAllTests() {
@@ -24,42 +24,43 @@ function runAllTests() {
 
 /**
  * Runs a specific backend test file matching the given path pattern.
- * Uses Jest's testPathPattern to filter tests.
+ * Passes the path to Vitest as a filename filter.
  */
 function runSpecificTest(testFilePath: string) {
   console.log(`\n🤖 Running specific test: ${testFilePath}\n`);
-  execSync(`yarn nx test backend --testPathPattern="${testFilePath}"`, {
+  execSync(`bash -c 'source ../env.sh && vitest run --reporter=verbose ${testFilePath}'`, {
     stdio: 'inherit',
+    cwd: 'backend',
   });
 }
 
 /**
  * Runs backend tests in watch mode, re-running on file changes.
  * Sources env.sh for environment variables.
- * Uses Jest's watch mode with coverage enabled.
+ * Uses Vitest's watch mode with coverage enabled.
  * Optionally watches a specific test file.
  */
 function runWatch(testFilePath?: string) {
   const target = testFilePath ? `file: ${testFilePath}` : 'all tests';
   console.log(`\n👀 Watch mode activated for ${target}\n`);
-  const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
-  execSync(
-    `bash -c 'source ../env.sh && NODE_OPTIONS="--experimental-vm-modules" jest --maxWorkers=1 --coverage --watch${testPattern}'`,
-    { stdio: 'inherit', cwd: 'backend' }
-  );
+  const testPattern = testFilePath ? ` ${testFilePath}` : '';
+  execSync(`bash -c 'source ../env.sh && vitest --coverage --watch${testPattern}'`, {
+    stdio: 'inherit',
+    cwd: 'backend',
+  });
 }
 
 /**
  * Runs backend tests in debug mode with Node.js debugger attached.
  * Allows breakpoint debugging in test files.
- * Runs tests serially (--runInBand) with verbose output and handle detection.
+ * Runs tests serially (--no-file-parallelism) with verbose output and console interception disabled.
  */
 function runDebug(testFilePath?: string) {
   const target = testFilePath ? `test: ${testFilePath}` : 'all tests';
   console.log(`\n🐛 Debug mode activated for ${target}\n`);
-  const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
+  const testPattern = testFilePath ? ` ${testFilePath}` : '';
   execSync(
-    `bash -c 'source ../env.sh && NODE_OPTIONS="--experimental-vm-modules --inspect-brk" jest --runInBand --detectOpenHandles --verbose${testPattern}'`,
+    `bash -c 'source ../env.sh && vitest run --inspect-brk --no-file-parallelism --disableConsoleIntercept=true --silent=false --reporter=verbose${testPattern}'`,
     { stdio: 'inherit', cwd: 'backend' }
   );
 }
@@ -73,20 +74,20 @@ function runCoverage(testFilePath?: string, html = false) {
   const target = testFilePath ? `file: ${testFilePath}` : 'all tests';
   console.log(`\n📊 Coverage mode activated for ${target}\n`);
 
-  const htmlReporter = html ? ' --coverageReporters=html' : '';
+  const hasCustomArguments = Boolean(testFilePath) || html;
 
-  if (testFilePath) {
-    execSync(
-      `yarn nx test backend --configuration=coverage --testPathPattern="${testFilePath}"${htmlReporter}`,
-      {
-        stdio: 'inherit',
-      }
-    );
+  if (!hasCustomArguments) {
+    execSync('yarn nx test backend --configuration=coverage', {
+      stdio: 'inherit',
+    });
     return;
   }
 
-  execSync(`yarn nx test backend --configuration=coverage${htmlReporter}`, {
+  const htmlReporter = html ? ' --coverage.reporter=html' : '';
+  const testPattern = testFilePath ? ` ${testFilePath}` : '';
+  execSync(`bash -c 'source ../env.sh && vitest run --coverage${htmlReporter}${testPattern}'`, {
     stdio: 'inherit',
+    cwd: 'backend',
   });
 }
 
@@ -94,7 +95,7 @@ function runCoverage(testFilePath?: string, html = false) {
  * Main entry point for backend unit tests.
  *
  * @description
- * Runs Jest tests for the backend project with various modes.
+ * Runs Vitest tests for the backend project with various modes.
  * Defaults to running a specific test file if the first argument doesn't match a mode.
  *
  * @modes
