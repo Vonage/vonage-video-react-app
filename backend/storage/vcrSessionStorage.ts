@@ -209,7 +209,7 @@ class VcrSessionStorage implements SessionStorage {
   async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
     const value: string | null = await this.dbState.get(key);
-    return value ? parseInt(value, 10) : 0;
+    return value ? Number.parseInt(value, 10) : 0;
   }
 }
 export default VcrSessionStorage;
