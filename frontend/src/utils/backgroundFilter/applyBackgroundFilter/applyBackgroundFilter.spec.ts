@@ -21,7 +21,7 @@ describe('applyBackgroundFilter', () => {
   }) as unknown as Publisher;
   beforeEach(() => {
     vi.resetAllMocks();
-    (hasMediaProcessorSupport as Mock).mockImplementation(vi.fn().mockReturnValue(true));
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(vi.fn().mockReturnValue(true));
   });
 
   it('does nothing if publisher is not provided', async () => {

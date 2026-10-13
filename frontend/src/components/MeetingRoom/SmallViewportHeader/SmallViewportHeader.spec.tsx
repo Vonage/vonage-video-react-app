@@ -8,7 +8,7 @@ import { render as renderBase, screen, fireEvent, waitFor } from '@testing-libra
 import jwt from 'jsonwebtoken';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { makeTestProvider, providers } from '@test/providers';
 import SmallViewportHeader from './SmallViewportHeader';
 

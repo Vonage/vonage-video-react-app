@@ -2,7 +2,7 @@ import { describe, it, expect, vi, Mock } from 'vitest';
 import { checkSystemRequirements } from '@vonage/client-sdk-video';
 import { render } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import RedirectToUnsupportedBrowserPage from './RedirectToUnsupportedBrowserPage';
 
 vi.mock('@vonage/client-sdk-video', () => ({ checkSystemRequirements: vi.fn() }));

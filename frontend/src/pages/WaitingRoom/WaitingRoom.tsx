@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import Box from '@mui/material/Box';
-import PageLayout from '@ui/PageLayout';
+import { PageLayout } from '@ui';
 import Banner from '@components/Banner';
 import Footer from '@components/Footer/Footer';
 import ControlPanel from '@components/WaitingRoom/ControlPanel';

@@ -38,11 +38,7 @@ function Summary({ className, children, ...props }: SummaryProps) {
       )}
       {...props}
     >
-      {isFunction(children) ? (
-        <StateRenderer builder={children as Callback} />
-      ) : (
-        (children as ReactNode)
-      )}
+      {isFunction(children) ? <StateRenderer builder={children} /> : children}
     </summary>
   );
 }

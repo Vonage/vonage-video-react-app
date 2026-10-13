@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import AdvancedSettingsCodecPriorityField from './AdvancedSettingsCodecPriorityField';
+import AdvancedSettingsCodecPriorityField, { testIds } from './AdvancedSettingsCodecPriorityField';
 
 describe('AdvancedSettingsCodecPriorityField', () => {
   it('reorders codecs through drag and drop', () => {
@@ -13,8 +13,8 @@ describe('AdvancedSettingsCodecPriorityField', () => {
       />
     );
 
-    const vp9Item = screen.getByTestId('advanced-settings-codec-priority-item-vp9');
-    const h264Item = screen.getByTestId('advanced-settings-codec-priority-item-h264');
+    const vp9Item = screen.getByTestId(testIds.item('vp9'));
+    const h264Item = screen.getByTestId(testIds.item('h264'));
 
     fireEvent.dragStart(vp9Item);
     fireEvent.dragOver(h264Item);
@@ -31,7 +31,7 @@ describe('AdvancedSettingsCodecPriorityField', () => {
       />
     );
 
-    const codecItems = within(screen.getByTestId('advanced-settings-codec-priority-list'))
+    const codecItems = within(screen.getByTestId(testIds.list))
       .getAllByRole('listitem')
       .map((item) => item.textContent);
 

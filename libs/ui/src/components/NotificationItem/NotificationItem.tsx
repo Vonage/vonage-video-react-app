@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { NotificationEntry, NotificationId } from '@core/stores/notifications';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { twMerge } from 'tailwind-merge';
 import { Prettify } from '@common/types';

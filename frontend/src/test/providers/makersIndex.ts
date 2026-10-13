@@ -29,6 +29,6 @@ export {
 } from './makeRuntimeProviderWrapper';
 
 export {
-  default as makeAdvancedSettingsProviderWrapper,
-  type AdvancedSettingsProviderWrapperOptions,
-} from './makeAdvancedSettingsProviderWrapper';
+  default as makeScreenShareProviderWrapper,
+  type ScreenShareProviderWrapperOptions,
+} from './makeScreenShareProviderWrapper';

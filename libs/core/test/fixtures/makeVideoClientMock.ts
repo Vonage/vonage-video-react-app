@@ -1,6 +1,6 @@
 import type { Mocked } from 'vitest';
 import type { VideoClient } from '@core/services';
-import { AnyFunction } from '@common/types';
+import type { AnyFunction } from '@common/types';
 import { isFunction, isNil } from '@common/assertions';
 
 type VideoClientFnMock<K extends keyof VideoClient, Result = Awaited<ReturnType<VideoClient[K]>>> =
@@ -27,7 +27,7 @@ const makeVideoClientMock = (mock: VideoClientMock): Mocked<VideoClient> => {
       return;
     }
 
-    target[key] = vi.fn(value);
+    target[key] = vi.fn(value as AnyFunction);
   });
 
   return new Proxy(target, {

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { env } from '../../../../env';
 import { ALLOWED_TYPES, MAX_SIZE_MB } from '../../../../utils/constants';
 import useImageStorage from '@utils/useImageStorage/useImageStorage';

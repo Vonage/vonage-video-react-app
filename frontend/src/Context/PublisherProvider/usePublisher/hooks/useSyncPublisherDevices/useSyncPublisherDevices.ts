@@ -1,5 +1,5 @@
 import type { Publisher } from '@vonage/client-sdk-video';
-import mediaDevices$ from '@core/stores/devices/devices$';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { useMountEffect } from '@web/hooks';
 import attempt from '@common/execution/attempt';
 import type { UnsubscribeCallback } from 'react-global-state-hooks';
@@ -27,7 +27,7 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
               if (didChanged) void attempt(() => publisherRef.current?.setVideoSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }
@@ -48,7 +48,7 @@ const useSyncPublisherDevices = (
               const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
               if (didChanged) void attempt(() => publisherRef.current?.setAudioSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }

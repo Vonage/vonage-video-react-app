@@ -13,7 +13,7 @@ import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import composeProviders from '@web/helpers/composeProviders';
 import { StrictMode } from 'react';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 
 vi.mock('@vonage/client-sdk-video');
 

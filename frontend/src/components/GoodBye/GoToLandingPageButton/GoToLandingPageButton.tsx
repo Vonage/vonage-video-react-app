@@ -13,7 +13,7 @@ const GoToLandingPageButton = (): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const handleLanding = () => {
-    navigate('/');
+    void navigate('/');
   };
 
   return (

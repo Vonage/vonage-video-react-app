@@ -42,7 +42,7 @@ const WaitingRoomStage: FC = () => {
   if (isConfigError) {
     return (
       <div className="flex h-full w-full items-center justify-center p-6">
-        <Typography className="text-vera-tertiary text-center">
+        <Typography className="text-vera-text-tertiary text-center">
           Set the <code>session-identifier</code> attribute to specify the room to join.
         </Typography>
       </div>

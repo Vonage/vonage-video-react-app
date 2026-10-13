@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Card from '@ui/Card';
+import Card from '@ui/components/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import isValidUserName from '@utils/isValidUserName';
@@ -79,7 +79,7 @@ const UsernameInput = ({
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room
-      navigate(`/room/${roomName}`, {
+      void navigate(`/room/${roomName}`, {
         state: {
           hasAccess: true,
         },
@@ -93,7 +93,7 @@ const UsernameInput = ({
       className={twMerge('flex flex-col gap-4 lg:max-w-125', className)}
       {...cardProps}
     >
-      <Typography className="text-vera-secondary text-vera-heading-4!">
+      <Typography className="text-vera-text-secondary text-vera-heading-4!">
         {t('waitingRoom.user.input.title')}
       </Typography>
 
@@ -122,11 +122,11 @@ const UsernameInput = ({
 
       <Separator width="100%" />
 
-      <Typography className={'text-vera-secondary text-vera-heading-4!'}>
+      <Typography className={'text-vera-text-secondary text-vera-heading-4!'}>
         {t('waitingRoom.title')}
       </Typography>
 
-      <Typography className="text-vera-tertiary text-vera-heading-4!" noWrap>
+      <Typography className="text-vera-text-tertiary text-vera-heading-4!" noWrap>
         {roomName}
       </Typography>
 

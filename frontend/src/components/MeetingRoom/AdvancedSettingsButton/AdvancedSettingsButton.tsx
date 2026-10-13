@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import ToolbarButton from '../ToolbarButton';
 
 export type AdvancedSettingsButtonProps = {

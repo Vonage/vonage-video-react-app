@@ -42,7 +42,7 @@ const JoinWaitRoomButton = ({
      */
     const session = await videoClient.createSession({ roomName });
 
-    navigate(`/waiting-room/${session.sessionKey}`);
+    void navigate(`/waiting-room/${session.sessionKey}`);
   };
 
   return (

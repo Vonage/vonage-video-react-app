@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import DialogContent from '@mui/material/DialogContent';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import Typography from '@mui/material/Typography';
 import BackgroundEffectsLayout from '../../../BackgroundEffects/BackgroundEffectsLayout';
 

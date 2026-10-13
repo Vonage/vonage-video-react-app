@@ -8,6 +8,7 @@ process.env.JIRA_EPIC_LINK = 'jiraEpicLink';
 process.env.JIRA_EPIC_URL = 'jiraEpicUrl';
 process.env.VONAGE_APP_ID = 'vonageAppId';
 process.env.VONAGE_PRIVATE_KEY = 'vonagePrivateKey';
+process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
 process.env.OT_API_KEY = 'someOpenTokKey';
 process.env.OT_API_SECRET = 'opentokAPISecret';
 process.env.SESSION_KEY_SECRET = 'test-session-key-secret-for-jwt-signing';

@@ -106,7 +106,6 @@ describe('ArchivingButton', () => {
 
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
-      archiveId: testArchiveId,
     });
 
     vi.useRealTimers();

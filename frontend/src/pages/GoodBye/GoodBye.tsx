@@ -1,13 +1,11 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import PageLayout from '@ui/PageLayout';
-import Banner from '@components/Banner';
-import Footer from '@components/Footer/Footer';
-import ArchiveList from '../../components/GoodBye/ArchiveList';
-import GoodByeMessage from '../../components/GoodBye/GoodbyeMessage';
+import { PageLayout, Card } from '@ui';
+import { Banner, Footer } from '@components';
+import ArchiveList from '@components/GoodBye/ArchiveList';
+import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
-import Card from '@ui/Card';
 import useGoodByePage from '../../hooks/useGoodByePage';
 
 /**
@@ -22,7 +20,7 @@ import useGoodByePage from '../../hooks/useGoodByePage';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
-  const { archives, header, caption, isSelfDeclinedRecording } = useGoodByePage();
+  const { header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
     <PageLayout>
@@ -35,7 +33,7 @@ const GoodBye = (): ReactElement => {
       <PageLayout.Right>
         <div className="flex w-full flex-col items-center gap-8">
           <Card className="w-full max-w-125">
-            <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-3 w-full text-left">
+            <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
             <div className="mb-6 w-full">
@@ -45,10 +43,10 @@ const GoodBye = (): ReactElement => {
           </Card>
           {!isSelfDeclinedRecording && (
             <Card className="w-full max-w-125">
-              <p className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-6">
+              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
                 {t('archiveList.label')}
               </p>
-              <ArchiveList archives={archives} />
+              <ArchiveList />
             </Card>
           )}
         </div>

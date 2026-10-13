@@ -2,7 +2,7 @@
 set -e
 
 # build artifact
-source ./vcrBuild.env.sh
+source ./env.sh
 
 # run install skipping post install script which requires husky
 yarn install --production=false --ignore-scripts --frozen-lockfile

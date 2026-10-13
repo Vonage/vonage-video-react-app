@@ -5,7 +5,7 @@ import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtur
 
 import MenuDevices from './MenuDevices';
 import * as util from '@utils/util';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 
 const someDevices = makeMediaDeviceInfos();
 

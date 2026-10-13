@@ -2,9 +2,9 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import classNames from 'classnames';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { makeApplicationErrorMapper } from '@core/errors';
@@ -58,7 +58,7 @@ const VideoDevices = ({
     env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
-          className={classNames('text-vera-tertiary', className)}
+          className={classNames(className)}
           sx={{
             display: 'flex',
             ml: 2,
@@ -72,7 +72,9 @@ const VideoDevices = ({
             customSize={-5}
             style={{ color: 'var(--vera-text-secondary)' }}
           />
-          <p className="text-vera-body-extended ml-4">{t('devices.video.camera.full')}</p>
+          <p className="text-vera-body-extended text-vera-text-tertiary ml-4">
+            {t('devices.video.camera.full')}
+          </p>
         </Box>
         <MenuList id="split-button-menu">
           {devicesAvailable.map((option) => {

@@ -5,7 +5,7 @@ import useSessionContext from '@hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
@@ -86,7 +86,9 @@ const ArchivingButton = ({
         }, RECORDING_START_DELAY);
       }
     } else if (archiveId) {
-      void videoClient.stopArchive({ sessionKey: sessionKey!, archiveId });
+      // Call stopArchive without archiveId - backend middleware will inject it from storage
+      // This handles server rotation where frontend has old archiveId
+      void videoClient.stopArchive({ sessionKey: sessionKey! });
     }
   };
 

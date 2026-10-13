@@ -5,6 +5,23 @@ type ThrottleOptions = {
   trailing?: boolean;
 };
 
+/**
+ * Rate-limits a function so it executes at most once per `wait` milliseconds.
+ * Useful for high-frequency events (scroll, resize, mouse move) where executing on every
+ * frame would degrade performance or flood a backend with redundant requests.
+ *
+ * By default both `leading` and `trailing` invocations are enabled — the first call fires
+ * immediately, and if more calls arrive during the wait window, the last one fires after
+ * the interval expires. Set `leading: false` to skip the immediate call, or `trailing: false`
+ * to drop the deferred one.
+ *
+ * @param callback - The function to throttle.
+ * @param wait - Minimum interval in milliseconds between executions.
+ * @param options - Control leading/trailing behavior.
+ * @param options.leading - Fire on the leading edge of the interval. Defaults to `true`.
+ * @param options.trailing - Fire on the trailing edge of the interval. Defaults to `true`.
+ * @returns A throttled version of the callback with the same parameter signature.
+ */
 function throttle<T extends (...args: Any[]) => void>(
   callback: T,
   wait: number,

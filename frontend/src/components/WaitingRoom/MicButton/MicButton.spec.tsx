@@ -17,8 +17,6 @@ const mockDevices = makeMediaDeviceInfos();
 
 describe('MicButton', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
     env.partialUpdate({
       ALLOW_MICROPHONE_CONTROL: true,
     });

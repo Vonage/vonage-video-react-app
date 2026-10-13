@@ -82,11 +82,11 @@ describe('useWaitingRoom', () => {
     expect(result.current.isRoomReady).toBe(false);
   });
 
-  it('isRoomReady is false when WAITING_ROOM_ALLOW_DEVICE_SELECTION is false', () => {
+  it('isRoomReady is true when WAITING_ROOM_ALLOW_DEVICE_SELECTION is false', () => {
     env.WAITING_ROOM_ALLOW_DEVICE_SELECTION = false;
 
     const { result } = renderHook(() => useWaitingRoom());
-    expect(result.current.isRoomReady).toBe(false);
+    expect(result.current.isRoomReady).toBe(true);
   });
 
   describe('audio input menu', () => {

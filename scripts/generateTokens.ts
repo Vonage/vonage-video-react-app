@@ -13,7 +13,7 @@ import tokensToJson from '../libs/ui/src/theme/helpers/designTokens/helpers/toke
 const scriptsToRun = ['libs/ui/src/theme/helpers/tailwind/generateTailwindPlugin.ts'];
 const commandName = 'sync:theme-tokens';
 
-const rootDesignTokensFilePath = path.resolve('designTokens.json');
+const rootDesignTokensFilePath = path.resolve('theme.json');
 const pluginDesignTokensFilePath = path.resolve(
   'libs/ui/src/theme/helpers/designTokens/designTokens.json'
 );
@@ -23,17 +23,15 @@ function syncPluginTokensFromRootOrDefaults(): void {
   console.log('\x1b[36m→ Syncing plugin token source\x1b[0m');
 
   if (!fs.existsSync(rootDesignTokensFilePath)) {
-    console.log(
-      '\x1b[36m→ Root designTokens.json not found. Bootstrapping from TS defaults\x1b[0m'
-    );
+    console.log('\x1b[36m→ Root theme.json not found. Bootstrapping from TS defaults\x1b[0m');
 
-    tokensToJson('.', 'designTokens.json');
+    tokensToJson('.', 'theme.json');
     const generatedRootTokens = fs.readFileSync(rootDesignTokensFilePath, 'utf-8');
 
     fs.writeFileSync(pluginDesignTokensFilePath, generatedRootTokens, 'utf-8');
 
     console.log(
-      `\x1b[32m✔ Root designTokens.json created from defaults at ${rootDesignTokensFilePath}\x1b[0m`
+      `\x1b[32m✔ Root theme.json created from defaults at ${rootDesignTokensFilePath}\x1b[0m`
     );
 
     console.log(
@@ -43,7 +41,7 @@ function syncPluginTokensFromRootOrDefaults(): void {
     return;
   }
 
-  console.log('\x1b[36m→ Root designTokens.json found. Using it as source of truth\x1b[0m');
+  console.log('\x1b[36m→ Root theme.json found. Using it as source of truth\x1b[0m');
   const rootTokens = fs.readFileSync(rootDesignTokensFilePath, 'utf-8');
 
   fs.writeFileSync(
@@ -59,9 +57,9 @@ function syncPluginTokensFromRootOrDefaults(): void {
 
 /**
  * Syncs design token JSON files and Tailwind plugin.
- * - Always regenerates designTokens.example.json from TS defaults.
- * - Uses root designTokens.json as source of truth when it exists.
- * - Bootstraps root designTokens.json from defaults when it does not exist.
+ * - Always regenerates theme.example.json from TS defaults.
+ * - Uses root theme.json as source of truth when it exists.
+ * - Bootstraps root theme.json from defaults when it does not exist.
  * - Always rebuilds and formats veraUI.cjs.
  * Exits with error code 1 if any script fails.
  */
@@ -70,7 +68,7 @@ const generateTokens = () => {
 
   try {
     console.log('\x1b[36m→ Generating root example token artifact\x1b[0m');
-    tokensToJson('.', 'designTokens.example.json');
+    tokensToJson('.', 'theme.example.json');
 
     syncPluginTokensFromRootOrDefaults();
   } catch (error) {

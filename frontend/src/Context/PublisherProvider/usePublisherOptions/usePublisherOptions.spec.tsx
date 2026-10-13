@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach, afterAll } from 'vites
 import { renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import OT from '@vonage/client-sdk-video';
 import localStorageMock from '@utils/mockData/localStorageMock';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import type { advancedSettings } from '@Context/AdvancedSettings';
 import advancedSettings$ from '@Context/AdvancedSettings';
@@ -10,6 +10,7 @@ import makeMediaDeviceInfos from '@web-test/fixtures/makeMediaDeviceInfos';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import usePublisherOptions from './usePublisherOptions';
 import { env } from '../../../env';
+import { Resolution } from '@common/types';
 
 const devices = makeMediaDeviceInfos();
 const audioDevice = devices.find((d) => d.kind === 'audioinput')!;
@@ -27,7 +28,7 @@ describe('usePublisherOptions', () => {
     env.partialUpdate({
       ALLOW_VIDEO_ON_JOIN: true,
       ALLOW_AUDIO_ON_JOIN: true,
-      DEFAULT_RESOLUTION: '1280x720',
+      DEFAULT_RESOLUTION: Resolution.HD_LANDSCAPE,
     });
 
     Object.defineProperty(window, 'localStorage', {
@@ -63,6 +64,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: env.PUBLISHER_MAX_RESOLUTION,
+        videoContentHint: '',
         preferredVideoCodecs: 'automatic',
         publishAudio: false,
         publishVideo: false,
@@ -71,14 +73,18 @@ describe('usePublisherOptions', () => {
           publisher: false,
           subscriber: false,
         },
-        audioFilter: {
-          type: 'advancedNoiseSuppression',
-        },
+        audioFilter: undefined,
+        audioSource: undefined,
+        autoGainControl: true,
+        echoCancellation: true,
         enableDtx: true,
+        noiseSuppression: true,
         videoFilter: undefined,
+        videoSource: undefined,
         name: '',
         initials: '',
         publishCaptions: true,
+        publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
       });
     });
   });
@@ -133,6 +139,7 @@ describe('usePublisherOptions', () => {
       expect(result.current).toEqual({
         frameRate: 30,
         resolution: env.PUBLISHER_MAX_RESOLUTION,
+        videoContentHint: '',
         preferredVideoCodecs: 'automatic',
         publishAudio: true,
         publishVideo: true,
@@ -144,7 +151,10 @@ describe('usePublisherOptions', () => {
           subscriber: false,
         },
         audioFilter: undefined,
+        autoGainControl: true,
+        echoCancellation: true,
         enableDtx: true,
+        noiseSuppression: true,
         videoFilter: {
           type: 'backgroundBlur',
           blurStrength: 'high',
@@ -152,6 +162,7 @@ describe('usePublisherOptions', () => {
         name: 'Foo Bar',
         initials: 'FB',
         publishCaptions: true,
+        publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
       });
     });
   });
@@ -188,7 +199,7 @@ describe('usePublisherOptions', () => {
     it('should always use max resolution for publisher initialization', async () => {
       const { result } = renderHook(
         () => usePublisherOptions({ isAudioEnabled: true, isVideoEnabled: true }),
-        { dialogState: { resolution: '1280x720' } }
+        { dialogState: { resolution: Resolution.HD_LANDSCAPE } }
       );
 
       await waitFor(() => {

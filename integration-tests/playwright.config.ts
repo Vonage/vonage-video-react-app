@@ -6,6 +6,7 @@ import { VIEWPORT } from './tests/utils';
 const isHeadedMode = process.env.headedMode === 'true';
 const isDebugMode = process.env.debugMode === 'true';
 const isInspectMode = process.env.inspectMode === 'true';
+const snapshotPlatform = process.env.PLAYWRIGHT_SNAPSHOT_PLATFORM ?? process.platform;
 
 /**
  * Chromium media testing flags
@@ -47,6 +48,7 @@ const fakeDeviceChromiumFlags = [
 export default defineConfig({
   timeout: 60000,
   testDir: './tests',
+  snapshotPathTemplate: `{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-${snapshotPlatform}{ext}`,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -133,19 +135,16 @@ export default defineConfig({
     reuseExistingServer: true,
     timeout: 120 * 1000, // 2 minutes for CI builds with terser minification
     env: {
-      AVOID_FETCHING_APP_CONFIG: 'true',
       BYPASS_WAITING_ROOM: 'false',
     },
 
     ...(isDebugMode
       ? {
-          command:
-            'bash -c "cd .. && source vcrBuild.env.sh && AVOID_FETCHING_APP_CONFIG=true BYPASS_WAITING_ROOM=false yarn dev"',
+          command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn dev"',
           url: 'http://localhost:5173/',
         }
       : {
-          command:
-            'bash -c "cd .. && source vcrBuild.env.sh && AVOID_FETCHING_APP_CONFIG=true BYPASS_WAITING_ROOM=false yarn start"',
+          command: 'bash -c "cd .. && source env.sh && BYPASS_WAITING_ROOM=false yarn start"',
           url: 'http://127.0.0.1:3345',
         }),
   },

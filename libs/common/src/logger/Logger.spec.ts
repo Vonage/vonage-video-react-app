@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { LoggerBase as LoggerBaseClass, LoggerFeature, type LoggerProviderConfig } from './Logger';
+import { default as LoggerBaseClass, LoggerFeature, type LoggerProviderConfig } from './Logger';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 const minimalProvider: LoggerProviderConfig = {

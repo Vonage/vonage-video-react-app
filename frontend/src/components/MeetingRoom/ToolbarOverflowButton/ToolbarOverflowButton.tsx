@@ -1,6 +1,6 @@
 import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';

@@ -41,7 +41,8 @@ const ScreenSharePublisher = ({
       containerRef.current.appendChild(element);
     }
   }, [element]);
-  const streamName = publisher?.stream?.name ?? '';
+  const participantName = publisher?.stream?.name ?? '';
+  const streamName = t('participants.screen', { participantName });
   return (
     box && (
       <VideoTile

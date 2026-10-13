@@ -19,3 +19,5 @@ export type * from './VideoSessionDetailsWithToken';
 export type * from './SessionKey';
 export type * from './DeepPartial';
 export * from './FacingMode';
+export { Resolution } from '../schemas/Resolution.schema';
+export { Lang } from '../schemas/Lang.schema';

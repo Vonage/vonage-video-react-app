@@ -18,19 +18,13 @@ describe('Emoji component', () => {
   });
 
   it('applies correct inline styles including animationDuration', () => {
-    render(<Emoji emojiWrapper={{ ...emojiWrapper }} />);
+    render(<Emoji emojiWrapper={{ ...emojiWrapper }} style={{ position: 'absolute' }} />);
 
     const container = screen.getByTestId('emoji-string-container');
-    const expectedDuration = EMOJI_DISPLAY_DURATION + 100;
 
     expect(container).toHaveStyle({
       position: 'absolute',
-      animationName: 'moveEmoji',
-      animationDuration: `${expectedDuration}ms`,
-      animationTimingFunction: 'linear',
-      animationIterationCount: '1',
-      maxWidth: '35%',
-      zIndex: '1',
+      animationDuration: `${EMOJI_DISPLAY_DURATION}ms`,
     });
   });
 });

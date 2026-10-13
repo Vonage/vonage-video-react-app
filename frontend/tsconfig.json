@@ -23,8 +23,8 @@
       "@app-types/*": ["./src/types/*"],
       "@common": ["../libs/common/src"],
       "@common/*": ["../libs/common/src/*"],
-      "@web": ["../libs/common/srcBrowser"],
-      "@web/*": ["../libs/common/srcBrowser/*"],
+      "@web": ["../libs/common/web"],
+      "@web/*": ["../libs/common/web/*"],
 
       "@components": ["./src/components"],
       "@components/*": ["./src/components/*"],
@@ -51,8 +51,8 @@
       "@tests/*": ["./src/tests/*"],
       "@common-test": ["../libs/common/test"],
       "@common-test/*": ["../libs/common/test/*"],
-      "@web-test": ["../libs/common/testBrowser"],
-      "@web-test/*": ["../libs/common/testBrowser/*"],
+      "@web-test": ["../libs/common/web-test"],
+      "@web-test/*": ["../libs/common/web-test/*"],
       "@core-test": ["../libs/core/test"],
       "@core-test/*": ["../libs/core/test/*"],
       "@ui-test": ["../libs/ui/test"],
@@ -60,7 +60,7 @@
 
       // video-router
       "@api-lib/*": ["../libs/api/src/*"],
-      "@node/*": ["../libs/common/srcNode/*"]
+      "@node/*": ["../libs/common/node/*"]
     },
     "types": ["vite/client", "node", "vitest", "vitest/globals"]
   },
@@ -76,8 +76,8 @@
     ".storybook/main.ts",
     ".storybook/preview.tsx",
     "../libs/common/test/**/*.ts",
-    "../libs/common/testBrowser/**/*.ts",
-    "../libs/common/testBrowser/**/*.tsx",
+    "../libs/common/web-test/**/*.ts",
+    "../libs/common/web-test/**/*.tsx",
     "./src/index.d.ts"
   ],
   "exclude": ["node_modules"]

@@ -75,3 +75,60 @@ test('User should be able to navigate to the next page using enter key', async (
 
   await page.waitForSelector('.publisher', { state: 'visible', timeout: 10000 });
 });
+
+test('should keep landing content equivalent across languages', async ({ page }) => {
+  const localizedLandingExpectations = [
+    {
+      languageOption: 'English',
+      sectionHeading: 'Start a new video meeting',
+      joinHeading: 'Join existing meeting',
+      roomNameLabel: 'Room name',
+      joinWaitingRoomButton: 'Join waiting room',
+      emptyRoomNameErrorText: 'Cannot be empty, contain',
+    },
+    {
+      languageOption: 'English (US)',
+      sectionHeading: 'Start a new video meeting',
+      joinHeading: 'Join existing meeting',
+      roomNameLabel: 'Room name',
+      joinWaitingRoomButton: 'Join waiting room',
+      emptyRoomNameErrorText: 'Cannot be empty, contain',
+    },
+    {
+      languageOption: 'Deutsch',
+      sectionHeading: 'Neues Videomeeting starten',
+      joinHeading: 'Bestehendem Meeting beitreten',
+      roomNameLabel: 'Raumname',
+      joinWaitingRoomButton: 'Warteraum betreten',
+      emptyRoomNameErrorText: 'Kann nicht leer sein und darf',
+    },
+    {
+      languageOption: 'Italiano',
+      sectionHeading: 'Inizia una nuova',
+      joinHeading: 'Unisciti a una riunione',
+      roomNameLabel: 'Nome della stanza',
+      joinWaitingRoomButton: "Unisciti alla sala d'attesa",
+      emptyRoomNameErrorText: 'Non può essere vuoto,',
+    },
+    {
+      languageOption: 'Español (México)',
+      sectionHeading: 'Iniciar una nueva',
+      joinHeading: 'Unirse a una reunión existente',
+      roomNameLabel: 'Nombre de sala',
+      joinWaitingRoomButton: 'Unirse a la sala de espera',
+      emptyRoomNameErrorText: 'No se permite dejar el campo',
+    },
+  ];
+
+  for (const expectation of localizedLandingExpectations) {
+    await page.getByRole('combobox').click();
+    await page.getByRole('option', { name: expectation.languageOption, exact: true }).click();
+
+    await expect(page.getByRole('heading', { name: expectation.sectionHeading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: expectation.joinHeading })).toBeVisible();
+
+    await page.getByRole('button', { name: expectation.joinWaitingRoomButton }).click();
+    await expect(page.getByLabel(expectation.roomNameLabel)).toBeVisible();
+    await expect(page.getByText(expectation.emptyRoomNameErrorText)).toBeVisible();
+  }
+});

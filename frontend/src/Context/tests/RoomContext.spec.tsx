@@ -1,7 +1,7 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import { Route, Routes } from 'react-router-dom';
-import MemoryRouter from '@test/RouterWrapper';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, ReactElement } from 'react';
 import { nativeDevices } from '@utils/mockData/device';

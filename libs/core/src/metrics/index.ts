@@ -7,3 +7,8 @@ export { default as PacketLossValue, packetLossValue } from './PacketLossValue';
 export { default as DurationValue, durationValue } from './DurationValue';
 export { default as OptionalValue, optionalValue } from './OptionalValue';
 export { default as ResolutionValue, resolutionValue, type Resolution } from './ResolutionValue';
+export { default as NetworkConditionValue, networkConditionValue } from './NetworkConditionValue';
+export {
+  default as NetworkConditionReasonValue,
+  networkConditionReasonValue,
+} from './NetworkConditionReasonValue';

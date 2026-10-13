@@ -146,99 +146,36 @@ export type VeraCssVariable =
   | VeraColorCssVariable
   | VeraTypographyCssVariable;
 
-type VeraTypographyProperties = Partial<{
-  fontSize: string;
-  lineHeight: string;
-  fontWeight: string;
-  mobileFontSize: string;
-  mobileLineHeight: string;
-  mobileFontWeight: string;
-}>;
+export type TypographyStyle = {
+  'font-size': string;
+  'line-height': string;
+  'font-weight': number;
+};
 
-type VeraColorProperties = Partial<{
-  accent: string;
-  alertBackground: string;
-  alertBackgroundHover: string;
-  alertText: string;
-  background: string;
-  border: string;
-  darkBackground: string;
-  darkGrey: string;
-  darkGreyHover: string;
-  darkGreyOpacity: string;
-  disabled: string;
-  error: string;
-  errorHover: string;
-  information: string;
-  informationBackground: string;
-  informationHover: string;
-  onAccent: string;
-  onBackground: string;
-  onDarkGrey: string;
-  onError: string;
-  onInformation: string;
-  onPrimary: string;
-  onSecondary: string;
-  onSuccess: string;
-  onSurface: string;
-  onTertiary: string;
-  onWarning: string;
-  primary: string;
-  primaryHover: string;
-  secondary: string;
-  secondaryHover: string;
-  skeletonLike: string;
-  success: string;
-  successHover: string;
-  surface: string;
-  tertiary: string;
-  tertiaryHover: string;
-  textDisabled: string;
-  textPrimary: string;
-  textSecondary: string;
-  textTertiary: string;
-  warning: string;
-  warningHover: string;
-}>;
+export type TypographyScale = Record<VeraTypographyTokenKey, TypographyStyle>;
 
-/**
- * Configuration for the veraUI Tailwind plugin.
- * Allows overriding design tokens for colors, typography, border radius, and font family.
- * All tokens are optional and will fall back to design system defaults.
- *
- * @example
- * // Using default values
- * plugins: [veraUI()]
- *
- * @example
- * // Overriding specific tokens
- * plugins: [veraUI({
- *   light: { primary: '#FF5733', accent: '#00FF00' },
- *   dark: { primary: '#AA2211', accent: '#00AA00' },
- *   borderRadiusMedium: '12px',
- *   headline: { fontSize: '5rem' },
- * })]
- */
-export type VeraUIConfig = {
-  light?: VeraColorProperties;
-  dark?: VeraColorProperties;
-  borderRadiusNone?: string;
-  borderRadiusExtraSmall?: string;
-  borderRadiusSmall?: string;
-  borderRadiusMedium?: string;
-  borderRadiusLarge?: string;
-  borderRadiusExtraLarge?: string;
-  fontFamilyPlain?: string;
-  headline?: VeraTypographyProperties;
-  subtitle?: VeraTypographyProperties;
-  heading1?: VeraTypographyProperties;
-  heading2?: VeraTypographyProperties;
-  heading3?: VeraTypographyProperties;
-  heading4?: VeraTypographyProperties;
-  bodyExtended?: VeraTypographyProperties;
-  bodyExtendedSemibold?: VeraTypographyProperties;
-  bodyBase?: VeraTypographyProperties;
-  bodyBaseSemibold?: VeraTypographyProperties;
-  caption?: VeraTypographyProperties;
-  captionSemibold?: VeraTypographyProperties;
+export type VeraThemeTokens = {
+  metadata: {
+    name: string;
+    version: string;
+    created: string;
+    description: string;
+  };
+  colors: {
+    light: Record<string, string>;
+    dark: Record<string, string>;
+  };
+  borderRadius: {
+    none: number;
+    'extra-small': number;
+    small: number;
+    medium: number;
+    large: number;
+    'extra-large': number;
+  };
+  typography: {
+    'font-family': string;
+    desktop: TypographyScale;
+    mobile: TypographyScale;
+  };
 };

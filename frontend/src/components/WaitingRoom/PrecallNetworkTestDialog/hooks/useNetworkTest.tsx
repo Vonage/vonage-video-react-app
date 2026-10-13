@@ -164,12 +164,12 @@ const useNetworkTest = () => {
               }));
             });
 
-            // timeout after 30s
+            // timeout after 60s
 
             const qualityResults = await new Promise<QualityTestResults>((res, rej) => {
               const timeout = setTimeout(
-                () => rej(new Error('Network test timed out')),
-                options.timeout || 30000
+                () => rej(new Error(t('waitingRoom.precallNetworkTest.error.timeout'))),
+                options.timeout || 60000
               );
 
               networkTest

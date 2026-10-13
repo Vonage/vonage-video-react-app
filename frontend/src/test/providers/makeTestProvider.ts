@@ -6,43 +6,40 @@ import {
   makeRuntimeProviderWrapper,
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
-  makeAdvancedSettingsProviderWrapper,
+  makeScreenShareProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
   type PreviewPublisherProviderWrapperOptions,
   type PublisherProviderWrapperOptions,
   type RuntimeProviderWrapperOptions,
   type SessionProviderWrapperOptions,
   type UserProviderWrapperOptions,
-  AdvancedSettingsProviderWrapperOptions,
+  type ScreenShareProviderWrapperOptions,
 } from './makersIndex';
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
-  advancedSettings = 'advancedSettings',
   runtime = 'runtime',
   user = 'user',
   session = 'session',
   publisher = 'publisher',
   backgroundPublisher = 'backgroundPublisher',
   previewPublisher = 'previewPublisher',
+  screenShare = 'screenShare',
 }
 
 type ProviderOptionsByKey = {
-  [providers.advancedSettings]: AdvancedSettingsProviderWrapperOptions;
   [providers.runtime]: RuntimeProviderWrapperOptions;
   [providers.user]: UserProviderWrapperOptions;
   [providers.session]: SessionProviderWrapperOptions;
   [providers.publisher]: PublisherProviderWrapperOptions;
   [providers.backgroundPublisher]: BackgroundPublisherProviderWrapperOptions;
   [providers.previewPublisher]: PreviewPublisherProviderWrapperOptions;
+  [providers.screenShare]: ScreenShareProviderWrapperOptions;
 };
 
 type ProviderContextsByKey = {
-  [providers.advancedSettings]: NonNullable<
-    ReturnType<typeof makeAdvancedSettingsProviderWrapper>['context']
-  >;
   [providers.runtime]: NonNullable<ReturnType<typeof makeRuntimeProviderWrapper>['context']>;
   [providers.user]: NonNullable<ReturnType<typeof makeUserProviderWrapper>['context']>;
   [providers.session]: NonNullable<ReturnType<typeof makeSessionProviderWrapper>['context']>;
@@ -53,13 +50,15 @@ type ProviderContextsByKey = {
   [providers.previewPublisher]: NonNullable<
     ReturnType<typeof makePreviewPublisherProviderWrapper>['context']
   >;
+  [providers.screenShare]: NonNullable<
+    ReturnType<typeof makeScreenShareProviderWrapper>['context']
+  >;
 };
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
-  [providers.advancedSettings]: [],
   [providers.runtime]: [],
   [providers.user]: [],
   [providers.session]: [providers.runtime, providers.user],
@@ -71,6 +70,7 @@ const PROVIDER_DEPENDENCIES = {
     providers.publisher,
   ],
   [providers.previewPublisher]: [providers.user],
+  [providers.screenShare]: [providers.user, providers.session],
 } as const;
 
 /**
@@ -154,11 +154,6 @@ function makeTestProvider<
    */
   const providerWrappers = sortedKeys.map((key) => {
     switch (key) {
-      case providers.advancedSettings:
-        return makeAdvancedSettingsProviderWrapper(
-          (options as ProviderOptionsFor<[providers.advancedSettings]> | undefined)
-            ?.advancedSettingsContext
-        );
       case providers.runtime:
         return makeRuntimeProviderWrapper(
           (options as ProviderOptionsFor<[providers.runtime]> | undefined)?.runtimeContext
@@ -184,6 +179,10 @@ function makeTestProvider<
         return makePreviewPublisherProviderWrapper(
           (options as ProviderOptionsFor<[providers.previewPublisher]> | undefined)
             ?.previewPublisherContext
+        );
+      case providers.screenShare:
+        return makeScreenShareProviderWrapper(
+          (options as ProviderOptionsFor<[providers.screenShare]> | undefined)?.screenShareContext
         );
       default:
         throw new Error(`Unknown provider: ${key}`);

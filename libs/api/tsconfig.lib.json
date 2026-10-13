@@ -11,10 +11,9 @@
   "include": [
     "src/**/*.ts",
     "../common/src/**/*.ts",
-    "../common/srcNode/**/*.ts",
+    "../common/node/**/*.ts",
     "../common/test/**/*.ts",
-    "../common/testNode/**/*.ts",
-    "../common/src/types/FacingMode.ts"
+    "../common/node-test/**/*.ts"
   ],
   "exclude": ["**/*.spec.*", "**/*.test.*", "../common/**/*.spec.*", "../common/**/*.test.*"]
 }

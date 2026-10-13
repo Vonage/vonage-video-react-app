@@ -2,12 +2,12 @@ import { ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import cleanAndDedupeDeviceLabels from '@utils/cleanAndDedupeDeviceLabels/cleanAndDedupeDeviceLabels';
 import SoundTest from '../../SoundTest';
 import { isGetActiveAudioOutputDeviceSupported } from '@utils/util';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { MediaDeviceInfoJSON } from '@web/types';
 import { makeApplicationErrorMapper } from '@core/errors';
@@ -80,7 +80,8 @@ const MenuDevices = ({
           </MenuItem>
         ))}
 
-      {shouldDisplayEmptyState && (
+      {/* audiooutput renders its own empty state below (with SoundTest), so exclude it here to avoid a duplicate */}
+      {shouldDisplayEmptyState && mediaDeviceKind !== 'audiooutput' && (
         <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
           {t('waitingRoom.devices.noDevicesFound')}
         </MenuItem>

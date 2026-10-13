@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "name": "Vonage Video App Theme",
+    "version": "1.0.0",
+    "created": "2026-08-20",
+    "description": "Unified design tokens (colors, border radius, typography) shared across the Vonage Video Android, iOS and React apps."
+  },
+  "colors": {
+    "light": {
+      "accent": "#FFFFFF",
+      "alert-background": "#FFEEF2",
+      "alert-background-hover": "#FEDFDF",
+      "alert-text": "#CD0000",
+      "background": "#F5F0FD",
+      "border": "#E6E6E6",
+      "dark-background": "#202124",
+      "dark-grey": "#333333",
+      "dark-grey-hover": "#292828",
+      "dark-grey-opacity": "#333333CD",
+      "disabled": "#E6E6E6",
+      "error": "#E61D1D",
+      "error-hover": "#CD0000",
+      "information": "#0276D5",
+      "information-background": "#E8F4FB",
+      "information-hover": "#2997F0",
+      "on-accent": "#000000",
+      "on-background": "#757575",
+      "on-dark-grey": "#FFFFFF",
+      "on-error": "#FFFFFF",
+      "on-information": "#FFFFFF",
+      "on-primary": "#FFFFFF",
+      "on-secondary": "#FFFFFF",
+      "on-success": "#FFFFFF",
+      "on-surface": "#929292",
+      "on-tertiary": "#FFFFFF",
+      "on-warning": "#FFFFFF",
+      "primary": "#9941FF",
+      "primary-hover": "#871EFF",
+      "secondary": "#000000",
+      "secondary-hover": "#666666",
+      "skeleton-like": "#B3B3B3",
+      "success": "#1C8731",
+      "success-hover": "#1F7629",
+      "surface": "#FFFFFF",
+      "tertiary": "#757575",
+      "tertiary-hover": "#929292",
+      "text-disabled": "#B3B3B3",
+      "text-primary": "#9941FF",
+      "text-secondary": "#000000",
+      "text-tertiary": "#757575",
+      "warning": "#BE5702",
+      "warning-hover": "#A64C03"
+    },
+    "dark": {
+      "accent": "#FFFFFF",
+      "alert-background": "#3E0004",
+      "alert-background-hover": "#6E0000",
+      "alert-text": "#FEDFDF",
+      "background": "#26044D",
+      "border": "#333333",
+      "dark-background": "#202124",
+      "dark-grey": "#333333",
+      "dark-grey-hover": "#292828",
+      "dark-grey-opacity": "#333333CD",
+      "disabled": "#333333",
+      "error": "#F75959",
+      "error-hover": "#FE9696",
+      "information": "#2997F0",
+      "information-background": "#E8F4FB",
+      "information-hover": "#0276D5",
+      "on-accent": "#000000",
+      "on-background": "#B3B3B3",
+      "on-dark-grey": "#FFFFFF",
+      "on-error": "#000000",
+      "on-information": "#FFFFFF",
+      "on-primary": "#000000",
+      "on-secondary": "#000000",
+      "on-success": "#000000",
+      "on-surface": "#FFFFFF",
+      "on-tertiary": "#000000",
+      "on-warning": "#000000",
+      "primary": "#B27BF2",
+      "primary-hover": "#CBA1FA",
+      "secondary": "#FFFFFF",
+      "secondary-hover": "#929292",
+      "skeleton-like": "#333333",
+      "success": "#30A849",
+      "success-hover": "#53CA6A",
+      "surface": "#000000",
+      "tertiary": "#B3B3B3",
+      "tertiary-hover": "#B3B3B3",
+      "text-disabled": "#666666",
+      "text-primary": "#B27BF2",
+      "text-secondary": "#FFFFFF",
+      "text-tertiary": "#B3B3B3",
+      "warning": "#FA9F00",
+      "warning-hover": "#FACC4B"
+    }
+  },
+  "borderRadius": {
+    "none": 0,
+    "extra-small": 2,
+    "small": 4,
+    "medium": 8,
+    "large": 12,
+    "extra-large": 24
+  },
+  "typography": {
+    "font-family": "Inter, sans-serif, system-ui, ui-sans-serif, Marker Felt, Trebuchet MS",
+    "desktop": {
+      "headline": {
+        "font-size": "66px",
+        "line-height": "88px",
+        "font-weight": 500
+      },
+      "subtitle": {
+        "font-size": "52px",
+        "line-height": "68px",
+        "font-weight": 500
+      },
+      "heading-1": {
+        "font-size": "40px",
+        "line-height": "52px",
+        "font-weight": 500
+      },
+      "heading-2": {
+        "font-size": "32px",
+        "line-height": "44px",
+        "font-weight": 500
+      },
+      "heading-3": {
+        "font-size": "26px",
+        "line-height": "36px",
+        "font-weight": 500
+      },
+      "heading-4": {
+        "font-size": "20px",
+        "line-height": "28px",
+        "font-weight": 500
+      },
+      "body-extended": {
+        "font-size": "16px",
+        "line-height": "24px",
+        "font-weight": 400
+      },
+      "body-extended-semibold": {
+        "font-size": "16px",
+        "line-height": "24px",
+        "font-weight": 600
+      },
+      "body-base": {
+        "font-size": "14px",
+        "line-height": "20px",
+        "font-weight": 400
+      },
+      "body-base-semibold": {
+        "font-size": "14px",
+        "line-height": "20px",
+        "font-weight": 600
+      },
+      "caption": {
+        "font-size": "12px",
+        "line-height": "16px",
+        "font-weight": 400
+      },
+      "caption-semibold": {
+        "font-size": "12px",
+        "line-height": "16px",
+        "font-weight": 600
+      }
+    },
+    "mobile": {
+      "headline": {
+        "font-size": "32px",
+        "line-height": "40px",
+        "font-weight": 500
+      },
+      "subtitle": {
+        "font-size": "30px",
+        "line-height": "38px",
+        "font-weight": 500
+      },
+      "heading-1": {
+        "font-size": "28px",
+        "line-height": "36px",
+        "font-weight": 500
+      },
+      "heading-2": {
+        "font-size": "24px",
+        "line-height": "32px",
+        "font-weight": 500
+      },
+      "heading-3": {
+        "font-size": "20px",
+        "line-height": "28px",
+        "font-weight": 500
+      },
+      "heading-4": {
+        "font-size": "18px",
+        "line-height": "24px",
+        "font-weight": 500
+      },
+      "body-extended": {
+        "font-size": "16px",
+        "line-height": "24px",
+        "font-weight": 400
+      },
+      "body-extended-semibold": {
+        "font-size": "16px",
+        "line-height": "24px",
+        "font-weight": 600
+      },
+      "body-base": {
+        "font-size": "14px",
+        "line-height": "20px",
+        "font-weight": 400
+      },
+      "body-base-semibold": {
+        "font-size": "14px",
+        "line-height": "20px",
+        "font-weight": 600
+      },
+      "caption": {
+        "font-size": "12px",
+        "line-height": "16px",
+        "font-weight": 400
+      },
+      "caption-semibold": {
+        "font-size": "12px",
+        "line-height": "16px",
+        "font-weight": 600
+      }
+    }
+  }
+}

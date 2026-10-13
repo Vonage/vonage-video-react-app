@@ -18,6 +18,7 @@ export type DialogProps = {
   handleClose: () => void;
   handleActionClick: () => void;
   actionText: DialogTexts;
+  disableDismiss?: boolean;
 };
 
 /**
@@ -37,11 +38,18 @@ const PopupDialog = ({
   handleClose,
   handleActionClick,
   actionText,
+  disableDismiss = false,
 }: DialogProps): ReactElement => {
   return (
     <Dialog
       open={isOpen}
-      onClose={handleClose}
+      onClose={(_event, reason) => {
+        const isDismissGesture = reason === 'backdropClick' || reason === 'escapeKeyDown';
+        if (disableDismiss && isDismissGesture) {
+          return;
+        }
+        handleClose();
+      }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >

@@ -1,4 +1,4 @@
-import { Lang } from '../../env';
+import { Lang } from '@common/types';
 
 export type LanguageOption = {
   code: Lang;

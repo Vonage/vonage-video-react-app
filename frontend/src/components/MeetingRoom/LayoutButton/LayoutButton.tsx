@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;

@@ -2,9 +2,9 @@ import { Box, MenuItem, MenuList, Tooltip } from '@mui/material';
 import classNames from 'classnames';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import VividIcon from '@ui/VividIcon';
+import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
-import mediaDevices$ from '@core/stores/devices';
+import mediaDevices$ from '@core/stores/mediaDevices';
 import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { handleClientApplicationError } from '@ui/helpers';
@@ -54,7 +54,6 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
     env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
       <>
         <Box
-          className="text-vera-tertiary"
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -68,7 +67,9 @@ const InputAudioDevices = ({ handleToggle }: InputAudioDevicesProps): ReactEleme
             customSize={-6}
             style={{ color: 'var(--vera-text-secondary) !important' }}
           />
-          <p className="text-vera-body-extended ml-4">{t('devices.audio.microphone.full')}</p>
+          <p className="text-vera-body-extended text-vera-text-tertiary ml-4">
+            {t('devices.audio.microphone.full')}
+          </p>
         </Box>
         <MenuList>
           {audioInputDevices.map((device) => {

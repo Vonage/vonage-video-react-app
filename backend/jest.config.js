@@ -8,6 +8,8 @@ export default {
   roots: ['<rootDir>/'],
   modulePaths: ['<rootDir>'],
   testMatch: ['**/tests/**/*.+(ts|tsx)', '**/?(*.)+(test).+(ts|tsx)'],
+  // `tests/helpers` holds test utilities, not test suites, so Jest must not scan it.
+  testPathIgnorePatterns: ['/node_modules/', '/tests/helpers/'],
   setupFiles: ['<rootDir>/jest/documentPolyfill.js', '<rootDir>/jest/setEnvVars.js'],
   coveragePathIgnorePatterns: ['/node_modules/', '/tests/', '/index\\.ts$'],
   collectCoverageFrom: [
@@ -26,8 +28,8 @@ export default {
     '^@common/(.*)$': '<rootDir>/../libs/common/src/$1',
     '^@common-test$': '<rootDir>/../libs/common/test',
     '^@common-test/(.*)$': '<rootDir>/../libs/common/test/$1',
-    '^@node$': '<rootDir>/../libs/common/srcNode',
-    '^@node/(.*)$': '<rootDir>/../libs/common/srcNode/$1',
+    '^@node$': '<rootDir>/../libs/common/node',
+    '^@node/(.*)$': '<rootDir>/../libs/common/node/$1',
   },
   transform: {
     '^.+\\.tsx?$': [
