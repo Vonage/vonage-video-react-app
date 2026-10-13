@@ -1,0 +1,280 @@
+.github/actions/deploy-vcr/action.yml
+  h_6029769cf9ac60 17-19,29-43
+.github/workflows/deploy-to-vcr.yml
+  h_6029769cf9ac60 37-49,37-44,45-48,49,62
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 16,131-187,131-139,140-151,152-174,175,176-187
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 20-21,20,21,79,89-92,93,96,98-135,98-101,103,104,105-110,111-115,116,117-124,125,126-129,130-132,133,134,135-136,150-162,150,152-153,154-163
+README.md
+  h_6029769cf9ac60 121-122
+backend/.env.example
+  h_6029769cf9ac60 27,30-36,53-57,59-62,59-69,64-78,71-81,80-95,82,83,84,85,86,87-95
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 10-12,62-69,62-99,73-74,76,79,83,85,88,92,94-97,100,107-108,110-181,110-124,125-127,128-181
+backend/helpers/config.ts
+  h_6029769cf9ac60 5-7,30,58,79,93-106,119-132
+backend/helpers/resolveResponseFormat.ts
+  h_6029769cf9ac60 1-18
+backend/jest/setEnvVars.js
+  h_6029769cf9ac60 16
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 3,5,7-10,17,19-21,27-29,35-78,35-58,59,60-61,62-68,69-78,88-95,114,119-120,122-124,125,126,127,128-129,130-131,132-135,132-165,136,137-140,141,142-144,145,146-163,164-165,166-170,171,172-176,177,178-179,181-182,184-187,189-192,189-191,194-211,194-210,213-219,213-217,218,219,221-224,221-222,223,224,226-227,229-230,232-235,237-238,241-247,241-243,245-247,249-250,249-251,253-284,253,254,255-256,257-272,273-274,275-284,286-306,286-287,288-289,290-300,301-305,306,308-312,314-316,318-320,318-319,322-352,322-341,343-344,346-349,351-352
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 2-3,2,3,6-18,6,7-10,11,12,13,14,15,16-18,25-29,31-35,31-32,33,34,35,51-58,55-57,62,70-71,73-93,73,74,75-93,96-99,96,97,98,99,102-110,113-114,117-129,117-118,119,120,121,122,123,124-129
+backend/middleware/authMiddleware/errors/SignInRequiredError.ts
+  h_6029769cf9ac60 1-20
+backend/middleware/authMiddleware/helpers/assertAllowedOrigin.ts
+  h_6029769cf9ac60 1-20
+backend/middleware/authMiddleware/helpers/authenticateCookieSession.ts
+  h_6029769cf9ac60 1-116,1-11,12-16,17-84,85-99,100-116
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  h_6029769cf9ac60 1-43
+backend/middleware/authMiddleware/helpers/isTokenIssuedToClient.ts
+  h_6029769cf9ac60 1-20
+backend/middleware/authMiddleware/helpers/logAuthFeatures.ts
+  h_6029769cf9ac60 1-9
+backend/middleware/authMiddleware/helpers/readBearerToken.ts
+  h_6029769cf9ac60 1-23
+backend/middleware/authMiddleware/helpers/refreshAccessToken.ts
+  h_6029769cf9ac60 1-63
+backend/middleware/authMiddleware/helpers/verifyActiveToken.ts
+  h_6029769cf9ac60 1-26
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_6029769cf9ac60 7-8,18-35,41-42
+backend/middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema.ts
+  h_6029769cf9ac60 8,18-22
+backend/middleware/corsMiddleware/corsMiddleware.ts
+  h_6029769cf9ac60 1-22
+backend/middleware/corsMiddleware/index.ts
+  h_6029769cf9ac60 1
+backend/middleware/corsMiddleware/schemas/CorsConfig.schema.ts
+  h_6029769cf9ac60 1-32
+backend/middleware/errorHandler.ts
+  h_6029769cf9ac60 5,54,56,61
+backend/middleware/helmetMiddleware/helmetMiddleware.test.ts
+  h_6029769cf9ac60 22-29,47-60
+backend/middleware/helmetMiddleware/helmetMiddleware.ts
+  h_6029769cf9ac60 3,7-18,66-69
+backend/middleware/index.ts
+  h_6029769cf9ac60 5
+backend/routes/auth/auth.ts
+  h_6029769cf9ac60 2,5-7,10,12-17,12,13,14-17
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 1,2-3,3,4-5,5
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 5-13,35,39-46,49-54,57-58,62,68-77,79,81-86,89-90,96-99,103,109-122,125-136,138-141,143-144,147,149-150,156-160,162,168,170,177,181-182
+backend/routes/auth/handlers/callbackHandler.ts
+  h_6029769cf9ac60 13-16,18,33-42,50,52-55,63,67-71,75-76,80-81,87,97,107,111-114,116-120
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 5-12,29,39,43-50,53-58,107,110-115,118-121,127-131
+backend/routes/auth/handlers/signInHandler.ts
+  h_6029769cf9ac60 9-13,28-36,38-40,48-52,54-61,63,67-72
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 1-140,1,2,3-31,32,33-65,66,67,68-72,73,74,75,76,77,78-80,81-84,85-88,89,90-96,97-98,99-116,117,118-119,120-138,139,140
+backend/routes/auth/handlers/signOutHandler.ts
+  h_6029769cf9ac60 1-115,1,2,3-4,5-6,7-8,9,10-11,12,13-14,15,16-20,21-36,37-41,42-43,44,45-46,47-49,50,51,52-63,64,65-82,83-95,96-102,103-110,111,112-115
+backend/routes/auth/helpers/buildAuthCookieOptions.ts
+  h_6029769cf9ac60 1-20
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 1-23
+backend/routes/auth/helpers/cookiePayloadFormat.ts
+  h_6029769cf9ac60 1
+backend/routes/auth/helpers/decryptCookiePayload.ts
+  h_6029769cf9ac60 1-53
+backend/routes/auth/helpers/encryptCookiePayload.test.ts
+  h_6029769cf9ac60 1-40
+backend/routes/auth/helpers/encryptCookiePayload.ts
+  h_6029769cf9ac60 1-25
+backend/routes/auth/helpers/readCallbackPath.ts
+  h_6029769cf9ac60 1-5
+backend/routes/auth/helpers/readCookiePayload.ts
+  h_6029769cf9ac60 1-22
+backend/routes/auth/helpers/revokeTokens.ts
+  h_6029769cf9ac60 1-41
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 1-62
+backend/routes/auth/schemas/AuthTransactionCookie.schema.ts
+  h_6029769cf9ac60 1-11
+backend/routes/auth/schemas/IdTokenCookie.schema.ts
+  h_6029769cf9ac60 1-9
+backend/routes/auth/schemas/SessionCookie.schema.ts
+  h_6029769cf9ac60 1-11
+backend/routes/auth/schemas/SignOutRequestBody.schema.ts
+  h_6029769cf9ac60 1-9
+backend/routes/auth/schemas/TokenExchangeResponse.schema.ts
+  h_6029769cf9ac60 7-11
+backend/server.ts
+  h_6029769cf9ac60 1-2,10-19,10-16,17,18-19,34-39,46,62-64,92
+backend/tests/helpers/makeEncryptedCookieHeader.ts
+  h_6029769cf9ac60 1-8
+backend/tests/helpers/readEncryptedSetCookie.ts
+  h_6029769cf9ac60 1-21
+backend/tests/helpers/readSetCookie.ts
+  h_6029769cf9ac60 1-16
+backend/tests/helpers/testAuthCookieSecret.ts
+  h_6029769cf9ac60 1
+backend/tests/session.auth.test.ts
+  h_6029769cf9ac60 5-6,9,19-26,118-124
+backend/types/config.ts
+  h_6029769cf9ac60 31,35-36
+customWordList.mjs
+  h_6029769cf9ac60 2
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 5-7,11,14-20,15,18,23-31,29-31,33,35,39,41-42,44,46,48-51,48,53,53-54,55-57,59,62,64,66,68,70-72,74,76,78,78-80,80-82,82-93,84,86,88-93,95,97-99,98,103-107,109,111-136,128-130,142,144-147,149,151,153,155-156,156,158,160,162-163,162,165,167,169-176,178,182,184-186,185
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 7,51-63,128
+docs/GETTING_STARTED.md
+  h_6029769cf9ac60 56-57,59-61
+frontend/.env.example
+  h_6029769cf9ac60 41-44
+frontend/src/VeraRoom/VeraRoomElement.spec.tsx
+  h_6029769cf9ac60 133-151
+frontend/src/VeraRoom/VeraRoomElement.tsx
+  h_6029769cf9ac60 17-18,34-50,110-119,129-132,134,136-139
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.spec.ts
+  h_6029769cf9ac60 1-32
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.ts
+  h_6029769cf9ac60 1-25
+frontend/src/VeraRoom/hooks/useStateSynchronizer.ts
+  h_6029769cf9ac60 5,16-24,38-41
+frontend/src/VeraRoom/index.ts
+  h_6029769cf9ac60 6-8
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributes.ts
+  h_6029769cf9ac60 1
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  h_6029769cf9ac60 31-40
+frontend/src/VeraRoom/stores/bridge/constants/initialState.ts
+  h_6029769cf9ac60 2,12,17-18
+frontend/src/api/reportFeedback.ts
+  h_6029769cf9ac60 3,24-34
+frontend/src/components/Banner/Banner.spec.tsx
+  h_6029769cf9ac60 1,4,7-14,16-19,21-37
+frontend/src/components/Banner/Banner.tsx
+  h_6029769cf9ac60 2,6-7,12-13,28-34
+frontend/src/components/BannerLogout/BannerLogout.tsx
+  h_6029769cf9ac60 1-45,1-13,14-15,16-22,23,24,25,26,27,28-45
+frontend/src/components/BannerLogout/index.tsx
+  h_6029769cf9ac60 1-3
+frontend/src/env.ts
+  h_6029769cf9ac60 52,93
+frontend/src/index.d.ts
+  h_6029769cf9ac60 17-22
+frontend/src/locales/de.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/en.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/es.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/it.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 356-357
+frontend/src/services/auth/redirectToAuthProvider.ts
+  h_6029769cf9ac60 1-25
+frontend/src/services/videoClient.spec.ts
+  h_6029769cf9ac60 5,9,34,37-40,42-46,48-52
+frontend/src/services/videoClient.ts
+  h_6029769cf9ac60 3,7-9,17
+frontend/vite.config.ts
+  h_6029769cf9ac60 43,155-158,174-184,188
+integration-tests/playwright.auth.config.ts
+  h_6029769cf9ac60 1-53,1-3,4-22,23,24-37,38,39-53
+integration-tests/tests-auth/apiAccess.spec.ts
+  h_6029769cf9ac60 1-36
+integration-tests/tests-auth/authEnabled.setup.ts
+  h_6029769cf9ac60 1-15
+integration-tests/tests-auth/constants.ts
+  h_6029769cf9ac60 1-21,1-16,17,18-21
+integration-tests/tests-auth/helpers/readCookie.ts
+  h_6029769cf9ac60 1-15
+integration-tests/tests-auth/helpers/requestAccessToken.ts
+  h_6029769cf9ac60 1-43
+integration-tests/tests-auth/logout.spec.ts
+  h_6029769cf9ac60 1-61,1-4,5,6-43,44-57,58-61
+integration-tests/tests-auth/session.spec.ts
+  h_6029769cf9ac60 1-78,1-34,35,36-42,43,44-53,54-78
+integration-tests/tests-auth/signIn.spec.ts
+  h_6029769cf9ac60 1-37
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 10
+libs/common/src/helpers/isAllowedOrigin/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.test.ts
+  h_6029769cf9ac60 1-29
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.ts
+  h_6029769cf9ac60 1-39
+scripts/testIntegration.ts
+  h_6029769cf9ac60 9,82-91,82-87,88,89-91,186,248-252
+scripts/vcrDev.ts
+  h_6029769cf9ac60 7-8,11-15,11-12,13,14-15
+vcr-gha.yml
+  h_6029769cf9ac60 1-2,4-5,4,5,7-8,7,8,10,12,16,18,21,26,33-34,37,44,47,54,59,62-63,66-126,66,67-70,71-73,74-75,76,77-78,79,80-81,82,83,84,85,86,87,88,89-90,91,92-93,94,95-96,97,98-99,100,101-102,103,104,105,106,107,108,109,110,111,112,113,114,115-116,117,118-119,120,121-122,123,124-125,126,142
+vcrBuild.dev.sh
+  h_6029769cf9ac60 7-8,10-15
+.vscode/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 43-46
+.kiro/settings/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 55-58
+.kiro/scripts/codegraph.sh
+  s_5d339d35dcc85b::t_ff410406116f33 15-17
+apps/local-oidc/eslint.config.mjs
+  h_6029769cf9ac60 1-12
+apps/local-oidc/package.json
+  h_6029769cf9ac60 1-8
+apps/local-oidc/project.json
+  h_6029769cf9ac60 1-45
+apps/local-oidc/src/main.ts
+  h_6029769cf9ac60 1-40,41,42-46,47-51,52-107,108-109,110-118,119-124
+apps/local-oidc/tsconfig.json
+  h_6029769cf9ac60 1-13
+backend/project.json
+  h_6029769cf9ac60 12,19,27,51,58,67-73
+env.defaults.sh
+  h_6029769cf9ac60 1-23,24,25,26,27,28,29-39
+env.sh
+  h_6029769cf9ac60 2-4,6,8-10,13-14,19-20,24-25,27,29-33,42
+eslint.config.mjs
+  h_6029769cf9ac60 22
+package.json
+  h_6029769cf9ac60 35,51
+scripts/dev.ts
+  h_6029769cf9ac60 16,19,54,61-63
+scripts/generateEnv.ts
+  h_6029769cf9ac60 3-4,7,30-32,35-39,41-42,44,46-50,53-66,69-87,90-103,106-123,126-164,208,218-227,229-236,238
+scripts/generateSecret.ts
+  h_6029769cf9ac60 1-17
+scripts/testFrontend.ts
+  h_6029769cf9ac60 18-19,22-25
+backend/helpers/reportFatalErrors.ts
+  h_6029769cf9ac60 1-24
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_6029769cf9ac60 96-98
+backend/index.ts
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1485e542ee0eb3e25f5d4708175d07e4f3ecb0ee",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5d339d35dcc85b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c8fb-8819-73d2-8f80-16ed62c77891",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
