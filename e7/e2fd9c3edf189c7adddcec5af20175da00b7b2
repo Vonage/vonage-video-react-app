@@ -1,0 +1,19 @@
+docs/PROMISE_AUDIT.md
+  s_cf9628dc703c3f::t_a2a256d1d83fcf 1-145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e7e2fd9c3edf189c7adddcec5af20175da00b7b2",
+  "prompts": {},
+  "sessions": {
+    "s_cf9628dc703c3f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "47702122-64ad-45bb-ab2e-275a32bc7e5d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

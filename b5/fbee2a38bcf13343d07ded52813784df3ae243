@@ -1,0 +1,35 @@
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_4ecbdf2f02dc77::t_05fa578bc7b947 113
+  h_737cf808c1c597 65
+frontend/src/components/Subscriber/Subscriber.tsx
+  s_4ecbdf2f02dc77::t_b657fa0cb4e94b 2
+  h_737cf808c1c597 44,120,122,125
+  h_737cf808c1c597 121,123-124
+frontend/src/components/MeetingRoom/ScreenSharePublisher/ScreenSharePublisher.spec.tsx
+  s_4ecbdf2f02dc77::t_453ecc94987521 48
+frontend/src/components/MeetingRoom/ScreenSharePublisher/ScreenSharePublisher.tsx
+  s_4ecbdf2f02dc77::t_965dddaaa1852f 44-45
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_4ecbdf2f02dc77::t_da0008434d9c13 73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5fbee2a38bcf13343d07ded52813784df3ae243",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_4ecbdf2f02dc77": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_398c6732-1e73-40b6-9454-449e704d28c3",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

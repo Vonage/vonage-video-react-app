@@ -1,0 +1,25 @@
+frontend/src/components/Subscriber/Subscriber.spec.tsx
+  h_737cf808c1c597 143-160
+  s_4ecbdf2f02dc77::t_57a65882c2f714 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac95bdd7cf3ec127bcd088dc94693cc104352f78",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_4ecbdf2f02dc77": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_398c6732-1e73-40b6-9454-449e704d28c3",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

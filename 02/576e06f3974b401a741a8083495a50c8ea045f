@@ -1,0 +1,18 @@
+backend/helpers/reportFatalErrors.ts
+  h_6029769cf9ac60 1-8
+backend/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_6029769cf9ac60 96-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02576e06f3974b401a741a8083495a50c8ea045f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

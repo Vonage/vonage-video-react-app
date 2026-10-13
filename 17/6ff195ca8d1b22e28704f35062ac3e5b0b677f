@@ -1,0 +1,19 @@
+backend/tests/session.test.ts
+  s_16343696230de9::t_83df212ad0b51f 491,493-494
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "176ff195ca8d1b22e28704f35062ac3e5b0b677f",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

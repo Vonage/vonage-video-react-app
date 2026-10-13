@@ -1,0 +1,20 @@
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 218,223
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 31-32,117-118,120,123
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 48
+integration-tests/playwright.auth.config.ts
+  h_6029769cf9ac60 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3391195c0100f7203c46cdd83f471d7232b94388",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

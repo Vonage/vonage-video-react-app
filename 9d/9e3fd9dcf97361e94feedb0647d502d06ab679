@@ -1,0 +1,66 @@
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 16
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 122-126
+backend/.env.example
+  h_6029769cf9ac60 30-36,82,84,86
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 62-99,125-127
+backend/helpers/config.ts
+  h_6029769cf9ac60 5-7,30,58,79,93-106
+backend/jest/setEnvVars.js
+  h_6029769cf9ac60 16
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 3,27-29,59,62-68,132-165,252,254-255,272-273,287-288,300-304
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 3-4,51-58,73-83,122-123
+backend/middleware/authMiddleware/helpers/authenticateCookieSession.ts
+  h_6029769cf9ac60 12-16,85-99
+backend/middleware/corsMiddleware/corsMiddleware.ts
+  h_6029769cf9ac60 1-22
+backend/middleware/corsMiddleware/index.ts
+  h_6029769cf9ac60 1
+backend/middleware/corsMiddleware/schemas/CorsConfig.schema.ts
+  h_6029769cf9ac60 1-32
+backend/middleware/index.ts
+  h_6029769cf9ac60 5
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 35
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 29,39
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 32
+backend/server.ts
+  h_6029769cf9ac60 10-16,47
+backend/types/config.ts
+  h_6029769cf9ac60 31,35-36
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 15,18,29-31,53-54,115-117,169
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 51-63
+env.defaults.sh
+  h_6029769cf9ac60 24,26,28
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 10
+libs/common/src/helpers/isAllowedOrigin/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.test.ts
+  h_6029769cf9ac60 1-29
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.ts
+  h_6029769cf9ac60 1-39
+vcr-gha.yml
+  h_6029769cf9ac60 67-70,107,110,113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9d9e3fd9dcf97361e94feedb0647d502d06ab679",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
