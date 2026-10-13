@@ -112,8 +112,8 @@ const useMeetingRoom = () => {
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
-    resolveAndJoin().catch((err: unknown) => {
-      frontendLogger.reportError(err, { eventSource: 'useMeetingRoom.resolveAndJoin.error' });
+    resolveAndJoin().catch((error: unknown) => {
+      frontendLogger.reportError(error, { eventSource: 'useMeetingRoom.resolveAndJoin.error' });
     });
 
     return () => {
