@@ -1,0 +1,24 @@
+.github/workflows/check-base-branch.yml
+  s_3cb252efaac298::t_57db4824efd6ef 24-25,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "6b08c1e909b7ef0ddb6934b9ed3fa90cd7271fc3",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_3cb252efaac298": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_4b3be9fd-31af-474a-bd06-21ad18c61311",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

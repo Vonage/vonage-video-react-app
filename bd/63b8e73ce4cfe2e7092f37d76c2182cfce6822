@@ -1,0 +1,14 @@
+yarn.lock
+  h_737cf808c1c597 12255-12257
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bd63b8e73ce4cfe2e7092f37d76c2182cfce6822",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
