@@ -20,6 +20,14 @@ vi.doMock('helmet', () => ({
   default: helmetMock,
 }));
 
+jest.unstable_mockModule('../../helpers/config', () => ({
+  default: () => ({
+    authEnabled: true,
+    oidcEndSessionEndpoint: 'https://idp.example.com/logout',
+    oidcPostLogoutRedirectUri: 'https://vera.example.com/',
+  }),
+}));
+
 describe('helmetMiddleware', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -35,6 +43,20 @@ describe('helmetMiddleware', () => {
     helmetMiddleware(req, res, next);
 
     expect(helmetHandlerMock).toHaveBeenCalledWith(req, res, next);
+  });
+
+  it('should allow sign-out form redirects to the provider and the post-logout host', async () => {
+    await import('./helmetMiddleware');
+
+    expect(helmetMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contentSecurityPolicy: {
+          directives: expect.objectContaining({
+            'form-action': ["'self'", 'https://idp.example.com', 'https://vera.example.com'],
+          }),
+        },
+      })
+    );
   });
 
   it('should disable contentSecurityPolicy in development', async () => {
