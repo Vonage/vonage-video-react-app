@@ -8,16 +8,14 @@ import {
 } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
 import { isApplicationError } from '@common/errors/assertions';
-import { getCookieValue } from '@node/helpers';
-import isVcr from '../../../middleware/isVcr';
-import getSessionStorageService from '../../../sessionStorageService';
 import loadConfig from '../../../helpers/config';
-import generateOpaqueToken from '../helpers/generateOpaqueToken';
 import readStringQueryParam from '../helpers/readStringQueryParam';
-import { SESSION_COOKIE_NAME, TRANSACTION_COOKIE_NAME } from '../constants';
+import readCookiePayload from '../helpers/readCookiePayload';
+import writeSessionCookies from '../helpers/writeSessionCookies';
+import buildAuthCookieOptions from '../helpers/buildAuthCookieOptions';
+import readCallbackPath from '../helpers/readCallbackPath';
 import TokenExchangeResponseSchema from '../schemas/TokenExchangeResponse.schema';
-
-const TOKEN_EXCHANGE_TIMEOUT_MS = 5000;
+import AuthTransactionCookieSchema from '../schemas/AuthTransactionCookie.schema';
 
 function makeCallbackHandler() {
   const authConfig = loadConfig();
@@ -32,8 +30,16 @@ function makeCallbackHandler() {
     };
   }
 
-  const { oidcIssuerUrl, tokenPath, oidcClientId, oidcWebRedirectUri } = authConfig;
-  const sessionService = getSessionStorageService();
+  const {
+    oidcTokenEndpoint,
+    oidcClientId,
+    oidcWebRedirectUri,
+    authCookieSecret,
+    authTransactionCookieName,
+    authProviderTimeoutMs,
+  } = authConfig;
+
+  const callbackPath = readCallbackPath({ oidcWebRedirectUri });
 
   return async function handleRequest(
     req: Request,
@@ -41,12 +47,12 @@ function makeCallbackHandler() {
     next: NextFunction
   ): Promise<void> {
     try {
-      const oktaError = readStringQueryParam(req.query.error);
+      const providerError = readStringQueryParam(req.query.error);
 
-      if (oktaError) {
-        throw makeUnauthorizedErrorHandler(`Okta rejected the login attempt: ${oktaError}`)(
-          new Error(oktaError)
-        );
+      if (providerError) {
+        throw makeUnauthorizedErrorHandler(
+          `The identity provider rejected the login attempt: ${providerError}`
+        )(null);
       }
 
       const code = readStringQueryParam(req.query.code);
@@ -54,41 +60,31 @@ function makeCallbackHandler() {
 
       if (!code || !returnedState) {
         throw makeUnauthorizedErrorHandler('Callback is missing the "code" or "state" parameter')(
-          new Error('Missing code or state query parameter')
+          null
         );
       }
 
-      const transactionId = getCookieValue({
-        cookieHeader: req.headers.cookie,
-        name: TRANSACTION_COOKIE_NAME,
+      const transaction = readCookiePayload({
+        req,
+        name: authTransactionCookieName,
+        secret: authCookieSecret,
+        schema: AuthTransactionCookieSchema,
       });
 
-      if (!transactionId) {
-        throw makeUnauthorizedErrorHandler('Missing auth transaction cookie')(
-          new Error('No auth transaction cookie on the OIDC callback request')
-        );
-      }
-
-      const transaction = await sessionService.getAuthTransaction({ transactionId });
-
       if (!transaction) {
-        throw makeUnauthorizedErrorHandler('Missing or expired auth transaction')(
-          new Error('No auth transaction found for the transaction cookie')
+        throw makeUnauthorizedErrorHandler('Missing, expired or invalid auth transaction cookie')(
+          null
         );
       }
 
-      const isStateValid = transaction.state === returnedState;
-
-      if (!isStateValid) {
-        throw makeUnauthorizedErrorHandler('State parameter does not match — possible CSRF')(
-          new Error('State mismatch on OIDC callback')
-        );
+      if (transaction.state !== returnedState) {
+        throw makeUnauthorizedErrorHandler('State parameter does not match — possible CSRF')(null);
       }
 
       const tokenResponse = await assertResult(
         () =>
           axios.post(
-            `${oidcIssuerUrl}${tokenPath}`,
+            oidcTokenEndpoint,
             new URLSearchParams({
               grant_type: 'authorization_code',
               code,
@@ -98,7 +94,7 @@ function makeCallbackHandler() {
             }),
             {
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              timeout: TOKEN_EXCHANGE_TIMEOUT_MS,
+              timeout: authProviderTimeoutMs,
             }
           ),
         makeThirdPartyErrorHandler('Token exchange with the identity provider failed')
@@ -108,25 +104,20 @@ function makeCallbackHandler() {
 
       if (!parsedTokenResponse.success) {
         throw makeUnauthorizedErrorHandler('Token exchange response failed schema validation')(
-          new Error('Token exchange response failed schema validation')
+          null
         );
       }
 
-      const { access_token: accessToken, expires_in: expiresInSeconds } = parsedTokenResponse.data;
+      res.clearCookie(
+        authTransactionCookieName,
+        buildAuthCookieOptions({ path: callbackPath, maxAge: undefined })
+      );
 
-      const sessionId = generateOpaqueToken();
-
-      await sessionService.setAccessToken({ sessionId, accessToken, expiresInSeconds });
-      await sessionService.deleteAuthTransaction({ transactionId });
-
-      res.clearCookie(TRANSACTION_COOKIE_NAME, { path: '/api/auth' });
-
-      res.cookie(SESSION_COOKIE_NAME, sessionId, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: isVcr,
-        maxAge: expiresInSeconds * 1000,
-        path: '/',
+      writeSessionCookies({
+        res,
+        tokenResponse: parsedTokenResponse.data,
+        previousRefreshToken: undefined,
+        authConfig,
       });
 
       res.redirect(transaction.returnTo);

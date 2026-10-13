@@ -2,10 +2,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, jest } from '@jes
 import axios from 'axios';
 import request from 'supertest';
 import { Server } from 'http';
-import getSessionStorageService from '../sessionStorageService';
-import { SESSION_COOKIE_NAME } from '../routes/auth/constants';
+import { TEST_AUTH_COOKIE_SECRET } from './helpers/testAuthCookieSecret';
+import makeEncryptedCookieHeader from './helpers/makeEncryptedCookieHeader';
 import mockVonageVideoSdk, { DEFAULT_CAPTIONS_ID } from './helpers/mockVonageVideoSdk';
 
+const SESSION_COOKIE_NAME = 'test_session';
 const OIDC_CLIENT_ID = 'test-client-id';
 const introspectionResponse = { data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID } };
 
@@ -13,9 +14,16 @@ const originalEnv = process.env;
 process.env = {
   ...originalEnv,
   AUTH_ENABLED: 'true',
-  OIDC_ISSUER_URL: 'https://example.com',
   OIDC_CLIENT_ID: OIDC_CLIENT_ID,
   OIDC_WEB_REDIRECT_URI: 'http://localhost:3000/api/auth/callback/okta',
+  OIDC_AUTHORIZATION_ENDPOINT: 'https://example.com/authorize',
+  OIDC_TOKEN_ENDPOINT: 'https://example.com/token',
+  OIDC_INTROSPECTION_ENDPOINT: 'https://example.com/introspect',
+  OIDC_REVOCATION_ENDPOINT: 'https://example.com/revoke',
+  OIDC_END_SESSION_ENDPOINT: 'https://example.com/logout',
+  OIDC_POST_LOGOUT_REDIRECT_URI: 'http://localhost:3000/',
+  AUTH_COOKIE_SECRET: TEST_AUTH_COOKIE_SECRET,
+  AUTH_SESSION_COOKIE_NAME: SESSION_COOKIE_NAME,
 };
 
 jest.mock('axios');
@@ -24,7 +32,6 @@ const mockPost = jest.spyOn(axios, 'post');
 await mockVonageVideoSdk();
 
 const startServer = (await import('../server')).default;
-const sessionService = getSessionStorageService();
 
 /**
  * Proves the v1 `session.ts` routes are wired into the app-wide `authMiddleware` gate from
@@ -105,14 +112,16 @@ describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=tr
 
   it('GET /session/:room/archives returns 200 with a valid session cookie (web path)', async () => {
     mockPost.mockResolvedValue(introspectionResponse);
-    await sessionService.setAccessToken({
-      sessionId: 'v1-cookie-session',
-      accessToken: 'session-token',
-    });
 
     const res = await request(server)
       .get(`/session/${roomName}/archives`)
-      .set('Cookie', `${SESSION_COOKIE_NAME}=v1-cookie-session`);
+      .set(
+        'Cookie',
+        makeEncryptedCookieHeader({
+          name: SESSION_COOKIE_NAME,
+          payload: { accessToken: 'session-token', accessTokenExpiresAt: Date.now() + 600_000 },
+        })
+      );
 
     expect(res.statusCode).toEqual(200);
   });

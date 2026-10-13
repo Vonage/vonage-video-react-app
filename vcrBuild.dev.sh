@@ -4,9 +4,15 @@ set -e
 # build artifact
 source ./vcrBuild.sh
 
-# copy env file to the build output (FAIL if missing)
+# write the env file to the build output (FAIL if missing): the env.defaults.sh values (loaded by
+# vcrBuild.sh through env.sh) first, then backend/.env, whose values win
 if [ -f ./backend/.env ]; then
-  cp ./backend/.env ./backend/dist/.env
+  {
+    for name in $(grep -oE '^export [A-Z_]+' ./env.defaults.sh | cut -d' ' -f2); do
+      printf "%s='%s'\n" "$name" "${!name}"
+    done
+    cat ./backend/.env
+  } > ./backend/dist/.env
 else
   echo "❌ ERROR: ./backend/.env file not found"
   exit 1
