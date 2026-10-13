@@ -56,5 +56,7 @@ instance:
       value: '/oauth2/v1/token'
     - name: AUTH_INTROSPECTION_TIMEOUT_MS
       value: '5000'
+    - name: GOLLUM_BASE_URL
+      secret: GOLLUM_BASE_URL
 debug:
   entrypoint: [node, bundle.cjs]
