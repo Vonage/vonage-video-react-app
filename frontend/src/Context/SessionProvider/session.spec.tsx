@@ -309,6 +309,18 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
+    it('connect rejecting should not set connected to true and should not throw', async () => {
+      vonageVideoClient.connect = vi.fn().mockRejectedValue(new Error('connect failed'));
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const { getByTestId } = render(<TestComponent />);
+
+      await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalled());
+      expect(getByTestId('connected')).toHaveTextContent('false');
+
+      consoleErrorSpy.mockRestore();
+    });
+
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 

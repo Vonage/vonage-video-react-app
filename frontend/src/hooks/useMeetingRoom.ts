@@ -12,6 +12,7 @@ import useMountEffect from '@web/hooks/useMountEffect';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
 import { screenShare$ } from '@Context';
+import frontendLogger from '../logger';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -111,7 +112,9 @@ const useMeetingRoom = () => {
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
-    void resolveAndJoin();
+    resolveAndJoin().catch((err: unknown) => {
+      frontendLogger.reportError(err, { eventSource: 'useMeetingRoom.resolveAndJoin.error' });
+    });
 
     return () => {
       disconnect?.();

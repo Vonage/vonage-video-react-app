@@ -527,7 +527,7 @@ const SessionProvider = ({
    */
   const disconnect = useCallback(() => {
     if (vonageVideoClient.current) {
-      vonageVideoClient.current.disconnect();
+      void vonageVideoClient.current.disconnect();
       vonageVideoClient.current = null;
 
       setConnected(false);

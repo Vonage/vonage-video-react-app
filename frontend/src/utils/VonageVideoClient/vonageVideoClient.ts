@@ -1,6 +1,5 @@
 import {
   initSession,
-  OTError,
   Publisher,
   Session,
   Stream,
@@ -425,38 +424,34 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Connects to the Vonage Video session using the provided credentials.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  connect = (): Promise<void> => {
+  connect = async (): Promise<void> => {
     const { token } = this.credential;
 
-    return new Promise((resolve, reject) => {
-      this.clientSession.connect(token, (err?: OTError) => {
-        if (err) {
-          frontendLogger.reportError(err, {
-            eventSource: 'vonageVideoClient.connect.error',
-            sessionId: this.sessionId,
-            connectionId: this.connectionId,
-            partnerId: this.applicationId,
-          });
+    try {
+      await this.clientSession.connect.promise(token);
 
-          reject(err);
-        } else {
-          frontendLogger.log('EnterMeeting', {
-            eventSource: 'vonageVideoClient.connect.success',
-            sessionId: this.sessionId,
-            connectionId: this.connectionId,
-            partnerId: this.applicationId,
-          });
-
-          resolve();
-        }
+      frontendLogger.log('EnterMeeting', {
+        eventSource: 'vonageVideoClient.connect.success',
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+        partnerId: this.applicationId,
       });
-    });
+    } catch (err) {
+      frontendLogger.reportError(err, {
+        eventSource: 'vonageVideoClient.connect.error',
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+        partnerId: this.applicationId,
+      });
+
+      throw err;
+    }
   };
 
   /**
    * Disconnects from the current session and cleans up the session object.
    */
-  disconnect = () => {
+  disconnect = async (): Promise<void> => {
     if (this.disconnected) {
       return;
     }
@@ -469,8 +464,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
-    this.clientSession.disconnect()?.catch(() => {});
-    this.clientSession = null as unknown as Session;
+    try {
+      await this.clientSession.disconnect();
+    } catch (err) {
+      frontendLogger.reportError(err, {
+        eventSource: 'vonageVideoClient.disconnect.error',
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+        partnerId: this.applicationId,
+      });
+    } finally {
+      this.clientSession = null as unknown as Session;
+    }
   };
 
   /**
