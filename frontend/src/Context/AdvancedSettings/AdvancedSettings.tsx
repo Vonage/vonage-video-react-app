@@ -47,7 +47,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
   selfViewMirroringEnabled: true,
-  videoStatsOverlayEnabled: false,
+  videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
   cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic,
   screenShareContentHint: ADVANCED_SETTINGS_CONTENT_HINT.detail,
   screenShareCodecMode: ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE.inherit,

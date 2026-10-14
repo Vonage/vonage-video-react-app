@@ -38,6 +38,7 @@ const appEnvKeys = [
   'DEFAULT_LAYOUT_MODE',
   'API_URL',
   'TUNNEL_DOMAIN',
+  'SHOW_VIDEO_STATS',
   'VONAGE_VIDEO_HOST',
 ] as const;
 

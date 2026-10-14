@@ -11,7 +11,8 @@
     "supportedLanguages": ["en", "en-US", "es", "es-MX", "it", "de", "ja"]
   },
   "appSettings": {
-    "enableReportIssue": true
+    "enableReportIssue": true,
+    "showVideoStats": false
   },
   "connectionSettings": {
     "tunnelDomain": "${TUNNEL_DOMAIN}",
