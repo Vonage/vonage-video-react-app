@@ -11,6 +11,15 @@ import useToolbarButtons, {
 import { makeTestProvider, providers } from '@test/providers';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
+import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
+import { testIds as archivingButtonTestIds } from '../ArchivingButton/ArchivingButton';
+import { testIds as captionsButtonTestIds } from '../CaptionsButton/CaptionsButton';
+import { testIds as chatButtonTestIds } from '../ChatButton/ChatButton';
+import { testIds as emojiGridButtonTestIds } from '../EmojiGridButton/EmojiGridButton';
+import { testIds as participantListButtonTestIds } from '../ParticipantListButton/ParticipantListButton';
+import { testIds as reportIssueButtonTestIds } from '../ReportIssueButton/ReportIssueButton';
+import { testIds as screenSharingButtonTestIds } from '../../ScreenSharingButton/ScreenSharingButton';
+import { testIds as toolbarOverflowButtonTestIds } from '../ToolbarOverflowButton/ToolbarOverflowButton';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -75,13 +84,13 @@ describe('Toolbar', () => {
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
     render(<Toolbar {...defaultProps} />);
-    expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(reportIssueButtonTestIds.button)).not.toBeInTheDocument();
   });
 
   it('renders the Report Issue button if it is configured to be enabled', () => {
     mockIsReportIssueEnabled.mockReturnValue(true);
     render(<Toolbar {...defaultProps} />);
-    expect(screen.getByTestId('report-issue-button')).toBeInTheDocument();
+    expect(screen.getByTestId(reportIssueButtonTestIds.button)).toBeInTheDocument();
   });
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
@@ -93,12 +102,12 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
+    expect(screen.queryByTestId(toolbarOverflowButtonTestIds.button)).toBeVisible();
 
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('screensharing-button')).not.toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeVisible();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
@@ -114,18 +123,18 @@ describe('Toolbar', () => {
         }}
       />
     );
-    expect(screen.queryByTestId('archiving-button')).toBeVisible();
-    expect(screen.queryByTestId('advanced-settings-button')).toBeVisible();
-    expect(screen.queryByTestId('screensharing-button')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.queryByTestId('captions-button')).toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(advancedSettingsButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(captionsButtonTestIds.button)).toBeVisible();
   });
 
   it('does not render advanced settings when the flag is disabled', () => {
     env.partialUpdate({ MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: false });
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(advancedSettingsButtonTestIds.button)).not.toBeInTheDocument();
   });
 
   it('splits the buttons between the toolbar and the overflow menu without repeating or losing any', () => {
@@ -137,11 +146,11 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.getAllByTestId('emoji-grid-button')).toHaveLength(1);
-    expect(screen.getAllByTestId('captions-button')).toHaveLength(1);
-    expect(screen.getAllByTestId('screensharing-button')).toHaveLength(1);
-    expect(screen.getAllByTestId('archiving-button')).toHaveLength(1);
-    expect(screen.getAllByTestId('chat-button')).toHaveLength(1);
+    expect(screen.getAllByTestId(emojiGridButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(captionsButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(screenSharingButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(archivingButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(chatButtonTestIds.button)).toHaveLength(1);
   });
 
   it('does not render the buttons whose feature flags are disabled', () => {
@@ -156,12 +165,12 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('screensharing-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('chat-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(captionsButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(participantListButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
   });
 
   it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {

@@ -5,6 +5,10 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  button: 'emoji-grid-button',
+} as const;
+
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
@@ -40,20 +44,9 @@ const EmojiGridButton = ({
       <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
         <ToolbarButton
           onClick={handleToggle}
-          icon={
-            <VividIcon
-              name="emoji-solid"
-              customSize={-5}
-              style={{
-                color: `${isEmojiGridOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)'} !important`,
-              }}
-            />
-          }
+          icon={<VividIcon name="emoji-solid" customSize={-5} />}
           ref={anchorRef}
-          data-testid="emoji-grid-button"
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
+          data-testid={testIds.button}
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>

@@ -5,6 +5,11 @@ import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  button: 'participant-list-button',
+  icon: 'PeopleIcon',
+} as const;
+
 export type ParticipantListButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
@@ -37,29 +42,19 @@ const ParticipantListButton = ({
       aria-label={t('participants.list.ariaLabel')}
     >
       <Badge
-        className="[&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
+        className="z-1 [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
         badgeContent={participantCount}
-        sx={{
-          marginRight: '12px',
-          zIndex: 1,
-        }}
         overlap="circular"
       >
         <ToolbarButton
-          data-testid="participant-list-button"
-          sx={{
-            marginTop: '0px',
-            marginRight: '0px',
-          }}
+          data-testid={testIds.button}
           onClick={handleClick}
           icon={
             <VividIcon
               name="group-solid"
               customSize={-4}
-              data-testid="PeopleIcon"
-              style={{
-                color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)',
-              }}
+              data-testid={testIds.icon}
+              className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
             />
           }
           isOverflowButton={isOverflowButton}

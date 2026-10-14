@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { makeTestProvider, providers } from '@test/providers';
-import ArchivingButton from './ArchivingButton';
+import ArchivingButton, { testIds } from './ArchivingButton';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -38,12 +38,12 @@ describe('ArchivingButton', () => {
 
   it('renders the button correctly', () => {
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    expect(screen.getByTestId('archiving-button')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.button)).toBeInTheDocument();
   });
 
   it('opens the modal when the button is clicked', () => {
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
   });
 
@@ -52,7 +52,7 @@ describe('ArchivingButton', () => {
     (mockVideoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
 
     // click the button to start archiving
@@ -76,7 +76,7 @@ describe('ArchivingButton', () => {
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Stop Recording?')).toBeInTheDocument();
   });
 
@@ -93,7 +93,7 @@ describe('ArchivingButton', () => {
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Stop Recording?')).toBeInTheDocument();
 
     // click the button to stop archiving

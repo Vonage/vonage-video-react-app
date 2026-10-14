@@ -7,6 +7,10 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import { runtime$ } from '@core/stores';
 
+export const testIds = {
+  button: 'captions-button',
+} as const;
+
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
@@ -94,25 +98,22 @@ const CaptionsButton = ({
     <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
       <ToolbarButton
         onClick={handleActionClick}
-        data-testid="captions-button"
+        data-testid={testIds.button}
         icon={
           !isUserCaptionsEnabled ? (
             <VividIcon
               name="closed-captioning-solid"
               customSize={-5}
-              style={{ color: 'var(--vera-on-secondary-light)' }}
+              className="text-vera-on-secondary-light"
             />
           ) : (
             <VividIcon
               name="closed-captioning-off-solid"
               customSize={-5}
-              style={{ color: 'var(--vera-error)' }}
+              className="text-vera-error"
             />
           )
         }
-        sx={{
-          marginTop: isOverflowButton ? '0px' : '4px',
-        }}
         isOverflowButton={isOverflowButton}
       />
     </Tooltip>

@@ -9,6 +9,10 @@ import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { RECORDING_START_DELAY } from '@utils/constants';
 
+export const testIds = {
+  button: 'archiving-button',
+} as const;
+
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
   handleClick?: () => void;
@@ -101,23 +105,15 @@ const ArchivingButton = ({
       <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
         <ToolbarButton
           onClick={handleButtonClick}
-          data-testid="archiving-button"
+          data-testid={testIds.button}
           className={classNames({ recording: isRecording })}
           icon={
             <VividIcon
               name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
               customSize={-5}
-              style={{
-                color: 'var(--vera-on-secondary-light)',
-              }}
+              className="text-vera-on-secondary-light"
             />
           }
-          style={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-            backgroundColor: isRecording
-              ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-              : undefined,
-          }}
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>

@@ -2,6 +2,10 @@ import Badge from '@mui/material/Badge';
 import { ForwardedRef, forwardRef, ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 
+export const testIds = {
+  unreadCount: 'chat-button-unread-count',
+} as const;
+
 export type UnreadMessagesBadgeProps = {
   children: ReactElement;
   isToolbarOverflowMenuOpen?: boolean;
@@ -29,11 +33,8 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
       {...rest}
       className="[&_.MuiBadge-badge]:text-vera-on-warning [&_.MuiBadge-badge]:bg-vera-warning"
       badgeContent={unreadCount}
-      data-testid="chat-button-unread-count"
+      data-testid={testIds.unreadCount}
       invisible={isInvisible}
-      sx={{
-        marginRight: '12px',
-      }}
       overlap="circular"
       ref={ref}
     >

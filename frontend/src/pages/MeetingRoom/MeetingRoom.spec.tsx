@@ -20,6 +20,7 @@ import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import type { VideoClient } from '@core/services';
+import { testIds as unreadMessagesBadgeTestIds } from '../../components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
@@ -425,7 +426,7 @@ describe('MeetingRoom', () => {
     sessionContext.current.unreadCount = 4;
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-button-unread-count')).toHaveTextContent('4');
+      expect(screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount)).toHaveTextContent('4');
     });
   });
 

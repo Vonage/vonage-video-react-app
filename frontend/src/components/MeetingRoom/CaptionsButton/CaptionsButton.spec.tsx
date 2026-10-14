@@ -6,7 +6,7 @@ import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, providers } from '@test/providers';
-import CaptionsButton, { CaptionsState } from './CaptionsButton';
+import CaptionsButton, { CaptionsState, testIds } from './CaptionsButton';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -71,13 +71,13 @@ describe('CaptionsButton', () => {
         captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
       />
     );
-    expect(screen.getByTestId('captions-button')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.button)).toBeInTheDocument();
   });
 
   it('turns the captions on when button is pressed', async () => {
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
-    act(() => screen.getByTestId('captions-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
 
     await waitFor(() => {
       expect(mockVideoClient.ensureCaptionsEnabled).toHaveBeenCalledWith({
