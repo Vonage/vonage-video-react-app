@@ -11,19 +11,28 @@ import {
   ADVANCED_SETTINGS_CODEC_MODE,
   ADVANCED_SETTINGS_CONTENT_HINT,
   ADVANCED_SETTINGS_SCREEN_SHARE_CODEC_MODE,
+  AdvancedSettingsScreenShareSurface,
   frameRateSchema,
 } from '../../schemas';
 import { Resolution } from '@common/types';
 import { env } from '../../../../env';
 import useAdvancesSettingsHandlers from '@Context/AdvancedSettings/useAdvancesSettingsHandlers';
+import { isFirefox, isWebKit } from '@web/platform';
 
 const DEFAULT_OPTION_VALUE = 'default-sdk';
 
-const { setScreenShareCodecMode, setScreenShareCodecPriority, setScalableScreenshareEnabled } =
-  advancedSettings$.actions;
+const {
+  setScreenShareSurface,
+  setScreenShareCodecMode,
+  setScreenShareCodecPriority,
+  setScalableScreenshareEnabled,
+} = advancedSettings$.actions;
 
 const AdvancedSettingsScreenSharingTab = (): ReactElement => {
   const { t } = useTranslation();
+  const screenShareSurface = advancedSettings$.use.select(
+    ({ screenShareSurface }) => screenShareSurface
+  );
   const screenShareContentHint = advancedSettings$.use.select(
     ({ screenShareContentHint }) => screenShareContentHint
   );
@@ -117,15 +126,32 @@ const AdvancedSettingsScreenSharingTab = (): ReactElement => {
       label: t('advancedSettings.video.codec.options.manual'),
     },
   ];
+  const screenShareSurfaceOptions: AdvancedSettingsSelectOption<AdvancedSettingsScreenShareSurface>[] =
+    Object.values(AdvancedSettingsScreenShareSurface).map((surface) => ({
+      value: surface,
+      label: t(`advancedSettings.video.screenShareSurface.options.${surface}`),
+    }));
+
+  const isScreenShareSurfaceSupported = !isFirefox() && !isWebKit();
 
   return (
     <div className="flex flex-col gap-6" data-testid="advanced-settings-screen-sharing-tab">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.screenSharing')}
       </h2>
-      <p className="font-vera-plain text-vera-body-base text-vera-tertiary">
+      <p className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
         {t('advancedSettings.video.sections.screenSharing.description')}
       </p>
+      {isScreenShareSurfaceSupported && (
+        <SelectField
+          id="advanced-settings-video-screen-share-surface"
+          data-testid="advanced-settings-video-screen-share-surface"
+          label={t('advancedSettings.video.screenShareSurface.label')}
+          value={screenShareSurface}
+          options={screenShareSurfaceOptions}
+          onChange={setScreenShareSurface}
+        />
+      )}
       <SelectField
         id="advanced-settings-video-screen-share-content-hint"
         data-testid="advanced-settings-video-screen-share-content-hint"

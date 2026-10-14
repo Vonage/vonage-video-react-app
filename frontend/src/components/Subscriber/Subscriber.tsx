@@ -1,4 +1,5 @@
 import { MouseEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -52,6 +53,7 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
+  const { t } = useTranslation();
   const { isMaxPinned, pinSubscriber } = useSessionContext();
   const { isPinned, subscriber } = subscriberWrapper;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
@@ -116,7 +118,12 @@ const Subscriber = ({
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
     >
-      {box && <ScreenShareNameDisplay name={username} box={box} />}
+      {box && (
+        <ScreenShareNameDisplay
+          name={t('participants.screen', { participantName: username })}
+          box={box}
+        />
+      )}
     </ScreenshareVideoTile>
   ) : (
     <VideoTile

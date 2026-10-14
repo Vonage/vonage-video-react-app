@@ -39,8 +39,8 @@ const AdvancedSettingsSidebar = (): ReactElement => {
             className={classNames(
               'flex shrink-0 items-center justify-center gap-2 rounded-xl px-4 py-3 text-center font-vera-plain text-vera-body-base-semibold transition-colors md:justify-start md:text-left',
               {
-                'bg-vera-surface text-vera-secondary': isSelected,
-                'bg-transparent text-vera-tertiary hover:bg-vera-surface hover:text-vera-secondary':
+                'bg-vera-surface text-vera-text-secondary': isSelected,
+                'bg-transparent text-vera-text-tertiary hover:bg-vera-surface hover:text-vera-text-secondary':
                   !isSelected,
               }
             )}
