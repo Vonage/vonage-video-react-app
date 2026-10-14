@@ -4,6 +4,7 @@ import {
   queryByText,
   screen,
   waitFor,
+  within,
   render as renderBase,
 } from '@testing-library/react';
 import { describe, beforeEach, it, vi, expect } from 'vitest';
@@ -19,7 +20,16 @@ import {
   setupWindowNavigatorMock,
 } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
-import DeviceSettingsMenuComponent from './DeviceSettingsMenu';
+import DeviceSettingsMenuComponent, {
+  testIds as deviceSettingsMenuTestIds,
+} from './DeviceSettingsMenu';
+import { testIds as dropdownSeparatorTestIds } from '../DropdownSeparator/DropdownSeparator';
+import { testIds as outputAudioDevicesTestIds } from '../OutputAudioDevices/OutputAudioDevices';
+import { testIds as soundTestTestIds } from '../../SoundTest/SoundTest';
+import { testIds as inputAudioDevicesTestIds } from '../InputAudioDevices/InputAudioDevices';
+import { testIds as videoDevicesTestIds } from '../VideoDevices/VideoDevices';
+import { testIds as videoDevicesOptionsTestIds } from '../VideoDevicesOptions/VideoDevicesOptions';
+import userEvent from '@testing-library/user-event';
 
 const { mockHasMediaProcessorSupport, mockGetActiveAudioOutputDevice, mockSetAudioOutputDevice } =
   vi.hoisted(() => {
@@ -108,7 +118,7 @@ describe('DeviceSettingsMenu Component', () => {
         />
       );
 
-      const outputDevicesElement = screen.getByTestId('output-devices');
+      const outputDevicesElement = screen.getByTestId(outputAudioDevicesTestIds.list);
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
       expect(outputDevicesElement.firstChild).toHaveTextContent(defaultSpeakers.label);
 
@@ -144,7 +154,7 @@ describe('DeviceSettingsMenu Component', () => {
         />
       );
 
-      const outputDevicesElement = screen.getByTestId('output-devices');
+      const outputDevicesElement = screen.getByTestId(outputAudioDevicesTestIds.list);
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(1));
       expect(outputDevicesElement.firstChild).toHaveTextContent('System Default');
       expect(
@@ -179,7 +189,7 @@ describe('DeviceSettingsMenu Component', () => {
         )
       );
 
-      const outputDevicesElement = screen.getByTestId('output-devices');
+      const outputDevicesElement = screen.getByTestId(outputAudioDevicesTestIds.list);
       expect(outputDevicesElement).toBeInTheDocument();
     });
 
@@ -201,7 +211,7 @@ describe('DeviceSettingsMenu Component', () => {
         )
       );
 
-      const soundTest = screen.queryByTestId('soundTest');
+      const soundTest = screen.queryByTestId(soundTestTestIds.button);
       expect(soundTest).toBeInTheDocument();
     });
 
@@ -222,7 +232,7 @@ describe('DeviceSettingsMenu Component', () => {
         />
       );
 
-      const outputDevicesElement = screen.getByTestId('output-devices');
+      const outputDevicesElement = screen.getByTestId(outputAudioDevicesTestIds.list);
 
       // Check initial list is correct
       await waitFor(() => expect(outputDevicesElement.children).to.have.length(3));
@@ -278,7 +288,7 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('video-settings-devices-dropdown')).toBeInTheDocument();
+        expect(screen.queryByTestId(deviceSettingsMenuTestIds.videoDropdown)).toBeInTheDocument();
       });
     });
 
@@ -295,7 +305,9 @@ describe('DeviceSettingsMenu Component', () => {
         />
       );
       await waitFor(() => {
-        expect(screen.queryByTestId('video-settings-devices-dropdown')).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId(deviceSettingsMenuTestIds.videoDropdown)
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -315,7 +327,7 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).toBeVisible();
+        expect(screen.queryByTestId(dropdownSeparatorTestIds.separator)).toBeVisible();
         expect(screen.queryByText('Video effects')).toBeVisible();
       });
     });
@@ -334,7 +346,7 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByTestId(dropdownSeparatorTestIds.separator)).not.toBeInTheDocument();
         expect(screen.queryByText('video effects')).not.toBeInTheDocument();
       });
     });
@@ -358,54 +370,131 @@ describe('DeviceSettingsMenu Component', () => {
       );
 
       await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
+        expect(screen.queryByTestId(dropdownSeparatorTestIds.separator)).not.toBeInTheDocument();
         expect(screen.queryByText('video effects')).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('the audio dropdown separator', () => {
-    it('is not left dangling at the top when allowDeviceSelection is false', async () => {
-      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: false });
+  describe('device selection', () => {
+    it('lets the user switch microphones when device selection is allowed', async () => {
+      const handleToggle = vi.fn();
+      const selectDeviceSpy = vi.spyOn(mediaDevices$.actions, 'selectDevice');
+      const user = userEvent.setup();
+      renderMenu({ deviceType: 'audio', handleToggle });
 
-      render(
-        <DeviceSettingsMenuComponent
-          deviceType="audio"
-          handleToggle={mockHandleToggle}
-          handleClose={mockHandleClose}
-          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-          isOpen
-          anchorRef={mockAnchorRef}
-          setIsOpen={mockSetIsOpen}
-        />
-      );
+      const microphones = screen.getByTestId(inputAudioDevicesTestIds.list);
+      await user.click(within(microphones).getByText('USB Headset Microphone'));
 
-      await waitFor(() => {
-        expect(screen.queryByTestId('dropdown-separator')).not.toBeInTheDocument();
-      });
+      expect(handleToggle).toHaveBeenCalledTimes(1);
+      expect(selectDeviceSpy).toHaveBeenCalledWith('audioinput', 'audio-input-2');
     });
 
-    it('separates the speaker test from the device lists when they are shown', async () => {
-      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: true });
+    it('still lets the user test the speakers when device selection is not allowed', async () => {
+      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: false });
+      const user = userEvent.setup();
+      renderMenu({ deviceType: 'audio' });
 
-      render(
-        <DeviceSettingsMenuComponent
-          deviceType="audio"
-          handleToggle={mockHandleToggle}
-          handleClose={mockHandleClose}
-          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
-          isOpen
-          anchorRef={mockAnchorRef}
-          setIsOpen={mockSetIsOpen}
-        />
-      );
+      await user.click(screen.getByTestId(soundTestTestIds.button));
 
-      await waitFor(() => {
-        expect(screen.getAllByTestId('dropdown-separator').length).toBeGreaterThan(0);
+      expect(HTMLAudioElement.prototype.play).toHaveBeenCalled();
+      expect(screen.queryByTestId(inputAudioDevicesTestIds.list)).not.toBeInTheDocument();
+    });
+
+    it('still lets the user open the video effects when device selection is not allowed', async () => {
+      env.partialUpdate({
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
+        ALLOW_BACKGROUND_EFFECTS: true,
       });
+      vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+      const toggleBackgroundEffects = vi.fn();
+      const user = userEvent.setup();
+      renderMenu({ deviceType: 'video', toggleBackgroundEffects });
+
+      await user.click(screen.getByTestId(videoDevicesOptionsTestIds.backgroundEffectsText));
+
+      expect(toggleBackgroundEffects).toHaveBeenCalledTimes(1);
+      expect(screen.queryByTestId(videoDevicesTestIds.list)).not.toBeInTheDocument();
     });
   });
+
+  it.each([
+    {
+      deviceType: 'audio',
+      allowDeviceSelection: true,
+      allowBackgroundEffects: false,
+      separators: 2,
+    },
+    {
+      deviceType: 'audio',
+      allowDeviceSelection: false,
+      allowBackgroundEffects: false,
+      separators: 0,
+    },
+    {
+      deviceType: 'video',
+      allowDeviceSelection: true,
+      allowBackgroundEffects: true,
+      separators: 1,
+    },
+    {
+      deviceType: 'video',
+      allowDeviceSelection: false,
+      allowBackgroundEffects: true,
+      separators: 0,
+    },
+    {
+      deviceType: 'video',
+      allowDeviceSelection: true,
+      allowBackgroundEffects: false,
+      separators: 0,
+    },
+  ] as const)(
+    'only separates rendered sections in the $deviceType menu (device selection: $allowDeviceSelection, background effects: $allowBackgroundEffects)',
+    ({ deviceType, allowDeviceSelection, allowBackgroundEffects, separators }) => {
+      env.partialUpdate({
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: allowDeviceSelection,
+        ALLOW_BACKGROUND_EFFECTS: allowBackgroundEffects,
+      });
+      vi.mocked(hasMediaProcessorSupport).mockReturnValue(true);
+      renderMenu({ deviceType });
+
+      const renderedSeparators = screen.queryAllByTestId(dropdownSeparatorTestIds.separator);
+
+      expect(renderedSeparators).toHaveLength(separators);
+      renderedSeparators.forEach((separator) => {
+        expect(isSection(separator.previousElementSibling)).toBe(true);
+        expect(isSection(separator.nextElementSibling)).toBe(true);
+      });
+    }
+  );
+
+  function renderMenu({
+    deviceType,
+    handleToggle = mockHandleToggle,
+    toggleBackgroundEffects = mockHandleToggleBackgroundEffects,
+  }: {
+    deviceType: 'audio' | 'video';
+    handleToggle?: () => void;
+    toggleBackgroundEffects?: () => void;
+  }) {
+    return render(
+      <DeviceSettingsMenuComponent
+        deviceType={deviceType}
+        handleToggle={handleToggle}
+        handleClose={mockHandleClose}
+        toggleBackgroundEffects={toggleBackgroundEffects}
+        isOpen
+        anchorRef={mockAnchorRef}
+        setIsOpen={mockSetIsOpen}
+      />
+    );
+  }
 });
+
+function isSection(element: Element | null): boolean {
+  return !!element && element.getAttribute('data-testid') !== dropdownSeparatorTestIds.separator;
+}
 
 function render(ui: ReactElement) {
   const { wrapper, ...context } = makeTestProvider([]);

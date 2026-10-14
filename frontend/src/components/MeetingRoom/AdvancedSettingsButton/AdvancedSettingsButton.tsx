@@ -5,6 +5,10 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/components/VividIcon';
 import ToolbarButton from '../ToolbarButton';
 
+export const testIds = {
+  button: 'advanced-settings-button',
+} as const;
+
 export type AdvancedSettingsButtonProps = {
   isOverflowButton?: boolean;
 };
@@ -30,11 +34,8 @@ const AdvancedSettingsButton = ({
       aria-label={t('advancedSettings.ariaLabel')}
     >
       <ToolbarButton
-        data-testid="advanced-settings-button"
-        sx={{
-          marginTop: '0px',
-          marginRight: '12px',
-        }}
+        data-testid={testIds.button}
+        className="mt-0 mr-[12px]"
         onClick={handleClick}
         icon={
           <VividIcon

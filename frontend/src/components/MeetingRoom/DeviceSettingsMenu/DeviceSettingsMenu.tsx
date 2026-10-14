@@ -12,7 +12,13 @@ import Grow from '@mui/material/Grow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import { tv } from 'tailwind-variants';
 import { env } from '../../../env';
+
+export const testIds = {
+  audioDropdown: 'audio-settings-devices-dropdown',
+  videoDropdown: 'video-settings-devices-dropdown',
+} as const;
 
 export type DeviceSettingsMenuProps = {
   deviceType: 'audio' | 'video';
@@ -23,6 +29,18 @@ export type DeviceSettingsMenuProps = {
   handleClose: (event: MouseEvent | TouchEvent) => void;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 };
+
+const settingsPaper = tv({
+  base: 'relative z-1 w-[90vw] max-w-[400px] rounded-[8px]! bg-vera-surface! p-2 text-vera-on-surface min-[600px]:w-full min-[600px]:p-4',
+  variants: {
+    deviceType: {
+      audio:
+        '[transform:translateY(-2%)_translateX(5%)] max-[741px]:[transform:translateY(-2%)_translateX(-10%)] max-[450px]:[transform:translateY(-2%)_translateX(-5%)]',
+      video:
+        '[transform:translateY(-5%)_translateX(-15%)] max-[741px]:[transform:translateY(-5%)_translateX(-40%)] max-[450px]:[transform:translateY(-5%)_translateX(-5%)]',
+    },
+  },
+});
 
 /**
  * DeviceSettingsMenu Component
@@ -50,10 +68,13 @@ const DeviceSettingsMenu = ({
   anchorRef,
   handleClose,
   setIsOpen,
-}: DeviceSettingsMenuProps): ReactElement | false => {
+}: DeviceSettingsMenuProps): ReactElement => {
   const isAudio = deviceType === 'audio';
+  const shouldDisplayDeviceSelection = env.MEETING_ROOM_ALLOW_DEVICE_SELECTION;
   const shouldDisplayBackgroundEffects =
     hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
+  const shouldSeparateVideoSections =
+    shouldDisplayDeviceSelection && shouldDisplayBackgroundEffects;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();
@@ -66,9 +87,14 @@ const DeviceSettingsMenu = ({
     if (isAudio) {
       return (
         <>
-          <InputDevices handleToggle={handleToggle} />
-          <OutputDevices handleToggle={handleToggle} />
-          {env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && <DropdownSeparator />}
+          {shouldDisplayDeviceSelection && (
+            <>
+              <InputDevices handleToggle={handleToggle} />
+              <DropdownSeparator />
+              <OutputDevices handleToggle={handleToggle} />
+              <DropdownSeparator />
+            </>
+          )}
           <ReduceNoiseTestSpeakers />
         </>
       );
@@ -76,12 +102,10 @@ const DeviceSettingsMenu = ({
 
     return (
       <>
-        <VideoDevices handleToggle={handleToggle} />
+        {shouldDisplayDeviceSelection && <VideoDevices handleToggle={handleToggle} />}
+        {shouldSeparateVideoSections && <DropdownSeparator />}
         {shouldDisplayBackgroundEffects && (
-          <>
-            <DropdownSeparator />
-            <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
-          </>
+          <VideoDevicesOptions toggleBackgroundEffects={handleToggleBackgroundEffects} />
         )}
       </>
     );
@@ -89,7 +113,7 @@ const DeviceSettingsMenu = ({
 
   return (
     <Popper
-      data-testid={isAudio ? 'audio-settings-devices-dropdown' : 'video-settings-devices-dropdown'}
+      data-testid={isAudio ? testIds.audioDropdown : testIds.videoDropdown}
       open={isOpen}
       anchorEl={anchorRef.current}
       transition
@@ -101,34 +125,9 @@ const DeviceSettingsMenu = ({
           {...TransitionProps}
           style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
         >
-          <Box sx={{ textAlign: 'left', fontWeight: 'normal' }}>
+          <Box className="text-left font-normal">
             <ClickAwayListener onClickAway={handleClose}>
-              <Paper
-                className="bg-vera-surface! text-vera-on-surface"
-                sx={(t) => ({
-                  padding: { xs: 1, sm: 2 },
-                  borderRadius: 2,
-                  zIndex: 1,
-                  transform: isAudio
-                    ? 'translateY(-2%) translateX(5%)'
-                    : 'translateY(-5%) translateX(-15%)',
-                  [t.breakpoints.down(741)]: {
-                    transform: isAudio
-                      ? 'translateY(-2%) translateX(-10%)'
-                      : 'translateY(-5%) translateX(-40%)',
-                  },
-                  [t.breakpoints.down(450)]: {
-                    transform: isAudio
-                      ? 'translateY(-2%) translateX(-5%)'
-                      : 'translateY(-5%) translateX(-5%)',
-                  },
-                  width: { xs: '90vw', sm: '100%' },
-                  maxWidth: 400,
-                  position: 'relative',
-                })}
-              >
-                {renderSettingsMenu()}
-              </Paper>
+              <Paper className={settingsPaper({ deviceType })}>{renderSettingsMenu()}</Paper>
             </ClickAwayListener>
           </Box>
         </Grow>

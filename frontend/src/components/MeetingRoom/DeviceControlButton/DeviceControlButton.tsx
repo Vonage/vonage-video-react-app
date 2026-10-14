@@ -13,6 +13,17 @@ import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
 import { env } from '../../../env';
 
+export const testIds = {
+  microphoneDisabledIcon: 'MicDisabledIcon',
+  microphoneOnIcon: 'MicNoneIcon',
+  microphoneOffIcon: 'MicOffToolbar',
+  cameraDisabledIcon: 'VideoCamDisabledIcon',
+  cameraOnIcon: 'VideoCamIcon',
+  cameraOffIcon: 'VideoCamOffIcon',
+  audioDropdownButton: 'audio-dropdown-button',
+  videoDropdownButton: 'video-dropdown-button',
+} as const;
+
 export type DeviceControlButtonProps = {
   deviceType: 'audio' | 'video';
   toggleBackgroundEffects: () => void;
@@ -68,7 +79,7 @@ const DeviceControlButton = ({
           <VividIcon
             name="microphone-solid"
             customSize={-5}
-            data-testid="MicDisabledIcon"
+            data-testid={testIds.microphoneDisabledIcon}
             style={{ color: 'var(--vera-text-disabled)' }}
           />
         );
@@ -78,7 +89,7 @@ const DeviceControlButton = ({
           <VividIcon
             name="microphone-solid"
             customSize={-5}
-            data-testid="MicNoneIcon"
+            data-testid={testIds.microphoneOnIcon}
             style={{ color: 'var(--vera-on-secondary-light)' }}
           />
         );
@@ -87,7 +98,7 @@ const DeviceControlButton = ({
         <VividIcon
           name="mic-mute-solid"
           customSize={-5}
-          data-testid="MicOffToolbar"
+          data-testid={testIds.microphoneOffIcon}
           style={{ color: 'var(--vera-error)', transform: 'scaleX(-1)' }}
         />
       );
@@ -98,7 +109,7 @@ const DeviceControlButton = ({
         <VividIcon
           name="video-solid"
           customSize={-5}
-          data-testid="VideoCamDisabledIcon"
+          data-testid={testIds.cameraDisabledIcon}
           style={{ color: 'var(--vera-text-disabled)' }}
         />
       );
@@ -108,7 +119,7 @@ const DeviceControlButton = ({
         <VividIcon
           name="video-solid"
           customSize={-5}
-          data-testid="VideoCamIcon"
+          data-testid={testIds.cameraOnIcon}
           style={{ color: 'var(--vera-on-secondary-light)' }}
         />
       );
@@ -117,7 +128,7 @@ const DeviceControlButton = ({
       <VividIcon
         name="video-off-solid"
         customSize={-5}
-        data-testid="VideoCamOffIcon"
+        data-testid={testIds.cameraOffIcon}
         style={{ color: 'var(--vera-error)' }}
       />
     );
@@ -143,12 +154,7 @@ const DeviceControlButton = ({
       {isAudio && <MutedAlert />}
       <ButtonGroup
         disableElevation
-        sx={{
-          mr: 2,
-          mt: 0.25,
-          borderRadius: '30px',
-        }}
-        className="bg-vera-dark-grey"
+        className="bg-vera-dark-grey mt-[2px] mr-4 rounded-[30px]!"
         variant="contained"
         ref={anchorRef}
         aria-label={t('devices.buttons.ariaLabel')}
@@ -160,8 +166,8 @@ const DeviceControlButton = ({
           aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
           onClick={handleToggle}
-          sx={{ width: 48, height: 48 }}
-          data-testid={isAudio ? 'audio-dropdown-button' : 'video-dropdown-button'}
+          className="size-12"
+          data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
         >
           {open ? (
             <VividIcon
@@ -188,12 +194,7 @@ const DeviceControlButton = ({
                 isAudio ? t('devices.audio.microphone.full') : t('devices.video.camera.full')
               }
               size="small"
-              sx={{
-                m: '3px',
-                width: 40,
-                height: 40,
-                borderRadius: '50%',
-              }}
+              className="m-[3px]! size-10 rounded-[50%]!"
             >
               {renderControlIcon()}
             </IconButton>

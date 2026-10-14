@@ -1,3 +1,1 @@
-import isDeviceEnabledOnJoin from './isDeviceEnabledOnJoin';
-
-export default isDeviceEnabledOnJoin;
+export { default } from './isDeviceEnabledOnJoin';

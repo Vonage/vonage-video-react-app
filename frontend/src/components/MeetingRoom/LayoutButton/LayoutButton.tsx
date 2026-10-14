@@ -1,9 +1,15 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
+import classNames from 'classnames';
 import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
+
+export const testIds = {
+  button: 'layout-button',
+  icon: 'ViewSidebarIcon',
+} as const;
 
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
@@ -55,13 +61,13 @@ const LayoutButton = ({
     <Tooltip title={getTooltipTitle()} aria-label={t('recording.tooltip.ariaLabel')}>
       <ToolbarButton
         onClick={handleClick}
-        data-testid="layout-button"
+        data-testid={testIds.button}
         icon={
           !isGrid ? (
             <VividIcon
               name="layout-2-solid"
               customSize={-5}
-              data-testid="ViewSidebarIcon"
+              data-testid={testIds.icon}
               style={{
                 color: isDisabled
                   ? 'var(--vera-secondary-light)'
@@ -72,7 +78,7 @@ const LayoutButton = ({
             <VividIcon
               name="apps-solid"
               customSize={-5}
-              data-testid="ViewSidebarIcon"
+              data-testid={testIds.icon}
               style={{
                 color: isDisabled
                   ? 'var(--vera-secondary-light)'
@@ -81,10 +87,10 @@ const LayoutButton = ({
             />
           )
         }
-        sx={{
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-          marginTop: isOverflowButton ? '0px' : '4px',
-        }}
+        className={classNames(
+          isDisabled ? 'cursor-not-allowed!' : 'cursor-pointer!',
+          isOverflowButton ? 'mt-0' : 'mt-[4px]'
+        )}
         isOverflowButton={isOverflowButton}
       />
     </Tooltip>

@@ -1,9 +1,15 @@
 import Tooltip from '@mui/material/Tooltip';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@ui/components/VividIcon';
+
+export const testIds = {
+  button: 'screensharing-button',
+  icon: 'ScreenShareIcon',
+} as const;
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;
@@ -57,31 +63,28 @@ const ScreenSharingButton = ({
       <Tooltip title={title} aria-label={t('screenSharing.tooltip.ariaLabel')}>
         <ToolbarButton
           onClick={handleButtonClick}
-          data-testid="screensharing-button"
+          data-testid={testIds.button}
           icon={
             !isSharingScreen ? (
               <VividIcon
                 name="screen-share-solid"
                 customSize={-5}
                 style={{ color: 'var(--vera-on-secondary-light)' }}
-                data-testid="ScreenShareIcon"
+                data-testid={testIds.icon}
               />
             ) : (
               <VividIcon
                 name="screen-share-off-solid"
                 customSize={-5}
                 style={{ color: 'var(--vera-on-secondary-light)' }}
-                data-testid="ScreenShareIcon"
+                data-testid={testIds.icon}
               />
             )
           }
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-            marginLeft: isOverflowButton ? '12px' : '0px',
-            backgroundColor: isSharingScreen
-              ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-              : undefined,
-          }}
+          className={classNames(isOverflowButton ? 'mt-0 ml-[12px]!' : 'mt-[4px] ml-0!', {
+            'bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]':
+              isSharingScreen,
+          })}
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>

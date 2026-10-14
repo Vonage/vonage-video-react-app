@@ -6,6 +6,11 @@ import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
+export const testIds = {
+  button: 'hidden-toolbar-items',
+  icon: 'MoreVertIcon',
+} as const;
+
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
@@ -60,14 +65,14 @@ const ToolbarOverflowButton = ({
       <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
         <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
           <ToolbarButton
-            data-testid="hidden-toolbar-items"
+            data-testid={testIds.button}
             id="hidden-toolbar-items"
             onClick={handleButtonToggle}
             icon={
               <VividIcon
                 name="more-vertical-solid"
                 customSize={-5}
-                data-testid="MoreVertIcon"
+                data-testid={testIds.icon}
                 style={{
                   color: isToolbarOverflowMenuOpen
                     ? 'var(--vera-on-surface)'
@@ -75,10 +80,7 @@ const ToolbarOverflowButton = ({
                 }}
               />
             }
-            sx={{
-              marginRight: '0px',
-              width: '48px',
-            }}
+            className="mr-0 w-[48px]"
           />
         </UnreadMessagesBadge>
       </Tooltip>

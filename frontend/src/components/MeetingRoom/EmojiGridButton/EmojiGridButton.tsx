@@ -5,6 +5,10 @@ import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  button: 'emoji-grid-button',
+} as const;
+
 export type EmojiGridProps = {
   isEmojiGridOpen: boolean;
   setIsEmojiGridOpen: Dispatch<SetStateAction<boolean>>;
@@ -50,10 +54,8 @@ const EmojiGridButton = ({
             />
           }
           ref={anchorRef}
-          data-testid="emoji-grid-button"
-          sx={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
+          data-testid={testIds.button}
+          className={isOverflowButton ? 'mt-0' : 'mt-[4px]'}
           isOverflowButton={isOverflowButton}
         />
       </Tooltip>

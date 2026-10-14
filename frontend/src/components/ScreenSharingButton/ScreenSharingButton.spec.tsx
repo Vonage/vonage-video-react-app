@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
-import ScreenSharingButton, { ScreenShareButtonProps } from './ScreenSharingButton';
+import ScreenSharingButton, { ScreenShareButtonProps, testIds } from './ScreenSharingButton';
 
 describe('ScreenSharingButton', () => {
   const mockToggleScreenShare = vi.fn();
@@ -15,7 +15,7 @@ describe('ScreenSharingButton', () => {
 
   it('renders the share screen button', () => {
     render(<ScreenSharingButton {...defaultProps} />);
-    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.icon)).toBeInTheDocument();
 
     const button = screen.getByRole('button');
     button.click();
@@ -24,7 +24,7 @@ describe('ScreenSharingButton', () => {
 
   it('renders the share screen off button', () => {
     render(<ScreenSharingButton {...defaultProps} isSharingScreen />);
-    expect(screen.getByTestId('ScreenShareIcon')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.icon)).toBeInTheDocument();
 
     const button = screen.getByRole('button');
     button.click();

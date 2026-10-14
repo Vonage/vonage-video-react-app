@@ -18,16 +18,10 @@ const ReduceNoiseTestSpeakers = (): ReactElement => {
   );
 
   return (
-    <MenuList
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        mt: 1,
-      }}
-    >
+    <MenuList className="mt-2! flex flex-col">
       {hasSpeakerDevices && (
         <SoundTest labelClassName="text-vera-body-extended">
-          <Box sx={{ mr: 1.5 }}>
+          <Box className="mr-3">
             <VividIcon
               customSize={-5}
               name="audio-mid-solid"

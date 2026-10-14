@@ -1,14 +1,18 @@
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, MenuList, MenuItem, Tooltip, BoxProps } from '@mui/material';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
 import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import mediaDevices$ from '@core/stores/mediaDevices';
-import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { makeApplicationErrorMapper } from '@core/errors';
 import { handleClientApplicationError } from '@ui/helpers';
+
+export const testIds = {
+  title: 'video-device-title',
+  list: 'video-devices',
+} as const;
 
 export type VideoDevicesProps = BoxProps & {
   handleToggle: () => void;
@@ -20,13 +24,13 @@ export type VideoDevicesProps = BoxProps & {
  * This component is responsible for rendering the list of video output devices (i.e. web cameras).
  * @param {VideoDevicesProps} props - the props for this component.
  *  @property {() => void} handleToggle - the function that handles the toggle of video output device.
- * @returns {ReactElement | false} - the video output devices component.
+ * @returns {ReactElement} - the video output devices component.
  */
 const VideoDevices = ({
   handleToggle,
   className,
   ...boxProps
-}: VideoDevicesProps): ReactElement | false => {
+}: VideoDevicesProps): ReactElement => {
   const { t } = useTranslation();
 
   // Use store's selection as source of truth, not publisher.getVideoSource() which can be stale
@@ -55,86 +59,61 @@ const VideoDevices = ({
   };
 
   return (
-    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
-      <>
-        <Box
-          className={classNames(className)}
-          sx={{
-            display: 'flex',
-            ml: 2,
-            mt: 1,
-            mb: 0.5,
-          }}
-          {...boxProps}
+    <>
+      <Box className={classNames('mt-2 mb-1 ml-4 flex', className)} {...boxProps}>
+        <VividIcon
+          name="video-line"
+          customSize={-5}
+          style={{ color: 'var(--vera-text-secondary)' }}
+        />
+        <p
+          className="text-vera-body-extended text-vera-text-tertiary ml-4"
+          data-testid={testIds.title}
         >
-          <VividIcon
-            name="video-line"
-            customSize={-5}
-            style={{ color: 'var(--vera-text-secondary)' }}
-          />
-          <p className="text-vera-body-extended text-vera-text-tertiary ml-4">
-            {t('devices.video.camera.full')}
-          </p>
-        </Box>
-        <MenuList id="split-button-menu">
-          {devicesAvailable.map((option) => {
-            const isSelected = option.deviceId === selectedDeviceId;
-            return (
-              <MenuItem
-                key={option.deviceId}
-                selected={isSelected}
-                onClick={() => handleChangeVideoSource(option.deviceId)}
-                className="[&.Mui-selected]:text-vera-on-background"
-                sx={{
-                  transition: 'background-color 160ms ease',
-                  '&&.Mui-selected': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                  '&&.Mui-selected:hover': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                  '&&:hover': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                }}
+          {t('devices.video.camera.full')}
+        </p>
+      </Box>
+      <MenuList id="split-button-menu" data-testid={testIds.list}>
+        {devicesAvailable.map((option) => {
+          const isSelected = option.deviceId === selectedDeviceId;
+          return (
+            <MenuItem
+              key={option.deviceId}
+              selected={isSelected}
+              onClick={() => handleChangeVideoSource(option.deviceId)}
+              className="[transition:background-color_160ms_ease] [&.Mui-selected]:text-vera-on-background [&.Mui-selected]:bg-vera-background! [&:hover]:bg-vera-background!"
+            >
+              <Box
+                key={`${option.deviceId}-video-device`}
+                className={classNames('mb-1 flex w-full items-center overflow-hidden', {
+                  'text-vera-text-primary': isSelected,
+                  'text-vera-text-secondary': !isSelected,
+                })}
               >
-                <Box
-                  key={`${option.deviceId}-video-device`}
-                  className={classNames('w-full items-center', {
-                    'text-vera-text-primary': isSelected,
-                    'text-vera-text-secondary': !isSelected,
-                  })}
-                  sx={{
-                    display: 'flex',
-                    mb: 0.5,
-                    overflow: 'hidden',
-                  }}
-                >
-                  {isSelected ? (
-                    <Box key={'video-devices-check'} sx={{ mr: 2.5 }}>
-                      <VividIcon
-                        name="check-line"
-                        customSize={-6}
-                        style={{
-                          color: `${
-                            isSelected ? 'var(--vera-text-primary)' : 'var(--vera-text-secondary)'
-                          } !important`,
-                        }}
-                      />
-                    </Box>
-                  ) : (
-                    <Box sx={{ minWidth: 36 }} /> // Placeholder when CheckIcon is not displayed
-                  )}
-                  <Tooltip title={option.label} placement="right" arrow>
-                    <span className="text-vera-body-extended truncate">{option.label}</span>
-                  </Tooltip>
-                </Box>
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </>
-    )
+                {isSelected ? (
+                  <Box key={'video-devices-check'} className="mr-5">
+                    <VividIcon
+                      name="check-line"
+                      customSize={-6}
+                      style={{
+                        color: `${
+                          isSelected ? 'var(--vera-text-primary)' : 'var(--vera-text-secondary)'
+                        } !important`,
+                      }}
+                    />
+                  </Box>
+                ) : (
+                  <Box className="min-w-[36px]" /> // Placeholder when CheckIcon is not displayed
+                )}
+                <Tooltip title={option.label} placement="right" arrow>
+                  <span className="text-vera-body-extended truncate">{option.label}</span>
+                </Tooltip>
+              </Box>
+            </MenuItem>
+          );
+        })}
+      </MenuList>
+    </>
   );
 };
 
