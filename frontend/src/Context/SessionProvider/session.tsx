@@ -492,8 +492,14 @@ const SessionProvider = ({
 
       await vonageVideoClient.current.connect();
       setConnected(true);
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (error: unknown) {
+      frontendLogger.log('Session: connect failed', {
+        eventSource: 'session.connect.error',
+        sessionId: vonageVideoClient.current?.sessionId,
+        connectionId: vonageVideoClient.current?.connectionId,
+        partnerId: vonageVideoClient.current?.applicationId,
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

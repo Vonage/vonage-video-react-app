@@ -56,7 +56,7 @@ type VonageVideoClientEvents = {
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session;
   private readonly credential: Credential;
-  private readonly applicationId: string;
+  public readonly applicationId: string;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
   private readonly streams = new Map<string, Stream>();

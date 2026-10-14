@@ -9,6 +9,7 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import frontendLogger from '../../logger';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -311,14 +312,22 @@ describe('SessionProvider', () => {
 
     it('connect rejecting should not set connected to true and should not throw', async () => {
       vonageVideoClient.connect = vi.fn().mockRejectedValue(new Error('connect failed'));
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const logSpy = vi.spyOn(frontendLogger, 'log').mockImplementation(() => {});
 
       const { getByTestId } = render(<TestComponent />);
 
-      await waitFor(() => expect(consoleErrorSpy).toHaveBeenCalled());
+      await waitFor(() =>
+        expect(logSpy).toHaveBeenCalledWith(
+          'Session: connect failed',
+          expect.objectContaining({
+            eventSource: 'session.connect.error',
+            message: 'connect failed',
+          })
+        )
+      );
       expect(getByTestId('connected')).toHaveTextContent('false');
 
-      consoleErrorSpy.mockRestore();
+      logSpy.mockRestore();
     });
 
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
