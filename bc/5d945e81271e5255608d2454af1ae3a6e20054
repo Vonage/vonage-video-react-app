@@ -1,0 +1,30 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_7d79809b9adad9::t_842cb79d64a0ce 59
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_7d79809b9adad9::t_4915f5b3eaa581 315,319-320,326-327,330
+  s_7d79809b9adad9::t_4067c95307da3a 322-325
+  s_7d79809b9adad9::t_7498faaecf82e4 12
+  s_7d79809b9adad9::t_dfc57f2049c3bf 321
+frontend/src/Context/SessionProvider/session.tsx
+  s_7d79809b9adad9::t_2e51ca605b6a72 497-500
+  s_7d79809b9adad9::t_12ff6fa28ed425 502
+  s_7d79809b9adad9::t_5efb9c5eccf75f 496
+  s_7d79809b9adad9::t_12404bc1c43845 495
+  s_7d79809b9adad9::t_e89f411f56556e 501
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc5d945e81271e5255608d2454af1ae3a6e20054",
+  "prompts": {},
+  "sessions": {
+    "s_7d79809b9adad9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ef7ac75-48e3-48e0-8fca-ef806b32ebba",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
