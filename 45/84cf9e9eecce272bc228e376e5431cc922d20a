@@ -1,0 +1,26 @@
+backend/helpers/resolveResponseFormat.ts
+  h_6029769cf9ac60 1-18
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 76-109
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 3,11-12,14,32-35,65,81-83,120,126-136
+backend/middleware/authMiddleware/errors/SignInRequiredError.ts
+  h_6029769cf9ac60 1-20
+backend/middleware/errorHandler.ts
+  h_6029769cf9ac60 5,54,56,61
+backend/routes/auth/auth.ts
+  h_6029769cf9ac60 4,8
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 14-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4584cf9e9eecce272bc228e376e5431cc922d20a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
