@@ -1,0 +1,65 @@
+backend/helpers/config.ts
+  s_7627de70bf8437::t_b66ea06a32f41c 3
+  s_7627de70bf8437::t_041ed8a1d5f5c9 57
+  h_737cf808c1c597 77
+  s_7627de70bf8437::t_5839cb091c1bbf 39-41,43
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_7627de70bf8437::t_13596158b56909 64
+  s_7627de70bf8437::t_339066cd179266 179,188-197,203
+  s_7627de70bf8437::t_9574f836c668a1 264-268
+  s_7627de70bf8437::t_dcd4ea1ef029e4 485-486
+  h_737cf808c1c597 25,183,198,200,236-245,278,285,290,306,309,317,433,445
+  s_7627de70bf8437::t_c7e0256d5b86e2 81-82
+  s_7627de70bf8437::t_b16e4bbf6f2db2 141
+  s_7627de70bf8437::t_771ed2a4f82a58 213-220
+  s_7627de70bf8437::t_dfdb8843231276 292-295
+  s_7627de70bf8437::t_d8aa20e53d7798 315-316,320
+  s_7627de70bf8437::t_fb386e8abfe240 423
+  s_7627de70bf8437::t_e52552e159ad18 202
+  s_7627de70bf8437::t_a149e2d7c8828f 319
+  h_737cf808c1c597 185,308
+frontend/src/Context/SessionProvider/session.tsx
+  h_737cf808c1c597 448
+  s_7627de70bf8437::t_fe4ef56dfb1010 412-413
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  s_7627de70bf8437::t_e163c3be4a2f38 170
+  h_737cf808c1c597 193,209,332,392,442
+  s_7627de70bf8437::t_afcfc68002997b 223
+  s_7627de70bf8437::t_c8771d3b6097c9 337-339
+  s_7627de70bf8437::t_45195cd5a55d21 389
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_7627de70bf8437::t_309900b514d6fc 13
+  h_737cf808c1c597 80
+frontend/src/main.tsx
+  s_7627de70bf8437::t_cbf1364bb7cc76 12
+  h_737cf808c1c597 26
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_7627de70bf8437::t_70ea9fd1edb961 370
+backend/types/config.ts
+  h_737cf808c1c597 38
+  s_7627de70bf8437::t_c0f197fe30192e 12-14,16
+backend/.env.example
+  s_7627de70bf8437::t_20fc9eda5cac0c 72-76,78-81
+  h_737cf808c1c597 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "12ab20e286c0197b8d39117c880609de443367a3",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7627de70bf8437": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_8adeab23-6e1c-40b7-941b-abe9c65a0b0a",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
