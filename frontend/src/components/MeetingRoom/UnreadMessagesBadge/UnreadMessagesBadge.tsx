@@ -31,7 +31,7 @@ const UnreadMessagesBadge = forwardRef(function UnreadMessagesBadge(
   return (
     <Badge
       {...rest}
-      className="[&_.MuiBadge-badge]:text-vera-on-warning [&_.MuiBadge-badge]:bg-vera-warning"
+      className="mr-[12px] [&_.MuiBadge-badge]:text-vera-on-warning [&_.MuiBadge-badge]:bg-vera-warning"
       badgeContent={unreadCount}
       data-testid={testIds.unreadCount}
       invisible={isInvisible}
