@@ -56,7 +56,7 @@ type VonageVideoClientEvents = {
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session;
   private readonly credential: Credential;
-  public readonly applicationId: string;
+  private readonly applicationId: string;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
   private readonly streams = new Map<string, Stream>();
@@ -458,10 +458,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
     this.disconnected = true;
 
-    // Clean up the hidden subscriber used for captions
-    if (this.hiddenSubscriber) {
-      this.clientSession.unsubscribe(this.hiddenSubscriber);
-      this.hiddenSubscriber = null;
+    try {
+      if (this.hiddenSubscriber) {
+        this.clientSession.unsubscribe(this.hiddenSubscriber);
+        this.hiddenSubscriber = null;
+      }
+    } catch (err) {
+      frontendLogger.reportError(err, {
+        eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
+        sessionId: this.sessionId,
+        connectionId: this.connectionId,
+        partnerId: this.applicationId,
+      });
     }
 
     try {

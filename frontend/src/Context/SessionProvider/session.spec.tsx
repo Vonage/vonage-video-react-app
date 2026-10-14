@@ -10,6 +10,7 @@ import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/sessio
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
 import frontendLogger from '../../logger';
+import wait from '@common/execution/wait';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -310,27 +311,61 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
-    it('connect rejecting should not set connected to true and should not throw', async () => {
+    it('connect rejecting should not set connected to true, should not throw, and should not duplicate the report VonageVideoClient already made', async () => {
       vonageVideoClient.connect = vi.fn().mockRejectedValue(new Error('connect failed'));
       const logSpy = vi.spyOn(frontendLogger, 'log').mockImplementation(() => {});
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+
+      const { getByTestId } = render(<TestComponent />);
+
+      await waitFor(() => expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1));
+      await wait(0);
+
+      expect(getByTestId('connected')).toHaveTextContent('false');
+      expect(logSpy).not.toHaveBeenCalled();
+      expect(reportErrorSpy).not.toHaveBeenCalled();
+
+      logSpy.mockRestore();
+      reportErrorSpy.mockRestore();
+    });
+
+    it('connect throwing during construction should report with sessionKey context since VonageVideoClient never got to see the failure', async () => {
+      const constructError = new Error('construct failed');
+      vi.mocked(VonageVideoClient).mockImplementationOnce(() => {
+        throw constructError;
+      });
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
 
       const { getByTestId } = render(<TestComponent />);
 
       await waitFor(() =>
-        expect(logSpy).toHaveBeenCalledWith(
-          'Session: connect failed',
+        expect(reportErrorSpy).toHaveBeenCalledWith(
+          constructError,
           expect.objectContaining({
-            eventSource: 'session.connect.error',
-            message: 'connect failed',
+            eventSource: 'session.connect.setup.error',
+            sessionKey: validSessionKey,
           })
         )
       );
       expect(getByTestId('connected')).toHaveTextContent('false');
 
-      logSpy.mockRestore();
+      reportErrorSpy.mockRestore();
     });
 
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it('disconnect should null the ref and set connected to false without waiting for VonageVideoClient.disconnect() to settle', async () => {
+      vonageVideoClient.disconnect = vi.fn().mockReturnValue(new Promise<void>(() => {}));
+
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {

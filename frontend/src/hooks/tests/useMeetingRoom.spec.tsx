@@ -142,7 +142,10 @@ describe('useMeetingRoom', () => {
     await waitFor(() => {
       expect(reportErrorSpy).toHaveBeenCalledWith(
         joinFailure,
-        expect.objectContaining({ eventSource: 'useMeetingRoom.resolveAndJoin.error' })
+        expect.objectContaining({
+          eventSource: 'useMeetingRoom.resolveAndJoin.error',
+          sessionKey: 'test-room',
+        })
       );
     });
 

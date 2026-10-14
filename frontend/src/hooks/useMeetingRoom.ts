@@ -113,7 +113,10 @@ const useMeetingRoom = () => {
     };
 
     resolveAndJoin().catch((error: unknown) => {
-      frontendLogger.reportError(error, { eventSource: 'useMeetingRoom.resolveAndJoin.error' });
+      frontendLogger.reportError(error, {
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey,
+      });
     });
 
     return () => {

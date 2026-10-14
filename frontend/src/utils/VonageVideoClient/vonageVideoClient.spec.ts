@@ -34,6 +34,7 @@ const mockInitSession = vi.fn();
 const mockConnectPromise = vi.fn();
 const mockConnect = Object.assign(vi.fn(), { promise: mockConnectPromise });
 const mockSubscribe = vi.fn();
+const mockUnsubscribe = vi.fn();
 const mockDisconnect = vi.fn();
 const mockPublish = vi.fn();
 type TestSession = Session & EventEmitter;
@@ -56,6 +57,7 @@ describe('VonageVideoClient', () => {
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
       subscribe: mockSubscribe,
+      unsubscribe: mockUnsubscribe,
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
       publish: mockPublish,
@@ -75,8 +77,8 @@ describe('VonageVideoClient', () => {
     vonageVideoClient = new VonageVideoClient(fakeCredentials);
   });
 
-  afterEach(() => {
-    void vonageVideoClient?.disconnect();
+  afterEach(async () => {
+    await vonageVideoClient?.disconnect();
     vonageVideoClient = null;
     vi.resetAllMocks();
   });
@@ -258,6 +260,36 @@ describe('VonageVideoClient', () => {
         sessionId: fakeSessionId,
       })
     );
+    expect(vonageVideoClient?.clientSession).toBeNull();
+  });
+
+  it('disconnect should still disconnect and clean up when unsubscribing the hidden caption subscriber throws', async () => {
+    const unsubscribeError = new Error('unsubscribe-failed');
+    const mockPublisher = {
+      id: 'publisher-id',
+      stream: { streamId: 'stream-id' },
+    } as unknown as Publisher;
+
+    mockPublish.mockImplementation((_publisher, callback) => {
+      callback();
+    });
+    mockSubscribe.mockReturnValue(mockSubscriber);
+    mockUnsubscribe.mockImplementation(() => {
+      throw unsubscribeError;
+    });
+
+    await vonageVideoClient?.connect();
+    await vonageVideoClient?.publish(mockPublisher);
+    await vonageVideoClient?.disconnect();
+    await wait(0);
+
+    expect(mockProvider.reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: unsubscribeError.message }),
+      expect.objectContaining({
+        eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
+      })
+    );
+    expect(mockDisconnect).toHaveBeenCalled();
     expect(vonageVideoClient?.clientSession).toBeNull();
   });
 
