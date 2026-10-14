@@ -95,11 +95,6 @@ const envVariables: EnvVariable[] = [
   { name: 'ALLOW_ARCHIVING', sourcePath: 'meetingRoomSettings.allowArchiving', format: 'raw' },
   { name: 'ALLOW_CAPTIONS', sourcePath: 'meetingRoomSettings.allowCaptions', format: 'raw' },
   { name: 'ALLOW_CHAT', sourcePath: 'meetingRoomSettings.allowChat', format: 'raw' },
-  {
-    name: 'DEVICE_SELECTION',
-    sourcePath: 'meetingRoomSettings.allowDeviceSelection',
-    format: 'raw',
-  },
   { name: 'ALLOW_EMOJIS', sourcePath: 'meetingRoomSettings.allowEmojis', format: 'raw' },
   { name: 'ALLOW_SCREEN_SHARE', sourcePath: 'meetingRoomSettings.allowScreenShare', format: 'raw' },
   {

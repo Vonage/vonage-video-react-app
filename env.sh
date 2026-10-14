@@ -21,7 +21,6 @@ export BYPASS_WAITING_ROOM=false
 export ALLOW_ARCHIVING=true
 export ALLOW_CAPTIONS=true
 export ALLOW_CHAT=true
-export DEVICE_SELECTION=true
 export ALLOW_EMOJIS=true
 export ALLOW_SCREEN_SHARE=true
 export DEFAULT_LAYOUT_MODE='active-speaker'

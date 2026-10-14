@@ -7,8 +7,11 @@ import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
-import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
+
+export const testIds = {
+  button: 'archiving-button',
+} as const;
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -24,12 +27,12 @@ export type ArchivingButtonProps = {
  * @param {ArchivingButtonProps} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- * @returns {ReactElement | false} - The ArchivingButton component.
+ * @returns {ReactElement} - The ArchivingButton component.
  */
 const ArchivingButton = ({
   isOverflowButton = false,
   handleClick,
-}: ArchivingButtonProps): ReactElement | false => {
+}: ArchivingButtonProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
@@ -98,39 +101,29 @@ const ArchivingButton = ({
   };
 
   return (
-    env.ALLOW_ARCHIVING && (
-      <>
-        <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleButtonClick}
-            data-testid="archiving-button"
-            className={classNames({ recording: isRecording })}
-            icon={
-              <VividIcon
-                name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
-                customSize={-5}
-                style={{
-                  color: 'var(--vera-on-secondary-light)',
-                }}
-              />
-            }
-            style={{
-              marginTop: isOverflowButton ? '0px' : '4px',
-              backgroundColor: isRecording
-                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-                : undefined,
-            }}
-            isOverflowButton={isOverflowButton}
-          />
-        </Tooltip>
-        <PopupDialog
-          isOpen={isModalOpen}
-          handleClose={handleClose}
-          handleActionClick={handleActionClick}
-          actionText={actionText}
+    <>
+      <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleButtonClick}
+          data-testid={testIds.button}
+          className={classNames({ recording: isRecording })}
+          icon={
+            <VividIcon
+              name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
+              customSize={-5}
+              className="text-vera-on-secondary-light"
+            />
+          }
+          isOverflowButton={isOverflowButton}
         />
-      </>
-    )
+      </Tooltip>
+      <PopupDialog
+        isOpen={isModalOpen}
+        handleClose={handleClose}
+        handleActionClick={handleActionClick}
+        actionText={actionText}
+      />
+    </>
   );
 };
 export default ArchivingButton;

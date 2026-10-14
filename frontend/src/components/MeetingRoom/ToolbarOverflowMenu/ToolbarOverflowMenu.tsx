@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react';
+import type { Dispatch, ReactElement, SetStateAction } from 'react';
 import ArchivingButton from '../ArchivingButton';
 import CaptionsButton from '../CaptionsButton';
 import EmojiGridButton from '../EmojiGridButton';
@@ -9,13 +9,17 @@ import LayoutButton from '../LayoutButton';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import getOverflowMenuButtons from '../../../utils/getOverflowMenuButtons';
-import isReportIssueEnabled from '../../../utils/isReportIssueEnabled';
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
-import { env } from '../../../env';
 import AdvancedSettingsButton from '../AdvancedSettingsButton';
+import getToolbarButtonVisibility from '../Toolbar/helpers/getToolbarButtonVisibility';
+import isDisplayableToolbarButton from '../Toolbar/helpers/isDisplayableToolbarButton';
+
+export const testIds = {
+  menu: 'toolbar-overflow-menu',
+} as const;
 
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
@@ -70,6 +74,7 @@ const ToolbarOverflowMenu = ({
   const participantCount =
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+  const buttonVisibility = getToolbarButtonVisibility();
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -80,14 +85,16 @@ const ToolbarOverflowMenu = ({
 
   // An array of buttons available for the overflow menu. As the screen resizes, buttons may be hidden and moved to the
   // Toolbar to ensure a responsive layout without compromising usability.
-  const overflowButtonArray: Array<ReactElement | false> = [
-    <ScreenSharingButton
-      toggleScreenShare={toggleShareScreen}
-      isSharingScreen={isSharingScreen}
-      isViewingScreenShare={isViewingScreenShare}
-      isOverflowButton
-      key="ScreenSharingButton"
-    />,
+  const overflowButtonArray: ReactElement[] = [
+    buttonVisibility.screenShare && (
+      <ScreenSharingButton
+        toggleScreenShare={toggleShareScreen}
+        isSharingScreen={isSharingScreen}
+        isViewingScreenShare={isViewingScreenShare}
+        isOverflowButton
+        key="ScreenSharingButton"
+      />
+    ),
     <LayoutButton
       isScreenSharePresent={isViewingScreenShare}
       isPinningPresent={isPinningPresent}
@@ -95,24 +102,30 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
-    <CaptionsButton
-      isOverflowButton
-      handleClick={closeMenu}
-      key="CaptionsButton"
-      captionsState={captionsState}
-    />,
-    <EmojiGridButton
-      isEmojiGridOpen={isEmojiGridOpen}
-      setIsEmojiGridOpen={setIsEmojiGridOpen}
-      isParentOpen={isOpen}
-      isOverflowButton
-      key="EmojiGridButton"
-    />,
-    <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />,
-    env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
+    buttonVisibility.emojis && (
+      <EmojiGridButton
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen={isOpen}
+        isOverflowButton
+        key="EmojiGridButton"
+      />
+    ),
+    buttonVisibility.captions && (
+      <CaptionsButton
+        isOverflowButton
+        handleClick={closeMenu}
+        key="CaptionsButton"
+        captionsState={captionsState}
+      />
+    ),
+    buttonVisibility.archiving && (
+      <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />
+    ),
+    buttonVisibility.advancedSettings && (
       <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />
     ),
-    isReportIssueEnabled() && (
+    buttonVisibility.reportIssue && (
       <ReportIssueButton
         isOpen={rightPanelActiveTab === 'issues'}
         handleClick={closeMenuWrapper(toggleReportIssue)}
@@ -120,42 +133,32 @@ const ToolbarOverflowMenu = ({
         key="ReportIssueButton"
       />
     ),
-    <ParticipantListButton
-      isOpen={rightPanelActiveTab === 'participant-list'}
-      handleClick={closeMenuWrapper(toggleParticipantList)}
-      participantCount={participantCount}
-      isOverflowButton
-      key="ParticipantListButton"
-    />,
-    <ChatButton
-      isOpen={rightPanelActiveTab === 'chat'}
-      handleClick={closeMenuWrapper(toggleChat)}
-      isOverflowButton
-      key="ChatButton"
-    />,
-  ];
+    buttonVisibility.participantList && (
+      <ParticipantListButton
+        isOpen={rightPanelActiveTab === 'participant-list'}
+        handleClick={closeMenuWrapper(toggleParticipantList)}
+        participantCount={participantCount}
+        isOverflowButton
+        key="ParticipantListButton"
+      />
+    ),
+    buttonVisibility.chat && (
+      <ChatButton
+        isOpen={rightPanelActiveTab === 'chat'}
+        handleClick={closeMenuWrapper(toggleChat)}
+        isOverflowButton
+        key="ChatButton"
+      />
+    ),
+  ].filter(isDisplayableToolbarButton);
 
   return (
     <Portal>
       <ClickAwayListener onClickAway={closeMenu}>
         <Grow in={isOpen}>
           <Box
-            data-testid="toolbar-overflow-menu"
-            className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
-            sx={{
-              padding: { xs: 1 },
-              borderRadius: 2,
-              zIndex: 1,
-              width: 'calc(100dvw - 30px)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignContent: 'space-between',
-              alignItems: 'center',
-              paddingLeft: '12px',
-              position: 'absolute',
-              left: '15px',
-              bottom: '80px',
-            }}
+            data-testid={testIds.menu}
+            className="absolute bottom-20 left-[15px] z-1 flex w-[calc(100dvw-30px)] content-between items-center justify-center gap-3 rounded-lg bg-vera-dark-grey-opacity py-2 pr-5 pl-3 text-vera-on-dark-grey"
           >
             {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount)}
           </Box>
