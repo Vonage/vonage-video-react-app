@@ -1,0 +1,16 @@
+scripts/generateEnv.ts
+  h_6029769cf9ac60 20,22,29-30,32-33,177,179,182
+.gitignore
+  h_6029769cf9ac60 81-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f8106676a5d1abab37d465a0cb9f99c840869518",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
