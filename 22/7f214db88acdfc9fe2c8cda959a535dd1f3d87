@@ -1,0 +1,42 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_7d79809b9adad9::t_470208fcf0b34f 80-81
+  s_7d79809b9adad9::t_a6513a0c02b778 266-272,276-295
+  s_7d79809b9adad9::t_8da3f6b3ab814a 273-275
+  s_7d79809b9adad9::t_2064f2aaa78941 37
+  s_7d79809b9adad9::t_f0d69dbd8950a1 60
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_7d79809b9adad9::t_648fd3e94f82e5 466-472
+  s_7d79809b9adad9::t_7408c335b58ee2 462-465
+  s_7d79809b9adad9::t_abe0038becc276 59
+  s_7d79809b9adad9::t_9d48bf26a7d136 461
+frontend/src/hooks/useMeetingRoom.ts
+  s_7d79809b9adad9::t_9865108c3c9a4d 116-119
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  s_7d79809b9adad9::t_9c4d1cb89de1ea 145-148
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_7d79809b9adad9::t_1169e4e39870ef 368-370
+  s_7d79809b9adad9::t_0383e26dd7dc1b 366-367
+  s_7d79809b9adad9::t_e3d14cb148af2b 13
+  s_7d79809b9adad9::t_13b1c2cad6e568 314,317-337,342-343,345-346,352,360,364
+  s_7d79809b9adad9::t_b99b6d0af16bb2 358-359
+  s_7d79809b9adad9::t_4a103500771c78 361-363
+  s_7d79809b9adad9::t_2683aaddb1839c 365
+frontend/src/Context/SessionProvider/session.tsx
+  s_7d79809b9adad9::t_a5eac52f7b0548 471-473,476,500-506
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "227f214db88acdfc9fe2c8cda959a535dd1f3d87",
+  "prompts": {},
+  "sessions": {
+    "s_7d79809b9adad9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ef7ac75-48e3-48e0-8fca-ef806b32ebba",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
