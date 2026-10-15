@@ -7,13 +7,15 @@ const useApplyAdvancedSettings = (publisher: Publisher | null): void => {
   useEffect(() => {
     if (!publisher) return;
 
-    const { frameRate, resolution, bitrateMode, customVideoBitrate } = advancedSettings$.getState();
+    const { frameRate, resolution, bitrateMode, customVideoBitrate, cameraContentHint } =
+      advancedSettings$.getState();
 
     void applyAdvancedSettingsToPublisher(publisher, {
       frameRate,
       resolution,
       bitrateMode,
       customVideoBitrate,
+      contentHint: cameraContentHint,
     });
   }, [publisher]);
 };

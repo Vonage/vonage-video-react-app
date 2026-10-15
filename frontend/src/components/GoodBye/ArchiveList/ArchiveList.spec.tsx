@@ -7,7 +7,7 @@ import ArchiveList from './ArchiveList';
 import { ProviderOptions, makeTestProvider, providers } from '@test/providers';
 import { composeProviders } from '@web/helpers';
 import { makeVideoClientMock } from '@core-test/fixtures';
-import { makeArchive } from '@common-test/fixtures';
+import { makeArchive } from '@web-test/fixtures';
 
 describe('ArchiveList', () => {
   it('should display an error state when recordings cannot be loaded', async () => {

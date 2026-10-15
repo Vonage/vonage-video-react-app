@@ -1,5 +1,5 @@
 import { ReactElement, RefObject, Dispatch, SetStateAction } from 'react';
-import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import InputDevices from '../InputAudioDevices';
 import OutputDevices from '../OutputAudioDevices';
 import ReduceNoiseTestSpeakers from '../ReduceNoiseTestSpeakers';
@@ -53,7 +53,7 @@ const DeviceSettingsMenu = ({
 }: DeviceSettingsMenuProps): ReactElement | false => {
   const isAudio = deviceType === 'audio';
   const shouldDisplayBackgroundEffects =
-    hasMediaProcessorSupport('both') && env.ALLOW_BACKGROUND_EFFECTS;
+    hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
 
   const handleToggleBackgroundEffects = () => {
     toggleBackgroundEffects();
