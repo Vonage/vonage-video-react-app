@@ -1,0 +1,20 @@
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 380-409
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 184-195
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 489-501,503-509,511-512,514
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_c939f8fae0de97 38,61,63,76,259-273,280,284,287-305,315
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1dd94479f2e413d14dee3b54ec41854529b540d5",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
