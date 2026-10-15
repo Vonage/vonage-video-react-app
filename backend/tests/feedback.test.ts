@@ -47,6 +47,24 @@ describe('POST /feedback/report', () => {
     mockReportIssue.mockClear();
   });
 
+  it('rejects an oversized feedback payload before invoking the feedback service (DoS guard)', async () => {
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({
+        title: 'x',
+        name: 'y',
+        issue: 'z',
+        // ~3 MB base64 attachment, over the route's 2 MB limit.
+        attachment: 'A'.repeat(3_000_000),
+      });
+
+    // The body must be rejected before it reaches the handler/service, so the base64 ->
+    // Buffer -> form-data amplification never happens.
+    expect(res.statusCode).toBe(413);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
+
   it('Posting a feedback should pass correct values to the feedback service', async () => {
     const res = await request(server)
       .post('/feedback/report')
