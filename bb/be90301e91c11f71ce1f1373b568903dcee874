@@ -1,0 +1,21 @@
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_dc5aabab156a0c::t_296f3c4a29349c 186,191,193
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_dc5aabab156a0c::t_71571bf4fa9899 408
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bbbe90301e91c11f71ce1f1373b568903dcee874",
+  "prompts": {},
+  "sessions": {
+    "s_dc5aabab156a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97fb7cc3-0736-432e-928b-c11f40a0a80d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,83 @@
+frontend/src/logger/event/index.ts
+  s_7c371a25d620f6::t_1da8a078df4fd7 2
+frontend/src/logger/event/splitSessionFromExtra.ts
+  s_7c371a25d620f6::t_670f4eff29e6fc 1-24
+libs/common/src/types/index.ts
+  s_7c371a25d620f6::t_e96094e6000d9e 5,7
+libs/common/src/schemas/ClientLogEvent/ClientLogSession.schema.ts
+  s_7c371a25d620f6::t_c0f35c5d933bd0 1-10
+frontend/src/Context/LoggerSynchronizer/LoggerSynchronizer.spec.tsx
+  s_7627de70bf8437::t_d45750a1c0977f 18-64
+  s_7627de70bf8437::t_b6063347973a1f 15-17
+  s_7627de70bf8437::t_192ef8d6872817 65-67
+  h_737cf808c1c597 1-14,68-99
+libs/common/src/schemas/ClientLogEvent/index.ts
+  s_7c371a25d620f6::t_765530a2b360d6 6
+frontend/src/logger/event/createClientEvent.ts
+  s_7c371a25d620f6::t_261a5e42217795 1
+  s_7c371a25d620f6::t_7633b285ff5818 39
+  h_737cf808c1c597 13,50-53
+  s_7c371a25d620f6::t_6ff2844f745f8d 34
+  s_7c371a25d620f6::t_345dcfa0f763a7 33
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.ts
+  h_737cf808c1c597 27
+  s_7c371a25d620f6::t_664235915daf28 2,11
+  s_7c371a25d620f6::t_8abeb74e241d14 26
+frontend/src/App.tsx
+  h_737cf808c1c597 25,54
+frontend/src/logger/event/createClientEvent.spec.ts
+  s_7c371a25d620f6::t_dc17f2465637b3 18,25,28,43,51,56,69,72,76,80,83-84,95,100
+  h_737cf808c1c597 65,73,88
+  h_737cf808c1c597 85-87
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.spec.ts
+  h_737cf808c1c597 26
+  h_737cf808c1c597 22,37-41
+frontend/src/logger/transport/backendLogTransport.ts
+  s_7c371a25d620f6::t_91b2a80c6b1a96 5
+  s_7c371a25d620f6::t_4e1e67debb5861 15,20-21,29
+  h_737cf808c1c597 44
+frontend/src/Context/LoggerSynchronizer/LoggerSynchronizer.tsx
+  s_7627de70bf8437::t_7849d82e54c647 11-12
+  s_7627de70bf8437::t_5ef6c6788b89b8 8-10
+  s_7627de70bf8437::t_b79117ee85516a 13-15
+  h_737cf808c1c597 1-7,16-21
+backend/services/tests/loggerService.test.ts
+  h_737cf808c1c597 25,49,63,66,131,143
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_737cf808c1c597 19,65
+backend/tests/logger.test.ts
+  h_737cf808c1c597 19,51,68,144,160,191,195-200
+frontend/src/Context/LoggerSynchronizer/index.tsx
+  h_737cf808c1c597 1
+frontend/src/logger/providers/backendLoggingProvider.spec.ts
+  h_737cf808c1c597 57,90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ee018913f40a6fee7ff0c665ca146f69d9840656",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7627de70bf8437": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_8adeab23-6e1c-40b7-941b-abe9c65a0b0a",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    },
+    "s_7c371a25d620f6": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_d7dc08d9-e7af-4edf-98bc-dbc3b92d87b2",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
