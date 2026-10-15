@@ -56,6 +56,19 @@ Then, open **backend/.env** and fill in the required configuration:
 
 Frontend feature flags and display settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) by running `yarn sync:env`. The defaults work out of the box — edit `app-config.json` only when you need to customise behaviour, then re-run `yarn sync:env`. Do not edit `env.sh` directly; it is generated. See [Configuration](./CONFIGURATION.md) for the full list of available options.
 
+### Install Dependencies
+
+Dependencies are installed with pnpm, which owns the only lockfile in the repository:
+
+```bash
+npm i -g pnpm@12.11.2
+pnpm install
+```
+
+pnpm 12 or newer is required. Avoid `corepack enable` here, since corepack currently ships pnpm 11, which does not set the executable bit on package binaries and breaks running scripts with yarn.
+
+`yarn install` and `npm install` are blocked and will tell you this. Running scripts with yarn keeps working normally. See [Package manager](../README.md#package-manager) in the README for the details, including how to move the project back to yarn.
+
 ### Start in Development Mode
 
 ```bash

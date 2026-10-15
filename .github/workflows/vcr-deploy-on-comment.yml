@@ -62,15 +62,21 @@ jobs:
         with:
           ref: ${{ steps.pr.outputs.head_sha }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
+          cache: pnpm
 
-      - name: Verify Node & Yarn versions
+      - name: Verify Node & pnpm versions
         run: |
           node -v
-          yarn -v
+          pnpm -v
 
       # Create dev VCR config, patch instance name, build artefact
       - name: Building artefact
