@@ -127,6 +127,14 @@ export const VIDEO_CONTAINER_BUTTON_SIZE_WR = 40;
 export const BACKGROUNDS_PATH = '/background';
 
 /**
+ * @constant {string} BACKGROUND_THUMBNAILS_PATH - The path to the preview thumbnails for the
+ * background gallery. These are downscaled (max 400px, full aspect ratio preserved — no
+ * cropping) versions of the full-size images, ~24-52KB each vs 118-324KB. The full-size
+ * images (BACKGROUNDS_PATH) are only fetched when a background is actually applied via the SDK.
+ */
+export const BACKGROUND_THUMBNAILS_PATH = '/background/thumbnails';
+
+/**
  * @constant {number} MAX_SIZE_MB - The maximum file size (in megabytes) allowed for image uploads.
  * Used to validate image uploads in components like AddBackgroundEffectLayout.
  */
