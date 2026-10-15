@@ -19,6 +19,7 @@ const tsProjects = [
   './libs/api/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
+  './apps/local-oidc/tsconfig.json',
 ];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -61,8 +62,6 @@ export default [
             'eslint.config.mjs',
             'scripts/licenseCheck.js',
             'frontend/tailwind.config.js',
-            'frontend/tailwind.config.ts',
-            'libs/ui/tailwind.config.ts',
             'libs/ui/postcss.config.js',
             'integration-tests/globalSetup.js',
             'integration-tests/main.js',

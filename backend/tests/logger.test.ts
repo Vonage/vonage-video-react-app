@@ -10,6 +10,7 @@ jest.mock('axios');
 
 // This needs to be set before the server is imported
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+delete process.env.AUTH_ENABLED;
 const startServer = (await import('../server')).default as (port?: number) => Promise<Server>;
 
 const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
