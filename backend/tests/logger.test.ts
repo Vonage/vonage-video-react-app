@@ -16,6 +16,7 @@ const startServer = (await import('../server')).default as (port?: number) => Pr
 const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -47,6 +48,7 @@ describe('POST /client-logs', () => {
   it('returns 204 and forwards valid payload to Gollum', async () => {
     const payload = createValidLogPayload({
       action: 'vonageVideoClient.connect.success',
+      session: { sessionId: 's1', connectionId: 'c1' },
       sessionId: 's1',
       connectionId: 'c1',
     });
@@ -63,6 +65,7 @@ describe('POST /client-logs', () => {
       expect.objectContaining({
         action: 'vonageVideoClient.connect.success',
         variation: 'Success',
+        session: { sessionId: 's1', connectionId: 'c1' },
         sessionId: 's1',
         connectionId: 'c1',
         clientSystemTime: payload.clientSystemTime,
@@ -138,6 +141,7 @@ describe('POST /client-logs', () => {
   it('forwards payload with optional fields when present', async () => {
     const payload = createValidLogPayload({
       payload: { error: { message: 'Something broke' } },
+      session: { partnerId: '100' },
       partnerId: '100',
       componentId: 'comp-1',
       name: 'MeetingComponent',
@@ -153,6 +157,7 @@ describe('POST /client-logs', () => {
       expect.any(String),
       expect.objectContaining({
         payload: { error: { message: 'Something broke' } },
+        session: { partnerId: '100' },
         partnerId: '100',
         componentId: 'comp-1',
         name: 'MeetingComponent',
@@ -183,10 +188,16 @@ describe('POST /client-logs/batch', () => {
     const batch = [
       createValidLogPayload({
         action: 'vonageVideoClient.connect.success',
+        session: { sessionId: 's1', connectionId: 'c1' },
         sessionId: 's1',
         connectionId: 'c1',
       }),
-      createValidLogPayload({ action: 'EnterMeeting', sessionId: 's2', connectionId: 'c2' }),
+      createValidLogPayload({
+        action: 'EnterMeeting',
+        session: { sessionId: 's2', connectionId: 'c2' },
+        sessionId: 's2',
+        connectionId: 'c2',
+      }),
     ];
 
     const res = await request(server)

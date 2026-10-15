@@ -16,6 +16,7 @@ const { forwardToGollum, forward, resetGollumWarning } = await import('../logger
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -61,6 +62,7 @@ describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
     it('should still call logOnConnect for EnterMeeting events when gollumUrl is not configured', async () => {
       const event = createValidClientLogEvent({
         action: 'EnterMeeting',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: 'apiKey',

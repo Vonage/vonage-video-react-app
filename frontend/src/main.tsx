@@ -9,7 +9,6 @@ import { registerIcon } from '@vonage/vivid';
 import App, { loggerProvider } from './App.jsx';
 import './i18n.js';
 import Logger from './logger';
-import { getStorageItem, STORAGE_KEYS } from './utils/storage';
 
 // Register Vivid icons for use throughout the application
 registerIcon();
@@ -23,7 +22,6 @@ const rootElement = document.getElementById('root')!;
 const { onUncaughtError, onRecoverableError, onCaughtError } = Logger;
 
 Logger.setup(() => loggerProvider);
-Logger.setContext({ userId: getStorageItem(STORAGE_KEYS.USERNAME) || undefined });
 
 ReactDOM.createRoot(rootElement, {
   onUncaughtError,

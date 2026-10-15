@@ -22,6 +22,7 @@ import { videoClient } from './services';
 import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
 import screenShare$ from '@Context/screenShare/screenShare$';
+import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 
 const InnerApp = () => {
   return (
@@ -50,6 +51,7 @@ const InnerApp = () => {
                     <RoomProvider>
                       <SessionProvider>
                         <PublisherProvider>
+                          <LoggerSynchronizer />
                           <screenShare$.Provider>
                             <MeetingRoom />
                           </screenShare$.Provider>
