@@ -57,10 +57,8 @@ const ScreenshareVideoTile = forwardRef(
       y: 0,
     });
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number }>({
-      x: 0,
-      y: 0,
-    });
+    // Kept in a ref so the rAF callback always diffs against the latest applied position
+    const lastMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
     // Refs for rAF-based mousemove throttling to avoid excessive setState calls
     const pendingMouseMove = useRef<{ x: number; y: number } | null>(null);
@@ -116,8 +114,22 @@ const ScreenshareVideoTile = forwardRef(
     const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
       if (zoomLevel > 1) {
         setIsDragging(true);
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
+        lastMousePosition.current = { x: event.clientX, y: event.clientY };
       }
+    };
+
+    const applyPendingMouseMove = () => {
+      const position = pendingMouseMove.current;
+      if (position) {
+        const deltaX = position.x - lastMousePosition.current.x;
+        const deltaY = position.y - lastMousePosition.current.y;
+        setPanOffset((prev) => ({
+          x: prev.x + deltaX,
+          y: prev.y + deltaY,
+        }));
+        lastMousePosition.current = position;
+      }
+      pendingMouseMove.current = null;
     };
 
     const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
@@ -126,18 +138,8 @@ const ScreenshareVideoTile = forwardRef(
       pendingMouseMove.current = { x: event.clientX, y: event.clientY };
 
       rafId.current ??= requestAnimationFrame(() => {
-        const position = pendingMouseMove.current;
-        if (position) {
-          const deltaX = position.x - lastMousePosition.x;
-          const deltaY = position.y - lastMousePosition.y;
-          setPanOffset((prev) => ({
-            x: prev.x + deltaX,
-            y: prev.y + deltaY,
-          }));
-          setLastMousePosition({ x: position.x, y: position.y });
-        }
-        pendingMouseMove.current = null;
         rafId.current = null;
+        applyPendingMouseMove();
       });
     };
 
@@ -147,7 +149,8 @@ const ScreenshareVideoTile = forwardRef(
         cancelAnimationFrame(rafId.current);
         rafId.current = null;
       }
-      pendingMouseMove.current = null;
+      // Flush the final pointer position so the drag doesn't end a frame behind
+      applyPendingMouseMove();
     };
 
     // Apply zoom transform style

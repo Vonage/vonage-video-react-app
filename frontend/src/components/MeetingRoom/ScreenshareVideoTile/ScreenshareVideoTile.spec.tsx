@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Box } from 'opentok-layout-js';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
@@ -270,6 +270,29 @@ describe('ScreenshareVideoTile', () => {
       fireEvent.mouseUp(tile);
 
       expect(tile).toBeInTheDocument();
+    });
+
+    it('pans by the full pointer distance, including a move still queued at mouse up', () => {
+      const frames: FrameRequestCallback[] = [];
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+        frames.push(callback);
+        return frames.length;
+      });
+      render(<ScreenshareVideoTile {...defaultProps} />);
+
+      const tile = screen.getByTestId('screenshare-tile');
+      const zoomedContent = tile.firstElementChild as HTMLElement;
+
+      fireEvent.wheel(tile, { deltaY: -100 });
+      fireEvent.mouseDown(tile, { clientX: 100, clientY: 100 });
+      fireEvent.mouseMove(tile, { clientX: 150, clientY: 150 });
+      act(() => frames.shift()?.(0));
+      fireEvent.mouseMove(tile, { clientX: 200, clientY: 200 });
+      fireEvent.mouseUp(tile);
+      rafSpy.mockRestore();
+
+      // 100px of pointer travel at 1.25x zoom -> translate(80px, 80px)
+      expect(zoomedContent.style.transform).toBe('scale(1.25) translate(80px, 80px)');
     });
 
     it('stops dragging on mouse leave', () => {

@@ -164,7 +164,8 @@ const VideoTileCanvas = ({
           <Subscriber
             key={subscriberWrapper.id}
             subscriberWrapper={subscriberWrapper}
-            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+            // Displayed subscribers come first, so anything past them is hidden (avoids an O(n²) lookup)
+            isHidden={index >= subscribersInDisplayOrder.length}
             box={layoutBoxes.subscriberBoxes?.[index]}
             isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
           />

@@ -1,4 +1,4 @@
-import { lazy, ReactElement } from 'react';
+import { lazy, ReactElement, useState } from 'react';
 import ParticipantList from '../ParticipantList/ParticipantList';
 import Chat from '../Chat';
 import type { RightPanelActiveTab } from '../../../hooks/useRightPanel';
@@ -31,6 +31,12 @@ const RightPanel = ({
   className,
   ...boxProps
 }: RightPanelProps): ReactElement => {
+  // Load the Report Issue chunk on first open, then keep it mounted so a half-filled form survives tab switches
+  const [hasOpenedIssues, setHasOpenedIssues] = useState(activeTab === 'issues');
+  if (activeTab === 'issues' && !hasOpenedIssues) {
+    setHasOpenedIssues(true);
+  }
+
   return (
     <Box
       data-testid="right-panel"
@@ -54,9 +60,11 @@ const RightPanel = ({
         isOpen={activeTab === 'background-effects'}
       />
       <Chat handleClose={handleClose} isOpen={activeTab === 'chat'} />
-      <SuspenseBoundary fallback={null}>
-        <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
-      </SuspenseBoundary>
+      {hasOpenedIssues && (
+        <SuspenseBoundary fallback={null}>
+          <ReportIssue handleClose={handleClose} isOpen={activeTab === 'issues'} />
+        </SuspenseBoundary>
+      )}
     </Box>
   );
 };

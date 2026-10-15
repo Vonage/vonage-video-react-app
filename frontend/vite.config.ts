@@ -251,22 +251,16 @@ export default defineConfig(({ mode }) => {
               'tailwind-merge',
               'tailwind-variants',
             ],
-            // Vonage / TokBox video SDKs — large, rarely change
+            // Vonage video SDKs used in the browser — large, rarely change.
+            // Server-only SDKs (opentok, @vonage/server-sdk, ...) must not be listed here:
+            // listing a package makes Vite resolve its Node-only modules for the browser build.
             'vendor-vonage': [
               '@vonage/client-sdk-video',
-              '@vonage/video',
               '@vonage/video-client-network-test',
-              'opentok',
               'opentok-layout-js',
-              'opentok-jwt',
-              'opentok-solutions-logging',
-              '@vonage/vcr-sdk',
-              '@vonage/auth',
-              '@vonage/server-sdk',
             ],
             // Other network / utility vendors
             'vendor-axios': ['axios'],
-            'vendor-syntax': ['react-syntax-highlighter'],
           },
         },
       },
