@@ -10,7 +10,6 @@ import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
 import isValidUserName from '@utils/isValidUserName';
 import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
-import frontendLogger from '../../../logger';
 import Separator from '@components/Separator';
 import { CardProps } from '@mui/material';
 import { twMerge } from 'tailwind-merge';
@@ -77,7 +76,6 @@ const UsernameInput = ({
         },
       }));
       setStorageItem(STORAGE_KEYS.USERNAME, username);
-      frontendLogger.setContext({ userId: username });
       // This takes the user to the meeting room and allows them to enter it
       // Otherwise if they entered the room directly, they are going to be redirected back to the waiting room
       // Setting hasAccess is required so that we are not redirected back to the waiting room
