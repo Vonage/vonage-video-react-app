@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import type { AuthConfig, Config, FeedbackConfig } from '../types/config';
+import type { AuthConfig, Config, FeedbackConfig, LoggerConfig } from '../types/config';
 import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 import { fileURLToPath } from 'node:url';
 
@@ -36,7 +36,11 @@ const loadConfig = (): Config => {
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
     severityId: process.env.JIRA_SEVERITY_ID,
-    gollumUrl: process.env.GOLLUM_BASE_URL,
+  };
+
+  const loggerConfig: LoggerConfig = {
+    gollumUrl: process.env.KIBANA_BASE_URL,
+    loggerVerbose,
   };
 
   if (provider === 'vonage') {
@@ -50,13 +54,13 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
       ...authConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
       videoHost,
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 
@@ -70,12 +74,12 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
       ...authConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 

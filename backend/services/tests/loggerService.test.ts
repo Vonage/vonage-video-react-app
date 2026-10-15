@@ -22,6 +22,7 @@ const { forwardToGollum, forward, logOnConnect } = await import('../loggerServic
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -45,6 +46,7 @@ describe('loggerService', () => {
     it('should POST to gollumUrl with mapped payload and serverReceivedTime', async () => {
       const event = createValidClientLogEvent({
         action: 'vonageVideoClient.connect.success',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: '100' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: '100',
@@ -58,13 +60,14 @@ describe('loggerService', () => {
         expect.objectContaining({
           action: 'vonageVideoClient.connect.success',
           variation: 'Success',
+          session: { sessionId: 's1', connectionId: 'c1', partnerId: '100' },
           sessionId: 's1',
           connectionId: 'c1',
+          partnerId: '100',
           clientSystemTime: event.clientSystemTime,
           source: event.source,
           guid: event.guid,
           userAgent: event.userAgent,
-          partnerId: '100',
           serverReceivedTime: expect.any(Number),
         }),
         expect.objectContaining({
@@ -125,6 +128,7 @@ describe('loggerService', () => {
     it('forwards to Gollum and for EnterMeeting also sends via OTKAnalytics', async () => {
       const payload = createValidClientLogEvent({
         action: 'EnterMeeting',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: 'apiKey',
@@ -136,6 +140,7 @@ describe('loggerService', () => {
         'https://example.com',
         expect.objectContaining({
           action: 'EnterMeeting',
+          session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
           sessionId: 's1',
           connectionId: 'c1',
           partnerId: 'apiKey',

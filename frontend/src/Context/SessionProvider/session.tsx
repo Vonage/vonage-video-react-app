@@ -409,13 +409,13 @@ const SessionProvider = ({
       return vonageVideoClient.current.hasStream(streamId);
     })();
 
-    console.warn(`Subscriber with stream ID ${streamId} destroyed`, {
+    frontendLogger.log('Session:SubscriberDestroyed', {
+      streamId,
       doesStreamStillExistInSession,
     });
 
     if (doesStreamStillExistInSession) {
       void vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
     destroySubscriber(streamId);
@@ -445,7 +445,7 @@ const SessionProvider = ({
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session:SubscriptionErrorIgnoredInReconnection', {
           reconnecting,
           isBrowserOnline,
         });
