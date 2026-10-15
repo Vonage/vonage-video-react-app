@@ -71,7 +71,7 @@ describe('getMediaDevicesInfo', () => {
   it('does not deadlock when skipStoreReady is set while isStoreReady is still pending', async () => {
     expect.assertions(1);
 
-    const metadata = mediaDevices$.getMetadata();
+    const { metadata } = mediaDevices$;
 
     // Firefox bootstrap is parked on the permission prompt: isStoreReady is still pending, and a
     // concurrent getUserMedia-driven sync already consumed the single-use first-query flag. The

@@ -11,9 +11,7 @@ import { isMobile } from '@web/platform';
  */
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
   getMediaDevicesInfo({ skipStoreReady = false }: { skipStoreReady?: boolean } = {}) {
-    return ({ getMetadata }): Promise<MediaDeviceInfoJSON[]> => {
-      const metadata = getMetadata();
-
+    return ({ metadata }): Promise<MediaDeviceInfoJSON[]> => {
       /**
        * Some browsers may intermittently fail to return the device list.
        * This function uses a retry mechanism to improve reliability.

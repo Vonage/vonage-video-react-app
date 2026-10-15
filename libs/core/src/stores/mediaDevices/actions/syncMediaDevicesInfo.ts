@@ -14,14 +14,13 @@ function syncMediaDevicesInfo(
   this: DevicesAPI['actions'],
   { skipStoreReady = false }: { skipStoreReady?: boolean } = {}
 ) {
-  return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
-    const meta = store.getMetadata();
+  return (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
     const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     // cancel ongoing update
-    void meta.loadingMediaDevices?.cancel();
+    void store.metadata.loadingMediaDevices?.cancel();
 
-    meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
+    const loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
       async (resolve, reject, { isCanceled }) => {
         try {
           const mediaDeviceInfo = await getMediaDevicesInfo({ skipStoreReady });
@@ -47,7 +46,7 @@ function syncMediaDevicesInfo(
           // reconcile audio output device with Vonage SDK if it changed
           if (updates?.audiooutput && isSinkIdSupported()) {
             // if the audio device changed, reconcileSelection with Vonage SDK
-            attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
+            void attempt(() => setVonageAudioOutputDevice(updates.audiooutput!));
           }
 
           resolve(mediaDeviceInfo);
@@ -57,7 +56,9 @@ function syncMediaDevicesInfo(
       }
     );
 
-    return meta.loadingMediaDevices;
+    store.metadata.loadingMediaDevices = loadingMediaDevices;
+
+    return loadingMediaDevices;
   };
 }
 

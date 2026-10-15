@@ -24,7 +24,6 @@ function setupDeviceStore(api: unknown) {
     return;
   }
 
-  const meta = api.getMetadata();
   const shouldMonkeyPatchGetUserMedia = isBrowserEnvironment && getUserMedia;
 
   const abortController = new AbortController();
@@ -34,12 +33,12 @@ function setupDeviceStore(api: unknown) {
   });
 
   const syncMediaDevicesInfoDebounced = debounce(async () => {
-    await meta.isStoreReady;
+    await api.metadata.isStoreReady;
 
     void api.actions.syncMediaDevicesInfo().catch(() => {});
   }, 10);
 
-  meta.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
+  api.metadata.isStoreReady = new CancelablePromise((resolve, reject, { isCanceled }) => {
     const syncDevicesAndResolve = () => {
       // skipStoreReady: this sync is what resolves isStoreReady, so it must not await it. Passing an
       // explicit flag (instead of a shared single-use flag getMediaDevicesInfo consumed) prevents a
@@ -75,7 +74,9 @@ function setupDeviceStore(api: unknown) {
   });
 
   abortController.signal.addEventListener('abort', () => {
-    void meta.isStoreReady.cancel(new Error('permissions request cancelled due to store cleanup'));
+    void api.metadata.isStoreReady.cancel(
+      new Error('permissions request cancelled due to store cleanup')
+    );
   });
 
   // listen for permission changes to resync devices when granted

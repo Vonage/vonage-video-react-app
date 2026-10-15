@@ -1,12 +1,8 @@
 import { useMemo } from 'react';
-import {
-  PublisherProperties,
-  VideoFilter,
-  AudioFilter,
-  hasMediaProcessorSupport,
-} from '@vonage/client-sdk-video';
+import { PublisherProperties, VideoFilter, AudioFilter } from '@vonage/client-sdk-video';
 import useUserContext from '@hooks/useUserContext';
 import getInitials from '@utils/getInitials';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import { useDeviceId } from '@core/stores/mediaDevices/hooks';
 import useStableCallback from '@web/hooks/useStableCallback';
 import { env } from '../../../env';
@@ -29,6 +25,7 @@ const usePublisherOptions = ({
   const frameRate = advancedSettings$.use.select((state) => state.frameRate);
   const codecMode = advancedSettings$.use.select((state) => state.codecMode);
   const codecPriority = advancedSettings$.use.select((state) => state.codecPriority);
+  const cameraContentHint = advancedSettings$.use.select((state) => state.cameraContentHint);
   const publisherAudioFallbackEnabled = advancedSettings$.use.select(
     (state) => state.publisherAudioFallbackEnabled
   );
@@ -88,6 +85,7 @@ const usePublisherOptions = ({
         ? 'automatic'
         : codecPriority) as PublisherProperties['preferredVideoCodecs'],
       resolution: env.PUBLISHER_MAX_RESOLUTION,
+      videoContentHint: cameraContentHint,
       videoFilter,
       videoSource,
       publishSenderStats: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
