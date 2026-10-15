@@ -92,7 +92,8 @@ const AdvancedSettingsCodecPriorityField = ({
     handleDragEnd();
   };
 
-  const moveCodec = (codec: AdvancedSettingsVideoCodec, offset: -1 | 1) => {
+  const moveCodec = (args: { codec: AdvancedSettingsVideoCodec; offset: -1 | 1 }) => {
+    const { codec, offset } = args;
     const targetCodec = codecPriority[codecPriority.indexOf(codec) + offset];
 
     if (!targetCodec) return;
@@ -171,7 +172,7 @@ const AdvancedSettingsCodecPriorityField = ({
                   <button
                     type="button"
                     onClick={() => {
-                      moveCodec(codec, -1);
+                      moveCodec({ codec, offset: -1 });
                     }}
                     aria-disabled={isFirstCodec}
                     aria-label={t('advancedSettings.video.codec.priority.moveUp', {
@@ -191,7 +192,7 @@ const AdvancedSettingsCodecPriorityField = ({
                   <button
                     type="button"
                     onClick={() => {
-                      moveCodec(codec, 1);
+                      moveCodec({ codec, offset: 1 });
                     }}
                     aria-disabled={isLastCodec}
                     aria-label={t('advancedSettings.video.codec.priority.moveDown', {
