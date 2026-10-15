@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render as renderBase, screen, within } from '@testing-library/react';
 import { ReactElement } from 'react';
 import Chat from './Chat';
-import type { ChatMessageType, ChatMessageId } from '../../../types/chat';
+import type { ChatMessageType, ChatMessageId } from '@app-types/chat';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 
@@ -91,13 +91,7 @@ describe('Chat', () => {
       });
 
       expect(screen.getAllByTestId('chat-message')).toHaveLength(2);
-
-      // Keying by the non-unique timestamp made React warn (and risk reconciliation bugs) when two
-      // messages arrived in the same millisecond; keying by the unique id avoids it.
-      const hasDuplicateKeyWarning = errorSpy.mock.calls.some((args) =>
-        args.some((arg) => typeof arg === 'string' && arg.includes('same key'))
-      );
-      expect(hasDuplicateKeyWarning).toBe(false);
+      expect(errorSpy).not.toHaveBeenCalled();
     } finally {
       errorSpy.mockRestore();
     }

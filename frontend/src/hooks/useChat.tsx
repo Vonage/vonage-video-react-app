@@ -13,6 +13,17 @@ export type UseChat = {
   onChatMessage: (data: string) => void;
   sendChatMessage: (text: string) => void;
 };
+
+function createChatMessageId(): ChatMessageId {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID() as ChatMessageId;
+  }
+
+  const array = new Uint32Array(4);
+  window.crypto.getRandomValues(array);
+  return Array.from(array, (value) => value.toString(16)).join('') as ChatMessageId;
+}
+
 /**
  * React hook to store ChatMessage array in state and provider functions for sending and receiving chat messages
  * @param {UseChatProps} props - props for the hook
@@ -51,10 +62,12 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
   const onChatMessage = useCallback(
     (data: string) => {
       if (data) {
+        const id = createChatMessageId();
+
         try {
           const { text, participantName } = JSON.parse(data);
           const message: ChatMessageType = {
-            id: crypto.randomUUID() as ChatMessageId,
+            id,
             timestamp: Date.now(),
             participantName: participantName || t('user.unknown'),
             message: text,

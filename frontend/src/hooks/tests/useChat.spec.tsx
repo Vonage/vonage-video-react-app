@@ -24,6 +24,18 @@ describe('useChat', () => {
     });
   });
 
+  it('onChatMessage should assign a unique id to each message', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
+      result.current.onChatMessage('{"participantName":"Remote User","text":"Hello again!"}');
+    });
+
+    expect(result.current.messages[0].id).toBeTruthy();
+    expect(result.current.messages[0].id).not.toBe(result.current.messages[1].id);
+  });
+
   it('onChatMessage should use the unknown user label when the participant name is missing', () => {
     const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
@@ -70,9 +82,7 @@ describe('useChat', () => {
   it('sendChatMessage should do nothing when signal is unavailable', () => {
     const { result } = renderHook(() => useChat({ signal: undefined }));
 
-    result.current.sendChatMessage('Hello there!');
-
-    expect(mockSignal).not.toHaveBeenCalled();
+    expect(() => result.current.sendChatMessage('Hello there!')).not.toThrow();
   });
 });
 

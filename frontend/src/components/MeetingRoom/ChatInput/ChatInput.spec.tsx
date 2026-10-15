@@ -3,7 +3,7 @@ import { render as renderBase, screen, fireEvent, cleanup } from '@testing-libra
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ChatInput from './ChatInput';
-import type { ChatMessageType, ChatMessageId } from '../../../types/chat';
+import type { ChatMessageType, ChatMessageId } from '@app-types/chat';
 
 const testMessages: ChatMessageType[] = [
   {
