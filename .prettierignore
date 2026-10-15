@@ -6,6 +6,7 @@ frontend/docs/
 *.md
 
 # Build and dependency folders
+pnpm-lock.yaml
 dist/
 node_modules/
 coverage/

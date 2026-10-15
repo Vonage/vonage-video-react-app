@@ -34,14 +34,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
-        run: yarn install --ignore-scripts --frozen-lockfile
+        run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Run ${{ matrix.project }} unit tests
         run: NX_DAEMON=false yarn nx test ${{ matrix.project }} --configuration=coverage
@@ -91,16 +96,21 @@ jobs:
           echo "Installed Chrome:"
           /usr/bin/google-chrome-stable --version
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
         run: |
           node -v
-          yarn install --ignore-scripts --frozen-lockfile
+          pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -144,16 +154,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+          cache: pnpm
 
       - name: Install Dependencies
         run: |
           node -v
-          yarn install --ignore-scripts --frozen-lockfile
+          pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Download all coverage artifacts
         uses: actions/download-artifact@v4
