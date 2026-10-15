@@ -11,5 +11,5 @@ export NVM_DIR="$HOME/.nvm"
 echo "🔍 Running tests before push..."
 yarn --silent test --reporter=dot
 
-echo "🔍 Verifying @vonage/video-common source hash..."
+echo "🔍 Verifying @vonage/video-reference-apps-common source hash..."
 yarn nx run common:hash:check

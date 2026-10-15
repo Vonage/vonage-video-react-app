@@ -9,4 +9,5 @@ export * from './customVideoBitrate.schema';
 export * from './frameRate.schema';
 export * from './manualCodecOrder.schema';
 export * from './screenShareCodecMode.schema';
+export * from './screenShareSurface.schema';
 export * from './videoCodec.schema';

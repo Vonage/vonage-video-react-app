@@ -73,11 +73,11 @@ const AdvancedSettingsCodecPriorityField = ({
 
   return (
     <div className="flex flex-col gap-3 rounded-vera-medium  border-vera-border bg-vera-background px-4 py-3">
-      <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+      <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
         {t('advancedSettings.video.codec.priority.label')}
       </p>
 
-      <p className="font-vera-plain text-vera-caption text-vera-tertiary">
+      <p className="font-vera-plain text-vera-caption text-vera-text-tertiary">
         {t('advancedSettings.video.codec.priority.description')}
       </p>
 
@@ -107,11 +107,11 @@ const AdvancedSettingsCodecPriorityField = ({
               )}
               data-testid={testIds.item(codec)}
             >
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-secondary">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-text-secondary">
                 {index + 1}
               </span>
 
-              <span className="font-vera-plain text-vera-body-base text-vera-secondary">
+              <span className="font-vera-plain text-vera-body-base text-vera-text-secondary">
                 {t(`advancedSettings.video.codec.priority.options.${codec}`)}
               </span>
             </li>

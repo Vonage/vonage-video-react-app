@@ -26,7 +26,6 @@ function selectDevice(
       return;
     }
 
-    const meta = store.getMetadata();
     const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     /**
@@ -34,8 +33,8 @@ function selectDevice(
      * In that case the easiest approach will be to wait for the ongoing sync to finish before continuing with the new reconciliation
      */
     const mediaDeviceInfo = await (async () => {
-      if (meta.loadingMediaDevices?.status === 'pending') {
-        await meta.loadingMediaDevices;
+      if (store.metadata.loadingMediaDevices?.status === 'pending') {
+        await store.metadata.loadingMediaDevices;
       }
 
       return getMediaDevicesInfo();
