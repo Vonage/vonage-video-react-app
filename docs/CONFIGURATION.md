@@ -50,7 +50,7 @@ OT_API_SECRET='your-api-secret'
 
 #### Allowed web origins (CORS)
 
-`CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only.
+`CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only: with `AUTH_ENABLED='true'` and an `https` `OIDC_WEB_REDIRECT_URI`, the server refuses to start with `*`.
 
 | Environment | Value |
 |---|---|

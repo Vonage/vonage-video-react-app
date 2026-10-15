@@ -6,8 +6,7 @@ import generateOpaqueToken from '../helpers/generateOpaqueToken';
 import computeCodeChallenge from '../helpers/computeCodeChallenge';
 import isSafeReturnToPath from '../helpers/isSafeReturnToPath';
 import readStringQueryParam from '../helpers/readStringQueryParam';
-import encryptCookiePayload from '../helpers/encryptCookiePayload';
-import buildAuthCookieOptions from '../helpers/buildAuthCookieOptions';
+import writeCookiePayload from '../helpers/writeCookiePayload';
 import readCallbackPath from '../helpers/readCallbackPath';
 import type { AuthTransactionCookie } from '../schemas/AuthTransactionCookie.schema';
 import { DEFAULT_RETURN_TO } from '../constants';
@@ -30,7 +29,6 @@ function makeSignInHandler() {
     oidcClientId,
     oidcWebRedirectUri,
     oidcScopes,
-    authCookieSecret,
     authTransactionCookieName,
     authTransactionMaxAgeSeconds,
   } = authConfig;
@@ -51,14 +49,14 @@ function makeSignInHandler() {
         returnTo,
       };
 
-      res.cookie(
-        authTransactionCookieName,
-        encryptCookiePayload({ payload: transaction, secret: authCookieSecret }),
-        buildAuthCookieOptions({
-          path: callbackPath,
-          maxAge: authTransactionMaxAgeSeconds * 1000,
-        })
-      );
+      writeCookiePayload({
+        res,
+        name: authTransactionCookieName,
+        payload: transaction,
+        path: callbackPath,
+        maxAge: authTransactionMaxAgeSeconds * 1000,
+        authConfig,
+      });
 
       const authorizeUrl = new URL(oidcAuthorizationEndpoint);
       authorizeUrl.searchParams.set('response_type', 'code');

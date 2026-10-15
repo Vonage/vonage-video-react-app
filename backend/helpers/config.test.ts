@@ -160,6 +160,20 @@ describe('loadConfig', () => {
       expect(() => loadConfig()).toThrow(/authCookieSecret/);
     });
 
+    test.each([
+      ['http', 'http://localhost:3000/api/auth/callback/okta', false],
+      ['https', 'https://vera.example.com/api/auth/callback/okta', true],
+    ])(
+      'should only reject CORS_ALLOWED_ORIGINS="*" with an https redirect URI (%s)',
+      (_scheme, redirectUri, shouldThrow) => {
+        process.env.CORS_ALLOWED_ORIGINS = '*';
+        process.env.OIDC_WEB_REDIRECT_URI = redirectUri;
+
+        if (shouldThrow) expect(() => loadConfig()).toThrow(/CORS_ALLOWED_ORIGINS/);
+        else expect(() => loadConfig()).not.toThrow();
+      }
+    );
+
     test('should throw when an endpoint is not a valid URL', () => {
       process.env.OIDC_TOKEN_ENDPOINT = '/oauth2/v1/token';
 

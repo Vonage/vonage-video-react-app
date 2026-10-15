@@ -110,7 +110,7 @@ function makeCallbackHandler() {
 
       res.clearCookie(
         authTransactionCookieName,
-        buildAuthCookieOptions({ path: callbackPath, maxAge: undefined })
+        buildAuthCookieOptions({ path: callbackPath, maxAge: undefined, oidcWebRedirectUri })
       );
 
       writeSessionCookies({

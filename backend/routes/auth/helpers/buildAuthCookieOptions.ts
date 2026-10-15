@@ -1,17 +1,22 @@
 import type { CookieOptions } from 'express';
-import isVcr from '../../../middleware/isVcr';
 
+/**
+ * The cookies live on the origin of `oidcWebRedirectUri`, so they're `Secure` exactly when that
+ * origin is HTTPS; plain-HTTP origins (local dev, a phone on the LAN) would drop `Secure` cookies.
+ */
 function buildAuthCookieOptions({
   path,
   maxAge,
+  oidcWebRedirectUri,
 }: {
   path: string;
   maxAge: number | undefined;
+  oidcWebRedirectUri: string;
 }): CookieOptions {
   return {
     httpOnly: true,
     sameSite: 'lax',
-    secure: isVcr,
+    secure: new URL(oidcWebRedirectUri).protocol === 'https:',
     path,
     ...(maxAge === undefined ? {} : { maxAge }),
   };
