@@ -1,4 +1,4 @@
-import { type ReactElement } from 'react';
+import { useCallback, type ReactElement } from 'react';
 import { tv } from 'tailwind-variants';
 import notifications$ from '@core/stores/notifications';
 import type { NotificationId } from '@core/stores/notifications';
@@ -11,9 +11,11 @@ const NotificationsContainer = ({
 }: NotificationsContainerProps): ReactElement => {
   const notifications = notifications$.use.select(({ notifications }) => notifications);
 
-  const handleDismiss = (id: NotificationId) => {
+  // Stable reference so each NotificationItem's auto-dismiss effect isn't torn down and its
+  // timer restarted every time this container re-renders (e.g. when another notification arrives).
+  const handleDismiss = useCallback((id: NotificationId) => {
     notifications$.actions.dismiss(id);
-  };
+  }, []);
 
   return (
     <div aria-live="polite" className={styles({ position })}>
