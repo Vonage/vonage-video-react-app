@@ -36,6 +36,24 @@ describe('useChat', () => {
     expect(result.current.messages[0].id).not.toBe(result.current.messages[1].id);
   });
 
+  it('onChatMessage should fall back to getRandomValues when randomUUID is unavailable', () => {
+    const originalRandomUUID = crypto.randomUUID;
+    // @ts-expect-error simulating a runtime without crypto.randomUUID
+    crypto.randomUUID = undefined;
+
+    try {
+      const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+      act(() => {
+        result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
+      });
+
+      expect(result.current.messages[0].id).toBeTruthy();
+    } finally {
+      crypto.randomUUID = originalRandomUUID;
+    }
+  });
+
   it('onChatMessage should use the unknown user label when the participant name is missing', () => {
     const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
