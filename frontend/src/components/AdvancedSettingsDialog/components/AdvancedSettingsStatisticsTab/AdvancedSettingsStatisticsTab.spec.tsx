@@ -115,6 +115,64 @@ describe('AdvancedSettingsStatisticsTab', () => {
       expect(screen.getByText('5')).toBeInTheDocument();
     });
   });
+
+  it('shows subscriber network condition regardless of the audio-fallback toggles', async () => {
+    const subscriberWrapper: SubscriberWrapper = {
+      id: 'sub-net',
+      element: document.createElement('video'),
+      isScreenshare: false,
+      isPinned: false,
+      subscriber: {
+        stream: { name: 'Carol' },
+        getStats: vi.fn((callback) => {
+          callback(undefined, {
+            audio: { packetsReceived: 10, packetsLost: 0, bytesReceived: 500 },
+            video: {
+              packetsReceived: 40,
+              packetsLost: 0,
+              bytesReceived: 20000,
+              width: 640,
+              height: 480,
+              codec: 'VP9',
+              frameRate: 24,
+              decodedFrameRate: 23,
+              bitrate: 600_000,
+              freezeCount: 0,
+              totalFreezesDuration: 0,
+            },
+            mediaLink: {
+              transport: {
+                connectionEstimatedBandwidth: 1_000_000,
+                networkCondition: 5,
+                networkConditionReason: 1,
+              },
+              remotePublisherTransport: { connectionEstimatedBandwidth: 900_000 },
+            },
+          });
+        }),
+      } as unknown as Subscriber,
+    };
+
+    render(<AdvancedSettingsStatisticsTab />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.subscriberWrappers = [subscriberWrapper];
+          }
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Carol')).toBeInTheDocument();
+    });
+
+    // Audio-fallback toggles are off by default; the subscriber's Network condition section must
+    // still render (it reflects the subscriber's own data), and the misleading "enable audio
+    // fallback" message must not appear.
+    expect(screen.getByText('Network condition')).toBeInTheDocument();
+    expect(screen.queryByText(/audio fallback to be enabled/i)).not.toBeInTheDocument();
+  });
 });
 
 type RenderOptions = {
