@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import backgroundEffectsButtonTestIds from '../../frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${baseURL}waiting-room/test-room`);
@@ -31,7 +33,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   const isBackgroundEffectsSupported = browserName === 'chromium';
 
   if (isBackgroundEffectsSupported) {
-    await expect(page.getByTestId('portraitIcon')).toBeVisible();
+    await expect(page.getByTestId(backgroundEffectsButtonTestIds.container)).toBeVisible();
   }
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
@@ -71,7 +73,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   const isBackgroundEffectsSupported = browserName === 'chromium';
 
   if (isBackgroundEffectsSupported) {
-    await expect(page.getByTestId('portraitIcon')).toBeVisible();
+    await expect(page.getByTestId(backgroundEffectsButtonTestIds.container)).toBeVisible();
   }
   await page.getByLabel('Name').fill('some user');
   await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
