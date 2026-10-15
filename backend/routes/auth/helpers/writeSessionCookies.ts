@@ -4,8 +4,7 @@ import type { SessionCookie } from '../schemas/SessionCookie.schema';
 import type { IdTokenCookie } from '../schemas/IdTokenCookie.schema';
 import type { EnabledAuthConfig } from '../../../middleware/authMiddleware/schemas/AuthConfig.schema';
 import { SIGN_OUT_PATH } from '../constants';
-import encryptCookiePayload from './encryptCookiePayload';
-import buildAuthCookieOptions from './buildAuthCookieOptions';
+import writeCookiePayload from './writeCookiePayload';
 
 /**
  * Writes the session from a token endpoint response (code exchange or refresh). Providers that
@@ -15,7 +14,7 @@ function writeSessionCookies({
   res,
   tokenResponse,
   previousRefreshToken,
-  authConfig: { authCookieSecret, authSessionCookieName, authIdTokenCookieName },
+  authConfig,
 }: {
   res: Response;
   tokenResponse: TokenExchangeResponse;
@@ -42,21 +41,27 @@ function writeSessionCookies({
       : refreshTokenLifetimeSeconds * 1000;
   })();
 
-  res.cookie(
-    authSessionCookieName,
-    encryptCookiePayload({ payload: session, secret: authCookieSecret }),
-    buildAuthCookieOptions({ path: '/', maxAge })
-  );
+  writeCookiePayload({
+    res,
+    name: authConfig.authSessionCookieName,
+    payload: session,
+    path: '/',
+    maxAge,
+    authConfig,
+  });
 
   if (!tokenResponse.id_token) return;
 
   const idTokenCookie: IdTokenCookie = { idToken: tokenResponse.id_token };
 
-  res.cookie(
-    authIdTokenCookieName,
-    encryptCookiePayload({ payload: idTokenCookie, secret: authCookieSecret }),
-    buildAuthCookieOptions({ path: SIGN_OUT_PATH, maxAge })
-  );
+  writeCookiePayload({
+    res,
+    name: authConfig.authIdTokenCookieName,
+    payload: idTokenCookie,
+    path: SIGN_OUT_PATH,
+    maxAge,
+    authConfig,
+  });
 }
 
 export default writeSessionCookies;

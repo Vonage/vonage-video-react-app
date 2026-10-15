@@ -32,7 +32,8 @@ function decryptCookiePayload<Schema extends z.ZodType>({
     const decipher = createDecipheriv(
       'aes-256-gcm',
       Buffer.from(secret, 'base64'),
-      Buffer.from(initializationVector, 'base64url')
+      Buffer.from(initializationVector, 'base64url'),
+      { authTagLength: 16 }
     );
     decipher.setAuthTag(Buffer.from(authenticationTag, 'base64url'));
 

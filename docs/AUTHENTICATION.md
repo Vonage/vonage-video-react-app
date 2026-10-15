@@ -22,7 +22,7 @@ authMiddleware → decrypts the session cookie → introspects (or refreshes) �
 
 ### 2.2 Backend-for-Frontend (BFF)
 
-The browser never receives a usable token. The tokens live inside cookies encrypted with AES-256-GCM using `AUTH_COOKIE_SECRET`, and the cookies are `HttpOnly`, `SameSite=Lax` and `Secure` on VCR. A modified cookie fails decryption and is treated as signed out. Because the session is in the cookie, any instance with the same secret can serve the user and there is no server-side session store.
+The browser never receives a usable token. The tokens live inside cookies encrypted with AES-256-GCM using `AUTH_COOKIE_SECRET`, and the cookies are `HttpOnly`, `SameSite=Lax`, and `Secure` whenever `OIDC_WEB_REDIRECT_URI` is `https`. A modified cookie fails decryption and is treated as signed out. Because the session is in the cookie, any instance with the same secret can serve the user and there is no server-side session store.
 
 | Cookie | Holds | Path | Lifetime |
 |---|---|---|---|
@@ -47,7 +47,7 @@ When a user isn't authenticated:
 
 - **Page requests** (`GET` that accepts HTML, without a Bearer header) redirect to `/auth/signin?returnTo=<original URL>`. A rejected Bearer token always gets `401`.
 - **Other requests** get `401`.
-- **Provider failures** never redirect, so an outage can't cause a sign-in loop. A failed introspection is a `401`; a refresh that fails for any reason other than a rejected refresh token is a `502`.
+- **Provider failures** never redirect, so an outage can't cause a sign-in loop. A failed or malformed introspection, and a refresh that fails for any reason other than a rejected refresh token (`invalid_grant`), are a `502`, never a `401`: the frontend sends every `401` to sign-in.
 - **Rejected refresh token** (`invalid_grant`): if the access token is still live, the request goes through (a parallel request already rotated it); if it has expired, the cookies are cleared and the user signs in again.
 
 Cookie-authenticated requests carrying an `Origin` header outside `CORS_ALLOWED_ORIGINS` are rejected with `401`, so other sites can't use a signed-in user's cookie. Per-PR hosts need this because other VCR customers' apps also live under `vonage.cloud`, which browsers treat as the same site. The Bearer path isn't affected. See [Configuration](./CONFIGURATION.md#allowed-web-origins-cors).
@@ -96,7 +96,7 @@ curl -X POST https://<domain>/auth/signout \
 
 - `fetchWithAuthRedirect` (`frontend/src/services/videoClient.ts`) sends every video client request with `credentials: 'include'`. On a `401` it calls `redirectToAuthProvider`, which navigates once to `${API_URL}/auth/signin?returnTo=<current path>` and returns a promise that never settles, so the error page doesn't flash before the navigation. `reportFeedback` handles `401` the same way.
 - The banner shows a **Log out** button (`BannerLogout`) when `AUTH_ENABLED` is `true` at build time; it submits a form `POST` to `/auth/signout`.
-- `<vera-room>` accepts a `credentials` attribute (default `include`) and a `videoClient` property for hosts that bring their own client. It never redirects on `401`: the host page owns sign-in.
+- `<vera-room>` accepts a `credentials` attribute (default `include`) and a `videoClient` property for hosts that bring their own client. It never redirects on `401`: the host page owns sign-in. An invalid `credentials` value logs a warning and falls back to `include`.
 
 ## 3. Configuration
 

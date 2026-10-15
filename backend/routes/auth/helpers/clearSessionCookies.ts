@@ -10,13 +10,15 @@ function clearSessionCookies({
   res: Response;
   authConfig: EnabledAuthConfig;
 }): void {
+  const { oidcWebRedirectUri } = authConfig;
+
   res.clearCookie(
     authConfig.authSessionCookieName,
-    buildAuthCookieOptions({ path: '/', maxAge: undefined })
+    buildAuthCookieOptions({ path: '/', maxAge: undefined, oidcWebRedirectUri })
   );
   res.clearCookie(
     authConfig.authIdTokenCookieName,
-    buildAuthCookieOptions({ path: SIGN_OUT_PATH, maxAge: undefined })
+    buildAuthCookieOptions({ path: SIGN_OUT_PATH, maxAge: undefined, oidcWebRedirectUri })
   );
 }
 

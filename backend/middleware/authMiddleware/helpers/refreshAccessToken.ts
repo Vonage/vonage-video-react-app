@@ -44,8 +44,7 @@ async function refreshAccessToken({
     );
   }
 
-  const isRefreshTokenRejected =
-    response.status === 400 && isRecord(response.data) && response.data.error === 'invalid_grant';
+  const isRefreshTokenRejected = isRecord(response.data) && response.data.error === 'invalid_grant';
 
   if (isRefreshTokenRejected) return { status: 'rejected' };
 

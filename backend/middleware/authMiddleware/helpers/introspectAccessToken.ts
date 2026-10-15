@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { makeUnauthorizedErrorHandler } from '@api-lib/errors';
+import { makeThirdPartyErrorHandler } from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
 import type { EnabledAuthConfig } from '../schemas/AuthConfig.schema';
 import TokenIntrospectionResponseSchema, {
@@ -7,8 +7,8 @@ import TokenIntrospectionResponseSchema, {
 } from '../schemas/TokenIntrospectionResponse.schema';
 
 /**
- * Provider failures throw a plain 401 (never a SignInRequiredError), so an outage can't trigger
- * a sign-in redirect loop.
+ * Provider failures throw a 502, never a 401 or a SignInRequiredError: the frontend sends every 401
+ * to sign-in, so an outage would otherwise become a sign-in loop.
  */
 async function introspectAccessToken({
   accessToken,
@@ -31,12 +31,12 @@ async function introspectAccessToken({
           timeout: authProviderTimeoutMs,
         }
       ),
-    makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
+    makeThirdPartyErrorHandler('Token introspection request to the identity provider failed')
   );
 
   return assertResult(
     () => TokenIntrospectionResponseSchema.parse(introspectionResponse.data),
-    makeUnauthorizedErrorHandler('Token introspection response is missing or invalid')
+    makeThirdPartyErrorHandler('Token introspection response is missing or invalid')
   );
 }
 

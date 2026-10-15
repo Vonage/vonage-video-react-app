@@ -214,7 +214,6 @@ describe('authMiddleware', () => {
       ['token inactive', { active: false }],
       ['issued to a different client_id', { active: true, sub: 'user-2', client_id: 'other-app' }],
       ['client_id and aud are both absent', { active: true, sub: 'user-2' }],
-      ['response fails schema validation', { unexpected: 'shape' }],
     ])('returns 401, never a redirect, when %s', async (_label, introspection) => {
       mockProvider({ introspection });
 
@@ -226,15 +225,21 @@ describe('authMiddleware', () => {
       expect(res.statusCode).toEqual(401);
     });
 
-    it('does not redirect an HTML page request when the provider call fails', async () => {
-      mockPost.mockRejectedValue(new Error('network error'));
+    it.each([
+      ['the provider call fails', () => mockPost.mockRejectedValue(new Error('network error'))],
+      [
+        'the introspection response fails schema validation',
+        () => mockProvider({ introspection: { unexpected: 'shape' } }),
+      ],
+    ])('returns 502, never a 401 or a redirect, when %s', async (_label, arrangeProvider) => {
+      arrangeProvider();
 
       const res = await request(buildApp())
         .get('/protected')
         .set('Accept', 'text/html')
         .set('Authorization', 'Bearer some-token');
 
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(502);
     });
   });
 

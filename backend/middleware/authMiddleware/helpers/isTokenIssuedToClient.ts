@@ -1,7 +1,8 @@
 import type { ActiveTokenIntrospectionResponse } from '../schemas/TokenIntrospectionResponse.schema';
 
 /**
- * RFC 7662 makes `client_id` optional, so `aud` is the fallback ownership signal when it's absent.
+ * RFC 7662 makes `client_id` optional; `aud` is the fallback only when it's absent. On Okta's org
+ * authorization server `aud` is the org URL, shared by every app, so it never matches a client ID.
  */
 function isTokenIssuedToClient({
   introspectionData,
