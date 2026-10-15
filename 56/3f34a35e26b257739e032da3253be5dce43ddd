@@ -1,0 +1,28 @@
+frontend/src/hooks/useChat.tsx
+  s_fbc7dba44f0b84::t_e1ee526d051ae5 16-26
+  s_fbc7dba44f0b84::t_fd2a46dd0f5176 65-66,70
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_fbc7dba44f0b84::t_b5894e458a8119 27-38
+  s_fbc7dba44f0b84::t_a77db7af8056fc 85
+frontend/src/components/MeetingRoom/Chat/Chat.spec.tsx
+  s_fbc7dba44f0b84::t_8807ed6dc083f4 5
+  s_fbc7dba44f0b84::t_02d40f506d6b37 94
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  s_fbc7dba44f0b84::t_3fa7a24810159e 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "563f34a35e26b257739e032da3253be5dce43ddd",
+  "prompts": {},
+  "sessions": {
+    "s_fbc7dba44f0b84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5332016-d96b-4b32-852b-690ec3b13ffd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
