@@ -1,0 +1,73 @@
+name: Deploy to VCR (Production)
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+permissions:
+  contents: read
+
+env:
+  DOMAIN: ${{ secrets.PROD_DOMAIN }}
+  INSTANCE_NAME: prod
+
+jobs:
+  build-and-test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: vcr-deploy-prod
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+
+      - name: Verify Node & Yarn versions
+        run: |
+          node -v
+          yarn -v
+
+      - name: Building artefact
+        run: |
+          sed -i "s/<DOMAIN>/${DOMAIN}/g" "${{ github.workspace }}/vcr-gha.yml"
+          sed -i "/^instance:/ {n; s/^  name: .*/  name: ${INSTANCE_NAME}/;}" "${{ github.workspace }}/vcr-gha.yml"
+          sed -i -E "s/^([[:space:]]+secret: )(VONAGE_APP_ID|VONAGE_PRIVATE_KEY|SESSION_KEY_SECRET)$/\1PROD_\2/" "${{ github.workspace }}/vcr-gha.yml"
+          ./vcrBuild.sh
+
+      - name: Install VCR CLI
+        uses: ./.github/actions/install-vcr-cli
+
+      - name: Deploy vcr
+        id: deploy
+        uses: ./.github/actions/deploy-vcr
+        with:
+          app-id: ${{ secrets.PROD_APP_ID }}
+          api-key: ${{ secrets.PROD_VCR_API_KEY }}
+          api-secret: ${{ secrets.PROD_VCR_API_SECRET }}
+          filename: vcr-gha.yml
+
+      - name: Slack notification on success
+        uses: ./.github/actions/slack-notify
+        with:
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: '28a745'
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n is merged and deployed to VCR (${{ env.INSTANCE_NAME }}) \nURL: ${{ steps.deploy.outputs.instance-url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
+        if: success()
+        continue-on-error: true
+
+      - name: Slack notification on failure
+        uses: ./.github/actions/slack-notify
+        with:
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: FF0000
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n is merged but FAILED to deploy to VCR (${{ env.INSTANCE_NAME }}) \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
+        if: failure()
+        continue-on-error: true
