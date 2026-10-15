@@ -1,0 +1,111 @@
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  h_6029769cf9ac60 2,9-12,14-22,73,79,87-95,102-110,113-143,151,161,167
+  h_6029769cf9ac60 111-112
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_6029769cf9ac60 1,17-21,32,34,67-76,78-80,82-86,88-100,102-125
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_6029769cf9ac60 12-16,27,29,58-67,69-87,89-112
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  h_6029769cf9ac60 21,24
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.spec.tsx
+  h_6029769cf9ac60 6,34,42
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_6029769cf9ac60 8-11,37-38
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_6029769cf9ac60 4,9-13,66,73,80,84-87
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.spec.tsx
+  h_6029769cf9ac60 5,28,77
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.spec.tsx
+  h_6029769cf9ac60 9,74,80
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_6029769cf9ac60 23,429
+frontend/src/components/MeetingRoom/ToolbarButton/ToolbarButton.tsx
+  h_6029769cf9ac60 3,5,10-19,26,35,39
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_6029769cf9ac60 9-13,68,75,83
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_6029769cf9ac60 7-10,41-42
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.tsx
+  h_6029769cf9ac60 8-11,30,32-33
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 9-13,16,57-58,132-133,422-459
+  h_6029769cf9ac60 460-462
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 14-22,87,93,105,107-110,126-130,137,149-153,168-173
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  h_6029769cf9ac60 14,62
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_6029769cf9ac60 10-13,101,117
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_6029769cf9ac60 8-12,41-42,51
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_6029769cf9ac60 8-12,45,50-51,57
+frontend/src/components/SoundTest/SoundTest.tsx
+  h_6029769cf9ac60 9-13,64,69
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_6029769cf9ac60 16-26,82,92,101,112,122,131,157,169-170,197
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  h_6029769cf9ac60 6,33-34,52-53,63,76,98,120,133,154,177
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.spec.tsx
+  h_6029769cf9ac60 5,11,18,20
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.tsx
+  h_6029769cf9ac60 5-8,34,36
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  h_6029769cf9ac60 15,18-22,33-43,71,73,76-77,90-97,105-106,108,116,128,130
+  h_6029769cf9ac60 44
+frontend/src/components/MeetingRoom/Toolbar/helpers/isDisplayableToolbarButton.ts
+  h_6029769cf9ac60 1-12
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.spec.tsx
+  h_6029769cf9ac60 3,30
+frontend/src/components/MeetingRoom/Toolbar/helpers/getToolbarButtonVisibility.ts
+  h_6029769cf9ac60 1-31
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.spec.tsx
+  h_6029769cf9ac60 5,18,27
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  h_6029769cf9ac60 1,10,17-18,20-22,77,89,105,114,122,125,128,136,145,153,160-161
+  h_6029769cf9ac60 19
+frontend/src/components/MeetingRoom/DropdownSeparator/DropdownSeparator.tsx
+  h_6029769cf9ac60 4-7,17-18
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.spec.tsx
+  h_6029769cf9ac60 6,19-20,34
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_6029769cf9ac60 1,12-16,27,33,62-71,73-91,93-116
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.spec.tsx
+  h_6029769cf9ac60 7,41,46,55,79,96
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_6029769cf9ac60 4,9-13,64,70,81,90-93
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 244-246,483-486
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_6029769cf9ac60 8-11,57-58
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  h_6029769cf9ac60 9,113,135
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  h_6029769cf9ac60 8,28,38
+frontend/src/utils/isDeviceEnabledOnJoin/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.spec.tsx
+  h_6029769cf9ac60 7,23-32,121,157,192,214,235,291,308-310,330,349,373,379-384,386-387,389-390,393-396,398,400-407,409-417,420-492,495-497
+  h_6029769cf9ac60 498
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 1-8,14-15,28-29,96,99,112,120-121,123-124,128,135,143,188,192-196,200-201,212,226-231
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  h_6029769cf9ac60 5-7,12-15,51,66-68,70,72-74,90
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  h_6029769cf9ac60 5,43,55,93,109,126,142
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_6029769cf9ac60 12-15,108
+frontend/src/components/ScreenSharingButton/index.tsx
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "48ad210f875ae7f78b20c9d5e5d46430e5dcb0ae",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
