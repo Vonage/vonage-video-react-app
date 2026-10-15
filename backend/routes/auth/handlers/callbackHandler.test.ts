@@ -1,17 +1,17 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
 import { SESSION_COOKIE_NAME, TRANSACTION_COOKIE_NAME } from '../constants';
 
-const loadConfigMock = jest.fn<() => Config>();
-const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
+const loadConfigMock = vi.fn<[], Config>();
+const axiosPostMock = vi.fn<[], Promise<{ data: unknown }>>();
 
-jest.unstable_mockModule('../../../helpers/config', () => ({
+vi.doMock('../../../helpers/config', () => ({
   default: loadConfigMock,
 }));
 
-jest.unstable_mockModule('axios', () => ({
+vi.doMock('axios', () => ({
   // `defaults` is needed because importing `./callbackHandler` transitively pulls in
   // `getSessionStorageService` → `@vonage/vcr-sdk`, whose module-level `Bridge` construction
   // sets `axios.defaults.httpAgent` — it would crash against a bare `{ post }` mock.

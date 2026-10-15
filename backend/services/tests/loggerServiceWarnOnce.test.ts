@@ -1,14 +1,15 @@
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type { MockInstance } from 'vitest';
 import type { ClientLogEvent } from '@common/types';
 
-jest.unstable_mockModule('../../helpers/config', () => ({
-  default: jest.fn().mockImplementation(() => ({
+vi.doMock('../../helpers/config', () => ({
+  default: vi.fn().mockImplementation(() => ({
     gollumUrl: undefined,
     loggerVerbose: false,
   })),
 }));
-jest.unstable_mockModule('axios', () => ({
-  default: { post: jest.fn() },
+vi.doMock('axios', () => ({
+  default: { post: vi.fn() },
 }));
 
 const { forwardToGollum, forward, resetGollumWarning } = await import('../loggerService');
@@ -28,12 +29,12 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
 });
 
 describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
-  let warnSpy: ReturnType<typeof jest.spyOn>;
+  let warnSpy: MockInstance;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     resetGollumWarning();
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   describe('forwardToGollum', () => {

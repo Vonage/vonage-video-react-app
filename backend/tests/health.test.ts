@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import closeServer from './helpers/closeServer';
 import request from 'supertest';
 import { Server } from 'http';
 
@@ -14,9 +15,7 @@ describe('GET /_/health', () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   it('returns a 200', async () => {
     const res = await request(server).get('/_/health');
