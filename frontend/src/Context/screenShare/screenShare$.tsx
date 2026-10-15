@@ -183,13 +183,14 @@ const screenShare$ = createContext(initialState, {
           // Publishing the screen sharing stream
           try {
             await publish(publisher);
-          } catch (err) {
+          } catch (error) {
             handleApplyAdvancedSettingsError({
               message: 'Failed to publish screen share',
               eventSource: 'screenShare$.toggleShareScreen.publish',
               partnerId,
-            })(err);
+            })(error);
 
+            publisher.destroy();
             actions$.onScreenShareStopped();
             return;
           }

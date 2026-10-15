@@ -405,6 +405,7 @@ describe('screenShare$', () => {
     const [state] = result.current;
     expect(state.isSharingScreen).toBe(false);
     expect(state.publisher).toBeNull();
+    expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
   });
 
   it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {
