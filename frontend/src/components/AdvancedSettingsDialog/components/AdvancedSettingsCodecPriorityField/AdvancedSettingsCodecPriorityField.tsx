@@ -136,7 +136,7 @@ const AdvancedSettingsCodecPriorityField = ({
               className="flex cursor-grab select-none items-center gap-3 active:cursor-grabbing"
               data-testid={testIds.item(codec)}
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-text-secondary">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-vera-border bg-vera-background text-center font-vera-plain text-vera-body-base-semibold text-vera-text-disabled">
                 {index + 1}
               </span>
 
