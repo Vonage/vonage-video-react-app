@@ -3,21 +3,28 @@ import type { DragEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import { VividIcon } from '@ui';
-import type {
-  AdvancedSettingsManualCodecOrder,
-  AdvancedSettingsVideoCodec,
-} from '../../types/types';
+import type { AdvancedSettingsManualCodecOrder, AdvancedSettingsVideoCodec } from '../../schemas';
+
+export const testIds = {
+  list: 'advanced-settings-codec-priority-list',
+  item: (codec: AdvancedSettingsVideoCodec) => `advanced-settings-codec-priority-item-${codec}`,
+  card: (codec: AdvancedSettingsVideoCodec) => `advanced-settings-codec-priority-card-${codec}`,
+  dragHandle: (codec: AdvancedSettingsVideoCodec) =>
+    `advanced-settings-codec-priority-drag-handle-${codec}`,
+  moveUp: (codec: AdvancedSettingsVideoCodec) =>
+    `advanced-settings-codec-priority-move-up-${codec}`,
+  moveDown: (codec: AdvancedSettingsVideoCodec) =>
+    `advanced-settings-codec-priority-move-down-${codec}`,
+} as const;
 
 type AdvancedSettingsCodecPriorityFieldProps = {
   codecPriority: AdvancedSettingsManualCodecOrder;
   setCodecPriority: (value: AdvancedSettingsManualCodecOrder) => void;
-  idPrefix?: string;
 };
 
 const AdvancedSettingsCodecPriorityField = ({
   codecPriority,
   setCodecPriority,
-  idPrefix = 'advanced-settings-codec-priority',
 }: AdvancedSettingsCodecPriorityFieldProps): ReactElement => {
   const { t } = useTranslation();
   const [draggedCodec, setDraggedCodec] = useState<AdvancedSettingsVideoCodec | null>(null);
@@ -95,15 +102,15 @@ const AdvancedSettingsCodecPriorityField = ({
 
   return (
     <div className="flex flex-col gap-3 rounded-vera-medium  border-vera-border bg-vera-background px-4 py-3">
-      <p className="font-vera-plain text-vera-body-base-semibold text-vera-secondary">
+      <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
         {t('advancedSettings.video.codec.priority.label')}
       </p>
 
-      <p className="font-vera-plain text-vera-caption text-vera-tertiary">
+      <p className="font-vera-plain text-vera-caption text-vera-text-tertiary">
         {t('advancedSettings.video.codec.priority.description')}
       </p>
 
-      <ol className="flex flex-col gap-2" data-testid={`${idPrefix}-list`}>
+      <ol className="flex flex-col gap-2" data-testid={testIds.list}>
         {codecPriority.map((codec, index) => {
           const isDraggedCodec = draggedCodec === codec;
           const isDropTarget = dropTargetCodec === codec && draggedCodec !== codec;
@@ -126,13 +133,12 @@ const AdvancedSettingsCodecPriorityField = ({
                 handleDrop(event, codec);
               }}
               className="flex cursor-grab select-none items-center gap-3 active:cursor-grabbing"
-              data-testid={`${idPrefix}-item-${codec}`}
+              data-testid={testIds.item(codec)}
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-vera-border font-vera-plain text-vera-caption text-vera-secondary">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vera-background font-vera-plain text-vera-caption text-vera-text-secondary">
                 {index + 1}
               </span>
 
-              {/* The card is the visual row; the <li> around it keeps the number draggable too. */}
               <div
                 ref={(element) => {
                   if (!element) {
@@ -147,17 +153,17 @@ const AdvancedSettingsCodecPriorityField = ({
                   isDraggedCodec ? 'border-vera-primary opacity-60' : 'border-vera-border',
                   isDropTarget ? 'border-vera-primary' : null
                 )}
-                data-testid={`${idPrefix}-card-${codec}`}
+                data-testid={testIds.card(codec)}
               >
                 <VividIcon
                   name="reorder-vertical-line"
                   customSize={-5}
                   aria-hidden="true"
-                  className="pointer-events-none text-vera-tertiary"
-                  data-testid={`${idPrefix}-drag-handle-${codec}`}
+                  className="pointer-events-none text-vera-text-tertiary"
+                  data-testid={testIds.dragHandle(codec)}
                 />
 
-                <span className="font-vera-plain text-vera-body-base text-vera-secondary">
+                <span className="font-vera-plain text-vera-body-base text-vera-text-secondary">
                   {codecLabel}
                 </span>
 
@@ -172,12 +178,12 @@ const AdvancedSettingsCodecPriorityField = ({
                       codec: codecLabel,
                     })}
                     className={classNames(
-                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-text-secondary transition-opacity',
                       isFirstCodec
                         ? 'cursor-not-allowed opacity-40'
                         : 'cursor-pointer hover:bg-vera-background'
                     )}
-                    data-testid={`${idPrefix}-move-up-${codec}`}
+                    data-testid={testIds.moveUp(codec)}
                   >
                     <VividIcon name="chevron-up-line" customSize={-5} />
                   </button>
@@ -192,12 +198,12 @@ const AdvancedSettingsCodecPriorityField = ({
                       codec: codecLabel,
                     })}
                     className={classNames(
-                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-secondary transition-opacity',
+                      'flex h-7 w-7 items-center justify-center rounded-vera-medium text-vera-text-secondary transition-opacity',
                       isLastCodec
                         ? 'cursor-not-allowed opacity-40'
                         : 'cursor-pointer hover:bg-vera-background'
                     )}
-                    data-testid={`${idPrefix}-move-down-${codec}`}
+                    data-testid={testIds.moveDown(codec)}
                   >
                     <VividIcon name="chevron-down-line" customSize={-5} />
                   </button>

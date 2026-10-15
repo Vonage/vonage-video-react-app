@@ -7,7 +7,7 @@ const FieldLabel: FC<FieldLabelProps> = ({ className, ...props }) => {
   return (
     <label
       className={twMerge(
-        'font-vera-plain text-vera-body-extended-semibold! text-vera-secondary',
+        'font-vera-plain text-vera-body-extended-semibold! text-vera-text-secondary',
         className
       )}
       {...props}

@@ -118,6 +118,10 @@ This application provides features for common conferencing use cases, such as:
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
 
+### OIDC token authentication (optional)
+
+See [Authentication](./docs/AUTHENTICATION.md) for the full guide.
+
 ## Documentation
 
 | Document | Description |
@@ -125,6 +129,8 @@ See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonag
 | [Getting Started](./docs/GETTING_STARTED.md) | Environment setup, local development, and deployment guide |
 | [Architecture](./docs/ARCHITECTURE.md) | Nx workspace structure, projects, and library boundaries |
 | [Configuration](./docs/CONFIGURATION.md) | Environment variables, feature flags, theming, and Storybook |
+| [Authentication](./docs/AUTHENTICATION.md) | OIDC/BFF authentication architecture, setup, and troubleshooting |
+| [Session Migration](./docs/SESSION_MIGRATION.md) | Server rotation support, archiving recovery, and testing |
 | [Testing](./docs/TESTING.md) | Integration tests, screenshot tests, and unit test suites |
 | [Code Style](./docs/CODE_STYLE.md) | Linting, formatting, naming conventions, and doc generation |
 | [Contributing](./docs/CONTRIBUTING.md) | How to contribute to the project |
