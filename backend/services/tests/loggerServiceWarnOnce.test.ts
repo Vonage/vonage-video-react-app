@@ -28,7 +28,7 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
   ...overrides,
 });
 
-describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
+describe('loggerService (KIBANA_BASE_URL not configured)', () => {
   let warnSpy: ReturnType<typeof jest.spyOn>;
 
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
 
       expect(warnSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GOLLUM_BASE_URL not configured')
+        expect.stringContaining('KIBANA_BASE_URL not configured')
       );
     });
 

@@ -39,7 +39,7 @@ const loadConfig = (): Config => {
   };
 
   const loggerConfig: LoggerConfig = {
-    gollumUrl: process.env.GOLLUM_BASE_URL,
+    gollumUrl: process.env.KIBANA_BASE_URL,
     loggerVerbose,
   };
 
