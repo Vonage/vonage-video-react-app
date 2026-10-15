@@ -123,14 +123,14 @@ function renderHook<Result, Props>(
 Before adding custom setup, check and reuse existing helpers in:
 
 - `libs/common/test`
-- `libs/common/testNode`
-- `libs/common/testBrowser`
+- `libs/common/node-test`
+- `libs/common/web-test`
 
 Useful existing helpers include:
 
 - `libs/common/test/setup.ts`
   - Already clears mocks, restores spies, and unstubs globals after each test. Already included in the global test setup — do not duplicate.
-- `libs/common/testNode/helpers/waitForEvent.ts`
+- `libs/common/node-test/helpers/waitForEvent.ts`
 
 ### Banned boilerplate — already provided globally
 
@@ -160,13 +160,13 @@ Also avoid, for the same reason:
 - Cleanup in `afterEach` that repeats what `beforeEach` already does. A test must never depend on the previous test having cleaned up after it; prepare the state you need in `beforeEach` instead.
 - Section-banner comments (`// Mock dependencies`, `// Arrange`). If a test needs signposting, split it.
   - Useful for event-driven async tests.
-- `libs/common/testBrowser/renderAsyncComponent.ts`
+- `libs/common/web-test/renderAsyncComponent.ts`
   - Use for components that resolve async behavior with Suspense boundaries.
-- `libs/common/testBrowser/renderAsyncHook.ts`
+- `libs/common/web-test/renderAsyncHook.ts`
   - Use for hooks that need async/Suspense-aware rendering.
-- `libs/common/testBrowser/makeGenericProviderWrapper.tsx`
+- `libs/common/web-test/makeGenericProviderWrapper.tsx`
   - Generic provider/context wrapper utility for reusable context testing.
-- `libs/common/testBrowser/fixtures/setupWindowNavigatorMock`
+- `libs/common/web-test/fixtures/setupWindowNavigatorMock`
   - Browser navigator setup helpers for web media-related tests.
 
 Do not duplicate setup that these helpers already provide.

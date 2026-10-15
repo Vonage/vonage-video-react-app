@@ -39,7 +39,7 @@ const SelectField = <TValue extends string | number>({
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary"
+        className="font-vera-plain text-vera-body-extended-semibold text-vera-text-secondary"
       >
         {label}
       </label>
@@ -48,7 +48,7 @@ const SelectField = <TValue extends string | number>({
           id={id}
           value={value}
           onChange={handleChange}
-          className="w-full appearance-none rounded-vera-medium border border-vera-border bg-vera-surface px-3 py-2 pr-10 font-vera-plain text-vera-body-base text-vera-secondary outline-none transition-colors focus:border-vera-primary"
+          className="w-full appearance-none rounded-vera-medium border border-vera-border bg-vera-surface px-3 py-2 pr-10 font-vera-plain text-vera-body-base text-vera-text-secondary outline-none transition-colors focus:border-vera-primary"
           {...selectProps}
         >
           {options.map((option) => (
@@ -71,7 +71,7 @@ const SelectField = <TValue extends string | number>({
         />
       </div>
       {description ? (
-        <p className="font-vera-plain text-vera-body-base text-vera-tertiary">{description}</p>
+        <p className="font-vera-plain text-vera-body-base text-vera-text-tertiary">{description}</p>
       ) : null}
     </div>
   );

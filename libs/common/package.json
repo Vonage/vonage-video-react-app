@@ -1,8 +1,12 @@
 {
-  "name": "@vonage/video-common",
+  "name": "@vonage/video-reference-apps-common",
   "version": "0.0.1",
   "type": "module",
-  "license": "MIT",
+  "author": {
+    "name": "Vonage Video API",
+    "email": "support@api.vonage.com"
+  },
+  "license": "Apache-2.0",
   "types": "./index.d.ts",
   "main": "./index.cjs",
   "module": "./index.js",

@@ -20,16 +20,19 @@ validateChannelFormat({ version: manifest.version, channel: manifest.channel });
 const computedHash = computePackageHash();
 
 if (computedHash !== manifest.hash) {
-  console.error('\n❌ @vonage/video-common hash check failed\n');
+  console.error('\n❌ @vonage/video-reference-apps-common hash check failed\n');
   console.error('   The source files (.ts/.tsx) do not match the committed manifest hash.');
   console.error('   This means libs/common source was modified without updating manifest.json.\n');
   console.error(`   Expected (manifest.json): ${manifest.hash || '(empty — never computed)'}`);
   console.error(`   Actual   (source):        ${computedHash}\n`);
-  console.error('   To fix, run:\n');
-  console.error('     yarn common:hash:update\n');
-  console.error('   Then commit the updated manifest.json.\n');
+  console.error('   To fix:\n');
+  console.error(
+    '     1. Ensure your branch is up-to-date with the target branch (e.g. git merge origin/develop)'
+  );
+  console.error('     2. Run: yarn common:hash:update');
+  console.error('     3. Commit the updated manifest.json.\n');
   process.exit(1);
 }
 
-console.log(`\n✅ @vonage/video-common hash verified: ${computedHash}\n`);
+console.log(`\n✅ @vonage/video-reference-apps-common hash verified: ${computedHash}\n`);
 process.exit(0);

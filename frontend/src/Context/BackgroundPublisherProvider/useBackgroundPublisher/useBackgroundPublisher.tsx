@@ -4,9 +4,9 @@ import {
   Event,
   initPublisher,
   VideoFilter,
-  hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -177,7 +177,7 @@ const useBackgroundPublisher = (
     if (backgroundPublisherRef.current) return;
 
     let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
+    if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
       videoFilter = initialBackgroundRef.current;
     }
 
