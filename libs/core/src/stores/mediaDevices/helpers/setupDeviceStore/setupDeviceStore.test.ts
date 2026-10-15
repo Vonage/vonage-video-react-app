@@ -310,7 +310,7 @@ describe('setupDeviceStore', () => {
       setupDeviceStore(api$);
 
       // Wait for the store to become ready, then assert media was never acquired at init.
-      await expect(api$.getMetadata().isStoreReady).resolves.toBeUndefined();
+      await expect(api$.metadata.isStoreReady).resolves.toBeUndefined();
       expect(getUserMediaSpy).not.toHaveBeenCalled();
     });
 
