@@ -3,7 +3,6 @@ import './helpers/config';
 
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import { Server } from 'http';
 import router from './routes';
@@ -30,7 +29,6 @@ app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(bodyParser.json());
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.

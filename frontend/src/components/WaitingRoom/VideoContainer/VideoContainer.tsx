@@ -1,4 +1,4 @@
-import { useRef, useEffect, ReactElement } from 'react';
+import { lazy, useRef, useEffect, ReactElement } from 'react';
 import MicButton from '../MicButton';
 import CameraButton from '../CameraButton';
 import VideoLoading from '../VideoLoading';
@@ -10,7 +10,7 @@ import VoiceIndicatorIcon from '../../MeetingRoom/VoiceIndicator/VoiceIndicator'
 import VignetteEffect from '../VignetteEffect';
 import BackgroundEffectsDialog from '../BackgroundEffects/BackgroundEffectsDialog';
 import BackgroundEffectsButton from '../BackgroundEffects/BackgroundEffectsButton';
-import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
+import LazyLoadBoundary from '@components/LazyLoadBoundary';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import PrecallNetworkTestDialog from '../PrecallNetworkTestDialog';
@@ -21,6 +21,8 @@ import VideoStatsOverlay from '../VideoStatsOverlay';
 export type VideoContainerProps = {
   username: string;
 };
+
+const AdvancedSettingsDialog = lazy(() => import('@components/AdvancedSettingsDialog'));
 
 /**
  * VideoContainer Component
@@ -122,7 +124,11 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
                 setIsBackgroundEffectsOpen={close}
               />
             )}
-            {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}
+            {isAdvancedSettingsOpen && (
+              <LazyLoadBoundary>
+                <AdvancedSettingsDialog />
+              </LazyLoadBoundary>
+            )}
             {isPrecallNetworkTestOpen && (
               <PrecallNetworkTestDialog
                 isPrecallNetworkTestOpen={isPrecallNetworkTestOpen}

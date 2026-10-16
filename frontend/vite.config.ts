@@ -230,6 +230,37 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       minify: 'terser',
       cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // React and MUI/Vivid import each other; splitting them into separate chunks
+            // produced a circular chunk initialization order, so they're kept together.
+            'vendor-react': [
+              'react',
+              'react-dom',
+              'react-router-dom',
+              'react-i18next',
+              'react-global-state-hooks',
+              '@mui/material',
+              '@mui/icons-material',
+              '@vonage/vivid',
+              '@emotion/react',
+              '@emotion/styled',
+              'tailwind-merge',
+              'tailwind-variants',
+            ],
+            // Vonage video SDKs used in the browser — large, rarely change.
+            // Server-only SDKs (opentok, @vonage/server-sdk, ...) must not be listed here:
+            // listing a package makes Vite resolve its Node-only modules for the browser build.
+            'vendor-vonage': [
+              '@vonage/client-sdk-video',
+              '@vonage/video-client-network-test',
+              'opentok-layout-js',
+            ],
+            'vendor-axios': ['axios'],
+          },
+        },
+      },
       terserOptions: {
         format: {
           comments: false,

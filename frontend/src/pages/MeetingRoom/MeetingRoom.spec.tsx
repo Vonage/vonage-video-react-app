@@ -1,6 +1,7 @@
 import '../../css/index.css';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { EventEmitter } from 'node:stream';
 import { ReactElement } from 'react';
@@ -201,6 +202,27 @@ describe('MeetingRoom', () => {
     render(<MeetingRoom />);
     const meetingRoom = await screen.findByTestId('meetingRoom');
     expect(meetingRoom).not.toBeNull();
+  });
+
+  it('renders the advanced settings dialog behind a lazy-load boundary when opened', async () => {
+    render(<MeetingRoom />);
+    await screen.findByTestId('meetingRoom');
+
+    const { result } = renderHook(() => advancedSettings$.use());
+
+    try {
+      act(() => {
+        result.current[1].open();
+      });
+
+      expect(
+        await screen.findByTestId('advanced-settings-dialog', {}, { timeout: 5000 })
+      ).toBeInTheDocument();
+    } finally {
+      act(() => {
+        result.current[1].close();
+      });
+    }
   });
 
   it('renders the small viewport header bar if it is on a small tab or device', async () => {

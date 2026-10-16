@@ -353,5 +353,7 @@
   "zoom.current": "現在のズーム",
   "errorPage.title": "問題が発生しました",
   "errorPage.description": "アプリケーションを起動できませんでした。ページをリロードするか、問題が解決しない場合はサポートにお問い合わせください。",
+  "lazyLoadBoundary.failed": "これを読み込めませんでした。接続を確認して再試行してください。",
+  "lazyLoadBoundary.retry": "再試行",
   "notification.dismiss": "通知を閉じる"
 }

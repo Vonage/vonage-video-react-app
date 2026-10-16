@@ -1,4 +1,4 @@
-import { useEffect, useState, useEffectEvent } from 'react';
+import { useEffect, useMemo, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
@@ -159,11 +159,14 @@ const useMeetingRoom = () => {
   });
 
   const isRecording = !!archiveId;
-  const captionsState = {
-    isUserCaptionsEnabled,
-    setIsUserCaptionsEnabled,
-    setCaptionsErrorResponse,
-  };
+  const captionsState = useMemo(
+    () => ({
+      isUserCaptionsEnabled,
+      setIsUserCaptionsEnabled,
+      setCaptionsErrorResponse,
+    }),
+    [isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse]
+  );
 
   return {
     t,
