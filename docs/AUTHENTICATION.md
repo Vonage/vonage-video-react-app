@@ -52,6 +52,7 @@ A fixed set of paths bypass the middleware entirely (passed in as `excludedPaths
 
 - **`InMemorySessionStorage`** (local dev, when `VCR_PORT` is unset), plain in-process maps. Nothing expires; entries live until the process restarts.
 - **`VcrSessionStorage`** (Vonage Cloud Runtime, when `VCR_PORT` is set), backed by `vcr.getInstanceState()`, a cross-instance key-value store that survives an individual instance being replaced.
+- **`UpstashRedisSessionStorage`** (e.g. Vercel, when `KV_REST_API_URL`/`KV_REST_API_TOKEN` or `UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` are set and `VCR_PORT` is unset), Upstash Redis over its REST API, with the same expiry rules as VCR.
 
 Two kinds of auth data live there:
 

@@ -36,6 +36,14 @@
       },
       "outputs": ["{workspaceRoot}/backend/dist"]
     },
+    "build:vercel": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "backend",
+        "command": "webpack --config ../backend/webpack.config.cjs --target node --mode production --env vercel"
+      },
+      "outputs": ["{workspaceRoot}/backend/dist/vercel.cjs"]
+    },
     "build:dev": {
       "executor": "nx:run-commands",
       "options": {
