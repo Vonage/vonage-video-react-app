@@ -1,0 +1,18 @@
+backend/helpers/reportFatalErrors.test.ts
+  h_6029769cf9ac60 1-64
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 6,502-550,554-559,572,584-585
+sonar-project.properties
+  h_6029769cf9ac60 48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "54cfeeae9b0ae414e96da4093d73bae928cd0510",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
