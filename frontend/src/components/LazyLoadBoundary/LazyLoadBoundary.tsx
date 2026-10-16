@@ -29,7 +29,7 @@ const LazyLoadBoundary = ({
   fallback = defaultFallback,
 }: LazyLoadBoundaryProps): ReactElement => {
   return (
-    <ErrorBoundary fallback={() => <LazyLoadBoundaryFallback />}>
+    <ErrorBoundary fallback={renderLazyLoadBoundaryFallback}>
       <SuspenseBoundary fallback={fallback}>{children}</SuspenseBoundary>
     </ErrorBoundary>
   );
@@ -46,6 +46,10 @@ function LazyLoadBoundaryFallback(): ReactElement {
       </Button>
     </div>
   );
+}
+
+function renderLazyLoadBoundaryFallback(): ReactElement {
+  return <LazyLoadBoundaryFallback />;
 }
 
 export default LazyLoadBoundary;
