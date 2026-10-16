@@ -45,9 +45,9 @@ const CaptionsBox = (): ReactElement => {
           caption={ownCaptions}
         />
       )}
-      {(subscriberWrappers ?? []).map((wrapper, index) => (
+      {(subscriberWrappers ?? []).map((wrapper) => (
         <UserCaption
-          key={wrapper.id || wrapper.subscriber?.id || index}
+          key={wrapper.id}
           subscriber={wrapper.subscriber}
           isSmallViewPort={isSmallViewPort}
         />
