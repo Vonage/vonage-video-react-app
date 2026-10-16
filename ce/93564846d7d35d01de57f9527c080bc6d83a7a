@@ -1,0 +1,115 @@
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.spec.tsx
+  s_76aa86199c221c::t_90eb240526e5f3 298-305,309,313-315,319-328
+frontend/src/components/AdvancedSettingsDialog/index.tsx
+  s_76aa86199c221c::t_80ce4e21214094 2
+backend/tests/feedback.test.ts
+  s_fbc7dba44f0b84::t_21eaaeb9e138b9 131-132
+  s_fbc7dba44f0b84::t_31e85fd466adde 108-130,133
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  s_fbc7dba44f0b84::t_271c46cce03fd5 127-131
+  s_fbc7dba44f0b84::t_7fc5922940311a 1
+  s_fbc7dba44f0b84::t_ea67748689904b 26
+  s_fbc7dba44f0b84::t_98501375b9d122 13
+  s_76aa86199c221c::t_37658bafd43d40 25
+frontend/src/locales/en.json
+  s_fbc7dba44f0b84::t_1309475f68bdac 356-357
+frontend/src/components/LazyLoadBoundary/index.ts
+  s_fbc7dba44f0b84::t_a8d9d18ae3a153 1-3
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_fbc7dba44f0b84::t_1f402a44739376 3-4
+  s_fbc7dba44f0b84::t_0cb35031fb15d6 218-220
+  s_fbc7dba44f0b84::t_965e7c4f40bc0f 212-217,221-225
+  s_fbc7dba44f0b84::t_7a1e2b88bb2b13 207-211,226-227
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_76aa86199c221c::t_9e0a3ac7d7a859 125
+  s_76aa86199c221c::t_55381f926104d4 155
+  s_76aa86199c221c::t_0c84d4b9713658 100
+  s_76aa86199c221c::t_86571e01e71657 246-247
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  s_76aa86199c221c::t_d3f62e3218924f 73-75,83
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.spec.tsx
+  s_76aa86199c221c::t_5c7d96a2c4f8ec 86-129
+  s_76aa86199c221c::t_08d90e1de124b9 1-7,16-19,32-46,49-58
+  s_76aa86199c221c::t_72918b2f69039f 62
+  s_76aa86199c221c::t_102716610bb3a8 22-30
+  s_76aa86199c221c::t_28c21ab96408c8 31
+  s_76aa86199c221c::t_49a2dc5011310c 59
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_fbc7dba44f0b84::t_c6bec076d0a976 6
+  s_76aa86199c221c::t_193b4c57c34065 35
+  s_fbc7dba44f0b84::t_e0dbf6363fdd23 134,136
+frontend/src/locales/ja.json
+  s_fbc7dba44f0b84::t_d11dbeaa553eda 356-357
+frontend/src/locales/it.json
+  s_fbc7dba44f0b84::t_2d82fdfd9def62 356-357
+frontend/src/components/MeetingRoom/RightPanel/RightPanel.tsx
+  s_fbc7dba44f0b84::t_e2ebd8494db738 8
+  s_fbc7dba44f0b84::t_d44e206c0c5325 51
+  s_fbc7dba44f0b84::t_540fd1af6bf71f 69
+  s_fbc7dba44f0b84::t_34144ac65529ef 40-45
+  s_fbc7dba44f0b84::t_360eb3826c20e0 52
+  s_fbc7dba44f0b84::t_e3f90f128ed946 56
+frontend/src/locales/de.json
+  s_fbc7dba44f0b84::t_50d79dabc9236d 356-357
+frontend/src/locales/es-MX.json
+  s_fbc7dba44f0b84::t_381e2dd920c315 356-357
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_fbc7dba44f0b84::t_943d45b722617c 136
+  s_fbc7dba44f0b84::t_7f72b4de72f3f2 197-208,212-215,217-220,222,227-228
+  s_fbc7dba44f0b84::t_0d90d000de7d6a 209,216,221
+  s_fbc7dba44f0b84::t_13a110bff8eb3f 36,55
+  s_fbc7dba44f0b84::t_3f607b89c68048 196,210-211,223-226
+  s_fbc7dba44f0b84::t_ed4a392c7f1af4 56
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.tsx
+  s_fbc7dba44f0b84::t_503c80548e5357 35
+  s_fbc7dba44f0b84::t_4d26556e6b5fe8 25
+  s_fbc7dba44f0b84::t_7a3924c5e3b676 2-3,6-8,11-13,20,22-23,26,31-34,36-37,39-43,45-49
+  s_fbc7dba44f0b84::t_d839d3786464de 1,9-10,21,24,27-28,30,38,44
+  s_fbc7dba44f0b84::t_388aa6ae5e009f 4-5,14-19,29
+frontend/src/locales/es.json
+  s_fbc7dba44f0b84::t_6c95eabd1b0989 356-357
+frontend/vite.config.ts
+  s_fbc7dba44f0b84::t_3b93fa6f6e7ae9 236-237
+frontend/src/VeraRoom/vite.veraroom.config.ts
+  s_fbc7dba44f0b84::t_7d10f530932f19 36-37
+  s_fbc7dba44f0b84::t_91bf674f5ca1e4 8,35,38-43
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.spec.tsx
+  s_fbc7dba44f0b84::t_1b1e8b2ce8c75b 1,3-5,14-15,17,20,22-23,34,39,48,59-60,62-64
+  s_fbc7dba44f0b84::t_14bf0763b1d698 2,6-13,16,18-19,21,24-33,35-38,40-47,49-58,61
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.spec.tsx
+  s_fbc7dba44f0b84::t_e684c7e77e78ff 4,13-14,23,33-40,44-50
+  s_fbc7dba44f0b84::t_340838c4a22a45 41-43
+  s_fbc7dba44f0b84::t_5c5e18525a3c95 16,21
+  s_fbc7dba44f0b84::t_facaf0a07e21c8 1,3,5-10,32,51-52,57-66
+  s_fbc7dba44f0b84::t_4d07637a339c92 2,11-12,15,17-20,22,24-31,53,55-56
+  s_fbc7dba44f0b84::t_e65c974654d275 54
+frontend/src/Context/SessionProvider/session.tsx
+  s_fbc7dba44f0b84::t_21425f1abd2659 280
+  s_fbc7dba44f0b84::t_9f8f1cbc579a07 281
+yarn.lock
+  s_fbc7dba44f0b84::t_c04774fc6a29c7 4410,6472,9080,12541,14201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce93564846d7d35d01de57f9527c080bc6d83a7a",
+  "prompts": {},
+  "sessions": {
+    "s_76aa86199c221c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49130ae8-847f-499d-8793-525a40426f42",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_fbc7dba44f0b84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5332016-d96b-4b32-852b-690ec3b13ffd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
