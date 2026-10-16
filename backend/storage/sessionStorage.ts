@@ -12,6 +12,8 @@ export interface SessionStorage {
   setArchiveIds(args: { sessionId: string; archiveIds: string[] }): Promise<void>;
   getArchiveIds(args: { sessionId: string }): Promise<string[]>;
 
+  setServerRotationPending(args: { sessionId: string; pending: number }): Promise<void>;
+  getServerRotationPending(args: { sessionId: string }): Promise<number>;
   setAuthTransaction(args: {
     transactionId: string;
     state: string;
@@ -30,6 +32,4 @@ export interface SessionStorage {
   }): Promise<void>;
 
   getAccessToken(args: { sessionId: string }): Promise<string | null>;
-  setServerRotationPending(args: { sessionId: string; pending: boolean }): Promise<void>;
-  getServerRotationPending(args: { sessionId: string }): Promise<boolean>;
 }
