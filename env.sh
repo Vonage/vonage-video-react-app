@@ -35,6 +35,7 @@ export ALLOW_ARCHIVING=true
 export ALLOW_CAPTIONS=true
 export ALLOW_CHAT=true
 export ALLOW_EMOJIS=true
+export ALLOW_MINI_MODE=true
 export ALLOW_SCREEN_SHARE=true
 export DEFAULT_LAYOUT_MODE='active-speaker'
 export SHOW_PARTICIPANT_LIST=true

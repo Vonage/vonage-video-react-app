@@ -168,7 +168,7 @@
     },
     "meetingRoomSettings": {
       "type": "object",
-      "description": "In-meeting feature toggles and defaults. allowFeedback and allowPictureInPicture are iOS only.",
+      "description": "In-meeting feature toggles and defaults. allowFeedback is iOS only. allowPictureInPicture maps to Mini Mode on web (Document PiP) and native PiP on iOS.",
       "required": [
         "allowSettings",
         "allowArchiving",
@@ -218,7 +218,8 @@
         },
         "allowPictureInPicture": {
           "type": "boolean",
-          "description": "When true, the meeting can continue in a picture-in-picture window (iOS only)."
+          "description": "When true, the meeting can continue in a picture-in-picture / Mini Mode window (Document PiP on web, native PiP on iOS).",
+          "x-envVar": "ALLOW_MINI_MODE"
         },
         "allowScreenShare": {
           "type": "boolean",

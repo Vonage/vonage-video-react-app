@@ -41,6 +41,7 @@ const EnvironmentVariablesSchema = z.object({
   ALLOW_CHAT: boolean({ default: true }),
   MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_EMOJIS: boolean({ default: true }),
+  ALLOW_MINI_MODE: boolean({ default: true }),
   ALLOW_SCREEN_SHARE: boolean({ default: true }),
   DEFAULT_LAYOUT_MODE: z.preprocess(
     (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
@@ -84,6 +85,7 @@ export class Env implements IEnvironmentVariables {
   public ALLOW_CHAT!: boolean;
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_EMOJIS!: boolean;
+  public ALLOW_MINI_MODE!: boolean;
   public ALLOW_SCREEN_SHARE!: boolean;
   public DEFAULT_LAYOUT_MODE!: LayoutMode;
   public SHOW_PARTICIPANT_LIST!: boolean;

@@ -12,6 +12,21 @@ import Button from '@mui/material/Button';
 vi.mock('@hooks/useRoomName');
 vi.mock('@web/platform');
 vi.mock('@utils/isReportIssueEnabled');
+vi.mock('../../../Context/MiniMode', () => ({
+  useMiniMode: () => ({
+    isSupported: false,
+    isOpen: false,
+    hostedElement: null,
+    enter: () => Promise.resolve(),
+    exit: () => undefined,
+    toggleAudio: () => undefined,
+    toggleVideo: () => undefined,
+    leave: () => undefined,
+    isAudioEnabled: true,
+    isVideoEnabled: true,
+    participant: null,
+  }),
+}));
 
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();

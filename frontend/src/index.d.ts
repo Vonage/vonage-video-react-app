@@ -16,6 +16,9 @@ type VeraRoomAttributes = {
   language?: string;
 };
 
+// DocumentPictureInPicture type augmentation lives in
+// libs/common/src/types/DocumentPictureInPicture.d.ts and is included
+// via the @common path mapping (see tsconfig include for type files).
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {

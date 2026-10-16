@@ -51,7 +51,7 @@ export const applyContentHint = async (
   const hasVideoTrack = publisher?.getVideoSource()?.track;
   if (!hasVideoTrack) return;
 
-  await publisher.setVideoContentHint(contentHint);
+  await Promise.resolve(publisher.setVideoContentHint(contentHint));
 };
 
 export const applyBitrate = async (

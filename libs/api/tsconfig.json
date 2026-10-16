@@ -27,6 +27,6 @@
       "@node-test": ["../common/node-test"],
       "@node-test/*": ["../common/node-test/*"]
     },
-    "lib": ["ESNext"]
+    "lib": ["DOM", "ESNext"]
   }
 }

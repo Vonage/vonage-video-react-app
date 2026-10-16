@@ -9,6 +9,22 @@ import {
 } from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
 
 vi.mock('@hooks/useRoomName');
+vi.mock('../../../Context/MiniMode', () => ({
+  useMiniMode: () => ({
+    isSupported: false,
+    isOpen: false,
+    hostedElement: null,
+    enter: () => Promise.resolve(),
+    exit: () => undefined,
+    toggleAudio: () => undefined,
+    toggleVideo: () => undefined,
+    leave: () => undefined,
+    isAudioEnabled: true,
+    isVideoEnabled: true,
+    participant: null,
+  }),
+}));
+
 describe('ToolbarOverflowButton', () => {
   const mockSetLayoutMode = vi.fn();
   afterEach(() => {
