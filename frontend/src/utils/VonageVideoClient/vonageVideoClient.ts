@@ -486,37 +486,32 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
-  publish = (publisher: Publisher): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.clientSession.publish(publisher, (error) => {
-        if (error) {
-          frontendLogger.reportError(error, {
-            eventSource: 'vonageVideoClient.publish.error',
-            errorCode: (error as { code?: number })?.code,
-            partnerId: this.applicationId,
-          });
-          const errorName = error.name || 'OTError';
-          const errorMessage = error.message || 'Unknown publish error';
-          reject(new Error(`${errorName}: ${errorMessage}`));
-          return;
-        }
-
-        // the following is needed for the local subscriber to be able to receive captions
-        // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
-        if (publisher.stream) {
-          this.hiddenSubscriber =
-            this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
-              audioVolume: 0,
-            }) ?? null;
-
-          this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
-            this.emit('localCaptionReceived', captionEvent);
-          });
-        }
-
-        resolve();
+  publish = async (publisher: Publisher): Promise<void> => {
+    try {
+      await this.clientSession.publish.promise(publisher);
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.publish.error',
+        errorCode: (error as { code?: number })?.code,
+        partnerId: this.applicationId,
       });
-    });
+      const errorName = (error as OTError)?.name || 'OTError';
+      const errorMessage = (error as OTError)?.message || 'Unknown publish error';
+      throw new Error(`${errorName}: ${errorMessage}`, { cause: error });
+    }
+
+    // the following is needed for the local subscriber to be able to receive captions
+    // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
+    if (publisher.stream) {
+      this.hiddenSubscriber =
+        this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
+          audioVolume: 0,
+        }) ?? null;
+
+      this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
+        this.emit('localCaptionReceived', captionEvent);
+      });
+    }
   };
 
   /**

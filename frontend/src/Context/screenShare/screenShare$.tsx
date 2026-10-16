@@ -181,7 +181,19 @@ const screenShare$ = createContext(initialState, {
           });
 
           // Publishing the screen sharing stream
-          await publish(publisher);
+          try {
+            await publish(publisher);
+          } catch (error) {
+            handleApplyAdvancedSettingsError({
+              message: 'Failed to publish screen share',
+              eventSource: 'screenShare$.toggleShareScreen.publish',
+              partnerId,
+            })(error);
+
+            publisher.destroy();
+            actions$.onScreenShareStopped();
+            return;
+          }
 
           if (screenShareBitrateMode !== null) {
             await attempt(
