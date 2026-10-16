@@ -1,0 +1,106 @@
+backend/tests/session.test.ts
+  h_6029769cf9ac60 1-3,18,47,50,77
+backend/tsconfig.json
+  h_6029769cf9ac60 10
+scripts/testBackend.ts
+  h_6029769cf9ac60 15,27,31,33,40,46-50,56,61,63,77,79-82,86-88,90,98
+backend/vitest.config.ts
+  h_6029769cf9ac60 1-41
+backend/routes/auth/helpers/isSafeReturnToPath.test.ts
+  h_6029769cf9ac60 1
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 2,10,12
+backend/helpers/__mocks__/config.ts
+  h_6029769cf9ac60 1,5
+backend/videoService/tests/opentokVideoService.test.ts
+  h_6029769cf9ac60 1,11-13,18,22,42,47,56,58
+integration-tests/test-api/vitest.config.ts
+  h_6029769cf9ac60 1-13,15-23,25-26,28
+backend/tests/assetlinks.test.ts
+  h_6029769cf9ac60 1-2,16
+backend/testSetup/documentPolyfill.test.ts
+  h_6029769cf9ac60 1
+backend/middleware/helmetMiddleware/helmetMiddleware.test.ts
+  h_6029769cf9ac60 2-3,5,7,9,14,19,25-26,64-65,68
+backend/tests/helpers/doPartialMock.ts
+  h_6029769cf9ac60 3,6-7,37
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_6029769cf9ac60 1
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_6029769cf9ac60 1-2,5-6,11-12,32,35,37
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 1,7-8,10,14
+backend/tests/health.test.ts
+  h_6029769cf9ac60 1-2,18
+backend/tests/session.auth.test.ts
+  h_6029769cf9ac60 1-2,22-23,77,79
+eslint.config.mjs
+  h_6029769cf9ac60 67,72
+docs/TESTING.md
+  h_6029769cf9ac60 44
+backend/testSetup/setEnvVars.test.ts
+  h_6029769cf9ac60 1
+backend/eslint.config.mjs
+  h_6029769cf9ac60 22
+backend/helpers/reportFatalErrors.test.ts
+  h_6029769cf9ac60 1,11,16,21,25,34
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 1,8
+sonar-project.properties
+  h_6029769cf9ac60 47
+backend/services/tests/feedbackService.test.ts
+  h_6029769cf9ac60 1,7
+package.json
+  h_6029769cf9ac60 50,76,78
+backend/tests/feedback.test.ts
+  h_6029769cf9ac60 1-2,8,10,15,17,42
+backend/tests/helpers/closeServer.ts
+  h_6029769cf9ac60 1-16
+backend/routes/video/constants/joinSession.test.ts
+  h_6029769cf9ac60 1
+integration-tests/test-api/apiIntegrity.test.ts
+  h_6029769cf9ac60 1,8-9,22-23,26-27,30-31,39-40,43-44,47-48,56,58,63,65,68,70,72,81-82,88-89,92,97,132
+yarn.lock
+  h_6029769cf9ac60 18,32,53,152,215,297,304,311,914,936,1890,1971,2716-2722,2724-2727,2729-2732,2734-2739,3631,3657,4167,5131,5608,7156,7314,7432,7595,7721,7733,7825,8582-8585,8587-8590,8592-8595,8597-8600,8602-8604,8606-8609,8611-8613,8615-8618,8620-8621,8623-8626,8628-8633,8635-8638,8640-8642,8644-8647,8649-8651,8653,8655-8656,8658-8659,8661,9434,9552,9942,10096,10274,10443,11034,11271,11276,11446,11861,11910,12430,13049
+integration-tests/test-api/tsconfig.json
+  h_6029769cf9ac60 11
+backend/services/tests/jiraFeedbackService.test.ts
+  h_6029769cf9ac60 2,7,18,22,76,78-79,167
+backend/tests/errorHandler.test.ts
+  h_6029769cf9ac60 1-2,20,24,27,30-31,39,42
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 1,8,10
+backend/project.json
+  h_6029769cf9ac60 12,19,27,51,58,65,67,70
+backend/tests/apple-app-site-association.test.ts
+  h_6029769cf9ac60 1-2,16
+backend/videoService/tests/vonageVideoService.test.ts
+  h_6029769cf9ac60 1,3,13,15-16,19,23,26,29,32,35,58
+backend/tests/sessionStorageService.test.ts
+  h_6029769cf9ac60 1,7
+backend/tests/logger.test.ts
+  h_6029769cf9ac60 1-2,8,10,33,39,166,172
+backend/tests/helpers/mockVonageVideoSdk.ts
+  h_6029769cf9ac60 1,21,24,36,38,41,43-45,47-49,51-52,56-57,59-60,62,67-74,76-77
+backend/tests/redactSensitiveKeys.test.ts
+  h_6029769cf9ac60 1
+backend/tests/helpers/index.ts
+  h_6029769cf9ac60 1
+backend/tests/blockCallsForArgs.test.ts
+  h_6029769cf9ac60 2,8,16,18,47,49,80-86
+backend/services/tests/loggerService.test.ts
+  h_6029769cf9ac60 1-2,5-6,16-17,38,41
+scripts/testIntegration.ts
+  h_6029769cf9ac60 53,59-60,65,82,173
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f8bd1baed2fc43eaefd847b5dde8ad85344a2d97",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
