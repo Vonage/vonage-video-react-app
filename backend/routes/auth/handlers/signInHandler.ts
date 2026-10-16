@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { makeInternalErrorHandler, makeNotFoundErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
-import isVcr from '../../../middleware/isVcr';
+import isHttpsDeployment from '../../../middleware/isHttpsDeployment';
 import getSessionStorageService from '../../../sessionStorageService';
 import loadConfig from '../../../helpers/config';
 import generateOpaqueToken from '../helpers/generateOpaqueToken';
@@ -53,7 +53,7 @@ function makeSignInHandler() {
       res.cookie(TRANSACTION_COOKIE_NAME, transactionId, {
         httpOnly: true,
         sameSite: 'lax',
-        secure: isVcr,
+        secure: isHttpsDeployment,
         maxAge: TRANSACTION_COOKIE_MAX_AGE_MS,
         path: '/api/auth',
       });

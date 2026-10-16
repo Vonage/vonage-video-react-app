@@ -200,3 +200,41 @@ yarn vcr:dev
 ```
 
 This will deploy using your local development configuration and code, making it quick to test changes in a cloud environment.
+
+---
+
+## Deployment to Vercel
+
+As an alternative to VCR, the application can be deployed to [Vercel](https://vercel.com). VCR remains fully supported; the Vercel build is selected only by `vercel.json` / `yarn build vercel`.
+
+On Vercel the frontend is served as static files from Vercel's CDN and the Express backend runs as a single Node.js function (`yarn build vercel` writes both to `.vercel/output` using the [Build Output API](https://vercel.com/docs/build-output-api/v3)).
+
+### 1. Create the Vercel project
+
+Import the repository in the [Vercel dashboard](https://vercel.com/new) (or run `npx vercel link`). The install and build commands are picked up from `vercel.json`, no framework preset is needed.
+
+### 2. Add a Redis database
+
+Serverless functions don't share memory, so the backend needs a shared store for room sessions, captions, archives and auth state. Add an **Upstash Redis** database from the Vercel Marketplace (Storage tab) and connect it to the project: this injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which the backend detects automatically. A database created directly on [Upstash](https://upstash.com) works too, using `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
+
+> ⚠️ Without a database the backend falls back to in-memory storage, which is not shared between function instances: participants may land in different sessions for the same room.
+
+### 3. Configure environment variables
+
+Add the backend variables from [Configuration](./CONFIGURATION.md) (`VIDEO_SERVICE_PROVIDER`, `VONAGE_APP_ID`, `VONAGE_PRIVATE_KEY`, `SESSION_KEY_SECRET`, …) in **Project Settings → Environment Variables**. Do **not** set `VCR_PORT`.
+
+> ⚠️ **Warning**: As with VCR, use a **separate** Vonage application per deployment, and point its Video webhooks (session, archive and captions callbacks under `/v2/hooks/*`) at the deployment's stable production domain. Preview deployments get a new URL on every push and are behind Vercel Deployment Protection by default, so they won't receive webhooks unless you configure a protection bypass.
+
+### 4. Deploy
+
+Push to the connected branch, or deploy from your machine:
+
+```bash
+npx vercel deploy          # preview
+npx vercel deploy --prod   # production
+```
+
+### Vercel limitations
+
+- Request bodies are limited to 4.5 MB by Vercel, so very large screenshots attached to in-call issue reports may be rejected.
+- The API rate limiter (`express-rate-limit`) keeps its counters in memory, so limits apply per function instance. Use the [Vercel Firewall](https://vercel.com/docs/vercel-firewall) for global rate limiting.

@@ -116,7 +116,7 @@ This application provides features for common conferencing use cases, such as:
 
 ## Running Locally
 
-See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
+See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR or Vercel deployment).
 
 ### OIDC token authentication (optional)
 
