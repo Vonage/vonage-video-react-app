@@ -64,7 +64,7 @@ function mockProvider({
       const token = body instanceof URLSearchParams ? body.get('token') : null;
       const data = typeof introspection === 'function' ? introspection(token) : introspection;
 
-      return Promise.resolve({ data });
+      return Promise.resolve({ status: 200, data });
     }
     if (url === TOKEN_ENDPOINT && refresh) return Promise.resolve(refresh);
 
@@ -139,7 +139,7 @@ describe('authMiddleware', () => {
         .set('Origin', 'https://other.example.com')
         .set('Authorization', 'Bearer some-token');
 
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(403);
       expect(postedUrls()).toEqual([]);
     });
 
@@ -157,7 +157,7 @@ describe('authMiddleware', () => {
         .set('Origin', 'https://vera.example.com')
         .set('Cookie', cookie);
 
-      expect(foreignResponse.statusCode).toEqual(401);
+      expect(foreignResponse.statusCode).toEqual(403);
       expect(allowedResponse.statusCode).toEqual(200);
       expect(postedUrls()).toEqual([INTROSPECTION_ENDPOINT]);
     });
@@ -228,18 +228,29 @@ describe('authMiddleware', () => {
     it.each([
       ['the provider call fails', () => mockPost.mockRejectedValue(new Error('network error'))],
       [
+        'the provider answers with an HTTP error',
+        () => mockPost.mockResolvedValue({ status: 401, data: { error: 'invalid_client' } }),
+      ],
+      [
         'the introspection response fails schema validation',
         () => mockProvider({ introspection: { unexpected: 'shape' } }),
       ],
     ])('returns 502, never a 401 or a redirect, when %s', async (_label, arrangeProvider) => {
       arrangeProvider();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
       const res = await request(buildApp())
         .get('/protected')
         .set('Accept', 'text/html')
         .set('Authorization', 'Bearer some-token');
 
+      const loggedOutput = JSON.stringify(consoleErrorSpy.mock.calls, (_key, value: unknown) =>
+        value instanceof Error ? { ...value, message: value.message } : value
+      );
+      consoleErrorSpy.mockRestore();
+
       expect(res.statusCode).toEqual(502);
+      expect(loggedOutput).not.toContain('some-token');
     });
   });
 

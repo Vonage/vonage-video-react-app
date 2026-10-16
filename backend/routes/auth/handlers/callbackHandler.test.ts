@@ -13,7 +13,7 @@ const ID_TOKEN_COOKIE_NAME = 'test_id_token';
 const TRANSACTION_COOKIE_NAME = 'test_transaction';
 
 const loadConfigMock = jest.fn<() => Config>();
-const axiosPostMock = jest.fn<() => Promise<{ data: unknown }>>();
+const axiosPostMock = jest.fn<() => Promise<{ status: number; data: unknown }>>();
 
 jest.unstable_mockModule('../../../helpers/config', () => ({
   default: loadConfigMock,
@@ -79,7 +79,7 @@ function completeCallback({
   tokenResponse: Record<string, unknown>;
   returnTo?: string;
 }) {
-  axiosPostMock.mockResolvedValue({ data: tokenResponse });
+  axiosPostMock.mockResolvedValue({ status: 200, data: tokenResponse });
 
   return request(buildApp())
     .get(`${CALLBACK_PATH}?code=auth-code&state=state-1`)

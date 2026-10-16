@@ -6,8 +6,9 @@ import {
   makeThirdPartyErrorHandler,
   makeUnauthorizedErrorHandler,
 } from '@api-lib/errors';
-import { assertResult } from '@api-lib/executions';
 import { isApplicationError } from '@common/errors/assertions';
+import tryCatch from '@common/execution/tryCatch';
+import makeProviderResponseError from '../../../middleware/authMiddleware/helpers/makeProviderResponseError';
 import loadConfig from '../../../helpers/config';
 import readStringQueryParam from '../helpers/readStringQueryParam';
 import readCookiePayload from '../helpers/readCookiePayload';
@@ -81,24 +82,37 @@ function makeCallbackHandler() {
         throw makeUnauthorizedErrorHandler('State parameter does not match — possible CSRF')(null);
       }
 
-      const tokenResponse = await assertResult(
-        () =>
-          axios.post(
-            oidcTokenEndpoint,
-            new URLSearchParams({
-              grant_type: 'authorization_code',
-              code,
-              redirect_uri: oidcWebRedirectUri,
-              client_id: oidcClientId,
-              code_verifier: transaction.codeVerifier,
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              timeout: authProviderTimeoutMs,
-            }
-          ),
-        makeThirdPartyErrorHandler('Token exchange with the identity provider failed')
+      const handleTokenExchangeFailure = makeThirdPartyErrorHandler(
+        'Token exchange with the identity provider failed'
       );
+
+      const { result: tokenResponse, error: tokenRequestError } = await tryCatch(() =>
+        axios.post(
+          oidcTokenEndpoint,
+          new URLSearchParams({
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: oidcWebRedirectUri,
+            client_id: oidcClientId,
+            code_verifier: transaction.codeVerifier,
+          }),
+          {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: authProviderTimeoutMs,
+            validateStatus: () => true,
+          }
+        )
+      );
+
+      if (tokenRequestError || !tokenResponse) {
+        throw handleTokenExchangeFailure(tokenRequestError);
+      }
+
+      if (tokenResponse.status !== 200) {
+        throw handleTokenExchangeFailure(
+          makeProviderResponseError({ endpoint: oidcTokenEndpoint, response: tokenResponse })
+        );
+      }
 
       const parsedTokenResponse = TokenExchangeResponseSchema.safeParse(tokenResponse.data);
 

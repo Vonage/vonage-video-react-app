@@ -134,7 +134,7 @@ describe('signOutHandler', () => {
 
     const res = await signOut().set('Origin', 'https://evil.example.com');
 
-    expect(res.statusCode).toEqual(401);
+    expect(res.statusCode).toEqual(403);
     expect(axiosPostMock).not.toHaveBeenCalled();
   });
 });
