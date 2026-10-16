@@ -29,8 +29,6 @@ app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-// express.json() above replaces the former body-parser.json() call;
-// body-parser is redundant since Express 4.16+ ships express.json() natively.
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.

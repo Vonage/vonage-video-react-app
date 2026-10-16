@@ -97,6 +97,7 @@ const Toolbar = memo(
     }, [destroyBackgroundPublisher, disconnect]);
     const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
     const showReportIssue = isReportIssueEnabled();
+    const allowAdvancedSettings = env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS;
 
     // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
     // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -121,9 +122,7 @@ const Toolbar = memo(
         />,
         <CaptionsButton key="CaptionsButton" captionsState={captionsState} />,
         <ArchivingButton key="ArchivingButton" />,
-        env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS && (
-          <AdvancedSettingsButton key="AdvancedSettingsButton" />
-        ),
+        allowAdvancedSettings && <AdvancedSettingsButton key="AdvancedSettingsButton" />,
         showReportIssue && (
           <ReportIssueButton
             isOpen={rightPanelActiveTab === 'issues'}
@@ -153,6 +152,7 @@ const Toolbar = memo(
         rightPanelActiveTab,
         participantCount,
         showReportIssue,
+        allowAdvancedSettings,
         toggleShareScreen,
         toggleReportIssue,
         toggleParticipantList,
@@ -242,5 +242,7 @@ const Toolbar = memo(
     );
   }
 );
+
+Toolbar.displayName = 'Toolbar';
 
 export default Toolbar;

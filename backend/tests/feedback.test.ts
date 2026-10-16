@@ -105,4 +105,30 @@ describe('POST /feedback/report', () => {
       origin: 'Android',
     });
   });
+
+  it('accepts a JSON body close to the 20MB limit', async () => {
+    const largeAttachment = 'a'.repeat(19 * 1024 * 1024);
+
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({ ...feedbackPayload, attachment: largeAttachment });
+
+    expect(res.statusCode).toEqual(200);
+    expect(mockReportIssue).toHaveBeenCalledWith(
+      expect.objectContaining({ attachment: largeAttachment })
+    );
+  });
+
+  it('rejects a JSON body over the 20MB limit', async () => {
+    const oversizedAttachment = 'a'.repeat(21 * 1024 * 1024);
+
+    const res = await request(server)
+      .post('/feedback/report')
+      .set('Content-Type', 'application/json')
+      .send({ ...feedbackPayload, attachment: oversizedAttachment });
+
+    expect(res.statusCode).not.toEqual(200);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
 });

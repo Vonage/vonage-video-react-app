@@ -70,6 +70,9 @@ const ScreenshareVideoTile = forwardRef(
         setPanOffset({ x: 0, y: 0 });
         setIsDragging(false);
       }
+    }, [zoomLevel]);
+
+    useEffect(() => {
       return () => {
         if (rafId.current !== null) {
           cancelAnimationFrame(rafId.current);
@@ -77,7 +80,7 @@ const ScreenshareVideoTile = forwardRef(
         }
         pendingMouseMove.current = null;
       };
-    }, [zoomLevel]);
+    }, []);
 
     const onWheel = (event: WheelEvent<HTMLDivElement>) => {
       if (!isZoomSupported) return;
@@ -218,7 +221,7 @@ const ScreenshareVideoTile = forwardRef(
       >
         <CustomBox
           ref={ref}
-          className="relative left-0 top-[-4px] h-full w-full overflow-hidden rounded-vera-large bg-vera-dark-grey-opacity"
+          className="relative left-0 -top-1 h-full w-full overflow-hidden rounded-vera-large bg-vera-dark-grey-opacity"
           style={transformStyle}
         />
         <CustomBox

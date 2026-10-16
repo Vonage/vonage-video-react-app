@@ -233,16 +233,14 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            // React ecosystem — stable across app changes
+            // React and MUI/Vivid import each other; splitting them into separate chunks
+            // produced a circular chunk initialization order, so they're kept together.
             'vendor-react': [
               'react',
               'react-dom',
               'react-router-dom',
               'react-i18next',
               'react-global-state-hooks',
-            ],
-            // MUI + Vivid UI components
-            'vendor-ui': [
               '@mui/material',
               '@mui/icons-material',
               '@vonage/vivid',
@@ -259,7 +257,6 @@ export default defineConfig(({ mode }) => {
               '@vonage/video-client-network-test',
               'opentok-layout-js',
             ],
-            // Other network / utility vendors
             'vendor-axios': ['axios'],
           },
         },

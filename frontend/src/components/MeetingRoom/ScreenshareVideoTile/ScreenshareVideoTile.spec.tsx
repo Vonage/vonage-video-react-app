@@ -295,17 +295,37 @@ describe('ScreenshareVideoTile', () => {
       expect(zoomedContent.style.transform).toBe('scale(1.25) translate(80px, 80px)');
     });
 
-    it('stops dragging on mouse leave', () => {
+    it('cancels the pending pan and stops dragging on mouse leave, so a stale move cannot still apply', () => {
+      const frames: FrameRequestCallback[] = [];
+      const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+        frames.push(callback);
+        return frames.length;
+      });
+      const cancelSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+
       render(<ScreenshareVideoTile {...defaultProps} />);
 
       const tile = screen.getByTestId('screenshare-tile');
+      const zoomedContent = tile.firstElementChild as HTMLElement;
 
       fireEvent.wheel(tile, { deltaY: -100 });
       fireEvent.mouseDown(tile, { clientX: 100, clientY: 100 });
+      fireEvent.mouseMove(tile, { clientX: 150, clientY: 150 });
+
+      const transformBeforeLeave = zoomedContent.style.transform;
 
       fireEvent.mouseLeave(tile);
 
-      expect(tile).toBeInTheDocument();
+      expect(cancelSpy).toHaveBeenCalled();
+
+      // The rAF queued before mouseLeave must not be allowed to apply now that dragging has stopped
+      act(() => frames.shift()?.(0));
+      fireEvent.mouseMove(tile, { clientX: 200, clientY: 200 });
+
+      rafSpy.mockRestore();
+      cancelSpy.mockRestore();
+
+      expect(zoomedContent.style.transform).toBe(transformBeforeLeave);
     });
   });
 

@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import PopupAlert from '@components/MeetingRoom/PopupAlert';
-import SuspenseBoundary from '@web/components/SuspenseBoundary';
+import LazyLoadBoundary from '@components/LazyLoadBoundary';
 import Toolbar from '../../components/MeetingRoom/Toolbar';
 import VideoTileCanvas from '../../components/MeetingRoom/VideoTileCanvas';
 import SmallViewportHeader from '../../components/MeetingRoom/SmallViewportHeader';
@@ -32,7 +32,7 @@ type MeetingRoomProps = BoxProps & {
   fullSize?: boolean;
 };
 
-const AdvancedSettingsDialog = lazy(() => import('@components/AdvancedSettings/Dialog'));
+const AdvancedSettingsDialog = lazy(() => import('@components/AdvancedSettingsDialog'));
 
 const isMobileDevice = isMobile();
 
@@ -131,9 +131,9 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
         captionsState={captionsState}
       />
       {isAdvancedSettingsOpen && (
-        <SuspenseBoundary fallback={null}>
+        <LazyLoadBoundary>
           <AdvancedSettingsDialog />
-        </SuspenseBoundary>
+        </LazyLoadBoundary>
       )}
       {recordingAlreadyNotified &&
         !archiveIdStartedBySelf &&

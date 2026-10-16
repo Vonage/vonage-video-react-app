@@ -5,7 +5,7 @@ import * as path from 'node:path';
 export default defineConfig((env) => {
   const baseConfig = baseConfigFn(env);
 
-  return mergeConfig(baseConfig, {
+  const mergedConfig = mergeConfig(baseConfig, {
     base: './',
     define: {
       'process.env.NODE_ENV': '"production"',
@@ -32,4 +32,13 @@ export default defineConfig((env) => {
       },
     },
   });
+
+  // This single-format iife lib build forces inlineDynamicImports, which Rollup rejects combined
+  // with manualChunks; mergeConfig skips `undefined` overrides, so it's deleted directly instead.
+  const output = mergedConfig.build?.rollupOptions?.output;
+  if (output && !Array.isArray(output)) {
+    delete output.manualChunks;
+  }
+
+  return mergedConfig;
 });
