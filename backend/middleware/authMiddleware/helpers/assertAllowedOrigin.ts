@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import { makeUnauthorizedErrorHandler } from '@api-lib/errors';
+import { makeForbiddenErrorHandler } from '@api-lib/errors';
 import { isAllowedOrigin } from '@common/helpers';
 
 function assertAllowedOrigin({
@@ -14,7 +14,7 @@ function assertAllowedOrigin({
   if (requestOrigin === undefined) return;
   if (isAllowedOrigin({ origin: requestOrigin, allowedOrigins })) return;
 
-  throw makeUnauthorizedErrorHandler(`Requests are not allowed from origin ${requestOrigin}`)(null);
+  throw makeForbiddenErrorHandler(`Requests are not allowed from origin ${requestOrigin}`)(null);
 }
 
 export default assertAllowedOrigin;

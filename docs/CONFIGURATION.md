@@ -59,7 +59,7 @@ OT_API_SECRET='your-api-secret'
 | VCR main deploy (`vcr-gha.yml`) | `https://<APP_HOST>`, filled by the deploy workflow |
 | VCR per-PR deploy | The PR instance URL, set by the workflow |
 
-Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, cookie-authenticated requests from an origin outside this list are also rejected with `401`.
+Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, requests from an origin outside this list are also rejected with `403`.
 
 #### Vonage Cloud Runtime (VCR)
 

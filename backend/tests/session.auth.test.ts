@@ -9,7 +9,10 @@ import mockVonageVideoSdk, { DEFAULT_CAPTIONS_ID } from './helpers/mockVonageVid
 
 const SESSION_COOKIE_NAME = 'test_session';
 const OIDC_CLIENT_ID = 'test-client-id';
-const introspectionResponse = { data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID } };
+const introspectionResponse = {
+  status: 200,
+  data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID },
+};
 
 const originalEnv = process.env;
 process.env = {

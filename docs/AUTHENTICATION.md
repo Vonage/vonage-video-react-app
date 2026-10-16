@@ -48,9 +48,9 @@ When a user isn't authenticated:
 - **Page requests** (`GET` that accepts HTML, without a Bearer header) redirect to `/auth/signin?returnTo=<original URL>`. A rejected Bearer token always gets `401`.
 - **Other requests** get `401`.
 - **Provider failures** never redirect, so an outage can't cause a sign-in loop. A failed or malformed introspection, and a refresh that fails for any reason other than a rejected refresh token (`invalid_grant`), are a `502`, never a `401`: the frontend sends every `401` to sign-in.
-- **Rejected refresh token** (`invalid_grant`): if the access token is still live, the request goes through (a parallel request already rotated it); if it has expired, the cookies are cleared and the user signs in again.
+- **Rejected refresh token** (`invalid_grant`): if the access token is still live, the request goes through (a parallel request already rotated it); if it has expired, the cookies are cleared and the user signs in again. Parallel requests after expiry therefore rely on the provider's refresh token rotation grace period (Okta has one; `apps/local-oidc` keeps a used refresh token valid for 30 seconds); without one, they cost a silent sign-in round trip.
 
-Cookie-authenticated requests carrying an `Origin` header outside `CORS_ALLOWED_ORIGINS` are rejected with `401`, so other sites can't use a signed-in user's cookie. Per-PR hosts need this because other VCR customers' apps also live under `vonage.cloud`, which browsers treat as the same site. The Bearer path isn't affected. See [Configuration](./CONFIGURATION.md#allowed-web-origins-cors).
+Requests carrying an `Origin` header outside `CORS_ALLOWED_ORIGINS` are rejected with `403` on both the cookie and Bearer paths, so other sites can't use a signed-in user's cookie. It's a `403`, not a `401`, because signing in again can't fix it, so the frontend doesn't redirect to sign-in. Per-PR hosts need this because other VCR customers' apps also live under `vonage.cloud`, which browsers treat as the same site. Requests without an `Origin` header (native apps, same-origin navigation) are allowed. See [Configuration](./CONFIGURATION.md#allowed-web-origins-cors).
 
 These paths skip the middleware, because their callers can't carry a user token:
 
@@ -73,7 +73,7 @@ Mobile and Web share one public client registration with no client secret, so PK
 
 ### 2.5 Logout
 
-`POST /auth/signout`. A request with a disallowed `Origin` gets a `401`, like every other route. Revocation at `OIDC_REVOCATION_ENDPOINT` is best effort: a failure doesn't stop the logout.
+`POST /auth/signout`. A request with a disallowed `Origin` gets a `403`, like every other route. Revocation at `OIDC_REVOCATION_ENDPOINT` is best effort: a failure doesn't stop the logout.
 
 **Web (session cookie):**
 
