@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
@@ -7,9 +7,9 @@ import getSessionStorageService from '../../sessionStorageService';
 import { errorHandler } from '../errorHandler';
 import authMiddleware from './authMiddleware';
 
-jest.mock('axios');
+vi.mock('axios');
 
-const mockPost = jest.spyOn(axios, 'post');
+const mockPost = vi.spyOn(axios, 'post');
 
 const CLIENT_ID = 'test-client-id';
 

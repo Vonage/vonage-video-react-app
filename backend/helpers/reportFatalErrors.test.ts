@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 type UncaughtExceptionHandler = (error: unknown) => void;
 
@@ -8,21 +8,21 @@ describe('reportFatalErrors', () => {
   let exitCode: number | undefined;
 
   beforeEach(async () => {
-    jest.resetModules();
+    vi.resetModules();
 
     errorLines = [];
     exitCode = undefined;
 
-    jest.spyOn(process, 'on').mockImplementation(((event: string, listener: unknown) => {
+    vi.spyOn(process, 'on').mockImplementation(((event: string, listener: unknown) => {
       if (event === 'uncaughtException') handler = listener as UncaughtExceptionHandler;
       return process;
     }) as never);
 
-    jest.spyOn(console, 'error').mockImplementation((line: unknown) => {
+    vi.spyOn(console, 'error').mockImplementation((line: unknown) => {
       errorLines.push(String(line));
     });
 
-    jest.spyOn(process, 'exit').mockImplementation(((code?: number) => {
+    vi.spyOn(process, 'exit').mockImplementation(((code?: number) => {
       exitCode = code;
       return undefined as never;
     }) as never);
@@ -31,7 +31,7 @@ describe('reportFatalErrors', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('reports the error name, message and cause, then exits', () => {

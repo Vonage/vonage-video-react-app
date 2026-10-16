@@ -1,8 +1,9 @@
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
+import type { MockedFunction } from 'vitest';
 import type { ClientLogEvent } from '@common/types';
 
-jest.unstable_mockModule('../../helpers/config', () => ({
-  default: jest.fn().mockImplementation(() => ({
+vi.doMock('../../helpers/config', () => ({
+  default: vi.fn().mockImplementation(() => ({
     apiKey: 'test-api-key',
     apiSecret: 'test-api-secret',
     applicationId: 'test-application-id',
@@ -12,8 +13,8 @@ jest.unstable_mockModule('../../helpers/config', () => ({
     loggerVerbose: false,
   })),
 }));
-jest.unstable_mockModule('axios', () => ({
-  default: { post: jest.fn(() => Promise.resolve({ status: 200 })) },
+vi.doMock('axios', () => ({
+  default: { post: vi.fn(() => Promise.resolve({ status: 200 })) },
 }));
 
 const { default: axiosMock } = await import('axios');
@@ -34,10 +35,10 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
 });
 
 describe('loggerService', () => {
-  const mockPost = axiosMock.post as jest.MockedFunction<typeof axiosMock.post>;
+  const mockPost = axiosMock.post as MockedFunction<typeof axiosMock.post>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockPost.mockResolvedValue({ status: 200 });
   });
 
