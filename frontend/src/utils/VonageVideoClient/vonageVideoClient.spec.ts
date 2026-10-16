@@ -31,8 +31,10 @@ const mockSubscriber = Object.assign(new EventEmitter(), {
 }) as unknown as TestSubscriber;
 
 const mockInitSession = vi.fn();
-const mockConnect = vi.fn();
+const mockConnectPromise = vi.fn();
+const mockConnect = Object.assign(vi.fn(), { promise: mockConnectPromise });
 const mockSubscribe = vi.fn();
+const mockUnsubscribe = vi.fn();
 const mockDisconnect = vi.fn();
 const mockPublish = vi.fn();
 type TestSession = Session & EventEmitter;
@@ -55,6 +57,7 @@ describe('VonageVideoClient', () => {
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
       subscribe: mockSubscribe,
+      unsubscribe: mockUnsubscribe,
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
       publish: mockPublish,
@@ -67,16 +70,15 @@ describe('VonageVideoClient', () => {
     }) as unknown as TestSession;
     mockInitSession.mockReturnValue(mockSession);
     (initSession as Mock).mockImplementation(mockInitSession);
-    mockConnect.mockImplementation((_, callback) => {
-      callback();
-    });
+    mockConnectPromise.mockResolvedValue(mockSession);
+    mockDisconnect.mockResolvedValue(undefined);
     mockSubscribe.mockReturnValue(mockSubscriber);
 
     vonageVideoClient = new VonageVideoClient(fakeCredentials);
   });
 
-  afterEach(() => {
-    vonageVideoClient?.disconnect();
+  afterEach(async () => {
+    await vonageVideoClient?.disconnect();
     vonageVideoClient = null;
     vi.resetAllMocks();
   });
@@ -104,13 +106,21 @@ describe('VonageVideoClient', () => {
       expect(vonageVideoClient).not.toBeUndefined();
     });
 
-    it('logs to console on unsuccessful connection', async () => {
-      const fakeError = 'fake-error';
-      mockConnect.mockImplementation((_, callback) => {
-        callback(fakeError);
-      });
+    it('reports the error and rejects on unsuccessful connection', async () => {
+      const fakeError = new Error('fake-error');
+      mockConnectPromise.mockRejectedValue(fakeError);
+
       await expect(() => vonageVideoClient?.connect()).rejects.toThrowError(fakeError);
 
+      expect(mockProvider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: fakeError.message, name: fakeError.name }),
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.connect.error',
+          sessionId: fakeSessionId,
+          connectionId: 'connection-id',
+          partnerId: fakeApplicationId,
+        })
+      );
       expect(mockProvider.log).not.toHaveBeenCalledWith('EnterMeeting', expect.anything());
       expect(vonageVideoClient).not.toBeUndefined();
     });
@@ -231,8 +241,56 @@ describe('VonageVideoClient', () => {
 
   it('disconnect should disconnect from the session and cleanup', async () => {
     await vonageVideoClient?.connect();
-    vonageVideoClient?.disconnect();
+    await vonageVideoClient?.disconnect();
     expect(mockDisconnect).toHaveBeenCalled();
+  });
+
+  it('disconnect should report (not swallow) a rejection from the session and still clean up', async () => {
+    const fakeError = new Error('fake-disconnect-error');
+    mockDisconnect.mockRejectedValue(fakeError);
+
+    await vonageVideoClient?.connect();
+    await vonageVideoClient?.disconnect();
+    await wait(0);
+
+    expect(mockProvider.reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: fakeError.message, name: fakeError.name }),
+      expect.objectContaining({
+        eventSource: 'vonageVideoClient.disconnect.error',
+        sessionId: fakeSessionId,
+      })
+    );
+    expect(vonageVideoClient?.clientSession).toBeNull();
+  });
+
+  it('disconnect should still disconnect and clean up when unsubscribing the hidden caption subscriber throws', async () => {
+    const unsubscribeError = new Error('unsubscribe-failed');
+    const mockPublisher = {
+      id: 'publisher-id',
+      stream: { streamId: 'stream-id' },
+    } as unknown as Publisher;
+
+    mockPublish.mockImplementation((_publisher, callback) => {
+      callback();
+    });
+    mockSubscribe.mockReturnValue(mockSubscriber);
+    mockUnsubscribe.mockImplementation(() => {
+      throw unsubscribeError;
+    });
+
+    await vonageVideoClient?.connect();
+    await vonageVideoClient?.publish(mockPublisher);
+    await vonageVideoClient?.disconnect();
+    await wait(0);
+
+    expect(mockProvider.reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: unsubscribeError.message }),
+      expect.objectContaining({
+        eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
+      })
+    );
+    expect(mockDisconnect).toHaveBeenCalled();
+    expect(vonageVideoClient?.clientSession).toBeNull();
   });
 
   it('forceMuteStream should call forceMuteStream on the session', async () => {

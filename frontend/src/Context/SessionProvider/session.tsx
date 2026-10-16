@@ -468,8 +468,12 @@ const SessionProvider = ({
     if (vonageVideoClient.current) {
       return;
     }
+
+    let clientConstructed = false;
+
     try {
       vonageVideoClient.current = new VonageVideoClient(credential);
+      clientConstructed = true;
       vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
       vonageVideoClient.current.on('sessionReconnecting', handleReconnecting);
       vonageVideoClient.current.on('sessionReconnected', handleReconnected);
@@ -492,8 +496,16 @@ const SessionProvider = ({
 
       await vonageVideoClient.current.connect();
       setConnected(true);
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (error: unknown) {
+      if (clientConstructed) {
+        return;
+      }
+
+      frontendLogger.reportError(error, {
+        eventSource: 'session.connect.setup.error',
+        sessionKey: credential.sessionKey,
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -527,7 +539,7 @@ const SessionProvider = ({
    */
   const disconnect = useCallback(() => {
     if (vonageVideoClient.current) {
-      vonageVideoClient.current.disconnect();
+      void vonageVideoClient.current.disconnect();
       vonageVideoClient.current = null;
 
       setConnected(false);
