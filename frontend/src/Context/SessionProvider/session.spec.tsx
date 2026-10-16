@@ -205,7 +205,7 @@ describe('SessionProvider', () => {
       } as unknown as SubscriberWrapper);
     });
 
-    await waitFor(() => expect(getByTestId('subscriberWrappers').children.length).toBe(2));
+    await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(2));
     expect(getByTestId('subscriberWrappers').children[0]).not.toHaveTextContent('sub1');
     const referenceBeforeReorder =
       subscriberWrappersSnapshots[subscriberWrappersSnapshots.length - 1];
@@ -310,7 +310,7 @@ describe('SessionProvider', () => {
 
       await waitFor(() => {
         expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub2');
-        expect(getByTestId('subscriberWrappers').children.length).toBe(2);
+        expect(getByTestId('subscriberWrappers').children).toHaveLength(2);
       });
     });
 
@@ -466,7 +466,7 @@ describe('SessionProvider', () => {
         } as unknown as SubscriberWrapper);
       });
 
-      await waitFor(() => expect(getByTestId('subscriberWrappers').children.length).toBe(3));
+      await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(3));
       expect(getByTestId('subscriberWrappers').children[0]).not.toHaveTextContent('sub1');
 
       act(() => {

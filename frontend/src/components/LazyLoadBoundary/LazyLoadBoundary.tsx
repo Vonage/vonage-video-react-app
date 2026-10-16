@@ -28,22 +28,24 @@ const LazyLoadBoundary = ({
   children,
   fallback = defaultFallback,
 }: LazyLoadBoundaryProps): ReactElement => {
-  const { t } = useTranslation();
-
   return (
-    <ErrorBoundary
-      fallback={() => (
-        <div className="flex flex-col items-center gap-2 p-4 text-vera-body-base text-vera-on-surface">
-          <span>{t('lazyLoadBoundary.failed')}</span>
-          <Button variant="outlined" onClick={() => window.location.reload()}>
-            {t('lazyLoadBoundary.retry')}
-          </Button>
-        </div>
-      )}
-    >
+    <ErrorBoundary fallback={() => <LazyLoadBoundaryFallback />}>
       <SuspenseBoundary fallback={fallback}>{children}</SuspenseBoundary>
     </ErrorBoundary>
   );
 };
+
+function LazyLoadBoundaryFallback(): ReactElement {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex flex-col items-center gap-2 p-4 text-vera-body-base text-vera-on-surface">
+      <span>{t('lazyLoadBoundary.failed')}</span>
+      <Button variant="outlined" onClick={() => window.location.reload()}>
+        {t('lazyLoadBoundary.retry')}
+      </Button>
+    </div>
+  );
+}
 
 export default LazyLoadBoundary;
