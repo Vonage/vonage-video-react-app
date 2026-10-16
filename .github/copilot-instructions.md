@@ -58,6 +58,10 @@ TypeScript version: `^5.8.3`
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
 - **Rule:** Logic that is shared between different projects (**frontend**, **backend**, **libs**) should be proposed for `libs/common`.
 - **Rule:** Do not add new dependencies. Use only the installed dependencies.
+- **Rule:** Dependencies are installed with pnpm only, and `pnpm-lock.yaml` is the single lockfile. Never run `yarn install` or `npm install`, and never commit a `yarn.lock` or `package-lock.json`.
+- **Rule:** yarn remains supported as a task runner, so `yarn dev`, `yarn test:frontend` and `yarn nx ...` are all valid. Only installing is pnpm-only.
+- **Rule:** Dependencies are installed with pnpm only, and `pnpm-lock.yaml` is the single lockfile. Never run `yarn install` or `npm install`, and never commit a `yarn.lock` or `package-lock.json`.
+- **Rule:** yarn remains supported as a task runner, so `yarn dev`, `yarn test:frontend` and `yarn nx ...` are all valid. Only installing is pnpm-only.
 - **Rule:** Do not add new state management libraries. Use only existing tooling.
 - **Rule:** Components must be kept small, focused, and composable.
 
