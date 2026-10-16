@@ -353,5 +353,6 @@
   "zoom.current": "現在のズーム",
   "errorPage.title": "問題が発生しました",
   "errorPage.description": "アプリケーションを起動できませんでした。ページをリロードするか、問題が解決しない場合はサポートにお問い合わせください。",
-  "notification.dismiss": "通知を閉じる"
+  "notification.dismiss": "通知を閉じる",
+  "banner.logout": "ログアウト"
 }
