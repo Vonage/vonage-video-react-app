@@ -1,0 +1,16 @@
+backend/routes/video/video.ts
+  h_6c0124248e0f80 239-242
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_6c0124248e0f80 80-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "591bd1ad8b66ffb4cb47eb10916452c78cf8ceb2",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

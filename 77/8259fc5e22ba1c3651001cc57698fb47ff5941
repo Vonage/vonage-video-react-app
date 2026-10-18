@@ -1,0 +1,16 @@
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 114,122-126
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "778259fc5e22ba1c3651001cc57698fb47ff5941",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

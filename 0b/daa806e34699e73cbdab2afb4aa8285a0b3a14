@@ -1,0 +1,20 @@
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  s_16343696230de9::t_4c3a78605ad311 25-26
+  s_16343696230de9::t_8954479a675d43 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0bdaa806e34699e73cbdab2afb4aa8285a0b3a14",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

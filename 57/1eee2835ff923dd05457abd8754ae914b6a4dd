@@ -1,0 +1,56 @@
+frontend/src/locales/it.json
+  s_16343696230de9::t_0084c276665ec0 300-301,304-305
+backend/routes/video/constants/startArchive.ts
+  s_16343696230de9::t_dfa682254cdb9c 18-19,21,37-38,40
+frontend/src/utils/VonageVideoClient/index.ts
+  s_16343696230de9::t_975983029d5ea4 3
+frontend/src/locales/es.json
+  s_16343696230de9::t_af5c7b7f78581b 300-301,304-305
+frontend/src/locales/ja.json
+  s_16343696230de9::t_40b778558cc326 300-301,304-305
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  s_16343696230de9::t_2d0289d6537143 194,203,210
+  s_16343696230de9::t_dec3e9e8b06447 133,148,154
+  s_16343696230de9::t_ee799903a6e684 174,178
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_16343696230de9::t_2d01c48dc2e7ae 396,406
+frontend/src/locales/en.json
+  s_16343696230de9::t_d62b83591ffd3c 300-301,304-305
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_16343696230de9::t_3ef3b6e4ca1f5a 30,32
+  s_16343696230de9::t_0feda4409e2edb 28-29
+  s_16343696230de9::t_700248c9a88737 33
+  s_16343696230de9::t_445357097f2076 98
+  s_16343696230de9::t_5e7c675b18b392 412,415-416
+  s_16343696230de9::t_1f8d76961e1cb0 421,424-425
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_16343696230de9::t_bc8faeb784da63 82-83,94
+frontend/src/Context/SessionProvider/session.tsx
+  s_16343696230de9::t_2b9968d3dbdfd3 374-379,382-387,405-411
+  s_16343696230de9::t_456106e03208e7 401,412
+  s_16343696230de9::t_dea6fe609c03f7 388
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_16343696230de9::t_2216bf4f3a70d6 83-84,98
+frontend/src/locales/de.json
+  s_16343696230de9::t_9748ee36b26dc0 301,304-305
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_16343696230de9::t_c72c5846dc3ee3 306,309-310,316,323-325,327-328,332-335
+frontend/src/locales/es-MX.json
+  s_16343696230de9::t_97436a9db57670 300-301,304-305
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "571eee2835ff923dd05457abd8754ae914b6a4dd",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_16343696230de9::t_3eb14e93fe0d4b 142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1db04a482fe350fdd61fface5a7957ad5b194f6f",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

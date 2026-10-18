@@ -1,0 +1,30 @@
+frontend/src/env.ts
+  h_6029769cf9ac60 50,90
+frontend/.env.example
+  h_6029769cf9ac60 36
+env.sh
+  h_6029769cf9ac60 30
+scripts/generateEnv.ts
+  h_6029769cf9ac60 20,22,29-30,32-33,122,178,180,183
+frontend/vite.config.ts
+  h_6029769cf9ac60 41
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_6029769cf9ac60 50
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 210
+specs/app-config.schema.json
+  h_6029769cf9ac60 61-65
+app-config.json
+  h_6029769cf9ac60 14-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e97215b0fdca5d29e6f63ea55bd68ad75f52d7cb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

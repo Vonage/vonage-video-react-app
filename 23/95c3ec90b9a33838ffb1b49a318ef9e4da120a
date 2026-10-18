@@ -1,0 +1,35 @@
+backend/helpers/reportFatalErrors.ts
+  h_6029769cf9ac60 1-24
+backend/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_6029769cf9ac60 96-98
+vcr-gha.yml
+  h_6029769cf9ac60 82,85
+integration-tests/playwright.auth.config.ts
+  h_6029769cf9ac60 38
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 106,113-114
+  h_6029769cf9ac60 108-112
+.github/workflows/deploy-to-vcr.yml
+  h_6029769cf9ac60 37-45
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 139-150
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 141,145,147
+integration-tests/tests-auth/constants.ts
+  h_6029769cf9ac60 17
+scripts/testIntegration.ts
+  h_6029769cf9ac60 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2395c3ec90b9a33838ffb1b49a318ef9e4da120a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

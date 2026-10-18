@@ -1,0 +1,18 @@
+libs/common/README.md
+  h_6029769cf9ac60 104
+libs/common/package.json
+  h_6029769cf9ac60 5-9
+libs/common/vite.config.ts
+  h_6029769cf9ac60 132,151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a270cb7ce07ec1bd345c34039826799114e59147",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
