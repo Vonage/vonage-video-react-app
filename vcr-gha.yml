@@ -6,7 +6,7 @@ instance:
   region: aws.euw1
   entrypoint: [node, bundle.cjs]
   # The placeholder <DOMAIN> will be replaced by sed in .github/workflows/deploy-to-vcr.yml
-  domains: <DOMAIN>
+  domains: [<DOMAIN>]
   environment:
     - name: VIDEO_SERVICE_PROVIDER
       secret: VIDEO_SERVICE_PROVIDER
