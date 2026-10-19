@@ -23,6 +23,9 @@ importers:
       '@mui/material':
         specifier: 9.0.0
         version: 9.0.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4)(supports-color@5.5.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4)(supports-color@5.5.0))(@types/react@19.2.14)(react@19.2.4)(supports-color@5.5.0))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@rtcstats/rtcstats-js':
+        specifier: 2.5.0
+        version: 2.5.0
       '@tanstack/react-query':
         specifier: 5.99.0
         version: 5.99.0(react@19.2.4)
@@ -2417,6 +2420,12 @@ packages:
 
   '@rspack/lite-tapable@1.1.0':
     resolution: {integrity: sha512-E2B0JhYFmVAwdDiG14+DW0Di4Ze4Jg10Pc4/lILUrd5DRCaklduz2OvJ5HYQ6G+hd+WTzqQb3QnDNfK4yvAFYw==}
+
+  '@rtcstats/rtcstats-js@2.5.0':
+    resolution: {integrity: sha512-+FK64oE1WGHAXoVM2Wc5WaeFnya42D8L4qUW2/qhN0vHx6wYc8UmwgHW7CssZ085YlFoEmqk7RL0ZgkBT0F3Vw==}
+
+  '@rtcstats/rtcstats-shared@2.6.2':
+    resolution: {integrity: sha512-XsjdRU/QCGUjb4YyreFrRa6ha5rPNJ3fNfuzC9aURY9PjFGd12dUYfRwmoMR5dS45BgY02XS814BkgU0huSwng==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -10579,6 +10588,12 @@ snapshots:
       '@rspack/lite-tapable': 1.1.0
 
   '@rspack/lite-tapable@1.1.0': {}
+
+  '@rtcstats/rtcstats-js@2.5.0':
+    dependencies:
+      '@rtcstats/rtcstats-shared': 2.6.2
+
+  '@rtcstats/rtcstats-shared@2.6.2': {}
 
   '@rtsao/scc@1.1.0': {}
 

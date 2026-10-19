@@ -19,6 +19,8 @@ export type SubscriberWrapper = {
 export type Credential = {
   sessionKey: string;
   token: string;
+  /** rtcstats-server WebSocket URL, only returned by the backend when rtcstats is configured. */
+  rtcStatsUrl?: string;
 };
 
 export type StreamCreatedEvent = Event<'streamCreated', Session> & {

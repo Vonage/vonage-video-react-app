@@ -48,6 +48,7 @@ const EnvironmentVariablesSchema = z.object({
   ),
   SHOW_PARTICIPANT_LIST: boolean({ default: true }),
   SHOW_VIDEO_STATS: boolean({ default: false }),
+  ENABLE_RTCSTATS: boolean({ default: false }),
   BYPASS_WAITING_ROOM: boolean({ default: false }),
   AUTH_ENABLED: boolean({ default: false }),
   API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
@@ -89,6 +90,7 @@ export class Env implements IEnvironmentVariables {
   public DEFAULT_LAYOUT_MODE!: LayoutMode;
   public SHOW_PARTICIPANT_LIST!: boolean;
   public SHOW_VIDEO_STATS!: boolean;
+  public ENABLE_RTCSTATS!: boolean;
   public BYPASS_WAITING_ROOM!: boolean;
   public AUTH_ENABLED!: boolean;
   public API_URL!: string;
