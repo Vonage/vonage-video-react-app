@@ -147,8 +147,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   });
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
-  useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
-  useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
+  useSyncPublisherDevices(() => publisherRef.current, { setIsAudioEnabled, setIsVideoEnabled });
+  useApplyAdvancedSettings(isPublishing ? publisher : null);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {
@@ -331,6 +331,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         if (publisherRef.current) {
           return;
         }
+        if (deviceAccess.camera === false || deviceAccess.microphone === false) {
+          return;
+        }
         isInitializingPublisherRef.current = true;
 
         const publisher = initPublisher(undefined, options);
@@ -350,7 +353,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         }
       }
     },
-    [addPublisherListeners, assignPublisher]
+    [addPublisherListeners, assignPublisher, deviceAccess]
   );
 
   /**

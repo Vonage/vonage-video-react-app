@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import FormattedMessageBody from './FormattedMessageBody';
 
 describe('FormattedMessageBody', () => {
@@ -12,11 +12,16 @@ describe('FormattedMessageBody', () => {
   });
 
   it('renders duplicate links without colliding React keys', () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const message = 'https://example.com https://example.com';
 
     render(<FormattedMessageBody message={message} />);
 
     expect(screen.getAllByRole('link', { name: 'example.com' })).toHaveLength(2);
+    expect(consoleErrorSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('same key'),
+      expect.anything()
+    );
   });
 
   describe('when messages contain URLs, correctly renders', () => {

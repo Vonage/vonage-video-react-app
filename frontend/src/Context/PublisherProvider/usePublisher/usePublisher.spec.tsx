@@ -464,6 +464,31 @@ describe('usePublisher', () => {
       });
     });
 
+    it('should not re-initialize the publisher after access is denied', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+        // @ts-expect-error We simulate user denying camera permissions in a browser.
+        mockPublisher.emit('accessDenied', {
+          message: 'Camera permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.publisher).toBeNull();
+      });
+
+      expect(mockedInitPublisher).toHaveBeenCalledOnce();
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      expect(mockedInitPublisher).toHaveBeenCalledOnce();
+    });
+
     it('should not set publishingError when receiving an accessAllowed event', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());

@@ -36,6 +36,8 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
   }, []);
 
   useEffect(() => {
+    setQuality('good');
+
     if (!publisher) {
       return undefined;
     }

@@ -58,4 +58,57 @@ describe('usePublisherQuality', () => {
     void act(() => mockPublisher.emit('videoDisableWarning'));
     await waitFor(() => expect(result.current).toBe('poor'));
   });
+
+  describe('publisher transitions', () => {
+    it('resets quality and ignores stale events when the publisher is swapped', async () => {
+      const publisherA = new EventEmitter();
+      const publisherB = new EventEmitter();
+      const { result, rerender } = renderHook(
+        ({ publisher }) => usePublisherQuality(publisher as unknown as Publisher),
+        { initialProps: { publisher: publisherA } }
+      );
+
+      void act(() => publisherA.emit('videoDisableWarning'));
+      await waitFor(() => expect(result.current).toBe('poor'));
+
+      rerender({ publisher: publisherB });
+      await waitFor(() => expect(result.current).toBe('good'));
+
+      void act(() => publisherA.emit('videoDisableWarning'));
+      expect(result.current).toBe('good');
+
+      void act(() => publisherB.emit('videoDisabled'));
+      await waitFor(() => expect(result.current).toBe('bad'));
+    });
+
+    it('resets quality when the publisher becomes null', async () => {
+      const mockPublisher = new EventEmitter();
+      const { result, rerender } = renderHook(
+        ({ publisher }) => usePublisherQuality(publisher as unknown as Publisher | null),
+        { initialProps: { publisher: mockPublisher as EventEmitter | null } }
+      );
+
+      void act(() => mockPublisher.emit('videoDisableWarning'));
+      await waitFor(() => expect(result.current).toBe('poor'));
+
+      rerender({ publisher: null });
+      await waitFor(() => expect(result.current).toBe('good'));
+    });
+
+    it('removes all listeners from the publisher on unmount', () => {
+      const mockPublisher = new EventEmitter();
+      const { unmount } = renderHook(() =>
+        usePublisherQuality(mockPublisher as unknown as Publisher)
+      );
+
+      expect(mockPublisher.listenerCount('videoDisabled')).toBeGreaterThan(0);
+
+      unmount();
+
+      expect(mockPublisher.listenerCount('videoDisabled')).toBe(0);
+      expect(mockPublisher.listenerCount('videoEnabled')).toBe(0);
+      expect(mockPublisher.listenerCount('videoDisableWarning')).toBe(0);
+      expect(mockPublisher.listenerCount('videoDisableWarningLifted')).toBe(0);
+    });
+  });
 });
