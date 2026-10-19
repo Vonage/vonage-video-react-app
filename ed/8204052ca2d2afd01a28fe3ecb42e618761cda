@@ -1,0 +1,19 @@
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  s_5afd5a9af910d4::t_d8a43f37bf4b0b 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed8204052ca2d2afd01a28fe3ecb42e618761cda",
+  "prompts": {},
+  "sessions": {
+    "s_5afd5a9af910d4": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a06685a8-28a6-4012-b674-daa90c675af8",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
