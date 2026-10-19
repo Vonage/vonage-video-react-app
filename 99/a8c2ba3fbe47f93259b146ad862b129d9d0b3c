@@ -1,0 +1,24 @@
+vcr-gha.yml
+  s_55bca60f3b5258::t_9ccf039ed860a6 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "99a8c2ba3fbe47f93259b146ad862b129d9d0b3c",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_55bca60f3b5258": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_6bdf26b2-ace2-49e5-985b-0699498c51d3",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
