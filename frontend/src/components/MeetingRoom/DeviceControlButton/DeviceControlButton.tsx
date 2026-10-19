@@ -154,7 +154,7 @@ const DeviceControlButton = ({
       {isAudio && <MutedAlert />}
       <ButtonGroup
         disableElevation
-        className="bg-vera-dark-grey rounded-[30px]!"
+        className="bg-vera-dark-grey flex items-center rounded-[30px]! p-0.5"
         variant="contained"
         ref={anchorRef}
         aria-label={t('devices.buttons.ariaLabel')}
@@ -166,7 +166,7 @@ const DeviceControlButton = ({
           aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
           aria-haspopup="menu"
           onClick={handleToggle}
-          className="size-12"
+          className="size-11 rounded-[50%]!"
           data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
         >
           {open ? (
@@ -193,7 +193,7 @@ const DeviceControlButton = ({
                 isAudio ? t('devices.audio.microphone.full') : t('devices.video.camera.full')
               }
               size="small"
-              className="m-[3px] size-10 rounded-[50%]!"
+              className="size-11 rounded-[50%]!"
             >
               {renderControlIcon()}
             </IconButton>
