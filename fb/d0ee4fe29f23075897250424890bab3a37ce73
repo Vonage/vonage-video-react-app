@@ -1,0 +1,52 @@
+backend/helpers/assertCorsMatchesAuth.ts
+  h_6029769cf9ac60 1-26
+backend/middleware/authMiddleware/helpers/isTokenIssuedToClient.ts
+  h_6029769cf9ac60 4-5
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 163-176
+backend/routes/auth/helpers/writeCookiePayload.ts
+  h_6029769cf9ac60 1-28
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.spec.ts
+  h_6029769cf9ac60 27-43
+backend/routes/auth/helpers/decryptCookiePayload.ts
+  h_6029769cf9ac60 35-36
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 25,50,99
+sonar-project.properties
+  h_6029769cf9ac60 21
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  h_6029769cf9ac60 2,10-11,34,39
+backend/routes/auth/helpers/buildAuthCookieOptions.ts
+  h_6029769cf9ac60 3-6,10,14,19
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.ts
+  h_6029769cf9ac60 4-5,19-29
+backend/helpers/config.ts
+  h_6029769cf9ac60 9,33-34
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 228-235,242
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 7,17,44-51,57-64
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 13-14,17,21
+backend/middleware/authMiddleware/helpers/refreshAccessToken.ts
+  h_6029769cf9ac60 47
+backend/routes/auth/handlers/callbackHandler.ts
+  h_6029769cf9ac60 113
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 53
+backend/routes/auth/handlers/signInHandler.ts
+  h_6029769cf9ac60 9,52-59
+package.json
+  h_6029769cf9ac60 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fbd0ee4fe29f23075897250424890bab3a37ce73",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_5afd5a9af910d4::t_52b4aebaff6769 157
+  s_5afd5a9af910d4::t_92dfabcb62e253 196
+  h_737cf808c1c597 169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0ed95c760b2c2e7a70c6abcc3aea503a7491cc7c",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5afd5a9af910d4": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a06685a8-28a6-4012-b674-daa90c675af8",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

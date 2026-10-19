@@ -1,0 +1,22 @@
+.github/scripts/readAppHost.sh
+  h_6029769cf9ac60 1-12
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 111
+.github/actions/deploy-vcr/action.yml
+  h_6029769cf9ac60 19-20,38-43,47-56,59-73
+.github/workflows/deploy-to-vcr.yml
+  h_6029769cf9ac60 44
+.gitignore
+  h_6029769cf9ac60 81-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "80c64a0b2bf97b94029072dfe5ca5b8edbede015",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
