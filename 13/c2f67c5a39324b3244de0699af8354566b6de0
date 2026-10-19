@@ -1,0 +1,29 @@
+.kiro/steering/vera-configure.md
+  s_708e8d2b915fcc::t_47ee87d1a86b71 1
+.kiro/steering/vera-deploy-vcr.md
+  s_708e8d2b915fcc::t_47dea3d0c9d84b 1
+.kiro/steering/vera-feature-flags.md
+  s_708e8d2b915fcc::t_361abb51ebbbe8 1
+.kiro/steering/vera-setup.md
+  s_708e8d2b915fcc::t_cf3132e02bb758 1
+.kiro/steering/vera-snapshot-tests.md
+  s_708e8d2b915fcc::t_1ecbb2afebca66 1
+.kiro/steering/vera-testing.md
+  s_708e8d2b915fcc::t_0fcf7d2a871f18 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "13c2f67c5a39324b3244de0699af8354566b6de0",
+  "prompts": {},
+  "sessions": {
+    "s_708e8d2b915fcc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d2c4d69-5e90-448c-948d-1a690b8a6e42",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "aos-svg <artur.osinski@vonage.com>"
+    }
+  }
+}
