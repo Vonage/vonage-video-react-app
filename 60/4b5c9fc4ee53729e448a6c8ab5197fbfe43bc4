@@ -1,0 +1,20 @@
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.tsx
+  s_76aa86199c221c::t_e72bf0602c5d9c 32,51-52
+  s_76aa86199c221c::t_b9c53debde5b86 53-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "604b5c9fc4ee53729e448a6c8ab5197fbfe43bc4",
+  "prompts": {},
+  "sessions": {
+    "s_76aa86199c221c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49130ae8-847f-499d-8793-525a40426f42",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
