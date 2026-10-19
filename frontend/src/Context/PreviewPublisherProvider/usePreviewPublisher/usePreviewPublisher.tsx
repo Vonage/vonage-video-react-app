@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
-import { initPublisher, hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import { initPublisher } from '@vonage/client-sdk-video';
 import type { Event, Publisher, PublisherProperties, VideoFilter } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';

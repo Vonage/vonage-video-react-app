@@ -50,19 +50,19 @@ const isApiTestPath = (testPath: string): boolean => {
 };
 
 /**
- * Runs API integration tests (Jest-based tests in tests/api/).
+ * Runs API integration tests (Vitest-based tests in test-api/).
  * Optionally filters by a specific test file path.
  */
 const runApiTests = (testFilePath?: string) => {
   const target = testFilePath ? `file: ${testFilePath}` : 'all API tests';
   console.log(`\n🤖 Running API integration tests: ${target}\n`);
-  const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
-  const command = `bash -c 'source ../../env.sh && jest --maxWorkers=1${testPattern}'`;
+  const testPattern = testFilePath ? ` "${testFilePath}"` : '';
+  const command = `bash -c 'source ../../env.sh && vitest run${testPattern}'`;
   console.log(`\n🚀 Running: ${command}\n`);
   execSync(command, {
     stdio: 'inherit',
     cwd: 'integration-tests/test-api',
-    env: { ...process.env, NODE_OPTIONS: '--experimental-vm-modules' },
+    env: { ...process.env, NODE_OPTIONS: '' },
   });
 };
 
@@ -79,7 +79,7 @@ const runAllPlaywrightTests = () => {
 };
 
 /**
- * Runs all integration tests: API tests (Jest) + Playwright tests.
+ * Runs all integration tests: API tests (Vitest) + Playwright tests.
  */
 const runAllTests = () => {
   runApiTests();
@@ -170,7 +170,7 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @modes
  * - (no args)             - Run all tests in all browsers (headless)
- * - api                   - Run only API integration tests (Jest)
+ * - api                   - Run only API integration tests (Vitest)
  * - playwright            - Run only Playwright tests (skip API tests)
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)

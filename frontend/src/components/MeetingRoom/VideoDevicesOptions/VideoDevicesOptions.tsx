@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
-import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import VividIcon from '@ui/components/VividIcon';
 
 export const testIds = {
   backgroundEffectsText: 'background-effects-text',
@@ -28,8 +28,13 @@ const VideoDevicesOptions = ({
 
   return (
     <MenuList className="flex flex-col">
-      <MenuItem onClick={toggleBackgroundEffects} className="hover:bg-vera-background">
-        <PortraitIcon className="mr-4 text-[22px]!" />
+      <MenuItem onClick={toggleBackgroundEffects} className="gap-4 hover:bg-vera-background">
+        <VividIcon
+          name="background-blur-light-line"
+          customSize={-5}
+          className="text-inherit"
+          aria-hidden="true"
+        />
         <Typography data-testid={testIds.backgroundEffectsText} className="mr-4!">
           {t('backgroundEffects.title')}
         </Typography>

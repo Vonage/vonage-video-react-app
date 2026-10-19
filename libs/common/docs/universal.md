@@ -1,20 +1,20 @@
 # Common API
 
-Common utilities exported from `@vonage/video-common`.
+Common utilities exported from `@vonage/video-reference-apps-common`.
 
 These APIs are runtime-agnostic and can be used from browser, Node.js, and shared code.
 
 Use the root entry when importing multiple common utilities:
 
 ```ts
-import { tryCatch, isNil, ApplicationError } from '@vonage/video-common';
+import { tryCatch, isNil, ApplicationError } from '@vonage/video-reference-apps-common';
 ```
 
 Use domain or deep imports when you want a more explicit dependency boundary:
 
 ```ts
-import { tryCatch } from '@vonage/video-common/execution';
-import tryCatch from '@vonage/video-common/execution/tryCatch';
+import { tryCatch } from '@vonage/video-reference-apps-common/execution';
+import tryCatch from '@vonage/video-reference-apps-common/execution/tryCatch';
 ```
 
 ---
@@ -32,7 +32,7 @@ import {
   enqueue,
   attempt,
   wait,
-} from '@vonage/video-common/execution';
+} from '@vonage/video-reference-apps-common/execution';
 ```
 
 ### `tryCatch`
@@ -52,7 +52,7 @@ Returns:
 Use it when you want explicit error handling without wrapping the call site in `try/catch`.
 
 ```ts
-import tryCatch from '@vonage/video-common/execution/tryCatch';
+import tryCatch from '@vonage/video-reference-apps-common/execution/tryCatch';
 
 // Async
 const { result, error } = await tryCatch(() => fetchUser(userId));
@@ -75,7 +75,7 @@ Fire-and-forget execution helper.
 It runs a callback, catches any thrown error, and never rethrows. An optional error handler can be provided when needed.
 
 ```ts
-import attempt from '@vonage/video-common/execution/attempt';
+import attempt from '@vonage/video-reference-apps-common/execution/attempt';
 
 // sync
 attempt(() => analytics.track('page_view'));
@@ -96,7 +96,7 @@ attempt(
 Ensures that any exception thrown by the callback is converted into a safe {@link ApplicationError} with a user-facing fallback message — preventing raw errors from leaking sensitive details (stack traces, internal state, credentials) to consumers or end users.
 
 ```ts
-import assertResult from '@vonage/video-common/execution/assertResult';
+import assertResult from '@vonage/video-reference-apps-common/execution/assertResult';
 
 const session = await assertResult(() => videoClient.createSession(), {
   fallbackConfig: {
@@ -115,7 +115,7 @@ Delays execution until no calls have been made for the configured duration.
 Useful for search inputs, resize handlers, and other high-frequency events.
 
 ```ts
-import debounce from '@vonage/video-common/execution/debounce';
+import debounce from '@vonage/video-reference-apps-common/execution/debounce';
 
 const search = debounce((query: string) => {
   fetchResults(query);
@@ -135,7 +135,7 @@ Limits execution to at most once per interval.
 Supports `leading` and `trailing` execution.
 
 ```ts
-import throttle from '@vonage/video-common/execution/throttle';
+import throttle from '@vonage/video-reference-apps-common/execution/throttle';
 
 const onScroll = throttle(
   () => {
@@ -160,7 +160,7 @@ Creates a promise with external `resolve` and `reject` handlers.
 Useful when a promise must be completed from another callback, event, or lifecycle boundary.
 
 ```ts
-import defer from '@vonage/video-common/execution/defer';
+import defer from '@vonage/video-reference-apps-common/execution/defer';
 
 const { promise, resolve, reject } = defer<string>();
 
@@ -180,7 +180,7 @@ Sequential promise queue.
 Each task waits for the previous task to settle before running.
 
 ```ts
-import enqueue from '@vonage/video-common/execution/enqueue';
+import enqueue from '@vonage/video-reference-apps-common/execution/enqueue';
 
 let saveQueue: Promise<void> | null = null;
 
@@ -196,7 +196,7 @@ const saveDraft = (draft: Draft) => {
 Simple delay helper.
 
 ```ts
-import wait from '@vonage/video-common/execution/wait';
+import wait from '@vonage/video-reference-apps-common/execution/wait';
 
 await wait(1000);
 ```
@@ -209,7 +209,7 @@ Runs an async callback with automatic retries, but allows it to succeed only onc
 After the first successful execution, future calls are no-ops.
 
 ```ts
-import idempotentCallbackWithRetry from '@vonage/video-common/execution/idempotentCallbackWithRetry';
+import idempotentCallbackWithRetry from '@vonage/video-reference-apps-common/execution/idempotentCallbackWithRetry';
 
 const connectOnce = await idempotentCallbackWithRetry(async () => {
   return session.connect(token);
@@ -232,7 +232,7 @@ import {
   assertNotNil,
   isString,
   isRecord,
-} from '@vonage/video-common/assertions';
+} from '@vonage/video-reference-apps-common/assertions';
 ```
 
 ### Type guards
@@ -258,7 +258,7 @@ import {
 | `isValidSessionKey(value)` | `value` is a structurally valid session key |
 
 ```ts
-import isNil from '@vonage/video-common/assertions/isNil';
+import isNil from '@vonage/video-reference-apps-common/assertions/isNil';
 
 if (isNil(user)) {
   return redirectToLogin();
@@ -281,7 +281,7 @@ Use assertions for fail-fast validation and type narrowing.
 | `assertSessionId(value, message?)` | `value` is not a valid session ID |
 
 ```ts
-import assertNotNil from '@vonage/video-common/assertions/assertNotNil';
+import assertNotNil from '@vonage/video-reference-apps-common/assertions/assertNotNil';
 
 assertNotNil(session, 'Session must be initialized before connecting');
 
@@ -296,7 +296,7 @@ session.connect(token);
 Structured error handling with `ApplicationError`.
 
 ```ts
-import { ApplicationError } from '@vonage/video-common/errors';
+import { ApplicationError } from '@vonage/video-reference-apps-common/errors';
 ```
 
 ### `ApplicationError`
@@ -304,7 +304,7 @@ import { ApplicationError } from '@vonage/video-common/errors';
 Application-level error class with support for status codes, severity, issue aggregation, fallback messages, and safe serialization.
 
 ```ts
-import { ApplicationError } from '@vonage/video-common/errors';
+import { ApplicationError } from '@vonage/video-reference-apps-common/errors';
 import { StatusCode } from 'status-code-enum';
 
 const error = new ApplicationError({
@@ -347,13 +347,13 @@ const payload = error.exportSafely();
 Provider-based logger with deferred setup, persistent context, error reporting, and grouped logging.
 
 ```ts
-import Logger from '@vonage/video-common/logger';
+import Logger from '@vonage/video-reference-apps-common/logger';
 ```
 
 ### `Logger`
 
 ```ts
-import Logger from '@vonage/video-common/logger';
+import Logger from '@vonage/video-reference-apps-common/logger';
 
 const logger = new Logger();
 
@@ -374,7 +374,7 @@ group.reportError(error);
 ### React bootstrap example
 
 ```ts
-import Logger from '@vonage/video-common/logger';
+import Logger from '@vonage/video-reference-apps-common/logger';
 
 const logger = new Logger();
 
@@ -389,7 +389,7 @@ ReactDOM.createRoot(rootElement, {
 ### `LoggerProviderConfig`
 
 ```ts
-import type { LoggerProviderConfig } from '@vonage/video-common/logger';
+import type { LoggerProviderConfig } from '@vonage/video-reference-apps-common/logger';
 
 const myProvider: LoggerProviderConfig = {
   verbose: true,
@@ -415,7 +415,7 @@ import {
   decodeJwt,
   interceptObject,
   isZodError,
-} from '@vonage/video-common/helpers';
+} from '@vonage/video-reference-apps-common/helpers';
 ```
 
 | Export | Description |
@@ -430,7 +430,7 @@ import {
 | `toRemValue(px)` | Converts a pixel value to `rem` |
 
 ```ts
-import decodeJwt from '@vonage/video-common/helpers/decodeJwt';
+import decodeJwt from '@vonage/video-reference-apps-common/helpers/decodeJwt';
 
 const payload = decodeJwt(token);
 
@@ -447,7 +447,7 @@ Zod validation schemas for shared Video API values.
 import {
   RoomNameSchema,
   FacingModeSchema,
-} from '@vonage/video-common/schemas';
+} from '@vonage/video-reference-apps-common/schemas';
 ```
 
 | Export | Validates |
@@ -462,7 +462,7 @@ import {
 | `ClientLogEventSchema` | Client log event payload |
 
 ```ts
-import { RoomNameSchema } from '@vonage/video-common/schemas';
+import { RoomNameSchema } from '@vonage/video-reference-apps-common/schemas';
 
 const result = RoomNameSchema.safeParse(input);
 
@@ -484,7 +484,7 @@ import type {
   SessionId,
   VideoSessionDetails,
   DeepPartial,
-} from '@vonage/video-common/types';
+} from '@vonage/video-reference-apps-common/types';
 ```
 
 | Export | Description |
@@ -526,7 +526,7 @@ Static camera-label lookup values.
 import {
   frontFacingKeywords,
   rearFacingKeywords,
-} from '@vonage/video-common/constants';
+} from '@vonage/video-reference-apps-common/constants';
 ```
 
 | Export | Description |
@@ -535,7 +535,7 @@ import {
 | `rearFacingKeywords` | Labels commonly used for rear-facing cameras |
 
 ```ts
-import frontFacingKeywords from '@vonage/video-common/constants/frontFacingKeywords';
+import frontFacingKeywords from '@vonage/video-reference-apps-common/constants/frontFacingKeywords';
 
 const isFrontCamera = frontFacingKeywords.some((keyword) =>
   deviceLabel.includes(keyword)
