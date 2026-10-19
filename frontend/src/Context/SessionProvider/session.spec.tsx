@@ -9,8 +9,6 @@ import VonageVideoClient from '@utils/VonageVideoClient';
 import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
-import frontendLogger from '../../logger';
-import wait from '@common/execution/wait';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -55,12 +53,23 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        void joinRoom({ sessionKey: validSessionKey });
+        joinRoom({ sessionKey: validSessionKey }).catch(() => {});
       }
     }, [joinRoom]);
 
     return (
       <div>
+        <button
+          data-testid="joinRoom"
+          onClick={() => {
+            if (joinRoom) {
+              joinRoom({ sessionKey: validSessionKey }).catch(() => {});
+            }
+          }}
+          type="button"
+        >
+          Join Room
+        </button>
         <button
           data-testid="publish"
           onClick={() => {
@@ -311,45 +320,31 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
-    it('connect rejecting should not set connected to true, should not throw, and should not duplicate the report VonageVideoClient already made', async () => {
-      vonageVideoClient.connect = vi.fn().mockRejectedValue(new Error('connect failed'));
-      const logSpy = vi.spyOn(frontendLogger, 'log').mockImplementation(() => {});
-      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    it('connect rejecting should rethrow and null the ref so a retry attempts a new connection', async () => {
+      expect.assertions(3);
+      const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+      vonageVideoClient.connect = vi.fn().mockRejectedValueOnce(new Error('connect failed'));
 
       const { getByTestId } = render(<TestComponent />);
 
-      await waitFor(() => expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1));
-      await wait(0);
-
-      expect(getByTestId('connected')).toHaveTextContent('false');
-      expect(logSpy).not.toHaveBeenCalled();
-      expect(reportErrorSpy).not.toHaveBeenCalled();
-
-      logSpy.mockRestore();
-      reportErrorSpy.mockRestore();
-    });
-
-    it('connect throwing during construction should report with sessionKey context since VonageVideoClient never got to see the failure', async () => {
-      const constructError = new Error('construct failed');
-      vi.mocked(VonageVideoClient).mockImplementationOnce(() => {
-        throw constructError;
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 1) {
+          throw new Error('VonageVideoClient not constructed yet');
+        }
       });
-      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-
-      const { getByTestId } = render(<TestComponent />);
-
-      await waitFor(() =>
-        expect(reportErrorSpy).toHaveBeenCalledWith(
-          constructError,
-          expect.objectContaining({
-            eventSource: 'session.connect.setup.error',
-            sessionKey: validSessionKey,
-          })
-        )
-      );
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(1);
       expect(getByTestId('connected')).toHaveTextContent('false');
 
-      reportErrorSpy.mockRestore();
+      act(() => {
+        getByTestId('joinRoom').click();
+      });
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 2) {
+          throw new Error('VonageVideoClient not retried yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(2);
     });
 
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
@@ -372,7 +367,12 @@ describe('SessionProvider', () => {
         getByTestId('disconnect').click();
       });
 
-      await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'false') {
+          throw new Error('connected not false yet');
+        }
+      });
+      expect(getByTestId('connected')).toHaveTextContent('false');
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 

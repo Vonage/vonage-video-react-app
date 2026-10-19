@@ -436,15 +436,15 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         connectionId: this.connectionId,
         partnerId: this.applicationId,
       });
-    } catch (err) {
-      frontendLogger.reportError(err, {
+    } catch (error) {
+      frontendLogger.reportError(error, {
         eventSource: 'vonageVideoClient.connect.error',
         sessionId: this.sessionId,
         connectionId: this.connectionId,
         partnerId: this.applicationId,
       });
 
-      throw err;
+      throw error;
     }
   };
 
@@ -463,8 +463,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         this.clientSession.unsubscribe(this.hiddenSubscriber);
         this.hiddenSubscriber = null;
       }
-    } catch (err) {
-      frontendLogger.reportError(err, {
+    } catch (error) {
+      frontendLogger.reportError(error, {
         eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
         sessionId: this.sessionId,
         connectionId: this.connectionId,
@@ -474,8 +474,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
     try {
       await this.clientSession.disconnect();
-    } catch (err) {
-      frontendLogger.reportError(err, {
+    } catch (error) {
+      frontendLogger.reportError(error, {
         eventSource: 'vonageVideoClient.disconnect.error',
         sessionId: this.sessionId,
         connectionId: this.connectionId,

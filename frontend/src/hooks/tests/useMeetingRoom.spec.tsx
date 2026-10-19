@@ -133,6 +133,7 @@ describe('useMeetingRoom', () => {
   });
 
   it('reports (does not throw) when resolving the session before joining fails', async () => {
+    expect.assertions(1);
     const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
     const joinFailure = new Error('create session failed');
     mockCreateSessionMutate.mockRejectedValue(joinFailure);
@@ -140,16 +141,45 @@ describe('useMeetingRoom', () => {
     renderHook(() => useMeetingRoom());
 
     await waitFor(() => {
-      expect(reportErrorSpy).toHaveBeenCalledWith(
-        joinFailure,
-        expect.objectContaining({
-          eventSource: 'useMeetingRoom.resolveAndJoin.error',
-          sessionKey: 'test-room',
-        })
-      );
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      joinFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
+  });
+
+  it('reports (does not throw) when connect() itself rejects', async () => {
+    expect.assertions(1);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const connectFailure = new Error('connect failed');
+    const mockJoinRoom = vi.fn().mockRejectedValue(connectFailure);
+
+    renderHook(() => useMeetingRoom(), {
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.joinRoom = mockJoinRoom;
+        },
+      },
     });
 
-    reportErrorSpy.mockRestore();
+    await waitFor(() => {
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      connectFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
   });
 
   it('does not navigate to goodbye when reconnecting is true', async () => {
