@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../utils/constants';
+import redirectToAuthProvider from '../services/auth/redirectToAuthProvider';
 
 export type SubmissionData = {
   title: string;
@@ -20,9 +21,17 @@ type ResponseType = {
  */
 
 const reportIssue = async (submissionData: SubmissionData) => {
-  return axios.post<{
-    feedbackData: ResponseType;
-  }>(`${API_URL}/feedback/report`, submissionData, { withCredentials: true });
+  return axios
+    .post<{
+      feedbackData: ResponseType;
+    }>(`${API_URL}/feedback/report`, submissionData, { withCredentials: true })
+    .catch((error: unknown) => {
+      const isUnauthorized = axios.isAxiosError(error) && error.response?.status === 401;
+
+      if (isUnauthorized) return redirectToAuthProvider();
+
+      throw error;
+    });
 };
 
 export default reportIssue;

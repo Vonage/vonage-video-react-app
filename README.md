@@ -49,7 +49,7 @@ For details on the workspace structure, libraries, and module boundaries, see [A
 | Minimum device width | 360px |
 | Media Processors | Chromium-based browsers only (see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport)) |
 | Node.js | v22 |
-| Package manager | [yarn](https://yarnpkg.com) |
+| Package manager | [pnpm](https://pnpm.io) for installing. [yarn](https://yarnpkg.com) still runs the scripts, see [Package manager](#package-manager) |
 | Version manager (optional) | [nvm](https://github.com/creationix/nvm) |
 
 ## Features
@@ -122,6 +122,54 @@ This application provides features for common conferencing use cases, such as:
 ## Running Locally
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
+
+You can safely generate the backend secrets (`SESSION_KEY_SECRET`, and `AUTH_COOKIE_SECRET` when auth is enabled) with `yarn generate:secret`. Use a different value for each variable and each environment.
+
+### Package manager
+
+Dependencies are installed with **pnpm**, and `pnpm-lock.yaml` is the only lockfile in the repository.
+
+```bash
+npm i -g pnpm@12.11.2
+pnpm install
+```
+
+pnpm links dependencies from a shared store instead of copying them, which is substantially faster than yarn on this dependency tree.
+
+pnpm 12 or newer is required, and the install is blocked below that. Earlier versions do not set the executable bit on package binaries, which makes `yarn prettier` and `yarn quality-check` fail with "Permission denied". Avoid `corepack enable` for this repository, since corepack currently ships pnpm 11.
+
+#### Still want to use yarn?
+
+You can, for running scripts. Only installing is pnpm-only.
+
+Once dependencies are installed with pnpm, yarn works as a task runner exactly as before:
+
+```bash
+yarn dev
+yarn test:frontend
+yarn nx run-many -t build
+```
+
+`yarn run` does not read the lockfile, so the absence of `yarn.lock` makes no difference to it. Installing is the exception: `yarn install` and `npm install` stop with a message pointing here, because a second lockfile would drift from `pnpm-lock.yaml`.
+
+If a [corepack](https://nodejs.org/api/corepack.html)-managed yarn refuses to run a script because `packageManager` is set to pnpm, run it with pnpm instead (`pnpm dev`), or use a globally installed yarn.
+
+#### Upgrading an existing checkout
+
+If you already had the project installed with yarn, the scripts detect it and tell you. Running `yarn dev` prints a notice that installs moved to pnpm, and offers to run `pnpm install` for you. Accept it, or run `pnpm install` yourself. Nothing else about your workflow changes.
+
+#### Going back to yarn entirely
+
+If the project ever needs to return to yarn as its package manager:
+
+```bash
+yarn migrate:yarn          # prints what it will do
+yarn migrate:yarn --yes    # applies it
+```
+
+This restores `resolutions` in `package.json` from the pnpm overrides, resets `packageManager`, removes the install guard, deletes `pnpm-lock.yaml` and `pnpm-workspace.yaml`, and runs `yarn install` to generate a fresh `yarn.lock`.
+
+Two caveats. The generated `yarn.lock` will not match the pnpm versions exactly, because yarn re-resolves the tree; direct dependencies are almost all pinned, so the drift is limited to transitive ones. And the CI workflows, git hooks and `vcrBuild.sh` still invoke pnpm: the script lists them on completion so they can be reverted from git history.
 
 ### OIDC token authentication (optional)
 

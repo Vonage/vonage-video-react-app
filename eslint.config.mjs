@@ -19,7 +19,6 @@ const tsProjects = [
   './libs/api/tsconfig.json',
   './libs/ui/tsconfig.json',
   './integration-tests/tsconfig.json',
-  './apps/local-oidc/tsconfig.json',
 ];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -65,14 +64,12 @@ export default [
             'libs/ui/postcss.config.js',
             'integration-tests/globalSetup.js',
             'integration-tests/main.js',
-            'backend/jest.config.js',
-            'backend/jest/setEnvVars.js',
+            'backend/testSetup/setEnvVars.js',
             'frontend/.storybook/main.ts',
             'frontend/.storybook/preview.tsx',
             'libs/ui/.storybook/main.ts',
             'libs/ui/.storybook/preview.tsx',
-            'backend/jest/documentPolyfill.js',
-            'integration-tests/test-api/jest.config.js',
+            'backend/testSetup/documentPolyfill.js',
             // add more config files here if needed, e.g.
           ],
         },

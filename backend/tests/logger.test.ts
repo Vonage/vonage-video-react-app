@@ -1,12 +1,13 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import closeServer from './helpers/closeServer';
 import axios from 'axios';
 import request from 'supertest';
 import { Server } from 'node:http';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
-jest.mock('../helpers/config', mockOpentokConfig);
+vi.doMock('../helpers/config', mockOpentokConfig);
 
-jest.mock('axios');
+vi.mock('axios');
 
 // This needs to be set before the server is imported
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
@@ -29,15 +30,13 @@ const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
 
 describe('POST /client-logs', () => {
   let server: Server;
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = vi.spyOn(axios, 'post');
 
   beforeAll(async () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   beforeEach(() => {
     mockPost.mockClear();
@@ -164,15 +163,13 @@ describe('POST /client-logs', () => {
 
 describe('POST /client-logs/batch', () => {
   let server: Server;
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = vi.spyOn(axios, 'post');
 
   beforeAll(async () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   beforeEach(() => {
     mockPost.mockClear();

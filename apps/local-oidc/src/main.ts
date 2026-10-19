@@ -8,6 +8,8 @@ import express from 'express';
 const port = Number(process.env.LOCAL_OIDC_PORT ?? 3346);
 const accessTokenLifetimeSeconds = Number(process.env.LOCAL_OIDC_ACCESS_TOKEN_TTL_SECONDS ?? 3600);
 const subject = 'local-user';
+// Mirrors Okta's refresh token rotation grace period (30s default), so parallel refreshes succeed.
+const REFRESH_TOKEN_REUSE_WINDOW_MS = 30_000;
 
 type TokenGrant = { clientId: string; scope: string; expiresAt: number };
 
@@ -69,7 +71,12 @@ app.post('/token', (req, res) => {
   const usedToken = grantType === 'refresh_token' ? refreshToken : code;
   const grants = grantType === 'refresh_token' ? refreshTokens : authorizationCodes;
   const grant = grants.get(usedToken);
-  grants.delete(usedToken);
+
+  if (grantType === 'refresh_token') {
+    setTimeout(() => refreshTokens.delete(usedToken), REFRESH_TOKEN_REUSE_WINDOW_MS).unref();
+  } else {
+    grants.delete(usedToken);
+  }
 
   if (!grant) {
     res.status(400).json({ error: 'invalid_grant' });

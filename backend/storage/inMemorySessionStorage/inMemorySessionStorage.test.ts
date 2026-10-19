@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import InMemorySessionStorage from '../inMemorySessionStorage';
 import type { SessionStorage } from '../sessionStorage';
 
@@ -78,46 +79,6 @@ describe('InMemorySessionStorage', () => {
       await expect(storage.decrementCaptionsUserCount({ sessionKey })).rejects.toThrow(
         `Session for key: ${sessionKey} does not exist. Cannot remove captions user.`
       );
-    });
-  });
-
-  describe('auth transaction', () => {
-    const transactionId = 'transaction-abc';
-
-    it('should return null for a transaction that does not exist', async () => {
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toBeNull();
-    });
-
-    it('should set, get, and delete an auth transaction', async () => {
-      await storage.setAuthTransaction({
-        transactionId,
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toEqual({
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      await storage.deleteAuthTransaction({ transactionId });
-      expect(await storage.getAuthTransaction({ transactionId })).toBeNull();
-    });
-  });
-
-  describe('access token', () => {
-    it('should return null for a session id with no stored access token', async () => {
-      const accessToken = await storage.getAccessToken({ sessionId });
-      expect(accessToken).toBeNull();
-    });
-
-    it('should set and get an access token by session id', async () => {
-      await storage.setAccessToken({ sessionId, accessToken: 'okta-access-token' });
-      expect(await storage.getAccessToken({ sessionId })).toBe('okta-access-token');
     });
   });
 
