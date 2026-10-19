@@ -48,7 +48,7 @@ describe('ToolbarOverflowButton', () => {
         },
       },
     });
-    expect(screen.queryByTestId(toolbarOverflowButtonTestIds.button)).toBeInTheDocument();
+    expect(screen.getByTestId(toolbarOverflowButtonTestIds.button)).toBeInTheDocument();
   });
   it('toggling shows and hides the toolbar buttons', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
@@ -87,7 +87,7 @@ describe('ToolbarOverflowButton', () => {
       },
     });
     // We expect the ChatButton in the ToolbarOverflowMenu and the ToolbarOverflowButton to have an unread messages badge present
-    expect(screen.queryAllByTestId(unreadMessagesBadgeTestIds.unreadCount).length).toBe(2);
+    expect(screen.queryAllByTestId(unreadMessagesBadgeTestIds.unreadCount)).toHaveLength(2);
   });
 });
 type RenderOptions = {
