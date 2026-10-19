@@ -20,7 +20,7 @@ vi.doMock('helmet', () => ({
   default: helmetMock,
 }));
 
-jest.unstable_mockModule('../../helpers/config', () => ({
+vi.doMock('../../helpers/config', () => ({
   default: () => ({
     authEnabled: true,
     oidcEndSessionEndpoint: 'https://idp.example.com/logout',

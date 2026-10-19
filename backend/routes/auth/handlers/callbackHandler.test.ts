@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
 import type { Config } from '../../../types/config';
@@ -12,14 +12,14 @@ const SESSION_COOKIE_NAME = 'test_session';
 const ID_TOKEN_COOKIE_NAME = 'test_id_token';
 const TRANSACTION_COOKIE_NAME = 'test_transaction';
 
-const loadConfigMock = jest.fn<() => Config>();
-const axiosPostMock = jest.fn<() => Promise<{ status: number; data: unknown }>>();
+const loadConfigMock = vi.fn<[], Config>();
+const axiosPostMock = vi.fn<[], Promise<{ status: number; data: unknown }>>();
 
-jest.unstable_mockModule('../../../helpers/config', () => ({
+vi.doMock('../../../helpers/config', () => ({
   default: loadConfigMock,
 }));
 
-jest.unstable_mockModule('axios', () => ({
+vi.doMock('axios', () => ({
   default: { post: axiosPostMock, defaults: {} },
 }));
 

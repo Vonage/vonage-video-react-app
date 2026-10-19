@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import express, { type Express, type Request } from 'express';
 import request from 'supertest';
 import SessionCookieSchema from '../../routes/auth/schemas/SessionCookie.schema';
@@ -10,9 +10,9 @@ import readSetCookie from '../../tests/helpers/readSetCookie';
 import readEncryptedSetCookie from '../../tests/helpers/readEncryptedSetCookie';
 import authMiddleware from './authMiddleware';
 
-jest.mock('axios');
+vi.mock('axios');
 
-const mockPost = jest.spyOn(axios, 'post');
+const mockPost = vi.spyOn(axios, 'post');
 
 const SESSION_COOKIE_NAME = 'test_session';
 const CLIENT_ID = 'test-client-id';
@@ -237,7 +237,7 @@ describe('authMiddleware', () => {
       ],
     ])('returns 502, never a 401 or a redirect, when %s', async (_label, arrangeProvider) => {
       arrangeProvider();
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
       const res = await request(buildApp())
         .get('/protected')
