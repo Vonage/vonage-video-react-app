@@ -40,7 +40,9 @@
   "advancedSettings.video.codec.options.manual": "Manuell",
   "advancedSettings.video.codec.description": "Das SDK wählt automatisch den besten Codec basierend auf Netzwerkbedingungen und Teilnehmerfähigkeiten aus. Änderungen gelten ab dem nächsten Anruf.",
   "advancedSettings.video.codec.priority.label": "Codec-Priorität",
-  "advancedSettings.video.codec.priority.description": "Ziehen Sie die Einträge, um die bevorzugte Codec-Reihenfolge vom ersten bis zum letzten festzulegen.",
+  "advancedSettings.video.codec.priority.description": "Ziehen Sie die Einträge oder verwenden Sie die Pfeilschaltflächen, um die bevorzugte Codec-Reihenfolge vom ersten bis zum letzten festzulegen.",
+  "advancedSettings.video.codec.priority.moveUp": "{{codec}} nach oben verschieben",
+  "advancedSettings.video.codec.priority.moveDown": "{{codec}} nach unten verschieben",
   "advancedSettings.video.codec.priority.options.vp9": "VP9",
   "advancedSettings.video.codec.priority.options.vp8": "VP8",
   "advancedSettings.video.codec.priority.options.h264": "H.264",
@@ -353,5 +355,6 @@
   "zoom.current": "Aktueller Zoom",
   "errorPage.title": "Etwas ist schiefgelaufen",
   "errorPage.description": "Die Anwendung konnte nicht gestartet werden. Bitte laden Sie die Seite neu oder wenden Sie sich an den Support, wenn das Problem weiterhin besteht.",
-  "notification.dismiss": "Benachrichtigung schließen"
+  "notification.dismiss": "Benachrichtigung schließen",
+  "banner.logout": "Abmelden"
 }

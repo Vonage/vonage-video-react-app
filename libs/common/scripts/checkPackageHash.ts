@@ -20,7 +20,7 @@ validateChannelFormat({ version: manifest.version, channel: manifest.channel });
 const computedHash = computePackageHash();
 
 if (computedHash !== manifest.hash) {
-  console.error('\n❌ @vonage/video-common hash check failed\n');
+  console.error('\n❌ @vonage/video-reference-apps-common hash check failed\n');
   console.error('   The source files (.ts/.tsx) do not match the committed manifest hash.');
   console.error('   This means libs/common source was modified without updating manifest.json.\n');
   console.error(`   Expected (manifest.json): ${manifest.hash || '(empty — never computed)'}`);
@@ -34,5 +34,5 @@ if (computedHash !== manifest.hash) {
   process.exit(1);
 }
 
-console.log(`\n✅ @vonage/video-common hash verified: ${computedHash}\n`);
+console.log(`\n✅ @vonage/video-reference-apps-common hash verified: ${computedHash}\n`);
 process.exit(0);

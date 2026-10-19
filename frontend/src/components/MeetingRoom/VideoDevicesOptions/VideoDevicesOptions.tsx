@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
-import PortraitIcon from '@mui/icons-material/Portrait';
 import { useTranslation } from 'react-i18next';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import VividIcon from '@ui/components/VividIcon';
 
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;
@@ -30,8 +30,13 @@ const VideoDevicesOptions = ({
         mt: 1,
       }}
     >
-      <MenuItem onClick={toggleBackgroundEffects} className="hover:bg-vera-background">
-        <PortraitIcon sx={{ fontSize: 22, mr: 2 }} />
+      <MenuItem onClick={toggleBackgroundEffects} className="gap-4 hover:bg-vera-background">
+        <VividIcon
+          name="background-blur-light-line"
+          customSize={-5}
+          className="text-inherit"
+          aria-hidden="true"
+        />
         <Typography data-testid="background-effects-text" sx={{ mr: 2 }}>
           {t('backgroundEffects.title')}
         </Typography>

@@ -14,6 +14,10 @@ inputs:
   filename:
     description: VCR config filename to deploy with
     required: true
+  instance-name:
+    description: Instance the config must target; the deploy is refused if it doesn't match
+    required: false
+    default: ''
 
 outputs:
   instance-url:
@@ -23,6 +27,50 @@ outputs:
 runs:
   using: composite
   steps:
+    # Workflows patch the config with sed; a patch that silently misses must not overwrite another instance
+    - name: Verify the target instance
+      shell: bash
+      env:
+        VCR_FILENAME: ${{ inputs.filename }}
+        EXPECTED_INSTANCE: ${{ inputs.instance-name }}
+      run: |
+        CONFIG="backend/dist/$VCR_FILENAME"
+        read_instance_name() {
+          awk '/^instance:/{in_block=1;next} in_block&&/^[^ #]/{exit} in_block&&/^  name:/{sub(/^  name:[ ]*/,"");sub(/[ ]*#.*$/,"");print;exit}' "$1"
+        }
+        ACTUAL_INSTANCE=$(read_instance_name "$CONFIG")
+
+        if [ -n "$EXPECTED_INSTANCE" ] && [ "$ACTUAL_INSTANCE" != "$EXPECTED_INSTANCE" ]; then
+          echo "::error::${VCR_FILENAME} targets instance '${ACTUAL_INSTANCE}', expected '${EXPECTED_INSTANCE}'; refusing to deploy."
+          exit 1
+        fi
+
+        if [ -z "$EXPECTED_INSTANCE" ]; then
+          MAIN_INSTANCE=$(read_instance_name vcr-gha.yml)
+          if [ "$VCR_FILENAME" != "vcr-gha.yml" ] && [ "$ACTUAL_INSTANCE" = "$MAIN_INSTANCE" ]; then
+            echo "::error::${VCR_FILENAME} still targets the main instance '${MAIN_INSTANCE}'; refusing to deploy."
+            exit 1
+          fi
+          echo "::warning::No instance-name passed (workflow from before VIDSOL-1306); deploying '${ACTUAL_INSTANCE}' in compatibility mode."
+        fi
+
+        echo "Deploying instance ${ACTUAL_INSTANCE}"
+
+    # Workflows from before VIDSOL-1306 don't fill <APP_HOST>; the backend refuses to start with it
+    - name: Fill remaining placeholders
+      if: inputs.instance-name == ''
+      shell: bash
+      env:
+        VCR_FILENAME: ${{ inputs.filename }}
+      run: |
+        CONFIG="backend/dist/$VCR_FILENAME"
+        APP_HOST="$(bash .github/scripts/readAppHost.sh)"
+        sed -i "s#<APP_HOST>#${APP_HOST}#g" "$CONFIG"
+        if grep -v '^[[:space:]]*#' "$CONFIG" | grep -qE '<[A-Z_]+>'; then
+          echo "::error::Unfilled placeholders left in ${VCR_FILENAME}; refusing to deploy."
+          exit 1
+        fi
+
     - name: Deploy to VCR
       id: deploy
       shell: bash
