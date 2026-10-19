@@ -49,7 +49,7 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
   }, [data, language]);
 
   return (
-    <ul className={twMerge('ArchiveList', 'max-h-47.5 overflow-y-auto', className)} {...props}>
+    <ul className={twMerge('ArchiveList', 'max-h-47.5 overflow-y-auto pr-2', className)} {...props}>
       {!!error && (
         <ListElement data-testid="archive-list-error">
           <VividIcon name="warning-line" customSize={-4} className="text-vera-warning" />
@@ -91,9 +91,10 @@ const ArchiveList = ({ className, queryOptions, ...props }: ArchiveListProps): R
             <VividIcon
               name={isTranscriptionArchive ? 'text-line' : 'video-active-line'}
               customSize={-4}
+              className="shrink-0"
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-1 min-w-0">
               <p
                 data-testid={`archive-list-item-title-${index}`}
                 className={classNames(
