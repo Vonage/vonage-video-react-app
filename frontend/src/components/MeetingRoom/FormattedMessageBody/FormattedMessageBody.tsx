@@ -48,8 +48,8 @@ const FormattedMessageBody = ({ message }: FormattedMessageBodyProps): ReactElem
 
   return (
     <>
-      {messageFragments.map((messageFragment, index) => (
-        <span key={index}>{messageFragment} </span>
+      {messageFragments.map((messageFragment) => (
+        <span key={messageFragment.key}>{messageFragment} </span>
       ))}
     </>
   );

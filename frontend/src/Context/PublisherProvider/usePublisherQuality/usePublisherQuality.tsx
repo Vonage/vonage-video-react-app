@@ -36,8 +36,6 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
   }, []);
 
   useEffect(() => {
-    setQuality('good');
-
     if (!publisher) {
       return undefined;
     }
@@ -52,6 +50,7 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
       publisher.off('videoEnabled', handleVideoEnabled);
       publisher.off('videoDisableWarning', handleVideoWarning);
       publisher.off('videoDisableWarningLifted', handleVideoWarningLifted);
+      setQuality('good');
     };
   }, [
     handleVideoDisabled,
