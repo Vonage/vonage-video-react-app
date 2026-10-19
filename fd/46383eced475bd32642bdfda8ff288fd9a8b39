@@ -1,0 +1,53 @@
+frontend/src/components/MeetingRoom/ScreenShareError/index.tsx
+  s_dc5aabab156a0c::t_fad382c4779800 1-3
+frontend/src/locales/it.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/locales/ja.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/locales/en.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/locales/es.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_dc5aabab156a0c::t_0cc60862833fba 40
+  s_dc5aabab156a0c::t_8503d25b1a5413 16,42-48,197,200,203-208,291
+  s_dc5aabab156a0c::t_66027b43f16c63 41
+frontend/src/locales/es-MX.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/components/MeetingRoom/ScreenShareError/ScreenShareError.spec.tsx
+  s_dc5aabab156a0c::t_3fb22fb3eb5a60 24
+  s_dc5aabab156a0c::t_fa26a371ff6c72 26-28
+  s_dc5aabab156a0c::t_57946a69fa791d 5
+  s_dc5aabab156a0c::t_e2f27fec332e2a 1-4,6-23,25,29-39
+frontend/src/Context/screenShare/constants/initialState.ts
+  s_dc5aabab156a0c::t_8503d25b1a5413 15,25
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_dc5aabab156a0c::t_8503d25b1a5413 13,109
+frontend/src/locales/de.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 317
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_dc5aabab156a0c::t_8503d25b1a5413 409
+frontend/src/components/MeetingRoom/ScreenShareError/ScreenShareError.tsx
+  s_dc5aabab156a0c::t_3b730124e62b63 23
+  s_dc5aabab156a0c::t_c3550ae4d4f36a 25,32
+  s_dc5aabab156a0c::t_f635e61f218a86 18-19
+  s_dc5aabab156a0c::t_287f6b471757ad 1-17,20-22,24,26-31,33,35-36,38-43
+  s_dc5aabab156a0c::t_986a673fac0ae7 34
+  s_dc5aabab156a0c::t_8b830f2cfe6b75 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fd46383eced475bd32642bdfda8ff288fd9a8b39",
+  "prompts": {},
+  "sessions": {
+    "s_dc5aabab156a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97fb7cc3-0736-432e-928b-c11f40a0a80d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

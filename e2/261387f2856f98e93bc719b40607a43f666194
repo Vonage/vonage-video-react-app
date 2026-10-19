@@ -1,0 +1,41 @@
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  s_3cdb86436cb45c::t_708c4149fe79a8 150-151
+  s_3cdb86436cb45c::t_e63ab207bb6ce2 334-336
+  s_3cdb86436cb45c::t_8e9a8c21a051a4 356
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_3cdb86436cb45c::t_38a2dcb2e39038 115
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.spec.tsx
+  s_3cdb86436cb45c::t_c71a67ccb441d3 2
+  s_3cdb86436cb45c::t_6f4b7451c5c7ed 15
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  s_3cdb86436cb45c::t_d841c6dc81e51c 467-491
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  s_3cdb86436cb45c::t_0167fa6aec77f3 14,27-28,48-49
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.tsx
+  s_3cdb86436cb45c::t_cd7477b3e921fd 52
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_3cdb86436cb45c::t_e667a465e3a1cf 115
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.tsx
+  s_3cdb86436cb45c::t_6a0d14a61e9c46 39-40
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.spec.tsx
+  s_3cdb86436cb45c::t_cf7b1841077a18 100-102
+  s_3cdb86436cb45c::t_3433141ed51a9d 61-99,103-113
+frontend/src/components/Publisher/Publisher.spec.tsx
+  s_3cdb86436cb45c::t_22c70992d16690 1-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e2261387f2856f98e93bc719b40607a43f666194",
+  "prompts": {},
+  "sessions": {
+    "s_3cdb86436cb45c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5cdb08b4-f1f3-49c5-b442-9d06b33aad8c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

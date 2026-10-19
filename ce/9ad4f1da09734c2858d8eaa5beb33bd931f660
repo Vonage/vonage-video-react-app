@@ -1,0 +1,24 @@
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  s_4269014d2ebe6e::t_2680cd8136e09b 48,50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce9ad4f1da09734c2858d8eaa5beb33bd931f660",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_4269014d2ebe6e": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e59ccf90-f4b4-40f9-beda-4766af334ac6",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

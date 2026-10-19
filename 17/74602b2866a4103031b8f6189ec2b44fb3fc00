@@ -1,0 +1,52 @@
+.github/copilot-instructions.md
+  h_6029769cf9ac60 61-64
+.github/workflows/auto-update-dependencies.yml
+  h_6029769cf9ac60 24-25,30,32
+.github/workflows/deploy-to-vcr.yml
+  h_6029769cf9ac60 24-26,31,33,36
+.github/workflows/lint.yml
+  h_6029769cf9ac60 33-35,40,43,75-77,82,85
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 37-39,44,47,97-99,104,109,153-155,160,165
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 65-67,72,74,77
+.github/workflows/video-common-integrity.yml
+  h_6029769cf9ac60 14-15,19,22
+.github/workflows/video-common-publish.yml
+  h_6029769cf9ac60 24-25,29,32-41
+.husky/pre-commit
+  h_6029769cf9ac60 5,9
+.husky/pre-push
+  h_6029769cf9ac60 5,9,11
+.prettierignore
+  h_6029769cf9ac60 9
+README.md
+  h_6029769cf9ac60 52,121-164
+docs/GETTING_STARTED.md
+  h_6029769cf9ac60 59-69
+package.json
+  h_6029769cf9ac60 11,16-20,22-23,25-33,37-38,55-56
+pnpm-lock.yaml
+  h_6029769cf9ac60 1-17106
+pnpm-workspace.yaml
+  h_6029769cf9ac60 1-7
+scripts/assertPackageManager.mjs
+  h_6029769cf9ac60 1-49
+scripts/assertPnpmInstall.mjs
+  h_6029769cf9ac60 1-95
+scripts/migrateToYarn.mjs
+  h_6029769cf9ac60 1-132
+vcrBuild.sh
+  h_6029769cf9ac60 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1774602b2866a4103031b8f6189ec2b44fb3fc00",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
