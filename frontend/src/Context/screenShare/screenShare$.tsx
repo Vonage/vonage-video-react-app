@@ -13,6 +13,7 @@ import {
 } from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { attempt } from '@common/execution';
 import { isNil } from 'json-storage-formatter';
+import frontendLogger from '../../logger';
 import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
@@ -32,6 +33,15 @@ const screenShare$ = createContext(initialState, {
           isEntireScreen: false,
           screenshareVideoElement: undefined,
           publisher: null,
+        }));
+      };
+    },
+
+    clearShareScreenError: () => {
+      return ({ setState }) => {
+        setState((state) => ({
+          ...state,
+          shareScreenError: null,
         }));
       };
     },
@@ -184,13 +194,18 @@ const screenShare$ = createContext(initialState, {
           try {
             await publish(publisher);
           } catch (error) {
-            handleApplyAdvancedSettingsError({
-              message: 'Failed to publish screen share',
+            frontendLogger.reportError(error, {
               eventSource: 'screenShare$.toggleShareScreen.publish',
               partnerId,
-            })(error);
+            });
 
             publisher.destroy();
+
+            setState((state) => ({
+              ...state,
+              shareScreenError: error instanceof Error ? error.message : 'Unknown error',
+            }));
+
             actions$.onScreenShareStopped();
             return;
           }
@@ -273,4 +288,5 @@ export default Object.assign(screenShare$, {
   useScreenshareVideoElement: screenShare$.use.createSelectorHook(
     (state) => state.screenshareVideoElement
   ),
+  useShareScreenError: screenShare$.use.createSelectorHook((state) => state.shareScreenError),
 });

@@ -10,6 +10,7 @@ import EmojisOrigin from '../../components/MeetingRoom/EmojisOrigin';
 import RightPanel from '../../components/MeetingRoom/RightPanel';
 import CaptionsBox from '../../components/MeetingRoom/CaptionsButton/CaptionsBox';
 import CaptionsError from '../../components/MeetingRoom/CaptionsError';
+import ScreenShareError from '../../components/MeetingRoom/ScreenShareError';
 import classNames from 'classnames';
 import useMeetingRoom from '../../hooks/useMeetingRoom';
 import { twMerge } from 'tailwind-merge';
@@ -105,6 +106,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
           setCaptionsErrorResponse={setCaptionsErrorResponse}
         />
       )}
+      <ScreenShareError />
       {!recordingAlreadyNotified && (
         <RecordingPopUpIndicator
           shouldPromptRecordingConsent={shouldPromptRecordingConsent}
