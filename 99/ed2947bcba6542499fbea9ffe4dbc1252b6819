@@ -1,0 +1,44 @@
+apps/local-oidc/src/main.ts
+  h_6029769cf9ac60 11-12,74-79
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 67,142,160,230-233,240,247-251,253
+backend/middleware/authMiddleware/helpers/assertAllowedOrigin.ts
+  h_6029769cf9ac60 2,17
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  h_6029769cf9ac60 4,9,22-23,26-52
+backend/middleware/authMiddleware/helpers/makeProviderResponseError.ts
+  h_6029769cf9ac60 1-21
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 16,82
+backend/routes/auth/handlers/callbackHandler.ts
+  h_6029769cf9ac60 10-11,85-86,89-116
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 137
+backend/tests/session.auth.test.ts
+  h_6029769cf9ac60 11-14
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 51,53,76
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 62
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/node/errors/handlers/index.ts
+  h_6029769cf9ac60 4
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/index.ts
+  h_6029769cf9ac60 1
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.test.ts
+  h_6029769cf9ac60 1-12
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.ts
+  h_6029769cf9ac60 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "99ed2947bcba6542499fbea9ffe4dbc1252b6819",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
