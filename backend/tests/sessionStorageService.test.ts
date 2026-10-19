@@ -6,6 +6,8 @@ describe('getSessionStorageService', () => {
   afterEach(() => {
     vi.resetModules(); // Clear module cache between tests
     delete process.env.VCR_PORT; // Clean up the environment variable after each test
+    delete process.env.KV_REST_API_URL;
+    delete process.env.KV_REST_API_TOKEN;
   });
 
   it('should return VcrSessionStorage when isVcr is true', async () => {
@@ -19,6 +21,17 @@ describe('getSessionStorageService', () => {
 
     // Assert it returns VcrSessionStorage
     expect(sessionStorage).toBeInstanceOf(VcrSessionStorage);
+  });
+
+  it('should return UpstashRedisSessionStorage when an Upstash Redis database is configured', async () => {
+    process.env.KV_REST_API_URL = 'https://example.upstash.io';
+    process.env.KV_REST_API_TOKEN = 'token';
+
+    const { default: getSessionStorageService } = await import('../sessionStorageService');
+    const { default: UpstashRedisSessionStorage } =
+      await import('../storage/upstashRedisSessionStorage');
+
+    expect(getSessionStorageService()).toBeInstanceOf(UpstashRedisSessionStorage);
   });
 
   it('should return in-memory session storage when not using VCR', async () => {

@@ -5,6 +5,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, options) => {
   const isDevelopment = options.mode === 'development';
+  // `--env vercel` builds the Vercel function handler, which exports the Express app instead of listening.
+  const isVercel = Boolean(env?.vercel);
 
   return {
     target: 'node',
@@ -13,9 +15,16 @@ module.exports = (env, options) => {
     mode: options.mode,
     devtool: isDevelopment ? 'inline-source-map' : false,
 
-    entry: {
-      bundle: path.resolve(__dirname, 'index.ts'),
-    },
+    entry: isVercel
+      ? {
+          vercel: {
+            import: path.resolve(__dirname, 'vercel.ts'),
+            library: { type: 'commonjs2', export: 'default' },
+          },
+        }
+      : {
+          bundle: path.resolve(__dirname, 'index.ts'),
+        },
 
     output: {
       // output on the root of the backend folder

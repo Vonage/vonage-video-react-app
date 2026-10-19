@@ -54,6 +54,15 @@ OT_API_SECRET='your-api-secret'
 |----------|----------|-------------|
 | `VCR_PORT` | ⚠️ VCR only | Port exposed by VCR (typically `3345`). **Do not set this locally** — its presence switches the app to VCR storage. |
 
+#### Vercel
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `KV_REST_API_URL` / `UPSTASH_REDIS_REST_URL` | ⚠️ Vercel only | Upstash Redis REST URL. Injected automatically by Vercel's Upstash Marketplace integration (`KV_` names); when set (and not on VCR) the app uses Upstash Redis for session storage. |
+| `KV_REST_API_TOKEN` / `UPSTASH_REDIS_REST_TOKEN` | ⚠️ Vercel only | Upstash Redis REST token. |
+
+See [Deployment to Vercel](./GETTING_STARTED.md#deployment-to-vercel).
+
 #### Jira feedback integration (optional)
 
 Enables the in-call issue reporting tool to file tickets directly into Jira.
