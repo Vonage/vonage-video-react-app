@@ -331,7 +331,9 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         if (publisherRef.current) {
           return;
         }
-        if (deviceAccess.camera === false || deviceAccess.microphone === false) {
+        const hasDeniedDeviceAccess =
+          deviceAccess.camera === false || deviceAccess.microphone === false;
+        if (hasDeniedDeviceAccess) {
           return;
         }
         isInitializingPublisherRef.current = true;
