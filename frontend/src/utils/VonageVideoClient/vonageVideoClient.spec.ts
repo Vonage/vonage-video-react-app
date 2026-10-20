@@ -352,17 +352,34 @@ describe('VonageVideoClient', () => {
     expect(mockSession.unpublish).toHaveBeenCalledTimes(1);
   });
 
-  it('signal should send a signal to all participants in the session', async () => {
-    const signalData: SignalType = {
-      type: 'chat',
-      data: 'Hello, world!',
-    };
+  describe('signal', () => {
+    it('sends a signal to all participants in the session', async () => {
+      const signalData: SignalType = {
+        type: 'chat',
+        data: 'Hello, world!',
+        retryAfterReconnect: true,
+      };
 
-    await vonageVideoClient?.connect();
-    vonageVideoClient?.signal(signalData);
+      await vonageVideoClient?.connect();
+      await vonageVideoClient?.signal(signalData);
 
-    expect(mockSession.signal).toHaveBeenCalledWith(signalData);
-    expect(mockSession.signal).toHaveBeenCalledTimes(1);
+      expect(mockSession.signal).toHaveBeenCalledWith(signalData);
+      expect(mockSession.signal).toHaveBeenCalledTimes(1);
+    });
+
+    it('reports and rethrows when the signal fails to send', async () => {
+      const signalData: SignalType = { type: 'chat', data: 'Hello, world!' };
+      const fakeError = new Error('signal failed');
+      mockSession.signal = vi.fn().mockRejectedValueOnce(fakeError);
+
+      await vonageVideoClient?.connect();
+
+      await expect(vonageVideoClient?.signal(signalData)).rejects.toThrow('signal failed');
+      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
+      const [reportedError, context] = mockProvider.reportError.mock.calls[0];
+      expect(reportedError).toMatchObject({ message: 'signal failed' });
+      expect(context).toEqual({ eventSource: 'vonageVideoClient.signal.error' });
+    });
   });
 
   describe('event handling', () => {

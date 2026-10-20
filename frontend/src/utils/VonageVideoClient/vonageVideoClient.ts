@@ -572,9 +572,15 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   /**
    * Sends a signal to all participants in the session.
    * @param {SignalType} data - The signal data to be sent.
+   * @throws {OTError} Re-throws if the signal fails to send, after reporting it.
    */
-  signal = (data: SignalType) => {
-    this.clientSession.signal(data)?.catch(() => {});
+  signal = async (data: SignalType): Promise<void> => {
+    try {
+      await this.clientSession.signal(data);
+    } catch (err) {
+      frontendLogger.reportError(err, { eventSource: 'vonageVideoClient.signal.error' });
+      throw err;
+    }
   };
 
   /**

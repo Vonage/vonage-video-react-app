@@ -178,6 +178,8 @@
   "chat.meetingUrl": "URL de la reunión:",
   "chat.open": "Abrir chat",
   "chat.title": "Chat",
+  "chatErrors.sendFailed.message": "No se pudo enviar tu mensaje. Por favor revisa tu red e intenta de nuevo.",
+  "chatErrors.sendFailed.title": "Mensaje no enviado",
   "common.or": "o",
   "connectionAlert.quality.message": "Por favor verifica tu conectividad. Tu video puede estar deshabilitado para mejorar la experiencia.",
   "connectionAlert.quality.title": "Problema de calidad de video",

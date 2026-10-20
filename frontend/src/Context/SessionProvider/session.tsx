@@ -247,6 +247,7 @@ const SessionProvider = ({
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
   const { messages, onChatMessage, sendChatMessage } = useChat({
     signal: vonageVideoClient.current?.signal,
+    reconnecting,
   });
   const getConnectionId = useCallback((): string | undefined => {
     return vonageVideoClient.current?.connectionId;
