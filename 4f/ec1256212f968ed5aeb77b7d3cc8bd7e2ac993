@@ -1,0 +1,49 @@
+frontend/src/hooks/useEmoji.tsx
+  s_fc902581b171a8::t_a6fb967c9e62af 13
+  s_fc902581b171a8::t_89251d75abc67c 32
+  s_fc902581b171a8::t_41e7f2ac435b72 55
+frontend/src/Context/SessionProvider/session.tsx
+  s_fc902581b171a8::t_87f18717082c95 225
+frontend/src/locales/de.json
+  s_fc902581b171a8::t_0f2103b120745f 178-179
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_fc902581b171a8::t_9724a74347a409 66-67
+  s_fc902581b171a8::t_e13560c1782b87 70-73
+  s_fc902581b171a8::t_ac16d479f87858 1,4,8-10,15,19,32-33,43-45,50-61,63-65,68-69,74-87
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_fc902581b171a8::t_39f7f65a8aa13f 525,527-533
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_fc902581b171a8::t_c7de887753563d 290-296,298-303,305-312,317
+  s_fc902581b171a8::t_64803bc35d66ad 313-316
+frontend/src/locales/es-MX.json
+  s_fc902581b171a8::t_ecf41113d4e100 178-179
+frontend/src/hooks/useChat.tsx
+  s_fc902581b171a8::t_7543af18423fab 64
+  s_fc902581b171a8::t_a8f83b71277f22 1,6-11,14-15,21-22,27-28,32-33,35,38-40,48,53-63,65-70,72,98
+frontend/src/locales/en.json
+  s_fc902581b171a8::t_dabda72fd1456c 178-179
+frontend/src/types/session.ts
+  s_fc902581b171a8::t_36a79b6248fe21 45
+frontend/src/locales/es.json
+  s_fc902581b171a8::t_6562c98a1009ad 178-179
+frontend/src/locales/it.json
+  s_fc902581b171a8::t_d95ce72f3bfaf5 178-179
+frontend/src/locales/ja.json
+  s_fc902581b171a8::t_a7c0f7c4140363 178-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4fec1256212f968ed5aeb77b7d3cc8bd7e2ac993",
+  "prompts": {},
+  "sessions": {
+    "s_fc902581b171a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0156242a-7c17-46c6-aeab-2285d58d741c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

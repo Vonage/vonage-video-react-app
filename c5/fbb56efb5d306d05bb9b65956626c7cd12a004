@@ -1,0 +1,14 @@
+libs/common/manifest.json
+  h_737cf808c1c597 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c5fbb56efb5d306d05bb9b65956626c7cd12a004",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
