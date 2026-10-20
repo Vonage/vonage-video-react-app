@@ -1,0 +1,14 @@
+integration-tests/tests/postCallTranscription.spec.ts
+  h_6c0124248e0f80 1-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d54680e355f106c5ea8571f7f3885869e0f83690",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
