@@ -9,6 +9,7 @@ import VividIcon from '@ui/components/VividIcon';
 import classNames from 'classnames';
 import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
+import { RECORDING_ARCHIVE_NAME } from '@common/constants';
 
 export type ArchivingButtonProps = {
   isOverflowButton?: boolean;
@@ -33,14 +34,14 @@ const ArchivingButton = ({
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
-    archiveId,
-    markArchiveStartRequestedBySelf,
-    resetArchiveStartRequestedBySelf,
+    recordingArchiveId,
+    markRecordingStartRequestedBySelf,
+    resetRecordingStartRequestedBySelf,
     sessionKey,
     connected,
   } = useSessionContext();
 
-  const isRecording = !!archiveId;
+  const isRecording = !!recordingArchiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
   const handleButtonClick = () => {
@@ -66,7 +67,6 @@ const ArchivingButton = ({
   const handleClose = () => {
     setIsModalOpen(false);
 
-    // If the ArchivingButton is in the ToolbarOverflowMenu, we close the modal and the menu
     if (isOverflowButton && handleClick) {
       handleClick();
     }
@@ -74,21 +74,22 @@ const ArchivingButton = ({
 
   const handleDialogClick = (action: 'start' | 'stop') => {
     if (action === 'start') {
-      if (!archiveId && connected) {
-        markArchiveStartRequestedBySelf();
+      if (!recordingArchiveId && connected) {
+        markRecordingStartRequestedBySelf();
         setTimeout(async () => {
           try {
             await videoClient.startArchive({ sessionKey: sessionKey! });
           } catch (err) {
-            resetArchiveStartRequestedBySelf();
+            resetRecordingStartRequestedBySelf();
             console.log(err);
           }
         }, RECORDING_START_DELAY);
       }
-    } else if (archiveId) {
-      // Call stopArchive without archiveId - backend middleware will inject it from storage
-      // This handles server rotation where frontend has old archiveId
-      void videoClient.stopArchive({ sessionKey: sessionKey! });
+    } else if (recordingArchiveId) {
+      void videoClient.stopArchive({
+        sessionKey: sessionKey!,
+        archiveType: RECORDING_ARCHIVE_NAME,
+      });
     }
   };
 
@@ -104,7 +105,11 @@ const ArchivingButton = ({
           <ToolbarButton
             onClick={handleButtonClick}
             data-testid="archiving-button"
-            className={classNames({ recording: isRecording })}
+            className={classNames(
+              { recording: isRecording },
+              isRecording &&
+                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            )}
             icon={
               <VividIcon
                 name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
@@ -116,9 +121,6 @@ const ArchivingButton = ({
             }
             style={{
               marginTop: isOverflowButton ? '0px' : '4px',
-              backgroundColor: isRecording
-                ? 'color-mix(in srgb, var(--vera-on-secondary-light) 33%, transparent) !important'
-                : undefined,
             }}
             isOverflowButton={isOverflowButton}
           />
