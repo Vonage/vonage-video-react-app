@@ -1,0 +1,31 @@
+.claude/skills/deploy-vcr/SKILL.md
+  s_708e8d2b915fcc::t_5bdbe072aa702d 3,7,9,11,13,15,17-19,21,23-25,27,29,34,37,39,41-45,47,49,51,53,55-62
+.claude/skills/record-snapshots/SKILL.md
+  s_708e8d2b915fcc::t_74fe7369fa885a 3,8,10,12,14,16-20,22-27,30,34,36,38,41-42,45,47-49,51,60,62,64-66
+.claude/skills/configure/SKILL.md
+  s_708e8d2b915fcc::t_023d1b78e8a5f2 3,5,8,10,12,14,16-20,22,24-26,28,32-34,37,39,42,47,49,51-53,55,58,61,63-66,68,70,72-73,75,78-79,82,86,88,90-96
+.claude/skills/setup/SKILL.md
+  s_708e8d2b915fcc::t_4daffad9a2ed53 3,7,9,11,13,16-20,23,25-31,33,36,39-41,43,47,54,56,58,61-68,70-74,77,80-85,87,89,91-96,98,100-102,104,106,108-119,121,123-125
+.claude/skills/feature-flag/SKILL.md
+  s_708e8d2b915fcc::t_c97e4a65b06e40 3,8,10,12,14,16,18-21,23,26,30,32,34,36,42,45-46,49,51,53,55,58,61,65,67,69,72,75-78,82,84,92,94,96-97,101,103,105-106,108-109,111-112
+.claude/skills/run-tests/SKILL.md
+  s_708e8d2b915fcc::t_73497f18b88acf 3,10,12,14,16-51,55,57-59,61,63,65-68
+.github/copilot-instructions.md
+  s_708e8d2b915fcc::t_382a7c7a477d8f 47-54,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "39aed15ab368345d68108c2c193486a0c4973785",
+  "prompts": {},
+  "sessions": {
+    "s_708e8d2b915fcc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d2c4d69-5e90-448c-948d-1a690b8a6e42",
+        "model": "unknown"
+      },
+      "human_author": "aos-svg <artur.osinski@vonage.com>"
+    }
+  }
+}
