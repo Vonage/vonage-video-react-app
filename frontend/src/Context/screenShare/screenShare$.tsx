@@ -14,6 +14,9 @@ import {
 import { attempt } from '@common/execution';
 import { isNil } from 'json-storage-formatter';
 import frontendLogger from '../../logger';
+import i18n from '../../i18n';
+import { env } from '../../env';
+import { notifications$ } from '@core/stores';
 import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
@@ -33,15 +36,6 @@ const screenShare$ = createContext(initialState, {
           isEntireScreen: false,
           screenshareVideoElement: undefined,
           publisher: null,
-        }));
-      };
-    },
-
-    clearShareScreenError: () => {
-      return ({ setState }) => {
-        setState((state) => ({
-          ...state,
-          shareScreenError: null,
         }));
       };
     },
@@ -201,10 +195,13 @@ const screenShare$ = createContext(initialState, {
 
             publisher.destroy();
 
-            setState((state) => ({
-              ...state,
-              shareScreenError: error instanceof Error ? error.message : 'Unknown error',
-            }));
+            notifications$.actions.push({
+              type: 'error',
+              message: i18n.t('screenSharing.errors', {
+                shareScreenError: error instanceof Error ? error.message : 'Unknown error',
+              }),
+              expirationMs: env.NOTIFICATION_DURATION_MS,
+            });
 
             actions$.onScreenShareStopped();
             return;
@@ -288,5 +285,4 @@ export default Object.assign(screenShare$, {
   useScreenshareVideoElement: screenShare$.use.createSelectorHook(
     (state) => state.screenshareVideoElement
   ),
-  useShareScreenError: screenShare$.use.createSelectorHook((state) => state.shareScreenError),
 });

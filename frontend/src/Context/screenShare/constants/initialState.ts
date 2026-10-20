@@ -12,7 +12,6 @@ export type ScreenShareState = {
   screensharingPublisher: Publisher | null;
   screenshareVideoElement: HTMLVideoElement | HTMLObjectElement | undefined;
   publisher: Publisher | null;
-  shareScreenError: string | null;
 };
 
 const initialState = (): ScreenShareState => ({
@@ -22,7 +21,6 @@ const initialState = (): ScreenShareState => ({
   screensharingPublisher: null,
   screenshareVideoElement: undefined,
   publisher: null,
-  shareScreenError: null,
 });
 
 export default initialState;

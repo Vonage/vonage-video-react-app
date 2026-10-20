@@ -9,6 +9,7 @@ import screenShare$ from './screenShare$';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 import { Resolution } from '@common/types';
+import { notifications$ } from '@core/stores';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -379,6 +380,7 @@ describe('screenShare$', () => {
 
   it('resets screen share state and does not throw when publish rejects', async () => {
     mockPublish.mockRejectedValueOnce(new Error('Publishing failed'));
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { result } = render({
       userContext: {
@@ -406,7 +408,12 @@ describe('screenShare$', () => {
     expect(state.isSharingScreen).toBe(false);
     expect(state.publisher).toBeNull();
     expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
-    expect(state.shareScreenError).toBe('Publishing failed');
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'error',
+        message: expect.stringContaining('Publishing failed'),
+      })
+    );
   });
 
   it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {

@@ -17,12 +17,14 @@ const typeIconName: Record<NotificationEntry['type'], string> = {
   info: 'info-line',
   warning: 'warning-line',
   success: 'check-circle-line',
+  error: 'error-warning-line',
 };
 
 const typeIconColorVar: Record<NotificationEntry['type'], string> = {
   info: 'var(--vera-information)',
   warning: 'var(--vera-warning)',
   success: 'var(--vera-success)',
+  error: 'var(--vera-error)',
 };
 
 type NotificationItemProps = PropsWithChildren<
