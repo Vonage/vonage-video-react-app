@@ -1,57 +1,62 @@
 ---
 name: deploy-vcr
-description: Deploy the Vonage Video React reference app (VERA web) to Vonage Cloud Runtime (VCR) — a personal dev instance from your machine with yarn vcr:dev, a per-PR preview by commenting vcr:deploy on a pull request, and what deploys automatically when a PR merges to develop. Use whenever the user wants a shareable/HTTPS URL for testing, a cloud backend for the Android or iOS VERA apps, asks about vcr-dev.yml, vcr.yml.example, vcrBuild.sh, the vcr CLI, "vcr:deploy" / "vcr:remove" comments, or a VCR deployment that fails or misbehaves.
+description: Deploy the Vonage Video React reference app (VERA web) to Vonage Cloud Runtime (VCR) — your own test instance with pnpm vcr:dev, a preview for a pull request by commenting vcr:deploy, and the automatic deploy when a pull request is merged into develop. Use when someone wants a shareable HTTPS link for testing, a cloud backend for the Android or iOS VERA app, asks about vcr-dev.yml, vcr.yml.example, vcrBuild.sh, the vcr command, the "vcr:deploy" / "vcr:remove" comments, or a deploy that fails.
 inclusion: manual
 ---
 
-# Deploying VERA Web to Vonage Cloud Runtime
+# Deploying VERA Web to Vonage Cloud Runtime (VCR)
 
-Invoke with `/deploy-vcr` in Claude Code, or `#vera-deploy-vcr` in kiro.
+Use `/deploy-vcr` in Claude Code, or `#vera-deploy-vcr` in kiro.
 
-A VCR deployment is the production build: `backend/dist/bundle.cjs` serving the built frontend from `backend/dist/dist`, on one HTTPS origin. That makes it the easiest way to test on phones (camera/mic need HTTPS) or give the mobile apps a backend without tunnels.
+A VCR deploy gives you the whole app on one HTTPS link. That's the easiest way to test on a phone (the camera needs HTTPS) or to give the mobile apps a backend.
 
-## Pick the route
+## Pick a way
 
-| Route | When | How |
+| Way | When | How |
 |---|---|---|
-| **PR preview** | Reviewing a PR; no local VCR setup | Comment exactly `vcr:deploy` on the PR. The bot builds the PR head and replies with the URL. Instance `vera-pr-<number>`; `vcr:remove` deletes it, closing the PR deletes it too. Same-repo branches only (needs repo secrets). |
-| **Personal dev instance** | Iterating on your own branch / your own Vonage account | `yarn vcr:dev` (below) |
-| **Shared `dev` instance** | Automatic | `deploy-to-vcr.yml` runs when a PR is **merged into `develop`**. Don't deploy to it by hand. |
+| **Pull request preview** | You want to try a pull request | Comment exactly `vcr:deploy` on the pull request. A bot replies with the link. Comment `vcr:remove` to delete it; closing the pull request also deletes it. Only for branches in this repo. **Sign-in is on** (Okta). |
+| **Your own instance** | You test your branch with your own Vonage account | `pnpm vcr:dev` (below) |
+| **Shared `dev` instance** | Happens by itself | Every merge into `develop` deploys it. Don't deploy there by hand. |
 
-## Personal dev instance — one-time setup
+## Your own instance: first time only
 
-1. **VCR CLI** — install per [Working locally](https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation), then `vcr configure` (API key/secret, region).
-2. **A separate Vonage application for VCR.** Create a new app in the dashboard and run `vcr app generate-keys --app-id <vcr-app-id> --region <region>`. Don't reuse the `VONAGE_APP_ID` from `backend/.env`: generate-keys **rotates** that application's private key, which would break your local `backend/.env`.
-3. **Manifest:**
+1. **Install the VCR CLI** ([guide](https://developer.vonage.com/en/vonage-cloud-runtime/getting-started/working-locally#cli-installation)), then run `vcr configure`.
+2. **Make a separate Vonage application for VCR**, then run `vcr app generate-keys --app-id <vcr-app-id> --region <region>`. Don't use the application from `backend/.env`: this command replaces its key, and your local setup stops working.
+3. **Create your config file:**
    ```bash
-   cp vcr.yml.example vcr-dev.yml   # gitignored
+   cp vcr.yml.example vcr-dev.yml   # not committed
    ```
-   Set `instance.application-id` to the VCR app id (replace the literal `${DEV_VCR_APP_ID}` placeholder; it is not substituted). Set `project.name`, `instance.name` and `region` to your own values so you don't overwrite a colleague's `vera-dev`.
+   Put your VCR application ID in `application-id` (replace `${DEV_VCR_APP_ID}` with the real ID). Give `project.name` and `instance.name` your own names, so you don't overwrite a colleague's instance.
 
 ## Deploy
 
 ```bash
-yarn vcr:dev
+pnpm vcr:dev
 ```
 
-This runs `vcrBuild.dev.sh` → `vcrBuild.sh` (`source env.sh`, `yarn install --ignore-scripts --frozen-lockfile`, `yarn build`) → copies `backend/.env` and `vcr-dev.yml` into `backend/dist` → `cd backend/dist && vcr deploy -f vcr-dev.yml`. The CLI prints the instance URL.
+This builds the app, writes the backend settings (from `env.defaults.sh` and then your `backend/.env`) into the build, and uploads it. The link is printed at the end.
 
-What that implies:
+Good to know:
 
-- **Frontend config** comes from the committed `env.sh` at build time. `frontend/.env` is also read by Vite during the build, so a local override there ends up in the deployed bundle — clear it if you don't want that. Leave `API_URL` empty for VCR so the app uses its own origin.
-- **Backend config** comes from your `backend/.env`, copied verbatim. It needs working video credentials and must **not** contain `VCR_PORT` (VCR sets it; that's what switches storage to VCR's state store).
-- Committed `vcr-gha.yml` is the CI manifest (secrets, `<DOMAIN>` placeholder); don't deploy with it locally.
+- **Sign-in is always off** on your own instance, whatever `backend/.env` says. To try sign-in in the cloud, use a pull request preview.
+- `backend/.env` needs working Vonage credentials and a `SESSION_KEY_SECRET`. It must **not** contain `VCR_PORT`; VCR sets that itself.
+- `frontend/.env` is included in the build too. Clear anything there you don't want deployed, and leave `API_URL` empty.
+- If your pnpm version isn't exactly 12.11.2, the build installs that version globally on your machine.
+- `vcr-gha.yml` is only for CI. Don't deploy with it yourself.
 
-**Remove:** `yarn vcr:dev rm` — but it hard-codes `--project-name vonage-video-react-app --instance-name vera-dev`. If you renamed them in step 3, remove with `vcr instance rm --project-name <yours> --instance-name <yours>`.
+**Remove your instance:** `pnpm vcr:dev rm`. This only works for the default names (`vonage-video-react-app` / `vera-dev`). If you changed them, run `vcr instance rm --project-name <yours> --instance-name <yours>`.
 
-## Pointing the mobile apps at a VCR instance
+## Use it from the mobile apps
 
-Use the instance URL, no trailing slash: Android `BASE_API_URL` in `local.properties`, iOS per that repo's config. HTTPS means no cleartext exceptions are needed.
+Use the instance link without a slash at the end: Android `BASE_API_URL` in `local.properties`, iOS in its config.
 
-## Failures
+## Problems
 
-- **`vcrBuild.dev.sh`: `./backend/.env file not found` / `./vcr-dev.yml not found`** — setup steps above.
-- **Deploy succeeds, app shows errors creating rooms** — check `vcr instance log` (or the dashboard logs) for `Missing config values for Vonage`: `backend/.env` was empty or used the OpenTok block without its keys.
-- **Local dev broke right after VCR setup** — you ran `generate-keys` against your local app; regenerate a key for it and update `backend/.env`, then use a separate app for VCR.
-- **`vcr:deploy` comment did nothing** — body must be exactly `vcr:deploy`, on a PR (not an issue), from a branch in this repo.
-- **Build fails on `--frozen-lockfile`** — `yarn.lock` is out of date with a `package.json` change; run `yarn install` and commit the lockfile.
+| You see | Fix |
+|---|---|
+| `./backend/.env file not found` or `./vcr-dev.yml not found` | Do the first-time steps above. |
+| The app opens but rooms fail | Check the instance logs for `Missing config values for Vonage`: your `backend/.env` is missing credentials. |
+| Local setup broke right after VCR setup | You ran `generate-keys` on your local application. Make a new key for it, update `backend/.env`, and use a separate application for VCR. |
+| The `vcr:deploy` comment did nothing | It must be exactly `vcr:deploy`, on a pull request, from a branch in this repo. |
+| Build fails with `--frozen-lockfile` | `pnpm-lock.yaml` is out of date. Run `pnpm install` and commit it. |
+| CI: `environment secret references not found` | A secret (often `AUTH_COOKIE_SECRET`) is missing on VCR. Create it: `vcr secret create --name AUTH_COOKIE_SECRET --value '<new pnpm generate:secret value>'`. |

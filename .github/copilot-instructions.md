@@ -44,6 +44,14 @@ TypeScript version: `^5.8.3`
 
 ---
 
+# AI Assistant Skills
+
+- Task-specific guides live in `.claude/skills/<name>/SKILL.md` (index: `.claude/skills/README.md`), mirrored for kiro as symlinks in `.kiro/steering/`. Use them for setup (`/setup`), configuration (`/configure`), new config keys (`/feature-flag`), test routing (`/run-tests`), Playwright screenshots (`/record-snapshots`) and Vonage Cloud Runtime deploys (`/deploy-vcr`).
+- They are verified against the scripts and code, not the docs; where they disagree with a doc, trust the skill and fix the doc (`.claude/skills/EVALUATIONS.md` lists known drift).
+- Frontend config flows `app-config.json` → `pnpm sync:env` → `env.sh` → `appEnvKeys` in `frontend/vite.config.ts` → `frontend/src/env.ts`; a key missing from any hop silently falls back to its default.
+
+---
+
 # General Development Guidelines, Import Rules
 
 ## Library and feature placement
@@ -59,7 +67,7 @@ TypeScript version: `^5.8.3`
 - **Rule:** Logic that is shared between different projects (**frontend**, **backend**, **libs**) should be proposed for `libs/common`.
 - **Rule:** Do not add new dependencies. Use only the installed dependencies.
 - **Rule:** Dependencies are installed with pnpm only, and `pnpm-lock.yaml` is the single lockfile. Never run `yarn install` or `npm install`, and never commit a `yarn.lock` or `package-lock.json`.
-- **Rule:** yarn remains supported as a task runner, so `yarn dev`, `yarn test:frontend` and `yarn nx ...` are all valid. Only installing is pnpm-only.
+- **Rule:** yarn remains supported as a task runner, so `pnpm dev`, `pnpm test:frontend` and `yarn nx ...` are all valid. Only installing is pnpm-only.
 - **Rule:** Do not add new state management libraries. Use only existing tooling.
 - **Rule:** Components must be kept small, focused, and composable.
 

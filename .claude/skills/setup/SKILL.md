@@ -1,105 +1,125 @@
 ---
 name: setup
-description: First-time environment setup and environment doctor for the Vonage Video React reference app (VERA web). Use whenever the user wants to set up or onboard onto this repo, bootstrap a new machine, run the app locally for the first time, or hits "Missing config values for Vonage", "Unknown video service provider", "yarn: command not found", wrong Node version, husky/pre-commit/pre-push failures, the @vonage/video-common hash check, ports 3345/5173 already in use, or asks "why won't this start". Also use when they need a backend for the Android or iOS VERA apps.
+description: First-time setup and "why won't it start" help for the Vonage Video React reference app (VERA web). Use when someone sets up the repo, installs dependencies with pnpm, runs the app for the first time, or hits errors like "Dependencies cannot be installed with yarn/npm", "pnpm … is too old", "Permission denied", "Missing config values for Vonage", a ZodError when the backend starts (authSessionCookieName, oidcScopes, authCookieSecret, corsAllowedOrigins), "yarn: command not found", wrong Node version, git hook failures, the video-reference-apps-common hash check, or ports 3345/3346/5173 already in use. Also use when the Android or iOS VERA app needs a backend.
 inclusion: manual
 ---
 
-# VERA Web — Environment Setup & Doctor
+# VERA Web — Setup
 
-Invoke with `/setup` in Claude Code, or `#vera-setup` in kiro.
+Use `/setup` in Claude Code, or `#vera-setup` in kiro.
 
-Diagnose first, then fix only what is actually broken. Almost every "it won't start" report comes down to one of four things: wrong Node version, no `yarn`, no `backend/.env` (or an empty one), or dependencies never installed. Checking takes seconds; re-running the whole setup on a working machine wastes minutes and can clobber a good `.env`.
+Check first, then fix only what is broken. Run every command from the repo root.
 
-All commands run from the repo root.
-
-## Step 1: Diagnose
+## 1. Check
 
 ```bash
-node -v; cat .nvmrc                 # must match the major in .nvmrc (22)
-yarn -v                             # Yarn 1.22.x (pinned via "packageManager" in package.json)
-test -d node_modules && echo "deps installed" || echo "deps MISSING"
-test -f backend/.env && grep -E '^(VIDEO_SERVICE_PROVIDER|VONAGE_APP_ID)=' backend/.env || echo "backend/.env MISSING"
-git config core.hooksPath || echo "husky hooks NOT installed"
-lsof -iTCP:3345 -iTCP:5173 -sTCP:LISTEN   # anything already holding the backend/frontend ports?
+node -v; cat .nvmrc                 # should be Node 22
+pnpm -v                             # should be 12 or newer
+test -d node_modules/.pnpm && echo "installed" || echo "not installed with pnpm"
+test -f backend/.env && echo "backend/.env found" || echo "backend/.env missing"
+lsof -iTCP:3345 -iTCP:3346 -iTCP:5173 -sTCP:LISTEN   # is something already running?
 ```
 
-## Step 2: Prerequisites
+## 2. Install the tools
 
-- **Node 22** — the version in `.nvmrc`. `nvm install && nvm use` picks it up. A newer major (24, 25) is untested here; CI uses `.nvmrc` exactly.
-- **Yarn 1** — `corepack enable` provides the pinned `yarn@1.22.22`; or `npm i -g yarn`. Don't use `npm install` or Yarn Berry: the lockfile is `yarn.lock` v1 and CI installs with `--frozen-lockfile`.
-- **A Vonage application with Video enabled** — [dashboard → Applications](https://dashboard.vonage.com/applications). You need its **Application ID** and the **private key** file downloaded when you generated keys.
+- **Node 22:** `nvm install && nvm use` (reads `.nvmrc`).
+- **pnpm 12 or newer:**
+  ```bash
+  npm i -g pnpm@12.11.2
+  ```
+  Don't use `corepack enable`. It gives you pnpm 11, which is too old: commands fail with "Permission denied".
+- **A Vonage application with Video turned on.** Create it in the [dashboard](https://dashboard.vonage.com/applications). You need the **Application ID** and the **private key** file.
 
-## Step 3: Install
+## 3. Install the project
 
 ```bash
-yarn install
+pnpm install
 ```
 
-This also runs husky (`prepare` → sets `core.hooksPath`) and `postinstall` → `nx postinstall integration-tests` → `playwright install`, which downloads browsers (~hundreds of MB). If that download fails behind a proxy, `yarn install --ignore-scripts` finishes the install; run `npx husky` and `cd integration-tests && npx playwright install` later.
+- pnpm is the only way to install. `yarn install` and `npm install` are blocked on purpose.
+- The first install also downloads browsers for the end-to-end tests, so it can take a few minutes.
+- Old checkout installed with yarn? Any `pnpm` script notices and offers to run `pnpm install` for you. Say yes.
 
-## Step 4: `backend/.env`
+## 4. Create `backend/.env`
 
 ```bash
 cp backend/.env.example backend/.env
+pnpm generate:secret     # the secret is the last line; run once per secret
 ```
 
 Fill in:
 
 ```ini
 VIDEO_SERVICE_PROVIDER='vonage'
-VONAGE_APP_ID='<application id>'
+VONAGE_APP_ID='<your application id>'
 VONAGE_PRIVATE_KEY='-----BEGIN PRIVATE KEY-----
-...the whole file, newlines included...
+...paste the whole key file here...
 -----END PRIVATE KEY-----'
+SESSION_KEY_SECRET='<a secret from pnpm generate:secret>'
 ```
 
-- The key is pasted **inline, multi-line, inside single quotes** — not a path to the `.key` file.
-- `backend/helpers/config.ts` throws `Missing config values for Vonage` when either value is empty and `Unknown video service provider` when `VIDEO_SERVICE_PROVIDER` is not `vonage`/`opentok`. The legacy OpenTok block uses `OT_API_KEY`/`OT_API_SECRET` instead.
-- **Never set `VCR_PORT` locally** — its presence (`backend/middleware/isVcr.ts`) switches session storage to Vonage Cloud Runtime's state store, which doesn't exist on your machine, and moves the listen port to its value.
-- Leave `AUTH_ENABLED='false'` for a first run. Okta sign-in is optional; see `docs/AUTHENTICATION.md`. If you do enable it, copy the `OIDC_*` DEV values from `env.sh` into `backend/.env` — the backend dev server does **not** source `env.sh`.
-- `backend/.env` is gitignored. Never commit it or paste the private key into chat, issues or PRs.
+Paste the key itself, inside single quotes, not the path to the file.
 
-## Step 5: Run
+**Sign-in (auth) is turned on in the example file** (`AUTH_ENABLED='true'`). Left as it is, the backend stops at start-up with a `ZodError` about `authSessionCookieName`, `oidcScopes` and others. Pick one:
+
+1. **Easiest:** set `AUTH_ENABLED='false'`.
+2. **Keep sign-in on:** set `AUTH_COOKIE_SECRET` to a new secret from `pnpm generate:secret`, and remove the `#` from every line in the "Project-level auth settings" block at the bottom of `backend/.env`. Sign-in then uses a local test login server (`apps/local-oidc`) that `pnpm dev` starts for you and that accepts every login.
+
+Also:
+
+- Keep `CORS_ALLOWED_ORIGINS='*'` for local work. An empty value stops the backend.
+- Never set `VCR_PORT` on your machine. It is only for Vonage Cloud Runtime.
+- Never commit `backend/.env` or share the key or secrets.
+
+## 5. Run
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
-Backend on **http://localhost:3345**, Vite on **http://localhost:5173** (open this one). `yarn dev frontend` / `yarn dev backend` run one side; `yarn dev debug` attaches `--inspect` (port 9229) to the backend.
+Open **http://localhost:5173**. The backend runs on port 3345 and the local login server on 3346.
 
-Frontend settings need no setup — `env.sh` is committed and sourced by every frontend Nx target. To change features, theme or backend URL use `/configure` (Claude Code) or `#vera-configure` (kiro).
+- `pnpm dev frontend` or `pnpm dev backend` runs only one part (no login server).
+- `pnpm dev debug` lets you attach a debugger to the backend (port 9229).
 
-**Smoke test:** open `http://localhost:5173`, create a room, allow camera/mic, and join from a second browser tab with the room URL. Two tiles means the backend minted tokens and media flows.
+**Quick test:** create a room, allow camera and mic, then open the room link in a second tab. If you see two videos, everything works.
 
-## Optional pieces
+To change features, theme or backend URL: `/configure` (Claude Code) or `#vera-configure` (kiro).
 
-- **Production-like run** — `yarn start` builds the frontend, copies it into `backend/dist/dist`, bundles the backend and serves everything on **:3345**. Webpack copies `backend/.env` into `backend/dist/` at build time, so after editing `.env` you must rebuild (re-run `yarn start`), not just restart.
-- **Other devices / phones** — tunnel both ports (ngrok config in `docs/GETTING_STARTED.md`), then put `API_URL=https://<backend-tunnel>` and `TUNNEL_DOMAIN=<frontend-tunnel-host>` in `frontend/.env` (copy `frontend/.env.example`). Camera/mic require HTTPS on anything but localhost, which is why a LAN IP over plain HTTP shows no devices.
-- **Backend for the Android/iOS VERA apps** — they have no backend of their own; run this one (`yarn dev backend` is enough). Android emulator reaches it at `http://10.0.2.2:3345`; a physical device needs a tunnel.
-- **Storybook** — `yarn storybook frontend` (:6006) or `yarn storybook ui` (:6007).
-- **Cloud deploy** — `/deploy-vcr` or `#vera-deploy-vcr`.
+## Optional
 
-## Git hooks (what will run on you)
+- **Production-style run:** `pnpm start` builds everything and serves it on port 3345. It copies `backend/.env` into the build, so run it again after you change `.env`.
+- **Test on a phone:** open both ports through a tunnel such as ngrok (see `docs/GETTING_STARTED.md`). Then set `API_URL` and `TUNNEL_DOMAIN` in `frontend/.env` (copy `frontend/.env.example`). Phones need HTTPS for the camera.
+- **Backend for the Android or iOS app:** `pnpm dev backend` (set `AUTH_ENABLED='false'`). The Android emulator uses `http://10.0.2.2:3345`.
+- **Storybook:** `pnpm storybook frontend` (port 6006) or `pnpm storybook ui` (port 6007).
+- **Real sign-in provider (Okta etc.):** `docs/AUTHENTICATION.md`.
+- **Deploy to the cloud:** `/deploy-vcr` or `#vera-deploy-vcr`.
 
-- **pre-commit** → `yarn quality-check` (ts-check + ESLint + Prettier check across the workspace). Fix with `yarn lint:fix`.
-- **pre-push** → `yarn test` (all unit suites) and `yarn nx run common:hash:check`.
-- The hooks source `~/.nvm/nvm.sh` to find `yarn`. If you installed Node another way and the hook says `yarn: not found`, make `yarn` available on the PATH that git hooks get.
-- Don't `--no-verify` past them; CI runs the same checks (`lint.yml`, `run-tests.yml`).
+## Git hooks
 
-## Common failures
+- Before each **commit**, the hook checks types, lint and formatting. Fix most problems with `pnpm lint:fix`.
+- Before each **push**, it runs all unit tests and the `libs/common` hash check.
+- Don't skip them with `--no-verify`; CI runs the same checks.
 
-- **`Missing config values for Vonage`** — `backend/.env` missing or values empty. Step 4.
-- **Rooms fail to create, backend logs VCR / state errors, or it listens on an odd port** — `VCR_PORT` is set. Remove it.
-- **`yarn: command not found`** — Step 2 (`corepack enable`).
-- **`EADDRINUSE :3345` or Vite moved to 5174** — an old `yarn dev`/`yarn start` is still running. `lsof -iTCP:3345 -sTCP:LISTEN`, stop it.
-- **Pre-push: `@vonage/video-common hash check failed`** — you changed `libs/common/src`. Merge the latest `origin/develop`, run `yarn common:hash:update`, commit `libs/common/manifest.json`.
-- **Pre-commit fails on Prettier/ESLint in files you didn't touch** — usually `node_modules` from a different branch; `yarn install`, then `yarn lint:fix`.
-- **Room loads but no camera/mic on another device** — HTTP on a non-localhost origin; use a tunnel (Optional pieces).
-- **Changed `backend/.env`, `yarn start` ignores it** — rebuild; see Optional pieces.
-- **A feature flag edit did nothing** — not a setup problem; `/configure` or `#vera-configure` has the checklist.
+**Known gap:** the git hooks, a few scripts (`ts-check`, `quality-check`, `test:ui`, `test:core`, `test:common`, `test:api`, `common:hash:update`, and `test:backend` without a file) and the Playwright auto-start still call `yarn` internally. If you get `yarn: command not found`, use the pnpm commands in `/run-tests` (`#vera-testing`), which avoid it. For the git hooks and the sign-in tests there is no pnpm-only way yet, so install yarn until those are switched to pnpm.
 
-## Cautions
+## Common problems
 
-- `backend/.env`, `frontend/.env`, `vcr.yml`, `vcr-dev.yml` are gitignored and hold secrets or personal IDs. Keep them out of commits.
-- `env.sh` is generated from `app-config.json`; don't hand-edit it as part of setup.
-- Pull requests target `develop`, not `main` (a workflow retargets them automatically). Branch from `origin/develop`.
+| You see | Fix |
+|---|---|
+| `Dependencies cannot be installed with yarn` / `npm` | Use `pnpm install`. |
+| `pnpm … is too old` or `Permission denied` | `npm i -g pnpm@12.11.2`, then `pnpm install`. |
+| `ZodError` about `authSessionCookieName`, `oidcScopes`, … | Step 4: turn auth off, or uncomment the auth block. |
+| `authCookieSecret: must be 32 bytes` | Put a new `pnpm generate:secret` value in `AUTH_COOKIE_SECRET`. |
+| `Missing config values for Vonage` | Fill `VONAGE_APP_ID` and `VONAGE_PRIVATE_KEY`. |
+| Page can't reach `localhost:3346` | Auth is on but the login server isn't running. Use plain `pnpm dev`, or turn auth off. |
+| `EADDRINUSE` on 3345 or 3346, or Vite uses 5174 | An old run is still going. Stop it (`lsof -iTCP:3345 -sTCP:LISTEN`). |
+| Push fails: `video-reference-apps-common hash check failed` | You changed `libs/common`. Merge the latest `origin/develop`, run `pnpm nx run common:hash:update`, commit `libs/common/manifest.json`. |
+| `yarn: command not found` | See "Known gap" above. |
+| A config change does nothing | `/configure` or `#vera-configure`. |
+
+## Remember
+
+- Never commit `backend/.env`, `frontend/.env`, `vcr-dev.yml` or `integration-tests/auth/backend.env`.
+- Don't edit `env.sh` by hand; it is generated.
+- Pull requests go to `develop`, not `main`.

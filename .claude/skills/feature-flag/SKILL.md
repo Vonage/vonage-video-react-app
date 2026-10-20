@@ -1,86 +1,87 @@
 ---
 name: feature-flag
-description: Add, rename or remove a configuration key / feature flag in the Vonage Video React reference app (VERA web) end-to-end — app-config.json, the shared JSON schema in specs/, scripts/generateEnv.ts, env.sh, the appEnvKeys allow-list in frontend/vite.config.ts, the zod schema in frontend/src/env.ts, the component that reads it, its spec, frontend/.env.example and docs. Use whenever the user wants a new toggle ("make X configurable", "add a flag to hide Y"), a new default value, or touches generateEnv.ts, env.ts or the app-config schema. For flipping a key that already exists use the configure guide instead.
+description: Add, rename or remove a setting / feature flag in the Vonage Video React reference app (VERA web), from start to end — app-config.json, the shared schema in specs/, scripts/generateEnv.ts, env.sh, env.defaults.sh, appEnvKeys in frontend/vite.config.ts, frontend/src/env.ts, the component that uses it, its test, frontend/.env.example and docs. Use when someone wants a new on/off switch ("make X configurable", "add a flag to hide Y"), a new default value, or edits generateEnv.ts, env.ts or the app-config schema. To change a setting that already exists, use the configure guide.
 inclusion: fileMatch
 fileMatchPattern: ['scripts/generateEnv.ts', 'frontend/src/env.ts', 'specs/app-config.schema.json']
 ---
 
-# Adding a config key to VERA Web
+# Adding a setting to VERA Web
 
-In kiro this attaches when the generator, `env.ts` or the schema is in context; pull it in with `#vera-feature-flags` otherwise. Flipping an existing key is `/configure` (Claude Code) or `#vera-configure` (kiro).
+In kiro this loads by itself when one of those files is open; otherwise use `#vera-feature-flags`. To change an existing setting, use `/configure` (`#vera-configure`).
 
-A value travels `app-config.json` → `yarn sync:env` → `env.sh` → `source env.sh` → `frontend/vite.config.ts` (`appEnvKeys` → `__APP_ENV__`) → `frontend/src/env.ts` (`Env`) → `env.MY_FLAG` in a component. **Every hop is an explicit list.** Miss one and the value silently falls back to the default in `env.ts`, which is the most common way a new flag "does nothing".
+A setting passes through **five places**, and each one has its own list. Forget one and the app quietly uses the default — the most common reason a new flag "does nothing".
 
-Worked example: a boolean `meetingRoomSettings.allowRaiseHand` → `ALLOW_RAISE_HAND`, default `true`.
+Example used below: an on/off switch `meetingRoomSettings.allowRaiseHand`, named `ALLOW_RAISE_HAND`, on by default.
 
-## 1. Decide where it lives
+## 1. Pick where it goes
 
-- **Boolean toggle, cross-platform meaning** → a property in the matching `*Settings` group of `app-config.json`. The shared schema allows extra **boolean** keys in every `*Settings` group (`additionalProperties: { "type": "boolean" }`), so it validates even before step 2.
-- **String / number / list, or a new group** → must be declared in `specs/app-config.schema.json` first, otherwise the file stops validating.
-- **Web-only non-boolean tuning value** (like `NOTIFICATION_DURATION_MS`) → not in `app-config.json`; emit a `literal` entry in `scripts/generateEnv.ts`.
-- **Per-environment value** (URLs, hosts) → not in `app-config.json`; it is read from `frontend/.env` or the shell (`API_URL`, `TUNNEL_DOMAIN`, `VONAGE_VIDEO_HOST`). Skip steps 3–4 for those.
+- **On/off switch** → add it to the right `…Settings` group in `app-config.json`. The shared schema already allows extra on/off keys there.
+- **Text, number or list** → first add it to `specs/app-config.schema.json`, or the file won't validate.
+- **Web-only number or text** (like `NOTIFICATION_DURATION_MS`) → put it in `env.defaults.sh` instead: `export NAME="${NAME:-default}"`, with a one-line comment. Public values only. Skip step 3, but still do steps 4 and 5.
+- **Per-machine value** (URLs, hosts) → it belongs in `frontend/.env`, not `app-config.json`. Skip step 3.
 
-## 2. `app-config.json` and the shared schema
+## 2. `app-config.json` and the schema
 
 ```jsonc
-// app-config.json → meetingRoomSettings
+// app-config.json, inside meetingRoomSettings
 "allowRaiseHand": true
 ```
 
-Document it in `specs/app-config.schema.json` under the same group: `"type"`, a one-line `"description"`, and `"x-envVar": "ALLOW_RAISE_HAND"`. Add it to `"required"` only if every platform's config will have it.
+In `specs/app-config.schema.json`, under the same group, add `"type"`, a short `"description"` and `"x-envVar": "ALLOW_RAISE_HAND"`.
 
-**This schema is shared with the mobile apps** — the Android repo's CI and its config TUI download `specs/app-config.schema.json` (and `theme.schema.json`) from this repo's `develop` branch. Adding a required key or tightening a type breaks their config validation until they follow. Additive, optional booleans are safe.
+The Android repo also checks its config against this schema (from `develop`). Adding an optional on/off key is safe. Making a key required, or changing a type, breaks their checks until they update.
 
-## 3. Generator: `scripts/generateEnv.ts`
+## 3. `scripts/generateEnv.ts`
 
-Add an entry to `envVariables` (array order = order of exports in `env.sh`; put it near its group):
+Add a line to the matching group in `envVariableGroups`:
 
 ```ts
 { name: 'ALLOW_RAISE_HAND', sourcePath: 'meetingRoomSettings.allowRaiseHand', format: 'raw' },
 ```
 
-`format: 'raw'` for booleans/numbers, `'string'` for single-quoted strings, `join: '|'` for arrays, `valueMap` when the shared enum differs from the web value (see `DEFAULT_LAYOUT_MODE`). A missing `sourcePath` makes the generator exit with `Missing value in app-config.json for path …`.
+Use `format: 'raw'` for true/false and numbers, `'string'` for text, `join: '|'` for lists. Then:
 
 ```bash
-yarn sync:env
-git diff env.sh
+pnpm sync:env
+git diff env.sh      # should show only your new line
 ```
 
-The diff must show only your new export. **`sync:env` also deletes the hand-maintained `AUTH_*` / `OIDC_*` block at the end of `env.sh`** — restore it (`git checkout -p env.sh`) before committing.
+## 4. `frontend/vite.config.ts`
 
-## 4. Allow-list: `frontend/vite.config.ts`
+Add `'ALLOW_RAISE_HAND'` to `appEnvKeys`. Only names in this list reach the browser.
 
-Add `'ALLOW_RAISE_HAND'` to `appEnvKeys`. Only listed keys are copied into `__APP_ENV__`; anything else in `env.sh` never reaches the browser. (Several documented values — `NOTIFICATION_DURATION_MS`, the bitrate bounds, `SUPPORTED_FRAME_RATES`, `PUBLISHER_MAX_RESOLUTION`, `ARCHIVES_REFRESH_INTERVAL_MS` — are missing from this list today and are therefore always their `env.ts` defaults.)
+## 5. `frontend/src/env.ts`
 
-## 5. Parse it: `frontend/src/env.ts`
-
-Two edits in the same file:
+Two changes in the same file:
 
 ```ts
-// EnvironmentVariablesSchema
+// in EnvironmentVariablesSchema
 ALLOW_RAISE_HAND: boolean({ default: true }),
 
-// class Env
+// in class Env
 public ALLOW_RAISE_HAND!: boolean;
 ```
 
-Use the existing field helpers (`boolean`, `integer`, `stringField`, `langListField`, `intListField`, `ResolutionSchema`). The default here is what unit tests, Storybook-without-env and any missing value get — make it the safe production behaviour.
+The default is what tests and missing values get, so make it the safe choice.
 
-## 6. Read it where it's used
+## 6. Use it
 
-```ts
+```tsx
 import { env } from '<relative path>/env';
 
-{env.ALLOW_RAISE_HAND && <RaiseHandButton ... />}
+{env.ALLOW_RAISE_HAND && <RaiseHandButton />}
 ```
 
-Follow the repo rules in `CLAUDE.md`: the **parent decides visibility** — gate the component where it's rendered; a reusable component must not read `env` and return `null`. Vera-specific flags stay in `frontend`; never import `env` into `libs/ui`, `libs/core` or `libs/common` (they are app-agnostic), pass a prop instead.
+Repo rules (`CLAUDE.md`):
+
+- The **parent** decides whether to show a component. Don't make the component return `null` itself.
+- Only `frontend` reads `env`. Never import it into `libs/ui`, `libs/core` or `libs/common`; pass a prop instead.
 
 ## 7. Test it
 
-Vitest runs with `mode === 'test'`, so **no** env values are injected and `Env` defaults apply. Flip the flag per test; `frontend/src/test/setup.ts` calls `env.reset()` after each:
+Tests always use the defaults from `env.ts`. Turn the flag off inside the test (it's reset after each test):
 
-```ts
+```tsx
 it('hides the raise-hand button when allowRaiseHand is false', () => {
   env.partialUpdate({ ALLOW_RAISE_HAND: false });
   render(<Toolbar />);
@@ -88,24 +89,24 @@ it('hides the raise-hand button when allowRaiseHand is false', () => {
 });
 ```
 
-One "off" case next to the existing "on" behaviour is enough (repo rule: avoid overtesting). Run it: `yarn test:frontend <path to spec>` (`/run-tests`, `#vera-testing`).
+One "off" test is enough. Run it with `pnpm test:frontend <path to the test file>`.
 
-## 8. Document
+## 8. Document it
 
-- `frontend/.env.example` — add a commented `# ALLOW_RAISE_HAND=true` line in the matching block.
-- `docs/CONFIGURATION.md` — add a row to the matching table (variable, type, default, values, description).
+- `frontend/.env.example`: add a commented line, `# ALLOW_RAISE_HAND=true`.
+- `docs/CONFIGURATION.md`: add a row to the right table.
 
 ## Renaming or removing
 
-Do the same hops in reverse and grep both names across `app-config.json specs scripts frontend docs integration-tests`. Removing a key from `app-config.json` while the generator still maps it fails `yarn sync:env` loudly — good. Removing it only from `appEnvKeys` fails silently — bad; grep.
+Do the same steps backwards, then search for the old name in `app-config.json`, `specs`, `scripts`, `frontend`, `docs` and `integration-tests`.
 
-## Done checklist
+## Checklist
 
-- [ ] `app-config.json` value, schema entry with `x-envVar`
-- [ ] `generateEnv.ts` entry; `yarn sync:env`; `env.sh` diff is one line; OIDC block intact
+- [ ] `app-config.json` + schema entry with `x-envVar`
+- [ ] `generateEnv.ts` line (or `env.defaults.sh`), `pnpm sync:env`, one-line diff
 - [ ] `appEnvKeys` in `frontend/vite.config.ts`
-- [ ] `EnvironmentVariablesSchema` **and** class field in `env.ts`
-- [ ] consumer gated by the parent; spec with `env.partialUpdate`
+- [ ] schema **and** class field in `env.ts`
+- [ ] parent decides visibility; one test with `env.partialUpdate`
 - [ ] `.env.example` + `docs/CONFIGURATION.md`
-- [ ] restarted `yarn dev` and saw it work with the flag both ways (toggle via `frontend/.env` for a quick check)
-- [ ] `yarn quality-check frontend` passes
+- [ ] restarted `pnpm dev` and tried the flag both ways (quickest: set it in `frontend/.env`)
+- [ ] `pnpm lint` and `pnpm nx run-many -t ts-check -p frontend` pass
