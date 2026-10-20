@@ -183,16 +183,20 @@ class UpstashRedisSessionStorage implements SessionStorage {
 
   async decrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
     const key = makeKey(StorageResource.CaptionsUserCount, sessionKey);
-    const [captionsUserCount] = await this.pipeline([
-      ['DECR', key],
-      ['EXPIRE', key, ENTRY_EXPIRATION_TIME],
+    // Clamp and expire inside Redis so a delayed response cannot delete a concurrent join.
+    const captionsUserCount = await this.command([
+      'EVAL',
+      `local count = redis.call('DECR', KEYS[1])
+       if count <= 0 then
+         redis.call('DEL', KEYS[1])
+         return 0
+       end
+       redis.call('EXPIRE', KEYS[1], ARGV[1])
+       return count`,
+      1,
+      key,
+      ENTRY_EXPIRATION_TIME,
     ]);
-
-    const isBelowZero = Number(captionsUserCount) < 0;
-    if (isBelowZero) {
-      await this.delete(key);
-      return 0;
-    }
     return Number(captionsUserCount);
   }
 

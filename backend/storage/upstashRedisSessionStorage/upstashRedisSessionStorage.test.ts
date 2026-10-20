@@ -13,6 +13,17 @@ const makeFakeUpstash = () => {
   const execute = ([name, key, ...args]: RedisCommand) => {
     const redisKey = String(key);
     switch (name) {
+      case 'EVAL': {
+        const counterKey = String(args[1]);
+        const count = Math.max(0, Number(values.get(counterKey) ?? 0) - 1);
+        if (count === 0) {
+          values.delete(counterKey);
+        } else {
+          values.set(counterKey, String(count));
+          expirations.set(counterKey, Number(args[2]));
+        }
+        return { result: count };
+      }
       case 'GET':
         return { result: values.get(redisKey) ?? null };
       case 'SET':
@@ -99,6 +110,27 @@ describe('UpstashRedisSessionStorage', () => {
     expect(await storage.decrementCaptionsUserCount({ sessionKey: 'key' })).toBe(0);
     expect(await storage.decrementCaptionsUserCount({ sessionKey: 'key' })).toBe(0);
     expect(fakeUpstash.values.has('key:captionsUserCount')).toBe(false);
+  });
+
+  it('preserves concurrent joins when a decrement response is delayed', async () => {
+    const executeRequest = fakeUpstash.fetchMock.getMockImplementation()!;
+    const decrementExecuted = Promise.withResolvers<void>();
+    const releaseResponse = Promise.withResolvers<void>();
+    fakeUpstash.fetchMock.mockImplementationOnce(async (url, init) => {
+      const response = await executeRequest(url, init);
+      decrementExecuted.resolve();
+      await releaseResponse.promise;
+      return response;
+    });
+
+    const decrement = storage.decrementCaptionsUserCount({ sessionKey: 'key' });
+    await decrementExecuted.promise;
+    await storage.incrementCaptionsUserCount({ sessionKey: 'key' });
+    await storage.incrementCaptionsUserCount({ sessionKey: 'key' });
+    releaseResponse.resolve();
+    expect(await decrement).toBe(0);
+    expect(fakeUpstash.values.get('key:captionsUserCount')).toBe('2');
+    expect(await storage.decrementCaptionsUserCount({ sessionKey: 'key' })).toBe(1);
   });
 
   it('throws when Upstash rejects the request', async () => {

@@ -3,6 +3,10 @@
 import { execSync } from 'child_process';
 import { cpSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 
+// Build tooling intentionally reads the application's policy to keep CDN and Express headers aligned.
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import getVercelHeaders from '../backend/middleware/helmetMiddleware/getVercelHeaders';
+
 const args = process.argv.slice(2);
 
 /**
@@ -93,7 +97,7 @@ const buildVercel = () => {
         routes: [
           {
             src: '/(.*)',
-            headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+            headers: getVercelHeaders(),
             continue: true,
           },
           { src: VERCEL_API_ROUTE, dest: '/api' },
