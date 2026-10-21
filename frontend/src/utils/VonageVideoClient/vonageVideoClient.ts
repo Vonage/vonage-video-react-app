@@ -507,14 +507,22 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     // the following is needed for the local subscriber to be able to receive captions
     // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
     if (publisher.stream) {
-      this.hiddenSubscriber =
-        this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
-          audioVolume: 0,
-        }) ?? null;
+      try {
+        this.hiddenSubscriber = await this.clientSession.subscribe.promise(
+          publisher.stream,
+          document.createElement('div'),
+          { audioVolume: 0 }
+        );
 
-      this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
-        this.emit('localCaptionReceived', captionEvent);
-      });
+        this.hiddenSubscriber.on('captionReceived', (captionEvent) => {
+          this.emit('localCaptionReceived', captionEvent);
+        });
+      } catch (error) {
+        frontendLogger.reportError(error, {
+          eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
+          partnerId: this.applicationId,
+        });
+      }
     }
   };
 

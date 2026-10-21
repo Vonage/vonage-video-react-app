@@ -33,6 +33,7 @@ const mockSubscriber = Object.assign(new EventEmitter(), {
 const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
 const mockSubscribe = vi.fn();
+const mockSubscribePromise = vi.fn();
 const mockDisconnect = vi.fn();
 const mockPublish = vi.fn();
 const mockPublishPromise = vi.fn();
@@ -55,7 +56,7 @@ describe('VonageVideoClient', () => {
 
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
-      subscribe: mockSubscribe,
+      subscribe: Object.assign(mockSubscribe, { promise: mockSubscribePromise }),
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
       publish: Object.assign(mockPublish, { promise: mockPublishPromise }),
@@ -73,6 +74,7 @@ describe('VonageVideoClient', () => {
       callback();
     });
     mockSubscribe.mockReturnValue(mockSubscriber);
+    mockSubscribePromise.mockResolvedValue(mockSubscriber);
     mockPublishPromise.mockResolvedValue(undefined);
 
     vonageVideoClient = new VonageVideoClient(fakeCredentials);
@@ -268,9 +270,40 @@ describe('VonageVideoClient', () => {
       await vonageVideoClient?.connect();
       await vonageVideoClient?.publish(streamPublisher);
 
-      expect(mockSubscribe).toHaveBeenCalledWith(mockStream, expect.anything(), {
+      expect(mockSubscribePromise).toHaveBeenCalledWith(mockStream, expect.anything(), {
         audioVolume: 0,
       });
+
+      const localCaptionReceivedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('localCaptionReceived', resolve);
+      });
+
+      mockSubscriber.emit('captionReceived', { caption: 'hello' });
+
+      await expect(localCaptionReceivedPromise).resolves.toEqual({ caption: 'hello' });
+    });
+
+    it('resolves publish and reports the error when the hidden subscriber fails to attach', async () => {
+      const mockStream = { streamId: 'stream-id' } as unknown as Stream;
+      const streamPublisher = { ...mockPublisher, stream: mockStream } as unknown as Publisher;
+      const hiddenSubscriberError = new Error('Hidden subscriber failed');
+      mockSubscribePromise.mockRejectedValueOnce(hiddenSubscriberError);
+
+      await vonageVideoClient?.connect();
+
+      await expect(vonageVideoClient?.publish(streamPublisher)).resolves.toBeUndefined();
+      await wait(0);
+
+      expect(mockProvider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: hiddenSubscriberError.name,
+          message: hiddenSubscriberError.message,
+        }),
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
+          partnerId: fakeApplicationId,
+        })
+      );
     });
 
     it('should throw an error if publishing fails', async () => {
