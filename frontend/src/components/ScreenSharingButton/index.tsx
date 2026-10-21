@@ -1,3 +1,2 @@
-import ScreenSharingButton from './ScreenSharingButton';
-
-export default ScreenSharingButton;
+export { default } from './ScreenSharingButton';
+export { default as shouldDisplayScreenShareButton } from './shouldDisplayScreenShareButton';

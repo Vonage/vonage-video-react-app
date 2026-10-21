@@ -5,6 +5,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  backgroundEffectsText: 'background-effects-text',
+} as const;
+
 export type VideoDevicesOptionsProps = {
   toggleBackgroundEffects: () => void;
 };
@@ -23,13 +27,7 @@ const VideoDevicesOptions = ({
   const { t } = useTranslation();
 
   return (
-    <MenuList
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        mt: 1,
-      }}
-    >
+    <MenuList className="flex flex-col">
       <MenuItem onClick={toggleBackgroundEffects} className="gap-4 hover:bg-vera-background">
         <VividIcon
           name="background-blur-light-line"
@@ -37,7 +35,7 @@ const VideoDevicesOptions = ({
           className="text-inherit"
           aria-hidden="true"
         />
-        <Typography data-testid="background-effects-text" sx={{ mr: 2 }}>
+        <Typography data-testid={testIds.backgroundEffectsText} className="mr-4!">
           {t('backgroundEffects.title')}
         </Typography>
       </MenuItem>

@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  button: 'report-issue-button',
+} as const;
+
 export type ReportIssueButtonProps = {
   handleClick: () => void;
   isOpen: boolean;
@@ -34,17 +38,13 @@ const ReportIssueButton = ({
       aria-label={t('feedbackForm.ariaLabel')}
     >
       <ToolbarButton
-        data-testid="report-issue-button"
-        sx={{
-          marginTop: '0px',
-          marginRight: '12px',
-        }}
+        data-testid={testIds.button}
         onClick={handleClick}
         icon={
           <VividIcon
             customSize={-5}
             name="feedback-solid"
-            style={{ color: isOpen ? 'var(--vera-secondary)' : 'var(--vera-on-secondary-light)' }}
+            className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
           />
         }
         ref={anchorRef}
