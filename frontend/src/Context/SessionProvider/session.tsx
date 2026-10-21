@@ -469,7 +469,9 @@ const SessionProvider = ({
     });
 
     if (doesStreamStillExistInSession) {
-      void vonageVideoClient.current!.resubscribeToStreamId(streamId);
+      vonageVideoClient.current!.resubscribeToStreamId(streamId).catch((err) => {
+        frontendLogger.reportError(err, { eventSource: 'session.resubscribeToStreamId' });
+      });
       console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
