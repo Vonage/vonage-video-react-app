@@ -134,7 +134,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.streams.delete(streamId);
   }
 
-  private subscribeToStream = async (stream: Stream) => {
+  private subscribeToStream = async (
+    stream: Stream,
+    { rethrowOnError = false }: { rethrowOnError?: boolean } = {}
+  ) => {
     if (this.disconnected) {
       return;
     }
@@ -206,6 +209,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       // Only emit subscriptionError for critical errors
       console.error('[SUBSCRIBER] Critical subscription error:', syncError);
       this.handleSubscriptionError(syncError);
+
+      if (rethrowOnError) {
+        throw syncError;
+      }
     }
   };
 
@@ -231,7 +238,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return;
     }
 
-    await this.subscribeToStream(stream);
+    await this.subscribeToStream(stream, { rethrowOnError: true });
   };
 
   /**
