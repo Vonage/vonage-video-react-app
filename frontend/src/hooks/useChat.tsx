@@ -3,12 +3,8 @@ import { useTranslation } from 'react-i18next';
 import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
 import { SignalType } from '../types/session';
-import frontendLogger from '../logger';
-
-export type ChatSendErrorType = {
-  header: string;
-  caption: string;
-} | null;
+import { notifications$ } from '@core/stores';
+import { env } from '../env';
 
 export type UseChatProps = {
   signal: ((data: SignalType) => Promise<void>) | undefined;
@@ -19,7 +15,6 @@ export type UseChat = {
   messages: ChatMessageType[];
   onChatMessage: (data: string) => void;
   sendChatMessage: (text: string) => Promise<void>;
-  chatSendError: ChatSendErrorType;
 };
 /**
  * React hook to store ChatMessage array in state and provider functions for sending and receiving chat messages
@@ -30,12 +25,10 @@ export type UseChat = {
  *   @property {ChatMessageType[]} messages - array of chat messages
  *   @property {(data: string) => void} onChatMessage - new message handler
  *   @property {(text: string) => Promise<void>} sendChatMessage - function to send message
- *   @property {ChatSendErrorType} chatSendError - error state for a failed chat send
  */
 const useChat = ({ signal, reconnecting }: UseChatProps): UseChat => {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  const [chatSendError, setChatSendError] = useState<ChatSendErrorType>(null);
   const reconnectingRef = useRef(false);
   reconnectingRef.current = reconnecting === true;
   const {
@@ -59,13 +52,12 @@ const useChat = ({ signal, reconnecting }: UseChatProps): UseChat => {
           }),
           retryAfterReconnect: true,
         });
-        setChatSendError(null);
-      } catch (err) {
+      } catch {
         if (reconnectingRef.current) return;
-        frontendLogger.reportError(err, { eventSource: 'useChat.sendChatMessage' });
-        setChatSendError({
-          header: t('chatErrors.sendFailed.title'),
-          caption: t('chatErrors.sendFailed.message'),
+        notifications$.actions.push({
+          type: 'error',
+          message: t('chatErrors.sendFailed'),
+          expirationMs: env.NOTIFICATION_DURATION_MS,
         });
       }
     },
@@ -95,7 +87,6 @@ const useChat = ({ signal, reconnecting }: UseChatProps): UseChat => {
     messages,
     onChatMessage,
     sendChatMessage,
-    chatSendError,
   };
 };
 

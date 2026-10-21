@@ -1,13 +1,10 @@
-import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
+import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useChat from '../useChat';
-import frontendLogger from '../../logger';
+import { notifications$ } from '@core/stores';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 const mockSignal = vi.fn();
-const mockProvider = { log: vi.fn(), reportError: vi.fn() };
-
-frontendLogger.setup(() => mockProvider);
 
 describe('useChat', () => {
   beforeEach(() => {
@@ -51,9 +48,9 @@ describe('useChat', () => {
     });
   });
 
-  it('surfaces a visible chatSendError when the signal rejects outside of reconnection', async () => {
-    const fakeError = new Error('signal failed');
-    mockSignal.mockRejectedValueOnce(fakeError);
+  it('pushes a visible error notification when the signal rejects outside of reconnection', async () => {
+    mockSignal.mockRejectedValueOnce(new Error('signal failed'));
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: false }));
 
@@ -61,21 +58,18 @@ describe('useChat', () => {
       await result.current.sendChatMessage('Hello there!');
     });
 
-    await waitFor(() =>
-      expect(result.current.chatSendError).toEqual({
-        header: 'Message not sent',
-        caption: "Your message couldn't be sent. Please check your network and try again.",
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'error',
+        message: "Your message couldn't be sent. Please check your network and try again.",
       })
     );
-    expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
-    const [reportedError, context] = mockProvider.reportError.mock.calls[0];
-    expect(reportedError).toMatchObject({ message: fakeError.message });
-    expect(context).toEqual({ eventSource: 'useChat.sendChatMessage' });
   });
 
-  it('does not surface an error when the signal fails during reconnection', async () => {
-    expect.assertions(2);
+  it('does not push a notification when the signal fails during reconnection', async () => {
+    expect.assertions(1);
     mockSignal.mockRejectedValueOnce(new Error('signal failed'));
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: true }));
 
@@ -83,8 +77,7 @@ describe('useChat', () => {
       await result.current.sendChatMessage('Hello there!');
     });
 
-    expect(result.current.chatSendError).toBeNull();
-    expect(mockProvider.reportError).not.toHaveBeenCalled();
+    expect(pushSpy).not.toHaveBeenCalled();
   });
 });
 

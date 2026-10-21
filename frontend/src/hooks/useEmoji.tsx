@@ -52,7 +52,7 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
         }
 
         const data = JSON.stringify({ emoji, time: new Date().getTime() });
-        signal({ type: 'emoji', data })?.catch(() => {});
+        signal({ type: 'emoji', data, retryAfterReconnect: false })?.catch(() => {});
       },
       500,
       { leading: true, trailing: false }
