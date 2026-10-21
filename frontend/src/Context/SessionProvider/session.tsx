@@ -266,6 +266,10 @@ const SessionProvider = ({
   } = useRightPanel();
 
   const handleChatSignal = ({ data }: SignalEvent) => {
+    if (!env.ALLOW_CHAT) {
+      throw new Error('Chat signal received while chat is disabled');
+    }
+
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
@@ -464,13 +468,13 @@ const SessionProvider = ({
       return vonageVideoClient.current.hasStream(streamId);
     })();
 
-    console.warn(`Subscriber with stream ID ${streamId} destroyed`, {
+    frontendLogger.log('Session:SubscriberDestroyed', {
+      streamId,
       doesStreamStillExistInSession,
     });
 
     if (doesStreamStillExistInSession) {
       void vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
     destroySubscriber(streamId);
@@ -500,7 +504,7 @@ const SessionProvider = ({
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session:SubscriptionErrorIgnoredInReconnection', {
           reconnecting,
           isBrowserOnline,
         });
@@ -531,7 +535,10 @@ const SessionProvider = ({
       vonageVideoClient.current.on('sessionDisconnected', handleSessionDisconnected);
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
-      vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      const isChatAllowed = env.ALLOW_CHAT;
+      if (isChatAllowed) {
+        vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      }
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',

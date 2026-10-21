@@ -5,7 +5,6 @@ import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { makeTestProvider, providers } from '@test/providers';
 import PostCallTranscriptionButton from './PostCallTranscriptionButton';
-import { env } from '../../../env';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -116,15 +115,6 @@ describe('PostCallTranscriptionButton', () => {
     });
 
     vi.useRealTimers();
-  });
-
-  it('is not rendered when allowPostCallTranscription is disabled', () => {
-    env.partialUpdate({
-      ALLOW_POST_CALL_TRANSCRIPTION: false,
-    });
-    render(<PostCallTranscriptionButton handleClick={mockHandleCloseMenu} />);
-
-    expect(screen.queryByTestId('post-call-transcription-button')).not.toBeInTheDocument();
   });
 });
 

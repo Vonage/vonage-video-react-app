@@ -188,7 +188,6 @@ These are runtime/environment values and are **not** generated from `app-config.
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
-| `DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Enable device selection globally |
 | `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors in the waiting room |
 | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors inside the meeting room |
 
