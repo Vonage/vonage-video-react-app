@@ -26,9 +26,12 @@ import isErrorLike from '@common/assertions/isErrorLike';
 import frontendLogger from '../../logger';
 import { decodeSessionKey } from '@common/helpers';
 
+export type ArchiveStartedEvent = { id: string; name: string };
+export type ArchiveStoppedEvent = { id: string; name: string };
+
 type VonageVideoClientEvents = {
-  archiveStarted: [string];
-  archiveStopped: [];
+  archiveStarted: [ArchiveStartedEvent];
+  archiveStopped: [ArchiveStoppedEvent];
   screenshareStreamCreated: [];
   sessionDisconnected: [{ reason?: string }];
   sessionReconnected: [];
@@ -94,7 +97,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private attachEventListeners = () => {
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
-    this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
+    this.clientSession.on('archiveStopped', (event) => this.handleArchiveStopped(event));
     this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
@@ -451,19 +454,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when an archive starts.
-   * @param {{ id: string }} param - The archive ID.
+   * @param {{ id: string; name: string }} param - The archive ID and name.
    * @private
    */
-  private handleArchiveStarted = ({ id }: { id: string }) => {
-    this.emit('archiveStarted', id);
+  private handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
+    this.emit('archiveStarted', { id, name });
   };
 
   /**
    * Emits an event when an archive stops.
+   * @param {{ id: string; name: string }} param - The archive ID and name.
    * @private
    */
-  private handleArchiveStopped = () => {
-    this.emit('archiveStopped');
+  private handleArchiveStopped = ({ id, name }: { id: string; name: string }) => {
+    this.emit('archiveStopped', { id, name });
   };
 
   /**

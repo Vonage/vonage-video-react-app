@@ -13,10 +13,10 @@ function runCommand(command: string): void {
 }
 
 /**
- * Runs both frontend and backend in development mode.
+ * Runs frontend, backend and the local OIDC provider in development mode.
  */
 function devAll(): void {
-  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:dev'");
+  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:dev' 'nx run local-oidc:dev'");
 }
 
 /**
@@ -51,14 +51,16 @@ function devBackendDebugWait(): void {
  * Runs frontend in dev mode and backend in debug mode (node --inspect on port 9229).
  */
 function devDebug(): void {
-  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:debug'");
+  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:debug' 'nx run local-oidc:dev'");
 }
 
 /**
  * Runs frontend in dev mode and backend in debug mode with --inspect-brk (waits for debugger).
  */
 function devDebugWait(): void {
-  runCommand("concurrently 'nx run frontend:dev' 'nx run backend:debug:wait'");
+  runCommand(
+    "concurrently 'nx run frontend:dev' 'nx run backend:debug:wait' 'nx run local-oidc:dev'"
+  );
 }
 
 /**

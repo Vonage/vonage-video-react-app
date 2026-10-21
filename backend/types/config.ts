@@ -32,10 +32,12 @@ export type OpentokConfig = {
 export type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 
 import type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+import type { CorsConfig } from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 
 export type Config = (VonageConfig | OpentokConfig) &
   FeedbackConfig &
   LoggerConfig &
-  AuthConfig & {
+  AuthConfig &
+  CorsConfig & {
     sessionKeySecret: string;
   };
