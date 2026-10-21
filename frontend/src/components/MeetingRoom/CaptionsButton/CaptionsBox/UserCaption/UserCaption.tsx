@@ -3,6 +3,7 @@ import { ReactElement, useState, useRef, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import useReceivingCaptions from '../../../../../hooks/useReceivingCaptions';
+import useCaptionsTranslation from './hooks/useCaptionsTranslation';
 import { CAPTION_DISPLAY_DURATION_MS } from '../../../../../utils/constants';
 
 export type UserCaptionProps = {
@@ -28,6 +29,7 @@ const UserCaption = ({
   const { caption: captionText, isReceivingCaptions } = useReceivingCaptions({
     subscriber,
   });
+  useCaptionsTranslation(subscriber);
 
   const displayCaption = caption ?? captionText;
   const isActive = Boolean(caption ?? isReceivingCaptions);

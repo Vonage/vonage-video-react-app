@@ -197,6 +197,11 @@
           "description": "When true, live captions can be enabled during the meeting.",
           "x-envVar": "ALLOW_CAPTIONS"
         },
+        "allowCaptionTranslation": {
+          "type": "boolean",
+          "description": "When true and captions are allowed, users can choose a translation language for the captions they receive.",
+          "x-envVar": "ALLOW_CAPTION_TRANSLATION"
+        },
         "allowChat": {
           "type": "boolean",
           "description": "When true, the in-meeting text chat is available.",

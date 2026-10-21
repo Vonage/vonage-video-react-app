@@ -199,6 +199,7 @@ These are runtime/environment values and are **not** generated from `app-config.
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
 | `ALLOW_CAPTIONS` | `boolean` | `true` | `true` \| `false` | Enable live captions |
+| `ALLOW_CAPTION_TRANSLATION` | `boolean` | `false` | `true` \| `false` | Show the Captions settings tab to translate received captions (requires `ALLOW_CAPTIONS`) |
 | `ALLOW_CHAT` | `boolean` | `true` | `true` \| `false` | Enable the in-call group chat |
 | `ALLOW_EMOJIS` | `boolean` | `true` | `true` \| `false` | Enable emoji reactions |
 | `ALLOW_SCREEN_SHARE` | `boolean` | `true` | `true` \| `false` | Enable screen sharing |

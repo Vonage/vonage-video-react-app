@@ -142,6 +142,11 @@ const envVariableGroups: EnvVariableGroup[] = [
       },
       { name: 'ALLOW_ARCHIVING', sourcePath: 'meetingRoomSettings.allowArchiving', format: 'raw' },
       { name: 'ALLOW_CAPTIONS', sourcePath: 'meetingRoomSettings.allowCaptions', format: 'raw' },
+      {
+        name: 'ALLOW_CAPTION_TRANSLATION',
+        sourcePath: 'meetingRoomSettings.allowCaptionTranslation',
+        format: 'raw',
+      },
       { name: 'ALLOW_CHAT', sourcePath: 'meetingRoomSettings.allowChat', format: 'raw' },
       { name: 'ALLOW_EMOJIS', sourcePath: 'meetingRoomSettings.allowEmojis', format: 'raw' },
       {
