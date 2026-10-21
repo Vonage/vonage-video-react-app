@@ -11,6 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
 import usePushToTalk from '@hooks/usePushToTalk';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import { env } from '../../../env';
 
 export const testIds = {
@@ -51,6 +52,11 @@ const DeviceControlButton = ({
   const [open, setOpen] = useState<boolean>(false);
   const anchorRef = useRef<HTMLInputElement | null>(null);
   const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
+  const shouldDisplayBackgroundEffects =
+    hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
+  const hasDeviceSettings = isAudio
+    ? env.MEETING_ROOM_ALLOW_DEVICE_SELECTION
+    : env.MEETING_ROOM_ALLOW_DEVICE_SELECTION || shouldDisplayBackgroundEffects;
 
   const tooltipTitle = getControlButtonTooltip({
     isAudio,
@@ -159,30 +165,32 @@ const DeviceControlButton = ({
         ref={anchorRef}
         aria-label={t('devices.buttons.ariaLabel')}
       >
-        <IconButton
-          size="small"
-          aria-controls={open ? 'split-button-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
-          aria-haspopup="menu"
-          onClick={handleToggle}
-          className="size-11 rounded-[50%]!"
-          data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
-        >
-          {open ? (
-            <VividIcon
-              name="chevron-down-line"
-              customSize={-6}
-              className="text-vera-on-secondary-light"
-            />
-          ) : (
-            <VividIcon
-              name="chevron-up-line"
-              customSize={-6}
-              className="text-vera-on-secondary-light"
-            />
-          )}
-        </IconButton>
+        {hasDeviceSettings && (
+          <IconButton
+            size="small"
+            aria-controls={open ? 'split-button-menu' : undefined}
+            aria-expanded={open ? 'true' : undefined}
+            aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
+            aria-haspopup="menu"
+            onClick={handleToggle}
+            className="size-11 rounded-[50%]!"
+            data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
+          >
+            {open ? (
+              <VividIcon
+                name="chevron-down-line"
+                customSize={-6}
+                className="text-vera-on-secondary-light"
+              />
+            ) : (
+              <VividIcon
+                name="chevron-up-line"
+                customSize={-6}
+                className="text-vera-on-secondary-light"
+              />
+            )}
+          </IconButton>
+        )}
         <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
           <Box>
             {/* We add the Box here so that the tooltip is present if the button is disabled */}
@@ -200,15 +208,17 @@ const DeviceControlButton = ({
           </Box>
         </Tooltip>
       </ButtonGroup>
-      <DeviceSettingsMenu
-        deviceType={deviceType}
-        handleToggle={handleToggle}
-        toggleBackgroundEffects={toggleBackgroundEffects}
-        anchorRef={anchorRef}
-        isOpen={open}
-        handleClose={handleClose}
-        setIsOpen={setOpen}
-      />
+      {hasDeviceSettings && (
+        <DeviceSettingsMenu
+          deviceType={deviceType}
+          handleToggle={handleToggle}
+          toggleBackgroundEffects={toggleBackgroundEffects}
+          anchorRef={anchorRef}
+          isOpen={open}
+          handleClose={handleClose}
+          setIsOpen={setOpen}
+        />
+      )}
     </>
   );
 };

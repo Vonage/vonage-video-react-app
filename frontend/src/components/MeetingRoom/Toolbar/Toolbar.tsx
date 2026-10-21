@@ -230,8 +230,8 @@ const Toolbar = ({
       <Box
         ref={rightPanelControlsRef}
         className={classNames('ml-3 box-border justify-end gap-3 pr-3', {
-          flex: displayRightPanel,
-          hidden: !displayRightPanel,
+          flex: displayRightPanel || displayTimeRoomName,
+          hidden: !displayRightPanel && !displayTimeRoomName,
           'flex-1': displayTimeRoomName,
           'flex-initial': !displayTimeRoomName,
         })}
