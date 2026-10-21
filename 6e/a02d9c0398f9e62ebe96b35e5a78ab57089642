@@ -1,0 +1,109 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_737cf808c1c597 33
+  s_7a55de52f3f119::t_cfc0c01db3328d 7,9-16,22,26
+frontend/src/locales/it.json
+  s_7a55de52f3f119::t_f2a94b98336e68 20
+  h_737cf808c1c597 103-105
+frontend/src/locales/es.json
+  s_7a55de52f3f119::t_36956bcf7e5501 20
+  h_737cf808c1c597 103-105
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  s_7a55de52f3f119::t_2f304ac980bc6a 62
+  h_737cf808c1c597 7,243-247
+libs/api/src/schemas/CaptionOptions.schema.ts
+  s_7a55de52f3f119::t_210835bfe360d3 3,10
+frontend/.env.example
+  s_7a55de52f3f119::t_4d613576b62f20 30
+frontend/src/components/AdvancedSettingsDialog/schemas/index.ts
+  s_7a55de52f3f119::t_cd4f4a0722fa4f 5
+libs/api/src/schemas/CaptionsTranslationLevel.schema.ts
+  s_7a55de52f3f119::t_12e6d3d9d3b81e 1-19
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.tsx
+  s_7a55de52f3f119::t_ee6ff19519689c 5
+  s_7a55de52f3f119::t_2364710e88bbf2 2-4
+  s_7a55de52f3f119::t_7ddb7bba70c327 6-8
+  h_737cf808c1c597 1,9-72
+frontend/src/locales/es-MX.json
+  s_7a55de52f3f119::t_a8768b5785909b 20
+  h_737cf808c1c597 103-105
+specs/app-config.schema.json
+  s_7a55de52f3f119::t_8c886d35827f4f 200-204
+docs/CONFIGURATION.md
+  s_7a55de52f3f119::t_ca6473ca77a757 202
+frontend/src/components/AdvancedSettingsDialog/schemas/captionsTranslationLanguage.schema.ts
+  s_7a55de52f3f119::t_9a725253a8c9c3 1-67
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_737cf808c1c597 13-14
+  s_7a55de52f3f119::t_6b3d6fffec5d13 26-30
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.spec.ts
+  s_7a55de52f3f119::t_3550995109df59 1-47
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.spec.tsx
+  s_7a55de52f3f119::t_659e736d49b9b7 32-33
+frontend/src/locales/en.json
+  h_737cf808c1c597 103-105
+  s_7a55de52f3f119::t_fda7b37601e920 20
+frontend/src/components/AdvancedSettingsDialog/helpers/isCaptionsTabAvailable.ts
+  s_7a55de52f3f119::t_7acf5c17958668 1-7
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  s_7a55de52f3f119::t_1eeef5d5c30880 47
+  h_737cf808c1c597 14
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettingsTab.schema.ts
+  s_7a55de52f3f119::t_34e4fbfbc05b72 8,17
+libs/api/src/schemas/index.ts
+  s_7a55de52f3f119::t_9a3b07132ac798 24
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.ts
+  s_7a55de52f3f119::t_4a4166a6cfff78 1-30
+frontend/vite.config.ts
+  s_7a55de52f3f119::t_522b9b03d80973 31
+backend/routes/video/constants/enableCaptions.ts
+  s_7a55de52f3f119::t_aaa606e461301e 15
+  s_7a55de52f3f119::t_5f3b2e283f11f1 1,16
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.tsx
+  h_737cf808c1c597 6
+  s_7a55de52f3f119::t_f8a6eb3daee7cc 32
+frontend/src/locales/de.json
+  s_7a55de52f3f119::t_e0e9efac1bfa09 20
+  h_737cf808c1c597 103-105
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.spec.tsx
+  s_7a55de52f3f119::t_88fff19e8b060f 1-33
+frontend/src/env.ts
+  h_737cf808c1c597 86
+  s_7a55de52f3f119::t_6369151b9fdf9b 41
+app-config.json
+  s_7a55de52f3f119::t_a6f2a365366258 42
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  s_7a55de52f3f119::t_ee6336666fb70c 24-25
+frontend/src/locales/ja.json
+  h_737cf808c1c597 103-105
+  s_7a55de52f3f119::t_9bea110d9b36cb 20
+scripts/generateEnv.ts
+  s_7a55de52f3f119::t_69a3a8cdab4378 145-149
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.spec.tsx
+  h_737cf808c1c597 23-45
+  s_7a55de52f3f119::t_adc7b396531a06 4-5
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/index.tsx
+  s_7a55de52f3f119::t_96255cbee4c2b8 1
+env.sh
+  h_737cf808c1c597 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6ea02d9c0398f9e62ebe96b35e5a78ab57089642",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7a55de52f3f119": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f4859b79-0758-4d67-b491-bcab43cf8ed6",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
