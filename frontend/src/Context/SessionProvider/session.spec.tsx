@@ -6,9 +6,14 @@ import { Publisher, Stream } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
-import { StreamPropertyChangedEvent, SubscriberWrapper } from '@app-types/session';
+import type {
+  SignalEvent,
+  StreamPropertyChangedEvent,
+  SubscriberWrapper,
+} from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import { env } from '../../env';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -49,6 +54,8 @@ describe('SessionProvider', () => {
       pinSubscriber,
       isMaxPinned,
       lastStreamUpdate,
+      messages,
+      unreadCount,
     } = useSessionContext();
 
     useEffect(() => {
@@ -133,6 +140,8 @@ describe('SessionProvider', () => {
         <span data-testid="reconnecting">{String(reconnecting)}</span>
         <span data-testid="archiveId">{String(archiveId)}</span>
         <span data-testid="isMaxPinned">{String(isMaxPinned)}</span>
+        <span data-testid="unreadCount">{unreadCount}</span>
+        <span data-testid="messageCount">{messages.length}</span>
         <span data-testid="streamPropertyChanged">
           {lastStreamUpdate ? JSON.stringify(lastStreamUpdate) : 'No updates'}
         </span>
@@ -449,7 +458,7 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('archiveStarted', 'abc123');
+        vonageVideoClient.emit('archiveStarted', { id: 'abc123', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveId')).toHaveTextContent('abc123'));
@@ -459,10 +468,51 @@ describe('SessionProvider', () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
-        vonageVideoClient.emit('archiveStopped');
+        vonageVideoClient.emit('archiveStopped', { id: 'abc123', name: 'recording' });
       });
 
       await waitFor(() => expect(getByTestId('archiveId')).toHaveTextContent('null'));
+    });
+  });
+
+  describe('chat', () => {
+    const chatSignal: SignalEvent = {
+      type: 'signal:chat',
+      data: JSON.stringify({ participantName: 'Jane', text: 'Hello' }),
+      from: null,
+    };
+
+    it('stores the message and increments the unread count when chat is allowed', async () => {
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        vonageVideoClient.emit('signal:chat', chatSignal);
+      });
+
+      await waitFor(() => expect(getByTestId('unreadCount')).toHaveTextContent('1'));
+      expect(getByTestId('messageCount')).toHaveTextContent('1');
+    });
+
+    it('does not listen to chat signals when chat is not allowed', async () => {
+      env.partialUpdate({ ALLOW_CHAT: false });
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        vonageVideoClient.emit('signal:chat', chatSignal);
+      });
+
+      expect(vonageVideoClient.listenerCount('signal:chat')).toBe(0);
+      expect(getByTestId('unreadCount')).toHaveTextContent('0');
+    });
+
+    it('fails loudly if a chat signal reaches the handler while chat is not allowed', async () => {
+      await renderAndWaitForConnection();
+      const [handleChatSignal] = vonageVideoClient.listeners('signal:chat');
+      env.partialUpdate({ ALLOW_CHAT: false });
+
+      expect(() => handleChatSignal(chatSignal)).toThrow(
+        'Chat signal received while chat is disabled'
+      );
     });
   });
 

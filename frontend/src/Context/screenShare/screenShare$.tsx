@@ -98,8 +98,6 @@ const screenShare$ = createContext(initialState, {
             codecPriority,
           });
 
-          const partnerId = session.sessionDetails?.applicationId ?? null;
-
           const publisher = initPublisher(
             undefined,
             {
@@ -119,7 +117,6 @@ const screenShare$ = createContext(initialState, {
               handleApplyAdvancedSettingsError({
                 message: 'Failed to initialize screen share publisher',
                 eventSource: 'screenShare$.toggleShareScreen.initPublisher',
-                partnerId,
               })(err);
 
               actions$.onScreenShareStopped();
@@ -189,7 +186,6 @@ const screenShare$ = createContext(initialState, {
               handleApplyAdvancedSettingsError({
                 message: 'Failed to apply screen share bitrate',
                 eventSource: 'screenShare$.toggleShareScreen.applyBitrate',
-                partnerId,
               })
             );
           }

@@ -58,8 +58,10 @@ const useMeetingRoom = () => {
     closeRightPanel,
     toggleReportIssue,
     archiveId,
+    recordingArchiveId,
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
+    transcriptionArchiveId,
   } = useSessionContext();
 
   const { toggleShareScreen } = screenShare$.use.actions();
@@ -73,7 +75,7 @@ const useMeetingRoom = () => {
 
   const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
   const handleRecordingNotified = () => {
-    setLatestNotifiedArchiveId(archiveId);
+    setLatestNotifiedArchiveId(recordingArchiveId);
   };
   const shouldPromptRecordingConsent =
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
@@ -164,7 +166,8 @@ const useMeetingRoom = () => {
     sessionKey,
   });
 
-  const isRecording = !!archiveId;
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
+  const isTranscribing = !!transcriptionArchiveId;
   const captionsState = {
     isUserCaptionsEnabled,
     setIsUserCaptionsEnabled,
@@ -189,6 +192,7 @@ const useMeetingRoom = () => {
     quality,
     isVideoEnabled,
     isRecording,
+    isTranscribing,
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
@@ -196,6 +200,7 @@ const useMeetingRoom = () => {
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
     archiveId,
+    recordingArchiveId,
     shouldPromptRecordingConsent,
     handleRecordingNotified,
     latestNotifiedArchiveId,
