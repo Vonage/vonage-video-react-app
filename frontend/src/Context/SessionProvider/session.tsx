@@ -266,6 +266,10 @@ const SessionProvider = ({
   } = useRightPanel();
 
   const handleChatSignal = ({ data }: SignalEvent) => {
+    if (!env.ALLOW_CHAT) {
+      throw new Error('Chat signal received while chat is disabled');
+    }
+
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
@@ -533,7 +537,10 @@ const SessionProvider = ({
       vonageVideoClient.current.on('sessionDisconnected', handleSessionDisconnected);
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
-      vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      const isChatAllowed = env.ALLOW_CHAT;
+      if (isChatAllowed) {
+        vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      }
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
