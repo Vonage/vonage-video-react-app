@@ -7,6 +7,7 @@ export type ToolbarButtonVisibility = {
   emojis: boolean;
   captions: boolean;
   archiving: boolean;
+  postCallTranscription: boolean;
   advancedSettings: boolean;
   reportIssue: boolean;
   participantList: boolean;
@@ -22,6 +23,7 @@ const getToolbarButtonVisibility = (): ToolbarButtonVisibility => ({
   emojis: env.ALLOW_EMOJIS,
   captions: env.ALLOW_CAPTIONS,
   archiving: env.ALLOW_ARCHIVING,
+  postCallTranscription: env.ALLOW_POST_CALL_TRANSCRIPTION,
   advancedSettings: env.MEETING_ROOM_ALLOW_ADVANCED_SETTINGS,
   reportIssue: isReportIssueEnabled(),
   participantList: env.SHOW_PARTICIPANT_LIST,

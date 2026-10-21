@@ -25,6 +25,7 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import getToolbarButtonVisibility from './helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from './helpers/isDisplayableToolbarButton';
 
@@ -121,6 +122,9 @@ const Toolbar = ({
       <CaptionsButton key="CaptionsButton" captionsState={captionsState} />
     ),
     buttonVisibility.archiving && <ArchivingButton key="ArchivingButton" />,
+    buttonVisibility.postCallTranscription && (
+      <PostCallTranscriptionButton key="PostCallTranscriptionButton" />
+    ),
     buttonVisibility.advancedSettings && <AdvancedSettingsButton key="AdvancedSettingsButton" />,
   ].filter(isDisplayableToolbarButton);
 

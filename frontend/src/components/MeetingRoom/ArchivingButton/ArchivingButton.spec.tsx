@@ -26,9 +26,10 @@ describe('ArchivingButton', () => {
     vi.clearAllMocks();
     sessionContext = {
       subscriberWrappers: [],
-      archiveId: null,
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: null,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType;
@@ -49,7 +50,7 @@ describe('ArchivingButton', () => {
 
   it('triggers the start archiving when button is pressed', async () => {
     vi.useFakeTimers();
-    (mockVideoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
+    (mockVideoClient.startArchive as Mock).mockResolvedValue({ id: testArchiveId });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
     act(() => screen.getByTestId(testIds.button).click());
@@ -70,9 +71,10 @@ describe('ArchivingButton', () => {
   it('shows stop recording dialog when archiving is active', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: 'test-archive-id',
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
@@ -84,9 +86,10 @@ describe('ArchivingButton', () => {
     vi.useFakeTimers();
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: testArchiveId,
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType);
@@ -103,8 +106,11 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
+    // We pass archiveType so the backend looks up the current archive ID,
+    // handling server rotation where the frontend's archiveId becomes stale.
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
+      archiveType: 'recording',
     });
 
     vi.useRealTimers();

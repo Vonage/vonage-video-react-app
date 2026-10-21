@@ -116,6 +116,7 @@ describe('ToolbarOverflowMenu', () => {
       ALLOW_EMOJIS: false,
       ALLOW_CAPTIONS: false,
       ALLOW_ARCHIVING: false,
+      ALLOW_POST_CALL_TRANSCRIPTION: false,
       SHOW_PARTICIPANT_LIST: false,
     });
     const mockToggleChat = vi.fn();

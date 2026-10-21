@@ -13,6 +13,7 @@ import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
 import { testIds as archivingButtonTestIds } from '../ArchivingButton/ArchivingButton';
+import { testIds as postCallTranscriptionButtonTestIds } from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import { testIds as captionsButtonTestIds } from '../CaptionsButton/CaptionsButton';
 import { testIds as chatButtonTestIds } from '../ChatButton/ChatButton';
 import { testIds as emojiGridButtonTestIds } from '../EmojiGridButton/EmojiGridButton';
@@ -150,6 +151,7 @@ describe('Toolbar', () => {
     expect(screen.getAllByTestId(captionsButtonTestIds.button)).toHaveLength(1);
     expect(screen.getAllByTestId(screenSharingButtonTestIds.button)).toHaveLength(1);
     expect(screen.getAllByTestId(archivingButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(postCallTranscriptionButtonTestIds.button)).toHaveLength(1);
     expect(screen.getAllByTestId(chatButtonTestIds.button)).toHaveLength(1);
   });
 
@@ -159,6 +161,7 @@ describe('Toolbar', () => {
       ALLOW_EMOJIS: false,
       ALLOW_CAPTIONS: false,
       ALLOW_ARCHIVING: false,
+      ALLOW_POST_CALL_TRANSCRIPTION: false,
       SHOW_PARTICIPANT_LIST: false,
       ALLOW_CHAT: false,
     });
@@ -169,6 +172,7 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeInTheDocument();
     expect(screen.queryByTestId(captionsButtonTestIds.button)).not.toBeInTheDocument();
     expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(postCallTranscriptionButtonTestIds.button)).not.toBeInTheDocument();
     expect(screen.queryByTestId(participantListButtonTestIds.button)).not.toBeInTheDocument();
     expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
   });
@@ -179,7 +183,7 @@ describe('Toolbar', () => {
     render(<Toolbar {...defaultProps} />);
 
     expect(mockUseToolbarButtons).toHaveBeenLastCalledWith(
-      expect.objectContaining({ numberOfToolbarButtons: 5 })
+      expect.objectContaining({ numberOfToolbarButtons: 6 })
     );
   });
 });

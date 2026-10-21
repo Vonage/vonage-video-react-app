@@ -14,6 +14,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
 import AdvancedSettingsButton from '../AdvancedSettingsButton';
+import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import getToolbarButtonVisibility from '../Toolbar/helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from '../Toolbar/helpers/isDisplayableToolbarButton';
 
@@ -121,6 +122,13 @@ const ToolbarOverflowMenu = ({
     ),
     buttonVisibility.archiving && (
       <ArchivingButton isOverflowButton handleClick={closeMenu} key="ArchivingButton" />
+    ),
+    buttonVisibility.postCallTranscription && (
+      <PostCallTranscriptionButton
+        isOverflowButton
+        handleClick={closeMenu}
+        key="PostCallTranscriptionButton"
+      />
     ),
     buttonVisibility.advancedSettings && (
       <AdvancedSettingsButton isOverflowButton key="AdvancedSettingsButton" />
