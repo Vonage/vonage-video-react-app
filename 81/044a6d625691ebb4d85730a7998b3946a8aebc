@@ -1,0 +1,20 @@
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_6c0124248e0f80 68,82
+libs/common/manifest.json
+  h_6c0124248e0f80 4
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.spec.ts
+  h_6c0124248e0f80 49,54
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.ts
+  h_6c0124248e0f80 13-15,27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "81044a6d625691ebb4d85730a7998b3946a8aebc",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

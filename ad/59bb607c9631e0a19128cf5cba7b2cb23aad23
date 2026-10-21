@@ -1,0 +1,21 @@
+integration-tests/tests/postCallTranscription.spec.ts
+  s_16343696230de9::t_b173751ae3e4b4 95
+  s_16343696230de9::t_0f8d4f9e717c80 1-6,8-94,96-103
+  s_16343696230de9::t_e5bc89fcdd1c85 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ad59bb607c9631e0a19128cf5cba7b2cb23aad23",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
