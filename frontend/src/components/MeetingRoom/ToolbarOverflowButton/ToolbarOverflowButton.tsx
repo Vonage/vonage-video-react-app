@@ -73,7 +73,11 @@ const ToolbarOverflowButton = ({
                 name="more-vertical-solid"
                 customSize={-5}
                 data-testid={testIds.icon}
-                className="text-vera-on-secondary-light"
+                className={
+                  isToolbarOverflowMenuOpen
+                    ? 'text-vera-secondary-light'
+                    : 'text-vera-on-secondary-light'
+                }
               />
             }
           />

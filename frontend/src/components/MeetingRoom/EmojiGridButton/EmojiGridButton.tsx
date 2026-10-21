@@ -44,7 +44,15 @@ const EmojiGridButton = ({
       <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
         <ToolbarButton
           onClick={handleToggle}
-          icon={<VividIcon name="emoji-solid" customSize={-5} />}
+          icon={
+            <VividIcon
+              name="emoji-solid"
+              customSize={-5}
+              className={
+                isEmojiGridOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'
+              }
+            />
+          }
           ref={anchorRef}
           data-testid={testIds.button}
           isOverflowButton={isOverflowButton}
