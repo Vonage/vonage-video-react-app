@@ -13,7 +13,7 @@ describe('useChat', () => {
   });
 
   it('onChatMessage should parse message and update messages state', () => {
-    const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: false }));
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
     act(() => {
       result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
@@ -27,7 +27,7 @@ describe('useChat', () => {
   });
 
   it('sendChatMessage should send message via signal with retryAfterReconnect enabled', async () => {
-    const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: false }), {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }), {
       userContext: {
         value: {
           defaultSettings: {
@@ -48,11 +48,11 @@ describe('useChat', () => {
     });
   });
 
-  it('pushes a visible error notification when the signal rejects outside of reconnection', async () => {
+  it('pushes a visible error notification when the signal rejects', async () => {
     mockSignal.mockRejectedValueOnce(new Error('signal failed'));
     const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
-    const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: false }));
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
     await act(async () => {
       await result.current.sendChatMessage('Hello there!');
@@ -64,20 +64,6 @@ describe('useChat', () => {
         message: "Your message couldn't be sent. Please check your network and try again.",
       })
     );
-  });
-
-  it('does not push a notification when the signal fails during reconnection', async () => {
-    expect.assertions(1);
-    mockSignal.mockRejectedValueOnce(new Error('signal failed'));
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    const { result } = renderHook(() => useChat({ signal: mockSignal, reconnecting: true }));
-
-    await act(async () => {
-      await result.current.sendChatMessage('Hello there!');
-    });
-
-    expect(pushSpy).not.toHaveBeenCalled();
   });
 });
 

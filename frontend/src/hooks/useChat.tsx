@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUserContext from './useUserContext';
 import { ChatMessageType } from '../types/chat';
@@ -8,7 +8,6 @@ import { env } from '../env';
 
 export type UseChatProps = {
   signal: ((data: SignalType) => Promise<void>) | undefined;
-  reconnecting: boolean | null;
 };
 
 export type UseChat = {
@@ -20,17 +19,14 @@ export type UseChat = {
  * React hook to store ChatMessage array in state and provider functions for sending and receiving chat messages
  * @param {UseChatProps} props - props for the hook
  *  @property {((data: SignalType) => Promise<void>) | undefined} signal - function to send signal to all participants
- *  @property {boolean | null} reconnecting - whether the session is currently reconnecting
  * @returns {UseChat} return object
  *   @property {ChatMessageType[]} messages - array of chat messages
  *   @property {(data: string) => void} onChatMessage - new message handler
  *   @property {(text: string) => Promise<void>} sendChatMessage - function to send message
  */
-const useChat = ({ signal, reconnecting }: UseChatProps): UseChat => {
+const useChat = ({ signal }: UseChatProps): UseChat => {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  const reconnectingRef = useRef(false);
-  reconnectingRef.current = reconnecting === true;
   const {
     user: {
       defaultSettings: { name: localParticipantName },
@@ -53,7 +49,6 @@ const useChat = ({ signal, reconnecting }: UseChatProps): UseChat => {
           retryAfterReconnect: true,
         });
       } catch {
-        if (reconnectingRef.current) return;
         notifications$.actions.push({
           type: 'error',
           message: t('chatErrors.sendFailed'),
