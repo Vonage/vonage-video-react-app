@@ -21,19 +21,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
+          cache: pnpm
 
-      - name: Verify Node & Yarn versions
+      - name: Verify Node & pnpm versions
         run: |
           node -v
-          yarn -v
+          pnpm -v
 
       - name: Building artefact
         run: |
           sed -i "s/<DOMAIN>/${DOMAIN}/g" "${{ github.workspace }}/vcr-gha.yml"
+
+          APP_HOST="$(bash .github/scripts/readAppHost.sh)"
+          sed -i "s/<APP_HOST>/${APP_HOST}/g" "${{ github.workspace }}/vcr-gha.yml"
+          if grep -v '^[[:space:]]*#' "${{ github.workspace }}/vcr-gha.yml" | grep -qE '<[A-Z_]+>'; then
+            echo "::error::Unfilled placeholders left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
+
           ./vcrBuild.sh
 
       - name: Install VCR CLI
@@ -46,6 +60,7 @@ jobs:
           api-key: ${{ secrets.VCR_API_KEY }}
           api-secret: ${{ secrets.VCR_API_SECRET }}
           filename: vcr-gha.yml
+          instance-name: dev
 
       - name: Slack notification on success
         uses: ./.github/actions/slack-notify

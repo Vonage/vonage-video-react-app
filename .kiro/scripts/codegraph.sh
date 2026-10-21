@@ -12,6 +12,9 @@ if ! command -v uvx >/dev/null 2>&1; then
 fi
 
 mkdir -p .codegraphcontext
+# CGC 0.6.13 has no first-party telemetry subsystem. Keep the standard
+# ecosystem opt-out set for CGC and any transitive tooling it invokes.
+export DO_NOT_TRACK="${DO_NOT_TRACK:-1}"
 export CGC_EMBEDDED_BUFFER_POOL_MB="${CGC_EMBEDDED_BUFFER_POOL_MB:-512}"
 export CGC_OUTPUT_FORMAT="${CGC_OUTPUT_FORMAT:-gcf}"
 if [ "$#" -eq 0 ]; then
