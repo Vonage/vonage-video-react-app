@@ -44,7 +44,7 @@ const ToolbarOverflowButton = ({
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
-  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
+  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(false);
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
