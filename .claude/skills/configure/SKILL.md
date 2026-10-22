@@ -1,6 +1,6 @@
 ---
 name: configure
-description: Change how the Vonage Video React reference app (VERA web) behaves without writing code — turn features on or off (chat, captions, recording, screen share, emojis, background effects, noise suppression, device selection, waiting room, advanced settings, report issue, video stats), change languages, default layout or resolution, change colours with theme.json, point the frontend at another backend, or try a setting only on your machine with frontend/.env. Use when someone edits app-config.json, env.sh, env.defaults.sh, theme.json or frontend/.env, mentions pnpm sync:env or pnpm sync:theme-tokens, or says a setting "isn't taking effect". To ADD a new setting use the feature-flag guide.
+description: Change how the Vonage Video React reference app (VERA web) behaves without writing code — turn features on or off (chat, captions, recording, post-call transcription, screen share, emojis, background effects, noise suppression, device selection, waiting room, advanced settings, report issue, video stats), change languages, default layout or resolution, change colours with theme.json, point the frontend at another backend, or try a setting only on your machine with frontend/.env. Use when someone edits app-config.json, env.sh, env.defaults.sh, theme.json or frontend/.env, mentions pnpm sync:env or pnpm sync:theme-tokens, or says a setting "isn't taking effect". To ADD a new setting use the feature-flag guide.
 inclusion: fileMatch
 fileMatchPattern: ['app-config.json', 'env.sh', 'env.defaults.sh', 'theme.json', 'frontend/.env*']
 ---
@@ -46,6 +46,7 @@ Never edit `env.sh` by hand; the next sync overwrites it.
 | `meetingRoomSettings.allowArchiving` / `allowCaptions` / `allowChat` / `allowEmojis` / `allowScreenShare` / `showParticipantList` | `ALLOW_ARCHIVING` / `ALLOW_CAPTIONS` / `ALLOW_CHAT` / `ALLOW_EMOJIS` / `ALLOW_SCREEN_SHARE` / `SHOW_PARTICIPANT_LIST` |
 | `meetingRoomSettings.allowDeviceSelection` | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` |
 | `meetingRoomSettings.allowSettings` | `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` |
+| `meetingRoomSettings.allowPostCallTranscription` (the Transcribe button) | `ALLOW_POST_CALL_TRANSCRIPTION` |
 | `meetingRoomSettings.defaultLayoutMode` = `activeSpeaker` or `grid` | `DEFAULT_LAYOUT_MODE` = `active-speaker` or `grid` |
 
 - Allowed languages: `en`, `en-US`, `es`, `es-MX`, `it`, `de`, `ja`.
