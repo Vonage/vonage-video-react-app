@@ -329,8 +329,8 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
-    it('connect rejecting should rethrow and null the ref so a retry attempts a new connection', async () => {
-      expect.assertions(3);
+    it('connect rejecting should rethrow, tear down via disconnect(), and let a retry attempt a new connection', async () => {
+      expect.assertions(4);
       const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
       vonageVideoClient.connect = vi.fn().mockRejectedValueOnce(new Error('connect failed'));
 
@@ -343,6 +343,13 @@ describe('SessionProvider', () => {
       });
       expect(mockedVonageVideoClient).toHaveBeenCalledTimes(1);
       expect(getByTestId('connected')).toHaveTextContent('false');
+
+      await waitFor(() => {
+        if (vi.mocked(vonageVideoClient.disconnect).mock.calls.length < 1) {
+          throw new Error('disconnect not called yet');
+        }
+      });
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
 
       act(() => {
         getByTestId('joinRoom').click();

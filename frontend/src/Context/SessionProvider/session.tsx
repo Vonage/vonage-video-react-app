@@ -519,6 +519,18 @@ const SessionProvider = ({
   );
 
   /**
+   * Disconnects from the current session and cleans up session-related resources.
+   */
+  const disconnect = useCallback(() => {
+    if (vonageVideoClient.current) {
+      void vonageVideoClient.current.disconnect();
+      vonageVideoClient.current = null;
+
+      setConnected(false);
+    }
+  }, []);
+
+  /**
    * Connects to the session using the provided credentials.
    * @param {Credential} credential - The sessionKey and token for the session.
    * @returns {Promise<void>} A promise that resolves when the session is connected.
@@ -556,7 +568,7 @@ const SessionProvider = ({
       await vonageVideoClient.current.connect();
       setConnected(true);
     } catch (error: unknown) {
-      vonageVideoClient.current = null;
+      disconnect();
       throw error;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -585,18 +597,6 @@ const SessionProvider = ({
     },
     [connect, videoClient, skipBrowserUrlUpdate]
   );
-
-  /**
-   * Disconnects from the current session and cleans up session-related resources.
-   */
-  const disconnect = useCallback(() => {
-    if (vonageVideoClient.current) {
-      void vonageVideoClient.current.disconnect();
-      vonageVideoClient.current = null;
-
-      setConnected(false);
-    }
-  }, []);
 
   /**
    * Force mutes a participant.
