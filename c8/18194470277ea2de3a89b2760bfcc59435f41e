@@ -1,0 +1,76 @@
+backend/services/tests/loggerService.test.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 26,50,64,67,132,144
+backend/types/config.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 12-14,16,39
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 2,11,26-27
+backend/helpers/config.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 3,46-50,64,85
+backend/testSetup/setEnvVars.test.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 64-66
+frontend/src/logger/event/createClientEvent.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 1,13,33-34,39,50-53
+backend/services/loggerService.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 56
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 20,32,51,66
+frontend/src/logger/providers/backendLoggingProvider.spec.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 57,90
+libs/common/manifest.json
+  s_2203d2d1b7044b::t_1c05793e09ebf2 4
+frontend/src/logger/transport/backendLogTransport.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 5,15,20-21,29,44
+frontend/src/logger/event/splitSessionFromExtra.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 1-24
+libs/common/src/schemas/ClientLogEvent/ClientLogSession.schema.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 1-10
+integration-tests/tests/postCallTranscription.spec.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 1-103
+vcr-gha.yml
+  s_2203d2d1b7044b::t_1c05793e09ebf2 139-140
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  s_2203d2d1b7044b::t_1c05793e09ebf2 171,194,210,224,333,338-340,390,393,443
+libs/common/src/schemas/ClientLogEvent/index.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 6
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 25,67,84-85,147,185,189,191,194-204,206,208-209,219-226,246-255,274-278,288,295,300,302-305,316,318-319,325-327,329-330,433,443,455,496-497
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 412
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.spec.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 22,26,37-39
+  s_2203d2d1b7044b::t_6f310e098ddae0 40-41
+frontend/src/Context/SessionProvider/session.tsx
+  s_2203d2d1b7044b::t_1c05793e09ebf2 471-472,509
+backend/testSetup/setEnvVars.js
+  s_2203d2d1b7044b::t_1c05793e09ebf2 15
+backend/tests/logger.test.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 20,50,67,143,159,188,192-197
+frontend/src/logger/event/index.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 2
+frontend/src/logger/event/createClientEvent.spec.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 18,25,28,43,51,56,65,69,72-73,76,80,83-88,95,100
+libs/common/src/types/index.ts
+  s_2203d2d1b7044b::t_1c05793e09ebf2 5,7
+frontend/src/App.tsx
+  s_2203d2d1b7044b::t_1c05793e09ebf2 25,54
+customWordList.mjs
+  s_2203d2d1b7044b::t_1c05793e09ebf2 20
+backend/.env.example
+  s_2203d2d1b7044b::t_1c05793e09ebf2 98-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c818194470277ea2de3a89b2760bfcc59435f41e",
+  "prompts": {},
+  "sessions": {
+    "s_2203d2d1b7044b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88d653f5-750e-4774-9985-be67cf166726",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
