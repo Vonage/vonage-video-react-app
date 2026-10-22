@@ -378,7 +378,8 @@ describe('VonageVideoClient', () => {
       expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
       const [reportedError, context] = mockProvider.reportError.mock.calls[0];
       expect(reportedError).toMatchObject({ message: 'signal failed' });
-      expect(context).toEqual({ eventSource: 'vonageVideoClient.signal.error' });
+      expect(context).toMatchObject({ eventSource: 'vonageVideoClient.signal.error' });
+      expect(context).not.toHaveProperty('message');
     });
   });
 
