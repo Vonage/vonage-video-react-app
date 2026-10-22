@@ -1,10 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
-import { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
+import type { ReactElement } from 'react';
 import getOverflowMenuButtons from './getOverflowMenuButtons';
-
-vi.mock('../constants', () => ({
-  RIGHT_PANEL_BUTTON_COUNT: 2,
-}));
 
 const fakeToolbarButtons = [
   { key: 'Button1' },
@@ -12,10 +8,9 @@ const fakeToolbarButtons = [
   { key: 'Button3' },
   { key: 'Button4' },
   { key: 'Button5' },
-] as unknown as Array<ReactElement | false>;
+] as unknown as ReactElement[];
 
-const keysOf = (buttons: Array<ReactElement | false>) =>
-  buttons.map((button) => (button as ReactElement).key);
+const keysOf = (buttons: ReactElement[]) => buttons.map((button) => button.key);
 
 describe('getOverflowMenuButtons', () => {
   it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {
@@ -43,20 +38,17 @@ describe('getOverflowMenuButtons', () => {
       { key: 'EmojiGridButton' },
       { key: 'CaptionsButton' },
       { key: 'ArchivingButton' },
-    ] as unknown as Array<ReactElement | false>;
+    ] as unknown as ReactElement[];
     const overflowButtons = [
       { key: 'ScreenSharingButton' },
       { key: 'LayoutButton' },
       { key: 'CaptionsButton' },
       { key: 'EmojiGridButton' },
       { key: 'ArchivingButton' },
-    ] as unknown as Array<ReactElement | false>;
+    ] as unknown as ReactElement[];
 
     const overflow = getOverflowMenuButtons(overflowButtons, 3, toolbarButtons);
 
-    expect(overflow.map((button) => (button as ReactElement).key)).toEqual([
-      'CaptionsButton',
-      'ArchivingButton',
-    ]);
+    expect(keysOf(overflow)).toEqual(['CaptionsButton', 'ArchivingButton']);
   });
 });

@@ -2,7 +2,7 @@ import { API_URL } from '../../utils/constants';
 import isErrorLike from '@common/assertions/isErrorLike';
 import type { ClientLogEvent } from '@common/types';
 import { formatToStore } from 'json-storage-formatter';
-import { createClientEvent } from '../event';
+import { createClientEvent, splitSessionFromExtra } from '../event';
 
 /**
  * Transport that POSTs ClientLogEvent to the backend.
@@ -12,19 +12,13 @@ export class BackendLogTransport {
   private readonly endpoint = `${API_URL}/client-logs`;
 
   log(event: string, extra?: Record<string, unknown>): void {
-    const { sessionId, connectionId, partnerId, userId, ...rest } = (extra ?? {}) as Record<
-      string,
-      string | undefined
-    >;
+    const { session, payload } = splitSessionFromExtra(extra);
     const clientEvent = {
       ...createClientEvent({
         level: 'info',
         action: event,
-        sessionId,
-        connectionId,
-        partnerId,
-        userId,
-        payload: rest,
+        session,
+        payload,
       }),
       variation: 'Success',
     };
@@ -32,10 +26,7 @@ export class BackendLogTransport {
   }
 
   reportError(error: unknown, extra?: Record<string, unknown>): void {
-    const { sessionId, connectionId, partnerId, userId, ...rest } = (extra ?? {}) as Record<
-      string,
-      string | undefined
-    >;
+    const { session, payload: rest } = splitSessionFromExtra(extra);
     const errorPayload = {
       error: isErrorLike(error)
         ? {
@@ -50,10 +41,7 @@ export class BackendLogTransport {
       ...createClientEvent({
         level: 'error',
         action: 'Error',
-        sessionId,
-        connectionId,
-        partnerId,
-        userId,
+        session,
         payload: errorPayload,
       }),
       variation: isErrorLike(error) ? ((error as Error).name ?? 'Error') : 'Failure',
@@ -78,6 +66,7 @@ export class BackendLogTransport {
       method: 'POST',
       body,
       keepalive: true,
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
     }).catch(() => {});
   }

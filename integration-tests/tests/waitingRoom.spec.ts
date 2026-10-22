@@ -1,5 +1,7 @@
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import backgroundEffectsButtonTestIds from '../../frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${baseURL}waiting-room/test-room`);
@@ -27,8 +29,11 @@ test('The buttons in the meeting room should match those in the waiting room wit
   ).toBeVisible();
   await expect(page.getByTestId('PersonIcon')).toHaveCount(0);
 
-  if (browserName !== 'firefox') {
-    await expect(page.getByTestId('portraitIcon')).toBeVisible();
+  // Background effects are hidden on Firefox and Safari (WebKit)
+  const isBackgroundEffectsSupported = browserName === 'chromium';
+
+  if (isBackgroundEffectsSupported) {
+    await expect(page.getByTestId(backgroundEffectsButtonTestIds.container)).toBeVisible();
   }
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
@@ -40,8 +45,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('VideoCamIcon')).toBeVisible();
   await expect(page.locator('xpath=//div[contains(text(),"S")]')).toHaveCount(0);
 
-  // Skipping this step for FF as we don't support BG replacement on FF
-  if (browserName !== 'firefox') {
+  if (isBackgroundEffectsSupported) {
     await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('background-effects-text')).toBeVisible();
@@ -65,8 +69,11 @@ test('The buttons in the meeting room should match those in the waiting room wit
   ).toBeVisible();
   await expect(page.getByTestId('PersonIcon')).toBeVisible();
 
-  if (browserName !== 'firefox') {
-    await expect(page.getByTestId('portraitIcon')).toBeVisible();
+  // Background effects are hidden on Firefox and Safari (WebKit)
+  const isBackgroundEffectsSupported = browserName === 'chromium';
+
+  if (isBackgroundEffectsSupported) {
+    await expect(page.getByTestId(backgroundEffectsButtonTestIds.container)).toBeVisible();
   }
   await page.getByLabel('Name').fill('some user');
   await page.getByRole('button', { name: 'Join meeting' }).click({ force: true });
@@ -77,8 +84,7 @@ test('The buttons in the meeting room should match those in the waiting room wit
   await expect(page.getByTestId('VideoCamOffIcon')).toBeVisible();
   await expect(page.getByTestId('MicOffToolbar')).toBeVisible();
 
-  // Skipping this step for FF as we don't support BG replacement on FF
-  if (browserName !== 'firefox') {
+  if (isBackgroundEffectsSupported) {
     await page.getByTestId('video-dropdown-button').click();
 
     await expect(page.getByTestId('background-effects-text')).toBeVisible();

@@ -54,6 +54,7 @@ describe('BackendLoggingProvider', () => {
       clientVersion: MOCK_VERSION,
       name: 'vera',
       componentId: 'vera',
+      session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
       sessionId: 's1',
       connectionId: 'c1',
       partnerId: 'apiKey',
@@ -86,6 +87,7 @@ describe('BackendLoggingProvider', () => {
       variation: 'Error',
       level: 'error',
       clientVersion: MOCK_VERSION,
+      session: { sessionId: 's2' },
       sessionId: 's2',
     });
     expect(body.payload).toMatchObject({ context: 'test' });

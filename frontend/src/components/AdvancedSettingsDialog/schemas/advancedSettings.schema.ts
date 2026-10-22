@@ -10,6 +10,7 @@ import { audioBitrateModeSchema } from './audioBitrateMode.schema';
 import { customVideoBitrateSchema } from './customVideoBitrate.schema';
 import { customAudioBitrateSchema } from './customAudioBitrate.schema';
 import { frameRateSchema } from './frameRate.schema';
+import { screenShareSurfaceSchema } from './screenShareSurface.schema';
 
 export const advancedSettingsSchema = z.object({
   isOpen: z.boolean(),
@@ -41,6 +42,7 @@ export const advancedSettingsSchema = z.object({
   screenShareResolution: ResolutionSchema.nullable(),
   screenShareBitrateMode: bitrateModeSchema.nullable(),
   screenShareCustomVideoBitrate: customVideoBitrateSchema,
+  screenShareSurface: screenShareSurfaceSchema,
 });
 
 export type AdvancedSettings = z.infer<typeof advancedSettingsSchema>;

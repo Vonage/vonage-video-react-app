@@ -1,29 +1,38 @@
-import axios from 'axios';
 import type { NextFunction, Request, Response } from 'express';
-import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
-import { assertResult } from '@api-lib/executions';
+import { isRecord } from '@common/assertions';
+import { makeInternalErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
 import loadConfig from '../../helpers/config';
-import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
-
-type ActiveTokenIntrospectionResponse = {
-  active: true;
-  sub: string;
-  client_id?: string;
-  email?: string;
-};
+import { SIGN_IN_PATH } from '../../routes/auth/constants';
+import SessionCookieSchema from '../../routes/auth/schemas/SessionCookie.schema';
+import readCookiePayload from '../../routes/auth/helpers/readCookiePayload';
+import writeSessionCookies from '../../routes/auth/helpers/writeSessionCookies';
+import clearSessionCookies from '../../routes/auth/helpers/clearSessionCookies';
+import resolveResponseFormat from '../../helpers/resolveResponseFormat';
+import type { ActiveTokenIntrospectionResponse } from './schemas/TokenIntrospectionResponse.schema';
+import { makeSignInRequiredErrorHandler } from './errors/SignInRequiredError';
+import readBearerToken from './helpers/readBearerToken';
+import assertAllowedOrigin from './helpers/assertAllowedOrigin';
+import introspectAccessToken from './helpers/introspectAccessToken';
+import verifyActiveToken from './helpers/verifyActiveToken';
+import authenticateCookieSession from './helpers/authenticateCookieSession';
 
 type RequestWithTokenAuth = Request & {
   user?: ActiveTokenIntrospectionResponse;
 };
 
 /**
- * Builds an Express middleware that validates the caller's OIDC access token against
- * the configured provider's introspection endpoint. Opt-in via AUTH_ENABLED — a no-op
- * otherwise, preserving current behavior for deployments not yet on OIDC auth.
+ * Builds an Express middleware that authenticates every request through the configured OIDC
+ * provider. Opt-in via AUTH_ENABLED — a no-op otherwise.
  *
- * Reads config.ts once, at construction time (not per request), so a misconfigured
- * deployment fails to start instead of 500ing on every request.
+ * - Bearer header (mobile): introspected on every request; never refreshed, never sets cookies.
+ * - Encrypted session cookie (web): refreshed ahead of expiry when a refresh token exists.
+ *
+ * Unauthenticated HTML page requests (GET, resolved via resolveResponseFormat) without a Bearer
+ * header are redirected to the sign-in flow; other unauthenticated requests are rejected with 401. Identity-provider
+ * failures are never redirected, so an outage cannot cause a sign-in loop.
+ *
+ * Reads config once, at construction time, so a misconfigured deployment fails to start.
  *
  * @param options.excludedPaths - exact request paths (req.path) that skip auth entirely
  * (e.g. health checks, provider webhooks, .well-known files) — callers that structurally
@@ -40,17 +49,17 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
   const excludedPaths = new Set(options.excludedPaths ?? []);
   const {
-    oidcIssuerUrl,
     oidcClientId,
     authHeaderName,
     authScheme,
-    introspectPath,
-    introspectionTimeoutMs,
+    authCookieSecret,
+    authSessionCookieName,
+    corsAllowedOrigins,
   } = authConfig;
 
   return async function handleRequest(
     req: Request,
-    _res: Response,
+    res: Response,
     next: NextFunction
   ): Promise<void> {
     if (excludedPaths.has(req.path)) {
@@ -58,59 +67,66 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
       return;
     }
 
+    const bearerToken = readBearerToken({ req, authHeaderName, authScheme });
+
     try {
-      const accessToken = extractAccessToken(req, { authHeaderName, authScheme });
+      assertAllowedOrigin({ req, allowedOrigins: corsAllowedOrigins });
 
-      if (!accessToken) {
-        throw makeUnauthorizedErrorHandler('Missing access token')(
-          new Error(`No access token in the "${authHeaderName}" header`)
-        );
+      if (bearerToken) {
+        const introspectionData = await introspectAccessToken({
+          accessToken: bearerToken,
+          authConfig,
+        });
+
+        (req as RequestWithTokenAuth).user = verifyActiveToken({
+          introspectionData,
+          clientId: oidcClientId,
+        });
+        next();
+        return;
       }
 
-      // TODO(VIDSOL-1153): IAM-190121 hasn't confirmed yet whether VERA Web is provisioned in
-      // Okta as an SPA or a Confidential Client. This assumes SPA (public client, no secret).
-      // If it turns out to be Confidential, add `client_secret: process.env.OIDC_CLIENT_SECRET` below.
-      const introspectionResponse = await assertResult(
-        () =>
-          axios.post(
-            `${oidcIssuerUrl}${introspectPath}`,
-            new URLSearchParams({
-              token: accessToken,
-              client_id: oidcClientId,
-              token_type_hint: 'access_token',
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              timeout: introspectionTimeoutMs,
-            }
-          ),
-        makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
-      );
+      const session = readCookiePayload({
+        req,
+        name: authSessionCookieName,
+        secret: authCookieSecret,
+        schema: SessionCookieSchema,
+      });
 
-      const introspectionData = assertResult(
-        () => TokenIntrospectionResponseSchema.parse(introspectionResponse.data),
-        makeUnauthorizedErrorHandler('Token introspection response is missing or invalid')
-      );
-
-      // Beyond "active", confirm the token was actually issued to this application. This
-      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-      // signal without this check, a valid token from a different app in the same org would
-      // pass. Assumes one shared client id across mobile/web; revisit if VIDSOL-860 registers
-      // a separate web client id.
-      const isTokenValidForThisApp =
-        introspectionData.active === true && introspectionData.client_id === oidcClientId;
-
-      if (!isTokenValidForThisApp) {
-        const rejectionReason = introspectionData.active
-          ? 'Token issued for a different client_id'
-          : 'Token inactive or expired';
-
-        throw makeUnauthorizedErrorHandler(rejectionReason)(new Error(rejectionReason));
+      if (!session) {
+        throw makeSignInRequiredErrorHandler(
+          `Missing access token in the "${authHeaderName}" header or the session cookie`
+        )(null);
       }
 
-      (req as RequestWithTokenAuth).user = introspectionData;
+      const sessionOutcome = await authenticateCookieSession({ session, authConfig });
+
+      if (sessionOutcome.status === 'refreshed') {
+        writeSessionCookies({
+          res,
+          tokenResponse: sessionOutcome.tokenResponse,
+          previousRefreshToken: session.refreshToken,
+          authConfig,
+        });
+      }
+
+      (req as RequestWithTokenAuth).user = sessionOutcome.user;
+
       next();
     } catch (error) {
+      const isCookieSignInRequired =
+        isRecord(error) && error.isSignInRequired === true && !bearerToken;
+
+      if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
+
+      const isSignInRequiredPageRequest =
+        isCookieSignInRequired && req.method === 'GET' && resolveResponseFormat(req) === 'html';
+
+      if (isSignInRequiredPageRequest) {
+        res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
+        return;
+      }
+
       if (isApplicationError(error)) {
         next(error);
         return;
@@ -122,18 +138,3 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 }
 
 export default authMiddleware;
-
-function extractAccessToken(
-  req: Request,
-  { authHeaderName, authScheme }: { authHeaderName: string; authScheme: string }
-): string | undefined {
-  const headerValue = req.headers[authHeaderName.toLowerCase()];
-  const authorizationHeader = Array.isArray(headerValue) ? headerValue[0] : headerValue;
-  const schemePrefix = `${authScheme.toLowerCase()} `;
-
-  if (authorizationHeader?.toLowerCase().startsWith(schemePrefix)) {
-    return authorizationHeader.slice(schemePrefix.length).trim();
-  }
-
-  return undefined;
-}

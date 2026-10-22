@@ -1,6 +1,12 @@
 
 # Instruction
 
+## Code graph navigation
+
+Use CodeGraphContext before broad repository exploration. Start with narrow, path-scoped symbol queries, inspect callers/callees/imports only when relevant, and then read the smallest necessary source ranges. Treat dead-code and relationship results as candidates requiring verification in source and tests.
+
+The index is one graph for the full monorepo. Distinguish projects by their paths (`frontend/`, `backend/`, `integration-tests/`, and `libs/*/`) while retaining cross-project relationships.
+
 All rules in this document should be treated as strict coding and architectural requirements for this repository.  
 When generating or editing code, always choose the option that is consistent with these rules.  
 When reviewing code, Copilot must also evaluate changes according to these rules and suggest corrections whenever the submitted code violates any of them.
@@ -52,6 +58,8 @@ TypeScript version: `^5.8.3`
 - **Rule:** Helpers, utilities, and hooks that are agnostic of the project must be placed in `libs/common`.
 - **Rule:** Logic that is shared between different projects (**frontend**, **backend**, **libs**) should be proposed for `libs/common`.
 - **Rule:** Do not add new dependencies. Use only the installed dependencies.
+- **Rule:** Dependencies are installed with pnpm only, and `pnpm-lock.yaml` is the single lockfile. Never run `yarn install` or `npm install`, and never commit a `yarn.lock` or `package-lock.json`.
+- **Rule:** yarn remains supported as a task runner, so `yarn dev`, `yarn test:frontend` and `yarn nx ...` are all valid. Only installing is pnpm-only.
 - **Rule:** Do not add new state management libraries. Use only existing tooling.
 - **Rule:** Components must be kept small, focused, and composable.
 

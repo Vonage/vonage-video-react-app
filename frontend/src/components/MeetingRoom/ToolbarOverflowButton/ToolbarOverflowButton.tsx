@@ -6,6 +6,11 @@ import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
+export const testIds = {
+  button: 'hidden-toolbar-items',
+  icon: 'MoreVertIcon',
+} as const;
+
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
@@ -16,7 +21,7 @@ export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  toolbarButtons?: Array<ReactElement | false>;
+  toolbarButtons?: ReactElement[];
   captionsState: CaptionsState;
 };
 
@@ -29,7 +34,7 @@ export type ToolbarOverflowButtonProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {Array<ReactElement | false>} [toolbarButtons] - toolbar buttons in display order, used to split overflow by key
+ *  @property {ReactElement[]} [toolbarButtons] - toolbar buttons in display order, used to split overflow by key
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
@@ -63,25 +68,21 @@ const ToolbarOverflowButton = ({
       <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
         <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
           <ToolbarButton
-            data-testid="hidden-toolbar-items"
+            data-testid={testIds.button}
             id="hidden-toolbar-items"
             onClick={handleButtonToggle}
             icon={
               <VividIcon
                 name="more-vertical-solid"
                 customSize={-5}
-                data-testid="MoreVertIcon"
-                style={{
-                  color: isToolbarOverflowMenuOpen
-                    ? 'var(--vera-on-surface)'
-                    : 'var(--vera-surface)',
-                }}
+                data-testid={testIds.icon}
+                className={
+                  isToolbarOverflowMenuOpen
+                    ? 'text-vera-secondary-light'
+                    : 'text-vera-on-secondary-light'
+                }
               />
             }
-            sx={{
-              marginRight: '0px',
-              width: '48px',
-            }}
           />
         </UnreadMessagesBadge>
       </Tooltip>
