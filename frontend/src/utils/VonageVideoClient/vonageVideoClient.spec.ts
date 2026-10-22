@@ -409,7 +409,7 @@ describe('VonageVideoClient', () => {
       await wait(0);
 
       expect(logSpy).toHaveBeenCalledWith(
-        'vonageVideoClient: handle session disconnected',
+        'vonageVideoClient:SessionDisconnected',
         expect.objectContaining({
           reason: 'forceDisconnected',
           partnerId: 'api-key',
