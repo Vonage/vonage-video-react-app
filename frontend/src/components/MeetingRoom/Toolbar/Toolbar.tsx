@@ -221,7 +221,6 @@ const Toolbar = ({
               isSharingScreen={isSharingScreen}
               toggleShareScreen={toggleShareScreen}
               toolbarButtonsCount={toolbarButtonsDisplayed}
-              toolbarButtons={toolbarButtons}
               captionsState={captionsState}
             />
           )}

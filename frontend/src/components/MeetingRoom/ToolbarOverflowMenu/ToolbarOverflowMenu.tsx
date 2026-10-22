@@ -36,7 +36,6 @@ export type ToolbarOverflowMenuProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  toolbarButtons?: ReactElement[];
   captionsState: CaptionsState;
 };
 
@@ -52,7 +51,6 @@ export type ToolbarOverflowMenuProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {ReactElement[]} [toolbarButtons] - toolbar buttons in display order, used to split overflow by key
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowMenu component.
  */
@@ -64,7 +62,6 @@ const ToolbarOverflowMenu = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  toolbarButtons,
   captionsState,
 }: ToolbarOverflowMenuProps): ReactElement => {
   const {
@@ -171,7 +168,7 @@ const ToolbarOverflowMenu = ({
             data-testid={testIds.menu}
             className="absolute bottom-20 left-[15px] z-1 flex w-[calc(100dvw-30px)] content-between items-center justify-center gap-3 rounded-lg bg-vera-dark-grey-opacity py-2 pr-5 pl-3 text-vera-on-dark-grey"
           >
-            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount, toolbarButtons)}
+            {getOverflowMenuButtons(overflowButtonArray, toolbarButtonsCount)}
           </Box>
         </Grow>
       </ClickAwayListener>

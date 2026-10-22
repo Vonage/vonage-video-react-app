@@ -21,7 +21,6 @@ export type ToolbarOverflowButtonProps = {
   toggleShareScreen: () => void;
   isSharingScreen: boolean;
   toolbarButtonsCount: number;
-  toolbarButtons?: ReactElement[];
   captionsState: CaptionsState;
 };
 
@@ -34,7 +33,6 @@ export type ToolbarOverflowButtonProps = {
  *  @property {Function} toggleShareScreen - toggles the user's screenshare
  *  @property {boolean} isSharingScreen - whether the user is sharing their screen
  *  @property {number} toolbarButtonsCount - number of buttons displayed on the toolbar
- *  @property {ReactElement[]} [toolbarButtons] - toolbar buttons in display order, used to split overflow by key
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
@@ -42,12 +40,11 @@ const ToolbarOverflowButton = ({
   toggleShareScreen,
   isSharingScreen,
   toolbarButtonsCount,
-  toolbarButtons,
   captionsState,
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
-  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
+  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(false);
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -94,7 +91,6 @@ const ToolbarOverflowButton = ({
         isSharingScreen={isSharingScreen}
         closeMenu={handleClickAway}
         toolbarButtonsCount={toolbarButtonsCount}
-        toolbarButtons={toolbarButtons}
         captionsState={captionsState}
       />
     </>

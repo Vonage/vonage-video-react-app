@@ -1,24 +1,14 @@
-import type { Key, ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 /**
  * Returns all of the buttons to be displayed in the toolbar overflow menu.
- * Splits by button key rather than array index so the overflow list can be
- * ordered independently of the toolbar without duplicating or dropping a control.
- * @param {ReactElement[]} buttons - Overflow-menu buttons
- * @param {number} toolbarButtonsCount - The number of buttons displayed on the toolbar
- * @param {ReactElement[]} toolbarButtons - Toolbar buttons in display order. Defaults to `buttons`.
+ * @param {ReactElement[]} buttons - All of the buttons that could be rendered
+ * @param {number} toolbarButtonsCount - The number of buttons displayed on the toolbar, any excess are displayed in the overflow menu
  * @returns {ReactElement[]} - The buttons for the toolbar overflow menu
  */
-function getOverflowMenuButtons(
+const getOverflowMenuButtons = (
   buttons: ReactElement[],
-  toolbarButtonsCount: number,
-  toolbarButtons: ReactElement[] = buttons
-): ReactElement[] {
-  const shownKeys = new Set<Key | null>(
-    toolbarButtons.slice(0, toolbarButtonsCount).map((button) => button.key)
-  );
-
-  return buttons.filter((button) => !shownKeys.has(button.key));
-}
+  toolbarButtonsCount: number
+): ReactElement[] => buttons.filter((_, index) => toolbarButtonsCount <= index);
 
 export default getOverflowMenuButtons;
