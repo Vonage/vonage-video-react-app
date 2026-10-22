@@ -1,0 +1,68 @@
+backend/routes/video/video.ts
+  s_d6930e45a3b817::t_dccb5e5cabc04c 156-158
+  s_f1e8a246e80aab::t_7a03574b1ed758 149
+  s_306c4ca6c499c2::t_db59a92ab8a46c 155
+  s_021f0f9bc88eeb::t_92324111af69fe 173
+  s_306c4ca6c499c2::t_f2a6b85f4e85ba 150-154,159-162
+backend/routes/video/schemas/CaptionsHookPayload.schema.ts
+  s_306c4ca6c499c2::t_dbf192ac8f75e2 7
+  s_306c4ca6c499c2::t_8fb545252c5bd8 22-27
+backend/tests/session.test.ts
+  s_937ca14a7bef06::t_7bbe6f5c946981 274-278
+  s_306c4ca6c499c2::t_4e299ffb77e96e 291-306
+  s_306c4ca6c499c2::t_593e3532b72eb2 273,279-290
+  s_306c4ca6c499c2::t_bbac295794401e 259
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "3671d698549ae587aa72271867fdab99c6d22108",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_021f0f9bc88eeb": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1792673390769659000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_306c4ca6c499c2": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_ebd36de9-b7fb-4bff-aecc-c4924951b07c",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_937ca14a7bef06": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1792667323161507000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_d6930e45a3b817": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1792673359054026000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_f1e8a246e80aab": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1792673377838948000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
