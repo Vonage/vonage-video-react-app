@@ -253,7 +253,6 @@ export default defineConfig(({ mode }) => {
               'react-i18next',
               'react-global-state-hooks',
               '@mui/material',
-              '@mui/icons-material',
               '@vonage/vivid',
               '@emotion/react',
               '@emotion/styled',
