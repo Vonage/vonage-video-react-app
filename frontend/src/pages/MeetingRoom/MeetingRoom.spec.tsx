@@ -10,7 +10,6 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector, { UseSpeakingDetectorOptions } from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
-import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
@@ -22,6 +21,7 @@ import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import type { VideoClient } from '@core/services';
+import { testIds as unreadMessagesBadgeTestIds } from '../../components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
@@ -187,10 +187,10 @@ describe('MeetingRoom', () => {
     mockUseActiveSpeaker.mockReturnValue(undefined);
     (useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
-      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+      ({ numberOfToolbarButtons, rightPanelButtonCount }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
           displayTimeRoomName: true,
-          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          centerButtonLimit: numberOfToolbarButtons - rightPanelButtonCount,
           rightButtonLimit: numberOfToolbarButtons,
         };
         return renderedToolbarButtons;
@@ -448,7 +448,7 @@ describe('MeetingRoom', () => {
     sessionContext.current.unreadCount = 4;
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-button-unread-count')).toHaveTextContent('4');
+      expect(screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount)).toHaveTextContent('4');
     });
   });
 

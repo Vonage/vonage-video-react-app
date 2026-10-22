@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import joinSession from './joinSession';
 import type { JoinSessionPayload } from '@api-lib';
 

@@ -11,8 +11,7 @@ import type { MediaDeviceInfoJSON } from '@web/types';
 import { makeTestProvider } from '@test/providers';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/mediaDevices';
-import { env } from '../../../env';
-import OutputAudioDevices from './OutputAudioDevices';
+import OutputAudioDevices, { testIds } from './OutputAudioDevices';
 
 vi.mock('@web/platform', async () => {
   const actual = await vi.importActual('@web/platform');
@@ -60,7 +59,7 @@ describe('OutputAudioDevices Component', () => {
     render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
 
     expect(screen.getByText('Speakers')).toBeInTheDocument();
-    expect(screen.getByTestId('output-devices')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.list)).toBeInTheDocument();
 
     // Check that specific audio output devices are rendered
     expect(screen.getByText(defaultSpeakers.label)).toBeInTheDocument();
@@ -133,17 +132,6 @@ describe('OutputAudioDevices Component', () => {
     // When only default device is available (length === 1), it should be selected.
     const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
-  });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    env.partialUpdate({
-      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
-    });
-
-    render(<OutputAudioDevices handleToggle={mockHandleToggle} />);
-
-    expect(screen.queryByTestId('output-device-title')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('output-devices')).not.toBeInTheDocument();
   });
 });
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 
 const doc = (globalThis as unknown as { document: { cookie: string } }).document;
 
