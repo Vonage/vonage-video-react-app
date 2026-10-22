@@ -8,24 +8,20 @@ import { frontendLogger } from '../../../logger';
  * @param {object} args - the reporting context
  * @param {string} args.message - human readable description of what failed
  * @param {string} args.eventSource - identifier of the call site for telemetry
- * @param {string | null} args.partnerId - the Vonage application id, when it could be resolved
  * @returns {(error: unknown) => void} the error handler
  */
 const handleApplyAdvancedSettingsError = ({
   message,
   eventSource,
-  partnerId,
 }: {
   message: string;
   eventSource: string;
-  partnerId: string | null;
 }) => {
   return (error: unknown) => {
     const applicationError = makeApplicationErrorMapper(message)(error);
 
     frontendLogger.reportError(applicationError, {
       eventSource,
-      partnerId,
     });
   };
 };

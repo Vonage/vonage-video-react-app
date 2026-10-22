@@ -17,6 +17,7 @@ const { forwardToGollum, forward, resetGollumWarning } = await import('../logger
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -28,7 +29,7 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
   ...overrides,
 });
 
-describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
+describe('loggerService (KIBANA_BASE_URL not configured)', () => {
   let warnSpy: MockInstance;
 
   beforeEach(() => {
@@ -47,7 +48,7 @@ describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
 
       expect(warnSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('GOLLUM_BASE_URL not configured')
+        expect.stringContaining('KIBANA_BASE_URL not configured')
       );
     });
 
@@ -62,6 +63,7 @@ describe('loggerService (GOLLUM_BASE_URL not configured)', () => {
     it('should still call logOnConnect for EnterMeeting events when gollumUrl is not configured', async () => {
       const event = createValidClientLogEvent({
         action: 'EnterMeeting',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: 'apiKey',
