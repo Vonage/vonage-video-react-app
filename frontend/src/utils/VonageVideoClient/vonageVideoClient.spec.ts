@@ -229,6 +229,39 @@ describe('VonageVideoClient', () => {
     });
   });
 
+  describe('resubscribeToStreamId', () => {
+    const streamId = 'stream-id';
+
+    async function connectAndRegisterStream() {
+      await vonageVideoClient?.connect();
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+      });
+      await wait(0);
+    }
+
+    it('rejects when a critical subscription error occurs', async () => {
+      await connectAndRegisterStream();
+
+      mockSubscribe.mockReturnValue(undefined);
+
+      await expect(vonageVideoClient?.resubscribeToStreamId(streamId)).rejects.toThrow(
+        'Vonage subscriber was not created.'
+      );
+    });
+
+    it('resolves without throwing for a recoverable subscription error', async () => {
+      await connectAndRegisterStream();
+
+      mockSubscribe.mockImplementation((_stream, _targetElement, _options, callback) => {
+        callback!({ name: 'OT_STREAM_NOT_FOUND', message: 'stream not found' });
+        return mockSubscriber;
+      });
+
+      await expect(vonageVideoClient?.resubscribeToStreamId(streamId)).resolves.toBeUndefined();
+    });
+  });
+
   it('disconnect should disconnect from the session and cleanup', async () => {
     await vonageVideoClient?.connect();
     vonageVideoClient?.disconnect();

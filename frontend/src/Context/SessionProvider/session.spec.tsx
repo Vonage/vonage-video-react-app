@@ -13,6 +13,7 @@ import type {
 } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import frontendLogger from '../../logger';
 import { env } from '../../env';
 
 vi.mock('@utils/ActiveSpeakerTracker');
@@ -306,6 +307,24 @@ describe('SessionProvider', () => {
 
       await waitFor(() => {
         expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
+      });
+    });
+
+    it('reports an error via frontendLogger when resubscribeToStreamId fails', async () => {
+      const resubscribeError = new Error('resubscribe failed');
+      vonageVideoClient.resubscribeToStreamId = vi.fn().mockRejectedValue(resubscribeError);
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+
+      await renderAndWaitForConnection();
+
+      act(() => {
+        vonageVideoClient.emit('subscriberDestroyed', 'sub1');
+      });
+
+      await waitFor(() => {
+        expect(reportErrorSpy).toHaveBeenCalledWith(resubscribeError, {
+          eventSource: 'session.resubscribeToStreamId',
+        });
       });
     });
   });
