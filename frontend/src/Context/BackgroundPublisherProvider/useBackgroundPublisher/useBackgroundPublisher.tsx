@@ -112,7 +112,7 @@ const useBackgroundPublisher = (
   };
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
-  useSyncPublisherDevices(backgroundPublisherRef, { setIsVideoEnabled });
+  useSyncPublisherDevices(() => backgroundPublisherRef.current, { setIsVideoEnabled });
 
   /**
    * Change background replacement or blur effect

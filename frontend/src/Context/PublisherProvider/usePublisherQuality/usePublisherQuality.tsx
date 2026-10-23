@@ -36,12 +36,22 @@ const usePublisherQuality = (publisher: Publisher | null): NetworkQuality => {
   }, []);
 
   useEffect(() => {
-    if (publisher) {
-      publisher.on('videoDisabled', handleVideoDisabled);
-      publisher.on('videoEnabled', handleVideoEnabled);
-      publisher.on('videoDisableWarning', handleVideoWarning);
-      publisher.on('videoDisableWarningLifted', handleVideoWarningLifted);
+    if (!publisher) {
+      return undefined;
     }
+
+    publisher.on('videoDisabled', handleVideoDisabled);
+    publisher.on('videoEnabled', handleVideoEnabled);
+    publisher.on('videoDisableWarning', handleVideoWarning);
+    publisher.on('videoDisableWarningLifted', handleVideoWarningLifted);
+
+    return () => {
+      publisher.off('videoDisabled', handleVideoDisabled);
+      publisher.off('videoEnabled', handleVideoEnabled);
+      publisher.off('videoDisableWarning', handleVideoWarning);
+      publisher.off('videoDisableWarningLifted', handleVideoWarningLifted);
+      setQuality('good');
+    };
   }, [
     handleVideoDisabled,
     handleVideoEnabled,
