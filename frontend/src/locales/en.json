@@ -326,6 +326,7 @@
   "screenSharing.title.start": "Start screen share",
   "screenSharing.title.stop": "Stop screen share",
   "screenSharing.tooltip.ariaLabel": "Start or stop screen share",
+  "screenSharing.errors": "Screen share error: {{shareScreenError}}",
   "soundTest.start": "Test speakers",
   "soundTest.stop": "Stop testing",
   "toolbar.tooltip.ariaLabel": "open additional toolbar items menu",

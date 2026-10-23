@@ -326,6 +326,7 @@
   "screenSharing.title.start": "Iniciar compartir pantalla",
   "screenSharing.title.stop": "Detener compartir pantalla",
   "screenSharing.tooltip.ariaLabel": "Iniciar o detener compartir pantalla",
+  "screenSharing.errors": "Error al compartir pantalla: {{shareScreenError}}",
   "soundTest.start": "Probar altavoces",
   "soundTest.stop": "Detener prueba",
   "toolbar.tooltip.ariaLabel": "abrir menú de barra de herramientas adicional",

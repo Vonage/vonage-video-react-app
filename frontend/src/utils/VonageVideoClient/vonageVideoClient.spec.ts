@@ -33,8 +33,10 @@ const mockSubscriber = Object.assign(new EventEmitter(), {
 const mockInitSession = vi.fn();
 const mockConnect = vi.fn();
 const mockSubscribe = vi.fn();
+const mockSubscribePromise = vi.fn();
 const mockDisconnect = vi.fn();
 const mockPublish = vi.fn();
+const mockPublishPromise = vi.fn();
 type TestSession = Session & EventEmitter;
 
 const fakeCredentials: Credential = {
@@ -54,11 +56,12 @@ describe('VonageVideoClient', () => {
 
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
-      subscribe: mockSubscribe,
+      subscribe: Object.assign(mockSubscribe, { promise: mockSubscribePromise }),
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
-      publish: mockPublish,
+      publish: Object.assign(mockPublish, { promise: mockPublishPromise }),
       unpublish: vi.fn(),
+      unsubscribe: vi.fn(),
       sessionId: fakeSessionId,
       connection: {
         connectionId: 'connection-id',
@@ -71,6 +74,8 @@ describe('VonageVideoClient', () => {
       callback();
     });
     mockSubscribe.mockReturnValue(mockSubscriber);
+    mockSubscribePromise.mockResolvedValue(mockSubscriber);
+    mockPublishPromise.mockResolvedValue(undefined);
 
     vonageVideoClient = new VonageVideoClient(fakeCredentials);
   });
@@ -253,23 +258,83 @@ describe('VonageVideoClient', () => {
 
     it('should publish a stream to the session', async () => {
       await vonageVideoClient?.connect();
-      void vonageVideoClient?.publish(mockPublisher);
-      expect(mockSession.publish).toHaveBeenCalledWith(mockPublisher, expect.any(Function));
-      expect(mockSession.publish).toHaveBeenCalledTimes(1);
+      await vonageVideoClient?.publish(mockPublisher);
+      expect(mockPublishPromise).toHaveBeenCalledWith(mockPublisher);
+      expect(mockPublishPromise).toHaveBeenCalledTimes(1);
+    });
+
+    it('attaches a hidden subscriber for captions when the publisher has a stream', async () => {
+      const mockStream = { streamId: 'stream-id' } as unknown as Stream;
+      const streamPublisher = { ...mockPublisher, stream: mockStream } as unknown as Publisher;
+
+      await vonageVideoClient?.connect();
+      await vonageVideoClient?.publish(streamPublisher);
+
+      expect(mockSubscribePromise).toHaveBeenCalledWith(mockStream, expect.anything(), {
+        audioVolume: 0,
+      });
+
+      const localCaptionReceivedPromise = new Promise((resolve) => {
+        vonageVideoClient?.on('localCaptionReceived', resolve);
+      });
+
+      mockSubscriber.emit('captionReceived', { caption: 'hello' });
+
+      await expect(localCaptionReceivedPromise).resolves.toEqual({ caption: 'hello' });
+    });
+
+    it('resolves publish and reports the error when the hidden subscriber fails to attach', async () => {
+      const mockStream = { streamId: 'stream-id' } as unknown as Stream;
+      const streamPublisher = { ...mockPublisher, stream: mockStream } as unknown as Publisher;
+      const hiddenSubscriberError = new Error('Hidden subscriber failed');
+      mockSubscribePromise.mockRejectedValueOnce(hiddenSubscriberError);
+
+      await vonageVideoClient?.connect();
+
+      await expect(vonageVideoClient?.publish(streamPublisher)).resolves.toBeUndefined();
+      await wait(0);
+
+      expect(mockProvider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: hiddenSubscriberError.name,
+          message: hiddenSubscriberError.message,
+        }),
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
+          partnerId: fakeApplicationId,
+        })
+      );
     });
 
     it('should throw an error if publishing fails', async () => {
       const error = new Error('Publishing failed');
       error.message = 'Publishing failed';
       error.name = 'oops';
-      mockPublish.mockImplementation((_, callback) => {
-        callback(error);
-      });
+      mockPublishPromise.mockRejectedValueOnce(error);
 
       await vonageVideoClient?.connect();
 
-      void expect(() => vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
+      await expect(vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         `${error.name}: ${error.message}`
+      );
+      await wait(0);
+
+      expect(mockProvider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: error.name, message: error.message }),
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.publish.error',
+          partnerId: fakeApplicationId,
+        })
+      );
+    });
+
+    it('wraps the error with a default name and message when the SDK error is missing them', async () => {
+      mockPublishPromise.mockRejectedValueOnce({});
+
+      await vonageVideoClient?.connect();
+
+      await expect(vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
+        'OTError: Unknown publish error'
       );
     });
   });
@@ -280,7 +345,7 @@ describe('VonageVideoClient', () => {
     } as unknown as Publisher;
 
     await vonageVideoClient?.connect();
-    void vonageVideoClient?.publish(mockPublisher);
+    await vonageVideoClient?.publish(mockPublisher);
     vonageVideoClient?.unpublish(mockPublisher);
 
     expect(mockSession.unpublish).toHaveBeenCalledWith(mockPublisher);

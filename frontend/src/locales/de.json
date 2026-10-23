@@ -326,6 +326,7 @@
   "screenSharing.title.start": "Bildschirmfreigabe starten",
   "screenSharing.title.stop": "Bildschirmfreigabe stoppen",
   "screenSharing.tooltip.ariaLabel": "Bildschirmfreigabe starten oder stoppen",
+  "screenSharing.errors": "Fehler bei der Bildschirmfreigabe: {{shareScreenError}}",
   "soundTest.start": "Lautsprecher testen",
   "soundTest.stop": "Test stoppen",
   "toolbar.tooltip.ariaLabel": "Menü für zusätzliche Symbolleistenelement öffnen",
