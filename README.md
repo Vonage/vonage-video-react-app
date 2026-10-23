@@ -52,6 +52,10 @@ For details on the workspace structure, libraries, and module boundaries, see [A
 | Package manager | [pnpm](https://pnpm.io) for installing. [yarn](https://yarnpkg.com) still runs the scripts, see [Package manager](#package-manager) |
 | Version manager (optional) | [nvm](https://github.com/creationix/nvm) |
 
+### SDK 2.35 Promises Migration
+
+The app is pinned to `@vonage/client-sdk-video@2.35.1`. `connect`, `disconnect`, `publish`, and `signal` use `async`/`await` with proper error reporting and user-visible failure states instead of `void`-prefixed fire-and-forget calls. `subscribe` and `initPublisher` deliberately keep their callback-based call shape, their `.promise()` form only resolves after the access outcome has already fired, which would reopen a listener-timing gap the current synchronous pattern avoids; only their error-handling paths were fixed (including the `forceMuteStream` moderation call, which had the same silent-failure gap). Client-side failures across these flows are reported through a central frontend logger, surfacing errors to the user instead of failing silently.
+
 ## Features
 
 This application provides features for common conferencing use cases, such as:
