@@ -60,12 +60,23 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        void joinRoom({ sessionKey: validSessionKey });
+        joinRoom({ sessionKey: validSessionKey }).catch(() => {});
       }
     }, [joinRoom]);
 
     return (
       <div>
+        <button
+          data-testid="joinRoom"
+          onClick={() => {
+            if (joinRoom) {
+              joinRoom({ sessionKey: validSessionKey }).catch(() => {});
+            }
+          }}
+          type="button"
+        >
+          Join Room
+        </button>
         <button
           data-testid="publish"
           onClick={() => {
@@ -318,6 +329,40 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
+    it('connect rejecting should rethrow, tear down via disconnect(), and let a retry attempt a new connection', async () => {
+      expect.assertions(4);
+      const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+      vonageVideoClient.connect = vi.fn().mockRejectedValueOnce(new Error('connect failed'));
+
+      const { getByTestId } = render(<TestComponent />);
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 1) {
+          throw new Error('VonageVideoClient not constructed yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(1);
+      expect(getByTestId('connected')).toHaveTextContent('false');
+
+      await waitFor(() => {
+        if (vi.mocked(vonageVideoClient.disconnect).mock.calls.length < 1) {
+          throw new Error('disconnect not called yet');
+        }
+      });
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        getByTestId('joinRoom').click();
+      });
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 2) {
+          throw new Error('VonageVideoClient not retried yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(2);
+    });
+
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
@@ -326,6 +371,24 @@ describe('SessionProvider', () => {
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it('disconnect should null the ref and set connected to false without waiting for VonageVideoClient.disconnect() to settle', async () => {
+      vonageVideoClient.disconnect = vi.fn().mockReturnValue(new Promise<void>(() => {}));
+
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'false') {
+          throw new Error('connected not false yet');
+        }
+      });
+      expect(getByTestId('connected')).toHaveTextContent('false');
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 

@@ -1,6 +1,5 @@
 import {
   initSession,
-  OTError,
   Publisher,
   Session,
   Stream,
@@ -474,48 +473,56 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Connects to the Vonage Video session using the provided credentials.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  connect = (): Promise<void> => {
+  connect = async (): Promise<void> => {
     const { token } = this.credential;
 
-    return new Promise((resolve, reject) => {
-      this.clientSession.connect(token, (err?: OTError) => {
-        if (err) {
-          frontendLogger.reportError(err, {
-            eventSource: 'vonageVideoClient.connect.error',
-          });
+    try {
+      await this.clientSession.connect.promise(token);
 
-          reject(err);
-        } else {
-          frontendLogger.setContext({ connectionId: this.connectionId });
+      frontendLogger.setContext({ connectionId: this.connectionId });
 
-          frontendLogger.log('EnterMeeting', {
-            eventSource: 'vonageVideoClient.connect.success',
-          });
-
-          resolve();
-        }
+      frontendLogger.log('EnterMeeting', {
+        eventSource: 'vonageVideoClient.connect.success',
       });
-    });
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.connect.error',
+      });
+
+      throw error;
+    }
   };
 
   /**
    * Disconnects from the current session and cleans up the session object.
    */
-  disconnect = () => {
+  disconnect = async (): Promise<void> => {
     if (this.disconnected) {
       return;
     }
 
     this.disconnected = true;
 
-    // Clean up the hidden subscriber used for captions
-    if (this.hiddenSubscriber) {
-      this.clientSession.unsubscribe(this.hiddenSubscriber);
-      this.hiddenSubscriber = null;
+    try {
+      if (this.hiddenSubscriber) {
+        this.clientSession.unsubscribe(this.hiddenSubscriber);
+        this.hiddenSubscriber = null;
+      }
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
+      });
     }
 
-    this.clientSession.disconnect()?.catch(() => {});
-    this.clientSession = null as unknown as Session;
+    try {
+      await this.clientSession.disconnect();
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.disconnect.error',
+      });
+    } finally {
+      this.clientSession = null as unknown as Session;
+    }
   };
 
   /**
