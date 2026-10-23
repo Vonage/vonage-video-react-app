@@ -24,6 +24,7 @@ import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker'
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import isErrorLike from '@common/assertions/isErrorLike';
 import frontendLogger from '../../logger';
+import rtcStatsTrace from '../rtcStatsTrace';
 import { decodeSessionKey } from '@common/helpers';
 
 export type ArchiveStartedEvent = { id: string; name: string };
@@ -475,7 +476,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
   connect = (): Promise<void> => {
-    const { token } = this.credential;
+    const { token, rtcStatsUrl } = this.credential;
+
+    // Opens the rtcstats-server socket before any peer connection exists, so the dump covers the
+    // whole call. No-op unless both ENABLE_RTCSTATS and the backend rtcstats settings are on.
+    if (rtcStatsTrace && rtcStatsUrl) rtcStatsTrace.connect(rtcStatsUrl);
 
     return new Promise((resolve, reject) => {
       this.clientSession.connect(token, (err?: OTError) => {
@@ -516,6 +521,9 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
     this.clientSession.disconnect()?.catch(() => {});
     this.clientSession = null as unknown as Session;
+
+    // Closing the socket ends this call's dump; the next join opens a new one.
+    rtcStatsTrace?.close();
   };
 
   /**

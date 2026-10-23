@@ -83,6 +83,17 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 | `JIRA_EPIC_LINK` | Epic link field value |
 | `JIRA_EPIC_URL` | URL to the target epic |
 
+#### rtcstats WebRTC monitoring (optional)
+
+Streams a trace of every peer connection to your own [rtcstats-server](https://github.com/rtcstats/rtcstats), so you can inspect calls the way you would in `webrtc-internals` and optionally analyze dumps on [rtcstats.com](https://rtcstats.com). It is off by default. To turn it on, set these two backend variables and `ENABLE_RTCSTATS=true` on the frontend (see [Monitoring](#monitoring)):
+
+| Variable | Description |
+|----------|-------------|
+| `RTCSTATS_ENDPOINT` | rtcstats-server WebSocket URL, e.g. `ws://localhost:3000` |
+| `RTCSTATS_JWT_SECRET` | Secret used to sign the rtcstats token. Must match the rtcstats-server secret, otherwise the server closes the socket with code `1008` and no dump is written |
+
+When both are set, the `joinSession` response also carries a signed `rtcStatsUrl`, valid for 10 minutes, whose token holds the room name (`conference`) and the Vonage session id (`session`) taken from the decoded session. The frontend opens the trace when the call connects and closes it when the call ends, so you get one dump per call.
+
 #### OIDC token authentication (optional)
 
 See [Authentication](./AUTHENTICATION.md) for the full authentication guide including all env var details.
@@ -223,6 +234,16 @@ These are runtime/environment values and are **not** generated from `app-config.
 | `SHOW_VIDEO_STATS` | `boolean` | `false` | `true` \| `false` | Show overlay video stats on the waiting room |
 | `NOTIFICATION_DURATION_MS` | `number` | `4000` | Positive integer, in milliseconds | Duration in-app notifications are displayed before auto-dismissing |
 | `AVOID_FETCHING_APP_CONFIG` | `boolean` | `true` | `true` \| `false` | Skip fetching remote app configuration on startup |
+
+---
+
+#### Monitoring
+
+A web-only setting that is not generated from `app-config.json`. Set it in [`frontend/.env`](../frontend/.env.example) or export it in your shell before building, because the value is read at build time.
+
+| Variable | Type | Default | Accepted values | Description |
+|----------|------|---------|-----------------|-------------|
+| `ENABLE_RTCSTATS` | `boolean` | `false` | `true` \| `false` | Wrap the WebRTC APIs with [rtcstats-js](https://github.com/rtcstats/rtcstats) and stream a trace to rtcstats-server. Needs the backend [rtcstats settings](#rtcstats-webrtc-monitoring-optional) too |
 
 ---
 
