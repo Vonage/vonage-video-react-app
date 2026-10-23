@@ -86,6 +86,56 @@ describe('SpeakingDetector', () => {
     expect(isSpeakingDetectorOffSpy).toHaveBeenCalled();
   });
 
+  it('stops the acquired microphone stream when cleanup runs before getUserMedia resolves (mute→unmute race)', async () => {
+    const trackStop = vi.fn();
+    const liveStream = {
+      getTracks: vi.fn(() => [{ stop: trackStop } as unknown as MediaStreamTrack]),
+    } as unknown as MediaStream;
+
+    // Control exactly when the microphone is acquired so we can run cleanup mid-start.
+    let resolveGetUserMedia!: (stream: MediaStream) => void;
+    const pendingGetUserMedia = new Promise<MediaStream>((resolve) => {
+      resolveGetUserMedia = resolve;
+    });
+    vi.spyOn(mediaDevices$.actions, 'getUserMedia').mockReturnValue(pendingGetUserMedia);
+
+    const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
+
+    // Start parks on the awaited getUserMedia...
+    const startPromise = speakingDetector.turnSpeakingDetectorOn();
+    // ...user toggles the mic back on before it is acquired, so cleanup runs during the await.
+    speakingDetector.turnSpeakingDetectorOff();
+    // Only now does the microphone stream actually arrive.
+    resolveGetUserMedia(liveStream);
+    await startPromise.catch(() => {});
+
+    // The just-acquired live stream must be released, not left running (mic indicator on).
+    expect(trackStop).toHaveBeenCalled();
+    expect(speakingDetector.stream).toBeNull();
+  });
+
+  it('closes the AudioContext and rethrows when getUserMedia rejects', async () => {
+    const audioContextCloseSpy = vi.fn();
+    global.AudioContext = vi.fn(() => ({
+      createMediaStreamSource: mockCreateMediaStreamSource,
+      createAnalyser: vi.fn(() => mockAnalyser),
+      close: audioContextCloseSpy,
+    })) as unknown as typeof global.AudioContext;
+
+    vi.spyOn(mediaDevices$.actions, 'getUserMedia').mockRejectedValue(
+      new Error('permission denied')
+    );
+
+    const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
+
+    await expect(speakingDetector.turnSpeakingDetectorOn()).rejects.toThrow(
+      'error starting speaking detector'
+    );
+
+    // The AudioContext created before the failed getUserMedia must be closed, not leaked.
+    expect(audioContextCloseSpy).toHaveBeenCalled();
+  });
+
   it('should clean up resources and emit isSpeakingWhileMutedOff when turning detector off', async () => {
     const speakingDetector = new SpeakingDetector({ selectedMicrophoneId: '132322' });
 
