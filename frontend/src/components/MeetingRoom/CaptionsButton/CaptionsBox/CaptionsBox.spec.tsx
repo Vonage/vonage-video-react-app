@@ -21,6 +21,8 @@ describe('CaptionsBox', () => {
       videoWidth: () => 1280,
       videoHeight: () => 720,
       subscribeToVideo: () => {},
+      getCaptionsTranslationLanguage: () => null,
+      setCaptionsTranslationLanguage: vi.fn().mockResolvedValue(undefined),
       stream: {
         streamId: id,
       },
