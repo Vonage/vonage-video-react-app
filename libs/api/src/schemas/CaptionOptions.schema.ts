@@ -8,6 +8,7 @@ export const CaptionOptionsSchema = z.object({
   partialCaptions: z.enum(['true', 'false']).optional(),
   statusCallbackUrl: z.string().optional(),
   translationLevel: CaptionsTranslationLevelSchema.optional(),
+  targetLanguageCode: z.string().optional(),
 }) satisfies z.ZodType<CaptionOptions>;
 
 export default CaptionOptionsSchema;

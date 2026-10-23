@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import type { CaptionsLanguageCode } from '@vonage/client-sdk-video';
 
+// Live Captions codes whose language Amazon Translate can target; eu-ES, gl-ES and zu-ZA are excluded.
+// en-AB and en-WL are excluded because Intl.DisplayNames cannot label them.
+// https://docs.aws.amazon.com/translate/latest/dg/what-is-languages.html
 export const CAPTIONS_TRANSLATION_LANGUAGES = [
   'af-ZA',
   'ar-AE',
   'ar-SA',
-  'eu-ES',
   'ca-ES',
   'zh-HK',
   'zh-CN',
@@ -19,15 +21,12 @@ export const CAPTIONS_TRANSLATION_LANGUAGES = [
   'en-IN',
   'en-IE',
   'en-NZ',
-  'en-AB',
   'en-ZA',
   'en-US',
-  'en-WL',
   'fa-IR',
   'fi-FI',
   'fr-FR',
   'fr-CA',
-  'gl-ES',
   'de-DE',
   'de-CH',
   'el-GR',
@@ -55,7 +54,6 @@ export const CAPTIONS_TRANSLATION_LANGUAGES = [
   'th-TH',
   'uk-UA',
   'vi-VN',
-  'zu-ZA',
 ] as const satisfies readonly CaptionsLanguageCode[];
 
 export const captionsTranslationLanguageSchema = z.enum(CAPTIONS_TRANSLATION_LANGUAGES);

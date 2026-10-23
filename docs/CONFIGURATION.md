@@ -61,6 +61,15 @@ OT_API_SECRET='your-api-secret'
 
 Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, requests from an origin outside this list are also rejected with `403`.
 
+#### Live Captions Translation (optional, private beta)
+
+[Live Captions Translation](https://developer.vonage.com/en/opentok/guides/live-caption-translation) must be enabled for your Vonage project. Both variables are unset by default, so the Start Captions request is unchanged.
+
+| Variable | Accepted values | Description |
+|----------|-----------------|-------------|
+| `CAPTIONS_TRANSLATION_LEVEL` | `FINALS_ONLY` \| `CONFIDENT_PARTIALS` \| `WINDOWED_PARTIALS` \| `ALL_PARTIALS` | How often captions are translated. Higher levels translate more partial captions and cost more. |
+| `CAPTIONS_TARGET_LANGUAGE_CODE` | BCP-47 code, e.g. `es-ES` | Session-level translation language for every participant. A language picked in the Captions settings tab overrides it, and choosing "Original" there reverts to this language instead of the spoken one. |
+
 #### Vonage Cloud Runtime (VCR)
 
 | Variable | Required | Description |
