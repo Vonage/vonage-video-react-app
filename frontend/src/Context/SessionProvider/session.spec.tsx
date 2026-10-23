@@ -38,6 +38,7 @@ const validSessionKey =
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
   let vonageVideoClient: VonageVideoClient;
+  let subscriberWrappersSnapshots: SubscriberWrapper[][];
 
   const TestComponent = () => {
     const {
@@ -57,6 +58,8 @@ describe('SessionProvider', () => {
       messages,
       unreadCount,
     } = useSessionContext();
+
+    subscriberWrappersSnapshots.push(subscriberWrappers);
 
     useEffect(() => {
       if (joinRoom) {
@@ -139,6 +142,7 @@ describe('SessionProvider', () => {
   };
 
   beforeEach(() => {
+    subscriberWrappersSnapshots = [];
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -196,6 +200,39 @@ describe('SessionProvider', () => {
       })
     );
     await waitFor(() => expect(getByTestId('activeSpeaker')).toHaveTextContent('sub2'));
+  });
+
+  it('should reorder subscriberWrappers to a new array reference when the active speaker changes', async () => {
+    const { getByTestId } = await renderAndWaitForConnection();
+
+    act(() => {
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub1',
+      } as unknown as SubscriberWrapper);
+      vonageVideoClient.emit('subscriberVideoElementCreated', {
+        id: 'sub2',
+      } as unknown as SubscriberWrapper);
+    });
+
+    await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(2));
+    expect(getByTestId('subscriberWrappers').children[0]).not.toHaveTextContent('sub1');
+    const referenceBeforeReorder =
+      subscriberWrappersSnapshots[subscriberWrappersSnapshots.length - 1];
+
+    void act(() =>
+      activeSpeakerTracker.emit('activeSpeakerChanged', {
+        previousActiveSpeaker: { subscriberId: undefined, movingAvg: 0 },
+        newActiveSpeaker: { subscriberId: 'sub1', movingAvg: 0.3 },
+      })
+    );
+
+    await waitFor(() =>
+      expect(getByTestId('subscriberWrappers').children[0]).toHaveTextContent('sub1')
+    );
+    const referenceAfterReorder =
+      subscriberWrappersSnapshots[subscriberWrappersSnapshots.length - 1];
+
+    expect(referenceAfterReorder).not.toBe(referenceBeforeReorder);
   });
 
   describe('publish', () => {
@@ -282,7 +319,7 @@ describe('SessionProvider', () => {
 
       await waitFor(() => {
         expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub2');
-        expect(getByTestId('subscriberWrappers').children.length).toBe(2);
+        expect(getByTestId('subscriberWrappers').children).toHaveLength(2);
       });
     });
 
@@ -479,7 +516,7 @@ describe('SessionProvider', () => {
         } as unknown as SubscriberWrapper);
       });
 
-      await waitFor(() => expect(getByTestId('subscriberWrappers').children.length).toBe(3));
+      await waitFor(() => expect(getByTestId('subscriberWrappers').children).toHaveLength(3));
       expect(getByTestId('subscriberWrappers').children[0]).not.toHaveTextContent('sub1');
 
       act(() => {

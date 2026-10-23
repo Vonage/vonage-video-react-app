@@ -5,6 +5,8 @@ import {
   ReactElement,
   ReactNode,
   WheelEvent,
+  useMemo,
+  useRef,
   useState,
   MouseEvent,
   useEffect,
@@ -14,6 +16,8 @@ import getBoxStyle from '../../../utils/helpers/getBoxStyle';
 import ZoomIndicator from '../ZoomIndicator';
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from '../../../utils/constants';
 import CustomBox from '@mui/material/Box';
+import type { CSSProperties } from 'react';
+import classNames from 'classnames';
 
 export type ScreenshareVideoTileProps = {
   'data-testid': string;
@@ -53,19 +57,30 @@ const ScreenshareVideoTile = forwardRef(
       y: 0,
     });
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number }>({
-      x: 0,
-      y: 0,
-    });
+    // Kept in a ref so the rAF callback always diffs against the latest applied position
+    const lastMousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+    // Refs for rAF-based mousemove throttling to avoid excessive setState calls
+    const pendingMouseMove = useRef<{ x: number; y: number } | null>(null);
+    const rafId = useRef<number | null>(null);
 
     // Auto re-center when zoom returns to 100%
     useEffect(() => {
       if (zoomLevel === 1) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPanOffset({ x: 0, y: 0 });
         setIsDragging(false);
       }
     }, [zoomLevel]);
+
+    useEffect(() => {
+      return () => {
+        if (rafId.current !== null) {
+          cancelAnimationFrame(rafId.current);
+          rafId.current = null;
+        }
+        pendingMouseMove.current = null;
+      };
+    }, []);
 
     const onWheel = (event: WheelEvent<HTMLDivElement>) => {
       if (!isZoomSupported) return;
@@ -102,30 +117,47 @@ const ScreenshareVideoTile = forwardRef(
     const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
       if (zoomLevel > 1) {
         setIsDragging(true);
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
+        lastMousePosition.current = { x: event.clientX, y: event.clientY };
       }
     };
 
-    const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-      if (isDragging && zoomLevel > 1) {
-        const deltaX = event.clientX - lastMousePosition.x;
-        const deltaY = event.clientY - lastMousePosition.y;
-
+    const applyPendingMouseMove = () => {
+      const position = pendingMouseMove.current;
+      if (position) {
+        const deltaX = position.x - lastMousePosition.current.x;
+        const deltaY = position.y - lastMousePosition.current.y;
         setPanOffset((prev) => ({
           x: prev.x + deltaX,
           y: prev.y + deltaY,
         }));
-
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
+        lastMousePosition.current = position;
       }
+      pendingMouseMove.current = null;
+    };
+
+    const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+      if (!isDragging || zoomLevel <= 1) return;
+
+      pendingMouseMove.current = { x: event.clientX, y: event.clientY };
+
+      rafId.current ??= requestAnimationFrame(() => {
+        rafId.current = null;
+        applyPendingMouseMove();
+      });
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
+      // Flush the final pointer position so the drag doesn't end a frame behind
+      applyPendingMouseMove();
     };
 
     // Apply zoom transform style
-    const getTransformStyle = () => {
+    const transformStyle: CSSProperties = useMemo(() => {
       let cursor = 'default';
       if (zoomLevel > 1) {
         cursor = isDragging ? 'grabbing' : 'grab';
@@ -137,7 +169,7 @@ const ScreenshareVideoTile = forwardRef(
         transition: isDragging ? 'none' : 'transform 0.1s ease-out',
         cursor,
       };
-    };
+    }, [zoomLevel, panOffset, isDragging]);
 
     const resetZoom = () => {
       setZoomLevel(1);
@@ -167,18 +199,19 @@ const ScreenshareVideoTile = forwardRef(
       <CustomBox
         id={id}
         data-testid={dataTestId}
-        sx={{
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          ...getBoxStyle(box, true), // Always true for screenshare
-        }}
-        className={className}
+        className={classNames(
+          'absolute flex items-center justify-center overflow-hidden',
+          className
+        )}
+        style={getBoxStyle(box, true)}
         onMouseEnter={() => onMouseEnter?.()}
         onMouseLeave={() => {
           setIsDragging(false);
+          if (rafId.current !== null) {
+            cancelAnimationFrame(rafId.current);
+            rafId.current = null;
+          }
+          pendingMouseMove.current = null;
           onMouseLeave?.();
         }}
         onWheel={onWheel}
@@ -188,29 +221,12 @@ const ScreenshareVideoTile = forwardRef(
       >
         <CustomBox
           ref={ref}
-          className="rounded-vera-large bg-vera-dark-grey-opacity"
-          sx={{
-            position: 'relative',
-            left: 0,
-            top: '-4px',
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            ...getTransformStyle(),
-          }}
+          className="relative left-0 -top-1 h-full w-full overflow-hidden rounded-vera-large bg-vera-dark-grey-opacity"
+          style={transformStyle}
         />
         <CustomBox
-          className="rounded-vera-large bg-vera-dark-grey-opacity"
-          sx={{
-            position: 'relative',
-            left: 0,
-            top: 0,
-            display: 'none',
-            width: '100%',
-            height: '100%',
-            overflow: 'hidden',
-            ...getTransformStyle(),
-          }}
+          className="relative left-0 top-0 hidden h-full w-full overflow-hidden rounded-vera-large bg-vera-dark-grey-opacity"
+          style={transformStyle}
         />
         {children}
 
