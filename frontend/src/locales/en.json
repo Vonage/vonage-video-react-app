@@ -280,6 +280,7 @@
   "participants.list.open": "Open participant list",
   "participants.maxPin": "You can't pin any more tiles",
   "participants.mute.dialog.content": "Mute {{participantName}} for everyone in the call? Only {{participantName}} can unmute themselves.",
+  "participants.mute.forceMuteFailed": "Failed to mute this participant. Please try again.",
   "participants.mute.tooltip": "Mute {{participantName}}'s microphone",
   "participants.pin": "Pin {{participantName}}",
   "participants.pin.video": "Pin {{participantName}}'s video",

@@ -280,6 +280,7 @@
   "participants.list.open": "Apri la lista dei partecipanti",
   "participants.maxPin": "Non puoi fissare altre tile",
   "participants.mute.dialog.content": "Disattivare {{participantName}} per tutti nella chiamata? Solo {{participantName}} può riattivarsi.",
+  "participants.mute.forceMuteFailed": "Non è stato possibile disattivare l'audio di questo partecipante. Riprova.",
   "participants.mute.tooltip": "Disattiva microfono di {{participantName}}",
   "participants.pin": "Fissa {{participantName}}",
   "participants.pin.video": "Fissa video di {{participantName}}",
