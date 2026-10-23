@@ -251,6 +251,26 @@ describe('VonageVideoClient', () => {
     expect(mockSession.forceMuteStream).toHaveBeenCalledWith(mockStream);
   });
 
+  it('forceMuteStream should report and rethrow when the session call fails', async () => {
+    const mockStream: Stream = {
+      streamId: 'stream-id',
+    } as unknown as Stream;
+    const error = new Error('Force mute failed');
+    (mockSession.forceMuteStream as Mock).mockRejectedValueOnce(error);
+
+    await vonageVideoClient?.connect();
+
+    await expect(vonageVideoClient?.forceMuteStream(mockStream)).rejects.toThrow(error);
+
+    expect(mockProvider.reportError).toHaveBeenCalledWith(
+      expect.objectContaining({ name: error.name, message: error.message }),
+      expect.objectContaining({
+        eventSource: 'vonageVideoClient.forceMuteStream.error',
+        partnerId: fakeApplicationId,
+      })
+    );
+  });
+
   describe('publish', () => {
     const mockPublisher: Publisher = {
       id: 'publisher-id',

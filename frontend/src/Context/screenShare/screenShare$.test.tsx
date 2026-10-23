@@ -63,19 +63,15 @@ describe('screenShare$', () => {
       await actions.toggleShareScreen();
     });
 
-    expect(initPublisher).toHaveBeenCalledWith(
-      undefined,
-      {
-        videoSource: 'screen',
-        insertDefaultUI: false,
-        videoContentHint: 'detail',
-        preferredVideoCodecs: 'automatic',
-        scalableScreenshare: false,
-        name: 'TestUser',
-        constraints: { video: { displaySurface: 'monitor' } },
-      },
-      expect.any(Function)
-    );
+    expect(initPublisher).toHaveBeenCalledWith(undefined, {
+      videoSource: 'screen',
+      insertDefaultUI: false,
+      videoContentHint: 'detail',
+      preferredVideoCodecs: 'automatic',
+      scalableScreenshare: false,
+      name: 'TestUser',
+      constraints: { video: { displaySurface: 'monitor' } },
+    });
     expect(mockPublisher.on).toHaveBeenCalledWith('streamCreated', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('streamDestroyed', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('mediaStopped', expect.any(Function));
@@ -146,8 +142,7 @@ describe('screenShare$', () => {
       expect.objectContaining({
         frameRate: 7,
         resolution: '1280x720',
-      }),
-      expect.any(Function)
+      })
     );
     expect(mockPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
   });
@@ -373,8 +368,7 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: undefined,
-      }),
-      expect.any(Function)
+      })
     );
   });
 
@@ -408,6 +402,7 @@ describe('screenShare$', () => {
     expect(state.isSharingScreen).toBe(false);
     expect(state.publisher).toBeNull();
     expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledTimes(1);
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'error',
@@ -444,8 +439,7 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: { video: { displaySurface: 'browser' } },
-      }),
-      expect.any(Function)
+      })
     );
   });
 });
