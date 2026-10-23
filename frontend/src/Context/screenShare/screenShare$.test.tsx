@@ -10,7 +10,6 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 import { Resolution } from '@common/types';
 import { notifications$ } from '@core/stores';
-import { frontendLogger } from '../../logger';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -64,19 +63,15 @@ describe('screenShare$', () => {
       await actions.toggleShareScreen();
     });
 
-    expect(initPublisher).toHaveBeenCalledWith(
-      undefined,
-      {
-        videoSource: 'screen',
-        insertDefaultUI: false,
-        videoContentHint: 'detail',
-        preferredVideoCodecs: 'automatic',
-        scalableScreenshare: false,
-        name: 'TestUser',
-        constraints: { video: { displaySurface: 'monitor' } },
-      },
-      expect.any(Function)
-    );
+    expect(initPublisher).toHaveBeenCalledWith(undefined, {
+      videoSource: 'screen',
+      insertDefaultUI: false,
+      videoContentHint: 'detail',
+      preferredVideoCodecs: 'automatic',
+      scalableScreenshare: false,
+      name: 'TestUser',
+      constraints: { video: { displaySurface: 'monitor' } },
+    });
     expect(mockPublisher.on).toHaveBeenCalledWith('streamCreated', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('streamDestroyed', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('mediaStopped', expect.any(Function));
@@ -147,8 +142,7 @@ describe('screenShare$', () => {
       expect.objectContaining({
         frameRate: 7,
         resolution: '1280x720',
-      }),
-      expect.any(Function)
+      })
     );
     expect(mockPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
   });
@@ -374,8 +368,7 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: undefined,
-      }),
-      expect.any(Function)
+      })
     );
   });
 
@@ -409,58 +402,13 @@ describe('screenShare$', () => {
     expect(state.isSharingScreen).toBe(false);
     expect(state.publisher).toBeNull();
     expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledTimes(1);
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'error',
         message: expect.stringContaining('Publishing failed'),
       })
     );
-  });
-
-  it('reports the error and surfaces a notification when initPublisher fails', async () => {
-    const initPublisherError = { name: 'OT_ERROR', message: 'Failed to init' };
-    vi.mocked(initPublisher).mockImplementation((_targetElement, _properties, callback) => {
-      callback?.(initPublisherError);
-      return mockPublisher as Publisher;
-    });
-    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    const { result } = render({
-      userContext: {
-        __interceptor: (context: UserContextType | null) => {
-          context!.user.defaultSettings.name = 'TestUser';
-        },
-      },
-      sessionContext: {
-        __interceptor: (context) => {
-          if (context) {
-            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
-          }
-        },
-      },
-    });
-
-    await act(async () => {
-      const [, actions] = result.current;
-      await actions.toggleShareScreen();
-    });
-
-    expect(reportErrorSpy).toHaveBeenCalledWith(
-      initPublisherError,
-      expect.objectContaining({ eventSource: 'screenShare$.toggleShareScreen.initPublisher' })
-    );
-    expect(pushSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'error',
-        message: expect.stringContaining('Failed to init'),
-      })
-    );
-
-    const [state] = result.current;
-    expect(state.isSharingScreen).toBe(false);
   });
 
   it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {
@@ -491,8 +439,7 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: { video: { displaySurface: 'browser' } },
-      }),
-      expect.any(Function)
+      })
     );
   });
 });

@@ -104,38 +104,17 @@ const screenShare$ = createContext(initialState, {
 
           const partnerId = session.sessionDetails?.applicationId ?? null;
 
-          const publisher = initPublisher(
-            undefined,
-            {
-              videoSource: 'screen',
-              insertDefaultUI: false,
-              videoContentHint: screenShareContentHint,
-              preferredVideoCodecs,
-              scalableScreenshare: scalableScreenshareEnabled,
-              ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
-              ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
-              name: user.defaultSettings.name,
-              constraints: screenShareConstraints,
-            },
-            (error) => {
-              if (!error) return;
-
-              frontendLogger.reportError(error, {
-                eventSource: 'screenShare$.toggleShareScreen.initPublisher',
-                partnerId,
-              });
-
-              notifications$.actions.push({
-                type: 'error',
-                message: i18n.t('screenSharing.errors', {
-                  shareScreenError: error.message,
-                }),
-                expirationMs: env.NOTIFICATION_DURATION_MS,
-              });
-
-              actions$.onScreenShareStopped();
-            }
-          );
+          const publisher = initPublisher(undefined, {
+            videoSource: 'screen',
+            insertDefaultUI: false,
+            videoContentHint: screenShareContentHint,
+            preferredVideoCodecs,
+            scalableScreenshare: scalableScreenshareEnabled,
+            ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
+            ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
+            name: user.defaultSettings.name,
+            constraints: screenShareConstraints,
+          });
 
           setState((state) => ({
             ...state,
