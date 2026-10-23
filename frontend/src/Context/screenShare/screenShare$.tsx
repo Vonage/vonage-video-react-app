@@ -117,13 +117,21 @@ const screenShare$ = createContext(initialState, {
               name: user.defaultSettings.name,
               constraints: screenShareConstraints,
             },
-            (err) => {
-              if (!err) return;
+            (error) => {
+              if (!error) return;
 
-              handleApplyAdvancedSettingsError({
-                message: 'Failed to initialize screen share publisher',
+              frontendLogger.reportError(error, {
                 eventSource: 'screenShare$.toggleShareScreen.initPublisher',
-              })(err);
+                partnerId,
+              });
+
+              notifications$.actions.push({
+                type: 'error',
+                message: i18n.t('screenSharing.errors', {
+                  shareScreenError: error.message,
+                }),
+                expirationMs: env.NOTIFICATION_DURATION_MS,
+              });
 
               actions$.onScreenShareStopped();
             }

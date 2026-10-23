@@ -7,6 +7,7 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { frontendLogger } from '../../../logger';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -57,7 +58,8 @@ describe('useBackgroundPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', () => {
+    it('should report initPublisher errors via frontendLogger', () => {
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -70,7 +72,12 @@ describe('useBackgroundPublisher', () => {
       act(() => {
         result.current.initBackgroundLocalPublisher();
       });
-      expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
+      expect(reportErrorSpy).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+        })
+      );
     });
 
     it('should apply background high blur-sm when initialized and changed background', async () => {
