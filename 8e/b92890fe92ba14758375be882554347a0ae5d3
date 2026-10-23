@@ -1,0 +1,88 @@
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 382-383,385-410,464-465
+  s_dc5aabab156a0c::t_71571bf4fa9899 411
+  s_dc5aabab156a0c::t_4eb51cafa33ba6 412-417
+  s_dc5aabab156a0c::t_e7a55a6cb76b9f 12
+  s_dc5aabab156a0c::t_05a18fe69f6fef 384
+  s_c847e1696b536f::t_41d1b7b0ccea8f 420-465
+  s_c847e1696b536f::t_a6bb335f7d7480 13
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 195-196,199-200,212-215
+  s_dc5aabab156a0c::t_296f3c4a29349c 197,203
+  s_dc5aabab156a0c::t_8503d25b1a5413 16,198,201,204,212
+  s_dc5aabab156a0c::t_4255594b751393 205-211
+  s_dc5aabab156a0c::t_4fa829558c0879 17-19
+  s_c847e1696b536f::t_78732a77d4e43d 125-130,132-134
+  s_c847e1696b536f::t_456672bef2acc2 131
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 536-548,550-552,569
+  s_dc5aabab156a0c::t_a9f3b3be8b678c 553-568
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_c939f8fae0de97 39,62,64,78,261-272,274-275,313,317,320-338,348
+  s_dc5aabab156a0c::t_02d9662c92e319 295,298-301
+  s_dc5aabab156a0c::t_1f6ec8d0bcae86 36
+  s_dc5aabab156a0c::t_316acde4073bf9 273,276-294,296-297,302-306
+  s_dc5aabab156a0c::t_be9812daabc0ab 77
+  s_dc5aabab156a0c::t_59066bfca0c410 59
+frontend/src/locales/it.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 330
+frontend/src/locales/ja.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 340
+frontend/src/locales/en.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 330
+frontend/src/locales/es.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 330
+frontend/src/locales/es-MX.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 330
+frontend/src/locales/de.json
+  s_dc5aabab156a0c::t_8503d25b1a5413 330
+libs/ui/src/components/NotificationItem/NotificationItem.tsx
+  s_dc5aabab156a0c::t_ee514291cb436e 20,27
+libs/core/src/stores/notifications/types/NotificationType.ts
+  s_dc5aabab156a0c::t_45532ff2297c40 1
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  s_c847e1696b536f::t_3d74d401a687ad 61-62,75-80
+  s_c847e1696b536f::t_f3303e45b98db8 10
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_c847e1696b536f::t_e71290f52ff9f0 23
+  s_c847e1696b536f::t_fe80bca566387e 206,208-209
+  s_c847e1696b536f::t_62fe871d1fe8bf 204-205
+  s_c847e1696b536f::t_f733353fafbff3 207
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_c847e1696b536f::t_35e4de03f80eea 196,198-199
+  s_c847e1696b536f::t_313df42c2d8af7 24
+  s_c847e1696b536f::t_8302de79b9e0f8 194-195
+  s_c847e1696b536f::t_5d0443059152c5 197
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  s_c847e1696b536f::t_6b3671f15df230 57-58,69-74
+  s_c847e1696b536f::t_ad6c628f2757ca 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8eb92890fe92ba14758375be882554347a0ae5d3",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_c847e1696b536f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd0ab09a-1867-43ed-afee-720525f14d72",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_dc5aabab156a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97fb7cc3-0736-432e-928b-c11f40a0a80d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
