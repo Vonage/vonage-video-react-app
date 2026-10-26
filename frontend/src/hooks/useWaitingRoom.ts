@@ -6,7 +6,6 @@ import useSessionKeyParam from './useSessionKeyParam';
 import useDecodedSessionKey from './useDecodedSessionKey';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
-import { env } from '../env';
 
 const useWaitingRoom = () => {
   const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
@@ -80,10 +79,7 @@ const useWaitingRoom = () => {
     setOpenVideoInput(false);
   };
 
-  const isRoomReady =
-    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION &&
-    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED &&
-    !isVideoLoading;
+  const isRoomReady = accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
 
   return {
     anchorEl,

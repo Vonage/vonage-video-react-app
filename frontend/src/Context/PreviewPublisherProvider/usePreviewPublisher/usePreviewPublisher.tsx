@@ -1,12 +1,14 @@
 import { useState, useRef, useCallback } from 'react';
-import { initPublisher, hasMediaProcessorSupport } from '@vonage/client-sdk-video';
+import { initPublisher } from '@vonage/client-sdk-video';
 import type { Event, Publisher, PublisherProperties, VideoFilter } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@web/hooks/useStableCallback';
@@ -96,13 +98,11 @@ const usePreviewPublisher = (
     () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    () =>
-      initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    () => initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
-    () =>
-      initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
+    () => initialValue?.isAudioEnabled ?? isDeviceEnabledOnJoin('audio')
   );
 
   const handlePreviewDestroyed = () => {
@@ -185,13 +185,14 @@ const usePreviewPublisher = (
       videoFilter = initialBackgroundRef.current;
     }
 
-    const { frameRate, codecMode, codecPriority } = advancedSettings$.getState();
+    const { frameRate, codecMode, codecPriority, cameraContentHint } = advancedSettings$.getState();
 
     const publisherOptions: PublisherProperties = {
       insertDefaultUI: false,
       videoFilter,
       resolution: env.PUBLISHER_MAX_RESOLUTION,
       frameRate,
+      videoContentHint: cameraContentHint,
       preferredVideoCodecs: codecMode === 'automatic' ? 'automatic' : codecPriority,
       publishAudio: isAudioEnabled,
       publishVideo: isVideoEnabled,

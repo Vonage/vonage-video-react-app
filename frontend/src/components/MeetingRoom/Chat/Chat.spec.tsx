@@ -1,28 +1,32 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, render as renderBase, screen, within } from '@testing-library/react';
 import { ReactElement } from 'react';
 import Chat from './Chat';
-import { ChatMessageType } from '../../../types/chat';
+import type { ChatMessageType, ChatMessageId } from '@app-types/chat';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import { SessionContextType } from '../../../Context/SessionProvider/session';
 
 const testMessages: ChatMessageType[] = [
   {
+    id: 'message-1' as ChatMessageId,
     participantName: 'User One',
     timestamp: 1726587657728,
     message: 'Hello all',
   },
   {
+    id: 'message-2' as ChatMessageId,
     participantName: 'User Two',
     timestamp: 1726587657729,
     message: 'Good morning',
   },
   {
+    id: 'message-3' as ChatMessageId,
     participantName: 'User Three',
     timestamp: 1726587657730,
     message: 'Hi',
   },
   {
+    id: 'message-4' as ChatMessageId,
     participantName: 'User Four',
     timestamp: 1726587657731,
     message: 'Sup',
@@ -55,6 +59,42 @@ describe('Chat', () => {
       '11:40 AM'
     );
     expect(chatMessages[0].textContent).toMatch('Hello all');
+  });
+
+  it('renders messages that share a timestamp without duplicate React keys', () => {
+    const sameTimestampMessages: ChatMessageType[] = [
+      {
+        id: 'message-a' as ChatMessageId,
+        participantName: 'User One',
+        timestamp: 1726587657728,
+        message: 'first',
+      },
+      {
+        id: 'message-b' as ChatMessageId,
+        participantName: 'User Two',
+        timestamp: 1726587657728,
+        message: 'second',
+      },
+    ];
+
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      render(<Chat handleClose={() => {}} isOpen />, {
+        sessionContext: {
+          __interceptor: (context: SessionContextType) => {
+            if (context) {
+              context.messages = sameTimestampMessages;
+            }
+          },
+        },
+      });
+
+      expect(screen.getAllByTestId('chat-message')).toHaveLength(2);
+      expect(errorSpy).not.toHaveBeenCalled();
+    } finally {
+      errorSpy.mockRestore();
+    }
   });
 });
 

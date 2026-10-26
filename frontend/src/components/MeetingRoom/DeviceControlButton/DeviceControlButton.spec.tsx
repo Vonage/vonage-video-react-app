@@ -8,7 +8,7 @@ import useSpeakingDetector from '@hooks/useSpeakingDetector';
 import usePublisherContext from '@hooks/usePublisherContext';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import { makeTestProvider } from '@test/providers';
-import DeviceControlButton from './DeviceControlButton';
+import DeviceControlButton, { testIds } from './DeviceControlButton';
 import { env } from '../../../env';
 import enTranslations from '../../../locales/en.json';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
@@ -141,6 +141,20 @@ describe('DeviceControlButton', () => {
         await screen.findByText('Microphone control is disabled in this application')
       ).toBeInTheDocument();
     });
+
+    it('hides the settings dropdown when device selection is not allowed', () => {
+      env.partialUpdate({ MEETING_ROOM_ALLOW_DEVICE_SELECTION: false });
+
+      render(
+        <DeviceControlButton
+          deviceType="audio"
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+        />
+      );
+
+      expect(screen.getByLabelText('Microphone')).toBeInTheDocument();
+      expect(screen.queryByTestId(testIds.audioDropdownButton)).not.toBeInTheDocument();
+    });
   });
 
   describe('video DeviceControlButton', () => {
@@ -181,6 +195,23 @@ describe('DeviceControlButton', () => {
       expect(
         await screen.findByText('Camera control is disabled in this application')
       ).toBeInTheDocument();
+    });
+
+    it('hides the settings dropdown when neither device selection nor background effects are allowed', () => {
+      env.partialUpdate({
+        MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
+        ALLOW_BACKGROUND_EFFECTS: false,
+      });
+
+      render(
+        <DeviceControlButton
+          deviceType="video"
+          toggleBackgroundEffects={mockHandleToggleBackgroundEffects}
+        />
+      );
+
+      expect(screen.getByLabelText('Camera')).toBeInTheDocument();
+      expect(screen.queryByTestId(testIds.videoDropdownButton)).not.toBeInTheDocument();
     });
   });
 });
