@@ -256,7 +256,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .send(
               createCaptionsHookPayload({
                 status: 'started',
-                captionId: 'captions-id-updated',
+                captionsId: 'captions-id-updated',
               })
             );
 
@@ -268,6 +268,40 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(captionsIdAfterIgnored).toEqual('captions-id-initial');
           expect(startedResponse.statusCode).toEqual(200);
           expect(captionsIdAfterStarted).toEqual('captions-id-updated');
+        });
+
+        it('accepts captions events that omit stream', async () => {
+          const { stream: _stream, ...payload } = createCaptionsHookPayload({
+            captionsId: 'captions-id-from-vonage',
+          });
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send(payload);
+
+          const captionsId = await sessionService.getCaptionsId({ sessionId: validSessionId });
+
+          expect(response.statusCode).toEqual(200);
+          expect(captionsId).toEqual('captions-id-from-vonage');
+        });
+
+        it('logs only the received keys when a captions event is invalid', async () => {
+          const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send({ sessionId: validSessionId, secretValue: 'do-not-log' });
+
+          expect(response.statusCode).toEqual(400);
+          expect(warnSpy).toHaveBeenCalledWith(
+            '[hooks/captions] Invalid payload',
+            expect.objectContaining({ receivedKeys: ['sessionId', 'secretValue'] })
+          );
+          expect(JSON.stringify(warnSpy.mock.calls)).not.toContain('do-not-log');
+
+          warnSpy.mockRestore();
         });
 
         it('handles non-actionable, started, and stopped archive events', async () => {
@@ -392,7 +426,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPending).toBe(true);
+            expect(serverRotationPending).toBe(1);
             expect(captionsIdAfterRotation).toEqual('captions-id-preserved');
             expect(archiveIdsAfterRotation).toEqual(['archive-id-active']);
           });
@@ -407,7 +441,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
 
             await sessionService.setServerRotationPending({
               sessionId: validSessionId,
-              pending: true,
+              pending: 1,
             });
 
             const response = await request(server)
@@ -420,8 +454,43 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPendingAfter).toBe(false);
+            expect(serverRotationPendingAfter).toBe(0);
             expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+          });
+
+          it('/hooks/archive stopped with name=transcription triggers startArchive with withTranscription=true', async () => {
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['transcription-archive-id'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId: validSessionId,
+              pending: 1,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(
+                createArchiveHookPayload({
+                  status: 'stopped',
+                  id: 'transcription-archive-id',
+                  name: 'transcription',
+                })
+              );
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                hasTranscription: true,
+                name: 'transcription',
+              })
+            );
           });
 
           it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
@@ -454,7 +523,7 @@ function getMockedVideoInstances(): MockedVideoInstance[] {
 
 function createCaptionsHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    captionId: 'caption-id-1',
+    captionsId: 'caption-id-1',
     projectId: 'project-id-1',
     sessionId: validSessionId,
     status: 'started',

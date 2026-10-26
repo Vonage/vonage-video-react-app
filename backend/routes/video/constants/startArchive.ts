@@ -1,18 +1,37 @@
 import { HandlersConfig } from '@api-lib';
-import { LayoutType, Resolution } from '@vonage/video';
+import { ArchiveOptions, ArchiveOutputMode, LayoutType, Resolution } from '@vonage/video';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
+
+type ArchiveOptionsWithTag = ArchiveOptions & { multiArchiveTag?: string };
+
+const recordingOptions: ArchiveOptionsWithTag = {
+  name: RECORDING_ARCHIVE_NAME,
+  outputMode: ArchiveOutputMode.COMPOSED,
+  multiArchiveTag: RECORDING_ARCHIVE_NAME,
+  resolution: Resolution.FHD_LANDSCAPE,
+  layout: {
+    type: LayoutType.BEST_FIT,
+    screenshareType: 'horizontalPresentation',
+  },
+};
+
+const transcriptionOptions: ArchiveOptionsWithTag = {
+  name: TRANSCRIPTION_ARCHIVE_NAME,
+  outputMode: ArchiveOutputMode.INDIVIDUAL,
+  multiArchiveTag: TRANSCRIPTION_ARCHIVE_NAME,
+  hasAudio: true,
+  hasVideo: false,
+  hasTranscription: true,
+  transcriptionProperties: {
+    hasSummary: true,
+  },
+};
 
 const startArchive: HandlersConfig['startArchive'] = {
-  addDefaults: ({ sessionKey, archiveOptions }) => ({
+  addDefaults: ({ sessionKey, withTranscription, archiveOptions }) => ({
     sessionKey,
     archiveOptions: {
-      resolution: Resolution.FHD_LANDSCAPE,
-      layout: {
-        // In multiparty archives, we use the 'bestFit' layout to scale based on the number of streams. For screen-sharing archives,
-        // we select 'horizontalPresentation' so the screenshare stream is displayed prominently along with other streams.
-        // See: https://developer.vonage.com/en/video/guides/archive-broadcast-layout#layout-types-for-screen-sharing
-        type: LayoutType.BEST_FIT,
-        screenshareType: 'horizontalPresentation',
-      },
+      ...(withTranscription ? transcriptionOptions : recordingOptions),
       ...archiveOptions,
     },
   }),

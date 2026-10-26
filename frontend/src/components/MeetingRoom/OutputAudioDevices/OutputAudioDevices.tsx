@@ -1,8 +1,7 @@
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MediaDeviceInfoJSON } from '@web/types';
 import classNames from 'classnames';
-import DropdownSeparator from '../DropdownSeparator';
 import Box from '@mui/material/Box';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,10 +10,14 @@ import { useDistinctLabelMediaDevices } from '@ui/hooks';
 import { isSinkIdSupported } from '@web/platform';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import { Tooltip } from '@mui/material';
-import { env } from '../../../env';
 import useSelectDeviceHandler from '@hooks/useSelectDeviceHandler';
 import { makeApplicationErrorMapper } from '@core/errors';
 import { handleClientApplicationError } from '@ui/helpers';
+
+export const testIds = {
+  title: 'output-device-title',
+  list: 'output-devices',
+} as const;
 
 export type OutputAudioDevicesProps = {
   handleToggle: () => void;
@@ -26,9 +29,9 @@ export type OutputAudioDevicesProps = {
  * Displays and switches audio output devices.
  * @param {OutputAudioDevicesProps} props - The props for the component.
  *  @property {() => void} handleToggle - Function to close the menu.
- * @returns {ReactElement | false} - The OutputAudioDevices component.
+ * @returns {ReactElement} - The OutputAudioDevices component.
  */
-const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement | false => {
+const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactElement => {
   const { t } = useTranslation();
   const currentAudioOutputId = mediaDevices$.useDeviceId('audiooutput');
 
@@ -61,93 +64,57 @@ const OutputAudioDevices = ({ handleToggle }: OutputAudioDevicesProps): ReactEle
   };
 
   return (
-    env.MEETING_ROOM_ALLOW_DEVICE_SELECTION && (
-      <>
-        <DropdownSeparator />
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            ml: 2,
-            mt: 2,
-            mb: 0.5,
-          }}
+    <div>
+      <Box className="mb-1 ml-4 flex items-center">
+        <VividIcon name="audio-mid-line" customSize={-5} />
+        <p
+          className="text-vera-body-extended text-vera-text-tertiary ml-4"
+          data-testid={testIds.title}
         >
-          <VividIcon
-            name="audio-mid-line"
-            customSize={-5}
-            style={{ color: 'var(--vera-text-secondary) !important' }}
-          />
-          <p
-            className="text-vera-body-extended text-vera-text-tertiary ml-4"
-            data-testid="output-device-title"
-          >
-            {t('devices.audio.speakers.full')}
-          </p>
-        </Box>
+          {t('devices.audio.speakers.full')}
+        </p>
+      </Box>
 
-        <MenuList data-testid="output-devices">
-          {availableDevices?.map((device: MediaDeviceInfoJSON) => {
-            // If audio output device selection is not supported we show the default device as selected
-            const isSelected =
-              device.deviceId === currentAudioOutputId || availableDevices.length === 1;
+      <MenuList data-testid={testIds.list}>
+        {availableDevices?.map((device: MediaDeviceInfoJSON) => {
+          // If audio output device selection is not supported we show the default device as selected
+          const isSelected =
+            device.deviceId === currentAudioOutputId || availableDevices.length === 1;
 
-            return (
-              <MenuItem
-                key={device.deviceId}
-                selected={isSelected}
-                onClick={() => handleChangeAudioOutput(device.deviceId)}
-                className="[&.Mui-selected]:text-vera-on-background"
-                sx={{
-                  transition: 'background-color 160ms ease',
-                  '&&.Mui-selected': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                  '&&.Mui-selected:hover': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                  '&&:hover': {
-                    backgroundColor: 'var(--vera-background)',
-                  },
-                }}
+          return (
+            <MenuItem
+              key={device.deviceId}
+              selected={isSelected}
+              onClick={() => handleChangeAudioOutput(device.deviceId)}
+              className="[transition:background-color_160ms_ease]! [&.Mui-selected]:text-vera-on-background [&.Mui-selected]:bg-vera-background! [&:hover]:bg-vera-background!"
+            >
+              <Box
+                key={`${device.deviceId}-input-device`}
+                className={classNames('mb-1 flex w-full items-center overflow-hidden', {
+                  'text-vera-text-primary': isSelected,
+                  'text-vera-text-secondary': !isSelected,
+                })}
               >
-                <Box
-                  key={`${device.deviceId}-input-device`}
-                  className={classNames('w-full items-center', {
-                    'text-vera-text-primary': isSelected,
-                    'text-vera-text-secondary': !isSelected,
-                  })}
-                  sx={{
-                    display: 'flex',
-                    mb: 0.5,
-                    overflow: 'hidden',
-                  }}
-                >
-                  {isSelected ? (
-                    <Box key={'output-audio-devices-check'} sx={{ mr: 2.5 }}>
-                      <VividIcon
-                        name="check-line"
-                        customSize={-6}
-                        style={{
-                          color: isSelected
-                            ? 'var(--vera-text-primary)'
-                            : 'var(--vera-text-secondary)',
-                        }}
-                      />
-                    </Box>
-                  ) : (
-                    <Box sx={{ minWidth: 36 }} />
-                  )}
-                  <Tooltip title={device.label} placement="right" arrow>
-                    <span className="text-vera-body-extended truncate">{device.label}</span>
-                  </Tooltip>
-                </Box>
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </>
-    )
+                {isSelected ? (
+                  <Box key={'output-audio-devices-check'} className="mr-5">
+                    <VividIcon
+                      name="check-line"
+                      customSize={-6}
+                      className="text-vera-text-primary"
+                    />
+                  </Box>
+                ) : (
+                  <Box className="min-w-9" />
+                )}
+                <Tooltip title={device.label} placement="right" arrow>
+                  <span className="text-vera-body-extended truncate">{device.label}</span>
+                </Tooltip>
+              </Box>
+            </MenuItem>
+          );
+        })}
+      </MenuList>
+    </div>
   );
 };
 

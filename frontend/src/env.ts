@@ -36,6 +36,7 @@ const EnvironmentVariablesSchema = z.object({
   WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean({ default: false }),
   WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_ARCHIVING: boolean({ default: true }),
+  ALLOW_POST_CALL_TRANSCRIPTION: boolean({ default: true }),
   ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
   ALLOW_CAPTIONS: boolean({ default: true }),
   ALLOW_CAPTION_TRANSLATION: boolean({ default: false }),
@@ -82,6 +83,7 @@ export class Env implements IEnvironmentVariables {
   public WAITING_ROOM_ALLOW_ADVANCED_SETTINGS!: boolean;
   public WAITING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_ARCHIVING!: boolean;
+  public ALLOW_POST_CALL_TRANSCRIPTION!: boolean;
   public ALLOW_CAPTIONS!: boolean;
   public ALLOW_CAPTION_TRANSLATION!: boolean;
   public ALLOW_CHAT!: boolean;

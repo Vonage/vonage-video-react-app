@@ -24,6 +24,60 @@ describe('useChat', () => {
     });
   });
 
+  it('onChatMessage should assign a unique id to each message', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
+      result.current.onChatMessage('{"participantName":"Remote User","text":"Hello again!"}');
+    });
+
+    expect(result.current.messages[0].id).toBeTruthy();
+    expect(result.current.messages[0].id).not.toBe(result.current.messages[1].id);
+  });
+
+  it('onChatMessage should fall back to getRandomValues when randomUUID is unavailable', () => {
+    const originalRandomUUID = crypto.randomUUID;
+    // @ts-expect-error simulating a runtime without crypto.randomUUID
+    crypto.randomUUID = undefined;
+
+    try {
+      const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+      act(() => {
+        result.current.onChatMessage('{"participantName":"Remote User","text":"Hello!"}');
+      });
+
+      expect(result.current.messages[0].id).toBeTruthy();
+    } finally {
+      crypto.randomUUID = originalRandomUUID;
+    }
+  });
+
+  it('onChatMessage should use the unknown user label when the participant name is missing', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('{"text":"Hello!"}');
+    });
+
+    expect(result.current.messages[0]).toMatchObject({
+      participantName: 'unknown user',
+      message: 'Hello!',
+    });
+  });
+
+  it('onChatMessage should ignore empty or invalid data', () => {
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    act(() => {
+      result.current.onChatMessage('');
+      result.current.onChatMessage('invalid JSON');
+    });
+
+    expect(result.current.messages).toHaveLength(0);
+  });
+
   it('sendChatMessage should send message via signal', () => {
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
       userContext: {
@@ -41,6 +95,12 @@ describe('useChat', () => {
       type: 'chat',
       data: '{"participantName":"Local User","text":"Hello there!"}',
     });
+  });
+
+  it('sendChatMessage should do nothing when signal is unavailable', () => {
+    const { result } = renderHook(() => useChat({ signal: undefined }));
+
+    expect(() => result.current.sendChatMessage('Hello there!')).not.toThrow();
   });
 });
 
