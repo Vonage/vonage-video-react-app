@@ -1,0 +1,14 @@
+libs/common/manifest.json
+  h_6c0124248e0f80 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fa4aea575b7032a83dce184c9bd7bcec5fc557a3",
+  "prompts": {},
+  "humans": {
+    "h_6c0124248e0f80": {
+      "author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

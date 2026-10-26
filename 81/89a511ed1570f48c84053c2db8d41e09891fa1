@@ -1,0 +1,22 @@
+.github/copilot-instructions.md
+  s_4191c7c0acbcd4::t_d13c0d2e259241 70
+.claude/skills/configure/SKILL.md
+  s_4191c7c0acbcd4::t_b314066d88ced3 3
+  s_4191c7c0acbcd4::t_f9c603ecc4a1f8 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8189a511ed1570f48c84053c2db8d41e09891fa1",
+  "prompts": {},
+  "sessions": {
+    "s_4191c7c0acbcd4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e7bacd5b-f8b8-4da7-9c6e-82c2dc787541",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "aos-svg <artur.osinski@vonage.com>"
+    }
+  }
+}

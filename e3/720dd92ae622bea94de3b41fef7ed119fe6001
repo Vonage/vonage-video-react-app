@@ -1,0 +1,27 @@
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.ts
+  s_4fb89427529935::t_37ad403094c35a 13-15
+  h_737cf808c1c597 27
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.spec.ts
+  s_4fb89427529935::t_ed9ea9b0a6b028 49,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3720dd92ae622bea94de3b41fef7ed119fe6001",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_4fb89427529935": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_0e203238-bfb3-4a20-a719-3943130b1395",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

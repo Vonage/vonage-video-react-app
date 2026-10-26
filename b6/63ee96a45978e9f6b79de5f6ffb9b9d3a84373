@@ -1,0 +1,19 @@
+package.json
+  s_3f4acb3885fb19::t_28f277a13d3c92 174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b663ee96a45978e9f6b79de5f6ffb9b9d3a84373",
+  "prompts": {},
+  "sessions": {
+    "s_3f4acb3885fb19": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_c66a79db-b4bc-416b-87cf-1795b11a8afe",
+        "model": "auto"
+      },
+      "human_author": null
+    }
+  }
+}
