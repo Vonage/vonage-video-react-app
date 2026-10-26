@@ -1,0 +1,29 @@
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.tsx
+  s_76aa86199c221c::t_206e0bdbb2a27c 13,17,40,43
+  s_76aa86199c221c::t_16a0a8a2c13b65 2,14-16,18,37
+  s_76aa86199c221c::t_858355420d2fa9 39
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  s_76aa86199c221c::t_3decb42fc8024a 128-131
+  s_76aa86199c221c::t_282befa333e28c 38
+  s_76aa86199c221c::t_43dc6dd2373a12 62
+frontend/src/locales/es-MX.json
+  s_76aa86199c221c::t_a43e3145318efa 368
+frontend/src/locales/es.json
+  s_76aa86199c221c::t_f4697bcc08c0c6 368
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4dea7ad1b2d9455ffc9b3e70699df4499a849f80",
+  "prompts": {},
+  "sessions": {
+    "s_76aa86199c221c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49130ae8-847f-499d-8793-525a40426f42",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
