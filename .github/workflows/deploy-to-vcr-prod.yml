@@ -12,10 +12,8 @@ permissions:
 env:
   DOMAIN: ${{ secrets.PROD_DOMAIN }}
   INSTANCE_NAME: prod
-  # Must match the sign-in and sign-out redirect URIs registered on the PROD Okta app.
-  EXPECTED_APP_HOST: meet.vonage.com
-  OIDC_ISSUER_URL: https://login.okta.vonage.com
-  OIDC_CLIENT_ID: 0oakkpqg8jPFmRxun0i7
+  OIDC_ISSUER_URL: ${{ secrets.PROD_OIDC_ISSUER_URL }}
+  OIDC_CLIENT_ID: ${{ secrets.PROD_OIDC_CLIENT_ID }}
 
 jobs:
   build-and-test:
@@ -49,11 +47,16 @@ jobs:
         run: |
           MANIFEST="${{ github.workspace }}/vcr-gha.yml"
 
-          APP_HOST="$(bash .github/scripts/readAppHost.sh)"
-          if [ "$APP_HOST" != "$EXPECTED_APP_HOST" ]; then
-            echo "::error::PROD_DOMAIN must start with ${EXPECTED_APP_HOST}, got ${APP_HOST}; refusing to deploy."
+          if ! [[ "$OIDC_ISSUER_URL" =~ ^https://[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::PROD_OIDC_ISSUER_URL must be set to the Okta org root (https://<host>, no path); refusing to deploy."
             exit 1
           fi
+          if ! [[ "$OIDC_CLIENT_ID" =~ ^[A-Za-z0-9]+$ ]]; then
+            echo "::error::PROD_OIDC_CLIENT_ID must be set to the Okta client ID; refusing to deploy."
+            exit 1
+          fi
+
+          APP_HOST="$(bash .github/scripts/readAppHost.sh)"
 
           # VCR needs a list; PROD_DOMAIN may be a bare host or a list, so build it from the host.
           sed -i "s/^  domains: <DOMAIN>$/  domains: [${APP_HOST}]/" "$MANIFEST"
