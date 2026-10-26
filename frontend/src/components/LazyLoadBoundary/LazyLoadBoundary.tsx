@@ -1,8 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import ErrorBoundary from '../ErrorBoundary';
 
@@ -11,12 +9,6 @@ export type LazyLoadBoundaryProps = {
   fallback?: ReactNode;
 };
 
-const defaultFallback = (
-  <Box className="flex h-full items-center justify-center p-4">
-    <CircularProgress />
-  </Box>
-);
-
 /**
  * Wraps a React.lazy() component so a failed chunk fetch (e.g. a transient network error, or a
  * stale hash after a redeploy) shows a retry UI for that subtree instead of throwing up to the
@@ -24,10 +16,7 @@ const defaultFallback = (
  *
  * React.lazy() caches a rejected import forever, so retrying reloads the page instead.
  */
-const LazyLoadBoundary = ({
-  children,
-  fallback = defaultFallback,
-}: LazyLoadBoundaryProps): ReactElement => {
+const LazyLoadBoundary = ({ children, fallback = null }: LazyLoadBoundaryProps): ReactElement => {
   return (
     <ErrorBoundary fallback={renderLazyLoadBoundaryFallback}>
       <SuspenseBoundary fallback={fallback}>{children}</SuspenseBoundary>

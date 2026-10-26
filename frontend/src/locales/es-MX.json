@@ -365,7 +365,7 @@
   "zoom.current": "Zoom actual",
   "errorPage.title": "Algo salió mal",
   "errorPage.description": "La aplicación no pudo iniciarse. Recarga la página o contacta con soporte si el problema persiste.",
-  "lazyLoadBoundary.failed": "No se pudo cargar esto. Comprueba tu conexión e inténtalo de nuevo.",
+  "lazyLoadBoundary.failed": "No se ha podido realizar la carga. Comprueba tu conexión e inténtalo de nuevo.",
   "lazyLoadBoundary.retry": "Reintentar",
   "notification.dismiss": "Descartar notificación",
   "banner.logout": "Cerrar sesión"
