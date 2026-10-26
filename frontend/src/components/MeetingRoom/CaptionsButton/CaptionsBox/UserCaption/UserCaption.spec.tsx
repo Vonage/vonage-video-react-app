@@ -7,11 +7,11 @@ import UserCaption from './UserCaption';
 import { SubscriberWrapper } from '../../../../../types/session';
 
 vi.mock('../../../../../hooks/useSessionContext');
+const mockReceivingCaptions = vi.hoisted(() => ({
+  current: { caption: '', isReceivingCaptions: false },
+}));
 vi.mock('../../../../../hooks/useReceivingCaptions', () => ({
-  default: () => ({
-    captionText: '',
-    isReceivingCaptions: false,
-  }),
+  default: () => mockReceivingCaptions.current,
 }));
 
 vi.useFakeTimers();
@@ -54,25 +54,32 @@ describe('UserCaption', () => {
     mockUseSessionContext.mockReturnValue(sessionContext as unknown as SessionContextType);
   });
 
-  it('renders the caption when receiving captions', () => {
+  it('renders the speaker name and caption when receiving captions', () => {
+    mockReceivingCaptions.current = { caption: 'Test Caption', isReceivingCaptions: true };
+
     const { getByText } = render(
       <UserCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
+        speakerName="Alice"
         isSmallViewPort={false}
-        caption="Test Caption"
       />
     );
+
+    expect(getByText('Alice:')).toBeInTheDocument();
     expect(getByText('Test Caption')).toBeInTheDocument();
   });
 
-  it('does not render when no caption is provided', () => {
+  it('does not render when no caption is received', () => {
+    mockReceivingCaptions.current = { caption: '', isReceivingCaptions: false };
+
     const { queryByText } = render(
       <UserCaption
         subscriber={createSubscriberWrapper('subscriber-1').subscriber}
+        speakerName="Alice"
         isSmallViewPort={false}
-        caption=""
       />
     );
-    expect(queryByText('Test Caption')).not.toBeInTheDocument();
+
+    expect(queryByText('Alice:')).not.toBeInTheDocument();
   });
 });

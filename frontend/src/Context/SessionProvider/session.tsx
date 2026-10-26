@@ -10,7 +10,7 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { Connection, Publisher, Stream, Subscriber } from '@vonage/client-sdk-video';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
@@ -18,7 +18,6 @@ import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
-  LocalCaptionReceived,
   SignalEvent,
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
@@ -74,7 +73,7 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
-  ownCaptions: string | null;
+  ownCaptionsSubscriber: Subscriber | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -116,7 +115,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
-  ownCaptions: null,
+  ownCaptionsSubscriber: null,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -136,7 +135,7 @@ export type SessionContextInitialValue = Partial<
     | 'subscriberWrappers'
     | 'lastStreamUpdate'
     | 'subscriptionError'
-    | 'ownCaptions'
+    | 'ownCaptionsSubscriber'
     | 'archiveId'
     | 'activeSpeakerId'
     | 'recordingAlreadyNotified'
@@ -185,7 +184,9 @@ const SessionProvider = ({
   const [subscriptionError, setSubscriptionError] = useState<Error | null>(
     initialValue?.subscriptionError ?? null
   );
-  const [ownCaptions, setOwnCaptions] = useState<string | null>(initialValue?.ownCaptions ?? null);
+  const [ownCaptionsSubscriber, setOwnCaptionsSubscriber] = useState<Subscriber | null>(
+    initialValue?.ownCaptionsSubscriber ?? null
+  );
 
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
@@ -394,10 +395,6 @@ const SessionProvider = ({
     );
   };
 
-  const handleLocalCaptionReceived = (event: LocalCaptionReceived) => {
-    setOwnCaptions(event.caption);
-  };
-
   const handleSubscriberDestroyed = async (streamId: string) => {
     await wait(500);
 
@@ -487,7 +484,7 @@ const SessionProvider = ({
         handleSubscriberVideoElementCreated
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
-      vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
+      vonageVideoClient.current.on('ownCaptionsSubscriberChanged', setOwnCaptionsSubscriber);
       vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
 
       await vonageVideoClient.current.connect();
@@ -600,7 +597,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,
@@ -638,7 +635,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,

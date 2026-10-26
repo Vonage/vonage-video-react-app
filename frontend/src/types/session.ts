@@ -46,8 +46,6 @@ export type SignalType = {
 
 export type SubscriberAudioLevelUpdatedEvent = { movingAvg: number; subscriberId: string };
 
-export type LocalCaptionReceived = { streamId: string; caption: string; isFinal: boolean };
-
 export type StreamPropertyChangedEvent = {
   stream: Stream;
   changedProperty: 'hasAudio' | 'hasVideo' | 'hasCaptions' | 'videoDimensions';

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Subscriber } from '@vonage/client-sdk-video';
+import EventEmitter from 'events';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import { SessionContextType } from '../../../../Context/SessionProvider/session';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import CaptionsBox from './CaptionsBox';
@@ -63,5 +65,29 @@ describe('CaptionsBox', () => {
 
     const { getByTestId } = render(<CaptionsBox />);
     expect(getByTestId('captions-box')).toBeInTheDocument();
+  });
+
+  it('translates and renders own captions through the own captions subscriber', () => {
+    const ownCaptionsSubscriber = Object.assign(new EventEmitter(), {
+      getCaptionsTranslationLanguage: () => null,
+      setCaptionsTranslationLanguage: vi.fn().mockResolvedValue(undefined),
+    }) as unknown as Subscriber & EventEmitter;
+    sessionContext.subscriberWrappers = [];
+    sessionContext.ownCaptionsSubscriber = ownCaptionsSubscriber;
+    advancedSettings$.actions.setCaptionsTranslationLanguage('es-ES');
+
+    const { getByText } = render(<CaptionsBox />);
+    act(() => {
+      ownCaptionsSubscriber.emit('captionReceived', {
+        streamId: 'own-stream',
+        caption: 'Hola a todos',
+        isFinal: true,
+      });
+    });
+
+    expect(ownCaptionsSubscriber.setCaptionsTranslationLanguage).toHaveBeenCalledWith('es-ES');
+    expect(getByText('Hola a todos')).toBeInTheDocument();
+
+    advancedSettings$.actions.setCaptionsTranslationLanguage(null);
   });
 });

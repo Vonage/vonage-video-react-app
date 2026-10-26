@@ -59,6 +59,7 @@ describe('VonageVideoClient', () => {
       forceMuteStream: vi.fn(),
       publish: mockPublish,
       unpublish: vi.fn(),
+      unsubscribe: vi.fn(),
       sessionId: fakeSessionId,
       connection: {
         connectionId: 'connection-id',
@@ -271,6 +272,26 @@ describe('VonageVideoClient', () => {
       void expect(() => vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         `${error.name}: ${error.message}`
       );
+    });
+
+    it('exposes the own captions subscriber while publishing', async () => {
+      const ownCaptionsSubscriberChanges: (Subscriber | null)[] = [];
+      mockPublish.mockImplementation((_, callback: () => void) => {
+        callback();
+      });
+      const publisherWithStream = {
+        id: 'publisher-id',
+        stream: { streamId: 'own-stream' },
+      } as unknown as Publisher;
+
+      await vonageVideoClient?.connect();
+      vonageVideoClient?.on('ownCaptionsSubscriberChanged', (subscriber) => {
+        ownCaptionsSubscriberChanges.push(subscriber);
+      });
+      await vonageVideoClient?.publish(publisherWithStream);
+      vonageVideoClient?.unpublish(publisherWithStream);
+
+      expect(ownCaptionsSubscriberChanges).toEqual([mockSubscriber, null]);
     });
   });
 
