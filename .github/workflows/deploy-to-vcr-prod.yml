@@ -12,6 +12,10 @@ permissions:
 env:
   DOMAIN: ${{ secrets.PROD_DOMAIN }}
   INSTANCE_NAME: prod
+  # Must match the sign-in and sign-out redirect URIs registered on the PROD Okta app.
+  EXPECTED_APP_HOST: meet.vonage.com
+  OIDC_ISSUER_URL: https://login.okta.vonage.com
+  OIDC_CLIENT_ID: 0oakkpqg8jPFmRxun0i7
 
 jobs:
   build-and-test:
@@ -25,21 +29,86 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - name: Setup node
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
+          cache: pnpm
 
-      - name: Verify Node & Yarn versions
+      - name: Verify Node & pnpm versions
         run: |
           node -v
-          yarn -v
+          pnpm -v
 
       - name: Building artefact
         run: |
-          sed -i "s/<DOMAIN>/${DOMAIN}/g" "${{ github.workspace }}/vcr-gha.yml"
-          sed -i "/^instance:/ {n; s/^  name: .*/  name: ${INSTANCE_NAME}/;}" "${{ github.workspace }}/vcr-gha.yml"
-          sed -i -E "s/^([[:space:]]+secret: )(VONAGE_APP_ID|VONAGE_PRIVATE_KEY|SESSION_KEY_SECRET)$/\1PROD_\2/" "${{ github.workspace }}/vcr-gha.yml"
+          MANIFEST="${{ github.workspace }}/vcr-gha.yml"
+
+          APP_HOST="$(bash .github/scripts/readAppHost.sh)"
+          if [ "$APP_HOST" != "$EXPECTED_APP_HOST" ]; then
+            echo "::error::PROD_DOMAIN must start with ${EXPECTED_APP_HOST}, got ${APP_HOST}; refusing to deploy."
+            exit 1
+          fi
+
+          # VCR needs a list; PROD_DOMAIN may be a bare host or a list, so build it from the host.
+          sed -i "s/^  domains: <DOMAIN>$/  domains: [${APP_HOST}]/" "$MANIFEST"
+          if ! grep -qxF "  domains: [${APP_HOST}]" "$MANIFEST"; then
+            echo "::error::Could not set domains to [${APP_HOST}]; refusing to deploy."
+            exit 1
+          fi
+          sed -i "s/<APP_HOST>/${APP_HOST}/g" "$MANIFEST"
+
+          sed -i "/^instance:/,/^[^ #]/ s/^  name: .*/  name: ${INSTANCE_NAME}/" "$MANIFEST"
+          if ! grep -qx "  name: ${INSTANCE_NAME}" "$MANIFEST"; then
+            echo "::error::Could not set the instance name to ${INSTANCE_NAME}; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i -E "s/^([[:space:]]+secret: )(VONAGE_APP_ID|VONAGE_PRIVATE_KEY|SESSION_KEY_SECRET|AUTH_COOKIE_SECRET)$/\1PROD_\2/" "$MANIFEST"
+          for SECRET_NAME in VONAGE_APP_ID VONAGE_PRIVATE_KEY SESSION_KEY_SECRET AUTH_COOKIE_SECRET; do
+            if ! grep -qE "^[[:space:]]+secret: PROD_${SECRET_NAME}$" "$MANIFEST"; then
+              echo "::error::Could not point ${SECRET_NAME} at PROD_${SECRET_NAME}; refusing to deploy."
+              exit 1
+            fi
+          done
+
+          sed -i "/name: AUTH_ENABLED/{n;s/value: .*/value: 'true'/;}" "$MANIFEST"
+          if ! grep -A1 'name: AUTH_ENABLED' "$MANIFEST" | grep -qF "value: 'true'"; then
+            echo "::error::Could not set AUTH_ENABLED to true; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i "/name: OIDC_CLIENT_ID/{n;s/value: .*/value: '${OIDC_CLIENT_ID}'/;}" "$MANIFEST"
+          if ! grep -A1 'name: OIDC_CLIENT_ID' "$MANIFEST" | grep -qF "value: '${OIDC_CLIENT_ID}'"; then
+            echo "::error::Could not set OIDC_CLIENT_ID to the PROD client; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i "s#https://launchpadtest.vonage.com/#${OIDC_ISSUER_URL}/#g" "$MANIFEST"
+          if grep -qF 'launchpadtest.vonage.com' "$MANIFEST"; then
+            echo "::error::DEV Okta endpoints left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
+          for ENDPOINT_PATH in authorize token introspect revoke logout; do
+            if ! grep -qF "value: '${OIDC_ISSUER_URL}/oauth2/v1/${ENDPOINT_PATH}'" "$MANIFEST"; then
+              echo "::error::Missing PROD Okta ${ENDPOINT_PATH} endpoint; refusing to deploy."
+              exit 1
+            fi
+          done
+
+          if grep -v '^[[:space:]]*#' "$MANIFEST" | grep -qE '<[A-Z_]+>'; then
+            echo "::error::Unfilled placeholders left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
+
+          # The frontend build reads AUTH_ENABLED for the logout button
+          export AUTH_ENABLED=true
+
           ./vcrBuild.sh
 
       - name: Install VCR CLI
@@ -53,6 +122,7 @@ jobs:
           api-key: ${{ secrets.PROD_VCR_API_KEY }}
           api-secret: ${{ secrets.PROD_VCR_API_SECRET }}
           filename: vcr-gha.yml
+          instance-name: ${{ env.INSTANCE_NAME }}
 
       - name: Slack notification on success
         uses: ./.github/actions/slack-notify
