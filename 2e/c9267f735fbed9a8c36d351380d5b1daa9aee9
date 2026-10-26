@@ -1,0 +1,23 @@
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.tsx
+  s_76aa86199c221c::t_b6650dec691716 19
+frontend/src/locales/es-MX.json
+  s_76aa86199c221c::t_a43e3145318efa 368
+frontend/src/locales/es.json
+  s_76aa86199c221c::t_f4697bcc08c0c6 368
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2ec9267f735fbed9a8c36d351380d5b1daa9aee9",
+  "prompts": {},
+  "sessions": {
+    "s_76aa86199c221c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49130ae8-847f-499d-8793-525a40426f42",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
