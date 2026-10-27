@@ -1,0 +1,64 @@
+.cursorrules
+  h_c939f8fae0de97 1
+.github/copilot-instructions.md
+  h_c939f8fae0de97 1
+.github/instructions/test-files.instructions.md
+  h_c939f8fae0de97 7-8,10-12
+.kiro/steering/comments.md
+  h_c939f8fae0de97 3-4,6,8-9
+.windsurfrules
+  h_c939f8fae0de97 1
+AGENTS.md
+  h_c939f8fae0de97 1-1935
+CLAUDE.md
+  h_c939f8fae0de97 1
+GEMINI.md
+  h_c939f8fae0de97 1
+apps/local-oidc/package.json
+  h_c939f8fae0de97 6
+backend/package.json
+  h_c939f8fae0de97 8
+backend/routes/video/schemas/CaptionsHookPayload.schema.ts
+  h_c939f8fae0de97 7,22-27
+backend/routes/video/video.ts
+  h_c939f8fae0de97 149-162,173
+backend/routes/wellKnown.ts
+  h_c939f8fae0de97 34-35
+backend/tests/assetlinks.test.ts
+  h_c939f8fae0de97 56
+backend/tests/session.test.ts
+  h_c939f8fae0de97 259,273-306,526
+docs/CONTRIBUTING.md
+  h_c939f8fae0de97 16-35
+docs/TESTING.md
+  h_c939f8fae0de97 50
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  h_c939f8fae0de97 36-38,60-62
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.spec.tsx
+  h_c939f8fae0de97 33-47,49,57-92
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.tsx
+  h_c939f8fae0de97 39-40,42-53
+frontend/src/components/MeetingRoom/Chat/Chat.spec.tsx
+  h_c939f8fae0de97 1,5,11,17,23,29,63-98
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  h_c939f8fae0de97 45
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  h_c939f8fae0de97 6,10
+frontend/src/hooks/tests/useChat.spec.tsx
+  h_c939f8fae0de97 27-80,99-104
+frontend/src/hooks/useChat.tsx
+  h_c939f8fae0de97 4,16-26,65-66,70
+frontend/src/types/chat.ts
+  h_c939f8fae0de97 1-6,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "52c3bdd83000fe85b45c6c34e71bd2cf1e5ce2b9",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
