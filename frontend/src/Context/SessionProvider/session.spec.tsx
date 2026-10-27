@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach, onTestFinished } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
@@ -317,7 +317,7 @@ describe('SessionProvider', () => {
       const wrappersBeforeEmoji = subscriberWrappersRefHistory.at(-1);
 
       const realSetTimeout = globalThis.setTimeout;
-      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
+      vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
         handler: TimerHandler,
         timeout?: number,
         ...args: unknown[]
@@ -325,7 +325,6 @@ describe('SessionProvider', () => {
         if (timeout === EMOJI_DISPLAY_DURATION) return 0;
         return realSetTimeout(handler, timeout, ...args);
       }) as typeof setTimeout);
-      onTestFinished(() => setTimeoutSpy.mockRestore());
 
       act(() => {
         vonageVideoClient.emit('signal:emoji', {
