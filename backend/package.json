@@ -5,6 +5,6 @@
   "main": "index.js",
   "type": "module",
   "author": "",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "private": true
 }
