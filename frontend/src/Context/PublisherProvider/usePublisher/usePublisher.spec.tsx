@@ -69,6 +69,19 @@ describe('usePublisher', () => {
   });
 
   describe('initializeLocalPublisher', () => {
+    it('exposes the publisher immediately so quality listeners can attach', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      expect(result.current.publisher).toBeNull();
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      expect(result.current.publisher).toBe(mockPublisher);
+    });
+
     it('should initialize publisher and update state when access is allowed', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = renderHook(() => usePublisher());
@@ -449,6 +462,31 @@ describe('usePublisher', () => {
         expect(destroySpy).toHaveBeenCalled();
         expect(result.current.publisher).toBeNull();
       });
+    });
+
+    it('should not re-initialize the publisher after access is denied', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+        // @ts-expect-error We simulate user denying camera permissions in a browser.
+        mockPublisher.emit('accessDenied', {
+          message: 'Camera permission denied during the call',
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.publisher).toBeNull();
+      });
+
+      expect(mockedInitPublisher).toHaveBeenCalledOnce();
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+      });
+
+      expect(mockedInitPublisher).toHaveBeenCalledOnce();
     });
 
     it('should not set publishingError when receiving an accessAllowed event', async () => {
