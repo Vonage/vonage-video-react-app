@@ -256,7 +256,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .send(
               createCaptionsHookPayload({
                 status: 'started',
-                captionId: 'captions-id-updated',
+                captionsId: 'captions-id-updated',
               })
             );
 
@@ -268,6 +268,40 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(captionsIdAfterIgnored).toEqual('captions-id-initial');
           expect(startedResponse.statusCode).toEqual(200);
           expect(captionsIdAfterStarted).toEqual('captions-id-updated');
+        });
+
+        it('accepts captions events that omit stream', async () => {
+          const { stream: _stream, ...payload } = createCaptionsHookPayload({
+            captionsId: 'captions-id-from-vonage',
+          });
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send(payload);
+
+          const captionsId = await sessionService.getCaptionsId({ sessionId: validSessionId });
+
+          expect(response.statusCode).toEqual(200);
+          expect(captionsId).toEqual('captions-id-from-vonage');
+        });
+
+        it('logs only the received keys when a captions event is invalid', async () => {
+          const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send({ sessionId: validSessionId, secretValue: 'do-not-log' });
+
+          expect(response.statusCode).toEqual(400);
+          expect(warnSpy).toHaveBeenCalledWith(
+            '[hooks/captions] Invalid payload',
+            expect.objectContaining({ receivedKeys: ['sessionId', 'secretValue'] })
+          );
+          expect(JSON.stringify(warnSpy.mock.calls)).not.toContain('do-not-log');
+
+          warnSpy.mockRestore();
         });
 
         it('handles non-actionable, started, and stopped archive events', async () => {
@@ -489,7 +523,7 @@ function getMockedVideoInstances(): MockedVideoInstance[] {
 
 function createCaptionsHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    captionId: 'caption-id-1',
+    captionsId: 'caption-id-1',
     projectId: 'project-id-1',
     sessionId: validSessionId,
     status: 'started',
