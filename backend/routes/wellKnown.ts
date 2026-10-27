@@ -31,6 +31,8 @@ wellKnownRouter.get('/assetlinks.json', (_req: Request, res: Response) => {
         // SHA-256 certificate fingerprints for the Android app
         sha256_cert_fingerprints: [
           'A5:77:34:82:4C:98:13:CF:88:DF:20:46:2C:B7:7E:33:C0:4C:FC:C6:A1:E4:B3:25:5F:43:49:BA:FE:B5:43:27',
+          // Certificate of release builds distributed outside the Play Store (e.g. CI builds)
+          '58:17:AE:FF:E1:0C:D2:1E:F0:6E:8E:F4:0E:EB:46:13:38:0E:D2:91:C6:DB:1B:30:B6:CD:5D:7B:2E:20:B2:9B',
         ],
       },
     },
