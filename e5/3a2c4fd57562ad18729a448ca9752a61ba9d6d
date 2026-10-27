@@ -1,0 +1,29 @@
+README.md
+  s_c847e1696b536f::t_a80824335543d2 55-56,58
+  s_c847e1696b536f::t_608848f9a470af 57
+docs/ARCHITECTURE.md
+  s_c847e1696b536f::t_7ccf9b677dc340 61-64
+frontend/src/Context/SessionProvider/session.tsx
+  s_c847e1696b536f::t_cd9ce0de64b31f 107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e53a2c4fd57562ad18729a448ca9752a61ba9d6d",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_c847e1696b536f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd0ab09a-1867-43ed-afee-720525f14d72",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
