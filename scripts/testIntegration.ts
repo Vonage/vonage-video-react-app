@@ -6,6 +6,7 @@ const args = process.argv.slice(2);
 
 const VALID_MODES = [
   'api',
+  'auth',
   'debug',
   'inspect',
   'canon',
@@ -15,6 +16,11 @@ const VALID_MODES = [
 ] as const;
 
 type ValidMode = (typeof VALID_MODES)[number];
+
+const VISUAL_COMPARISON_SPEC_FILES = [
+  'tests/multiparty.spec.ts',
+  'tests/visualComparisons.spec.ts',
+] as const;
 
 /**
  * Checks if a string looks like a file path.
@@ -45,19 +51,19 @@ const isApiTestPath = (testPath: string): boolean => {
 };
 
 /**
- * Runs API integration tests (Jest-based tests in tests/api/).
+ * Runs API integration tests (Vitest-based tests in test-api/).
  * Optionally filters by a specific test file path.
  */
 const runApiTests = (testFilePath?: string) => {
   const target = testFilePath ? `file: ${testFilePath}` : 'all API tests';
   console.log(`\n🤖 Running API integration tests: ${target}\n`);
-  const testPattern = testFilePath ? ` --testPathPattern="${testFilePath}"` : '';
-  const command = `bash -c 'source ../../env.sh && jest --maxWorkers=1${testPattern}'`;
+  const testPattern = testFilePath ? ` "${testFilePath}"` : '';
+  const command = `bash -c 'source ../../env.sh && vitest run${testPattern}'`;
   console.log(`\n🚀 Running: ${command}\n`);
   execSync(command, {
     stdio: 'inherit',
     cwd: 'integration-tests/test-api',
-    env: { ...process.env, NODE_OPTIONS: '--experimental-vm-modules' },
+    env: { ...process.env, NODE_OPTIONS: '' },
   });
 };
 
@@ -74,7 +80,17 @@ const runAllPlaywrightTests = () => {
 };
 
 /**
- * Runs all integration tests: API tests (Jest) + Playwright tests.
+ * Runs the auth E2E suite: the built app with AUTH_ENABLED=true against apps/local-oidc.
+ */
+const runAuthTests = () => {
+  console.log('\n🔐 Running auth E2E tests against local-oidc...\n');
+  runCommand(
+    "cd integration-tests && bash -c 'source ../env.sh && if [ -f auth/backend.env ]; then set -a && source auth/backend.env && set +a; fi && playwright test -c playwright.auth.config.ts'"
+  );
+};
+
+/**
+ * Runs all integration tests: API tests (Vitest) + Playwright tests.
  */
 const runAllTests = () => {
   runApiTests();
@@ -139,11 +155,19 @@ const runCanon = (testNameOrPath?: string) => {
  * Runs across all browsers (Chrome, Firefox, Mobile Chrome).
  */
 const updateScreenshots = (testNameOrPath?: string) => {
-  const testArg = testNameOrPath || 'tests/visualComparisons.spec.ts';
-  console.log(`\n🔄 Updating screenshots for ${testArg}\n`);
+  const normalizedTestNameOrPath = testNameOrPath?.trim();
+
+  const targetSpecs = normalizedTestNameOrPath
+    ? [normalizedTestNameOrPath]
+    : [...VISUAL_COMPARISON_SPEC_FILES];
+  const targetDescription = normalizedTestNameOrPath || targetSpecs.join(' ');
+
+  console.log(`\n🔄 Updating screenshots for ${targetDescription}\n`);
+
+  const targetSpecsArg = targetSpecs.join(' ');
 
   runCommand(
-    `cd integration-tests && playwright test ${testArg} --project='Google Chrome Fake Devices' --project=firefox --project='Mobile Chrome' --update-snapshots`
+    `cd integration-tests && playwright test ${targetSpecsArg} --project='Google Chrome Fake Devices' --project=firefox --project='Mobile Chrome' --update-snapshots`
   );
 };
 
@@ -157,12 +181,13 @@ const updateScreenshots = (testNameOrPath?: string) => {
  *
  * @modes
  * - (no args)             - Run all tests in all browsers (headless)
- * - api                   - Run only API integration tests (Jest)
+ * - api                   - Run only API integration tests (Vitest)
  * - playwright            - Run only Playwright tests (skip API tests)
+ * - auth                  - Run the auth E2E suite against apps/local-oidc
  * - debug [test-name]     - Debug mode (Playwright Inspector + Chrome DevTools, timeout disabled)
  * - inspect [test-name]   - Inspect mode (Chrome DevTools, headed mode)
  * - canon [test-name]     - Generate canonical screenshots (baseline for visual regression)
- * - update [test-name]    - Update test screenshots (all browsers)
+ * - update [test-name]    - Update screenshots for one test or all visual comparison specs (all browsers)
  * - <test-name>           - Run specific test in headed Chrome
  *
  * @example
@@ -217,6 +242,11 @@ const main = () => {
 
   if (isPlaywrightMode) {
     runAllPlaywrightTests();
+    return;
+  }
+
+  if (firstArg === 'auth') {
+    runAuthTests();
     return;
   }
 

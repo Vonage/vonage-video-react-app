@@ -6,6 +6,7 @@ import { VIEWPORT } from './tests/utils';
 const isHeadedMode = process.env.headedMode === 'true';
 const isDebugMode = process.env.debugMode === 'true';
 const isInspectMode = process.env.inspectMode === 'true';
+const snapshotPlatform = process.env.PLAYWRIGHT_SNAPSHOT_PLATFORM ?? process.platform;
 
 /**
  * Chromium media testing flags
@@ -47,6 +48,7 @@ const fakeDeviceChromiumFlags = [
 export default defineConfig({
   timeout: 60000,
   testDir: './tests',
+  snapshotPathTemplate: `{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-${snapshotPlatform}{ext}`,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -31,6 +31,7 @@ describe('Subscriber', () => {
         stream: {
           streamId: id,
           videoType,
+          name: 'Alice',
         },
       } as unknown as OTSubscriber,
     };
@@ -137,6 +138,24 @@ describe('Subscriber', () => {
     expect(screen.getByTestId('vivid-icon-pin-2-solid')).toBeVisible();
     await act(() => userEvent.hover(subscriberContainer));
     expect(screen.getByTestId('vivid-icon-pin-2-off-solid')).toBeVisible();
+  });
+
+  it('should localize the screenshare label from the raw publisher name', () => {
+    const mockedSubscriberId = '789';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, true);
+    const mockedBox = createMockBox(360, 10, 10, 640);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    expect(screen.getByText("Alice's screen")).toBeVisible();
+    expect(screen.queryByText('Alice')).not.toBeInTheDocument();
   });
 
   it('should not render pin icon when screenshare subscriber is hovered', () => {

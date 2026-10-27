@@ -49,4 +49,17 @@ describe('CaptionsBox', () => {
     const { getByTestId } = render(<CaptionsBox />);
     expect(getByTestId('captions-box')).toBeInTheDocument();
   });
+
+  it('keys captions by the wrapper id when subscriber.id is missing', () => {
+    const wrapperWithoutSubscriberId = createSubscriberWrapper('wrapper-stable-id');
+    wrapperWithoutSubscriberId.subscriber = {
+      ...wrapperWithoutSubscriberId.subscriber,
+      id: undefined,
+    } as Subscriber;
+    sessionContext.subscriberWrappers = [wrapperWithoutSubscriberId];
+    sessionContext.connected = true;
+
+    const { getByTestId } = render(<CaptionsBox />);
+    expect(getByTestId('captions-box')).toBeInTheDocument();
+  });
 });
