@@ -57,7 +57,7 @@ describe('useBackgroundPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should reuse a shared video track as videoSource instead of reopening the camera (see #619)', () => {
+    it('should use the shared video track as videoSource', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
       const { result } = render();
@@ -73,7 +73,7 @@ describe('useBackgroundPublisher', () => {
       );
     });
 
-    it('should stop the shared video track it owns when destroyed (see #619)', () => {
+    it('should stop the shared video track when destroyed', () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
       const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
       const { result } = render();
@@ -88,7 +88,22 @@ describe('useBackgroundPublisher', () => {
       expect(sharedVideoTrack.stop).toHaveBeenCalled();
     });
 
-    it('should stop the shared video track when publisher init fails (see #619)', () => {
+    it('should stop the shared video track when a publisher already exists', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result } = render();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
+    it('should stop the shared video track when init fails', () => {
       const error = new Error('Simulated publisher init failure');
       mockedInitPublisher.mockImplementation((_, _args, callback) => {
         callback(error);

@@ -85,8 +85,6 @@ const useBackgroundPublisher = (
   const { setAccessStatus, accessStatus } = usePermissions();
 
   const backgroundPublisherRef = useRef<Publisher | null>(null);
-  // The cloned camera track shared from the preview publisher (see #619). We own it, so it must be
-  // stopped when this publisher is destroyed, otherwise it keeps a camera capture open.
   const sharedVideoTrackRef = useRef<MediaStreamTrack | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
 
@@ -180,14 +178,18 @@ const useBackgroundPublisher = (
 
     backgroundPublisherRef.current = null;
 
-    // Release the shared clone we own (see #619); the SDK does not stop a track it did not create.
+    // SDK does not stop a track it did not create
     destroySharedVideoTrack();
   }, []);
 
   const initBackgroundLocalPublisher = useCallback(
     (sharedVideoTrack?: MediaStreamTrack) => {
-      if (backgroundPublisherRef.current) return;
+      if (backgroundPublisherRef.current) {
+        sharedVideoTrack?.stop();
+        return;
+      }
 
+      destroySharedVideoTrack();
       sharedVideoTrackRef.current = sharedVideoTrack ?? null;
 
       let videoFilter: VideoFilter | undefined;
@@ -195,8 +197,7 @@ const useBackgroundPublisher = (
         videoFilter = initialBackgroundRef.current;
       }
 
-      // Reuse the preview publisher's already-captured camera track when provided (see #619),
-      // so the effects preview doesn't open the camera a second time. Fall back to the device id.
+      // Reuse the preview publisher's already-captured camera track
       const publisherOptions: PublisherProperties = {
         insertDefaultUI: false,
         videoFilter,

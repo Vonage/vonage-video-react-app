@@ -45,8 +45,7 @@ const useWaitingRoom = () => {
 
   useEffect(() => {
     if (backgroundPublisher || !publisher || isVideoLoading) return;
-    // Share the preview publisher's already-captured camera track with the effects publisher
-    // (clone so each publisher owns its own track) instead of opening the camera again. See #619.
+    // Clone so each publisher owns its own track
     const previewTrack = publisher.getVideoSource()?.track;
     initBackgroundLocalPublisher(previewTrack ? previewTrack.clone() : undefined);
   }, [initBackgroundLocalPublisher, backgroundPublisher, publisher, isVideoLoading]);
