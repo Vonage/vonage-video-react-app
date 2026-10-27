@@ -109,15 +109,15 @@ describe('useChat', () => {
     expect(() => result.current.sendChatMessage('Hello there!')).not.toThrow();
   });
 
-  it('pushes a visible error notification when the signal rejects', async () => {
-    expect.assertions(1);
+  it('pushes a visible error notification and rethrows when the signal rejects', async () => {
+    expect.assertions(2);
     mockSignal.mockRejectedValueOnce(new Error('signal failed'));
     const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { result } = renderHook(() => useChat({ signal: mockSignal }));
 
     await act(async () => {
-      await result.current.sendChatMessage('Hello there!');
+      await expect(result.current.sendChatMessage('Hello there!')).rejects.toThrow('signal failed');
     });
 
     expect(pushSpy).toHaveBeenCalledWith(

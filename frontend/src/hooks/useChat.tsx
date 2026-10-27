@@ -59,12 +59,13 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
           }),
           retryAfterReconnect: true,
         });
-      } catch {
+      } catch (error) {
         notifications$.actions.push({
           type: 'error',
           message: t('chatErrors.sendFailed'),
           expirationMs: env.NOTIFICATION_DURATION_MS,
         });
+        throw error;
       }
     },
     [signal, localParticipantName, t]
