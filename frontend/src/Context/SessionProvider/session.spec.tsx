@@ -1,11 +1,12 @@
 import { ReactElement, useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach, onTestFinished } from 'vitest';
 import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import { EMOJI_DISPLAY_DURATION } from '@utils/constants';
 import type {
   SignalEvent,
   StreamPropertyChangedEvent,
@@ -36,8 +37,6 @@ const mockVideoClient = {
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
 
-// Records each distinct subscriberWrappers array reference the context exposes, so tests can
-// assert whether an update replaced the array (new reference) or bailed out (same reference).
 const subscriberWrappersRefHistory: SubscriberWrapper[][] = [];
 
 describe('SessionProvider', () => {
@@ -139,7 +138,9 @@ describe('SessionProvider', () => {
         <span data-testid="reconnecting">{String(reconnecting)}</span>
         <span data-testid="archiveId">{String(archiveId)}</span>
         <span data-testid="isMaxPinned">{String(isMaxPinned)}</span>
-        <span data-testid="emojiCount">{emojiQueue.length}</span>
+        <span data-testid="emojiSenders">
+          {emojiQueue.map((emojiWrapper) => emojiWrapper.name).join(',')}
+        </span>
         <span data-testid="unreadCount">{unreadCount}</span>
         <span data-testid="messageCount">{messages.length}</span>
         <span data-testid="streamPropertyChanged">
@@ -299,7 +300,7 @@ describe('SessionProvider', () => {
       });
     });
 
-    it('does not replace the subscriberWrappers array when an emoji signal is received', async () => {
+    it('resolves the emoji sender from the current subscribers without replacing the subscriberWrappers array', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
       act(() => {
@@ -314,23 +315,27 @@ describe('SessionProvider', () => {
       await waitFor(() => expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1'));
 
       const wrappersBeforeEmoji = subscriberWrappersRefHistory.at(-1);
-      const emojiCountBefore = Number(getByTestId('emojiCount').textContent);
+
+      const realSetTimeout = globalThis.setTimeout;
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
+        handler: TimerHandler,
+        timeout?: number,
+        ...args: unknown[]
+      ) => {
+        if (timeout === EMOJI_DISPLAY_DURATION) return 0;
+        return realSetTimeout(handler, timeout, ...args);
+      }) as typeof setTimeout);
+      onTestFinished(() => setTimeoutSpy.mockRestore());
 
       act(() => {
         vonageVideoClient.emit('signal:emoji', {
           type: 'signal:emoji',
           data: JSON.stringify({ emoji: '👍', time: 1 }),
-          from: { connectionId: 'remote-connection' },
+          from: { connectionId: 'sub1-connection' },
         } as unknown as SignalEvent);
       });
 
-      // The emoji is processed (added to the queue)...
-      await waitFor(() =>
-        expect(Number(getByTestId('emojiCount').textContent)).toBe(emojiCountBefore + 1)
-      );
-
-      // ...but the subscriberWrappers reference must be unchanged. Returning a fresh array copy
-      // would re-render the whole session context and every video tile on every emoji received.
+      await waitFor(() => expect(getByTestId('emojiSenders')).toHaveTextContent('Sub One'));
       expect(subscriberWrappersRefHistory.at(-1)).toBe(wrappersBeforeEmoji);
     });
 
