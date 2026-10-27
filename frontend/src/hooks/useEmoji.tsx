@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import throttle from '@common/execution/throttle';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
@@ -59,6 +59,11 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
     );
     return throttledFunc;
   }, [signal]);
+
+  // Cancel any pending trailing call when the throttled function is recreated or the component unmounts
+  useEffect(() => {
+    return () => sendEmoji.cancel?.();
+  }, [sendEmoji]);
 
   /**
    * Checks if the given connection belongs to the current user.

@@ -2,7 +2,9 @@ import {
   type Dispatch,
   type ReactElement,
   type SetStateAction,
+  memo,
   useCallback,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -70,176 +72,224 @@ export type ToolbarProps = {
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and a function to set an error message
  * @returns {ReactElement} - the toolbar component
  */
-const Toolbar = ({
-  isSharingScreen,
-  toggleShareScreen,
-  rightPanelActiveTab,
-  toggleParticipantList,
-  toggleBackgroundEffects,
-  toggleChat,
-  toggleReportIssue,
-  participantCount,
-  captionsState,
-}: ToolbarProps): ReactElement => {
-  const { disconnect, subscriberWrappers } = useSessionContext();
-  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
-  const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
-  const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
-  const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const handleLeave = useCallback(() => {
-    if (!disconnect) {
-      return;
-    }
-    disconnect();
-    destroyBackgroundPublisher();
-  }, [destroyBackgroundPublisher, disconnect]);
-  const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
-  const buttonVisibility = getToolbarButtonVisibility();
+const Toolbar = memo(
+  ({
+    isSharingScreen,
+    toggleShareScreen,
+    rightPanelActiveTab,
+    toggleParticipantList,
+    toggleBackgroundEffects,
+    toggleChat,
+    toggleReportIssue,
+    participantCount,
+    captionsState,
+  }: ToolbarProps): ReactElement => {
+    const { disconnect, subscriberWrappers } = useSessionContext();
+    const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+    const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+    const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
+    const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
+    const handleLeave = useCallback(() => {
+      if (!disconnect) {
+        return;
+      }
+      disconnect();
+      destroyBackgroundPublisher();
+    }, [destroyBackgroundPublisher, disconnect]);
+    const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
 
-  const centerToolbarButtons: ReactElement[] = [
-    buttonVisibility.screenShare && (
-      <ScreenSharingButton
-        toggleScreenShare={toggleShareScreen}
-        isSharingScreen={isSharingScreen}
-        isViewingScreenShare={isViewingScreenShare}
-        key="ScreenSharingButton"
-      />
-    ),
-    <LayoutButton
-      isScreenSharePresent={isScreenSharePresent}
-      key="LayoutButton"
-      isPinningPresent={isPinningPresent}
-    />,
-    buttonVisibility.emojis && (
-      <EmojiGridButton
-        isEmojiGridOpen={openEmojiGridDesktop}
-        setIsEmojiGridOpen={setOpenEmojiGridDesktop}
-        isParentOpen
-        key="EmojiGridButton"
-      />
-    ),
-    buttonVisibility.captions && (
-      <CaptionsButton key="CaptionsButton" captionsState={captionsState} />
-    ),
-    buttonVisibility.archiving && <ArchivingButton key="ArchivingButton" />,
-    buttonVisibility.postCallTranscription && (
-      <PostCallTranscriptionButton key="PostCallTranscriptionButton" />
-    ),
-    buttonVisibility.advancedSettings && <AdvancedSettingsButton key="AdvancedSettingsButton" />,
-  ].filter(isDisplayableToolbarButton);
+    // Feature-flag reads are build-time constants, so they are stable for the component's lifetime
+    // and safe to leave out of the memo dependency arrays below.
+    const {
+      screenShare: showScreenShareButton,
+      emojis: showEmojiGridButton,
+      captions: showCaptionsButton,
+      archiving: showArchivingButton,
+      postCallTranscription: showPostCallTranscriptionButton,
+      advancedSettings: showAdvancedSettingsButton,
+      reportIssue: showReportIssueButton,
+      participantList: showParticipantListButton,
+      chat: showChatButton,
+    } = getToolbarButtonVisibility();
 
-  const rightPanelToolbarButtons: ReactElement[] = [
-    buttonVisibility.reportIssue && (
-      <ReportIssueButton
-        isOpen={rightPanelActiveTab === 'issues'}
-        handleClick={toggleReportIssue}
-        key="ReportIssueButton"
-      />
-    ),
-    buttonVisibility.participantList && (
-      <ParticipantListButton
-        isOpen={rightPanelActiveTab === 'participant-list'}
-        handleClick={toggleParticipantList}
-        participantCount={participantCount}
-        key="ParticipantListButton"
-      />
-    ),
-    buttonVisibility.chat && (
-      <ChatButton
-        isOpen={rightPanelActiveTab === 'chat'}
-        handleClick={toggleChat}
-        key="ChatButton"
-      />
-    ),
-  ].filter(isDisplayableToolbarButton);
-
-  // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
-  // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
-  const toolbarButtons: ReactElement[] = [...centerToolbarButtons, ...rightPanelToolbarButtons];
-  // We track the toolbar and the accompanying containers so we know which toolbar buttons to display, and whether the TimeRoomName should be displayed
-  const toolbarRef = useRef<HTMLDivElement | null>(null);
-  const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
-  const mediaControlsRef = useRef<HTMLDivElement | null>(null);
-  const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
-  const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
-
-  const { displayTimeRoomName, centerButtonLimit, rightButtonLimit } = useToolbarButtons({
-    timeRoomNameRef,
-    toolbarRef,
-    mediaControlsRef,
-    overflowAndExitRef,
-    rightPanelControlsRef,
-    numberOfToolbarButtons: toolbarButtons.length,
-    rightPanelButtonCount: rightPanelToolbarButtons.length,
-  });
-
-  const toolbarButtonsDisplayed = rightButtonLimit;
-  // We display the overflow button when we don't have enough space to display all the toolbar buttons
-  const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
-  const centerButtons = toolbarButtons.slice(0, centerButtonLimit);
-  const hasCenterButtons = centerButtons.length > 0;
-  // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
-  const displayRightPanelButtons = (toolbarButton: ReactElement, index: number) =>
-    index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
-  // Array of `false` or right panel button ReactElements to display.
-  const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
-  // We display the right panel if we have at least one right panel button to display.
-  const displayRightPanel = rightPanelButtons.some((rightPanelButton) => !!rightPanelButton);
-
-  return (
-    <Box
-      ref={toolbarRef}
-      className="absolute bottom-0 left-0 flex h-20 w-full flex-row items-center justify-between bg-vera-dark-background p-4"
-    >
-      <Box
-        ref={timeRoomNameRef}
-        className={classNames('flex-1 justify-start overflow-hidden', {
-          flex: displayTimeRoomName,
-          hidden: !displayTimeRoomName,
-          'mr-3': !displayRightPanel,
-        })}
-      >
-        {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
-      </Box>
-      <Box className="flex flex-1 items-center justify-center">
-        <Box ref={mediaControlsRef} className="flex flex-row gap-4 pr-4">
-          <DeviceControlButton
-            deviceType="audio"
-            toggleBackgroundEffects={toggleBackgroundEffects}
-          />
-          <DeviceControlButton
-            deviceType="video"
-            toggleBackgroundEffects={toggleBackgroundEffects}
-          />
-        </Box>
-        {hasCenterButtons && (
-          <Box className="flex flex-row items-center gap-3 pr-3">{centerButtons}</Box>
-        )}
-        <Box ref={overflowAndExitRef} className="flex flex-row gap-3 pr-3">
-          {shouldShowOverflowButton && (
-            <ToolbarOverflowButton
+    const centerToolbarButtons: ReactElement[] = useMemo(
+      () =>
+        [
+          showScreenShareButton && (
+            <ScreenSharingButton
+              toggleScreenShare={toggleShareScreen}
               isSharingScreen={isSharingScreen}
-              toggleShareScreen={toggleShareScreen}
-              toolbarButtonsCount={toolbarButtonsDisplayed}
-              captionsState={captionsState}
+              isViewingScreenShare={isViewingScreenShare}
+              key="ScreenSharingButton"
             />
+          ),
+          <LayoutButton
+            isScreenSharePresent={isScreenSharePresent}
+            key="LayoutButton"
+            isPinningPresent={isPinningPresent}
+          />,
+          showEmojiGridButton && (
+            <EmojiGridButton
+              isEmojiGridOpen={openEmojiGridDesktop}
+              setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+              isParentOpen
+              key="EmojiGridButton"
+            />
+          ),
+          showCaptionsButton && (
+            <CaptionsButton key="CaptionsButton" captionsState={captionsState} />
+          ),
+          showArchivingButton && <ArchivingButton key="ArchivingButton" />,
+          showPostCallTranscriptionButton && (
+            <PostCallTranscriptionButton key="PostCallTranscriptionButton" />
+          ),
+          showAdvancedSettingsButton && <AdvancedSettingsButton key="AdvancedSettingsButton" />,
+        ].filter(isDisplayableToolbarButton),
+      [
+        showScreenShareButton,
+        toggleShareScreen,
+        isSharingScreen,
+        isViewingScreenShare,
+        isScreenSharePresent,
+        isPinningPresent,
+        showEmojiGridButton,
+        openEmojiGridDesktop,
+        showCaptionsButton,
+        captionsState,
+        showArchivingButton,
+        showPostCallTranscriptionButton,
+        showAdvancedSettingsButton,
+      ]
+    );
+
+    const rightPanelToolbarButtons: ReactElement[] = useMemo(
+      () =>
+        [
+          showReportIssueButton && (
+            <ReportIssueButton
+              isOpen={rightPanelActiveTab === 'issues'}
+              handleClick={toggleReportIssue}
+              key="ReportIssueButton"
+            />
+          ),
+          showParticipantListButton && (
+            <ParticipantListButton
+              isOpen={rightPanelActiveTab === 'participant-list'}
+              handleClick={toggleParticipantList}
+              participantCount={participantCount}
+              key="ParticipantListButton"
+            />
+          ),
+          showChatButton && (
+            <ChatButton
+              isOpen={rightPanelActiveTab === 'chat'}
+              handleClick={toggleChat}
+              key="ChatButton"
+            />
+          ),
+        ].filter(isDisplayableToolbarButton),
+      [
+        showReportIssueButton,
+        rightPanelActiveTab,
+        toggleReportIssue,
+        showParticipantListButton,
+        toggleParticipantList,
+        participantCount,
+        showChatButton,
+        toggleChat,
+      ]
+    );
+
+    // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
+    // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
+    const toolbarButtons: ReactElement[] = [...centerToolbarButtons, ...rightPanelToolbarButtons];
+    // We track the toolbar and the accompanying containers so we know which toolbar buttons to display, and whether the TimeRoomName should be displayed
+    const toolbarRef = useRef<HTMLDivElement | null>(null);
+    const timeRoomNameRef = useRef<HTMLDivElement | null>(null);
+    const mediaControlsRef = useRef<HTMLDivElement | null>(null);
+    const rightPanelControlsRef = useRef<HTMLDivElement | null>(null);
+    const overflowAndExitRef = useRef<HTMLDivElement | null>(null);
+
+    const { displayTimeRoomName, centerButtonLimit, rightButtonLimit } = useToolbarButtons({
+      timeRoomNameRef,
+      toolbarRef,
+      mediaControlsRef,
+      overflowAndExitRef,
+      rightPanelControlsRef,
+      numberOfToolbarButtons: toolbarButtons.length,
+      rightPanelButtonCount: rightPanelToolbarButtons.length,
+    });
+
+    const toolbarButtonsDisplayed = rightButtonLimit;
+    // We display the overflow button when we don't have enough space to display all the toolbar buttons
+    const shouldShowOverflowButton = toolbarButtonsDisplayed < toolbarButtons.length;
+    const centerButtons = toolbarButtons.slice(0, centerButtonLimit);
+    const hasCenterButtons = centerButtons.length > 0;
+    // Displays the right panel buttons - any additional buttons to be displayed that aren't in the center of the toolbar.
+    const displayRightPanelButtons = (toolbarButton: ReactElement, index: number) =>
+      index >= centerButtonLimit && index < rightButtonLimit && toolbarButton;
+    // Array of `false` or right panel button ReactElements to display.
+    const rightPanelButtons = toolbarButtons.map(displayRightPanelButtons);
+    // We display the right panel if we have at least one right panel button to display.
+    const displayRightPanel = rightPanelButtons.some((rightPanelButton) => !!rightPanelButton);
+
+    return (
+      <Box
+        ref={toolbarRef}
+        className="absolute bottom-0 left-0 flex h-20 w-full flex-row items-center justify-between bg-vera-dark-background p-4"
+      >
+        <Box
+          ref={timeRoomNameRef}
+          className={classNames('flex-1 justify-start overflow-hidden', {
+            flex: displayTimeRoomName,
+            hidden: !displayTimeRoomName,
+            'mr-3': !displayRightPanel,
+          })}
+        >
+          {displayTimeRoomName && <TimeRoomNameMeetingRoom />}
+        </Box>
+        <Box className="flex flex-1 items-center justify-center">
+          <Box ref={mediaControlsRef} className="flex flex-row gap-4 pr-4">
+            <DeviceControlButton
+              deviceType="audio"
+              toggleBackgroundEffects={toggleBackgroundEffects}
+            />
+            <DeviceControlButton
+              deviceType="video"
+              toggleBackgroundEffects={toggleBackgroundEffects}
+            />
+          </Box>
+          {hasCenterButtons && (
+            <Box className="flex flex-row items-center gap-3 pr-3">{centerButtons}</Box>
           )}
-          <ExitButton handleLeave={handleLeave} />
+          <Box ref={overflowAndExitRef} className="flex flex-row gap-3 pr-3">
+            {shouldShowOverflowButton && (
+              <ToolbarOverflowButton
+                isSharingScreen={isSharingScreen}
+                toggleShareScreen={toggleShareScreen}
+                toolbarButtonsCount={toolbarButtonsDisplayed}
+                captionsState={captionsState}
+              />
+            )}
+            <ExitButton handleLeave={handleLeave} />
+          </Box>
+        </Box>
+        <Box
+          ref={rightPanelControlsRef}
+          className={classNames('ml-3 box-border justify-end gap-3 pr-3', {
+            flex: displayRightPanel || displayTimeRoomName,
+            hidden: !displayRightPanel && !displayTimeRoomName,
+            'flex-1': displayTimeRoomName,
+            'flex-initial': !displayTimeRoomName,
+          })}
+        >
+          {rightPanelButtons}
         </Box>
       </Box>
-      <Box
-        ref={rightPanelControlsRef}
-        className={classNames('ml-3 box-border justify-end gap-3 pr-3', {
-          flex: displayRightPanel || displayTimeRoomName,
-          hidden: !displayRightPanel && !displayTimeRoomName,
-          'flex-1': displayTimeRoomName,
-          'flex-initial': !displayTimeRoomName,
-        })}
-      >
-        {rightPanelButtons}
-      </Box>
-    </Box>
-  );
-};
+    );
+  }
+);
+
+Toolbar.displayName = 'Toolbar';
 
 export default Toolbar;

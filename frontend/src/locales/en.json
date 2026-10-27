@@ -365,6 +365,8 @@
   "zoom.current": "Current zoom",
   "errorPage.title": "Something went wrong",
   "errorPage.description": "The application could not start. Please reload the page or contact support if the problem persists.",
+  "lazyLoadBoundary.failed": "This couldn't be loaded. Please check your connection and try again.",
+  "lazyLoadBoundary.retry": "Retry",
   "notification.dismiss": "Dismiss notification",
   "banner.logout": "Log out"
 }
