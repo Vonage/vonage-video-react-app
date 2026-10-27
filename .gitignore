@@ -78,3 +78,5 @@ graph.json
 
 # Local code graph database
 /.codegraphcontext/
+
+/.agents/tasks

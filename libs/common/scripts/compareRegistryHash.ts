@@ -14,7 +14,7 @@ const MANIFEST_PATH = path.join(ROOT, 'manifest.json');
 
 const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
 const { version, hash: localHash } = manifest;
-const PACKAGE_NAME = '@vonage/video-common';
+const PACKAGE_NAME = '@vonage/video-reference-apps-common';
 const REGISTRY = 'https://npm.pkg.github.com';
 
 if (fs.existsSync(TARBALL_DIR)) {

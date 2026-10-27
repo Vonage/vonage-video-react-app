@@ -6,6 +6,7 @@ import { makeMediaDeviceInfos, setupWindowNavigatorMock } from '@web-test/fixtur
 import MenuDevices from './MenuDevices';
 import * as util from '@utils/util';
 import mediaDevices$ from '@core/stores/mediaDevices';
+import { testIds as soundTestTestIds } from '../../SoundTest/SoundTest';
 
 const someDevices = makeMediaDeviceInfos();
 
@@ -109,7 +110,7 @@ describe('MenuDevices Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId('soundTest')).toBeInTheDocument();
+      expect(screen.getByTestId(soundTestTestIds.button)).toBeInTheDocument();
     });
   });
 
@@ -131,7 +132,7 @@ describe('MenuDevices Component', () => {
     );
 
     await waitFor(() => {
-      expect(screen.queryByTestId('soundTest')).not.toBeInTheDocument();
+      expect(screen.queryByTestId(soundTestTestIds.button)).not.toBeInTheDocument();
     });
   });
 

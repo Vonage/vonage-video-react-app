@@ -1,5 +1,5 @@
 /**
- * Builds and publishes video-common as a personal dev package to GitHub Packages.
+ * Builds and publishes video-reference-apps-common as a personal dev package to GitHub Packages.
  *
  * Usage:
  *   GH_TOKEN=<token> npx tsx scripts/publishPackage.dev.ts                    (recommended)
@@ -10,8 +10,8 @@
  * Flow:
  * - Reads the GitHub token from the GH_TOKEN env var, or a CLI argument as fallback
  * - Reads an optional owner from the --owner=<org> CLI flag or the GH_OWNER env var
- * - Resolves the target scope: @<owner>/video-common when an owner is provided,
- *   otherwise @<current-github-user>/video-common resolved from the token
+ * - Resolves the target scope: @<owner>/video-reference-apps-common when an owner is provided,
+ *   otherwise @<current-github-user>/video-reference-apps-common resolved from the token
  * - Computes the next available <base>-dev.N version from registry
  * - Publishes that version once with the "dev" dist-tag
  * - Persists the published version to manifest.json and package.json
@@ -141,7 +141,7 @@ async function requestGitHubApi(args: { endpoint: string; token: string }): Prom
       Accept: 'application/vnd.github+json',
       Authorization: `Bearer ${token}`,
       'X-GitHub-Api-Version': GITHUB_API_VERSION,
-      'User-Agent': 'video-common-dev-publisher',
+      'User-Agent': 'video-reference-apps-common-dev-publisher',
       Connection: 'close',
     },
   });
@@ -153,7 +153,7 @@ async function getPublishedVersions(args: {
   token: string;
 }): Promise<string[]> {
   const { orgOwner, packageName, token } = args;
-  // GitHub API expects the unscoped package name (e.g. "video-common", not "@user/video-common")
+  // GitHub API expects the unscoped package name (e.g. "video-reference-apps-common", not "@user/video-reference-apps-common")
   const unscopedName = packageName.includes('/') ? packageName.split('/')[1] : packageName;
   const encodedPackageName = encodeURIComponent(unscopedName);
   const versions: string[] = [];
@@ -263,7 +263,7 @@ async function main(): Promise<void> {
   // Use the provided owner (org) when supplied, otherwise fall back to the
   // GitHub user resolved from the token for a personal dev publish.
   const scopeOwner = orgOwner ?? (await resolveGitHubUsernameFromToken(token));
-  const devName = `@${scopeOwner}/video-common`;
+  const devName = `@${scopeOwner}/video-reference-apps-common`;
 
   console.log(`Publishing as ${devName}...`);
 

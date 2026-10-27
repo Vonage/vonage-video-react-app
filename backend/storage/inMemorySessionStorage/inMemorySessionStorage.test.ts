@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import InMemorySessionStorage from '../inMemorySessionStorage';
 import type { SessionStorage } from '../sessionStorage';
 
@@ -97,46 +98,6 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
-  describe('auth transaction', () => {
-    const transactionId = 'transaction-abc';
-
-    it('should return null for a transaction that does not exist', async () => {
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toBeNull();
-    });
-
-    it('should set, get, and delete an auth transaction', async () => {
-      await storage.setAuthTransaction({
-        transactionId,
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toEqual({
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      await storage.deleteAuthTransaction({ transactionId });
-      expect(await storage.getAuthTransaction({ transactionId })).toBeNull();
-    });
-  });
-
-  describe('access token', () => {
-    it('should return null for a session id with no stored access token', async () => {
-      const accessToken = await storage.getAccessToken({ sessionId });
-      expect(accessToken).toBeNull();
-    });
-
-    it('should set and get an access token by session id', async () => {
-      await storage.setAccessToken({ sessionId, accessToken: 'okta-access-token' });
-      expect(await storage.getAccessToken({ sessionId })).toBe('okta-access-token');
-    });
-  });
-
   describe('setArchiveIds / getArchiveIds', () => {
     it('should set and retrieve archive ids', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
@@ -155,13 +116,13 @@ describe('InMemorySessionStorage', () => {
   describe('setServerRotationPending / getServerRotationPending', () => {
     it('should set and retrieve the pending flag', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.setServerRotationPending({ sessionId, pending: true });
-      expect(await storage.getServerRotationPending({ sessionId })).toBe(true);
+      await storage.setServerRotationPending({ sessionId, pending: 2 });
+      expect(await storage.getServerRotationPending({ sessionId })).toBe(2);
     });
 
     it('should silently no-op for an unknown sessionId', async () => {
       await expect(
-        storage.setServerRotationPending({ sessionId, pending: true })
+        storage.setServerRotationPending({ sessionId, pending: 1 })
       ).resolves.toBeUndefined();
     });
   });

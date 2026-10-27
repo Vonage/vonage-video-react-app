@@ -1,5 +1,4 @@
 import { initPublisher } from '@vonage/client-sdk-video';
-import { useTranslation } from 'react-i18next';
 import { createContext, InferAPI } from 'react-global-state-hooks';
 import { initialState } from './constants';
 import useUserContext from '@hooks/useUserContext';
@@ -23,7 +22,6 @@ const screenShare$ = createContext(initialState, {
   metadata: {
     user: {} as UserType,
     session: {} as SessionContextType,
-    t: (() => {}) as ReturnType<typeof useTranslation>['t'],
   },
   actions: {
     onScreenShareStopped: function (this: ScreenShare['actions']) {
@@ -64,7 +62,7 @@ const screenShare$ = createContext(initialState, {
 
     toggleShareScreen: () => {
       return async ({ getState, metadata, setState, actions }) => {
-        const { user, session, t } = metadata;
+        const { user, session } = metadata;
         const { vonageVideoClient, publish } = session;
         const actions$ = actions as ScreenShare['actions'];
 
@@ -100,8 +98,6 @@ const screenShare$ = createContext(initialState, {
             codecPriority,
           });
 
-          const partnerId = session.sessionDetails?.applicationId ?? null;
-
           const publisher = initPublisher(
             undefined,
             {
@@ -112,7 +108,7 @@ const screenShare$ = createContext(initialState, {
               scalableScreenshare: scalableScreenshareEnabled,
               ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
               ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
-              name: t('participants.screen', { participantName: user.defaultSettings.name }),
+              name: user.defaultSettings.name,
               constraints: screenShareConstraints,
             },
             (err) => {
@@ -121,7 +117,6 @@ const screenShare$ = createContext(initialState, {
               handleApplyAdvancedSettingsError({
                 message: 'Failed to initialize screen share publisher',
                 eventSource: 'screenShare$.toggleShareScreen.initPublisher',
-                partnerId,
               })(err);
 
               actions$.onScreenShareStopped();
@@ -191,7 +186,6 @@ const screenShare$ = createContext(initialState, {
               handleApplyAdvancedSettingsError({
                 message: 'Failed to apply screen share bitrate',
                 eventSource: 'screenShare$.toggleShareScreen.applyBitrate',
-                partnerId,
               })
             );
           }
@@ -214,7 +208,6 @@ export default Object.assign(screenShare$, {
   Provider: (() => {
     // Keeps the metadata in sync, executes before the children are rendered
     const Synchronizer: FC<PropsWithChildren> = ({ children }) => {
-      const { t } = useTranslation();
       const { user } = useUserContext();
       const session = useSessionContext();
       const { setMetadata } = screenShare$.use.api();
@@ -223,7 +216,6 @@ export default Object.assign(screenShare$, {
         ...metadata,
         user,
         session,
-        t,
       }));
 
       return children;
