@@ -1,0 +1,24 @@
+integration-tests/fixtures/testWithLogging.ts
+  s_423b3edfe82c05::t_87670e7f4a6fc3 10
+integration-tests/playwright.config.ts
+  s_423b3edfe82c05::t_5140779e3a4056 69
+  s_423b3edfe82c05::t_13494abe2cb625 5
+integration-tests/baseUrl.ts
+  s_423b3edfe82c05::t_0a7357969a3d6e 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "67716784471832033ec30d2a537fa0dd727efffa",
+  "prompts": {},
+  "sessions": {
+    "s_423b3edfe82c05": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4720d7b6-f064-48bc-b0b6-3967cb582ef9",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

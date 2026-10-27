@@ -1,0 +1,749 @@
+frontend/src/locales/localeParity.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 7,19
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  s_857e09fea3fe19::t_566f43504b5346 12-16,27,29,58-63,65-83,85-100
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9-14,52,68-88,91-95,97,107,113,115-117,125,147,150-152,172,194-209
+libs/common/docs/universal.md
+  s_857e09fea3fe19::t_566f43504b5346 3,10,16-17,35,55,78,99,118,138,163,183,199,212,235,261,284,299,307,350,356,377,392,418,433,450,465,487,529,538
+.github/workflows/vcr-deploy-on-comment.yml
+  s_857e09fea3fe19::t_566f43504b5346 20-21,67-71,76,78,81,85,95-98,102,104-137,152-164
+frontend/src/components/MeetingRoom/Toolbar/helpers/isDisplayableToolbarButton.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-12
+frontend/src/hooks/useMeetingRoom.ts
+  s_857e09fea3fe19::t_566f43504b5346 60,63,77,163-164,189,197
+frontend/src/App.tsx
+  s_857e09fea3fe19::t_566f43504b5346 25,54
+frontend/src/services/videoClient.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 5,9,34,37-40,42-46,48-52
+integration-tests/tests-auth/authEnabled.setup.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-15
+backend/routes/video/constants/startArchive.ts
+  s_857e09fea3fe19::t_566f43504b5346 2-28,31,34
+backend/helpers/resolveResponseFormat.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-18
+backend/routes/auth/handlers/callbackHandler.ts
+  s_857e09fea3fe19::t_566f43504b5346 10-11,14-17,19,34-43,51,53-56,64,68-72,75-77,81-82,85-87,89-108,111-115,121,125-128,130-134
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 38-55
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 23,189,192,429
+integration-tests/tests-auth/constants.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-21
+libs/common/src/constants/archiveNames.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-29
+libs/core/src/hooks/useArchives/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 2-8
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9,20,99
+backend/routes/auth/constants.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,3,5
+.github/workflows/deploy-to-vcr.yml
+  s_857e09fea3fe19::t_566f43504b5346 24-28,33,35,38,43-50,63
+backend/services/tests/loggerService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,5-6,16-17,26,39,42,50,64,67,132,144
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  s_857e09fea3fe19::t_566f43504b5346 21-29
+.claude/skills/run-tests/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-68
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,9-12,14-22,73,79,87-95,102-144,152,162,168
+backend/middleware/corsMiddleware/corsMiddleware.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-22
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 36,49,133,148,154,174,178,194,203,210
+frontend/src/VeraRoom/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 6-8
+customWordList.mjs
+  s_857e09fea3fe19::t_566f43504b5346 2,20
+apps/local-oidc/eslint.config.mjs
+  s_857e09fea3fe19::t_566f43504b5346 1-12
+frontend/src/components/MeetingRoom/ScreenSharePublisher/ScreenSharePublisher.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 48
+frontend/src/services/auth/redirectToAuthProvider.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,11
+frontend/package.json
+  s_857e09fea3fe19::t_566f43504b5346 3
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9-13,47,68,75-80
+integration-tests/tests-auth/helpers/requestAccessToken.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-43
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,17-23,78,89-98,106-133,136,144-161,168-169
+libs/common/docs/web.test.md
+  s_857e09fea3fe19::t_566f43504b5346 3,20,37,57,71,82,95,128
+package.json
+  s_857e09fea3fe19::t_566f43504b5346 3,7,11,14-38,52-53,55-56,62-65,71,79,81,150,157-159,174
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-130
+backend/services/tests/jiraFeedbackService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,7,18,22,76,78-79,167
+.github/workflows/run-tests.yml
+  s_857e09fea3fe19::t_566f43504b5346 16,38-42,47,50,100-104,109,114,141-202,220-224,229,234
+README.md
+  s_857e09fea3fe19::t_566f43504b5346 52,71-116,118-119,126-172
+  s_857e09fea3fe19::t_b79ae5a8d06898 173
+.github/workflows/lint.yml
+  s_857e09fea3fe19::t_566f43504b5346 33-37,42,45,77-81,86,89
+backend/helpers/__mocks__/config.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,5
+backend/storage/sessionStorage.ts
+  s_857e09fea3fe19::t_566f43504b5346 15-16
+.github/copilot-instructions.md
+  s_857e09fea3fe19::t_566f43504b5346 47-54,69-70
+backend/middleware/authMiddleware/helpers/refreshAccessToken.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-62
+backend/routes/video/schemas/CaptionsHookPayload.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 7,22-27
+backend/services/tests/feedbackService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,7
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,4,10-11,101,105
+backend/routes/auth/helpers/readCookiePayload.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-22
+frontend/src/components/SoundTest/SoundTest.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9-13,64,69
+integration-tests/test-api/tsconfig.json
+  s_857e09fea3fe19::t_566f43504b5346 11
+.kiro/settings/mcp.json
+  s_857e09fea3fe19::t_566f43504b5346 55-58
+frontend/src/services/videoClient.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,7-9,17
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  s_857e09fea3fe19::t_566f43504b5346 45
+frontend/src/components/MeetingRoom/TranscriptionIndicator/index.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-3
+backend/package.json
+  s_857e09fea3fe19::t_566f43504b5346 3
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.tsx
+  s_857e09fea3fe19::t_566f43504b5346 6-10,30-38
+integration-tests/tests/utils.ts
+  s_857e09fea3fe19::t_566f43504b5346 28-29
+frontend/src/components/BannerLogout/BannerLogout.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-45
+libs/common/docs/node.md
+  s_857e09fea3fe19::t_566f43504b5346 3,12,23,47,69,89,110,137,145-146
+scripts/assertPnpmInstall.mjs
+  s_857e09fea3fe19::t_566f43504b5346 1-99
+backend/middleware/errorHandler.ts
+  s_857e09fea3fe19::t_566f43504b5346 5,54,56,61
+.claude/skills/setup/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-125
+backend/middleware/authMiddleware/helpers/readBearerToken.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-23
+scripts/build.ts
+  s_857e09fea3fe19::t_566f43504b5346 85,98,106
+backend/middleware/authMiddleware/helpers/assertAllowedOrigin.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-20
+backend/tests/helpers/makeEncryptedCookieHeader.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-8
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 10-13,34,40,98-119
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 14-23,53,56,88,94,106,108-111,127-131,138-187
+scripts/testIntegration.ts
+  s_857e09fea3fe19::t_566f43504b5346 9,54,60-61,66,83-93,184,186,248-249
+  s_857e09fea3fe19::t_274d422f14f6d7 250-252
+backend/routes/auth/helpers/cookiePayloadFormat.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+frontend/src/components/ScreenSharingButton/shouldDisplayScreenShareButton.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-13
+backend/routes/auth/schemas/TokenExchangeResponse.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 7-11
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 16-17
+backend/routes/auth/helpers/isSafeReturnToPath.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+frontend/src/utils/hasMediaProcessorSupport/hasMediaProcessorSupport.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-22
+vcrBuild.sh
+  s_857e09fea3fe19::t_566f43504b5346 7-13,15-16
+integration-tests/tests-auth/apiAccess.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-36
+libs/common/manifest.json
+  s_857e09fea3fe19::t_566f43504b5346 4
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 11-15,31,36,40-42,47,80-81,86,91-95,105-121,123-130
+frontend/src/hooks/useToolbarButtons.tsx
+  s_857e09fea3fe19::t_566f43504b5346 12,28-29,39,85,123
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 7-10,41,47
+frontend/src/env.ts
+  s_857e09fea3fe19::t_566f43504b5346 39,53,85,95
+vcrBuild.dev.sh
+  s_857e09fea3fe19::t_566f43504b5346 7-8,10-15
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_857e09fea3fe19::t_566f43504b5346 9,39,124,131-132
+env.defaults.sh
+  s_857e09fea3fe19::t_566f43504b5346 1-39
+backend/routes/auth/schemas/SignOutRequestBody.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-9
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 6,34,42
+backend/helpers/reportFatalErrors.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-64
+backend/middleware/authMiddleware/helpers/authenticateCookieSession.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-116
+backend/eslint.config.mjs
+  s_857e09fea3fe19::t_566f43504b5346 22
+docs/CONFIGURATION.md
+  s_857e09fea3fe19::t_566f43504b5346 7,51-63,128
+.github/workflows/video-common-integrity.yml
+  s_857e09fea3fe19::t_566f43504b5346 14-17,21,24
+backend/vitest.config.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-41
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-12,59-62,67,73-74,80-81,85
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9-13,16,57-58,132-133,405,415,422-460
+  s_857e09fea3fe19::t_a650caab00611e 461-462
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5-7,29,34,36
+  s_857e09fea3fe19::t_6dfd166923cf11 4
+frontend/src/components/Banner/Banner.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,4,7-14,16-19,21-37
+frontend/src/logger/event/splitSessionFromExtra.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-24
+backend/middleware/authMiddleware/helpers/logAuthFeatures.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-9
+backend/routes/auth/handlers/signInHandler.ts
+  s_857e09fea3fe19::t_566f43504b5346 9-12,27-34,36-38,46-50,52-58,61,65-70
+integration-tests/test-api/apiIntegrity.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,8-9,22-23,26-27,30-31,39-40,43-44,47-48,56,58,63,65,68,70,72,81-82,88-89,92,97,132
+libs/common/src/schemas/ClientLogEvent/ClientLogSession.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-10
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_857e09fea3fe19::t_566f43504b5346 65,111
+backend/tests/helpers/testAuthCookieSecret.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+integration-tests/playwright.auth.config.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,4-18,20-32,34-53
+libs/common/docs/web.md
+  s_857e09fea3fe19::t_566f43504b5346 3,12,22,37,54,76,110,124,139,154,166,179,197,212,228,239,255-256,281,296
+backend/tests/helpers/readSetCookie.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-16
+backend/tests/session.auth.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,6-7,10,12-15,23-30,33-34,87,89,122-128
+frontend/src/logger/transport/backendLogTransport.ts
+  s_857e09fea3fe19::t_566f43504b5346 5,15,20-21,29,44
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  s_857e09fea3fe19::t_566f43504b5346 36-38,60-62
+backend/tests/errorHandler.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,20,24,27,30-31,39,42
+apps/local-oidc/package.json
+  s_857e09fea3fe19::t_566f43504b5346 1-8
+apps/local-oidc/tsconfig.json
+  s_857e09fea3fe19::t_566f43504b5346 1-13
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-11,36,40-47,49-63
+  s_857e09fea3fe19::t_3b5be0b912d189 7
+scripts/vcrDev.ts
+  s_857e09fea3fe19::t_566f43504b5346 7-8,11-15
+libs/common/README.md
+  s_857e09fea3fe19::t_566f43504b5346 1,13,18,29-31,37-52,59-62,71-73,78-81,84-85,88-90,104
+backend/routes/auth/helpers/revokeTokens.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-41
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,18,27
+frontend/src/VeraRoom/VeraRoomElement.tsx
+  s_857e09fea3fe19::t_566f43504b5346 17-18,34-50,110-119,129-132,134,136-139
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-30
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 83-92
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,17-21,32,34,67-72,74-76,78-82,84-96,98-117
+backend/middleware/corsMiddleware/schemas/CorsConfig.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-32
+integration-tests/tests-auth/helpers/readCookie.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-15
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9,113,135
+integration-tests/tests/postCallTranscription.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-103
+frontend/src/components/Subscriber/Subscriber.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,44,120-125
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributes.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+libs/common/src/constants/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 3
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,5,11-17,32,38-49,95-103,118-120,136,139,143-212
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-45
+frontend/src/utils/hasMediaProcessorSupport/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-3
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  s_857e09fea3fe19::t_566f43504b5346 48,50
+.nvmrc
+  s_857e09fea3fe19::t_566f43504b5346 1
+libs/common/vite.config.ts
+  s_857e09fea3fe19::t_566f43504b5346 132,151
+frontend/src/components/ScreenSharingButton/index.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-2
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 49,54
+scripts/assertPackageManager.mjs
+  s_857e09fea3fe19::t_566f43504b5346 1-78
+.claude/skills/configure/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-97
+backend/tests/helpers/doPartialMock.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,6-7,37
+libs/common/docs/node.test.md
+  s_857e09fea3fe19::t_566f43504b5346 3,16,51,71
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2
+backend/helpers/assertCorsMatchesAuth.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-26
+.vscode/mcp.json
+  s_857e09fea3fe19::t_566f43504b5346 43-46
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-37
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  s_857e09fea3fe19::t_566f43504b5346 15
+libs/core/src/hooks/useArchives/useArchives.ts
+  s_857e09fea3fe19::t_566f43504b5346 17-35,84-98
+  s_857e09fea3fe19::t_693dd7013f1c01 16
+apps/local-oidc/src/main.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-131
+libs/common/src/schemas/ClientLogEvent/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 6
+frontend/src/locales/en.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  s_857e09fea3fe19::t_566f43504b5346 4,52,118-133
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-12
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,11,26-27
+backend/server.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,10-19,34-39,46,62-64,92
+frontend/src/locales/it.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,302-303,306-307,311-317,368-369
+backend/testSetup/setEnvVars.js
+  s_857e09fea3fe19::t_566f43504b5346 1-16
+frontend/src/components/BannerLogout/index.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-3
+backend/testSetup/setEnvVars.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-68
+backend/routes/auth/schemas/IdTokenCookie.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-9
+.prettierignore
+  s_857e09fea3fe19::t_566f43504b5346 9
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 306,309-310,316,323-325,327-328,332-335,379
+frontend/src/VeraRoom/VeraRoomElement.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 133-151
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 6,502-550,554-559,572,584-585
+backend/tests/feedback.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,8,10,15,17,42
+.github/workflows/check-base-branch.yml
+  s_857e09fea3fe19::t_566f43504b5346 24-25,28
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,5-8,10-12,14-16,29,39,43-50,53-58,107,110-115,118-121,127-131
+backend/helpers/config.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,5-7,9,31-33,46-50,64,66,85,87,100-113,126-139
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-5
+frontend/src/logger/event/createClientEvent.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 18,25,28,43,51,56,65,69,72-73,76,80,83-88,95,100
+libs/common/package.json
+  s_857e09fea3fe19::t_566f43504b5346 2,5-9
+backend/tests/redactSensitiveKeys.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,7,9-10,12-14
+libs/common/src/helpers/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 10
+sonar-project.properties
+  s_857e09fea3fe19::t_566f43504b5346 21,48-49
+integration-tests/tests/waitingRoom.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 3-4,32-36,48,72-76,87
+backend/helpers/config.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,8,10-12,62-69,73-74,76,79,83,85,88,92,94-97,100,107-108,110-195
+apps/local-oidc/project.json
+  s_857e09fea3fe19::t_566f43504b5346 1-45
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 7-8,18-35,41
+  s_857e09fea3fe19::t_042f29a832306b 42
+backend/routes/auth/helpers/writeCookiePayload.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-28
+backend/tests/assetlinks.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,16
+backend/tests/logger.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,8,10,20,34,40,50,67,143,159,171,177,188,192-196
+  s_857e09fea3fe19::t_5266b1579d9625 197
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 22,26,37-39
+  s_857e09fea3fe19::t_7559163a02c01b 40-41
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-11,28,34,38-54
+  s_857e09fea3fe19::t_a58fecf67643d3 7
+frontend/src/components/MeetingRoom/Chat/Chat.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,5,11,17,23,29,63-97
+  s_857e09fea3fe19::t_4646ac905548ad 98
+backend/middleware/authMiddleware/errors/SignInRequiredError.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-20
+.claude/skills/feature-flag/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-112
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-20
+frontend/src/logger/event/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 2
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-11,37,43
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,7,10-12,36,55-57,59
+frontend/src/locales/es.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 14,62
+libs/common/src/types/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 5,7
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_857e09fea3fe19::t_566f43504b5346 25,29-31,33-34,67,84-85,100,144,182,186,188,191-201,203,205-206,216-223,239-248,267-271,281,288,293,295-298,309,311-312,318-320,322-323,426,436,448,457,460-461,466,469-470,489-490
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 7,29-32,42,47,53,56,74-77,81,89-92,99,109-110,113
+backend/routes/auth/auth.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,5-7,10,12-17
+.claude/skills/record-snapshots/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-66
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,28,77
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1,12-16,27,33,62-67,69-87,89-104
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 17-18
+backend/services/loggerService.ts
+  s_857e09fea3fe19::t_566f43504b5346 56
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 6,10
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 219-224
+backend/routes/auth/helpers/decryptCookiePayload.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-54
+backend/types/config.ts
+  s_857e09fea3fe19::t_566f43504b5346 12-14,16,35,39-41
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_857e09fea3fe19::t_566f43504b5346 2-3,6-18,25-29,31-35,55-57,62,70-71,73-93,96-99,102-110,113-114,117-129
+backend/middleware/corsMiddleware/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+docs/AUTHENTICATION.md
+  s_857e09fea3fe19::t_566f43504b5346 5-7,11,14-20,23-31,33,35,39,41-42,44,46,48-51,53,55-57,59,62,64,66,68,70-72,74,76,78,80-82,84,86,88-93,95,97-99,103-107,109,111-136,142,144-147,149,151,153,155-156,158,160,162-163,165,167,169-176,178,182,184-186
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,43,55,93,109,126,142
+backend/middleware/helmetMiddleware/helmetMiddleware.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 2-3,5,7,9,14,19,23-30,33-34,48-61,86-87,90
+scripts/testBackend.ts
+  s_857e09fea3fe19::t_566f43504b5346 15,27,31,33,40,46-50,56,61,63,77,79-82,86-88,90,98
+specs/app-config.schema.json
+  s_857e09fea3fe19::t_566f43504b5346 195-199
+libs/common/scripts/checkPackageHash.ts
+  s_857e09fea3fe19::t_566f43504b5346 23,37
+frontend/src/locales/de.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,303,306-307,311-317,368-369
+frontend/src/index.d.ts
+  s_857e09fea3fe19::t_566f43504b5346 17-22
+backend/middleware/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 5
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  s_857e09fea3fe19::t_566f43504b5346 12,20,25-28,58
+integration-tests/tests-auth/session.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-78
+frontend/src/utils/isDeviceEnabledOnJoin/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+libs/api/src/core/VideoClient/VideoClient.ts
+  s_857e09fea3fe19::t_566f43504b5346 96-98
+backend/tests/sessionStorageService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,7
+libs/common/docs/universal.test.md
+  s_857e09fea3fe19::t_566f43504b5346 3,12,20,32,47,55,58-59,71,87
+frontend/src/VeraRoom/hooks/useStateSynchronizer.ts
+  s_857e09fea3fe19::t_566f43504b5346 5,16-24,38-41
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 25,72-120
+frontend/src/locales/ja.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,91-98,103-110,120-121,131-132,141-142,312-313,316-317,321-327,365,378-379
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5,11,18,20
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,15,18-22,33-44,71,73,76-77,90-104,111-116,118,120,128,140,142
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 2-3,5,7-10,13,15,17,19-21,27-29,35-78,88-95,114,119-120,122-124,126,128-129,132-135,137-140,142-144,146-163,166-170,172-176,178-179,181-182,184-187,189-191,194-211,213-218,220-223,225-226,228-254,257-263,265-266,269-300,302-322,324-328,330-332,334-336,338-368
+libs/common/scripts/publishPackage.dev.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,13-14,144,156,266
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-16
+scripts/migrateToYarn.mjs
+  s_857e09fea3fe19::t_566f43504b5346 1-134
+backend/storage/vcrSessionStorage.ts
+  s_857e09fea3fe19::t_566f43504b5346 140,143,147,151,154
+backend/routes/auth/helpers/encryptCookiePayload.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-40
+backend/videoService/tests/opentokVideoService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,11-13,18,22,42,47,56,58
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-32
+backend/middleware/authMiddleware/helpers/verifyActiveToken.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-26
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-11,36,61-94
+  s_857e09fea3fe19::t_3cfc8727c08e5e 7
+frontend/src/hooks/tests/useToolbarButtons.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 35,100,125,151,177,188-233
+integration-tests/package.json
+  s_857e09fea3fe19::t_566f43504b5346 3
+backend/middleware/helmetMiddleware/helmetMiddleware.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,7-18,66-69
+backend/routes/auth/schemas/AuthTransactionCookie.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-11
+backend/tests/helpers/mockVonageVideoSdk.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,21,24,36,38,41,43-45,47-49,51-52,56-57,59-60,62,67-74,76-77
+backend/tests/helpers/readEncryptedSetCookie.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-21
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,7
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_857e09fea3fe19::t_566f43504b5346 73
+backend/videoService/tests/vonageVideoService.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,3,13,15-16,19,23,26,29,32,35,58
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8-10,28,35,43-58,60-68
+  s_857e09fea3fe19::t_bb6b1abab1fe06 7
+frontend/src/components/MeetingRoom/ToolbarButton/ToolbarButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 3,5,10-19,26,35,39
+vcr-gha.yml
+  s_6539b8062df850::t_5d85c7ef1083fc 15
+  s_6539b8062df850::t_86381413ac9ec3 16
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 14,17-27,55-59,88-89,98-99,107-108,115-120,128-129,137-138,163,168-193,204,211-221
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,5-9,11-13,15-18,22,35,39-46,49-54,57-58,62,68-77,79,81-86,89-90,96-99,103,109-122,125-136,138-141,143-144,147,149-150,156-160,162,168,170,177,181-182
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 27-80,99-104
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 6,33-34,52-53,63,76,98,120,133,154,177
+frontend/src/logger/providers/backendLoggingProvider.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 57,90
+libs/core/src/hooks/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 5-11
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-39
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 52-64
+pnpm-workspace.yaml
+  s_857e09fea3fe19::t_566f43504b5346 1-9
+scripts/generateSecret.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-17
+scripts/dev.ts
+  s_857e09fea3fe19::t_566f43504b5346 16,19,54,61-63
+docs/TESTING.md
+  s_857e09fea3fe19::t_566f43504b5346 44
+backend/tests/helpers/closeServer.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-16
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,5-6,11-12,20,32-33,36,38,51,66
+frontend/src/locales/es-MX.json
+  s_857e09fea3fe19::t_566f43504b5346 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/Context/SessionProvider/session.tsx
+  s_857e09fea3fe19::t_566f43504b5346 14,66-69,72-75,114-117,120-123,217-218,223-237,240-241,269-272,393,396-398,400-401,403-420,423-442,471-472,507,538-541,639-646,683-690
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  s_857e09fea3fe19::t_566f43504b5346 31-40
+frontend/src/components/Subscriber/Subscriber.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 34,143-158
+  s_857e09fea3fe19::t_2620912ab563c5 159-160
+frontend/src/types/chat.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-6,8
+.husky/pre-push
+  s_857e09fea3fe19::t_566f43504b5346 14
+backend/testSetup/documentPolyfill.js
+  s_857e09fea3fe19::t_566f43504b5346 1-15
+backend/tests/health.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,18
+frontend/src/VeraRoom/stores/bridge/constants/initialState.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,12,17-18
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 6,19-20,34
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-8,14,28-30,97,99-107,113-122,124-132,139-158,173,179-180,182,192,196-200,204-205,215-218,232-237
+frontend/src/components/MeetingRoom/Toolbar/helpers/getToolbarButtonVisibility.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-33
+frontend/src/utils/hasMediaProcessorSupport/hasMediaProcessorSupport.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-47
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.ts
+  s_857e09fea3fe19::t_566f43504b5346 13-15,27
+.kiro/scripts/codegraph.sh
+  s_857e09fea3fe19::t_566f43504b5346 15-17
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 11,144-157,199-215
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_857e09fea3fe19::t_566f43504b5346 4,8,20-23,28,32,34,38-43,45-47,52-53,57-59
+backend/tests/helpers/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+.claude/skills/deploy-vcr/SKILL.md
+  s_857e09fea3fe19::t_566f43504b5346 1-62
+backend/tsconfig.json
+  s_857e09fea3fe19::t_566f43504b5346 10
+backend/.env.example
+  s_857e09fea3fe19::t_566f43504b5346 27,30-36,53-69,71-78,80-95,98-107
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,5
+backend/project.json
+  s_857e09fea3fe19::t_566f43504b5346 65,67,70
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 5-7,12-15,51,66-68,70,72-74,90
+backend/middleware/authMiddleware/helpers/isTokenIssuedToClient.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-21
+libs/common/node/errors/handlers/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 4
+scripts/testFrontend.ts
+  s_857e09fea3fe19::t_566f43504b5346 18-19,22-25
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 7
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 7,23-32,121,157,192,214,235,291,308-310,330,349,373,378-492,495-497
+  s_857e09fea3fe19::t_5458200d3658a7 498
+frontend/src/api/reportFeedback.ts
+  s_857e09fea3fe19::t_566f43504b5346 3,24-34
+frontend/vite.config.ts
+  s_857e09fea3fe19::t_566f43504b5346 30,44,156-159,175-185,189
+integration-tests/tests-auth/signIn.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-37
+libs/common/scripts/compareRegistryHash.ts
+  s_857e09fea3fe19::t_566f43504b5346 17
+.gitignore
+  s_857e09fea3fe19::t_566f43504b5346 81-82
+backend/routes/auth/helpers/writeSessionCookies.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-67
+backend/middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 8,18-21
+  s_857e09fea3fe19::t_6166ad144057c2 22
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-59
+backend/routes/auth/helpers/readCallbackPath.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-5
+backend/tests/session.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-3,18,47,50,77,259,273-306,429,444,457,461-495,526
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,103-104,109
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 9,74,80
+frontend/src/components/MeetingRoom/DropdownSeparator/DropdownSeparator.tsx
+  s_857e09fea3fe19::t_566f43504b5346 4-7,17-18
+.github/scripts/readAppHost.sh
+  s_857e09fea3fe19::t_566f43504b5346 1-12
+frontend/src/components/MeetingRoom/ScreenSharePublisher/ScreenSharePublisher.tsx
+  s_857e09fea3fe19::t_566f43504b5346 44-45
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 8,28,38
+backend/routes/video/video.ts
+  s_857e09fea3fe19::t_566f43504b5346 11,57-58,62-65,67-91,93,149-162,173,192,220,251-255
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 141,152-155
+.github/workflows/auto-update-dependencies.yml
+  s_857e09fea3fe19::t_566f43504b5346 24-27,32,34
+.github/actions/deploy-vcr/action.yml
+  s_857e09fea3fe19::t_566f43504b5346 17-20,30-73
+backend/routes/auth/handlers/signOutHandler.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-140
+backend/routes/auth/helpers/buildAuthCookieOptions.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_857e09fea3fe19::t_566f43504b5346 1-143
+scripts/generateEnv.ts
+  s_857e09fea3fe19::t_566f43504b5346 3-4,7,30-32,35-39,41-42,44,46-50,53-66,69-87,90-103,106-123,126-159,203,213-222,224-231,233
+.github/workflows/video-common-publish.yml
+  s_857e09fea3fe19::t_566f43504b5346 24-27,31,34-43
+eslint.config.mjs
+  s_857e09fea3fe19::t_566f43504b5346 67,72
+frontend/src/hooks/useChat.tsx
+  s_857e09fea3fe19::t_566f43504b5346 4,16-26,65-66,70
+frontend/src/logger/event/createClientEvent.ts
+  s_857e09fea3fe19::t_566f43504b5346 1,13,33-34,39,50-53
+frontend/src/utils/VonageVideoClient/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 3
+libs/common/src/helpers/isAllowedOrigin/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+backend/tests/blockCallsForArgs.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 2,8,16,18,47,49,80-86
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.spec.tsx
+  s_857e09fea3fe19::t_566f43504b5346 3,30
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_857e09fea3fe19::t_566f43504b5346 17,56,63,90-104,148
+integration-tests/test-api/vitest.config.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-13,15-23,25-26,28
+backend/routes/auth/helpers/clearSessionCookies.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+backend/routes/auth/handlers/signOutHandler.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-115
+backend/helpers/reportFatalErrors.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-24
+backend/routes/auth/helpers/encryptCookiePayload.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+frontend/.env.example
+  s_857e09fea3fe19::t_566f43504b5346 29,42-45
+backend/routes/video/constants/joinSession.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+frontend/src/components/Banner/Banner.tsx
+  s_857e09fea3fe19::t_566f43504b5346 2,6-7,12-13,28-34
+backend/middleware/authMiddleware/helpers/makeProviderResponseError.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-21
+backend/testSetup/documentPolyfill.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-25
+backend/tests/apple-app-site-association.test.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-2,16
+libs/common/scripts/publishPackage.ts
+  s_857e09fea3fe19::t_566f43504b5346 65-67
+backend/routes/auth/schemas/SessionCookie.schema.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-11
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  s_857e09fea3fe19::t_566f43504b5346 68,82
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  s_857e09fea3fe19::t_566f43504b5346 11-12,113,117,171,194,210,224,333,338-340,390,393,443
+backend/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+integration-tests/tests-auth/logout.spec.ts
+  s_857e09fea3fe19::t_566f43504b5346 1-61
+env.sh
+  s_857e09fea3fe19::t_566f43504b5346 2-4,6,8-10,13-14,19-20,24-25,27,29-32,34,42
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/index.ts
+  s_857e09fea3fe19::t_566f43504b5346 1
+docs/GETTING_STARTED.md
+  s_857e09fea3fe19::t_566f43504b5346 56-57,59-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "4070ee2062f12d981a3da60b8785a81d5e0a2628",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_6539b8062df850": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1793028070952013000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_857e09fea3fe19": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1793027578935791000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

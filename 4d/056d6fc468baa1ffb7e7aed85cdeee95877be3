@@ -1,0 +1,26 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  s_70e0fe33fba9ab::t_cde50cb1d79066 95-96
+  h_737cf808c1c597 175
+  s_70e0fe33fba9ab::t_881e313bf31294 195
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4d056d6fc468baa1ffb7e7aed85cdeee95877be3",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_70e0fe33fba9ab": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e6062878-bbd2-47b8-a03e-d391c9b35656",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

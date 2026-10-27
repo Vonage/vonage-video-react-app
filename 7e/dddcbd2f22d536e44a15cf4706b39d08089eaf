@@ -1,0 +1,44 @@
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  h_737cf808c1c597 15-16,42,45-46,54
+  s_70bd25abfb99c8::t_74d99e4e600547 6
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.tsx
+  h_737cf808c1c597 24,27,75
+  s_70bd25abfb99c8::t_1636fd1e40b13b 9-10,18
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 42,469,537
+  s_70bd25abfb99c8::t_56fec79e2084e8 512
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_70bd25abfb99c8::t_866f59714bf3ca 276,282-287,291,293,295
+  s_70bd25abfb99c8::t_866a61c739eb50 62
+  s_70bd25abfb99c8::t_5f2f66d31cf160 279-281
+  s_70bd25abfb99c8::t_4d2997da3f95e6 277-278,288-290,292,294
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  h_737cf808c1c597 2,4-5
+  s_70bd25abfb99c8::t_7f377edd8c0397 69-92
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.spec.tsx
+  s_70bd25abfb99c8::t_f75f3cc187b7fe 57-59,63,67-68,72-74,78,82-83
+  s_70bd25abfb99c8::t_16e420e4675e65 10-12,14
+frontend/src/Context/SessionProvider/session.tsx
+  h_737cf808c1c597 13,76,118,138,187-189,487,600,638
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7edddcbd2f22d536e44a15cf4706b39d08089eaf",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_70bd25abfb99c8": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_b2cca5f7-cc04-4d43-901d-1918aa11b679",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+frontend/src/locales/es.json
+  s_16343696230de9::t_ab519b77181007 300
+frontend/src/locales/es-MX.json
+  s_16343696230de9::t_97ee3569aff4d2 300
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a8d93b8533fa70a7122e68ce69e20996120f86c",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

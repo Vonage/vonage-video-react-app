@@ -1,0 +1,20 @@
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.tsx
+  h_6029769cf9ac60 6,33-39
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  h_6029769cf9ac60 5,10-12,36,55-57,59
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds.ts
+  h_6029769cf9ac60 1-5
+integration-tests/tests/waitingRoom.spec.ts
+  h_6029769cf9ac60 3-4,36,76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f7b56749732dd857fc1dbde5518be536fa7fe411",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_76aa86199c221c::t_1f84491357990e 469
+  s_76aa86199c221c::t_099ff9eeec16c5 208
+  s_76aa86199c221c::t_0aeebfa43fd494 313
+frontend/src/components/LazyLoadBoundary/LazyLoadBoundary.tsx
+  s_76aa86199c221c::t_2ce2bbd44cd3e0 32,38-49
+  s_76aa86199c221c::t_c94314b0662a06 50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7fb921fec3dc6f3bc4d16cb42e83f3b653f1bd17",
+  "prompts": {},
+  "sessions": {
+    "s_76aa86199c221c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49130ae8-847f-499d-8793-525a40426f42",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

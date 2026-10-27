@@ -1,0 +1,44 @@
+.claude/skills/configure/SKILL.md
+  h_c939f8fae0de97 1-97
+.claude/skills/deploy-vcr/SKILL.md
+  h_c939f8fae0de97 1-62
+.claude/skills/feature-flag/SKILL.md
+  h_c939f8fae0de97 1-112
+.claude/skills/record-snapshots/SKILL.md
+  h_c939f8fae0de97 1-66
+.claude/skills/run-tests/SKILL.md
+  h_c939f8fae0de97 1-68
+.claude/skills/setup/SKILL.md
+  h_c939f8fae0de97 1-125
+.github/copilot-instructions.md
+  h_c939f8fae0de97 47-54
+.kiro/steering/vera-configure.md
+  h_c939f8fae0de97 1
+.kiro/steering/vera-deploy-vcr.md
+  h_c939f8fae0de97 1
+.kiro/steering/vera-feature-flags.md
+  h_c939f8fae0de97 1
+.kiro/steering/vera-setup.md
+  h_c939f8fae0de97 1
+.kiro/steering/vera-snapshot-tests.md
+  h_c939f8fae0de97 1
+.kiro/steering/vera-testing.md
+  h_c939f8fae0de97 1
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_c939f8fae0de97 47
+package.json
+  h_c939f8fae0de97 174
+pnpm-lock.yaml
+  h_c939f8fae0de97 51-52,185,191,362,957-958,1952-1958,2105-2107,2225-2226,2230-2231,2235-2236,2240-2241,2245-2246,2250-2251,2255-2256,2261-2262,2267-2268,2273-2274,2279-2280,2285-2286,2291-2292,2297-2298,2303-2304,2309-2310,2315-2316,2321-2322,2327-2328,2333-2334,2338-2339,2343-2344,2348-2349,2353-2354,2358-2359,3363-3367,3455-3456,7014-7015,8948,9231,9272,9298,9913,9934,9943,9956,9972,9978,9988-9990,10090,10254-10259,10266-10267,10359-10365,10393,10397,10400,10404,10406,10413,10415,10417,10420,10422,10424,10426,10428,10430,10436,10438,10440,10443,10445,10447,10451,10459,10465,10467,10470,10473,10476,10479,10482,10485,10488,10491,10494,10497,10500,10503,10506,10509,10512,10515,10518,10521,10524,10527,10530,10533,10536,10539,10601,10675,10677,10686,10692,10708,10711-10712,10975,11004,11473,11484,11489,11600,11605-11606,11806,11808,12032,12051-12052,12055-12056,12257,12912,14012,14697,14884,14901,15297,15585,15619,15629,15811,15816,15821,15823,15825-15850,15904,15911,16711,16769,16772-16773,16792
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "37ab7805ad6f4275cdcce91bf67d658158b10b79",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

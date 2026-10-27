@@ -1,0 +1,37 @@
+frontend/src/hooks/tests/useEmoji.spec.tsx
+  s_fc902581b171a8::t_ccec6ccaea78e0 36
+frontend/src/hooks/useEmoji.tsx
+  s_fc902581b171a8::t_ccec6ccaea78e0 55
+frontend/src/locales/es-MX.json
+  s_fc902581b171a8::t_9ce6c7729c7149 181
+frontend/src/locales/en.json
+  s_fc902581b171a8::t_9b1ef27eaebe2f 181
+frontend/src/locales/it.json
+  s_fc902581b171a8::t_d730d72d9495c6 181
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_fc902581b171a8::t_ae9025f8b8e3ef 1,4,51-53,61-64,69-70,72,80
+frontend/src/hooks/useChat.tsx
+  s_fc902581b171a8::t_29390cd71cf51c 6-7,55,57-60
+frontend/src/locales/de.json
+  s_fc902581b171a8::t_c2e0a7e1443fbc 181
+frontend/src/locales/ja.json
+  s_fc902581b171a8::t_942b20b65a72ac 191
+frontend/src/locales/es.json
+  s_fc902581b171a8::t_49a6dfd675afa4 181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b922f668b2f3e09501dd8a882a642c1618d3ccd",
+  "prompts": {},
+  "sessions": {
+    "s_fc902581b171a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0156242a-7c17-46c6-aeab-2285d58d741c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

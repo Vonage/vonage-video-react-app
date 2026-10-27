@@ -1,0 +1,20 @@
+vcr-gha.yml
+  s_6ac854aa00d098::t_d30d1b773d9930 59
+  s_6ac854aa00d098::t_5d9dea540fdcfe 60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fcff80e1b7eb55446b0e1c383b53e8084c121538",
+  "prompts": {},
+  "sessions": {
+    "s_6ac854aa00d098": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9da5874e-244c-4d09-b9cf-7f2f8699cb6a",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

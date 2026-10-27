@@ -1,0 +1,39 @@
+backend/jest/setEnvVars.test.ts
+  s_7c371a25d620f6::t_0b44960c1873b4 65-66
+  s_7c371a25d620f6::t_f9166b3649b504 64
+customWordList.mjs
+  h_737cf808c1c597 19
+backend/.env.example
+  h_737cf808c1c597 77
+backend/helpers/config.ts
+  h_737cf808c1c597 42
+backend/jest/setEnvVars.js
+  h_737cf808c1c597 15
+backend/services/loggerService.ts
+  h_737cf808c1c597 56
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_737cf808c1c597 31,50
+vcr-gha.yml
+  h_737cf808c1c597 59-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1bba0ccc0ec4ae77c4eadce36e966d1d027823c9",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7c371a25d620f6": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_d7dc08d9-e7af-4edf-98bc-dbc3b92d87b2",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

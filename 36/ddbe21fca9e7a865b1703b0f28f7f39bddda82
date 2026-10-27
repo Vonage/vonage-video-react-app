@@ -1,0 +1,229 @@
+.vscode/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 43-46
+.kiro/settings/mcp.json
+  s_5d339d35dcc85b::t_ff410406116f33 55-58
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 6
+  h_6029769cf9ac60 3,7-10,12,14-17,24-28,30-32,34,50-51,63-64,66-84,87,89,93-103,108-111,113
+.kiro/scripts/codegraph.sh
+  s_5d339d35dcc85b::t_ff410406116f33 15-17
+.github/workflows/run-tests.yml
+  h_6029769cf9ac60 16-23,138-182
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 87-89
+README.md
+  h_6029769cf9ac60 121-122,125-137
+apps/local-oidc/eslint.config.mjs
+  h_6029769cf9ac60 1-12
+apps/local-oidc/package.json
+  h_6029769cf9ac60 1-8
+apps/local-oidc/project.json
+  h_6029769cf9ac60 1-45
+apps/local-oidc/src/main.ts
+  h_6029769cf9ac60 1-112
+apps/local-oidc/tsconfig.json
+  h_6029769cf9ac60 1-13
+backend/.env.example
+  h_6029769cf9ac60 27,46-50,52-62,64-88
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 10-12,72-143
+backend/helpers/config.ts
+  h_6029769cf9ac60 99-112
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 5,7-10,17,19-21,33-71,81-88,107,112-113,115-117,119,121-122,125-129,131-135,137-138,140-141,143-146,148-150,153-169,172-178,180-182,184-185,187-188,190-193,195-196,199-201,203-205,207-209,211-239,241-256,258-262,264-266,268-269,272-291,293-294,296-299,301-302
+backend/middleware/authMiddleware/helpers/authenticateCookieSession.ts
+  h_6029769cf9ac60 1-98
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  h_6029769cf9ac60 1-43
+backend/middleware/authMiddleware/helpers/isTokenIssuedToClient.ts
+  h_6029769cf9ac60 1-20
+backend/middleware/authMiddleware/helpers/logAuthFeatures.ts
+  h_6029769cf9ac60 1-9
+backend/middleware/authMiddleware/helpers/readBearerToken.ts
+  h_6029769cf9ac60 1-23
+backend/middleware/authMiddleware/helpers/refreshAccessToken.ts
+  h_6029769cf9ac60 1-63
+backend/middleware/authMiddleware/helpers/verifyActiveToken.ts
+  h_6029769cf9ac60 1-26
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_6029769cf9ac60 7-8,18-35,41-42
+backend/middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema.ts
+  h_6029769cf9ac60 8,18-22
+backend/project.json
+  h_6029769cf9ac60 12,19,27,51,58,67-73
+backend/routes/auth/auth.ts
+  h_6029769cf9ac60 2,5-7,10,13-17
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 4-5
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 5-13,38-45,48-53,56-57,61,67-76,78,80-85,88-89,95-98,102,108-121,124-135,137-140,142-143,146,148-149,155-159,161,167,169,176,180-181
+backend/routes/auth/handlers/callbackHandler.ts
+  h_6029769cf9ac60 13-16,18,33-42,50,52-55,63,67-71,75-76,80-81,87,97,107,111-114,116-120
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 5-12,41-48,51-56,105,108-113,116-119,125-129
+backend/routes/auth/handlers/signInHandler.ts
+  h_6029769cf9ac60 9-13,28-36,38-40,48-52,54-61,63,67-72
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 1-106
+backend/routes/auth/handlers/signOutHandler.ts
+  h_6029769cf9ac60 1-90
+backend/routes/auth/helpers/buildAuthCookieOptions.ts
+  h_6029769cf9ac60 1-20
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 1-23
+backend/routes/auth/helpers/cookiePayloadFormat.ts
+  h_6029769cf9ac60 1
+backend/routes/auth/helpers/decryptCookiePayload.ts
+  h_6029769cf9ac60 1-53
+backend/routes/auth/helpers/encryptCookiePayload.test.ts
+  h_6029769cf9ac60 1-40
+backend/routes/auth/helpers/encryptCookiePayload.ts
+  h_6029769cf9ac60 1-25
+backend/routes/auth/helpers/readCallbackPath.ts
+  h_6029769cf9ac60 1-5
+backend/routes/auth/helpers/readCookiePayload.ts
+  h_6029769cf9ac60 1-22
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 1-62
+backend/routes/auth/schemas/AuthTransactionCookie.schema.ts
+  h_6029769cf9ac60 1-11
+backend/routes/auth/schemas/IdTokenCookie.schema.ts
+  h_6029769cf9ac60 1-9
+backend/routes/auth/schemas/SessionCookie.schema.ts
+  h_6029769cf9ac60 1-11
+backend/routes/auth/schemas/TokenExchangeResponse.schema.ts
+  h_6029769cf9ac60 7-11
+backend/server.ts
+  h_6029769cf9ac60 12-15,30-35,58-60,88
+backend/tests/helpers/makeEncryptedCookieHeader.ts
+  h_6029769cf9ac60 1-8
+backend/tests/helpers/readEncryptedSetCookie.ts
+  h_6029769cf9ac60 1-21
+backend/tests/helpers/readSetCookie.ts
+  h_6029769cf9ac60 1-16
+backend/tests/helpers/testAuthCookieSecret.ts
+  h_6029769cf9ac60 1
+backend/tests/session.auth.test.ts
+  h_6029769cf9ac60 5-6,9,19-26,118-124
+customWordList.mjs
+  h_6029769cf9ac60 2
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 7,77,81-105,111-117,120-129,131,136,146,188
+docs/GETTING_STARTED.md
+  h_6029769cf9ac60 56-57,59-61
+env.defaults.sh
+  h_6029769cf9ac60 1-39
+env.sh
+  h_6029769cf9ac60 2-4,6,8-10,13-14,19-20,24-25,27,29-33,42
+eslint.config.mjs
+  h_6029769cf9ac60 22
+frontend/.env.example
+  h_6029769cf9ac60 41-44
+frontend/src/VeraRoom/VeraRoomElement.spec.tsx
+  h_6029769cf9ac60 133-151
+frontend/src/VeraRoom/VeraRoomElement.tsx
+  h_6029769cf9ac60 17-18,34-50,110-119,129-132,134,136-139
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.spec.ts
+  h_6029769cf9ac60 1-32
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.ts
+  h_6029769cf9ac60 1-25
+frontend/src/VeraRoom/hooks/useStateSynchronizer.ts
+  h_6029769cf9ac60 5,16-24,38-41
+frontend/src/VeraRoom/index.ts
+  h_6029769cf9ac60 6-8
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributes.ts
+  h_6029769cf9ac60 1
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  h_6029769cf9ac60 31-40
+frontend/src/VeraRoom/stores/bridge/constants/initialState.ts
+  h_6029769cf9ac60 2,12,17-18
+frontend/src/api/reportFeedback.ts
+  h_6029769cf9ac60 3,24-34
+frontend/src/components/Banner/Banner.spec.tsx
+  h_6029769cf9ac60 1,4,7-14,16-19,21-37
+frontend/src/components/Banner/Banner.tsx
+  h_6029769cf9ac60 2,6-7,12-13,28-34
+frontend/src/components/BannerLogout/BannerLogout.tsx
+  h_6029769cf9ac60 1-41
+frontend/src/components/BannerLogout/index.tsx
+  h_6029769cf9ac60 1-3
+frontend/src/env.ts
+  h_6029769cf9ac60 52,93
+frontend/src/index.d.ts
+  h_6029769cf9ac60 17-22
+frontend/src/locales/de.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/en.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/es.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/it.json
+  h_6029769cf9ac60 356-357
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 343-344
+frontend/src/services/auth/redirectToAuthProvider.ts
+  h_6029769cf9ac60 1-25
+frontend/src/services/videoClient.spec.ts
+  h_6029769cf9ac60 5,9,34,37-40,42-46,48-52
+frontend/src/services/videoClient.ts
+  h_6029769cf9ac60 3,7-9,17
+frontend/vite.config.ts
+  h_6029769cf9ac60 43,155-158,174-184,188
+integration-tests/playwright.auth.config.ts
+  h_6029769cf9ac60 1-57
+integration-tests/tests-auth/apiAccess.spec.ts
+  h_6029769cf9ac60 1-36
+integration-tests/tests-auth/authEnabled.setup.ts
+  h_6029769cf9ac60 1-15
+integration-tests/tests-auth/constants.ts
+  h_6029769cf9ac60 1-21
+integration-tests/tests-auth/helpers/readCookie.ts
+  h_6029769cf9ac60 1-15
+integration-tests/tests-auth/helpers/requestAccessToken.ts
+  h_6029769cf9ac60 1-43
+integration-tests/tests-auth/logout.spec.ts
+  h_6029769cf9ac60 1-42
+integration-tests/tests-auth/session.spec.ts
+  h_6029769cf9ac60 1-70
+integration-tests/tests-auth/signIn.spec.ts
+  h_6029769cf9ac60 1-37
+package.json
+  h_6029769cf9ac60 35,51
+scripts/dev.ts
+  h_6029769cf9ac60 16,19,54,61-63
+scripts/generateEnv.ts
+  h_6029769cf9ac60 3-4,7,30-32,35-39,41-42,44,46-50,53-66,69-87,90-103,106-123,126-164,208,218-227,229-236,238
+scripts/generateSecret.ts
+  h_6029769cf9ac60 1-17
+scripts/testFrontend.ts
+  h_6029769cf9ac60 18-19,22-25
+scripts/testIntegration.ts
+  h_6029769cf9ac60 9,82-91,186,248-252
+scripts/vcrDev.ts
+  h_6029769cf9ac60 10
+vcr-gha.yml
+  h_6029769cf9ac60 47-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "36ddbe21fca9e7a865b1703b0f28f7f39bddda82",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_5d339d35dcc85b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0c8fb-8819-73d2-8f80-16ed62c77891",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

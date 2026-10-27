@@ -1,0 +1,22 @@
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  s_32c8ee0054f765::t_77c9f0bf78d8c4 1,7,9-10,13,15-16,18,21
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  s_32c8ee0054f765::t_adf5b72787154f 2,11,13,41,48,52
+  s_32c8ee0054f765::t_2dad81ed04e6f6 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "41fb11aaffe66db5562cec6705ff70e8d5951ad2",
+  "prompts": {},
+  "sessions": {
+    "s_32c8ee0054f765": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f205f1ff-4fee-408f-80e8-8939497a523a",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

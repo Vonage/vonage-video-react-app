@@ -1,0 +1,37 @@
+.github/workflows/deploy-to-vcr.yml
+  s_8f77f36b312928::t_07560fdd64cf21 7,15,21-23
+  s_8f77f36b312928::t_80d145eed40612 71
+  s_8f77f36b312928::t_a02697f3c63cf6 14
+  s_8f77f36b312928::t_3bd4083b6d7e0b 49
+  s_8f77f36b312928::t_d5191a5c6a2b1d 42
+  s_f9f63f13487cb0::t_9f22745150cd62 62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "485546df84a882cecc5cef597d9afd742815c94f",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_8f77f36b312928": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_b14c3e4a-d366-45fc-8b8c-72b9a79f89a4",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_f9f63f13487cb0": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1791317364749724000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

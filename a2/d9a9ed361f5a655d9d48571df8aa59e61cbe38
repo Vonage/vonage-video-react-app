@@ -1,0 +1,19 @@
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_fbc7dba44f0b84::t_a869325ab52221 39-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a2d9a9ed361f5a655d9d48571df8aa59e61cbe38",
+  "prompts": {},
+  "sessions": {
+    "s_fbc7dba44f0b84": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b5332016-d96b-4b32-852b-690ec3b13ffd",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

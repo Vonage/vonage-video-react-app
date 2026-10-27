@@ -1,0 +1,26 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_2203d2d1b7044b::t_adf49926e55f87 212-215
+  s_2203d2d1b7044b::t_f842f50873ebbf 241
+  s_2203d2d1b7044b::t_1f408560adc4ac 137-140
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_2203d2d1b7044b::t_d759d53e39d87d 232-264
+frontend/src/Context/SessionProvider/session.tsx
+  s_2203d2d1b7044b::t_042446a1d1aa87 473
+  s_2203d2d1b7044b::t_85332008fabbb0 472
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4af02b1755f86353ce48d55597489e39d5ba6092",
+  "prompts": {},
+  "sessions": {
+    "s_2203d2d1b7044b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88d653f5-750e-4774-9985-be67cf166726",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

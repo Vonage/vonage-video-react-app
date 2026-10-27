@@ -1,0 +1,22 @@
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 3,15,73
+backend/middleware/authMiddleware/helpers/assertAllowedOrigin.ts
+  h_6029769cf9ac60 1-20
+backend/server.ts
+  h_6029769cf9ac60 1-2
+integration-tests/tests-auth/session.spec.ts
+  h_6029769cf9ac60 36-42,44-53
+scripts/vcrDev.ts
+  h_6029769cf9ac60 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e89ff71a7bfd44f4da175664989482f0321b3c83",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 127,129
+vcrBuild.dev.sh
+  h_6029769cf9ac60 7-8,10-15
+scripts/vcrDev.ts
+  h_6029769cf9ac60 12-14
+  h_6029769cf9ac60 7-8,11,15
+vcr-gha.yml
+  h_6029769cf9ac60 1-2,4,6,8,10,12,14,18,20,23,28,35-36,39,46,49,56,61,64-65,68-71,74,77,80,83,86,89,92,95,98,101,103,106,109,112,115,118,121,124,129,131
+.github/workflows/vcr-deploy-on-comment.yml
+  h_6029769cf9ac60 12-20,29-30,88-90,106-124,139-151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c366db899d10d64445f7c7ea1ab6919a7366f127",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

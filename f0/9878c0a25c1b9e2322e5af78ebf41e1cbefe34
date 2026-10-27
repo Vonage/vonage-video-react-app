@@ -1,0 +1,39 @@
+app-config.json
+  h_737cf808c1c597 4
+backend/routes/video/helpers/getCaptionsTranslationOptions.ts
+  s_7a55de52f3f119::t_6a4d58a1b92af3 1-33
+backend/routes/video/constants/enableCaptions.ts
+  s_7a55de52f3f119::t_f14c0c5d8ba35c 1-2,16
+docs/CONFIGURATION.md
+  s_7a55de52f3f119::t_cde72dcf6f1429 64-72
+backend/.env.example
+  s_7a55de52f3f119::t_3d9525b8f052ee 37-41
+frontend/src/components/AdvancedSettingsDialog/schemas/captionsTranslationLanguage.schema.ts
+  s_7a55de52f3f119::t_43acff4e7dec75 5
+  s_7a55de52f3f119::t_ae693267048d9b 4,6
+libs/api/src/schemas/CaptionOptions.schema.ts
+  s_7a55de52f3f119::t_4c4a643a541b2f 11
+backend/routes/video/helpers/getCaptionsTranslationOptions.test.ts
+  s_7a55de52f3f119::t_af5c6d4d164ea6 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f09878c0a25c1b9e2322e5af78ebf41e1cbefe34",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7a55de52f3f119": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f4859b79-0758-4d67-b491-bcab43cf8ed6",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

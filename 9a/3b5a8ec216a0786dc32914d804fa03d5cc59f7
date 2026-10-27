@@ -1,0 +1,102 @@
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  s_84626ef0ac825f::t_35e184ff3a01d8 31
+  s_84626ef0ac825f::t_c419d33b630ab4 39-57,59-67
+  h_737cf808c1c597 24
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  s_84626ef0ac825f::t_6685235dfd0de3 35-46,48-49,51-52,54-68
+  h_737cf808c1c597 31
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  s_84626ef0ac825f::t_c3ef5710f37b86 21-39
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.ts
+  s_84626ef0ac825f::t_333e0946ec9ad1 1-20
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_84626ef0ac825f::t_3d2cdc49eca6bb 71-72
+  h_737cf808c1c597 98-103
+scripts/generateEnv.ts
+  s_84626ef0ac825f::t_87cc75baddb669 123-146
+  s_84626ef0ac825f::t_001fcfd8ec804a 20,24-28,33
+  s_84626ef0ac825f::t_7a86b1562107dd 202,204-206,209
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_84626ef0ac825f::t_9668f968f41b8b 92-98,105-114,125,127-132,136-137
+  h_737cf808c1c597 9
+  s_84626ef0ac825f::t_b7b2e4a91d8ba7 91,99,126
+  s_84626ef0ac825f::t_056060ca0c25b3 133-135
+  s_84626ef0ac825f::t_a295c863c2e8d2 138-140
+  h_737cf808c1c597 160,163
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  s_84626ef0ac825f::t_330bdf8934af5d 71
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.spec.tsx
+  s_84626ef0ac825f::t_07d4a685bef1e4 366-407
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  s_84626ef0ac825f::t_147f0b5ee04104 33-55
+  s_84626ef0ac825f::t_79933a411579c8 23
+  h_737cf808c1c597 29
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_737cf808c1c597 11-12
+  s_84626ef0ac825f::t_73fde4095ebbce 113,117
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_84626ef0ac825f::t_badd4906dba8a8 100,104
+  s_84626ef0ac825f::t_478efbf93b2e08 10
+  h_737cf808c1c597 9
+frontend/src/components/ScreenSharingButton/shouldDisplayScreenShareButton.ts
+  s_84626ef0ac825f::t_6388802c3b1932 1-13
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.spec.ts
+  s_84626ef0ac825f::t_22352dfba9bab6 1-30
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_84626ef0ac825f::t_872dea24e010c4 174
+  s_84626ef0ac825f::t_53d63049d9ed61 131,148-173,175-176
+  s_84626ef0ac825f::t_a39514a452e1ef 132-147
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.tsx
+  s_84626ef0ac825f::t_4d72aab3603e51 25
+frontend/src/Context/SessionProvider/session.tsx
+  s_84626ef0ac825f::t_08fa468c6d78c4 244-245
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  s_84626ef0ac825f::t_c68dfa9b51d036 50
+frontend/src/utils/isDeviceEnabledOnJoin/index.ts
+  s_84626ef0ac825f::t_a5f5ccb2bfad33 1-3
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_84626ef0ac825f::t_04cf63a94ea338 20
+  s_84626ef0ac825f::t_134e8c763d072a 99
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  s_84626ef0ac825f::t_1652c61f503ce4 56-96
+  s_84626ef0ac825f::t_cec778cceecac8 31
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  s_84626ef0ac825f::t_015b85b1628a60 94-118
+  s_84626ef0ac825f::t_10a69664542c95 36
+  h_737cf808c1c597 30
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  s_84626ef0ac825f::t_8c908f39b55b02 5,7,9-10
+specs/app-config.schema.json
+  s_84626ef0ac825f::t_f72ff6dfb3a9c3 64
+frontend/src/components/ScreenSharingButton/index.tsx
+  s_84626ef0ac825f::t_d4ac34b4bbd969 3-4
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_84626ef0ac825f::t_a0fb55a9072200 31
+  s_84626ef0ac825f::t_64d6af26828d9f 100-121,123-130
+  h_737cf808c1c597 26
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  h_737cf808c1c597 10,83-92,100-119,131-148
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  h_737cf808c1c597 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a3b5a8ec216a0786dc32914d804fa03d5cc59f7",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_84626ef0ac825f": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_df70f422-0436-44a6-9979-5a3e3933f4f8",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
