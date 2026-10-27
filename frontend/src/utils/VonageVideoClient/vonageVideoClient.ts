@@ -138,7 +138,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   private subscribeToStream = async (
     stream: Stream,
-    { rethrowOnError = false }: { rethrowOnError?: boolean } = {}
+    { isResubscribeAttempt = false }: { isResubscribeAttempt?: boolean } = {}
   ) => {
     if (this.disconnected) {
       return;
@@ -226,18 +226,13 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         errorName: isErrorLike(syncError) ? syncError.name : undefined,
       });
 
-      if (isRecoverableError) {
+      if (isRecoverableError && !isResubscribeAttempt) {
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
         return;
       }
 
-      // Only emit subscriptionError for critical errors
       this.handleSubscriptionError(syncError);
-
-      if (rethrowOnError) {
-        throw syncError;
-      }
     }
   };
 
@@ -278,7 +273,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       subscriberCount: this.getSubscriberCount(streamId),
     });
 
-    await this.subscribeToStream(stream, { rethrowOnError: true });
+    await this.subscribeToStream(stream, { isResubscribeAttempt: true });
   };
 
   /**

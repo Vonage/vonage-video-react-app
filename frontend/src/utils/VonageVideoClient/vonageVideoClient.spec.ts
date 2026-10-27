@@ -240,17 +240,24 @@ describe('VonageVideoClient', () => {
       await wait(0);
     }
 
-    it('rejects when a critical subscription error occurs', async () => {
+    it('reports a critical subscription error exactly once', async () => {
       await connectAndRegisterStream();
 
       mockSubscribe.mockReturnValue(undefined);
 
-      await expect(vonageVideoClient?.resubscribeToStreamId(streamId)).rejects.toThrow(
-        'Vonage subscriber was not created.'
-      );
+      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
+        vonageVideoClient?.on('subscriptionError', resolve);
+      });
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const error = await subscriptionErrorPromise;
+      await wait(0);
+      expect((error as Error).message).toBe('Vonage subscriber was not created.');
+      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
     });
 
-    it('resolves without throwing for a recoverable subscription error', async () => {
+    it('reports a recoverable subscription error during resubscribe instead of swallowing it', async () => {
       await connectAndRegisterStream();
 
       mockSubscribe.mockImplementation((_stream, _targetElement, _options, callback) => {
@@ -258,7 +265,16 @@ describe('VonageVideoClient', () => {
         return mockSubscriber;
       });
 
-      await expect(vonageVideoClient?.resubscribeToStreamId(streamId)).resolves.toBeUndefined();
+      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
+        vonageVideoClient?.on('subscriptionError', resolve);
+      });
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const error = await subscriptionErrorPromise;
+      await wait(0);
+      expect((error as { name?: string })?.name).toBe('OT_STREAM_NOT_FOUND');
+      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
     });
   });
 
