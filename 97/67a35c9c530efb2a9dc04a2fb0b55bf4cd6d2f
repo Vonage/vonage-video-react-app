@@ -1,0 +1,26 @@
+.github/workflows/deploy-to-vcr-prod.yml
+  s_22193e0409a7b3::t_0f720a2a692f78 111
+  s_22193e0409a7b3::t_241bb1545212e4 15-18,32-36,41,43,46,50-54,62-110,125
+  s_22193e0409a7b3::t_f2b7bc24646d40 55-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "9767a35c9c530efb2a9dc04a2fb0b55bf4cd6d2f",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_22193e0409a7b3": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_ad470cd0-2950-461b-a461-282976a642ac",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
