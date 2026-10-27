@@ -159,6 +159,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     };
     try {
       const subscribe = () =>
+        // subscribe.promise() resolves only after streamCreated/error has already fired
+        // (opentok.js:68371), so listeners here must attach before that, off the sync return.
         new Promise<Subscriber>((resolve, reject) => {
           const subscriber = this.clientSession.subscribe(
             stream,
