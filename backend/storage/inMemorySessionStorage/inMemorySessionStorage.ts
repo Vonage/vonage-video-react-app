@@ -31,10 +31,6 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    // Idempotent: setSession runs on every join, so preserve existing per-room
-    // state (archiveIds / captions) when the record already exists. Re-creating it
-    // would wipe tracked archives and captions, so sessionDestroyed could no longer
-    // stop them.
     const existingSession = this.sessions[roomName];
     this.sessions[roomName] = existingSession
       ? { ...existingSession, sessionKey }
