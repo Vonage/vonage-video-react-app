@@ -1,0 +1,19 @@
+backend/tests/assetlinks.test.ts
+  s_8e6a3046078488::t_1a737b1ebe3e51 56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1984dc1524fcb501ea0b790364d666344877d21",
+  "prompts": {},
+  "sessions": {
+    "s_8e6a3046078488": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_adb17dcd-80e4-4856-8315-6942918164e9",
+        "model": "auto"
+      },
+      "human_author": "Manuel Vera <manuel.veranieto@vonage.com>"
+    }
+  }
+}
