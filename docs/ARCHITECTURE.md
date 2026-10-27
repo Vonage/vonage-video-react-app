@@ -60,7 +60,7 @@ The following rules determine where code belongs within the workspace:
 
 ## Error Reporting
 
-Client-side failures are reported through `frontend/src/logger/FrontendLogger.ts` rather than failing silently. `publish` and `signal` use `async`/`await` with user-visible failure states, including the `forceMuteStream` moderation call, which had the same silent-failure gap.
+Client-side failures are reported through `frontend/src/logger/FrontendLogger.ts`. `publish`, `signal`, and the `forceMuteStream` moderation call use `async`/`await` with user-visible failure states.
 
 ## Related Documentation
 
