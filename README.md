@@ -52,6 +52,10 @@ For details on the workspace structure, libraries, and module boundaries, see [A
 | Package manager | [pnpm](https://pnpm.io) for installing. [yarn](https://yarnpkg.com) still runs the scripts, see [Package manager](#package-manager) |
 | Version manager (optional) | [nvm](https://github.com/creationix/nvm) |
 
+### SDK 2.35 Promises Migration
+
+The app is pinned to `@vonage/client-sdk-video@2.35.1`. `publish` and `signal` use `async`/`await`, reporting failures through a central frontend logger and surfacing a visible error to the user instead of failing silently. `subscribe` and `initPublisher` deliberately keep their callback-based call shape. For `subscribe`, `.promise()` only resolves after `streamCreated` (or an error) has already fired (confirmed in the SDK's bundled source, `opentok.js:68371`); for `initPublisher`, it only resolves after the access-granted/denied outcome has already fired (`opentok.js:65337-65349`). Either way, listeners attached after that resolution could miss events that already happened, which is why both keep the synchronous callback form instead. Only their error-handling paths were fixed, including the `forceMuteStream` moderation call, which had the same silent-failure gap.
+
 ## Features
 
 This application provides features for common conferencing use cases, such as:

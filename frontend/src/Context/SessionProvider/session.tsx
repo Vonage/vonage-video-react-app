@@ -104,7 +104,7 @@ export const SessionContext = createContext<SessionContextType>({
   sessionDetails: null,
   unreadCount: 0,
   messages: [],
-  sendChatMessage: async () => Promise.resolve(),
+  sendChatMessage: async () => {},
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
