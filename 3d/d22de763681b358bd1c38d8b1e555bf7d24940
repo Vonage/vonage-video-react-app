@@ -1,0 +1,27 @@
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.tsx
+  s_e8065fe0a22a57::t_4173970ab2a50b 1-28
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.spec.tsx
+  s_e8065fe0a22a57::t_123e687af1158f 1-29
+  s_e8065fe0a22a57::t_16477bfc3ddb32 30-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3dd22de763681b358bd1c38d8b1e555bf7d24940",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_e8065fe0a22a57": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a8ef5497-b136-40f6-82e0-737ad7920bac",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
