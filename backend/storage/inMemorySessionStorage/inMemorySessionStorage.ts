@@ -31,13 +31,16 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    this.sessions[roomName] = {
-      sessionKey,
-      captionsId: null,
-      captionsUserCount: 0,
-      archiveIds: [],
-      serverRotationPending: 0,
-    };
+    const existingSession = this.sessions[roomName];
+    this.sessions[roomName] = existingSession
+      ? { ...existingSession, sessionKey }
+      : {
+          sessionKey,
+          captionsId: null,
+          captionsUserCount: 0,
+          archiveIds: [],
+          serverRotationPending: 0,
+        };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
       this.sessionKeyBySessionId[sessionId] = sessionKey;
