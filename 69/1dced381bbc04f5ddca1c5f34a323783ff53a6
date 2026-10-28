@@ -1,0 +1,26 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_c939f8fae0de97 9,26,40-41,61,72-75,141-143,154-155,303-340
+frontend/src/Context/SessionProvider/session.tsx
+  h_c939f8fae0de97 279-281
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 382,411,414
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 15,189-192,202
+frontend/src/hooks/tests/useChat.spec.tsx
+  h_c939f8fae0de97 125
+frontend/src/hooks/useChat.tsx
+  h_c939f8fae0de97 64
+libs/core/src/stores/notifications/types/NotificationType.ts
+  h_c939f8fae0de97 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "691dced381bbc04f5ddca1c5f34a323783ff53a6",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+integration-tests/tests/videoFeatures.spec.ts
+  h_9cf21c851a7c99 1,231-232,241-250,253-257,259-273,278,288-303,310-311,316-318,322-337,343-344
+  h_9cf21c851a7c99 223,258,304-309,312-315,319-321,338-342,345-346
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eb7381d9a921fb16f949798b03dbff6f3a5ad2ef",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
