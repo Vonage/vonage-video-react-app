@@ -70,6 +70,7 @@ const useMeetingRoom = () => {
   const screensharingPublisher = screenShare$.useScreensharingPublisher();
   const screenshareVideoElement = screenShare$.useScreenshareVideoElement();
 
+  const [joinError, setJoinError] = useState<Error | null>(null);
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
 
@@ -119,6 +120,7 @@ const useMeetingRoom = () => {
         eventSource: 'useMeetingRoom.resolveAndJoin.error',
         sessionKey,
       });
+      setJoinError(error instanceof Error ? error : new Error('Unknown join error'));
     });
 
     return () => {
@@ -163,6 +165,10 @@ const useMeetingRoom = () => {
   useRedirectOnSubscriberError({
     subscriberError: subscriptionError,
     reconnecting,
+    sessionKey,
+  });
+  useRedirectOnJoinError({
+    joinError,
     sessionKey,
   });
 
@@ -294,6 +300,39 @@ function useRedirectOnSubscriberError({
   useEffect(() => {
     maybeRedirect();
   }, [subscriberError, reconnecting]);
+}
+
+/**
+ * If the user is unable to create or join the session, we redirect them to the goodbye page.
+ * Without this, the meeting-room UI stays mounted with no working connection and no way to leave.
+ * @param {Error | null} joinError - The join error object or null if no error.
+ */
+function useRedirectOnJoinError({
+  joinError,
+  sessionKey,
+}: {
+  joinError: Error | null;
+  sessionKey: string | null;
+}) {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const maybeRedirect = useEffectEvent(() => {
+    if (!joinError) {
+      return;
+    }
+
+    void navigate(`/goodbye/${sessionKey || ''}`, {
+      state: {
+        header: t('subscribingErrors.blocked.title'),
+        caption: t('subscribingErrors.blocked.message'),
+      },
+    });
+  });
+
+  useEffect(() => {
+    maybeRedirect();
+  }, [joinError]);
 }
 
 export default useMeetingRoom;

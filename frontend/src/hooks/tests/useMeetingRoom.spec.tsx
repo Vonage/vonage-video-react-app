@@ -132,8 +132,8 @@ describe('useMeetingRoom', () => {
     });
   });
 
-  it('reports (does not throw) when resolving the session before joining fails', async () => {
-    expect.assertions(1);
+  it('reports and redirects to goodbye (does not throw) when resolving the session before joining fails', async () => {
+    expect.assertions(2);
     const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
     const joinFailure = new Error('create session failed');
     mockCreateSessionMutate.mockRejectedValue(joinFailure);
@@ -152,10 +152,19 @@ describe('useMeetingRoom', () => {
         sessionKey: 'test-room',
       })
     );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
+      })
+    );
   });
 
-  it('reports (does not throw) when connect() itself rejects', async () => {
-    expect.assertions(1);
+  it('reports and redirects to goodbye (does not throw) when connect() itself rejects', async () => {
+    expect.assertions(2);
     const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
     const connectFailure = new Error('connect failed');
     const mockJoinRoom = vi.fn().mockRejectedValue(connectFailure);
@@ -178,6 +187,15 @@ describe('useMeetingRoom', () => {
       expect.objectContaining({
         eventSource: 'useMeetingRoom.resolveAndJoin.error',
         sessionKey: 'test-room',
+      })
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
       })
     );
   });
