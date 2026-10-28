@@ -17,7 +17,6 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
-import attempt from '@common/execution/attempt';
 import { readHighestLayerResolution, readHighestLayerFrameRate } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
@@ -162,14 +161,12 @@ type PreviousPublisherVideoSample = {
 
 function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
   return new Promise((resolve) => {
-    attempt(
-      () =>
-        publisher.getStats((error, stats) => {
-          if (error) return resolve(null);
-          resolve(stats ?? null);
-        }),
-      () => resolve(null)
-    );
+    publisher
+      .getStats((error, stats) => {
+        if (error) return resolve(null);
+        resolve(stats ?? null);
+      })
+      .catch(() => resolve(null));
   });
 }
 

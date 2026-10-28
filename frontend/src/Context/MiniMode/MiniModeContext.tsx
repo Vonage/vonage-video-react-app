@@ -20,7 +20,7 @@ import {
   isDocumentPictureInPictureSupported,
   registerEnterPictureInPictureAction,
   useDocumentPictureInPicture,
-} from '@common/documentPictureInPicture';
+} from '@web/documentPictureInPicture';
 import frontendLogger from '../../logger';
 import type { SubscriberWrapper } from '../../types/session';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
@@ -103,6 +103,8 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     disconnect,
     sessionKey,
     archiveId,
+    recordingArchiveId,
+    transcriptionArchiveId,
   } = useSessionContext();
   const {
     publisherVideoElement,
@@ -145,6 +147,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   const publisherRef = useRef(publisher);
   const isOpenRef = useRef(pipWindow !== null);
 
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
   const isSupported = env.ALLOW_MINI_MODE && isDocumentPictureInPictureSupported();
   const isOpen = pipWindow !== null;
 
@@ -308,7 +311,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
             containerWidth={PIP_WINDOW_SIZE.width}
             isAudioEnabled={isAudioEnabled}
             isVideoEnabled={isVideoEnabled}
-            isRecording={!!archiveId}
+            isRecording={isRecording}
             onToggleAudio={toggleAudio}
             onToggleVideo={toggleVideo}
             onExpand={exit}

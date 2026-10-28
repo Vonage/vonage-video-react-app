@@ -1,3 +1,18 @@
+type DocumentPictureInPicture = {
+  requestWindow: (options?: {
+    width?: number;
+    height?: number;
+    disallowReturnToOpener?: boolean;
+  }) => Promise<Window>;
+};
+
+declare global {
+  // Document Picture-in-Picture is not yet part of TypeScript's DOM lib.
+  interface Window {
+    documentPictureInPicture?: DocumentPictureInPicture;
+  }
+}
+
 /**
  * Whether the Document Picture-in-Picture API is available in this browser.
  * Chromium-only as of 2026; Safari and Firefox do not implement it.

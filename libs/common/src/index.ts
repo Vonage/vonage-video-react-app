@@ -1,6 +1,5 @@
 export * from './assertions';
 export * from './constants';
-export * from './documentPictureInPicture';
 export * from './errors';
 export * from './execution';
 export * from './helpers';

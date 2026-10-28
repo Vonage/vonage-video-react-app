@@ -14,6 +14,6 @@
     "strictNullChecks": false,
     "noImplicitAny": false
   },
-  "include": ["**/*.ts", "../libs/common/src/types/DocumentPictureInPicture.d.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["test-api"]
 }

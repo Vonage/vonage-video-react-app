@@ -2,6 +2,10 @@ import { expect, Page } from '@playwright/test';
 import { randomBytes } from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
+type PictureInPictureCapableWindow = Window & {
+  documentPictureInPicture?: { requestWindow?: unknown; window?: Window | null };
+};
+
 const joinMeeting = async (page: Page, roomName: string, username: string) => {
   await page.goto(`${baseURL}waiting-room/${roomName}`);
   await page.getByLabel('Name').waitFor({ state: 'visible' });
@@ -27,7 +31,9 @@ test.describe('Mini Mode', () => {
     await expect(miniButton).toBeVisible();
 
     const supported = await page.evaluate(
-      () => typeof window.documentPictureInPicture?.requestWindow === 'function'
+      () =>
+        typeof (window as PictureInPictureCapableWindow).documentPictureInPicture?.requestWindow ===
+        'function'
     );
     expect(supported).toBe(true);
 
@@ -36,22 +42,16 @@ test.describe('Mini Mode', () => {
     await expect
       .poll(async () =>
         page.evaluate(() => {
-          const pipWindow = (
-            window as Window & {
-              documentPictureInPicture?: { window?: Window | null };
-            }
-          ).documentPictureInPicture?.window;
+          const pipWindow = (window as PictureInPictureCapableWindow).documentPictureInPicture
+            ?.window;
           return Boolean(pipWindow && !pipWindow.closed);
         })
       )
       .toBe(true);
 
     const pipHasChrome = await page.evaluate(() => {
-      const pipDoc = (
-        window as Window & {
-          documentPictureInPicture?: { window?: Window | null };
-        }
-      ).documentPictureInPicture?.window?.document;
+      const pipDoc = (window as PictureInPictureCapableWindow).documentPictureInPicture?.window
+        ?.document;
       return Boolean(pipDoc?.querySelector('[data-testid="mini-call-window"]'));
     });
     expect(pipHasChrome).toBe(true);
@@ -73,7 +73,9 @@ test.describe('Mini Mode', () => {
     await expect(page.getByTestId('mini-mode-button')).toHaveCount(0);
 
     const supported = await page.evaluate(
-      () => typeof window.documentPictureInPicture?.requestWindow === 'function'
+      () =>
+        typeof (window as PictureInPictureCapableWindow).documentPictureInPicture?.requestWindow ===
+        'function'
     );
     expect(supported).toBe(false);
   });

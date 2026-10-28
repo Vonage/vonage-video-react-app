@@ -15,22 +15,6 @@ import { testIds as layoutButtonTestIds } from '../LayoutButton/LayoutButton';
 import { testIds as unreadMessagesBadgeTestIds } from '../UnreadMessagesBadge/UnreadMessagesBadge';
 
 vi.mock('@hooks/useRoomName');
-vi.mock('../../../Context/MiniMode', () => ({
-  useMiniMode: () => ({
-    isSupported: false,
-    isOpen: false,
-    hostedElement: null,
-    enter: () => Promise.resolve(),
-    exit: () => undefined,
-    toggleAudio: () => undefined,
-    toggleVideo: () => undefined,
-    leave: () => undefined,
-    isAudioEnabled: true,
-    isVideoEnabled: true,
-    participant: null,
-  }),
-}));
-
 describe('ToolbarOverflowButton', () => {
   const mockSetLayoutMode = vi.fn();
   afterEach(() => {
@@ -113,11 +97,12 @@ type RenderOptions = {
 
 function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.runtime],
+    [providers.user, providers.session, providers.runtime, providers.miniMode],
     {
       userContext,
       sessionContext,
       runtimeContext: undefined,
+      miniModeContext: undefined,
     }
   );
 

@@ -7,6 +7,7 @@ import {
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
   makeScreenShareProviderWrapper,
+  makeMiniModeProviderWrapper,
   type BackgroundPublisherProviderWrapperOptions,
   type PreviewPublisherProviderWrapperOptions,
   type PublisherProviderWrapperOptions,
@@ -14,6 +15,7 @@ import {
   type SessionProviderWrapperOptions,
   type UserProviderWrapperOptions,
   type ScreenShareProviderWrapperOptions,
+  type MiniModeProviderWrapperOptions,
 } from './makersIndex';
 
 /**
@@ -27,6 +29,7 @@ export enum providers {
   backgroundPublisher = 'backgroundPublisher',
   previewPublisher = 'previewPublisher',
   screenShare = 'screenShare',
+  miniMode = 'miniMode',
 }
 
 type ProviderOptionsByKey = {
@@ -37,6 +40,7 @@ type ProviderOptionsByKey = {
   [providers.backgroundPublisher]: BackgroundPublisherProviderWrapperOptions;
   [providers.previewPublisher]: PreviewPublisherProviderWrapperOptions;
   [providers.screenShare]: ScreenShareProviderWrapperOptions;
+  [providers.miniMode]: MiniModeProviderWrapperOptions;
 };
 
 type ProviderContextsByKey = {
@@ -53,6 +57,7 @@ type ProviderContextsByKey = {
   [providers.screenShare]: NonNullable<
     ReturnType<typeof makeScreenShareProviderWrapper>['context']
   >;
+  [providers.miniMode]: NonNullable<ReturnType<typeof makeMiniModeProviderWrapper>['context']>;
 };
 
 /**
@@ -71,6 +76,7 @@ const PROVIDER_DEPENDENCIES = {
   ],
   [providers.previewPublisher]: [providers.user],
   [providers.screenShare]: [providers.user, providers.session],
+  [providers.miniMode]: [],
 } as const;
 
 /**
@@ -183,6 +189,10 @@ function makeTestProvider<
       case providers.screenShare:
         return makeScreenShareProviderWrapper(
           (options as ProviderOptionsFor<[providers.screenShare]> | undefined)?.screenShareContext
+        );
+      case providers.miniMode:
+        return makeMiniModeProviderWrapper(
+          (options as ProviderOptionsFor<[providers.miniMode]> | undefined)?.miniModeContext
         );
       default:
         throw new Error(`Unknown provider: ${key}`);

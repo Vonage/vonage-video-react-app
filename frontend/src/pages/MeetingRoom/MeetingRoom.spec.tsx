@@ -558,6 +558,7 @@ function render(
       providers.publisher,
       providers.runtime,
       providers.screenShare,
+      providers.miniMode,
     ],
     {
       userContext: {
@@ -573,6 +574,7 @@ function render(
       publisherContext,
       runtimeContext: { videoClient: mockVideoClient },
       screenShareContext: undefined,
+      miniModeContext: undefined,
     }
   );
 

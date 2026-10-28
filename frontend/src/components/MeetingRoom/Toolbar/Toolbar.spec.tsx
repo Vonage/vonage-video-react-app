@@ -22,22 +22,6 @@ import { testIds as reportIssueButtonTestIds } from '../ReportIssueButton/Report
 import { testIds as screenSharingButtonTestIds } from '../../ScreenSharingButton/ScreenSharingButton';
 import { testIds as toolbarOverflowButtonTestIds } from '../ToolbarOverflowButton/ToolbarOverflowButton';
 
-vi.mock('../../../Context/MiniMode', () => ({
-  useMiniMode: () => ({
-    isSupported: false,
-    isOpen: false,
-    hostedElement: null,
-    enter: () => Promise.resolve(),
-    exit: () => undefined,
-    toggleAudio: () => undefined,
-    toggleVideo: () => undefined,
-    leave: () => undefined,
-    isAudioEnabled: true,
-    isVideoEnabled: true,
-    participant: null,
-  }),
-}));
-
 const mockedRoomName = { roomName: 'test-room-name' };
 
 vi.mock('react-router-dom', () => ({
@@ -205,7 +189,7 @@ describe('Toolbar', () => {
 });
 
 function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime]);
+  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.miniMode]);
 
   return {
     ...context,

@@ -78,8 +78,7 @@
     "../libs/common/test/**/*.ts",
     "../libs/common/web-test/**/*.ts",
     "../libs/common/web-test/**/*.tsx",
-    "./src/index.d.ts",
-    "../libs/common/src/types/DocumentPictureInPicture.d.ts"
+    "./src/index.d.ts"
   ],
   "exclude": ["node_modules"]
 }

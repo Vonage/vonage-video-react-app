@@ -21,7 +21,6 @@ import {
   StreamPropertyChangedEvent,
 } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
-import attempt from '@common/execution/attempt';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import isErrorLike from '@common/assertions/isErrorLike';
 import frontendLogger from '../../logger';
@@ -515,13 +514,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       this.hiddenSubscriber = null;
     }
 
-    void attempt(
-      () => this.clientSession.disconnect(),
-      (error) =>
-        frontendLogger.reportError(error, {
-          eventSource: 'vonageVideoClient.disconnect.error',
-        })
-    );
+    this.clientSession.disconnect()?.catch(() => {});
     this.clientSession = null as unknown as Session;
   };
 
@@ -575,13 +568,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {SignalType} data - The signal data to be sent.
    */
   signal = (data: SignalType) => {
-    void attempt(
-      () => this.clientSession.signal(data),
-      (error) =>
-        frontendLogger.reportError(error, {
-          eventSource: 'vonageVideoClient.signal.error',
-        })
-    );
+    this.clientSession.signal(data)?.catch(() => {});
   };
 
   /**
