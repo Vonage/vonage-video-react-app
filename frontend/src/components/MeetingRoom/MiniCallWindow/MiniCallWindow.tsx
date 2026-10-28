@@ -21,8 +21,9 @@ export type MiniCallWindowProps = {
 };
 
 /**
- * Simplified Mini Mode Picture-in-Picture window contents.
- * Shows active-speaker video (or avatar), name chip, and mute/camera/expand/leave controls.
+ * Contents of the Mini Mode window: the participant's video (or avatar), their name, and call controls.
+ * @param {MiniCallWindowProps} props - The participant to show, call state, and control handlers
+ * @returns {ReactElement} The Mini Mode window contents
  */
 const MiniCallWindow = ({
   participant,

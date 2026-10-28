@@ -35,6 +35,7 @@ function MiniModeTestProvider({ children, ...value }: MiniModeTestProviderProps)
 
 function makeDefaultMiniModeValue(): MiniModeContextType {
   return {
+    isAvailable: false,
     isOpen: false,
     hostedElement: null,
     enter: vi.fn(() => Promise.resolve()),

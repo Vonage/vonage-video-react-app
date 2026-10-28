@@ -6,11 +6,7 @@ import tryCatch from '@common/execution/tryCatch';
  */
 const VIVID_ICON_BASE_URL = 'https://icon.resources.vonage.com/v4.11.0';
 
-/**
- * Icons that are rendered inside the Mini Mode Picture-in-Picture window.
- * Pre-loaded at module initialization so they are available on first render.
- */
-const PRELOADED_ICONS = [
+const MINI_MODE_ICONS = [
   'microphone-solid',
   'mic-mute-solid',
   'video-solid',
@@ -93,11 +89,14 @@ const loadIconSvg = (name: string): Promise<void> => {
   return promise;
 };
 
-// Pre-fetch all icons used in the mini mode UI at module load time.
-// This ensures they are cached before the PiP window opens.
-for (const name of PRELOADED_ICONS) {
-  void loadIconSvg(name);
-}
+/**
+ * Starts fetching every icon the Mini Mode window uses, so they are cached by the time it renders.
+ */
+const preloadMiniModeIcons = (): void => {
+  MINI_MODE_ICONS.forEach((name) => {
+    void loadIconSvg(name);
+  });
+};
 
 const subscribeToCache = (callback: () => void): (() => void) => {
   iconCacheListeners.add(callback);
@@ -132,5 +131,5 @@ const resetIconCache = (): void => {
   iconCacheListeners.clear();
 };
 
-export { loadIconSvg, resetIconCache };
+export { loadIconSvg, preloadMiniModeIcons, resetIconCache };
 export default useIconSvg;

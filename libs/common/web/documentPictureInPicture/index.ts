@@ -6,5 +6,4 @@ export { default as useDocumentPictureInPicture } from './useDocumentPictureInPi
 export type {
   DocumentPictureInPictureWindowOptions,
   DocumentPictureInPictureResult,
-  UseDocumentPictureInPictureOptions,
 } from './useDocumentPictureInPicture';

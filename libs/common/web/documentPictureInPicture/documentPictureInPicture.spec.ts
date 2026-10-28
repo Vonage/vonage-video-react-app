@@ -42,24 +42,17 @@ describe('documentPictureInPicture', () => {
     expect(result.current.mountNode).toBeNull();
   });
 
-  it('calls the latest onClose when the browser closes the window', async () => {
+  it('resets when the browser closes the window', async () => {
     const pipWindow = stubPictureInPictureWindow();
-    const firstOnClose = vi.fn();
-    const latestOnClose = vi.fn();
-    const { result, rerender } = renderHook(
-      ({ onClose }) => useDocumentPictureInPicture({ onClose }),
-      { initialProps: { onClose: firstOnClose } }
-    );
-    rerender({ onClose: latestOnClose });
+    const { result } = renderHook(() => useDocumentPictureInPicture());
 
     await act(() => result.current.open({ width: 360, height: 260 }));
     act(() => {
       pipWindow.dispatchEvent(new Event('pagehide'));
     });
 
-    expect(firstOnClose).not.toHaveBeenCalled();
-    expect(latestOnClose).toHaveBeenCalledOnce();
     expect(result.current.window).toBeNull();
+    expect(result.current.mountNode).toBeNull();
   });
 });
 

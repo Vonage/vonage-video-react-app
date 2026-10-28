@@ -8,11 +8,10 @@ import {
   useMemo,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
 import attempt from '@common/execution/attempt';
 import useSessionContext from '@hooks/useSessionContext';
 import usePublisherContext from '@hooks/usePublisherContext';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import {
   registerEnterPictureInPictureAction,
   useDocumentPictureInPicture,
@@ -20,6 +19,7 @@ import {
 import frontendLogger from '../../logger';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
 import MiniCallWindowStylesProvider from '../../components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider';
+import { preloadMiniModeIcons } from '../../components/MeetingRoom/MiniCallWindow/useIconSvg';
 import isMiniModeSupported from './isMiniModeSupported';
 import resolveMiniModeParticipant, {
   type MiniModeHostedElement,
@@ -28,6 +28,7 @@ import resolveMiniModeParticipant, {
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
 
 export type MiniModeContextType = {
+  isAvailable: boolean;
   isOpen: boolean;
   hostedElement: MiniModeHostedElement;
   enter: () => Promise<void>;
@@ -47,12 +48,9 @@ export type MiniModeProviderProps = {
  * @returns {ReactElement} The provider and, while open, the Mini Mode window portal
  */
 export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElement => {
-  const navigate = useNavigate();
   const {
     subscriberWrappers,
     activeSpeakerId,
-    disconnect,
-    sessionKey,
     archiveId,
     recordingArchiveId,
     transcriptionArchiveId,
@@ -65,10 +63,10 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     toggleAudio,
     toggleVideo,
   } = usePublisherContext();
-  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+  const leaveMeeting = useLeaveMeeting();
   const { window: pipWindow, mountNode, open, close } = useDocumentPictureInPicture();
 
-  const isSupported = isMiniModeSupported();
+  const isAvailable = isMiniModeSupported();
   const isOpen = pipWindow !== null;
   const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
   const participant = isOpen
@@ -83,32 +81,31 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   const hostedElement = participant?.element ?? null;
 
   const enter = useCallback(async () => {
-    if (!isSupported || isOpen) return;
+    if (!isAvailable || isOpen) return;
 
+    preloadMiniModeIcons();
     await attempt(
       () => open(PIP_WINDOW_SIZE),
       (error) => frontendLogger.reportError(error, { eventSource: 'miniMode.enter.error' })
     );
-  }, [isSupported, isOpen, open]);
+  }, [isAvailable, isOpen, open]);
 
   useEffect(() => {
-    if (!isSupported || !publisher) return undefined;
+    if (!isAvailable || !publisher) return undefined;
 
     return registerEnterPictureInPictureAction(() => {
       void enter();
     });
-  }, [isSupported, publisher, enter]);
+  }, [isAvailable, publisher, enter]);
 
   const leave = () => {
     close();
-    disconnect?.();
-    destroyBackgroundPublisher();
-    void navigate(`/goodbye/${sessionKey ?? ''}`);
+    leaveMeeting();
   };
 
   const value = useMemo<MiniModeContextType>(
-    () => ({ isOpen, hostedElement, enter, exit: close }),
-    [isOpen, hostedElement, enter, close]
+    () => ({ isAvailable, isOpen, hostedElement, enter, exit: close }),
+    [isAvailable, isOpen, hostedElement, enter, close]
   );
 
   return (

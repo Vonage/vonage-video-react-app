@@ -32,8 +32,6 @@ const MiniModeIcon = ({ name, className }: MiniModeIconProps): ReactElement => {
     <div
       className={twMerge('inline-flex size-5', className)}
       data-testid={`mini-mode-icon-${name}`}
-      // The SVG comes from the trusted Vonage CDN (VIVID icon set) and icon
-      // names are hardcoded constants — no user-supplied HTML is ever injected.
       dangerouslySetInnerHTML={{ __html: svgContent }}
     />
   );

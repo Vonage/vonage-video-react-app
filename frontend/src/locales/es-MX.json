@@ -272,7 +272,6 @@
   "layout.tooltip.isScreenSharePresent": "No se puede cambiar el diseño mientras se comparte pantalla",
   "layout.tooltip.switchToActiveSpeaker": "Cambiar a vista de orador activo",
   "layout.tooltip.switchToGrid": "Cambiar a vista de cuadrícula",
-  "miniMode.badge": "Modo mini",
   "miniMode.cameraOff.tooltip": "Apagar cámara",
   "miniMode.cameraOn.tooltip": "Encender cámara",
   "miniMode.enter.ariaLabel": "activar modo mini",

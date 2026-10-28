@@ -29,7 +29,7 @@ const MiniModeButton = ({ isOverflowButton, handleClick }: MiniModeButtonProps):
   return (
     <Tooltip
       title={isOpen ? t('miniMode.expand.tooltip') : t('miniMode.enter.tooltip')}
-      aria-label={t('miniMode.enter.ariaLabel')}
+      aria-label={isOpen ? t('miniMode.expand.ariaLabel') : t('miniMode.enter.ariaLabel')}
     >
       <ToolbarButton
         onClick={onClick}

@@ -3,80 +3,55 @@ import { randomBytes } from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
 type PictureInPictureCapableWindow = Window & {
-  documentPictureInPicture?: { requestWindow?: unknown; window?: Window | null };
+  documentPictureInPicture?: { window?: Window | null };
 };
 
-const joinMeeting = async (page: Page, roomName: string, username: string) => {
-  await page.goto(`${baseURL}waiting-room/${roomName}`);
+const joinMeeting = async (page: Page, username: string) => {
+  await page.goto(`${baseURL}waiting-room/${randomBytes(5).toString('hex')}`);
   await page.getByLabel('Name').waitFor({ state: 'visible' });
   await page.getByLabel('Name').fill(username);
   await page.getByRole('button', { name: 'Join meeting' }).click();
+  await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
 };
 
+const isDesktopChromium = (browserName: string, isMobile: boolean) =>
+  browserName === 'chromium' && !isMobile;
+
 test.describe('Mini Mode', () => {
-  test('Chrome: Mini mode button opens a Document Picture-in-Picture window', async ({
+  test('opens the call in a Document Picture-in-Picture window on desktop Chromium', async ({
     page,
     browserName,
     isMobile,
   }) => {
-    // Non-regression: Document Picture-in-Picture API is Chromium-only
-    test.skip(browserName !== 'chromium', 'Document PiP is Chromium-only');
-    // Non-regression: Mini Mode v1 is desktop toolbar only
-    test.skip(!!isMobile, 'Mini Mode v1 is desktop toolbar');
+    test.skip(!isDesktopChromium(browserName, isMobile), 'Mini Mode is desktop Chromium only');
 
-    await joinMeeting(page, randomBytes(5).toString('hex'), 'Mini Chrome');
-
-    await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
-    const miniButton = page.getByTestId('mini-mode-button');
-    await expect(miniButton).toBeVisible();
-
-    const supported = await page.evaluate(
-      () =>
-        typeof (window as PictureInPictureCapableWindow).documentPictureInPicture?.requestWindow ===
-        'function'
-    );
-    expect(supported).toBe(true);
-
-    await miniButton.click();
+    await joinMeeting(page, 'Mini Chrome');
+    await page.getByTestId('mini-mode-button').click();
 
     await expect
-      .poll(async () =>
-        page.evaluate(() => {
-          const pipWindow = (window as PictureInPictureCapableWindow).documentPictureInPicture
-            ?.window;
-          return Boolean(pipWindow && !pipWindow.closed);
-        })
+      .poll(() =>
+        page.evaluate(() =>
+          Boolean(
+            (
+              window as PictureInPictureCapableWindow
+            ).documentPictureInPicture?.window?.document.querySelector(
+              '[data-testid="mini-call-window"]'
+            )
+          )
+        )
       )
       .toBe(true);
-
-    const pipHasChrome = await page.evaluate(() => {
-      const pipDoc = (window as PictureInPictureCapableWindow).documentPictureInPicture?.window
-        ?.document;
-      return Boolean(pipDoc?.querySelector('[data-testid="mini-call-window"]'));
-    });
-    expect(pipHasChrome).toBe(true);
   });
 
-  test('Firefox and Safari: Mini mode button is hidden', async ({
+  test('hides the Mini Mode button where it is not supported', async ({
     page,
     browserName,
     isMobile,
   }) => {
-    // Non-regression: Document Picture-in-Picture API is Chromium-only
-    test.skip(browserName === 'chromium', 'Chromium supports Mini Mode');
-    // Non-regression: Mini Mode v1 is desktop toolbar only
-    test.skip(!!isMobile, 'Mini Mode v1 is desktop toolbar');
+    test.skip(isDesktopChromium(browserName, isMobile), 'Desktop Chromium supports Mini Mode');
 
-    await joinMeeting(page, randomBytes(5).toString('hex'), `Mini ${browserName}`);
+    await joinMeeting(page, `Mini ${browserName}`);
 
-    await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByTestId('mini-mode-button')).toHaveCount(0);
-
-    const supported = await page.evaluate(
-      () =>
-        typeof (window as PictureInPictureCapableWindow).documentPictureInPicture?.requestWindow ===
-        'function'
-    );
-    expect(supported).toBe(false);
   });
 });

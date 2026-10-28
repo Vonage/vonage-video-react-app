@@ -282,7 +282,6 @@
   "layout.tooltip.isScreenSharePresent": "スクリーン共有がアクティブな間はレイアウトを切り替えることができません",
   "layout.tooltip.switchToActiveSpeaker": "アクティブスピーカーレイアウトに切り替える",
   "layout.tooltip.switchToGrid": "グリッドレイアウトに切り替える",
-  "miniMode.badge": "ミニモード",
   "miniMode.cameraOff.tooltip": "カメラをオフ",
   "miniMode.cameraOn.tooltip": "カメラをオン",
   "miniMode.enter.ariaLabel": "ミニモードを開始",

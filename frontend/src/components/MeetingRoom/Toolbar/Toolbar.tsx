@@ -1,15 +1,8 @@
-import {
-  type Dispatch,
-  type ReactElement,
-  type SetStateAction,
-  useCallback,
-  useRef,
-  useState,
-} from 'react';
+import { type Dispatch, type ReactElement, type SetStateAction, useRef, useState } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useToolbarButtons from '@hooks/useToolbarButtons';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import Box from '@mui/material/Box';
 import classNames from 'classnames';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -83,20 +76,16 @@ const Toolbar = ({
   participantCount,
   captionsState,
 }: ToolbarProps): ReactElement => {
-  const { disconnect, subscriberWrappers } = useSessionContext();
-  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
-  const { exit: exitMiniMode } = useMiniMode();
+  const { subscriberWrappers } = useSessionContext();
+  const leaveMeeting = useLeaveMeeting();
+  const { isAvailable: isMiniModeAvailable, exit: exitMiniMode } = useMiniMode();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const handleLeave = useCallback(() => {
-    if (!disconnect) {
-      return;
-    }
+  const handleLeave = () => {
     exitMiniMode();
-    disconnect();
-    destroyBackgroundPublisher();
-  }, [destroyBackgroundPublisher, disconnect, exitMiniMode]);
+    leaveMeeting();
+  };
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const buttonVisibility = getToolbarButtonVisibility();
 
@@ -114,7 +103,7 @@ const Toolbar = ({
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
     />,
-    buttonVisibility.miniMode && <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
+    isMiniModeAvailable && <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
     buttonVisibility.emojis && (
       <EmojiGridButton
         isEmojiGridOpen={openEmojiGridDesktop}

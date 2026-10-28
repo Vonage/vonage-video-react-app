@@ -8,7 +8,7 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { makeTestProvider, providers } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
@@ -177,23 +177,13 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
   });
 
-  it('renders the Mini Mode button only on desktop browsers that support Document Picture-in-Picture', () => {
-    const unsupported = render(<Toolbar {...defaultProps} />);
+  it('renders the Mini Mode button only when Mini Mode is available', () => {
+    const unavailable = render(<Toolbar {...defaultProps} />);
     expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
-    unsupported.unmount();
+    unavailable.unmount();
 
-    vi.stubGlobal('documentPictureInPicture', { requestWindow: vi.fn() });
-    const desktop = render(<Toolbar {...defaultProps} />);
+    render(<Toolbar {...defaultProps} />, { miniModeContext: { isAvailable: true } });
     expect(screen.getByTestId('mini-mode-button')).toBeInTheDocument();
-    desktop.unmount();
-
-    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(
-      'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36'
-    );
-    render(<Toolbar {...defaultProps} />);
-    expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
-    vi.unstubAllGlobals();
-    vi.restoreAllMocks();
   });
 
   it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {
@@ -207,8 +197,14 @@ describe('Toolbar', () => {
   });
 });
 
-function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.miniMode]);
+function render(
+  ui: ReactElement,
+  { miniModeContext }: { miniModeContext?: ProviderOptions['MiniModeContext'] } = {}
+) {
+  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.miniMode], {
+    runtimeContext: undefined,
+    miniModeContext,
+  });
 
   return {
     ...context,

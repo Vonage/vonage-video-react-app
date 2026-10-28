@@ -46,6 +46,7 @@ describe('MiniModeContext', () => {
     pipWindow = makePictureInPictureWindow();
     requestWindow = vi.fn().mockResolvedValue(pipWindow);
     vi.stubGlobal('documentPictureInPicture', { requestWindow });
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
   });
 
   afterEach(() => {
@@ -81,68 +82,47 @@ describe('MiniModeContext', () => {
     expect(miniMode.current?.isOpen).toBe(false);
   });
 
-  it('follows the active speaker, skipping screenshares', async () => {
+  it('follows the active speaker, skipping screenshares, and returns videos when the browser closes it', async () => {
     const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
     const alice = makeSubscriberWrapper('alice', 'Alice');
     const bob = makeSubscriberWrapper('bob', 'Bob');
+    const bobTile = bob.element.parentElement;
     const { miniMode, sessionContext, rerender } = render({
       sessionInitialValue: { subscriberWrappers: [screenshare, alice, bob] },
-    });
-
-    await act(() => miniMode.current!.enter());
-    expect(miniMode.current?.hostedElement).toBe(alice.element);
-
-    sessionContext.current.activeSpeakerId = 'bob';
-    rerender();
-
-    expect(miniMode.current?.hostedElement).toBe(bob.element);
-    expect(pipWindow.document.body.contains(bob.element)).toBe(true);
-    expect(document.body.contains(alice.element)).toBe(true);
-  });
-
-  it('keeps the remote video visible when the local camera is off', async () => {
-    const alice = makeSubscriberWrapper('alice', 'Alice');
-    const { miniMode } = render({
-      sessionInitialValue: { subscriberWrappers: [alice] },
       publisherInitialValue: { isVideoEnabled: false },
     });
 
     await act(() => miniMode.current!.enter());
-
     expect(pipWindow.document.body.contains(alice.element)).toBe(true);
-    expect(pipWindow.document.body.textContent).not.toContain('AL');
+
+    sessionContext.current.activeSpeakerId = 'bob';
+    rerender();
+
+    expect(pipWindow.document.body.contains(bob.element)).toBe(true);
+    expect(pipWindow.document.body.textContent).not.toContain('BO');
+    expect(document.body.contains(alice.element)).toBe(true);
+
+    act(() => pipWindow.close());
+
+    expect(bob.element.parentElement).toBe(bobTile);
+    expect(miniMode.current?.isOpen).toBe(false);
   });
 
   it('shows the recording indicator for a recording, not for a transcription alone', async () => {
-    const transcription = render({
+    const { miniMode, sessionContext, rerender } = render({
       sessionInitialValue: { archiveId: 'transcription' },
       onSessionCreated: (context) => {
         context.transcriptionArchiveId = 'transcription';
       },
     });
-    await act(() => transcription.miniMode.current!.enter());
+    await act(() => miniMode.current!.enter());
 
     expect(findRecordingIndicator(pipWindow.document)).toBeNull();
-    transcription.unmount();
 
-    pipWindow = makePictureInPictureWindow();
-    requestWindow.mockResolvedValue(pipWindow);
-    const recording = render({ sessionInitialValue: { archiveId: 'recording' } });
-    await act(() => recording.miniMode.current!.enter());
+    sessionContext.current.recordingArchiveId = 'recording';
+    rerender();
 
     expect(findRecordingIndicator(pipWindow.document)).not.toBeNull();
-  });
-
-  it('puts the video back when the browser closes the window', async () => {
-    const alice = makeSubscriberWrapper('alice', 'Alice');
-    const tile = alice.element.parentElement;
-    const { miniMode } = render({ sessionInitialValue: { subscriberWrappers: [alice] } });
-
-    await act(() => miniMode.current!.enter());
-    act(() => pipWindow.close());
-
-    expect(alice.element.parentElement).toBe(tile);
-    expect(miniMode.current?.isOpen).toBe(false);
   });
 
   it('leave closes the window, disconnects, and navigates to goodbye', async () => {

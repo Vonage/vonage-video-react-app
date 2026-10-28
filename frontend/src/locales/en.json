@@ -272,7 +272,6 @@
   "layout.tooltip.isScreenSharePresent": "Cannot switch layout while screen share is active",
   "layout.tooltip.switchToActiveSpeaker": "Switch to Active Speaker layout",
   "layout.tooltip.switchToGrid": "Switch to Grid layout",
-  "miniMode.badge": "Mini mode",
   "miniMode.cameraOff.tooltip": "Turn camera off",
   "miniMode.cameraOn.tooltip": "Turn camera on",
   "miniMode.enter.ariaLabel": "enter mini mode",
