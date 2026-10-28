@@ -1,0 +1,16 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_c939f8fae0de97 85-97
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_c939f8fae0de97 34-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fe6761dfc7b2567927c93de56d599455d5c1646e",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
