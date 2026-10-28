@@ -88,7 +88,7 @@ test.describe('self-view mirroring', () => {
     await openWaitingRoomAdvancedSettingsVideoTab(page);
     const mirroringSwitch = page.getByTestId('advanced-settings-video-self-view-mirroring');
     await expect(mirroringSwitch).toBeChecked();
-    await mirroringSwitch.uncheck({ force: true });
+    await mirroringSwitch.uncheck();
     await expect(mirroringSwitch).not.toBeChecked();
     await closeAdvancedSettings(page);
 
@@ -103,7 +103,7 @@ test.describe('self-view mirroring', () => {
 
     await openMeetingRoomAdvancedSettingsVideoTab(page);
     await expect(mirroringSwitch).not.toBeChecked();
-    await mirroringSwitch.check({ force: true });
+    await mirroringSwitch.check();
     await expect(mirroringSwitch).toBeChecked();
     await closeAdvancedSettings(page);
 
@@ -124,7 +124,7 @@ test.describe('video stats overlay', () => {
 
     await openWaitingRoomAdvancedSettingsVideoTab(page);
     const statsOverlaySwitch = page.getByTestId('advanced-settings-video-stats-overlay');
-    await statsOverlaySwitch.check({ force: true });
+    await statsOverlaySwitch.check();
     await expect(statsOverlaySwitch).toBeChecked();
     await closeAdvancedSettings(page);
 
@@ -139,7 +139,7 @@ test.describe('video stats overlay', () => {
     await expect(statsOverlay).toBeVisible();
 
     await openWaitingRoomAdvancedSettingsVideoTab(page);
-    await statsOverlaySwitch.uncheck({ force: true });
+    await statsOverlaySwitch.uncheck();
     await expect(statsOverlaySwitch).not.toBeChecked();
     await closeAdvancedSettings(page);
 
