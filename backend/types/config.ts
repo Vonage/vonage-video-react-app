@@ -33,11 +33,13 @@ export type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig
 
 import type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 import type { CorsConfig } from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
+import type { RoomAccessConfig } from '../routes/video/schemas/RoomAccessConfig.schema';
 
 export type Config = (VonageConfig | OpentokConfig) &
   FeedbackConfig &
   LoggerConfig &
   AuthConfig &
-  CorsConfig & {
+  CorsConfig &
+  RoomAccessConfig & {
     sessionKeySecret: string;
   };

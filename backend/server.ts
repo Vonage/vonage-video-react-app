@@ -6,6 +6,7 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import { Server } from 'http';
 import router from './routes';
+import videoRouter from './routes/video';
 import { fileURLToPath } from 'url';
 import {
   authMiddleware,
@@ -49,6 +50,8 @@ app.use(bodyParser.json());
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
+
+app.use('/v2', authMiddleware({ mode: 'optional' }), videoRouter);
 
 app.use(
   authMiddleware({

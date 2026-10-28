@@ -5,6 +5,9 @@ import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.sc
 import CorsConfigSchema, {
   type CorsConfig,
 } from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
+import RoomAccessConfigSchema, {
+  type RoomAccessConfig,
+} from '../routes/video/schemas/RoomAccessConfig.schema';
 import { fileURLToPath } from 'node:url';
 import assertCorsMatchesAuth from './assertCorsMatchesAuth';
 
@@ -29,6 +32,7 @@ const loadConfig = (): Config => {
 
   const authConfig = loadAuthConfig();
   const corsConfig = loadCorsConfig();
+  const roomAccessConfig = loadRoomAccessConfig();
 
   assertCorsMatchesAuth({ authConfig, corsConfig });
 
@@ -64,6 +68,7 @@ const loadConfig = (): Config => {
       ...loggerConfig,
       ...authConfig,
       ...corsConfig,
+      ...roomAccessConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
@@ -85,6 +90,7 @@ const loadConfig = (): Config => {
       ...loggerConfig,
       ...authConfig,
       ...corsConfig,
+      ...roomAccessConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
@@ -96,6 +102,12 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+function loadRoomAccessConfig(): RoomAccessConfig {
+  return RoomAccessConfigSchema.parse({
+    legacyRoomNameLinksEnabled: process.env.LEGACY_ROOM_NAME_LINKS_ENABLED !== 'false',
+  });
+}
 
 function loadCorsConfig(): CorsConfig {
   const rawAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '').trim();

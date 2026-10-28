@@ -37,3 +37,7 @@ export OIDC_SCOPES="${OIDC_SCOPES:-openid profile email offline_access}"
 # Request header and scheme that carry a Bearer token (mobile clients).
 export AUTH_HEADER_NAME="${AUTH_HEADER_NAME:-authorization}"
 export AUTH_SCHEME="${AUTH_SCHEME:-Bearer}"
+
+# Honour links that identify a room by name. These are invites already sent out; they let a caller
+# without a session join an existing room, never create one. Turn off once such links have aged out.
+export LEGACY_ROOM_NAME_LINKS_ENABLED="${LEGACY_ROOM_NAME_LINKS_ENABLED:-true}"

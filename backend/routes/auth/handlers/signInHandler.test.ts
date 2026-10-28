@@ -27,6 +27,7 @@ const DISABLED_CONFIG: Config = {
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
   corsAllowedOrigins: ['*'],
+  legacyRoomNameLinksEnabled: true,
   authEnabled: false,
 };
 
@@ -37,6 +38,7 @@ const ENABLED_CONFIG: Config = {
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
   corsAllowedOrigins: ['*'],
+  legacyRoomNameLinksEnabled: true,
   authEnabled: true,
   oidcClientId: 'test-client-id',
   oidcWebRedirectUri: 'http://localhost:3000/api/auth/callback/okta',

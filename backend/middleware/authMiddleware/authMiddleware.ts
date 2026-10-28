@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { isRecord } from '@common/assertions';
+import { tryCatch } from '@common/execution';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
 import loadConfig from '../../helpers/config';
@@ -37,8 +38,13 @@ type RequestWithTokenAuth = Request & {
  * @param options.excludedPaths - exact request paths (req.path) that skip auth entirely
  * (e.g. health checks, provider webhooks, .well-known files) — callers that structurally
  * cannot carry a user's token.
+ * @param options.mode - 'required' rejects an unauthenticated request. 'optional' authenticates
+ * when a credential is present and otherwise continues with no user, leaving the decision to
+ * downstream authorization. Origin checks block in both modes.
  */
-function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
+function authMiddleware(
+  options: { excludedPaths?: Iterable<string>; mode?: 'required' | 'optional' } = {}
+) {
   const authConfig = loadConfig();
 
   if (!authConfig.authEnabled) {
@@ -46,6 +52,8 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
       next();
     };
   }
+
+  const isOptional = options.mode === 'optional';
 
   const excludedPaths = new Set(options.excludedPaths ?? []);
   const {
@@ -69,9 +77,20 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
 
     const bearerToken = readBearerToken({ req, authHeaderName, authScheme });
 
-    try {
-      assertAllowedOrigin({ req, allowedOrigins: corsAllowedOrigins });
+    const { error: originError } = tryCatch(() =>
+      assertAllowedOrigin({ req, allowedOrigins: corsAllowedOrigins })
+    );
 
+    if (originError) {
+      next(
+        isApplicationError(originError)
+          ? originError
+          : makeInternalErrorHandler('Unexpected error in authMiddleware')(originError)
+      );
+      return;
+    }
+
+    try {
       if (bearerToken) {
         const introspectionData = await introspectAccessToken({
           accessToken: bearerToken,
@@ -94,6 +113,11 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
       });
 
       if (!session) {
+        if (isOptional) {
+          next();
+          return;
+        }
+
         throw makeSignInRequiredErrorHandler(
           `Missing access token in the "${authHeaderName}" header or the session cookie`
         )(null);
@@ -118,6 +142,11 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
         isRecord(error) && error.isSignInRequired === true && !bearerToken;
 
       if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
+
+      if (isOptional) {
+        next();
+        return;
+      }
 
       const isSignInRequiredPageRequest =
         isCookieSignInRequired && req.method === 'GET' && resolveResponseFormat(req) === 'html';
