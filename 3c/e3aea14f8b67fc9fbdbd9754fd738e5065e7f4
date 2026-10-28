@@ -1,0 +1,34 @@
+libs/common/web/index.ts
+  s_e8065fe0a22a57::t_6e499832b4a86e 5
+frontend/src/test/providers/makeMiniModeProviderWrapper.tsx
+  s_e8065fe0a22a57::t_0b830c27d36c83 1-21,27-52
+  s_e8065fe0a22a57::t_8d2ccc49df0352 22-26
+frontend/src/test/providers/makersIndex.ts
+  s_e8065fe0a22a57::t_4170e30eff8e3c 35-39
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  s_e8065fe0a22a57::t_6be5a113ca4707 1,3-5,10-17,25-26,30,33,36-37,60-67,69,108-109,113-115,118,121,123-124,127,129,132,136-138,141-150,152-156,158,161,168-169,172-173,176,179-180,187-189,192,195-196,199,202-209,212,214,217,219,221-224,228-229,231-232,235,237,240,242-246,249,253,256,260-261,265,269,272,276,280-282,285-286,288,291,294,297,300-301,308,310,312,316,320,322-326,328-334,336-342,344-377,379-384,386-387,389-393
+  s_e8065fe0a22a57::t_eb65492bfd61d8 394-396
+libs/common/web/documentPictureInPicture/isDocumentPictureInPictureSupported.ts
+  s_e8065fe0a22a57::t_99f686fe6cbe68 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3ce3aea14f8b67fc9fbdbd9754fd738e5065e7f4",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_e8065fe0a22a57": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a8ef5497-b136-40f6-82e0-737ad7920bac",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
