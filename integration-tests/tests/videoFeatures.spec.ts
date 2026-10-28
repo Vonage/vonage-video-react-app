@@ -120,10 +120,13 @@ test.describe('video stats overlay', () => {
     await waitUntilReady(page, browserName);
 
     const statsOverlay = page.getByTestId('video-stats-overlay');
+    await openWaitingRoomAdvancedSettingsVideoTab(page);
+    const statsOverlaySwitch = page.getByTestId('advanced-settings-video-stats-overlay');
+    await statsOverlaySwitch.uncheck();
+    await closeAdvancedSettings(page);
     await expect(statsOverlay).toHaveCount(0);
 
     await openWaitingRoomAdvancedSettingsVideoTab(page);
-    const statsOverlaySwitch = page.getByTestId('advanced-settings-video-stats-overlay');
     await statsOverlaySwitch.check();
     await expect(statsOverlaySwitch).toBeChecked();
     await closeAdvancedSettings(page);
