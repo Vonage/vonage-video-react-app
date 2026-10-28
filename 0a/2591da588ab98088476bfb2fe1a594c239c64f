@@ -1,0 +1,36 @@
+frontend/src/Context/MiniMode/MiniModeContext.tsx
+  s_e8065fe0a22a57::t_24b093d574a97e 3-4,24-26,44-47,62,69,73-83,86,89-90,92,95,98,100,102-104,107,110-111,118,129
+frontend/src/Context/MiniMode/isMiniModeSupported.ts
+  s_e8065fe0a22a57::t_a1a32d297b81c0 2,6-7,10
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  s_e8065fe0a22a57::t_9ead212acd2b61 1,29-31,33,35,40-43,45-48,52,56,67-70,72,74-76,78,80-81,84-89,92-93,95-96,98-100,103-106,110,112-113,116-120,123,125-126,128-131,133,136-139,141-142,144-145,148-149,151,153,156,162,164-165,167,172,175-180,183,187,191-193,200-215,221-223,244,254-274
+libs/common/web/documentPictureInPicture/documentPictureInPicture.spec.ts
+  s_e8065fe0a22a57::t_3b9f655107aa62 5,10-12,14-15,18-20,22-25,27-29,31,33-34,36-37,40-43,45-57,60-62,65-72
+  s_e8065fe0a22a57::t_c1eb2f35b111a4 73-75
+frontend/src/components/MeetingRoom/MiniCallWindow/useHostedVideoElement.ts
+  s_e8065fe0a22a57::t_955a40c4146894 1-35
+  s_e8065fe0a22a57::t_35e8e68aae00bd 36
+frontend/src/Context/MiniMode/helpers/resolveMiniModeParticipant.ts
+  s_e8065fe0a22a57::t_8792dc849645df 1-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0a2591da588ab98088476bfb2fe1a594c239c64f",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_e8065fe0a22a57": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a8ef5497-b136-40f6-82e0-737ad7920bac",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
