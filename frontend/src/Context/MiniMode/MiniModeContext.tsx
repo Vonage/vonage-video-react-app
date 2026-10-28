@@ -22,6 +22,7 @@ import {
 import frontendLogger from '../../logger';
 import type { SubscriberWrapper } from '../../types/session';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
+import MiniCallWindowStylesProvider from '../../components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider';
 import isMiniModeSupported from './isMiniModeSupported';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
@@ -312,19 +313,21 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
       {children}
       {mountNode &&
         createPortal(
-          <MiniCallWindow
-            participant={participant}
-            hostedElement={hostedElement}
-            containerWidth={PIP_WINDOW_SIZE.width}
-            isAudioEnabled={isAudioEnabled}
-            isVideoEnabled={isVideoEnabled}
-            isHostedVideoEnabled={isHostedVideoEnabled}
-            isRecording={isRecording}
-            onToggleAudio={toggleAudio}
-            onToggleVideo={toggleVideo}
-            onExpand={exit}
-            onLeave={leave}
-          />,
+          <MiniCallWindowStylesProvider targetDocument={mountNode.ownerDocument}>
+            <MiniCallWindow
+              participant={participant}
+              hostedElement={hostedElement}
+              containerWidth={PIP_WINDOW_SIZE.width}
+              isAudioEnabled={isAudioEnabled}
+              isVideoEnabled={isVideoEnabled}
+              isHostedVideoEnabled={isHostedVideoEnabled}
+              isRecording={isRecording}
+              onToggleAudio={toggleAudio}
+              onToggleVideo={toggleVideo}
+              onExpand={exit}
+              onLeave={leave}
+            />
+          </MiniCallWindowStylesProvider>,
           mountNode
         )}
     </MiniModeContext.Provider>
