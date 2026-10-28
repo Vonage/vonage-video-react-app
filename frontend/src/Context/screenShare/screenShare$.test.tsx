@@ -379,7 +379,7 @@ describe('screenShare$', () => {
   });
 
   it('resets screen share state and does not throw when publish rejects', async () => {
-    mockPublish.mockRejectedValueOnce(new Error('Publishing failed'));
+    mockPublish.mockRejectedValue(new Error('Publishing failed'));
     const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { result } = render({
@@ -408,9 +408,10 @@ describe('screenShare$', () => {
     expect(state.isSharingScreen).toBe(false);
     expect(state.publisher).toBeNull();
     expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledTimes(3);
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'error',
+        type: 'warning',
         message: expect.stringContaining('Publishing failed'),
       })
     );
