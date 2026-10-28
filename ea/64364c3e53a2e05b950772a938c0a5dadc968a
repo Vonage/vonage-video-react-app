@@ -1,0 +1,24 @@
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  s_7d79809b9adad9::t_ef699dfb3342ac 135-136,155-163,166-167,192-200
+frontend/src/hooks/useMeetingRoom.ts
+  s_7d79809b9adad9::t_7373d9b9ae4742 305-337
+  s_7d79809b9adad9::t_e8b26ff810531d 73
+  s_7d79809b9adad9::t_6a226e4015d047 170-173
+  s_7d79809b9adad9::t_ca49c6a3b3470e 123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ea64364c3e53a2e05b950772a938c0a5dadc968a",
+  "prompts": {},
+  "sessions": {
+    "s_7d79809b9adad9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ef7ac75-48e3-48e0-8fca-ef806b32ebba",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
