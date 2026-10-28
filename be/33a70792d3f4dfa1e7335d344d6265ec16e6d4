@@ -1,0 +1,28 @@
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  f0ff9613f632acfe 1-31
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  f0ff9613f632acfe 1-6,7-8,10-19,21-42
+frontend/src/hooks/useWaitingRoom.ts
+  f0ff9613f632acfe 1-6
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  f0ff9613f632acfe 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "vonage-override-1.0.0",
+  "base_commit_sha": "be33a70792d3f4dfa1e7335d344d6265ec16e6d4",
+  "prompts": {
+    "f0ff9613f632acfe": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "880930a7-9463-42aa-80e9-603e48bc0aeb",
+        "model": "gpt-4o"
+      },
+      "human_author": "Kristian Zoli <ckristian.zoli@gmail.com>",
+      "total_additions": 84,
+      "total_deletions": 28,
+      "accepted_lines": 84,
+      "overriden_lines": 0
+    }
+  }
+}
