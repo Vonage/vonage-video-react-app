@@ -6,17 +6,13 @@ interface SessionData {
   captionsId: string | null;
   captionsUserCount: number;
   archiveIds: string[];
-  serverRotationPending: boolean;
+  serverRotationPending: number;
 }
 
 class InMemorySessionStorage implements SessionStorage {
   private sessions: { [key: string]: SessionData } = {};
   private roomNameBySessionKey: { [sessionKey: string]: string } = {};
   private sessionKeyBySessionId: { [sessionId: string]: string } = {};
-  private authTransactions: {
-    [transactionId: string]: { state: string; codeVerifier: string; returnTo: string };
-  } = {};
-  private accessTokensBySessionId: { [sessionId: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
     return this.sessions[roomName]?.sessionKey || null;
@@ -35,13 +31,16 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    this.sessions[roomName] = {
-      sessionKey,
-      captionsId: null,
-      captionsUserCount: 0,
-      archiveIds: [],
-      serverRotationPending: false,
-    };
+    const existingSession = this.sessions[roomName];
+    this.sessions[roomName] = existingSession
+      ? { ...existingSession, sessionKey }
+      : {
+          sessionKey,
+          captionsId: null,
+          captionsUserCount: 0,
+          archiveIds: [],
+          serverRotationPending: 0,
+        };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
       this.sessionKeyBySessionId[sessionId] = sessionKey;
@@ -120,60 +119,20 @@ class InMemorySessionStorage implements SessionStorage {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
   }
 
-  async setAuthTransaction({
-    transactionId,
-    state,
-    codeVerifier,
-    returnTo,
-  }: {
-    transactionId: string;
-    state: string;
-    codeVerifier: string;
-    returnTo: string;
-  }): Promise<void> {
-    this.authTransactions[transactionId] = { state, codeVerifier, returnTo };
-  }
-
-  async getAuthTransaction({
-    transactionId,
-  }: {
-    transactionId: string;
-  }): Promise<{ state: string; codeVerifier: string; returnTo: string } | null> {
-    return this.authTransactions[transactionId] ?? null;
-  }
-
-  async deleteAuthTransaction({ transactionId }: { transactionId: string }): Promise<void> {
-    delete this.authTransactions[transactionId];
-  }
-
-  async setAccessToken({
-    sessionId,
-    accessToken,
-  }: {
-    sessionId: string;
-    accessToken: string;
-  }): Promise<void> {
-    this.accessTokensBySessionId[sessionId] = accessToken;
-  }
-
-  async getAccessToken({ sessionId }: { sessionId: string }): Promise<string | null> {
-    return this.accessTokensBySessionId[sessionId] ?? null;
-  }
-
   async setServerRotationPending({
     sessionId,
     pending,
   }: {
     sessionId: string;
-    pending: boolean;
+    pending: number;
   }): Promise<void> {
     const session = this.getSessionBySessionId(sessionId);
     if (!session) return;
     session.serverRotationPending = pending;
   }
 
-  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<boolean> {
-    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? false;
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
+    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? 0;
   }
 }
 export default InMemorySessionStorage;

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import InMemorySessionStorage from '../inMemorySessionStorage';
 import type { SessionStorage } from '../sessionStorage';
 
@@ -81,43 +82,16 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
-  describe('auth transaction', () => {
-    const transactionId = 'transaction-abc';
+  describe('setSession idempotency', () => {
+    it('preserves archiveIds and captionsId when setSession is called again for the same room', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setArchiveIds({ sessionId, archiveIds: ['archive-1'] });
+      await storage.setCaptionsId({ sessionId, captionsId: 'captions-1' });
 
-    it('should return null for a transaction that does not exist', async () => {
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toBeNull();
-    });
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
 
-    it('should set, get, and delete an auth transaction', async () => {
-      await storage.setAuthTransaction({
-        transactionId,
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      const transaction = await storage.getAuthTransaction({ transactionId });
-      expect(transaction).toEqual({
-        state: 'state-1',
-        codeVerifier: 'pkce-1',
-        returnTo: '/room/abc',
-      });
-
-      await storage.deleteAuthTransaction({ transactionId });
-      expect(await storage.getAuthTransaction({ transactionId })).toBeNull();
-    });
-  });
-
-  describe('access token', () => {
-    it('should return null for a session id with no stored access token', async () => {
-      const accessToken = await storage.getAccessToken({ sessionId });
-      expect(accessToken).toBeNull();
-    });
-
-    it('should set and get an access token by session id', async () => {
-      await storage.setAccessToken({ sessionId, accessToken: 'okta-access-token' });
-      expect(await storage.getAccessToken({ sessionId })).toBe('okta-access-token');
+      expect(await storage.getArchiveIds({ sessionId })).toEqual(['archive-1']);
+      expect(await storage.getCaptionsId({ sessionId })).toBe('captions-1');
     });
   });
 
@@ -139,13 +113,13 @@ describe('InMemorySessionStorage', () => {
   describe('setServerRotationPending / getServerRotationPending', () => {
     it('should set and retrieve the pending flag', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.setServerRotationPending({ sessionId, pending: true });
-      expect(await storage.getServerRotationPending({ sessionId })).toBe(true);
+      await storage.setServerRotationPending({ sessionId, pending: 2 });
+      expect(await storage.getServerRotationPending({ sessionId })).toBe(2);
     });
 
     it('should silently no-op for an unknown sessionId', async () => {
       await expect(
-        storage.setServerRotationPending({ sessionId, pending: true })
+        storage.setServerRotationPending({ sessionId, pending: 1 })
       ).resolves.toBeUndefined();
     });
   });

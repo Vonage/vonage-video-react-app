@@ -11,6 +11,7 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
@@ -66,10 +67,16 @@ export type SessionContextType = {
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
   archiveIdStartedBySelf: string | null;
+  recordingArchiveId: string | null;
+  setRecordingArchiveId: Dispatch<SetStateAction<string | null>>;
+  transcriptionArchiveId: string | null;
+  setTranscriptionArchiveId: Dispatch<SetStateAction<string | null>>;
   recordingAlreadyNotified: boolean;
   setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
-  markArchiveStartRequestedBySelf: () => void;
-  resetArchiveStartRequestedBySelf: () => void;
+  markRecordingStartRequestedBySelf: () => void;
+  resetRecordingStartRequestedBySelf: () => void;
+  markTranscriptionStartRequestedBySelf: () => void;
+  resetTranscriptionStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleBackgroundEffects: () => void;
@@ -110,10 +117,16 @@ export const SessionContext = createContext<SessionContextType>({
   setLayoutMode: () => {},
   archiveId: null,
   archiveIdStartedBySelf: null,
+  recordingArchiveId: null,
+  setRecordingArchiveId: () => {},
+  transcriptionArchiveId: null,
+  setTranscriptionArchiveId: () => {},
   recordingAlreadyNotified: false,
   setRecordingAlreadyNotified: () => {},
-  markArchiveStartRequestedBySelf: () => {},
-  resetArchiveStartRequestedBySelf: () => {},
+  markRecordingStartRequestedBySelf: () => {},
+  resetRecordingStartRequestedBySelf: () => {},
+  markTranscriptionStartRequestedBySelf: () => {},
+  resetTranscriptionStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
   toggleBackgroundEffects: () => {},
@@ -207,19 +220,31 @@ const SessionProvider = ({
   const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
     initialValue?.archiveIdStartedBySelf ?? null
   );
+  const [recordingArchiveId, setRecordingArchiveId] = useState<string | null>(null);
+  const [transcriptionArchiveId, setTranscriptionArchiveId] = useState<string | null>(null);
   const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
     initialValue?.recordingAlreadyNotified ?? false
   );
-  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
-  // Tracks if this client initiated the archive (persists through server rotation)
-  const wasArchiveInitiatorRef = useRef<boolean>(false);
 
-  const markArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = true;
+  const recordingStartRequestedBySelfRef = useRef<boolean>(false);
+  const transcriptionStartRequestedBySelfRef = useRef<boolean>(false);
+  const wasRecordingInitiatorRef = useRef<boolean>(false);
+  const wasTranscriptionInitiatorRef = useRef<boolean>(false);
+
+  const markRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = true;
   }, []);
 
-  const resetArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = false;
+  const resetRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = false;
+  }, []);
+
+  const markTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = true;
+  }, []);
+
+  const resetTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = false;
   }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
@@ -264,21 +289,19 @@ const SessionProvider = ({
   } = useRightPanel();
 
   const handleChatSignal = ({ data }: SignalEvent) => {
+    if (!env.ALLOW_CHAT) {
+      throw new Error('Chat signal received while chat is disabled');
+    }
+
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
     }
   };
 
-  const handleEmoji = useCallback(
-    (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
-    },
-    [onEmoji]
-  );
+  const handleEmoji = useStableCallback((emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
+  });
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -385,28 +408,58 @@ const SessionProvider = ({
     setSubscriptionError(null);
   };
 
-  const handleArchiveStarted = (id: string) => {
+  const handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
     setArchiveId(id);
 
-    const isInitiatedBySelf =
-      archiveStartRequestedBySelfRef.current || wasArchiveInitiatorRef.current;
+    // Set the appropriate archive id based on archive name/type
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(id);
 
-    if (!isInitiatedBySelf) {
-      return;
+      const isRecordingInitiatedBySelf =
+        recordingStartRequestedBySelfRef.current || wasRecordingInitiatorRef.current;
+
+      if (isRecordingInitiatedBySelf) {
+        setArchiveIdStartedBySelf(id);
+        wasRecordingInitiatorRef.current = true;
+        recordingStartRequestedBySelfRef.current = false;
+      }
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(id);
+
+      const isTranscriptionInitiatedBySelf =
+        transcriptionStartRequestedBySelfRef.current || wasTranscriptionInitiatorRef.current;
+
+      if (isTranscriptionInitiatedBySelf) {
+        // Also set archiveIdStartedBySelf for transcription — suppresses consent for the initiator
+        setArchiveIdStartedBySelf(id);
+        wasTranscriptionInitiatorRef.current = true;
+        transcriptionStartRequestedBySelfRef.current = false;
+      }
     }
-
-    setArchiveIdStartedBySelf(id);
-    wasArchiveInitiatorRef.current = true;
-    archiveStartRequestedBySelfRef.current = false;
   };
 
-  const handleArchiveStopped = useStableCallback(() => {
-    // Preserve initiator flag only during reconnection (server rotation); drop it on manual stop.
-    wasArchiveInitiatorRef.current = reconnecting && wasArchiveInitiatorRef.current;
+  const handleArchiveStopped = useStableCallback(({ name }: { id: string; name: string }) => {
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(null);
+      wasRecordingInitiatorRef.current = reconnecting && wasRecordingInitiatorRef.current;
+      recordingStartRequestedBySelfRef.current = false;
+
+      if (transcriptionArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(null);
+      wasTranscriptionInitiatorRef.current = reconnecting && wasTranscriptionInitiatorRef.current;
+      transcriptionStartRequestedBySelfRef.current = false;
+
+      if (recordingArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
+    }
 
     setArchiveId(null);
-    setArchiveIdStartedBySelf(null);
-    archiveStartRequestedBySelfRef.current = false;
   });
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
@@ -433,13 +486,13 @@ const SessionProvider = ({
       return vonageVideoClient.current.hasStream(streamId);
     })();
 
-    console.warn(`Subscriber with stream ID ${streamId} destroyed`, {
+    frontendLogger.log('Session:SubscriberDestroyed', {
+      streamId,
       doesStreamStillExistInSession,
     });
 
     if (doesStreamStillExistInSession) {
       void vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
     destroySubscriber(streamId);
@@ -469,7 +522,7 @@ const SessionProvider = ({
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session:SubscriptionErrorIgnoredInReconnection', {
           reconnecting,
           isBrowserOnline,
         });
@@ -500,7 +553,10 @@ const SessionProvider = ({
       vonageVideoClient.current.on('sessionDisconnected', handleSessionDisconnected);
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
-      vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      const isChatAllowed = env.ALLOW_CHAT;
+      if (isChatAllowed) {
+        vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      }
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
@@ -600,8 +656,14 @@ const SessionProvider = ({
       unregisterActiveSpeakerChangeHandler,
       archiveId,
       archiveIdStartedBySelf,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
@@ -640,8 +702,14 @@ const SessionProvider = ({
       unregisterActiveSpeakerChangeHandler,
       archiveId,
       archiveIdStartedBySelf,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       setRecordingAlreadyNotified,
       recordingAlreadyNotified,
       vonageVideoClient,

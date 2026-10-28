@@ -1,8 +1,12 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import type { AuthConfig, Config, FeedbackConfig } from '../types/config';
+import type { AuthConfig, Config, FeedbackConfig, LoggerConfig } from '../types/config';
 import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+import CorsConfigSchema, {
+  type CorsConfig,
+} from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 import { fileURLToPath } from 'node:url';
+import assertCorsMatchesAuth from './assertCorsMatchesAuth';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -24,6 +28,9 @@ const loadConfig = (): Config => {
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
   const authConfig = loadAuthConfig();
+  const corsConfig = loadCorsConfig();
+
+  assertCorsMatchesAuth({ authConfig, corsConfig });
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
@@ -36,7 +43,11 @@ const loadConfig = (): Config => {
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
     severityId: process.env.JIRA_SEVERITY_ID,
-    gollumUrl: process.env.GOLLUM_BASE_URL,
+  };
+
+  const loggerConfig: LoggerConfig = {
+    gollumUrl: process.env.KIBANA_BASE_URL,
+    loggerVerbose,
   };
 
   if (provider === 'vonage') {
@@ -50,13 +61,14 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
       ...authConfig,
+      ...corsConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
       videoHost,
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 
@@ -70,12 +82,13 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
       ...authConfig,
+      ...corsConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 
@@ -83,6 +96,20 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+function loadCorsConfig(): CorsConfig {
+  const rawAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '').trim();
+
+  return CorsConfigSchema.parse({
+    corsAllowedOrigins:
+      rawAllowedOrigins === '*'
+        ? '*'
+        : rawAllowedOrigins
+            .split(',')
+            .map((origin) => origin.trim())
+            .filter((origin) => origin !== ''),
+  });
+}
 
 /**
  * Reads only the auth-related env vars, validated here since this is the single
@@ -92,18 +119,25 @@ export default loadConfig;
 function loadAuthConfig(): AuthConfig {
   if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
 
-  const introspectionTimeoutMs = process.env.AUTH_INTROSPECTION_TIMEOUT_MS;
-
   return AuthConfigSchema.parse({
     authEnabled: true,
-    oidcIssuerUrl: process.env.OIDC_ISSUER_URL,
     oidcClientId: process.env.OIDC_CLIENT_ID,
     oidcWebRedirectUri: process.env.OIDC_WEB_REDIRECT_URI,
+    oidcAuthorizationEndpoint: process.env.OIDC_AUTHORIZATION_ENDPOINT,
+    oidcTokenEndpoint: process.env.OIDC_TOKEN_ENDPOINT,
+    oidcIntrospectionEndpoint: process.env.OIDC_INTROSPECTION_ENDPOINT,
+    oidcRevocationEndpoint: process.env.OIDC_REVOCATION_ENDPOINT,
+    oidcEndSessionEndpoint: process.env.OIDC_END_SESSION_ENDPOINT,
+    oidcPostLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI,
+    oidcScopes: process.env.OIDC_SCOPES,
+    authCookieSecret: process.env.AUTH_COOKIE_SECRET,
+    authSessionCookieName: process.env.AUTH_SESSION_COOKIE_NAME,
+    authIdTokenCookieName: process.env.AUTH_ID_TOKEN_COOKIE_NAME,
+    authTransactionCookieName: process.env.AUTH_TRANSACTION_COOKIE_NAME,
+    authTransactionMaxAgeSeconds: process.env.AUTH_TRANSACTION_MAX_AGE_SECONDS,
+    authRefreshWindowSeconds: process.env.AUTH_REFRESH_WINDOW_SECONDS,
+    authProviderTimeoutMs: process.env.AUTH_PROVIDER_TIMEOUT_MS,
     authHeaderName: process.env.AUTH_HEADER_NAME,
     authScheme: process.env.AUTH_SCHEME,
-    introspectPath: process.env.OIDC_INTROSPECT_PATH,
-    authorizePath: process.env.OIDC_AUTHORIZE_PATH,
-    tokenPath: process.env.OIDC_TOKEN_PATH,
-    introspectionTimeoutMs: introspectionTimeoutMs ? Number(introspectionTimeoutMs) : undefined,
   });
 }

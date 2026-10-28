@@ -1,0 +1,67 @@
+import type { Response } from 'express';
+import type { TokenExchangeResponse } from '../schemas/TokenExchangeResponse.schema';
+import type { SessionCookie } from '../schemas/SessionCookie.schema';
+import type { IdTokenCookie } from '../schemas/IdTokenCookie.schema';
+import type { EnabledAuthConfig } from '../../../middleware/authMiddleware/schemas/AuthConfig.schema';
+import { SIGN_OUT_PATH } from '../constants';
+import writeCookiePayload from './writeCookiePayload';
+
+/**
+ * Writes the session from a token endpoint response (code exchange or refresh). Providers that
+ * don't rotate refresh tokens omit `refresh_token` on refresh, so the previous one is kept.
+ */
+function writeSessionCookies({
+  res,
+  tokenResponse,
+  previousRefreshToken,
+  authConfig,
+}: {
+  res: Response;
+  tokenResponse: TokenExchangeResponse;
+  previousRefreshToken: string | undefined;
+  authConfig: EnabledAuthConfig;
+}): void {
+  const refreshToken = tokenResponse.refresh_token ?? previousRefreshToken;
+
+  const session: SessionCookie = {
+    accessToken: tokenResponse.access_token,
+    accessTokenExpiresAt: Date.now() + tokenResponse.expires_in * 1000,
+    ...(refreshToken ? { refreshToken } : {}),
+  };
+
+  // RFC 6749 has no refresh-token lifetime field; without one this is a browser-session cookie.
+  const maxAge = (() => {
+    if (!refreshToken) return tokenResponse.expires_in * 1000;
+
+    const refreshTokenLifetimeSeconds =
+      tokenResponse.refresh_expires_in ?? tokenResponse.refresh_token_expires_in;
+
+    return refreshTokenLifetimeSeconds === undefined
+      ? undefined
+      : refreshTokenLifetimeSeconds * 1000;
+  })();
+
+  writeCookiePayload({
+    res,
+    name: authConfig.authSessionCookieName,
+    payload: session,
+    path: '/',
+    maxAge,
+    authConfig,
+  });
+
+  if (!tokenResponse.id_token) return;
+
+  const idTokenCookie: IdTokenCookie = { idToken: tokenResponse.id_token };
+
+  writeCookiePayload({
+    res,
+    name: authConfig.authIdTokenCookieName,
+    payload: idTokenCookie,
+    path: SIGN_OUT_PATH,
+    maxAge,
+    authConfig,
+  });
+}
+
+export default writeSessionCookies;

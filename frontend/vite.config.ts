@@ -27,6 +27,7 @@ const appEnvKeys = [
   'WAITING_ROOM_ALLOW_ADVANCED_SETTINGS',
   'WAITING_ROOM_ALLOW_DEVICE_SELECTION',
   'ALLOW_ARCHIVING',
+  'ALLOW_POST_CALL_TRANSCRIPTION',
   'ALLOW_CAPTIONS',
   'ALLOW_CHAT',
   'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
@@ -41,6 +42,7 @@ const appEnvKeys = [
   'TUNNEL_DOMAIN',
   'SHOW_VIDEO_STATS',
   'VONAGE_VIDEO_HOST',
+  'AUTH_ENABLED',
 ] as const;
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
@@ -152,6 +154,10 @@ export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
   const isTest = mode === 'test';
 
+  const callbackPath = env.OIDC_WEB_REDIRECT_URI
+    ? new URL(env.OIDC_WEB_REDIRECT_URI).pathname
+    : null;
+
   const appEnvObject = {
     MODE: mode,
     ...(isTest
@@ -167,16 +173,21 @@ export default defineConfig(({ mode }) => {
       host: true,
       allowedHosts: ['*', env.TUNNEL_DOMAIN],
       proxy: {
-        // Okta's registered local redirect URI is fixed to this Vite dev server's origin
-        // (http://localhost:3000/api/auth/callback/okta) — proxy it through to the backend,
-        // which is the only thing that actually implements this route. /auth/signin needs the
-        // same treatment: it sets the auth-transaction cookie that the callback validates, so
-        // both legs of the flow must be seen as same-origin by the browser.
-        '/api/auth/callback/okta': {
+        // The local OIDC redirect URI points at this dev server, so the auth routes are proxied to
+        // the backend and the user lands back on the dev server after signing in.
+        ...(callbackPath
+          ? {
+              [callbackPath]: {
+                target: env.API_URL || 'http://localhost:3345',
+                changeOrigin: true,
+              },
+            }
+          : {}),
+        '/auth/signin': {
           target: env.API_URL || 'http://localhost:3345',
           changeOrigin: true,
         },
-        '/auth/signin': {
+        '/auth/signout': {
           target: env.API_URL || 'http://localhost:3345',
           changeOrigin: true,
         },

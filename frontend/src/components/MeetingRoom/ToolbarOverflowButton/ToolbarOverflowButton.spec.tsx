@@ -2,11 +2,17 @@ import { describe, expect, it, vi, afterEach } from 'vitest';
 import { act, render as renderBase, screen, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import ToolbarOverflowButton from './ToolbarOverflowButton';
+import ToolbarOverflowButton, {
+  testIds as toolbarOverflowButtonTestIds,
+} from './ToolbarOverflowButton';
 import {
   ToolbarOverflowMenuProps,
   CaptionsState,
 } from '../ToolbarOverflowMenu/ToolbarOverflowMenu';
+import { testIds as archivingButtonTestIds } from '../ArchivingButton/ArchivingButton';
+import { testIds as emojiGridButtonTestIds } from '../EmojiGridButton/EmojiGridButton';
+import { testIds as layoutButtonTestIds } from '../LayoutButton/LayoutButton';
+import { testIds as unreadMessagesBadgeTestIds } from '../UnreadMessagesBadge/UnreadMessagesBadge';
 
 vi.mock('@hooks/useRoomName');
 vi.mock('../../../Context/MiniMode', () => ({
@@ -58,7 +64,7 @@ describe('ToolbarOverflowButton', () => {
         },
       },
     });
-    expect(screen.queryByTestId('hidden-toolbar-items')).toBeInTheDocument();
+    expect(screen.getByTestId(toolbarOverflowButtonTestIds.button)).toBeInTheDocument();
   });
   it('toggling shows and hides the toolbar buttons', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
@@ -73,15 +79,15 @@ describe('ToolbarOverflowButton', () => {
         },
       },
     });
-    expect(screen.queryByTestId('layout-button')).not.toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
+    expect(screen.queryByTestId(layoutButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeVisible();
     act(() => {
-      screen.getByTestId('hidden-toolbar-items').click();
+      screen.getByTestId(toolbarOverflowButtonTestIds.button).click();
     });
-    expect(screen.queryByTestId('layout-button')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).toBeVisible();
+    expect(screen.queryByTestId(layoutButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).toBeVisible();
   });
   it('should have the unread messages badge present', () => {
     render(<ToolbarOverflowButton {...defaultProps} />, {
@@ -97,7 +103,7 @@ describe('ToolbarOverflowButton', () => {
       },
     });
     // We expect the ChatButton in the ToolbarOverflowMenu and the ToolbarOverflowButton to have an unread messages badge present
-    expect(screen.queryAllByTestId('chat-button-unread-count').length).toBe(2);
+    expect(screen.queryAllByTestId(unreadMessagesBadgeTestIds.unreadCount)).toHaveLength(2);
   });
 });
 type RenderOptions = {

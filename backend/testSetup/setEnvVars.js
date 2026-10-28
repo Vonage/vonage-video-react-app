@@ -12,4 +12,5 @@ process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
 process.env.OT_API_KEY = 'someOpenTokKey';
 process.env.OT_API_SECRET = 'opentokAPISecret';
 process.env.SESSION_KEY_SECRET = 'test-session-key-secret-for-jwt-signing';
-process.env.GOLLUM_BASE_URL = 'https://example.com';
+process.env.KIBANA_BASE_URL = 'https://example.com';
+process.env.CORS_ALLOWED_ORIGINS = '*';

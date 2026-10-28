@@ -1,12 +1,13 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import closeServer from './helpers/closeServer';
 import axios from 'axios';
 import request from 'supertest';
 import { Server } from 'node:http';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 
-jest.mock('../helpers/config', mockOpentokConfig);
+vi.doMock('../helpers/config', mockOpentokConfig);
 
-jest.mock('axios');
+vi.mock('axios');
 
 // This needs to be set before the server is imported
 process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
@@ -16,6 +17,7 @@ const startServer = (await import('../server')).default as (port?: number) => Pr
 const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -29,15 +31,13 @@ const createValidLogPayload = (overrides?: Record<string, unknown>) => ({
 
 describe('POST /client-logs', () => {
   let server: Server;
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = vi.spyOn(axios, 'post');
 
   beforeAll(async () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   beforeEach(() => {
     mockPost.mockClear();
@@ -47,6 +47,7 @@ describe('POST /client-logs', () => {
   it('returns 204 and forwards valid payload to Gollum', async () => {
     const payload = createValidLogPayload({
       action: 'vonageVideoClient.connect.success',
+      session: { sessionId: 's1', connectionId: 'c1' },
       sessionId: 's1',
       connectionId: 'c1',
     });
@@ -63,6 +64,7 @@ describe('POST /client-logs', () => {
       expect.objectContaining({
         action: 'vonageVideoClient.connect.success',
         variation: 'Success',
+        session: { sessionId: 's1', connectionId: 'c1' },
         sessionId: 's1',
         connectionId: 'c1',
         clientSystemTime: payload.clientSystemTime,
@@ -138,6 +140,7 @@ describe('POST /client-logs', () => {
   it('forwards payload with optional fields when present', async () => {
     const payload = createValidLogPayload({
       payload: { error: { message: 'Something broke' } },
+      session: { partnerId: '100' },
       partnerId: '100',
       componentId: 'comp-1',
       name: 'MeetingComponent',
@@ -153,6 +156,7 @@ describe('POST /client-logs', () => {
       expect.any(String),
       expect.objectContaining({
         payload: { error: { message: 'Something broke' } },
+        session: { partnerId: '100' },
         partnerId: '100',
         componentId: 'comp-1',
         name: 'MeetingComponent',
@@ -164,15 +168,13 @@ describe('POST /client-logs', () => {
 
 describe('POST /client-logs/batch', () => {
   let server: Server;
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = vi.spyOn(axios, 'post');
 
   beforeAll(async () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   beforeEach(() => {
     mockPost.mockClear();
@@ -183,10 +185,16 @@ describe('POST /client-logs/batch', () => {
     const batch = [
       createValidLogPayload({
         action: 'vonageVideoClient.connect.success',
+        session: { sessionId: 's1', connectionId: 'c1' },
         sessionId: 's1',
         connectionId: 'c1',
       }),
-      createValidLogPayload({ action: 'EnterMeeting', sessionId: 's2', connectionId: 'c2' }),
+      createValidLogPayload({
+        action: 'EnterMeeting',
+        session: { sessionId: 's2', connectionId: 'c2' },
+        sessionId: 's2',
+        connectionId: 'c2',
+      }),
     ];
 
     const res = await request(server)
