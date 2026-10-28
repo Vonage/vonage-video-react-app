@@ -13,12 +13,16 @@ import { assertResult } from '@api-lib/executions';
 import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
+import type { RequestWithTokenAuth, VideoRouteContext } from './types/VideoRouteContext';
 
 const videoRouter = Router();
 
 const sessionService = getSessionStorageService();
 
-export const videoHandler = createVideoHandler({
+export const videoHandler = createVideoHandler<VideoRouteContext, object>({
+  createContext: ({ req }) => ({
+    user: (req as RequestWithTokenAuth).user,
+  }),
   auth: {
     authType: 'jwt',
     applicationId: process.env.VONAGE_APP_ID!,
@@ -27,6 +31,9 @@ export const videoHandler = createVideoHandler({
   videoParams: {
     videoHost: process.env.VONAGE_VIDEO_HOST,
   },
+  sessionSigning: process.env.SESSION_KEY_SECRET
+    ? { secret: process.env.SESSION_KEY_SECRET }
+    : undefined,
 
   /**
    * Adds the default values for the different video methods.

@@ -132,6 +132,23 @@ describe('createVideoHandler', () => {
     });
   });
 
+  describe('sessionSigning', () => {
+    it('signs and verifies sessionKeys with the configured secret instead of the api key', () => {
+      const handler = createVideoHandler({
+        auth: { authType: 'apiKey', apiKey: mockApiKey, apiSecret: 'test-api-secret' },
+        sessionSigning: { secret: 'configured-session-secret' },
+      });
+      const videoClient = handler.router$.makeVideoClient$();
+      const signedWithSecret = jwt.sign({ sessionId: mockSessionId }, 'configured-session-secret');
+      const signedWithApiKey = jwt.sign({ sessionId: mockSessionId, n: 'api-key' }, mockApiKey);
+
+      expect(videoClient.decodeSessionKey({ sessionKey: signedWithSecret }).sessionId).toBe(
+        mockSessionId
+      );
+      expect(() => videoClient.decodeSessionKey({ sessionKey: signedWithApiKey })).toThrow();
+    });
+  });
+
   describe('decodeSessionId', () => {
     it('should decode a valid sessionId via VideoClient method (not a TRPC route)', async () => {
       const app = createTestApp();

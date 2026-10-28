@@ -272,6 +272,27 @@ const myFunction = async () => {
 };
 ```
 
+- **Rule:** Wrap every step that can fail (parsing, decoding, I/O, SDK and network calls) in `assertResult` with the error handler whose status code matches the failure (`makeBadRequestErrorHandler`, `makeUnauthorizedErrorHandler`, `makeForbiddenErrorHandler`, `makeNotFoundErrorHandler`, `makeThirdPartyErrorHandler`, `makeVideoApiErrorHandler`, `makeInternalErrorHandler`) and a safe, descriptive, non-sensitive message. You can also use the helper to create custom erros of an specific type.
+
+```ts
+// example #1
+const session = assertResult(
+    () => readCookiePayload({ req, name: authSessionCookieName, secret: authCookieSecret, schema: SessionCookieSchema }),
+    makeBadRequestErrorHandler('Failed to read session cookie from request')
+);
+// example #2
+throw makeBadRequestErrorHandler('Payload is not valid')(null);
+```
+
+- **Rule:** You can safelly pass ApplicationError as src for other ApplicationError or handlers, the data wont be overwritten.
+```ts
+// Bad
+next(isApplicationError(error) ? error : makeInternalErrorHandler('Unexpected error in authMiddleware')(error));
+
+// Good
+makeInternalErrorHandler('Unexpected error in authMiddleware')(error); // if the error is an ApplicationError all it's original configuration will be preserved, no message or status code will be overwritten.
+```
+
 ## Type modeling & correctness
 
 - **Rule:** Prefer `named parameters` for functions with 2+ parameters or parameters of the same type. 
