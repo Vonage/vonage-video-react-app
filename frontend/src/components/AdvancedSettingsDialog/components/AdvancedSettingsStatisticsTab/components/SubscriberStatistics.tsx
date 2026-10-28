@@ -2,8 +2,7 @@ import { useMemo, type ReactElement } from 'react';
 import { useSubscriberStats } from '@core/hooks';
 import { useTranslation } from 'react-i18next';
 import { AdvancedSettingsStatisticsGroup } from '../../AdvancedSettingsStatisticsGroup';
-import advancedSettings$ from '@Context/AdvancedSettings';
-import { SubscriberWrapper } from '@app-types/session';
+import type { SubscriberWrapper } from '@app-types/session';
 
 interface SubscriberStatisticsProps {
   subscriberWrapper: SubscriberWrapper;
@@ -14,16 +13,6 @@ const SubscriberStatistics = ({ subscriberWrapper }: SubscriberStatisticsProps):
 
   const subscriber = Object.assign(subscriberWrapper.subscriber, { id: subscriberWrapper.id });
   const { data } = useSubscriberStats({ subscriber });
-
-  const publisherAudioFallbackEnabled = advancedSettings$.use.select(
-    ({ publisherAudioFallbackEnabled }) => publisherAudioFallbackEnabled
-  );
-  const subscriberAudioFallbackEnabled = advancedSettings$.use.select(
-    ({ subscriberAudioFallbackEnabled }) => subscriberAudioFallbackEnabled
-  );
-
-  const isNetworkConditionAvailable =
-    publisherAudioFallbackEnabled && subscriberAudioFallbackEnabled;
 
   const subscriberStatisticsGroups = useMemo(() => {
     if (!data) {
@@ -107,24 +96,20 @@ const SubscriberStatistics = ({ subscriberWrapper }: SubscriberStatisticsProps):
           value: data.remotePublisherConnectionEstimatedBandwidthBps,
         },
       ],
-      networkItems: isNetworkConditionAvailable
-        ? [
-            {
-              label: t('advancedSettings.statistics.metrics.networkCondition'),
-              value: data.network.score,
-            },
-            {
-              label: t('advancedSettings.statistics.metrics.networkConditionReason'),
-              value: data.network.reason,
-            },
-          ]
-        : [],
+      // Network condition reflects the subscriber's own transport data (like PublisherStatistics),
+      // not the local audio-fallback toggles, which have no effect on remote subscriber stats.
+      networkItems: [
+        {
+          label: t('advancedSettings.statistics.metrics.networkCondition'),
+          value: data.network.score,
+        },
+        {
+          label: t('advancedSettings.statistics.metrics.networkConditionReason'),
+          value: data.network.reason,
+        },
+      ],
     };
-  }, [data, t, isNetworkConditionAvailable]);
-
-  const networkDisabledMessage = isNetworkConditionAvailable
-    ? undefined
-    : t('advancedSettings.statistics.sections.networkDisabled');
+  }, [data, t]);
 
   return (
     <AdvancedSettingsStatisticsGroup
@@ -133,7 +118,6 @@ const SubscriberStatistics = ({ subscriberWrapper }: SubscriberStatisticsProps):
       audioItems={subscriberStatisticsGroups.audioItems}
       videoItems={subscriberStatisticsGroups.videoItems}
       networkItems={subscriberStatisticsGroups.networkItems}
-      networkDisabledMessage={networkDisabledMessage}
     />
   );
 };
