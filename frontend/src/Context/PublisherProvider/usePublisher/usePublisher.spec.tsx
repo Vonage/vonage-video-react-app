@@ -580,6 +580,25 @@ describe('usePublisher', () => {
         expect(result.current.publisherVideoElement).toBe(mockVideoElement);
       });
     });
+
+    it('should destroy the publisher (release the camera) on unmount', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result, unmount } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+        // @ts-expect-error We simulate the browser granting camera/microphone access.
+        mockPublisher.emit('accessAllowed');
+      });
+
+      await waitFor(() => {
+        expect(result.current.publisher).toBe(mockPublisher);
+      });
+
+      unmount();
+
+      expect(destroySpy).toHaveBeenCalled();
+    });
   });
 });
 

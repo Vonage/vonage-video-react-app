@@ -18,6 +18,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../../logger';
+import { useMountEffect } from '@web/hooks';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -156,6 +157,13 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess, t]);
+
+  useMountEffect(() => {
+    return () => {
+      publisherRef.current?.destroy?.();
+      publisherRef.current = null;
+    };
+  });
 
   reconnectingRef.current = reconnecting === true;
 
