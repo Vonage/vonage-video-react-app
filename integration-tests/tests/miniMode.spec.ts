@@ -18,15 +18,21 @@ const isDesktopChromium = (browserName: string, isMobile: boolean) =>
   browserName === 'chromium' && !isMobile;
 
 test.describe('Mini Mode', () => {
-  test('opens the call in a Document Picture-in-Picture window on desktop Chromium', async ({
+  test('opens the call in a Document Picture-in-Picture window only where it is supported', async ({
     page,
     browserName,
     isMobile,
   }) => {
-    test.skip(!isDesktopChromium(browserName, isMobile), 'Mini Mode is desktop Chromium only');
+    const miniModeButton = page.getByTestId('mini-mode-button');
 
-    await joinMeeting(page, 'Mini Chrome');
-    await page.getByTestId('mini-mode-button').click();
+    await joinMeeting(page, `Mini ${browserName}`);
+
+    if (!isDesktopChromium(browserName, isMobile)) {
+      await expect(miniModeButton).toHaveCount(0);
+      return;
+    }
+
+    await miniModeButton.click();
 
     await expect
       .poll(() =>
@@ -41,17 +47,5 @@ test.describe('Mini Mode', () => {
         )
       )
       .toBe(true);
-  });
-
-  test('hides the Mini Mode button where it is not supported', async ({
-    page,
-    browserName,
-    isMobile,
-  }) => {
-    test.skip(isDesktopChromium(browserName, isMobile), 'Desktop Chromium supports Mini Mode');
-
-    await joinMeeting(page, `Mini ${browserName}`);
-
-    await expect(page.getByTestId('mini-mode-button')).toHaveCount(0);
   });
 });
