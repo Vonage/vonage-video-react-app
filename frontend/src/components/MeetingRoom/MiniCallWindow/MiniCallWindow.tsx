@@ -1,22 +1,18 @@
-import { ReactElement, useLayoutEffect, useRef } from 'react';
+import { type ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import MiniModeIcon from './MiniModeIcon';
 import MiniCallWindowButton from './MiniCallWindowButton';
 import AvatarInitials from '../../AvatarInitials';
 import RecordingIndicator from '../RecordingIndicator';
 import NameDisplay from '../NameDisplay';
-import type {
-  MiniModeHostedElement,
-  MiniModeParticipant,
-} from '../../../Context/MiniMode/MiniModeContext';
+import type { MiniModeParticipant } from '../../../Context/MiniMode/helpers/resolveMiniModeParticipant';
+import useHostedVideoElement from './useHostedVideoElement';
 
 export type MiniCallWindowProps = {
-  participant: MiniModeParticipant | null;
-  hostedElement: MiniModeHostedElement;
+  participant: MiniModeParticipant;
   containerWidth: number;
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
-  isHostedVideoEnabled: boolean;
   isRecording: boolean;
   onToggleAudio: () => void;
   onToggleVideo: () => void;
@@ -30,11 +26,9 @@ export type MiniCallWindowProps = {
  */
 const MiniCallWindow = ({
   participant,
-  hostedElement,
   containerWidth,
   isAudioEnabled,
   isVideoEnabled,
-  isHostedVideoEnabled,
   isRecording,
   onToggleAudio,
   onToggleVideo,
@@ -43,29 +37,13 @@ const MiniCallWindow = ({
 }: MiniCallWindowProps): ReactElement => {
   const { t } = useTranslation();
   const videoHostRef = useRef<HTMLDivElement>(null);
-  const showAvatar = !hostedElement || !isHostedVideoEnabled;
+  const showAvatar = !participant.element || !participant.hasVideo;
   const audioLabel = isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip');
   const videoLabel = isVideoEnabled
     ? t('miniMode.cameraOff.tooltip')
     : t('miniMode.cameraOn.tooltip');
 
-  useLayoutEffect(() => {
-    const host = videoHostRef.current;
-    if (!host || !hostedElement) {
-      return undefined;
-    }
-
-    host.appendChild(hostedElement);
-    const videoElement = hostedElement;
-    // eslint-disable-next-line react-hooks/immutability -- video element is a DOM node we own
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
-    videoElement.style.objectFit = 'cover';
-    videoElement.style.position = 'absolute';
-    videoElement.style.inset = '0';
-
-    return undefined;
-  }, [hostedElement]);
+  useHostedVideoElement(videoHostRef, participant.element);
 
   return (
     <div
@@ -77,8 +55,8 @@ const MiniCallWindow = ({
         {showAvatar && (
           <div className="absolute inset-0 flex items-center justify-center">
             <AvatarInitials
-              initials={participant?.initials}
-              username={participant?.name}
+              initials={participant.initials}
+              username={participant.name}
               height={160}
               width={160}
             />
@@ -92,7 +70,7 @@ const MiniCallWindow = ({
             <RecordingIndicator isCompact />
           </div>
         )}
-        {participant?.name && (
+        {participant.name && (
           <NameDisplay name={participant.name} containerWidth={containerWidth} />
         )}
       </div>

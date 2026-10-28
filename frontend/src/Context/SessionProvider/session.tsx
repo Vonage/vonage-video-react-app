@@ -59,10 +59,6 @@ export type SessionContextType = {
   reconnecting: null | boolean;
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
-  registerActiveSpeakerChangeHandler: (handler: (subscriberId: string | undefined) => void) => void;
-  unregisterActiveSpeakerChangeHandler: (
-    handler: (subscriberId: string | undefined) => void
-  ) => void;
   layoutMode: LayoutMode;
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
@@ -111,8 +107,6 @@ export const SessionContext = createContext<SessionContextType>({
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
-  registerActiveSpeakerChangeHandler: () => {},
-  unregisterActiveSpeakerChangeHandler: () => {},
   layoutMode: 'grid',
   setLayoutMode: () => {},
   archiveId: null,
@@ -251,23 +245,6 @@ const SessionProvider = ({
     initialValue?.activeSpeakerId ?? undefined
   );
   const activeSpeakerIdRef = useRef<string | undefined>(undefined);
-  // External consumers (e.g. Mini Mode) can register a callback that fires
-  // on every activeSpeakerChanged event, alongside the existing handler below.
-  const activeSpeakerChangeHandlersRef = useRef<Set<(subscriberId: string | undefined) => void>>(
-    new Set()
-  );
-  const registerActiveSpeakerChangeHandler = useCallback(
-    (handler: (subscriberId: string | undefined) => void) => {
-      activeSpeakerChangeHandlersRef.current.add(handler);
-    },
-    []
-  );
-  const unregisterActiveSpeakerChangeHandler = useCallback(
-    (handler: (subscriberId: string | undefined) => void) => {
-      activeSpeakerChangeHandlersRef.current.delete(handler);
-    },
-    []
-  );
   const { messages, onChatMessage, sendChatMessage } = useChat({
     signal: vonageVideoClient.current?.signal,
   });
@@ -359,7 +336,6 @@ const SessionProvider = ({
       if (subscriberId) {
         moveSubscriberToTopOfDisplayOrder(subscriberId);
       }
-      activeSpeakerChangeHandlersRef.current.forEach((handler) => handler(subscriberId));
     });
   }, [moveSubscriberToTopOfDisplayOrder, setActiveSpeakerIdAndRef]);
 
@@ -652,8 +628,6 @@ const SessionProvider = ({
   const value = useMemo(
     () => ({
       activeSpeakerId,
-      registerActiveSpeakerChangeHandler,
-      unregisterActiveSpeakerChangeHandler,
       archiveId,
       archiveIdStartedBySelf,
       recordingArchiveId,
@@ -698,8 +672,6 @@ const SessionProvider = ({
     }),
     [
       activeSpeakerId,
-      registerActiveSpeakerChangeHandler,
-      unregisterActiveSpeakerChangeHandler,
       archiveId,
       archiveIdStartedBySelf,
       recordingArchiveId,

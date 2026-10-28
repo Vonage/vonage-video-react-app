@@ -13,7 +13,7 @@ export type MiniModeProviderWrapperOptions = Partial<
 
 /**
  * Creates a wrapper that provides a static Mini Mode context value.
- * Mini Mode is unsupported by default; any field can be overridden via options.
+ * Mini Mode is closed by default; any field can be overridden via options.
  * @param {MiniModeProviderWrapperOptions} options - The context value overrides.
  * @returns {object} The Mini Mode wrapper and context getter.
  */
@@ -35,17 +35,10 @@ function MiniModeTestProvider({ children, ...value }: MiniModeTestProviderProps)
 
 function makeDefaultMiniModeValue(): MiniModeContextType {
   return {
-    isSupported: false,
     isOpen: false,
     hostedElement: null,
     enter: vi.fn(() => Promise.resolve()),
     exit: vi.fn(),
-    toggleAudio: vi.fn(),
-    toggleVideo: vi.fn(),
-    leave: vi.fn(),
-    isAudioEnabled: true,
-    isVideoEnabled: true,
-    participant: null,
   };
 }
 

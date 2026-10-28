@@ -9,12 +9,10 @@ vi.mock('./MiniModeIcon', () => ({
 }));
 
 const makeProps = (overrides: Partial<MiniCallWindowProps> = {}): MiniCallWindowProps => ({
-  participant: { element: null, name: 'Maya Adeyemi', initials: 'MA' },
-  hostedElement: null,
+  participant: { element: null, name: 'Maya Adeyemi', initials: 'MA', hasVideo: true },
   containerWidth: 360,
   isAudioEnabled: true,
   isVideoEnabled: true,
-  isHostedVideoEnabled: true,
   isRecording: false,
   onToggleAudio: vi.fn(),
   onToggleVideo: vi.fn(),
@@ -69,8 +67,8 @@ describe('MiniCallWindow', () => {
     expect(screen.queryByTestId('mini-mode-recording-indicator')).not.toBeInTheDocument();
   });
 
-  it('shows the avatar fallback and participant name when there is no hosted element', () => {
-    render(<MiniCallWindow {...makeProps({ hostedElement: null })} />);
+  it('shows the avatar and name when there is no video element', () => {
+    render(<MiniCallWindow {...makeProps()} />);
 
     expect(screen.getByText('MA')).toBeInTheDocument();
     expect(screen.getByText('Maya Adeyemi')).toBeInTheDocument();
@@ -84,37 +82,25 @@ describe('MiniCallWindow', () => {
     expect(nameContainer).toHaveStyle({ maxWidth: '328px' });
   });
 
-  it('shows the avatar only when the hosted participant has no video, not when the local camera is off', () => {
+  it('shows the video while the participant has video, and the avatar when it does not', () => {
     const videoElement = document.createElement('video');
+    const tile = document.body.appendChild(document.createElement('div'));
+    tile.appendChild(videoElement);
+    const participant = { element: videoElement, name: 'Maya Adeyemi', initials: 'MA' };
 
-    const { rerender } = render(
-      <MiniCallWindow
-        {...makeProps({
-          hostedElement: videoElement,
-          isVideoEnabled: false,
-          isHostedVideoEnabled: true,
-        })}
-      />
+    const { rerender, unmount } = render(
+      <MiniCallWindow {...makeProps({ participant: { ...participant, hasVideo: true } })} />
     );
+    expect(screen.getByTestId('mini-call-window').contains(videoElement)).toBe(true);
+    expect(videoElement.style.objectFit).toBe('cover');
     expect(screen.queryByText('MA')).not.toBeInTheDocument();
 
     rerender(
-      <MiniCallWindow
-        {...makeProps({ hostedElement: videoElement, isHostedVideoEnabled: false })}
-      />
+      <MiniCallWindow {...makeProps({ participant: { ...participant, hasVideo: false } })} />
     );
     expect(screen.getByText('MA')).toBeInTheDocument();
-  });
 
-  it('re-parents the hosted element into the window and stretches it to fill', () => {
-    const videoElement = document.createElement('video');
-
-    render(<MiniCallWindow {...makeProps({ hostedElement: videoElement })} />);
-
-    const windowElement = screen.getByTestId('mini-call-window');
-    expect(windowElement.contains(videoElement)).toBe(true);
-    expect(videoElement.style.width).toBe('100%');
-    expect(videoElement.style.height).toBe('100%');
-    expect(videoElement.style.position).toBe('absolute');
+    unmount();
+    expect(videoElement.parentElement).toBe(tile);
   });
 });

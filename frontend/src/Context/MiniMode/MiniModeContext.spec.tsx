@@ -1,13 +1,8 @@
-import { act, render as renderBase, screen } from '@testing-library/react';
+import { act, render as renderBase, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useEffect, type ReactElement } from 'react';
 import { EventEmitter } from 'node:events';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
-import {
-  isDocumentPictureInPictureSupported,
-  registerEnterPictureInPictureAction,
-  useDocumentPictureInPicture,
-} from '@web/documentPictureInPicture';
 import type { Publisher, Subscriber } from '@vonage/client-sdk-video';
 import { makeTestProvider, providers } from '@test/providers';
 import type {
@@ -27,79 +22,38 @@ vi.mock('react-router-dom', async (importOriginal) => ({
   useNavigate: () => mockNavigate,
 }));
 
-vi.mock('@web/documentPictureInPicture', () => ({
-  isDocumentPictureInPictureSupported: vi.fn(() => false),
-  registerEnterPictureInPictureAction: vi.fn(() => vi.fn()),
-  useDocumentPictureInPicture: vi.fn(),
-}));
-
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
 
-type ActiveSpeakerHandler = (subscriberId: string | undefined) => void;
-
-let enterPictureInPictureHandler: (() => void) | undefined;
-let capturedOnClose: (() => void) | undefined;
-const mockUnregisterEnterPictureInPicture = vi.fn();
-const mockOpen = vi.fn();
-const mockClose = vi.fn();
-
-const pipState: { window: Window | null; mountNode: HTMLElement | null } = {
-  window: null,
-  mountNode: null,
-};
-
 describe('MiniModeContext', () => {
-  beforeEach(() => {
-    enterPictureInPictureHandler = undefined;
-    capturedOnClose = undefined;
-    pipState.window = null;
-    pipState.mountNode = null;
+  let pipWindow: ReturnType<typeof makePictureInPictureWindow>;
+  let requestWindow: ReturnType<typeof vi.fn>;
+  let setActionHandler: ReturnType<typeof vi.fn>;
 
+  beforeEach(() => {
     env.partialUpdate({ ALLOW_MINI_MODE: true });
-    setupWindowNavigatorMock({
-      mediaDevices: {
-        enumerateDevices: Promise.resolve([]),
-      },
-    });
+    setupWindowNavigatorMock({ mediaDevices: { enumerateDevices: Promise.resolve([]) } });
     vi.spyOn(navigator.permissions, 'query').mockResolvedValue({
       state: 'granted',
     } as PermissionStatus);
 
-    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(true);
-    vi.mocked(registerEnterPictureInPictureAction).mockImplementation((handler) => {
-      enterPictureInPictureHandler = handler;
-      return mockUnregisterEnterPictureInPicture;
+    setActionHandler = vi.fn();
+    Object.defineProperty(navigator, 'mediaSession', {
+      value: { setActionHandler },
+      configurable: true,
     });
-    vi.mocked(useDocumentPictureInPicture).mockImplementation((options) => {
-      capturedOnClose = options?.onClose;
-      return {
-        window: pipState.window,
-        mountNode: pipState.mountNode,
-        open: mockOpen,
-        close: mockClose,
-      };
-    });
-    mockOpen.mockImplementation(() => {
-      const mount = document.createElement('div');
-      document.body.appendChild(mount);
-      pipState.window = { closed: false, close: vi.fn() } as unknown as Window;
-      pipState.mountNode = mount;
-      return Promise.resolve();
-    });
-    mockClose.mockImplementation(() => {
-      pipState.window = null;
-      pipState.mountNode = null;
-    });
+
+    pipWindow = makePictureInPictureWindow();
+    requestWindow = vi.fn().mockResolvedValue(pipWindow);
+    vi.stubGlobal('documentPictureInPicture', { requestWindow });
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     vi.clearAllMocks();
-    mockOpen.mockReset();
-    mockClose.mockReset();
   });
 
-  it('useMiniMode throws when used outside of a MiniModeProvider', () => {
+  it('useMiniMode throws outside of a MiniModeProvider', () => {
     const Probe = (): ReactElement | null => {
       useMiniMode();
       return null;
@@ -110,229 +64,132 @@ describe('MiniModeContext', () => {
     );
   });
 
-  it('is unsupported and enter is a no-op when the Document PiP API is unavailable', async () => {
-    vi.mocked(isDocumentPictureInPictureSupported).mockReturnValue(false);
-    const { miniModeContext } = render();
+  it('shows the publisher when alone, and puts the video back when exiting', async () => {
+    const publisherVideoElement = mountInTile(document.createElement('video'));
+    const tile = publisherVideoElement.parentElement;
+    const { miniMode } = render({ publisherInitialValue: { publisherVideoElement } });
 
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
+    await act(() => miniMode.current!.enter());
 
-    expect(miniModeContext.current?.isSupported).toBe(false);
-    expect(mockOpen).not.toHaveBeenCalled();
-    expect(miniModeContext.current?.isOpen).toBe(false);
-    expect(registerEnterPictureInPictureAction).not.toHaveBeenCalled();
+    expect(requestWindow).toHaveBeenCalledWith({ width: 360, height: 260 });
+    expect(pipWindow.document.body.contains(publisherVideoElement)).toBe(true);
+    expect(pipWindow.document.body.textContent).toContain('Publisher Name');
+
+    act(() => miniMode.current!.exit());
+
+    expect(publisherVideoElement.parentElement).toBe(tile);
+    expect(miniMode.current?.isOpen).toBe(false);
   });
 
-  it('enter opens a 360x260 window showing the publisher when there are no subscribers', async () => {
-    const publisherVideoElement = document.createElement('video');
-    const { miniModeContext } = render({ publisherInitialValue: { publisherVideoElement } });
-
-    await act(async () => {
-      await miniModeContext.current?.enter();
+  it('follows the active speaker, skipping screenshares', async () => {
+    const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
+    const alice = makeSubscriberWrapper('alice', 'Alice');
+    const bob = makeSubscriberWrapper('bob', 'Bob');
+    const { miniMode, sessionContext, rerender } = render({
+      sessionInitialValue: { subscriberWrappers: [screenshare, alice, bob] },
     });
 
-    expect(mockOpen).toHaveBeenCalledWith({ width: 360, height: 260 });
-    expect(miniModeContext.current?.participant?.name).toBe('Publisher Name');
-    expect(miniModeContext.current?.hostedElement).toBe(publisherVideoElement);
-    expect(pipState.mountNode?.contains(publisherVideoElement)).toBe(true);
+    await act(() => miniMode.current!.enter());
+    expect(miniMode.current?.hostedElement).toBe(alice.element);
+
+    sessionContext.current.activeSpeakerId = 'bob';
+    rerender();
+
+    expect(miniMode.current?.hostedElement).toBe(bob.element);
+    expect(pipWindow.document.body.contains(bob.element)).toBe(true);
+    expect(document.body.contains(alice.element)).toBe(true);
   });
 
-  it('shows the recording indicator for a recording, but not for a transcription alone', async () => {
-    const transcriptionOnly = render({
-      sessionInitialValue: { archiveId: 'transcription-archive' },
-      onSessionCreated: (context) => {
-        context.transcriptionArchiveId = 'transcription-archive';
-      },
-    });
-    await act(async () => {
-      await transcriptionOnly.miniModeContext.current?.enter();
-    });
-
-    expect(screen.getByTestId('mini-call-window')).toBeVisible();
-    expect(screen.queryByTestId('mini-mode-recording-indicator')).not.toBeInTheDocument();
-    transcriptionOnly.unmount();
-
-    const recording = render({ sessionInitialValue: { archiveId: 'recording-archive' } });
-    await act(async () => {
-      await recording.miniModeContext.current?.enter();
-    });
-
-    expect(screen.getByTestId('mini-mode-recording-indicator')).toBeInTheDocument();
-  });
-
-  it('keeps showing the remote video when the local camera is off', async () => {
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    const { miniModeContext } = render({
-      sessionInitialValue: { subscriberWrappers: [cameraA] },
+  it('keeps the remote video visible when the local camera is off', async () => {
+    const alice = makeSubscriberWrapper('alice', 'Alice');
+    const { miniMode } = render({
+      sessionInitialValue: { subscriberWrappers: [alice] },
       publisherInitialValue: { isVideoEnabled: false },
     });
 
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
+    await act(() => miniMode.current!.enter());
 
-    expect(pipState.mountNode?.contains(cameraA.element)).toBe(true);
-    expect(screen.queryByText('AL')).not.toBeInTheDocument();
+    expect(pipWindow.document.body.contains(alice.element)).toBe(true);
+    expect(pipWindow.document.body.textContent).not.toContain('AL');
   });
 
-  it('picks the active speaker camera subscriber, skipping screenshares', async () => {
-    const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
-    const { miniModeContext } = render({
-      sessionInitialValue: {
-        subscriberWrappers: [screenshare, cameraA, cameraB],
-        activeSpeakerId: 'camera-b',
+  it('shows the recording indicator for a recording, not for a transcription alone', async () => {
+    const transcription = render({
+      sessionInitialValue: { archiveId: 'transcription' },
+      onSessionCreated: (context) => {
+        context.transcriptionArchiveId = 'transcription';
       },
     });
+    await act(() => transcription.miniMode.current!.enter());
 
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
+    expect(findRecordingIndicator(pipWindow.document)).toBeNull();
+    transcription.unmount();
 
-    expect(miniModeContext.current?.participant?.name).toBe('Bob B');
-    expect(miniModeContext.current?.hostedElement).toBe(cameraB.element);
+    pipWindow = makePictureInPictureWindow();
+    requestWindow.mockResolvedValue(pipWindow);
+    const recording = render({ sessionInitialValue: { archiveId: 'recording' } });
+    await act(() => recording.miniMode.current!.enter());
+
+    expect(findRecordingIndicator(pipWindow.document)).not.toBeNull();
   });
 
-  it('falls back to the first camera subscriber when no active speaker is set', async () => {
-    const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
-    const { miniModeContext } = render({
-      sessionInitialValue: { subscriberWrappers: [screenshare, cameraA, cameraB] },
-    });
+  it('puts the video back when the browser closes the window', async () => {
+    const alice = makeSubscriberWrapper('alice', 'Alice');
+    const tile = alice.element.parentElement;
+    const { miniMode } = render({ sessionInitialValue: { subscriberWrappers: [alice] } });
 
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
+    await act(() => miniMode.current!.enter());
+    act(() => pipWindow.close());
 
-    expect(miniModeContext.current?.participant?.name).toBe('Alice A');
-    expect(miniModeContext.current?.hostedElement).toBe(cameraA.element);
+    expect(alice.element.parentElement).toBe(tile);
+    expect(miniMode.current?.isOpen).toBe(false);
   });
 
-  it('follows active speaker changes only while open and only when the speaker changes', async () => {
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    const cameraB = makeSubscriberWrapper('camera-b', 'Bob B');
-    const { miniModeContext, activeSpeaker } = render({
-      sessionInitialValue: { subscriberWrappers: [cameraA, cameraB] },
-    });
+  it('leave closes the window, disconnects, and navigates to goodbye', async () => {
+    const { miniMode, sessionContext, backgroundPublisherContext } = render();
 
+    await act(() => miniMode.current!.enter());
     act(() => {
-      activeSpeaker.change?.('camera-b');
-    });
-    expect(miniModeContext.current?.participant).toBeNull();
-
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
-    expect(miniModeContext.current?.hostedElement).toBe(cameraA.element);
-
-    act(() => {
-      activeSpeaker.change?.('camera-a');
-    });
-    expect(miniModeContext.current?.hostedElement).toBe(cameraA.element);
-
-    act(() => {
-      activeSpeaker.change?.('camera-b');
-    });
-    expect(miniModeContext.current?.participant?.name).toBe('Bob B');
-    expect(pipState.mountNode?.contains(cameraB.element)).toBe(true);
-  });
-
-  it('exit restores the hosted element to its original parent and closes the window', async () => {
-    const originalParent = document.createElement('div');
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    originalParent.appendChild(cameraA.element);
-    const { miniModeContext } = render({ sessionInitialValue: { subscriberWrappers: [cameraA] } });
-
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
-    expect(cameraA.element.parentElement).not.toBe(originalParent);
-
-    act(() => {
-      miniModeContext.current?.exit();
+      within(pipWindow.document.body).getByTestId('mini-mode-leave').click();
     });
 
-    expect(cameraA.element.parentElement).toBe(originalParent);
-    expect(mockClose).toHaveBeenCalledOnce();
-    expect(miniModeContext.current?.isOpen).toBe(false);
-    expect(miniModeContext.current?.participant).toBeNull();
-  });
-
-  it('restores the hosted element when the window is closed externally', async () => {
-    const originalParent = document.createElement('div');
-    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
-    originalParent.appendChild(cameraA.element);
-    const { miniModeContext } = render({ sessionInitialValue: { subscriberWrappers: [cameraA] } });
-
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
-
-    act(() => {
-      mockClose();
-      capturedOnClose?.();
-    });
-
-    expect(cameraA.element.parentElement).toBe(originalParent);
-    expect(miniModeContext.current?.hostedElement).toBeNull();
-  });
-
-  it('leave exits, disconnects, destroys the background publisher, and navigates to goodbye', async () => {
-    const { miniModeContext, sessionContext, backgroundPublisherContext } = render();
-
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
-
-    act(() => {
-      miniModeContext.current?.leave();
-    });
-
-    expect(mockClose).toHaveBeenCalledOnce();
+    expect(pipWindow.closed).toBe(true);
     expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
     expect(backgroundPublisherContext.current.destroyBackgroundPublisher).toHaveBeenCalledOnce();
     expect(mockNavigate).toHaveBeenCalledWith(`/goodbye/${validSessionKey}`);
   });
 
-  it('reports an error and stays closed when opening the window fails', async () => {
+  it('reports an error and stays closed when the window cannot open', async () => {
     const reportError = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
-    mockOpen.mockRejectedValue(new Error('denied'));
-    const { miniModeContext } = render();
+    requestWindow.mockRejectedValue(new Error('denied'));
+    const { miniMode } = render();
 
-    await act(async () => {
-      await miniModeContext.current?.enter();
-    });
+    await act(() => miniMode.current!.enter());
 
     expect(reportError).toHaveBeenCalledWith(expect.any(Error), {
       eventSource: 'miniMode.enter.error',
     });
-    expect(miniModeContext.current?.isOpen).toBe(false);
+    expect(miniMode.current?.isOpen).toBe(false);
   });
 
-  it('enters Mini Mode through the automatic picture-in-picture action and unregisters it on unmount', async () => {
-    const { miniModeContext, unmount } = render();
+  it('opens when the browser triggers automatic picture-in-picture, only with a publisher', async () => {
+    render({ publisherInitialValue: { publisher: null } });
+    expect(setActionHandler).not.toHaveBeenCalled();
+
+    const { miniMode } = render();
+    const [, enterPictureInPicture] = setActionHandler.mock.calls[0] as [string, () => void];
 
     await act(async () => {
-      enterPictureInPictureHandler?.();
+      enterPictureInPicture();
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    expect(miniModeContext.current?.isOpen).toBe(true);
-
-    unmount();
-
-    expect(mockUnregisterEnterPictureInPicture).toHaveBeenCalledOnce();
-  });
-
-  it('does not register the automatic action without a publisher', () => {
-    render({ publisherInitialValue: { publisher: null } });
-
-    expect(registerEnterPictureInPictureAction).not.toHaveBeenCalled();
+    expect(miniMode.current?.isOpen).toBe(true);
   });
 });
+
+type MiniModeRef = { current: MiniModeContextType | null };
+type OnMiniModeRender = (context: MiniModeContextType) => void;
 
 type RenderOptions = {
   sessionInitialValue?: SessionContextInitialValue;
@@ -340,22 +197,31 @@ type RenderOptions = {
   onSessionCreated?: (context: SessionContextType) => void;
 };
 
+function MiniModeUnderTest({ onRender }: { onRender: OnMiniModeRender }): ReactElement {
+  return (
+    <MiniModeProvider>
+      <Probe onRender={onRender} />
+    </MiniModeProvider>
+  );
+}
+
+function Probe({ onRender }: { onRender: OnMiniModeRender }): null {
+  const context = useMiniMode();
+  useEffect(() => {
+    onRender(context);
+  });
+  return null;
+}
+
 function render({
   sessionInitialValue,
   publisherInitialValue,
   onSessionCreated,
 }: RenderOptions = {}) {
-  const miniModeContext: { current: MiniModeContextType | null } = { current: null };
-  const activeSpeaker: { change?: ActiveSpeakerHandler } = {};
-
-  const Probe = (): null => {
-    const context = useMiniMode();
-    useEffect(() => {
-      miniModeContext.current = context;
-    });
-    return null;
+  const miniMode: MiniModeRef = { current: null };
+  const captureMiniMode: OnMiniModeRender = (context) => {
+    miniMode.current = context;
   };
-
   const { wrapper, sessionContext, backgroundPublisherContext } = makeTestProvider(
     [
       providers.runtime,
@@ -371,17 +237,11 @@ function render({
         initialValue: { sessionKey: validSessionKey, ...sessionInitialValue },
         __onCreated: (context) => {
           context.disconnect = vi.fn();
-          context.registerActiveSpeakerChangeHandler = (handler) => {
-            activeSpeaker.change = handler;
-          };
           onSessionCreated?.(context);
         },
       },
       publisherContext: {
-        initialValue: {
-          publisher: makePublisher(),
-          ...publisherInitialValue,
-        },
+        initialValue: { publisher: makePublisher(), ...publisherInitialValue },
       },
       backgroundPublisherContext: {
         __onCreated: (context) => {
@@ -391,20 +251,37 @@ function render({
     }
   );
 
-  const result = renderBase(
-    <MiniModeProvider>
-      <Probe />
-    </MiniModeProvider>,
-    { wrapper }
-  );
+  const result = renderBase(<MiniModeUnderTest onRender={captureMiniMode} />, { wrapper });
+  const rerender = () => result.rerender(<MiniModeUnderTest onRender={captureMiniMode} />);
 
-  return { ...result, miniModeContext, activeSpeaker, sessionContext, backgroundPublisherContext };
+  return { ...result, rerender, miniMode, sessionContext, backgroundPublisherContext };
+}
+
+function makePictureInPictureWindow() {
+  const pipWindow = Object.assign(new EventTarget(), {
+    document: document.implementation.createHTMLDocument(''),
+    closed: false,
+    close: () => {
+      pipWindow.closed = true;
+      pipWindow.dispatchEvent(new Event('pagehide'));
+    },
+  });
+  return pipWindow;
+}
+
+function findRecordingIndicator(target: Document): Element | null {
+  return target.querySelector('[data-testid="mini-mode-recording-indicator"]');
+}
+
+function mountInTile<Element extends HTMLElement>(element: Element): Element {
+  document.body.appendChild(document.createElement('div')).appendChild(element);
+  return element;
 }
 
 function makeSubscriberWrapper(id: string, name: string, isScreenshare = false): SubscriberWrapper {
   return {
     id,
-    element: document.createElement('video'),
+    element: mountInTile(document.createElement('video')),
     subscriber: {
       stream: { name, initials: name.slice(0, 2).toUpperCase(), hasVideo: true },
     } as unknown as Subscriber,

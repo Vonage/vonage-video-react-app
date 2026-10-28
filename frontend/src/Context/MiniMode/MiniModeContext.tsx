@@ -1,13 +1,11 @@
 import {
   createContext,
-  ReactElement,
-  ReactNode,
+  type ReactElement,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useMemo,
-  useRef,
-  useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -20,36 +18,21 @@ import {
   useDocumentPictureInPicture,
 } from '@web/documentPictureInPicture';
 import frontendLogger from '../../logger';
-import type { SubscriberWrapper } from '../../types/session';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
 import MiniCallWindowStylesProvider from '../../components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider';
 import isMiniModeSupported from './isMiniModeSupported';
+import resolveMiniModeParticipant, {
+  type MiniModeHostedElement,
+} from './helpers/resolveMiniModeParticipant';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
 
-export type MiniModeHostedElement = HTMLVideoElement | HTMLObjectElement | null;
-
-type MiniModeParticipant = {
-  element: MiniModeHostedElement;
-  name: string;
-  initials: string;
-};
-
 export type MiniModeContextType = {
-  isSupported: boolean;
   isOpen: boolean;
   hostedElement: MiniModeHostedElement;
   enter: () => Promise<void>;
   exit: () => void;
-  toggleAudio: () => void;
-  toggleVideo: () => void;
-  leave: () => void;
-  isAudioEnabled: boolean;
-  isVideoEnabled: boolean;
-  participant: MiniModeParticipant | null;
 };
-
-export type { MiniModeParticipant };
 
 const MiniModeContext = createContext<MiniModeContextType | null>(null);
 
@@ -58,48 +41,16 @@ export type MiniModeProviderProps = {
 };
 
 /**
- * Resolves which participant to show in Mini Mode.
- * Inline simplified version of the previous separate function.
- */
-const resolveMiniModeParticipant = (
-  subscriberWrappers: SubscriberWrapper[],
-  activeSpeakerId: string | undefined,
-  publisher: {
-    element: MiniModeHostedElement;
-    name: string;
-    initials: string;
-  }
-): MiniModeParticipant => {
-  const cameraSubscribers = subscriberWrappers.filter((wrapper) => !wrapper.isScreenshare);
-  const activeSpeaker =
-    cameraSubscribers.find((wrapper) => wrapper.id === activeSpeakerId) ?? cameraSubscribers[0];
-
-  if (activeSpeaker) {
-    return {
-      element: activeSpeaker.element,
-      name: activeSpeaker.subscriber.stream?.name ?? '',
-      initials: activeSpeaker.subscriber.stream?.initials ?? '',
-    };
-  }
-
-  return {
-    element: publisher.element,
-    name: publisher.name,
-    initials: publisher.initials,
-  };
-};
-
-/**
- * Simplified Mini Mode Context - owns Document Picture-in-Picture lifecycle.
- * Opens floating window, re-parents active-speaker video, restores on close.
+ * Owns the Mini Mode Document Picture-in-Picture window and renders the call into it.
+ * The participant shown is derived from the session on every render, so it follows the active speaker.
+ * @param {MiniModeProviderProps} props - The meeting room content
+ * @returns {ReactElement} The provider and, while open, the Mini Mode window portal
  */
 export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElement => {
   const navigate = useNavigate();
   const {
     subscriberWrappers,
     activeSpeakerId,
-    registerActiveSpeakerChangeHandler,
-    unregisterActiveSpeakerChangeHandler,
     disconnect,
     sessionKey,
     archiveId,
@@ -107,224 +58,75 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
     transcriptionArchiveId,
   } = useSessionContext();
   const {
-    publisherVideoElement,
     publisher,
+    publisherVideoElement,
     isAudioEnabled,
     isVideoEnabled,
     toggleAudio,
     toggleVideo,
   } = usePublisherContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+  const { window: pipWindow, mountNode, open, close } = useDocumentPictureInPicture();
 
-  const [hostedElement, setHostedElement] = useState<MiniModeHostedElement>(null);
-  const [participant, setParticipant] = useState<MiniModeParticipant | null>(null);
-  const originalParentRef = useRef<HTMLElement | null>(null);
-  const hostedElementRef = useRef<MiniModeHostedElement>(null);
-
-  const restoreHostedElement = useCallback(() => {
-    const element = hostedElementRef.current;
-    const parent = originalParentRef.current;
-    if (element && parent) {
-      parent.appendChild(element);
-    }
-    originalParentRef.current = null;
-    hostedElementRef.current = null;
-    setHostedElement(null);
-    setParticipant(null);
-  }, []);
-
-  // onClose also covers closes we did not initiate: the user closing the window,
-  // or the browser auto-closing it when the tab becomes visible again.
-  const {
-    window: pipWindow,
-    mountNode,
-    open: openPipWindow,
-    close: closePipWindow,
-  } = useDocumentPictureInPicture({ onClose: restoreHostedElement });
-
-  const subscriberWrappersRef = useRef(subscriberWrappers);
-  const publisherVideoElementRef = useRef(publisherVideoElement);
-  const publisherRef = useRef(publisher);
-  const isOpenRef = useRef(pipWindow !== null);
-
-  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
   const isSupported = isMiniModeSupported();
-  const isHostedVideoEnabled = (() => {
-    if (!hostedElement) return false;
-    if (hostedElement === publisherVideoElement) return isVideoEnabled;
-    const hostedSubscriberWrapper = subscriberWrappers.find(
-      (wrapper) => wrapper.element === hostedElement
-    );
-    return !!hostedSubscriberWrapper?.subscriber.stream?.hasVideo;
-  })();
   const isOpen = pipWindow !== null;
-
-  // Keep refs in sync with latest values
-  useEffect(() => {
-    hostedElementRef.current = hostedElement;
-    subscriberWrappersRef.current = subscriberWrappers;
-    publisherVideoElementRef.current = publisherVideoElement;
-    publisherRef.current = publisher;
-    isOpenRef.current = isOpen;
-  }, [hostedElement, subscriberWrappers, publisherVideoElement, publisher, isOpen]);
-
-  const exit = useCallback(() => {
-    restoreHostedElement();
-    closePipWindow();
-  }, [restoreHostedElement, closePipWindow]);
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
+  const participant = isOpen
+    ? resolveMiniModeParticipant({
+        subscriberWrappers,
+        activeSpeakerId,
+        publisher,
+        publisherVideoElement,
+        isPublisherVideoEnabled: isVideoEnabled,
+      })
+    : null;
+  const hostedElement = participant?.element ?? null;
 
   const enter = useCallback(async () => {
-    if (!isSupported || isOpenRef.current) {
-      return;
-    }
+    if (!isSupported || isOpen) return;
 
     await attempt(
-      async () => {
-        const nextParticipant = resolveMiniModeParticipant(subscriberWrappers, activeSpeakerId, {
-          element: publisherVideoElement,
-          name: publisher?.stream?.name ?? '',
-          initials: publisher?.stream?.initials ?? '',
-        });
-
-        await openPipWindow(PIP_WINDOW_SIZE);
-
-        if (nextParticipant.element) {
-          originalParentRef.current = nextParticipant.element.parentElement;
-          setHostedElement(nextParticipant.element);
-        }
-
-        setParticipant(nextParticipant);
-      },
-      (error) => {
-        frontendLogger.reportError(error, {
-          eventSource: 'miniMode.enter.error',
-        });
-      }
+      () => open(PIP_WINDOW_SIZE),
+      (error) => frontendLogger.reportError(error, { eventSource: 'miniMode.enter.error' })
     );
-  }, [
-    activeSpeakerId,
-    isSupported,
-    publisher,
-    publisherVideoElement,
-    subscriberWrappers,
-    openPipWindow,
-  ]);
-
-  // Simplified active speaker switching - direct DOM manipulation
-  const handleActiveSpeakerChange = useCallback(
-    (subscriberId: string | undefined) => {
-      if (!isOpenRef.current) return;
-
-      const nextParticipant = resolveMiniModeParticipant(
-        subscriberWrappersRef.current,
-        subscriberId,
-        {
-          element: publisherVideoElementRef.current,
-          name: publisherRef.current?.stream?.name ?? '',
-          initials: publisherRef.current?.stream?.initials ?? '',
-        }
-      );
-
-      if (nextParticipant.element === hostedElementRef.current) return;
-
-      // Restore current element
-      restoreHostedElement();
-
-      // Set up new element
-      if (nextParticipant.element) {
-        originalParentRef.current = nextParticipant.element.parentElement;
-        setHostedElement(nextParticipant.element);
-      }
-
-      setParticipant(nextParticipant);
-    },
-    [restoreHostedElement]
-  );
+  }, [isSupported, isOpen, open]);
 
   useEffect(() => {
-    registerActiveSpeakerChangeHandler(handleActiveSpeakerChange);
-    return () => {
-      unregisterActiveSpeakerChangeHandler(handleActiveSpeakerChange);
-    };
-  }, [
-    handleActiveSpeakerChange,
-    registerActiveSpeakerChangeHandler,
-    unregisterActiveSpeakerChangeHandler,
-  ]);
+    if (!isSupported || !publisher) return undefined;
 
-  // Automatic Picture-in-Picture: Chromium invokes this action when the user
-  // switches tabs while we capture camera/mic, allowing enter() without a gesture.
-  // Registered once per publisher and dispatched through a ref so the handler
-  // is not torn down every time enter() is recreated (active speaker changes etc).
-  const enterRef = useRef(enter);
-  useEffect(() => {
-    enterRef.current = enter;
-  }, [enter]);
-
-  useEffect(() => {
-    if (!isSupported || !publisher) {
-      return undefined;
-    }
     return registerEnterPictureInPictureAction(() => {
-      void enterRef.current();
+      void enter();
     });
-  }, [isSupported, publisher]);
+  }, [isSupported, publisher, enter]);
 
-  const leave = useCallback(() => {
-    exit();
-    if (disconnect) {
-      disconnect();
-    }
+  const leave = () => {
+    close();
+    disconnect?.();
     destroyBackgroundPublisher();
     void navigate(`/goodbye/${sessionKey ?? ''}`);
-  }, [destroyBackgroundPublisher, disconnect, exit, navigate, sessionKey]);
+  };
 
   const value = useMemo<MiniModeContextType>(
-    () => ({
-      isSupported,
-      isOpen,
-      hostedElement,
-      enter,
-      exit,
-      toggleAudio,
-      toggleVideo,
-      leave,
-      isAudioEnabled,
-      isVideoEnabled,
-      participant,
-    }),
-    [
-      enter,
-      exit,
-      hostedElement,
-      isAudioEnabled,
-      isOpen,
-      isSupported,
-      isVideoEnabled,
-      leave,
-      participant,
-      toggleAudio,
-      toggleVideo,
-    ]
+    () => ({ isOpen, hostedElement, enter, exit: close }),
+    [isOpen, hostedElement, enter, close]
   );
 
   return (
     <MiniModeContext.Provider value={value}>
       {children}
       {mountNode &&
+        participant &&
         createPortal(
           <MiniCallWindowStylesProvider targetDocument={mountNode.ownerDocument}>
             <MiniCallWindow
               participant={participant}
-              hostedElement={hostedElement}
               containerWidth={PIP_WINDOW_SIZE.width}
               isAudioEnabled={isAudioEnabled}
               isVideoEnabled={isVideoEnabled}
-              isHostedVideoEnabled={isHostedVideoEnabled}
               isRecording={isRecording}
               onToggleAudio={toggleAudio}
               onToggleVideo={toggleVideo}
-              onExpand={exit}
+              onExpand={close}
               onLeave={leave}
             />
           </MiniCallWindowStylesProvider>,

@@ -177,15 +177,23 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
   });
 
-  it('renders the Mini Mode button only when the browser supports Document Picture-in-Picture', () => {
-    const { unmount } = render(<Toolbar {...defaultProps} />);
+  it('renders the Mini Mode button only on desktop browsers that support Document Picture-in-Picture', () => {
+    const unsupported = render(<Toolbar {...defaultProps} />);
     expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
-    unmount();
+    unsupported.unmount();
 
     vi.stubGlobal('documentPictureInPicture', { requestWindow: vi.fn() });
-    render(<Toolbar {...defaultProps} />);
+    const desktop = render(<Toolbar {...defaultProps} />);
     expect(screen.getByTestId('mini-mode-button')).toBeInTheDocument();
+    desktop.unmount();
+
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(
+      'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36'
+    );
+    render(<Toolbar {...defaultProps} />);
+    expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
     vi.unstubAllGlobals();
+    vi.restoreAllMocks();
   });
 
   it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {

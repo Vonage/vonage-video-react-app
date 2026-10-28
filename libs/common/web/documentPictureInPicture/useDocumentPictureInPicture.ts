@@ -80,8 +80,6 @@ export const useDocumentPictureInPicture = ({
       openedWindow.document.body.style.margin = '0';
       openedWindow.document.body.style.width = '100%';
       openedWindow.document.body.style.height = '100%';
-      openedWindow.document.body.style.backgroundColor = 'var(--vera-dark-grey, #2c2c2c)';
-      openedWindow.document.body.style.fontFamily = 'system-ui, -apple-system, sans-serif';
 
       // Create mount node for React portal
       const mount = openedWindow.document.createElement('div');
