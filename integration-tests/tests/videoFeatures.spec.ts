@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { expect, type BrowserContext, type Locator, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
@@ -220,7 +220,7 @@ test.describe('push-to-talk', () => {
 });
 
 test.describe('hidden participants tile', () => {
-  test('should group overflowing participants and promote a hidden active speaker', async ({
+  test('should group overflowing participants and bring a pinned hidden participant into view', async ({
     page: pageOne,
     context,
     browserName,
@@ -228,49 +228,8 @@ test.describe('hidden participants tile', () => {
   }) => {
     test.setTimeout(180_000);
 
-    const roomName = createRoomName();
-    const maxSubscriberTiles = isMobile
-      ? MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_MOBILE
-      : MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_DESKTOP;
-    const remoteParticipantNames = REMOTE_PARTICIPANT_NAMES.slice(0, maxSubscriberTiles + 1);
-    const expectedHiddenCount = remoteParticipantNames.length - (maxSubscriberTiles - 1);
-
-    await joinMeetingRoom({
-      page: pageOne,
-      username: 'Alice Adams',
-      roomName,
-      browserName,
-      audioOff: true,
-    });
-
-    const remotePages = new Map<string, Page>();
-    for (const username of remoteParticipantNames) {
-      const remotePage = await context.newPage();
-      await joinMeetingRoom({
-        page: remotePage,
-        username,
-        roomName,
-        browserName,
-        audioOff: true,
-        videoOff: true,
-      });
-      remotePages.set(username, remotePage);
-    }
-
-    const hiddenParticipantsTile = pageOne.getByTestId('hidden-participants');
-    await expect(hiddenParticipantsTile).toBeVisible({ timeout: 20000 });
-    await expect(hiddenParticipantsTile.locator('.MuiAvatar-root')).toHaveCount(
-      expectedHiddenCount
-    );
-
-    const visibleSubscribers = pageOne.locator('.subscriber:visible');
-    await expect(visibleSubscribers).toHaveCount(maxSubscriberTiles - 1);
-
-    const hiddenParticipantNames = await getHiddenParticipantNames({
-      page: pageOne,
-      participantNames: remoteParticipantNames,
-    });
-    expect(hiddenParticipantNames).toHaveLength(expectedHiddenCount);
+    const { remoteParticipantNames, hiddenParticipantNames, hiddenParticipantsTile } =
+      await joinRoomWithHiddenParticipants({ pageOne, context, browserName, isMobile });
 
     await hiddenParticipantsTile.click();
     await expect(pageOne.getByTestId('right-panel-title')).toBeVisible();
@@ -279,13 +238,44 @@ test.describe('hidden participants tile', () => {
         pageOne.locator('[data-testid^="participant-list-item"]', { hasText: username })
       ).toBeVisible();
     }
+
+    const pinnedParticipantName = hiddenParticipantNames[0];
+    await pageOne
+      .locator('[data-testid^="participant-list-item"]', { hasText: pinnedParticipantName })
+      .getByTestId('MoreVertIcon')
+      .click();
+    await pageOne
+      .getByTestId('pin-menu-item')
+      .filter({ hasText: `Pin ${pinnedParticipantName}` })
+      .click();
     await pageOne.getByTestId('right-panel-title').getByTestId('CloseIcon').click();
+
+    await expect(
+      pageOne.locator('.subscriber:visible').getByText(pinnedParticipantName, { exact: true })
+    ).toBeVisible({ timeout: 20000 });
+    await expect(hiddenParticipantsTile).toBeVisible();
+  });
+
+  test('should promote a hidden participant into view when they become the active speaker', async ({
+    page: pageOne,
+    context,
+    browserName,
+    isMobile,
+  }) => {
+    test.skip(
+      browserName !== 'chromium',
+      'active speaker detection needs the fake audio file that only the Chromium projects are launched with'
+    );
+    test.setTimeout(180_000);
+
+    const { remotePages, hiddenParticipantNames, hiddenParticipantsTile } =
+      await joinRoomWithHiddenParticipants({ pageOne, context, browserName, isMobile });
 
     const promotedParticipantName = hiddenParticipantNames[0];
     await remotePages.get(promotedParticipantName).getByTestId('MicOffToolbar').click();
 
     await expect(
-      visibleSubscribers.getByText(promotedParticipantName, { exact: true })
+      pageOne.locator('.subscriber:visible').getByText(promotedParticipantName, { exact: true })
     ).toBeVisible({ timeout: 20000 });
     await expect(hiddenParticipantsTile).toBeVisible();
   });
@@ -293,6 +283,65 @@ test.describe('hidden participants tile', () => {
 
 function createRoomName(): string {
   return crypto.randomBytes(5).toString('hex');
+}
+
+async function joinRoomWithHiddenParticipants({
+  pageOne,
+  context,
+  browserName,
+  isMobile,
+}: {
+  pageOne: Page;
+  context: BrowserContext;
+  browserName: string;
+  isMobile: boolean;
+}): Promise<{
+  remoteParticipantNames: string[];
+  remotePages: Map<string, Page>;
+  hiddenParticipantNames: string[];
+  hiddenParticipantsTile: Locator;
+}> {
+  const roomName = createRoomName();
+  const maxSubscriberTiles = isMobile
+    ? MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_MOBILE
+    : MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_DESKTOP;
+  const remoteParticipantNames = REMOTE_PARTICIPANT_NAMES.slice(0, maxSubscriberTiles + 1);
+  const expectedHiddenCount = remoteParticipantNames.length - (maxSubscriberTiles - 1);
+
+  await joinMeetingRoom({
+    page: pageOne,
+    username: 'Alice Adams',
+    roomName,
+    browserName,
+    audioOff: true,
+  });
+
+  const remotePages = new Map<string, Page>();
+  for (const username of remoteParticipantNames) {
+    const remotePage = await context.newPage();
+    await joinMeetingRoom({
+      page: remotePage,
+      username,
+      roomName,
+      browserName,
+      audioOff: true,
+      videoOff: true,
+    });
+    remotePages.set(username, remotePage);
+  }
+
+  const hiddenParticipantsTile = pageOne.getByTestId('hidden-participants');
+  await expect(hiddenParticipantsTile).toBeVisible({ timeout: 20000 });
+  await expect(hiddenParticipantsTile.locator('.MuiAvatar-root')).toHaveCount(expectedHiddenCount);
+  await expect(pageOne.locator('.subscriber:visible')).toHaveCount(maxSubscriberTiles - 1);
+
+  const hiddenParticipantNames = await getHiddenParticipantNames({
+    page: pageOne,
+    participantNames: remoteParticipantNames,
+  });
+  expect(hiddenParticipantNames).toHaveLength(expectedHiddenCount);
+
+  return { remoteParticipantNames, remotePages, hiddenParticipantNames, hiddenParticipantsTile };
 }
 
 async function joinMeetingRoom({
