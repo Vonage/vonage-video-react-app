@@ -61,7 +61,7 @@ const useChat = ({ signal }: UseChatProps): UseChat => {
         });
       } catch (error) {
         notifications$.actions.push({
-          type: 'error',
+          type: 'warning',
           message: t('chatErrors.sendFailed'),
           expirationMs: env.NOTIFICATION_DURATION_MS,
         });

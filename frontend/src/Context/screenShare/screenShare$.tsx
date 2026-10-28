@@ -12,6 +12,7 @@ import {
   handleApplyAdvancedSettingsError,
 } from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { attempt } from '@common/execution';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import { isNil } from 'json-storage-formatter';
 import frontendLogger from '../../logger';
 import i18n from '../../i18n';
@@ -185,7 +186,10 @@ const screenShare$ = createContext(initialState, {
 
           // Publishing the screen sharing stream
           try {
-            await publish(publisher);
+            await idempotentCallbackWithRetry(() => publish(publisher), {
+              retries: 2,
+              delayMs: 500,
+            });
           } catch (error) {
             frontendLogger.reportError(error, {
               eventSource: 'screenShare$.toggleShareScreen.publish',
@@ -195,7 +199,7 @@ const screenShare$ = createContext(initialState, {
             publisher.destroy();
 
             notifications$.actions.push({
-              type: 'error',
+              type: 'warning',
               message: i18n.t('screenSharing.errors', {
                 shareScreenError: error instanceof Error ? error.message : 'Unknown error',
               }),

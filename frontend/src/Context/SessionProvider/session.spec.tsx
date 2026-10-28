@@ -6,6 +6,7 @@ import { Publisher, Stream } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import { EMOJI_DISPLAY_DURATION } from '@utils/constants';
 import type {
   SignalEvent,
   StreamPropertyChangedEvent,
@@ -22,6 +23,7 @@ vi.mock('@utils/VonageVideoClient');
 vi.mock('@utils/constants', () => ({
   MAX_PIN_COUNT_MOBILE: 1,
   MAX_PIN_COUNT_DESKTOP: 1,
+  EMOJI_DISPLAY_DURATION: 5000,
 }));
 
 vi.mock('@api/fetchCredentials');
@@ -34,6 +36,8 @@ const mockVideoClient = {
 // A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+
+const subscriberWrappersRefHistory: SubscriberWrapper[][] = [];
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
@@ -54,6 +58,7 @@ describe('SessionProvider', () => {
       pinSubscriber,
       isMaxPinned,
       lastStreamUpdate,
+      emojiQueue,
       messages,
       unreadCount,
     } = useSessionContext();
@@ -63,6 +68,10 @@ describe('SessionProvider', () => {
         void joinRoom({ sessionKey: validSessionKey });
       }
     }, [joinRoom]);
+
+    useEffect(() => {
+      subscriberWrappersRefHistory.push(subscriberWrappers);
+    }, [subscriberWrappers]);
 
     return (
       <div>
@@ -129,6 +138,9 @@ describe('SessionProvider', () => {
         <span data-testid="reconnecting">{String(reconnecting)}</span>
         <span data-testid="archiveId">{String(archiveId)}</span>
         <span data-testid="isMaxPinned">{String(isMaxPinned)}</span>
+        <span data-testid="emojiSenders">
+          {emojiQueue.map((emojiWrapper) => emojiWrapper.name).join(',')}
+        </span>
         <span data-testid="unreadCount">{unreadCount}</span>
         <span data-testid="messageCount">{messages.length}</span>
         <span data-testid="streamPropertyChanged">
@@ -139,6 +151,8 @@ describe('SessionProvider', () => {
   };
 
   beforeEach(() => {
+    subscriberWrappersRefHistory.length = 0;
+
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -284,6 +298,44 @@ describe('SessionProvider', () => {
         expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub2');
         expect(getByTestId('subscriberWrappers').children.length).toBe(2);
       });
+    });
+
+    it('resolves the emoji sender from the current subscribers without replacing the subscriberWrappers array', async () => {
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        vonageVideoClient.emit('subscriberVideoElementCreated', {
+          id: 'sub1',
+          isScreenshare: false,
+          subscriber: {
+            stream: { connection: { connectionId: 'sub1-connection' }, name: 'Sub One' },
+          },
+        } as unknown as SubscriberWrapper);
+      });
+      await waitFor(() => expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1'));
+
+      const wrappersBeforeEmoji = subscriberWrappersRefHistory.at(-1);
+
+      const realSetTimeout = globalThis.setTimeout;
+      vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
+        handler: TimerHandler,
+        timeout?: number,
+        ...args: unknown[]
+      ) => {
+        if (timeout === EMOJI_DISPLAY_DURATION) return 0;
+        return realSetTimeout(handler, timeout, ...args);
+      }) as typeof setTimeout);
+
+      act(() => {
+        vonageVideoClient.emit('signal:emoji', {
+          type: 'signal:emoji',
+          data: JSON.stringify({ emoji: '👍', time: 1 }),
+          from: { connectionId: 'sub1-connection' },
+        } as unknown as SignalEvent);
+      });
+
+      await waitFor(() => expect(getByTestId('emojiSenders')).toHaveTextContent('Sub One'));
+      expect(subscriberWrappersRefHistory.at(-1)).toBe(wrappersBeforeEmoji);
     });
 
     it('removing a subscriber should remove it from the subscriberWrappers', async () => {
