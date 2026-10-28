@@ -104,7 +104,9 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
-    <MiniModeButton isOverflowButton handleClick={closeMenu} key="MiniModeButton" />,
+    buttonVisibility.miniMode && (
+      <MiniModeButton isOverflowButton handleClick={closeMenu} key="MiniModeButton" />
+    ),
     buttonVisibility.emojis && (
       <EmojiGridButton
         isEmojiGridOpen={isEmojiGridOpen}

@@ -177,13 +177,24 @@ describe('Toolbar', () => {
     expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
   });
 
+  it('renders the Mini Mode button only when the browser supports Document Picture-in-Picture', () => {
+    const { unmount } = render(<Toolbar {...defaultProps} />);
+    expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
+    unmount();
+
+    vi.stubGlobal('documentPictureInPicture', { requestWindow: vi.fn() });
+    render(<Toolbar {...defaultProps} />);
+    expect(screen.getByTestId('mini-mode-button')).toBeInTheDocument();
+    vi.unstubAllGlobals();
+  });
+
   it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {
     env.partialUpdate({ ALLOW_CHAT: false, SHOW_PARTICIPANT_LIST: false });
 
     render(<Toolbar {...defaultProps} />);
 
     expect(mockUseToolbarButtons).toHaveBeenLastCalledWith(
-      expect.objectContaining({ numberOfToolbarButtons: 7 })
+      expect.objectContaining({ numberOfToolbarButtons: 6 })
     );
   });
 });

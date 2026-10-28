@@ -1,9 +1,11 @@
 import isReportIssueEnabled from '@utils/isReportIssueEnabled';
+import isMiniModeSupported from '@Context/MiniMode/isMiniModeSupported';
 import { env } from '../../../../env';
 import shouldDisplayScreenShareButton from '../../../ScreenSharingButton/shouldDisplayScreenShareButton';
 
 export type ToolbarButtonVisibility = {
   screenShare: boolean;
+  miniMode: boolean;
   emojis: boolean;
   captions: boolean;
   archiving: boolean;
@@ -20,6 +22,7 @@ export type ToolbarButtonVisibility = {
  */
 const getToolbarButtonVisibility = (): ToolbarButtonVisibility => ({
   screenShare: shouldDisplayScreenShareButton(),
+  miniMode: isMiniModeSupported(),
   emojis: env.ALLOW_EMOJIS,
   captions: env.ALLOW_CAPTIONS,
   archiving: env.ALLOW_ARCHIVING,

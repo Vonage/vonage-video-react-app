@@ -14,6 +14,7 @@ const makeProps = (overrides: Partial<MiniCallWindowProps> = {}): MiniCallWindow
   containerWidth: 360,
   isAudioEnabled: true,
   isVideoEnabled: true,
+  isHostedVideoEnabled: true,
   isRecording: false,
   onToggleAudio: vi.fn(),
   onToggleVideo: vi.fn(),
@@ -83,13 +84,25 @@ describe('MiniCallWindow', () => {
     expect(nameContainer).toHaveStyle({ maxWidth: '328px' });
   });
 
-  it('shows the avatar fallback when video is disabled even with a hosted element', () => {
+  it('shows the avatar only when the hosted participant has no video, not when the local camera is off', () => {
     const videoElement = document.createElement('video');
 
-    render(
-      <MiniCallWindow {...makeProps({ hostedElement: videoElement, isVideoEnabled: false })} />
+    const { rerender } = render(
+      <MiniCallWindow
+        {...makeProps({
+          hostedElement: videoElement,
+          isVideoEnabled: false,
+          isHostedVideoEnabled: true,
+        })}
+      />
     );
+    expect(screen.queryByText('MA')).not.toBeInTheDocument();
 
+    rerender(
+      <MiniCallWindow
+        {...makeProps({ hostedElement: videoElement, isHostedVideoEnabled: false })}
+      />
+    );
     expect(screen.getByText('MA')).toBeInTheDocument();
   });
 

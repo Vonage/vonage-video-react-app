@@ -1,8 +1,7 @@
 import { ReactElement, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import MiniModeIcon from './MiniModeIcon';
+import MiniCallWindowButton from './MiniCallWindowButton';
 import AvatarInitials from '../../AvatarInitials';
 import RecordingIndicator from '../RecordingIndicator';
 import NameDisplay from '../NameDisplay';
@@ -17,6 +16,7 @@ export type MiniCallWindowProps = {
   containerWidth: number;
   isAudioEnabled: boolean;
   isVideoEnabled: boolean;
+  isHostedVideoEnabled: boolean;
   isRecording: boolean;
   onToggleAudio: () => void;
   onToggleVideo: () => void;
@@ -34,6 +34,7 @@ const MiniCallWindow = ({
   containerWidth,
   isAudioEnabled,
   isVideoEnabled,
+  isHostedVideoEnabled,
   isRecording,
   onToggleAudio,
   onToggleVideo,
@@ -42,7 +43,11 @@ const MiniCallWindow = ({
 }: MiniCallWindowProps): ReactElement => {
   const { t } = useTranslation();
   const videoHostRef = useRef<HTMLDivElement>(null);
-  const showAvatar = !hostedElement || !isVideoEnabled;
+  const showAvatar = !hostedElement || !isHostedVideoEnabled;
+  const audioLabel = isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip');
+  const videoLabel = isVideoEnabled
+    ? t('miniMode.cameraOff.tooltip')
+    : t('miniMode.cameraOn.tooltip');
 
   useLayoutEffect(() => {
     const host = videoHostRef.current;
@@ -92,91 +97,45 @@ const MiniCallWindow = ({
         )}
       </div>
       <div className="flex items-center justify-center gap-2 px-3 py-2">
-        <Tooltip title={isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-mute"
-            onClick={onToggleAudio}
-            aria-label={isAudioEnabled ? t('miniMode.mute.tooltip') : t('miniMode.unmute.tooltip')}
-            className="bg-vera-dark-background! rounded-full overflow-hidden"
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '9999px',
-              boxSizing: 'border-box',
-              padding: 4,
-            }}
-          >
-            <MiniModeIcon
-              name={isAudioEnabled ? 'microphone-solid' : 'mic-mute-solid'}
-              color={isAudioEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
-              size={20}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip
-          title={isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip')}
+        <MiniCallWindowButton
+          data-testid="mini-mode-mute"
+          title={audioLabel}
+          aria-label={audioLabel}
+          onClick={onToggleAudio}
         >
-          <IconButton
-            data-testid="mini-mode-camera"
-            onClick={onToggleVideo}
-            aria-label={
-              isVideoEnabled ? t('miniMode.cameraOff.tooltip') : t('miniMode.cameraOn.tooltip')
-            }
-            className="bg-vera-dark-background! rounded-full overflow-hidden"
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '9999px',
-              boxSizing: 'border-box',
-              padding: 4,
-            }}
-          >
-            <MiniModeIcon
-              name={isVideoEnabled ? 'video-solid' : 'video-off-solid'}
-              color={isVideoEnabled ? 'var(--vera-on-secondary-light)' : 'var(--vera-error)'}
-              size={20}
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('miniMode.expand.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-expand"
-            onClick={onExpand}
-            aria-label={t('miniMode.expand.ariaLabel')}
-            className="bg-vera-dark-background! rounded-full overflow-hidden"
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '9999px',
-              boxSizing: 'border-box',
-              padding: 4,
-            }}
-          >
-            <MiniModeIcon
-              name="export-solid"
-              color="var(--vera-on-secondary-light)"
-              size={20}
-              className="rotate-180"
-            />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title={t('miniMode.leave.tooltip')}>
-          <IconButton
-            data-testid="mini-mode-leave"
-            onClick={onLeave}
-            aria-label={t('miniMode.leave.ariaLabel')}
-            className="bg-vera-error! rounded-full overflow-hidden"
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '9999px',
-              boxSizing: 'border-box',
-              padding: 4,
-            }}
-          >
-            <MiniModeIcon name="end-call-solid" color="var(--vera-on-secondary-light)" size={20} />
-          </IconButton>
-        </Tooltip>
+          <MiniModeIcon
+            name={isAudioEnabled ? 'microphone-solid' : 'mic-mute-solid'}
+            className={isAudioEnabled ? 'text-vera-on-secondary-light' : 'text-vera-error'}
+          />
+        </MiniCallWindowButton>
+        <MiniCallWindowButton
+          data-testid="mini-mode-camera"
+          title={videoLabel}
+          aria-label={videoLabel}
+          onClick={onToggleVideo}
+        >
+          <MiniModeIcon
+            name={isVideoEnabled ? 'video-solid' : 'video-off-solid'}
+            className={isVideoEnabled ? 'text-vera-on-secondary-light' : 'text-vera-error'}
+          />
+        </MiniCallWindowButton>
+        <MiniCallWindowButton
+          data-testid="mini-mode-expand"
+          title={t('miniMode.expand.tooltip')}
+          aria-label={t('miniMode.expand.ariaLabel')}
+          onClick={onExpand}
+        >
+          <MiniModeIcon name="export-solid" className="rotate-180 text-vera-on-secondary-light" />
+        </MiniCallWindowButton>
+        <MiniCallWindowButton
+          data-testid="mini-mode-leave"
+          variant="danger"
+          title={t('miniMode.leave.tooltip')}
+          aria-label={t('miniMode.leave.ariaLabel')}
+          onClick={onLeave}
+        >
+          <MiniModeIcon name="end-call-solid" className="text-vera-on-secondary-light" />
+        </MiniCallWindowButton>
       </div>
     </div>
   );

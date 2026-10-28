@@ -44,19 +44,11 @@ describe('MiniModeIcon', () => {
     expect(icon.innerHTML).toContain('height="100%"');
   });
 
-  it('applies the colour, size, and className to the icon container', () => {
-    render(<MiniModeIcon name="styled-icon" color="#ff0000" size={32} className="rotate-180" />);
+  it('merges caller classes with the default icon size', () => {
+    render(<MiniModeIcon name="styled-icon" className="rotate-180 text-vera-error" />);
 
     const icon = screen.getByTestId('mini-mode-icon-styled-icon');
-    expect(icon).toHaveStyle({ color: '#ff0000', width: '32px', height: '32px' });
-    expect(icon).toHaveClass('rotate-180');
-  });
-
-  it('renders with default colour and size when not provided', () => {
-    render(<MiniModeIcon name="default-icon" />);
-
-    const icon = screen.getByTestId('mini-mode-icon-default-icon');
-    expect(icon).toHaveStyle({ color: 'currentColor', width: '20px', height: '20px' });
+    expect(icon).toHaveClass('inline-flex', 'size-5', 'rotate-180', 'text-vera-error');
   });
 
   it('does not refetch an icon that is already cached', async () => {

@@ -11,19 +11,11 @@ export type MiniModeButtonProps = {
 };
 
 /**
- * Simplified toolbar control for Mini Mode (Document Picture-in-Picture).
- * Hidden when the API is missing or ALLOW_MINI_MODE is false.
+ * Toolbar control that opens and closes Mini Mode (Document Picture-in-Picture).
  */
-const MiniModeButton = ({
-  isOverflowButton,
-  handleClick,
-}: MiniModeButtonProps): ReactElement | false => {
+const MiniModeButton = ({ isOverflowButton, handleClick }: MiniModeButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const { isSupported, isOpen, enter, exit } = useMiniMode();
-
-  if (!isSupported) {
-    return false;
-  }
+  const { isOpen, enter, exit } = useMiniMode();
 
   const onClick = () => {
     if (isOpen) {
@@ -44,11 +36,7 @@ const MiniModeButton = ({
         isOverflowButton={isOverflowButton}
         data-testid="mini-mode-button"
         icon={
-          <VividIcon
-            name="export-solid"
-            customSize={-5}
-            style={{ color: 'var(--vera-on-secondary-light)' }}
-          />
+          <VividIcon name="export-solid" customSize={-5} className="text-vera-on-secondary-light" />
         }
       />
     </Tooltip>

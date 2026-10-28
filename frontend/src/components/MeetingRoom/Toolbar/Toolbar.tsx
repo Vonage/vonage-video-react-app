@@ -114,7 +114,7 @@ const Toolbar = ({
       key="LayoutButton"
       isPinningPresent={isPinningPresent}
     />,
-    <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
+    buttonVisibility.miniMode && <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
     buttonVisibility.emojis && (
       <EmojiGridButton
         isEmojiGridOpen={openEmojiGridDesktop}

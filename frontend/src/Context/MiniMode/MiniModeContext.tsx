@@ -15,15 +15,14 @@ import attempt from '@common/execution/attempt';
 import useSessionContext from '@hooks/useSessionContext';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
-import { env } from '../../env';
 import {
-  isDocumentPictureInPictureSupported,
   registerEnterPictureInPictureAction,
   useDocumentPictureInPicture,
 } from '@web/documentPictureInPicture';
 import frontendLogger from '../../logger';
 import type { SubscriberWrapper } from '../../types/session';
 import MiniCallWindow from '../../components/MeetingRoom/MiniCallWindow';
+import isMiniModeSupported from './isMiniModeSupported';
 
 const PIP_WINDOW_SIZE = { width: 360, height: 260 };
 
@@ -148,7 +147,15 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
   const isOpenRef = useRef(pipWindow !== null);
 
   const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
-  const isSupported = env.ALLOW_MINI_MODE && isDocumentPictureInPictureSupported();
+  const isSupported = isMiniModeSupported();
+  const isHostedVideoEnabled = (() => {
+    if (!hostedElement) return false;
+    if (hostedElement === publisherVideoElement) return isVideoEnabled;
+    const hostedSubscriberWrapper = subscriberWrappers.find(
+      (wrapper) => wrapper.element === hostedElement
+    );
+    return !!hostedSubscriberWrapper?.subscriber.stream?.hasVideo;
+  })();
   const isOpen = pipWindow !== null;
 
   // Keep refs in sync with latest values
@@ -311,6 +318,7 @@ export const MiniModeProvider = ({ children }: MiniModeProviderProps): ReactElem
             containerWidth={PIP_WINDOW_SIZE.width}
             isAudioEnabled={isAudioEnabled}
             isVideoEnabled={isVideoEnabled}
+            isHostedVideoEnabled={isHostedVideoEnabled}
             isRecording={isRecording}
             onToggleAudio={toggleAudio}
             onToggleVideo={toggleVideo}

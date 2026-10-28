@@ -1,14 +1,11 @@
 import { ReactElement } from 'react';
+import { twMerge } from 'tailwind-merge';
 import useIconSvg from './useIconSvg';
 
 export type MiniModeIconProps = {
   /** Vivid icon name, e.g. `microphone-solid`. */
   name: string;
-  /** CSS color for the icon (defaults to `currentColor`). */
-  color?: string;
-  /** Pixel size of the square icon. */
-  size?: number;
-  /** Extra tailwind/utility classes for the root element. */
+  /** Tailwind classes for the root element, e.g. the icon color. */
   className?: string;
 };
 
@@ -25,27 +22,16 @@ export type MiniModeIconProps = {
  * Browsers do not execute `<script>` injected via `innerHTML`, and the CDN
  * serves static `image/svg+xml` content.
  *
- * @param {MiniModeIconProps} props - Icon name, color, and size
+ * @param {MiniModeIconProps} props - Icon name and root classes
  * @returns {ReactElement} Inline SVG icon
  */
-const MiniModeIcon = ({
-  name,
-  color = 'currentColor',
-  size = 20,
-  className,
-}: MiniModeIconProps): ReactElement => {
+const MiniModeIcon = ({ name, className }: MiniModeIconProps): ReactElement => {
   const svgContent = useIconSvg(name);
 
   return (
     <div
-      className={className}
+      className={twMerge('inline-flex size-5', className)}
       data-testid={`mini-mode-icon-${name}`}
-      style={{
-        display: 'inline-flex',
-        width: size,
-        height: size,
-        color,
-      }}
       // The SVG comes from the trusted Vonage CDN (VIVID icon set) and icon
       // names are hardcoded constants — no user-supplied HTML is ever injected.
       dangerouslySetInnerHTML={{ __html: svgContent }}

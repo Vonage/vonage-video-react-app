@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import copyStylesToDocument from './copyStylesToDocument';
 import syncStylesToWindow from './syncStylesToWindow';
+import waitForStylesheets from './waitForStylesheets';
 
 export type DocumentPictureInPictureWindowOptions = {
   width: number;
@@ -68,6 +69,11 @@ export const useDocumentPictureInPicture = ({
 
       // Copy styles from main document - essential for MUI/Tailwind rendering
       copyStylesToDocument(document, openedWindow.document);
+      await waitForStylesheets(openedWindow.document);
+
+      if (openedWindow.closed) {
+        throw new Error('Picture-in-Picture window closed before its styles loaded');
+      }
 
       // Apply minimal inline styles to the PiP window
       openedWindow.document.documentElement.style.height = '100%';

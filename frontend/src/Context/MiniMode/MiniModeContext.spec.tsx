@@ -161,6 +161,21 @@ describe('MiniModeContext', () => {
     expect(screen.getByTestId('mini-mode-recording-indicator')).toBeInTheDocument();
   });
 
+  it('keeps showing the remote video when the local camera is off', async () => {
+    const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
+    const { miniModeContext } = render({
+      sessionInitialValue: { subscriberWrappers: [cameraA] },
+      publisherInitialValue: { isVideoEnabled: false },
+    });
+
+    await act(async () => {
+      await miniModeContext.current?.enter();
+    });
+
+    expect(pipState.mountNode?.contains(cameraA.element)).toBe(true);
+    expect(screen.queryByText('AL')).not.toBeInTheDocument();
+  });
+
   it('picks the active speaker camera subscriber, skipping screenshares', async () => {
     const screenshare = makeSubscriberWrapper('screenshare', 'Screen', true);
     const cameraA = makeSubscriberWrapper('camera-a', 'Alice A');
@@ -391,7 +406,7 @@ function makeSubscriberWrapper(id: string, name: string, isScreenshare = false):
     id,
     element: document.createElement('video'),
     subscriber: {
-      stream: { name, initials: name.slice(0, 2).toUpperCase() },
+      stream: { name, initials: name.slice(0, 2).toUpperCase(), hasVideo: true },
     } as unknown as Subscriber,
     isScreenshare,
     isPinned: false,
