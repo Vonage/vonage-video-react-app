@@ -122,7 +122,7 @@ describe('useChat', () => {
 
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        type: 'error',
+        type: 'warning',
         message: "Your message couldn't be sent. Please check your network and try again.",
       })
     );

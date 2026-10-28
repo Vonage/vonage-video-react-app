@@ -278,15 +278,9 @@ const SessionProvider = ({
     }
   };
 
-  const handleEmoji = useCallback(
-    (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
-    },
-    [onEmoji]
-  );
+  const handleEmoji = useStableCallback((emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
+  });
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -611,7 +605,7 @@ const SessionProvider = ({
       } catch (error) {
         frontendLogger.reportError(error, { eventSource: 'session.forceMute.error' });
         notifications$.actions.push({
-          type: 'error',
+          type: 'warning',
           message: t('participants.mute.forceMuteFailed'),
           expirationMs: env.NOTIFICATION_DURATION_MS,
         });
