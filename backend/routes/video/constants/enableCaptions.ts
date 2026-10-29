@@ -1,4 +1,5 @@
 import { HandlersConfig } from '@api-lib';
+import getCaptionsTranslationOptions from '../helpers/getCaptionsTranslationOptions';
 
 const enableCaptions: HandlersConfig['enableCaptions'] = {
   addDefaults: ({ sessionKey, captionOptions }) => ({
@@ -12,6 +13,7 @@ const enableCaptions: HandlersConfig['enableCaptions'] = {
       // This is useful for real-time applications where the captions need to be updated frequently.
       // However, it may also increase the number of inaccuracies in the captions.
       partialCaptions: 'true',
+      ...getCaptionsTranslationOptions(),
       ...captionOptions,
     },
   }),

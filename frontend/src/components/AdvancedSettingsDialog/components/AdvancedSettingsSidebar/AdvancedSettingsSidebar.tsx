@@ -4,23 +4,33 @@ import classNames from 'classnames';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { VividIcon } from '@ui';
 import type { AdvancedSettingsTab } from '../../schemas';
+import isCaptionsTabAvailable from '../../helpers/isCaptionsTabAvailable';
 
-const tabs: AdvancedSettingsTab[] = ['general', 'video', 'screenSharing', 'audio', 'statistics'];
+const tabs: AdvancedSettingsTab[] = [
+  'general',
+  'video',
+  'screenSharing',
+  'audio',
+  'captions',
+  'statistics',
+];
 const { setSelectedTab } = advancedSettings$.actions;
 
 const AdvancedSettingsSidebar = (): ReactElement => {
   const { t } = useTranslation();
   const selectedTab = advancedSettings$.use.select((state) => state.selectedTab);
+  const visibleTabs = tabs.filter((tab) => tab !== 'captions' || isCaptionsTabAvailable());
 
   return (
     <div className="flex w-full flex-row gap-1 overflow-x-auto border-b border-vera-border bg-vera-background p-1 md:h-full md:w-55 md:flex-col md:gap-0.5 md:overflow-x-visible md:border-b-0 md:border-r">
-      {tabs.map((tab) => {
+      {visibleTabs.map((tab) => {
         const isSelected = selectedTab === tab;
         const tabIcon = (() => {
           if (tab === 'general') return 'gear-solid';
           if (tab === 'video') return 'video-solid';
           if (tab === 'screenSharing') return 'screen-share-solid';
           if (tab === 'audio') return 'microphone-solid';
+          if (tab === 'captions') return 'closed-captioning-solid';
           if (tab === 'statistics') return 'cell-reception-line';
           return null;
         })();

@@ -1,7 +1,8 @@
 import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { env } from '../../../../env';
 import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
 
 describe('AdvancedSettingsSidebar', () => {
@@ -17,6 +18,29 @@ describe('AdvancedSettingsSidebar', () => {
     expect(screen.getByTestId('advanced-settings-tab-audio-icon')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-statistics')).toBeInTheDocument();
     expect(screen.getByTestId('advanced-settings-tab-statistics-icon')).toBeInTheDocument();
+  });
+
+  describe('captions tab', () => {
+    afterEach(() => {
+      env.reset();
+    });
+
+    it('is shown when captions and caption translation are allowed', () => {
+      env.partialUpdate({ ALLOW_CAPTIONS: true, ALLOW_CAPTION_TRANSLATION: true });
+
+      render(<AdvancedSettingsSidebar />);
+
+      expect(screen.getByTestId('advanced-settings-tab-captions')).toBeInTheDocument();
+      expect(screen.getByTestId('advanced-settings-tab-captions-icon')).toBeInTheDocument();
+    });
+
+    it('is hidden when captions are not allowed', () => {
+      env.partialUpdate({ ALLOW_CAPTIONS: false, ALLOW_CAPTION_TRANSLATION: true });
+
+      render(<AdvancedSettingsSidebar />);
+
+      expect(screen.queryByTestId('advanced-settings-tab-captions')).not.toBeInTheDocument();
+    });
   });
 
   it('updates selected tab when clicking another tab', async () => {
