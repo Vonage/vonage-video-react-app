@@ -1,0 +1,47 @@
+frontend/src/locales/it.json
+  s_2203d2d1b7044b::t_6b5c966c3df9c3 296
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_2203d2d1b7044b::t_004a389bfca91e 263,274-275,283
+  s_2203d2d1b7044b::t_3fa0d94e206349 235-236,240
+  s_2203d2d1b7044b::t_2eabb93e1ef801 262,271-272,282,284-289
+  s_2203d2d1b7044b::t_844cad7a954e6a 273
+  s_2203d2d1b7044b::t_dced1d9c3c720f 290
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_2203d2d1b7044b::t_0f85f5c33c8a6b 230-231,233-236,238
+  s_2203d2d1b7044b::t_d7cc5c3917872d 237
+  s_2203d2d1b7044b::t_46251fcf125e8b 49
+frontend/src/locales/ja.json
+  s_2203d2d1b7044b::t_d6e2312cdbab2a 306
+frontend/src/locales/es.json
+  s_2203d2d1b7044b::t_0a0bebdee7de36 296
+frontend/src/locales/es-MX.json
+  s_2203d2d1b7044b::t_ea24208cc05296 296
+frontend/src/locales/de.json
+  s_2203d2d1b7044b::t_9cbeedd1934770 296
+frontend/src/locales/en.json
+  s_2203d2d1b7044b::t_c3eed7b7046245 296
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_2203d2d1b7044b::t_0b0c144b0dbf46 312-329
+  s_2203d2d1b7044b::t_9c931c726a3150 16
+frontend/src/Context/SessionProvider/session.tsx
+  s_2203d2d1b7044b::t_a2187bb4cf8af1 40,43
+  s_2203d2d1b7044b::t_8f76eb5dc133ce 190
+  s_2203d2d1b7044b::t_5821b0706ed01f 523-534
+  s_2203d2d1b7044b::t_04286575ac7836 568
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d4b59cdcff4ec0254c76e08829b3411fb2d0dac",
+  "prompts": {},
+  "sessions": {
+    "s_2203d2d1b7044b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88d653f5-750e-4774-9985-be67cf166726",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
