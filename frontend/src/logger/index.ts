@@ -1,3 +1,7 @@
 import { FrontendLogger } from './FrontendLogger';
 
-export default new FrontendLogger();
+const frontendLogger = new FrontendLogger();
+
+export { frontendLogger };
+
+export default frontendLogger;

@@ -35,6 +35,12 @@ class JiraFeedbackService implements FeedbackService {
   }
 
   async reportIssue(data: FeedbackData): Promise<ReportIssueReturn> {
+    // Defense in depth: reject oversized attachments before creating the ticket or allocating
+    // a Buffer, even if the route-level validation is ever bypassed.
+    if (data.attachment && data.attachment.length > this.attachmentMaxBase64Length) {
+      throw new Error('Attachment exceeds the maximum allowed size.');
+    }
+
     const feedbackIssueData = {
       fields: {
         project: {
@@ -93,11 +99,6 @@ class JiraFeedbackService implements FeedbackService {
   ): Promise<ReportIssueReturn> {
     if (!/^[A-Z]+-\d+$/.test(key)) {
       throw new Error(`Invalid Jira issue key: ${key}`);
-    }
-    // Defense in depth: reject oversized attachments before allocating a Buffer,
-    // even if the route-level validation is ever bypassed.
-    if (attachment.length > this.attachmentMaxBase64Length) {
-      throw new Error('Attachment exceeds the maximum allowed size.');
     }
     const fileBuffer = Buffer.from(attachment, 'base64');
     const formData = new FormData();

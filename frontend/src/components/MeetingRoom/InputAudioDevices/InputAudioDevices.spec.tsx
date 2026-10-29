@@ -2,7 +2,6 @@ import { describe, it, beforeEach, vi, expect } from 'vitest';
 import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import { env } from '../../../env';
 import {
   makeMediaDeviceInfos,
   makeMediaStreamMock,
@@ -24,10 +23,6 @@ const defaultAudioDevice = devices.find((d) => d.kind === 'audioinput')!;
 describe('InputAudioDevices Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    env.partialUpdate({
-      MEETING_ROOM_ALLOW_DEVICE_SELECTION: true,
-    });
 
     // Mock the native devices API - must be in beforeEach because vi.restoreAllMocks() clears them
     setupWindowNavigatorMock({
@@ -127,16 +122,6 @@ describe('InputAudioDevices Component', () => {
     // The default audio device should be selected
     const checkIcon = screen.getByTestId('vivid-icon-check-line');
     expect(checkIcon).toBeInTheDocument();
-  });
-
-  it('is not rendered when allowDeviceSelection is false', () => {
-    env.partialUpdate({
-      MEETING_ROOM_ALLOW_DEVICE_SELECTION: false,
-    });
-
-    render(<InputAudioDevices handleToggle={mockHandleToggle} />);
-
-    expect(screen.queryByText('Microphone')).not.toBeInTheDocument();
   });
 
   it('handles click event when audioDeviceId is found', async () => {

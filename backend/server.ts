@@ -1,15 +1,24 @@
-// loads environment variables from .env file
-import './helpers/config';
+// needs to go on top since it also loads environment variables from .env file
+import loadConfig from './helpers/config';
 
 import express from 'express';
 import type { Express, Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
-import cors from 'cors';
 import { Server } from 'http';
 import router from './routes';
 import { fileURLToPath } from 'url';
-import { errorHandler, helmetMiddleware, rateLimitMiddleware } from './middleware';
+import {
+  authMiddleware,
+  corsMiddleware,
+  errorHandler,
+  helmetMiddleware,
+  rateLimitMiddleware,
+} from './middleware';
+import skipForFeedbackReport from './middleware/skipForFeedbackReport';
+import logAuthFeatures from './middleware/authMiddleware/helpers/logAuthFeatures';
+import readCallbackPath from './routes/auth/helpers/readCallbackPath';
+import { SIGN_IN_PATH, SIGN_OUT_PATH } from './routes/auth/constants';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -24,34 +33,41 @@ if (process.env.__IS_CJS__) {
 
 const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
+const authCallbackPaths = (() => {
+  const authConfig = loadConfig();
+
+  return authConfig.authEnabled ? [readCallbackPath(authConfig)] : [];
+})();
+
 const app: Express = express();
-const jsonParser = express.json({ limit: '20mb' });
-const bodyParserJson = bodyParser.json();
 
 app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
-app.use((request, response, next) => {
-  if (request.path === '/feedback/report') {
-    next();
-    return;
-  }
-
-  jsonParser(request, response, next);
-});
-app.use(express.urlencoded({ limit: '20mb', extended: true }));
-app.use(cors({ origin: true, credentials: true }));
-app.use((request, response, next) => {
-  if (request.path === '/feedback/report') {
-    next();
-    return;
-  }
-
-  bodyParserJson(request, response, next);
-});
+app.use(skipForFeedbackReport(express.json({ limit: '20mb' })));
+app.use(skipForFeedbackReport(express.urlencoded({ limit: '20mb', extended: true })));
+app.use(corsMiddleware());
+app.use(skipForFeedbackReport(bodyParser.json()));
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
+
+app.use(
+  authMiddleware({
+    excludedPaths: [
+      '/_/health',
+      '/v2/hooks/session',
+      '/v2/hooks/captions',
+      '/v2/hooks/archive',
+      '/.well-known/apple-app-site-association',
+      '/.well-known/assetlinks.json',
+      SIGN_IN_PATH,
+      SIGN_OUT_PATH,
+      ...authCallbackPaths,
+    ],
+  })
+);
+
 app.use(router);
 
 app.use((_req, res, next) => {
@@ -75,6 +91,7 @@ const startServer: (port?: number) => Promise<Server> = (port = defaultPort) => 
       res(server);
 
       console.log('Server listening on port', port);
+      logAuthFeatures();
 
       if (process.env.FRONTEND_TARGET) {
         console.log('App listening at', process.env.FRONTEND_TARGET);

@@ -9,5 +9,4 @@ export {
   type SelectFieldOption,
   type SelectFieldProps,
 } from './components/SelectField';
-export { default as SwitchField, type SwitchFieldProps } from './components/SwitchField';
 export { default as VividIcon, type VividIconProps } from './components/VividIcon';

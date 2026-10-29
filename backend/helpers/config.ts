@@ -1,7 +1,12 @@
 import dotenv from 'dotenv';
 import path from 'node:path';
-import type { Config, FeedbackConfig } from '../types/config';
+import type { AuthConfig, Config, FeedbackConfig, LoggerConfig } from '../types/config';
+import AuthConfigSchema from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+import CorsConfigSchema, {
+  type CorsConfig,
+} from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 import { fileURLToPath } from 'node:url';
+import assertCorsMatchesAuth from './assertCorsMatchesAuth';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -14,9 +19,11 @@ if (process.env.__IS_CJS__) {
   runtimeDir = path.dirname(fileURLToPath(import.meta.url));
 }
 
-dotenv.config({ path: path.join(runtimeDir, '.env') });
+dotenv.config({ path: path.join(runtimeDir, '.env'), override: true });
 
-const DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH = 2_000_000;
+// Base64 length of the largest file the web FilePicker accepts (maxFileSize = 2e7 bytes):
+// 4 * ceil(2e7 / 3). Full-resolution PNG screenshots on HiDPI displays can reach several MB.
+const DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH = 26_666_668;
 
 const readAttachmentMaxBase64Length = (): number => {
   const value = process.env.JIRA_ATTACHMENT_MAX_BASE64_LENGTH;
@@ -38,6 +45,11 @@ const loadConfig = (): Config => {
 
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
+  const authConfig = loadAuthConfig();
+  const corsConfig = loadCorsConfig();
+
+  assertCorsMatchesAuth({ authConfig, corsConfig });
+
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
     apiUrl: process.env.JIRA_API_URL,
@@ -49,8 +61,12 @@ const loadConfig = (): Config => {
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
     severityId: process.env.JIRA_SEVERITY_ID,
-    gollumUrl: process.env.GOLLUM_BASE_URL,
     attachmentMaxBase64Length: readAttachmentMaxBase64Length(),
+  };
+
+  const loggerConfig: LoggerConfig = {
+    gollumUrl: process.env.KIBANA_BASE_URL,
+    loggerVerbose,
   };
 
   if (provider === 'vonage') {
@@ -64,12 +80,14 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
+      ...authConfig,
+      ...corsConfig,
       applicationId,
       privateKey,
       provider: 'vonage',
       videoHost,
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 
@@ -83,11 +101,13 @@ const loadConfig = (): Config => {
 
     return {
       ...feedbackConfig,
+      ...loggerConfig,
+      ...authConfig,
+      ...corsConfig,
       apiKey,
       apiSecret,
       provider: 'opentok',
       sessionKeySecret,
-      loggerVerbose,
     };
   }
 
@@ -95,3 +115,48 @@ const loadConfig = (): Config => {
 };
 
 export default loadConfig;
+
+function loadCorsConfig(): CorsConfig {
+  const rawAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS ?? '').trim();
+
+  return CorsConfigSchema.parse({
+    corsAllowedOrigins:
+      rawAllowedOrigins === '*'
+        ? '*'
+        : rawAllowedOrigins
+            .split(',')
+            .map((origin) => origin.trim())
+            .filter((origin) => origin !== ''),
+  });
+}
+
+/**
+ * Reads only the auth-related env vars, validated here since this is the single
+ * schema-validated source of truth for config in the app (consumers must go through
+ * loadConfig, not re-derive this independently).
+ */
+function loadAuthConfig(): AuthConfig {
+  if (process.env.AUTH_ENABLED !== 'true') return { authEnabled: false };
+
+  return AuthConfigSchema.parse({
+    authEnabled: true,
+    oidcClientId: process.env.OIDC_CLIENT_ID,
+    oidcWebRedirectUri: process.env.OIDC_WEB_REDIRECT_URI,
+    oidcAuthorizationEndpoint: process.env.OIDC_AUTHORIZATION_ENDPOINT,
+    oidcTokenEndpoint: process.env.OIDC_TOKEN_ENDPOINT,
+    oidcIntrospectionEndpoint: process.env.OIDC_INTROSPECTION_ENDPOINT,
+    oidcRevocationEndpoint: process.env.OIDC_REVOCATION_ENDPOINT,
+    oidcEndSessionEndpoint: process.env.OIDC_END_SESSION_ENDPOINT,
+    oidcPostLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI,
+    oidcScopes: process.env.OIDC_SCOPES,
+    authCookieSecret: process.env.AUTH_COOKIE_SECRET,
+    authSessionCookieName: process.env.AUTH_SESSION_COOKIE_NAME,
+    authIdTokenCookieName: process.env.AUTH_ID_TOKEN_COOKIE_NAME,
+    authTransactionCookieName: process.env.AUTH_TRANSACTION_COOKIE_NAME,
+    authTransactionMaxAgeSeconds: process.env.AUTH_TRANSACTION_MAX_AGE_SECONDS,
+    authRefreshWindowSeconds: process.env.AUTH_REFRESH_WINDOW_SECONDS,
+    authProviderTimeoutMs: process.env.AUTH_PROVIDER_TIMEOUT_MS,
+    authHeaderName: process.env.AUTH_HEADER_NAME,
+    authScheme: process.env.AUTH_SCHEME,
+  });
+}

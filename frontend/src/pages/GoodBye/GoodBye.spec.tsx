@@ -14,8 +14,8 @@ describe('GoodBye', () => {
     expect(screen.getByText('Thank you for joining!')).toBeVisible();
     expect(screen.getByText('Rejoining the room')).toBeVisible();
     expect(screen.getByRole('button', { name: 'View Landing Page' })).toBeVisible();
-    expect(screen.getByText('Download recordings')).toBeVisible();
-    expect(screen.getByText("The meeting hasn't been recorded")).toBeVisible();
+    expect(screen.getByText('Download session content')).toBeVisible();
+    expect(screen.getByText('This session has no content to download')).toBeVisible();
   });
 });
 

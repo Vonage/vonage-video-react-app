@@ -1,4 +1,5 @@
 import z from 'zod';
+import { ClientLogSessionSchema } from './ClientLogSession.schema';
 
 /**
  * Frontend → Backend logging payload contract.
@@ -7,6 +8,7 @@ import z from 'zod';
 export const ClientLogEventSchema = z.object({
   action: z.string().min(1),
   variation: z.string().optional(),
+  session: ClientLogSessionSchema.optional(),
   sessionId: z.string().optional(),
   connectionId: z.string().optional(),
   clientSystemTime: z.number(),
@@ -19,9 +21,10 @@ export const ClientLogEventSchema = z.object({
   sdkId: z.string().optional(),
   componentId: z.string().optional(),
   partnerId: z.string().optional(),
-  userId: z.string().optional(),
   logVersion: z.string().optional(),
   name: z.string().optional(),
+  /** Kibana indexes the user identifier under this field; a root `userId` is not queryable. */
+  referrer: z.string().optional(),
 });
 
 export type ClientLogEvent = z.infer<typeof ClientLogEventSchema>;
