@@ -101,7 +101,6 @@ const AudioIndicator = ({
               style={{
                 ...styles,
                 color: 'var(--vera-error)',
-                transform: 'scaleX(-1) scale(0.8)',
               }}
             />
           )}

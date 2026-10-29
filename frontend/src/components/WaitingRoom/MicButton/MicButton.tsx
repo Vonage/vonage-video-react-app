@@ -70,7 +70,7 @@ const MicButton = (): ReactElement | false => {
                 <VividIcon
                   name="mic-mute-line"
                   customSize={-5}
-                  style={{ color: 'var(--vera-alert-text)', transform: 'scaleX(-1)' }}
+                  style={{ color: 'var(--vera-alert-text)' }}
                 />
               )
             }
