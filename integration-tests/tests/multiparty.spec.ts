@@ -1,4 +1,4 @@
-import { expect, type BrowserContext, type Page } from '@playwright/test';
+import { expect, type BrowserContext, type Locator, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitUntilReady, SCREENSHOT } from './utils';
@@ -269,3 +269,140 @@ test.describe('display name for screenshare', () => {
     ).toBeVisible();
   });
 });
+
+test.describe('participant list and right panel', () => {
+  test('should list every participant with the correct count and remove a participant who leaves', async ({
+    page: pageOne,
+    context,
+    browserName,
+  }) => {
+    const { pageTwo } = await openMeetingWithTwoParticipants({ pageOne, context, browserName });
+
+    await openRightPanelTab({ page: pageOne, buttonTestId: 'participant-list-button' });
+
+    const rightPanelTitle = pageOne.getByTestId('right-panel-title');
+    const participantListItems = pageOne.locator('[data-testid^="participant-list-item"]');
+    await expect(rightPanelTitle).toHaveText('Participants (2)');
+    await expect(participantListItems).toHaveCount(2);
+    await expect(pageOne.getByTestId('participant-list-item-you')).toContainText('User One (You)');
+    await expect(participantListItems.filter({ hasText: 'User Two' })).toHaveCount(1);
+
+    await pageTwo.close();
+
+    await expect(participantListItems.filter({ hasText: 'User Two' })).toHaveCount(0, {
+      timeout: 20000,
+    });
+    await expect(participantListItems).toHaveCount(1);
+    await expect(rightPanelTitle).toHaveText('Participants (1)');
+  });
+
+  test('should show a single right panel when switching from chat to participants and expand the layout on close', async ({
+    page: pageOne,
+    context,
+    browserName,
+  }) => {
+    await openMeetingWithTwoParticipants({ pageOne, context, browserName });
+
+    const videoWrapper = pageOne.locator('#wrapper');
+    const closedPanelWidth = await getElementWidth(videoWrapper);
+
+    await openRightPanelTab({ page: pageOne, buttonTestId: 'chat-button' });
+
+    const rightPanel = pageOne.getByTestId('right-panel');
+    const rightPanelTitle = pageOne.getByTestId('right-panel-title');
+    const chatInput = pageOne.getByPlaceholder('Send a message');
+    await expect(rightPanel).toBeVisible();
+    await expect(rightPanelTitle).toHaveText('Chat');
+    await expect(chatInput).toBeVisible();
+    await expect.poll(() => getElementWidth(videoWrapper)).toBeLessThan(closedPanelWidth);
+
+    await openRightPanelTab({ page: pageOne, buttonTestId: 'participant-list-button' });
+
+    await expect(rightPanelTitle).toHaveCount(1);
+    await expect(rightPanelTitle).toHaveText('Participants (2)');
+    await expect(chatInput).toHaveCount(0);
+    await expect(pageOne.getByPlaceholder('Search participants')).toBeVisible();
+
+    await rightPanelTitle.getByTestId('CloseIcon').click();
+
+    await expect(rightPanel).toBeHidden();
+    await expect(rightPanelTitle).toHaveCount(0);
+    await expect.poll(() => getElementWidth(videoWrapper)).toBe(closedPanelWidth);
+  });
+
+  test('should navigate the leaving participant to the goodbye page and re-lay out the remaining tiles', async ({
+    page: pageOne,
+    context,
+    browserName,
+  }) => {
+    const { pageTwo } = await openMeetingWithTwoParticipants({ pageOne, context, browserName });
+
+    const publisher = pageOne.locator('.publisher');
+    const publisherWidthWithSubscriber = await getElementWidth(publisher);
+
+    const exitButton = pageTwo.getByTestId('CallEndIcon');
+    await expect(exitButton).toBeEnabled();
+    await exitButton.click();
+
+    await expect(pageTwo).toHaveURL(/goodbye/);
+    await expect(pageTwo.getByTestId('header-message')).toHaveText('You have left the meeting');
+    await expect(pageTwo.getByRole('button', { name: 'Go back to meeting' })).toBeVisible();
+
+    await expect(pageOne.locator('.subscriber')).toHaveCount(0, { timeout: 20000 });
+    await expect(pageOne.getByText('User Two', { exact: true })).toHaveCount(0);
+    await expect
+      .poll(() => getElementWidth(publisher))
+      .toBeGreaterThan(publisherWidthWithSubscriber);
+  });
+});
+
+async function openMeetingWithTwoParticipants({
+  pageOne,
+  context,
+  browserName,
+}: {
+  pageOne: Page;
+  context: BrowserContext;
+  browserName: string;
+}): Promise<{ pageTwo: Page }> {
+  const roomName = crypto.randomBytes(5).toString('hex');
+
+  await openMeetingRoomWithSettings({ page: pageOne, username: 'User One', roomName, browserName });
+  await pageOne.waitForSelector('.publisher', { state: 'visible' });
+
+  const pageTwo = await context.newPage();
+  await openMeetingRoomWithSettings({ page: pageTwo, username: 'User Two', roomName, browserName });
+  await pageTwo.waitForSelector('.publisher', { state: 'visible' });
+
+  await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible({
+    timeout: 20000,
+  });
+  await expect(pageTwo.locator('.subscriber').getByText('User One')).toBeVisible({
+    timeout: 20000,
+  });
+
+  return { pageTwo };
+}
+
+async function openRightPanelTab({
+  page,
+  buttonTestId,
+}: {
+  page: Page;
+  buttonTestId: 'chat-button' | 'participant-list-button';
+}): Promise<void> {
+  const visibleButton = page.locator(`[data-testid="${buttonTestId}"]:visible`);
+
+  const isButtonInToolbar = (await visibleButton.count()) > 0;
+  if (!isButtonInToolbar) {
+    await page.getByTestId('hidden-toolbar-items').click();
+  }
+
+  await visibleButton.first().click();
+  await page.mouse.move(0, 0);
+}
+
+async function getElementWidth(locator: Locator): Promise<number> {
+  const box = await locator.boundingBox();
+  return box?.width ?? 0;
+}
