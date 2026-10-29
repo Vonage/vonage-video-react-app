@@ -6,6 +6,7 @@ import {
   makeBadRequestErrorHandler,
   makeInternalErrorHandler,
 } from '@api-lib/errors';
+import { assertResult } from '@api-lib/executions';
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import getFeedbackService from '../services/getFeedbackService';
 import loadConfig from '../helpers/config';
@@ -66,13 +67,10 @@ feedbackRouter.post(
   parseFeedbackPayload,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const parsed = FeedbackReportSchema.safeParse(req.body);
-
-      if (!parsed.success) {
-        return next(makeBadRequestErrorHandler('Invalid feedback payload')(parsed.error));
-      }
-
-      const { title, name, issue, attachment } = parsed.data;
+      const { title, name, issue, attachment } = assertResult(
+        () => FeedbackReportSchema.parse(req.body),
+        makeBadRequestErrorHandler('Invalid feedback payload')
+      );
       const userAgent = normalizeUserAgent(req.headers['user-agent']);
       const origin = resolveOrigin(userAgent);
 
