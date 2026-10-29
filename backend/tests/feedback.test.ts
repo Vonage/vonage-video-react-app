@@ -154,13 +154,20 @@ describe('POST /feedback/report', () => {
     }
   );
 
-  it('does not parse urlencoded bodies with the global 20mb parser', async () => {
+  it('rejects a urlencoded body instead of silently accepting it as JSON', async () => {
+    const res = await request(server).post('/feedback/report').type('form').send(feedbackPayload);
+
+    expect(res.statusCode).toEqual(400);
+    expect(mockReportIssue).not.toHaveBeenCalled();
+  });
+
+  it('rejects an oversized urlencoded body with the same limit as JSON', async () => {
     const res = await request(server)
       .post('/feedback/report')
       .type('form')
       .send({ ...feedbackPayload, ignoredField: 'A'.repeat(2_200_000) });
 
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(413);
     expect(mockReportIssue).not.toHaveBeenCalled();
   });
 

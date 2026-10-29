@@ -16,7 +16,7 @@ const feedbackRouter = Router();
 const feedbackService = getFeedbackService();
 const { attachmentMaxBase64Length } = loadConfig();
 const feedbackPayloadLimitInBytes = attachmentMaxBase64Length + 10_000;
-const feedbackJsonParser = express.json({ limit: feedbackPayloadLimitInBytes });
+const feedbackJsonParser = express.json({ limit: feedbackPayloadLimitInBytes, type: () => true });
 
 const FeedbackReportSchema = z.object({
   title: z.string().min(1).max(255),
