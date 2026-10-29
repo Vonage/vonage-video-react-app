@@ -1,0 +1,14 @@
+integration-tests/tests/multiparty.spec.ts
+  h_9cf21c851a7c99 1,272-408
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b21fb340c748f7c9710becf6ff5d31f1ef78920f",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
