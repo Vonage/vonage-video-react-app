@@ -232,10 +232,12 @@ describe('VonageVideoClient', () => {
   describe('resubscribeToStreamId', () => {
     const streamId = 'stream-id';
 
+    const remoteParticipantName = 'Remote Participant';
+
     async function connectAndRegisterStream() {
       await vonageVideoClient?.connect();
       mockSession.emit('streamCreated', {
-        stream: { streamId, videoType: 'camera' } as unknown as Stream,
+        stream: { streamId, videoType: 'camera', name: remoteParticipantName } as unknown as Stream,
       });
       await wait(0);
     }
@@ -257,7 +259,8 @@ describe('VonageVideoClient', () => {
       expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
     });
 
-    it('reports a recoverable subscription error during resubscribe instead of swallowing it', async () => {
+    it('reports a recoverable subscription error during resubscribe without disconnecting the user', async () => {
+      expect.assertions(3);
       await connectAndRegisterStream();
 
       mockSubscribe.mockImplementation((_stream, _targetElement, _options, callback) => {
@@ -265,16 +268,26 @@ describe('VonageVideoClient', () => {
         return mockSubscriber;
       });
 
-      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
-        vonageVideoClient?.on('subscriptionError', resolve);
+      const subscriptionErrorListener = vi.fn();
+      vonageVideoClient?.on('subscriptionError', subscriptionErrorListener);
+
+      const resubscribeFailedPromise = new Promise<{ remoteParticipantName: string }>((resolve) => {
+        vonageVideoClient?.on('resubscribeFailed', resolve);
       });
 
       await vonageVideoClient?.resubscribeToStreamId(streamId);
 
-      const error = await subscriptionErrorPromise;
+      const resubscribeFailedEvent = await resubscribeFailedPromise;
       await wait(0);
-      expect((error as { name?: string })?.name).toBe('OT_STREAM_NOT_FOUND');
-      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
+
+      expect(subscriptionErrorListener).not.toHaveBeenCalled();
+      expect(resubscribeFailedEvent).toEqual({ remoteParticipantName });
+      expect(mockProvider.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ name: 'OT_STREAM_NOT_FOUND' }),
+        expect.objectContaining({
+          eventSource: 'vonageVideoClient.subscribeToStream.recoverable',
+        })
+      );
     });
   });
 

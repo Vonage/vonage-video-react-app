@@ -13,6 +13,7 @@ import type {
 } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import { notifications$ } from '@core/stores';
 import { env } from '../../env';
 
 vi.mock('@utils/ActiveSpeakerTracker');
@@ -306,6 +307,24 @@ describe('SessionProvider', () => {
 
       await waitFor(() => {
         expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
+      });
+    });
+
+    it('pushes a warning notification when a resubscribe attempt fails', async () => {
+      await renderAndWaitForConnection();
+      const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+      act(() => {
+        vonageVideoClient.emit('resubscribeFailed', { remoteParticipantName: 'Alex' });
+      });
+
+      await waitFor(() => {
+        expect(pushSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'warning',
+            message: "We couldn't reconnect to Alex's video.",
+          })
+        );
       });
     });
   });
