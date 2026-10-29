@@ -597,7 +597,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @returns {string | undefined} The connection ID.
    */
   get connectionId(): string | undefined {
-    return this.clientSession.connection?.connectionId;
+    return this.clientSession?.connection?.connectionId;
   }
 }
 

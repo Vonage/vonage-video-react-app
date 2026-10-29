@@ -246,6 +246,14 @@ describe('VonageVideoClient', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
+  it('connectionId should return undefined (not throw) after the session has been disconnected', async () => {
+    await vonageVideoClient?.connect();
+    await vonageVideoClient?.disconnect();
+
+    expect(() => vonageVideoClient?.connectionId).not.toThrow();
+    expect(vonageVideoClient?.connectionId).toBeUndefined();
+  });
+
   it('disconnect should report (not swallow) a rejection from the session and still clean up', async () => {
     expect.assertions(2);
     const fakeError = new Error('fake-disconnect-error');
