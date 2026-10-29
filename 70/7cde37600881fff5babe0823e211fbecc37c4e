@@ -1,0 +1,26 @@
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_2757969e2abae0::t_81724550f55d1c 108
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  s_2757969e2abae0::t_ad683047b6e0d0 73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "707cde37600881fff5babe0823e211fbecc37c4e",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_2757969e2abae0": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_6c2915b3-704b-4351-a850-38a2b0eef4e8",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
