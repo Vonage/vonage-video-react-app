@@ -525,15 +525,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Stream} stream - The stream to be muted.
    */
   forceMuteStream = async (stream: Stream): Promise<void> => {
-    try {
-      await this.clientSession.forceMuteStream(stream);
-    } catch (error) {
-      frontendLogger.reportError(error, {
-        eventSource: 'vonageVideoClient.forceMuteStream.error',
-        partnerId: this.applicationId,
-      });
-      throw error;
-    }
+    await this.clientSession.forceMuteStream(stream);
   };
 
   /**

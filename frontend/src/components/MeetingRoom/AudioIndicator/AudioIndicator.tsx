@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import Box from '@mui/material/Box';
+import tryCatch from '@common/execution/tryCatch';
 export type AudioIndicatorProps = {
   hasAudio: boolean | undefined;
   indicatorStyle?: React.CSSProperties;
@@ -56,11 +57,14 @@ const AudioIndicator = ({
     setIsModalOpen(false);
   };
 
-  const handleActionClick = () => {
-    if (forceMute && stream) {
-      void forceMute(stream);
-      handleClose();
-    }
+  const handleActionClick = async () => {
+    const isForceMuteUnavailable = !forceMute || !stream;
+    if (isForceMuteUnavailable) return;
+
+    const { didFail } = await tryCatch(() => forceMute(stream));
+    if (didFail) return;
+
+    handleClose();
   };
 
   const styles = {

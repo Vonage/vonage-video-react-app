@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from 'react';
-import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, render as renderBase, waitFor } from '@testing-library/react';
 import EventEmitter from 'events';
 import { Publisher, Stream } from '@vonage/client-sdk-video';
@@ -112,7 +112,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              void forceMute({} as unknown as Stream);
+              forceMute({} as unknown as Stream).catch(() => {});
             }
           }}
           type="button"
@@ -576,24 +576,25 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
-  it('forceMute should report and surface a notification when forceMuteStream fails', async () => {
+  it('forceMute should report once and surface a notification when forceMuteStream fails', async () => {
+    expect.assertions(5);
     const error = new Error('Force mute failed');
-    (vonageVideoClient.forceMuteStream as Mock).mockRejectedValueOnce(error);
+    vi.mocked(vonageVideoClient.forceMuteStream).mockRejectedValueOnce(error);
     const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
     const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
     const { getByTestId } = await renderAndWaitForConnection();
 
-    act(() => {
+    await act(async () => {
       getByTestId('forceMute').click();
+      await Promise.resolve();
     });
 
-    await waitFor(() =>
-      expect(reportErrorSpy).toHaveBeenCalledWith(
-        error,
-        expect.objectContaining({ eventSource: 'session.forceMute.error' })
-      )
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({ eventSource: 'session.forceMute.error' })
     );
+    expect(reportErrorSpy).toHaveBeenCalledTimes(1);
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'warning',

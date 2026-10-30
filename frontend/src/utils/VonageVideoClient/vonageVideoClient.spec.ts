@@ -251,24 +251,19 @@ describe('VonageVideoClient', () => {
     expect(mockSession.forceMuteStream).toHaveBeenCalledWith(mockStream);
   });
 
-  it('forceMuteStream should report and rethrow when the session call fails', async () => {
+  it('forceMuteStream should rethrow without reporting when the session call fails', async () => {
+    expect.assertions(2);
     const mockStream: Stream = {
       streamId: 'stream-id',
     } as unknown as Stream;
     const error = new Error('Force mute failed');
-    (mockSession.forceMuteStream as Mock).mockRejectedValueOnce(error);
+    vi.mocked(mockSession.forceMuteStream).mockRejectedValueOnce(error);
 
     await vonageVideoClient?.connect();
 
     await expect(vonageVideoClient?.forceMuteStream(mockStream)).rejects.toThrow(error);
 
-    expect(mockProvider.reportError).toHaveBeenCalledWith(
-      expect.objectContaining({ name: error.name, message: error.message }),
-      expect.objectContaining({
-        eventSource: 'vonageVideoClient.forceMuteStream.error',
-        partnerId: fakeApplicationId,
-      })
-    );
+    expect(mockProvider.reportError).not.toHaveBeenCalled();
   });
 
   describe('publish', () => {
