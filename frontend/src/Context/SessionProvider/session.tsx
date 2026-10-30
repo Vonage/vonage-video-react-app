@@ -37,6 +37,7 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
+import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
 import { runtime$ } from '@core/stores';
@@ -512,6 +513,8 @@ const SessionProvider = ({
     [reconnecting]
   );
 
+  const { resubscribeFailureNotifier } = useResubscribeFailureNotifier();
+
   /**
    * Connects to the session using the provided credentials.
    * @param {Credential} credential - The sessionKey and token for the session.
@@ -545,6 +548,7 @@ const SessionProvider = ({
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
       vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
       vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
+      vonageVideoClient.current.on('resubscribeFailed', resubscribeFailureNotifier);
 
       await vonageVideoClient.current.connect();
       setConnected(true);

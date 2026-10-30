@@ -14,6 +14,7 @@ import type {
 } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import { notifications$ } from '@core/stores';
 import { env } from '../../env';
 
 vi.mock('@utils/ActiveSpeakerTracker');
@@ -359,6 +360,33 @@ describe('SessionProvider', () => {
       await waitFor(() => {
         expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
       });
+    });
+
+    it('pushes one notification when several resubscribes fail together', async () => {
+      expect.assertions(2);
+
+      const { getByTestId } = render(<TestComponent />);
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'true') throw new Error('not connected');
+      });
+      const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+      act(() => {
+        Array.from({ length: 4 }).forEach(() => {
+          vonageVideoClient.emit('resubscribeFailed', {
+            streamId: 'stream-1',
+            error: new Error('stream not found'),
+          });
+        });
+      });
+
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'warning',
+          message: "Connection issues. Some video couldn't be restored.",
+        })
+      );
     });
   });
 

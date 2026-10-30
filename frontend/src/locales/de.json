@@ -294,6 +294,7 @@
   "publishingErrors.blocked.title": "Schwierigkeiten beim Beitreten zum Raum",
   "subscribingErrors.blocked.message": "Wir haben Schwierigkeiten, Sie mit anderen im Meetingraum zu verbinden. Bitte überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut.",
   "subscribingErrors.blocked.title": "Schwierigkeiten beim Beitreten zum Raum",
+  "subscribingErrors.resubscribeFailed.message": "Verbindungsprobleme. Einige Videos konnten nicht wiederhergestellt werden.",
   "recording.start.dialog.content": "Stellen Sie sicher, dass alle bereit sind! Sie können die Aufzeichnung nach dem Verlassen des Raums von der Seite \"Auf Wiedersehen\" herunterladen.",
   "recording.start.dialog.title": "Aufzeichnung starten?",
   "recording.start.title": "Aufzeichnung starten",

@@ -234,6 +234,67 @@ describe('VonageVideoClient', () => {
     });
   });
 
+  describe('resubscribeToStreamId', () => {
+    const streamId = 'stream-id';
+
+    const remoteParticipantName = 'Remote Participant';
+
+    async function connectAndRegisterStream() {
+      await vonageVideoClient?.connect();
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera', name: remoteParticipantName } as unknown as Stream,
+      });
+      await wait(0);
+    }
+
+    it('reports a critical subscription error exactly once', async () => {
+      await connectAndRegisterStream();
+
+      mockSubscribe.mockReturnValue(undefined);
+
+      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
+        vonageVideoClient?.on('subscriptionError', resolve);
+      });
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const error = await subscriptionErrorPromise;
+      await wait(0);
+      expect((error as Error).message).toBe('Vonage subscriber was not created.');
+      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
+    });
+
+    it('emits a recoverable resubscribe failure without disconnecting or reporting the user', async () => {
+      expect.assertions(3);
+      await connectAndRegisterStream();
+
+      const recoverableError = { name: 'OT_STREAM_NOT_FOUND', message: 'stream not found' };
+
+      mockSubscribe.mockImplementation((_stream, _targetElement, _options, callback) => {
+        callback!(recoverableError);
+        return mockSubscriber;
+      });
+
+      const subscriptionErrorListener = vi.fn();
+      vonageVideoClient?.on('subscriptionError', subscriptionErrorListener);
+
+      const resubscribeFailedPromise = new Promise<{ streamId: string; error: unknown }>(
+        (resolve) => {
+          vonageVideoClient?.on('resubscribeFailed', resolve);
+        }
+      );
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const resubscribeFailedEvent = await resubscribeFailedPromise;
+      await wait(0);
+
+      expect(subscriptionErrorListener).not.toHaveBeenCalled();
+      expect(resubscribeFailedEvent).toEqual({ streamId, error: recoverableError });
+      expect(mockProvider.reportError).not.toHaveBeenCalled();
+    });
+  });
+
   it('disconnect should disconnect from the session and cleanup', async () => {
     await vonageVideoClient?.connect();
     vonageVideoClient?.disconnect();
