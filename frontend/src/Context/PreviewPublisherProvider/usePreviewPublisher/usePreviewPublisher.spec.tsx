@@ -10,6 +10,7 @@ import renderAsyncHook from '@web-test/renderAsyncHook';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { frontendLogger } from '../../../logger';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -53,7 +54,8 @@ describe('usePreviewPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', async () => {
+    it('should report initPublisher errors via frontendLogger', async () => {
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
       );
@@ -64,7 +66,12 @@ describe('usePreviewPublisher', () => {
 
       const { result } = await render();
       result.current.initLocalPublisher();
-      expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
+      expect(reportErrorSpy).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
+        })
+      );
     });
 
     it('should apply background high blur-sm when initialized and changed background', async () => {

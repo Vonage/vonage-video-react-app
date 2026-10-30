@@ -280,6 +280,7 @@
   "participants.list.open": "Teilnehmerliste öffnen",
   "participants.maxPin": "Sie können keine weiteren Kacheln anheften",
   "participants.mute.dialog.content": "{{participantName}} für alle im Anruf stummschalten? Nur {{participantName}} kann sich selbst unmute.",
+  "participants.mute.forceMuteFailed": "Der Teilnehmer konnte nicht stummgeschaltet werden. Bitte versuchen Sie es erneut.",
   "participants.mute.tooltip": "Mikrofon von {{participantName}} stummschalten",
   "participants.pin": "{{participantName}} anheften",
   "participants.pin.video": "Video von {{participantName}} anheften",

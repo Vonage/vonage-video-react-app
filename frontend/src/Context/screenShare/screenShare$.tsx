@@ -105,30 +105,17 @@ const screenShare$ = createContext(initialState, {
 
           const partnerId = session.sessionDetails?.applicationId ?? null;
 
-          const publisher = initPublisher(
-            undefined,
-            {
-              videoSource: 'screen',
-              insertDefaultUI: false,
-              videoContentHint: screenShareContentHint,
-              preferredVideoCodecs,
-              scalableScreenshare: scalableScreenshareEnabled,
-              ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
-              ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
-              name: user.defaultSettings.name,
-              constraints: screenShareConstraints,
-            },
-            (err) => {
-              if (!err) return;
-
-              handleApplyAdvancedSettingsError({
-                message: 'Failed to initialize screen share publisher',
-                eventSource: 'screenShare$.toggleShareScreen.initPublisher',
-              })(err);
-
-              actions$.onScreenShareStopped();
-            }
-          );
+          const publisher = initPublisher(undefined, {
+            videoSource: 'screen',
+            insertDefaultUI: false,
+            videoContentHint: screenShareContentHint,
+            preferredVideoCodecs,
+            scalableScreenshare: scalableScreenshareEnabled,
+            ...(!isNil(screenShareFrameRate) && { frameRate: screenShareFrameRate }),
+            ...(!isNil(screenShareResolution) && { resolution: screenShareResolution }),
+            name: user.defaultSettings.name,
+            constraints: screenShareConstraints,
+          });
 
           setState((state) => ({
             ...state,
