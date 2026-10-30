@@ -1,0 +1,21 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_7d79809b9adad9::t_0dd1ad0ce3a81f 63
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_7d79809b9adad9::t_94eebd07b85fe8 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e123fb42f87f629a0694ba98dccc12fa4326b164",
+  "prompts": {},
+  "sessions": {
+    "s_7d79809b9adad9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ef7ac75-48e3-48e0-8fca-ef806b32ebba",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

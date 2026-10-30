@@ -1,0 +1,20 @@
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_6029769cf9ac60 60-121
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_6029769cf9ac60 35,88,111-115,180-182,185-190,192-193,195-197,199-226
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 47-51
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  h_6029769cf9ac60 101-105,187-212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf9536e54fb26cb8af1499a05ef3ce5c0dc3b76a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
