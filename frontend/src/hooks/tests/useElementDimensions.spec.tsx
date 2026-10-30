@@ -44,7 +44,6 @@ describe('useElementDimensions', () => {
 
     unmount();
 
-    // The cleanup must disconnect the observer (release it), not merely unobserve one element.
     expect(disconnect).toHaveBeenCalledTimes(1);
   });
 });

@@ -31,8 +31,6 @@ const useElementDimensions = ({ elementRef }: UseElementDimensionsProps): Dimens
       resizeObserver.current?.observe(elementCurrent);
     }
     return () => {
-      // Fully disconnect and drop the observer so it is released (no leak) and so the guard
-      // above re-creates a fresh observer if elementRef changes.
       resizeObserver.current?.disconnect();
       resizeObserver.current = undefined;
     };
