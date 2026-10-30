@@ -1,2 +1,2 @@
 export { default } from './AdvancedSettings';
-export type { advancedSettings } from './AdvancedSettings';
+export type { AdvancedSettings as advancedSettings } from './AdvancedSettings';

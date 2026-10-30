@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
 import useSessionContext from './useSessionContext';
-import useScreenShare from './useScreenShare';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
@@ -12,6 +11,7 @@ import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
+import { screenShare$ } from '@Context';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -57,24 +57,24 @@ const useMeetingRoom = () => {
     closeRightPanel,
     toggleReportIssue,
     archiveId,
+    recordingArchiveId,
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
+    transcriptionArchiveId,
   } = useSessionContext();
 
-  const {
-    isSharingScreen,
-    isEntireScreen,
-    screensharingPublisher,
-    screenshareVideoElement,
-    toggleShareScreen,
-  } = useScreenShare();
+  const { toggleShareScreen } = screenShare$.use.actions();
+  const isSharingScreen = screenShare$.useIsSharingScreen();
+  const isEntireScreen = screenShare$.useIsEntireScreen();
+  const screensharingPublisher = screenShare$.useScreensharingPublisher();
+  const screenshareVideoElement = screenShare$.useScreenshareVideoElement();
 
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
 
   const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
   const handleRecordingNotified = () => {
-    setLatestNotifiedArchiveId(archiveId);
+    setLatestNotifiedArchiveId(recordingArchiveId);
   };
   const shouldPromptRecordingConsent =
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
@@ -133,7 +133,7 @@ const useMeetingRoom = () => {
 
   useEffect(() => {
     if (connected && publisher && publish) {
-      void publish();
+      void publish().catch(() => {});
     }
   }, [publisher, publish, connected]);
 
@@ -160,7 +160,8 @@ const useMeetingRoom = () => {
     sessionKey,
   });
 
-  const isRecording = !!archiveId;
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
+  const isTranscribing = !!transcriptionArchiveId;
   const captionsState = {
     isUserCaptionsEnabled,
     setIsUserCaptionsEnabled,
@@ -185,6 +186,7 @@ const useMeetingRoom = () => {
     quality,
     isVideoEnabled,
     isRecording,
+    isTranscribing,
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
@@ -192,6 +194,7 @@ const useMeetingRoom = () => {
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
     archiveId,
+    recordingArchiveId,
     shouldPromptRecordingConsent,
     handleRecordingNotified,
     latestNotifiedArchiveId,

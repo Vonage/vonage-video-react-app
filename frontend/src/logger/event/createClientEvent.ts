@@ -1,4 +1,4 @@
-import type { ClientLogEvent } from '@common/types';
+import type { ClientLogEvent, ClientLogSession } from '@common/types';
 import getAppVersion from '@utils/getAppVersion';
 import OT from '@vonage/client-sdk-video';
 import uniqueId from 'react-global-state-hooks/uniqueId';
@@ -10,10 +10,7 @@ type ClientEventInput = {
   level: ClientLogEvent['level'];
   action: string;
   payload?: Record<string, unknown>;
-  sessionId?: string;
-  connectionId?: string;
-  partnerId?: string;
-  userId?: string;
+  session?: ClientLogSession;
   variation?: string;
   logVersion?: string;
   timestamp?: number;
@@ -33,10 +30,13 @@ const getPlatform = () => ({
  */
 export function createClientEvent(input: ClientEventInput): ClientLogEvent {
   const { userAgent, source } = getPlatform();
+  const { sessionId, connectionId, partnerId, userId } = input.session ?? {};
+
   return {
     action: input.action,
     variation: input.variation,
     logVersion: input.logVersion ?? '2',
+    session: input.session,
     payload: input.payload,
     clientSystemTime: input.timestamp ?? Date.now(),
     level: input.level,
@@ -47,9 +47,9 @@ export function createClientEvent(input: ClientEventInput): ClientLogEvent {
     userAgent,
     name: input.name ?? 'vera',
     componentId: input.componentId ?? 'vera',
-    ...(input.sessionId != null && { sessionId: input.sessionId }),
-    ...(input.connectionId != null && { connectionId: input.connectionId }),
-    ...(input.partnerId != null && { partnerId: input.partnerId }),
-    ...(input.userId != null && { userId: input.userId }),
+    ...(sessionId != null && { sessionId }),
+    ...(connectionId != null && { connectionId }),
+    ...(partnerId != null && { partnerId }),
+    ...(userId != null && { referrer: userId }),
   };
 }

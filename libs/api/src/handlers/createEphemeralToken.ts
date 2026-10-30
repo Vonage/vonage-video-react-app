@@ -18,8 +18,9 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
     const tokenOptions: ClientTokenOptions = {
       role: TokenRole.MODERATOR,
 
+      // expireTime is an absolute UNIX time in seconds (the SDK writes it into the JWT `exp`).
       // Chosen 30s because our K8s probes use 10s timeouts; allows one retry + margin.
-      expireTime: Date.now() + 30 * 1000,
+      expireTime: Math.floor(Date.now() / 1000) + 30,
 
       ...clientTokenOptions,
     };

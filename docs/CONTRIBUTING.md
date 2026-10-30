@@ -13,6 +13,26 @@ To set expectations clearly, contributions are accepted when they:
 
 Contributions are declined or returned when they arrive as large undiscussed diffs, skip the issue-first step, bundle multiple unrelated changes, or cannot be explained by the contributor.
 
+## Agent instructions and symlinks
+
+The coding conventions live in `AGENTS.md` at the repository root. `CLAUDE.md`, `GEMINI.md`,
+`.cursorrules`, `.windsurfrules` and `.github/copilot-instructions.md` are symlinks to it, so every
+assistant reads the same rules. The task guides under `.kiro/steering/vera-*.md` are likewise
+symlinks into `.claude/skills/`.
+
+Git only checks symlinks out as links when `core.symlinks` is enabled, which on Windows also
+requires Developer Mode. Without it, each of those paths is checked out as a small text file whose
+contents are the target path, and an assistant reading one silently gets no rules at all, with no
+error. If you work on Windows, confirm with:
+
+```sh
+git config --get core.symlinks
+readlink AGENTS.md
+```
+
+`AGENTS.md` is a regular file and should print nothing for `readlink`; the five aliases should each
+print their target.
+
 ## Getting Started
 Before you begin, please review the following:
 - Read our [Code of Conduct](../CODE_OF_CONDUCT.md) to understand our community standards.

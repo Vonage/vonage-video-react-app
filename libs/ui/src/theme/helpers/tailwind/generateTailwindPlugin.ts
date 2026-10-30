@@ -1,13 +1,11 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import kebabToCamel from '../../../../../common/src/helpers/kebabToCamel';
 import designTokens from '../designTokens/designTokens.json';
-import tsDesignTokens from '../designTokens/designTokens.js';
 import type {
+  TypographyScale,
+  VeraThemeTokens,
   VeraTypographyTokenKey,
   VeraTypographyVariableNamesByToken,
-  VeraUIConfig,
 } from '../veraUI.types';
 import { veraTypographyCssVariableNames } from '../veraUI.types';
 
@@ -19,181 +17,80 @@ const veraTypographyVariableNames: Record<
   VeraTypographyVariableNamesByToken
 > = veraTypographyCssVariableNames;
 
-const VERA_UI_CONFIG_JSDOC = `/**
- * @typedef {Object} VeraTypographyProperties
- * @property {string} [fontSize]
- * @property {string} [lineHeight]
- * @property {string} [fontWeight]
- * @property {string} [mobileFontSize]
- * @property {string} [mobileLineHeight]
- * @property {string} [mobileFontWeight]
- */
-/**
- * @typedef {Object} VeraColorThemeConfig
- * @property {string} [accent]
- * @property {string} [alertBackground]
- * @property {string} [alertBackgroundHover]
- * @property {string} [alertText]
- * @property {string} [background]
- * @property {string} [border]
- * @property {string} [darkBackground]
- * @property {string} [darkGrey]
- * @property {string} [darkGreyHover]
- * @property {string} [darkGreyOpacity]
- * @property {string} [disabled]
- * @property {string} [error]
- * @property {string} [errorHover]
- * @property {string} [information]
- * @property {string} [informationBackground]
- * @property {string} [informationHover]
- * @property {string} [onAccent]
- * @property {string} [onBackground]
- * @property {string} [onDarkGrey]
- * @property {string} [onError]
- * @property {string} [onInformation]
- * @property {string} [onPrimary]
- * @property {string} [onSecondary]
- * @property {string} [onSuccess]
- * @property {string} [onSurface]
- * @property {string} [onTertiary]
- * @property {string} [onWarning]
- * @property {string} [primary]
- * @property {string} [primaryHover]
- * @property {string} [secondary]
- * @property {string} [secondaryHover]
- * @property {string} [skeletonLike]
- * @property {string} [success]
- * @property {string} [successHover]
- * @property {string} [surface]
- * @property {string} [tertiary]
- * @property {string} [tertiaryHover]
- * @property {string} [textDisabled]
- * @property {string} [textPrimary]
- * @property {string} [textSecondary]
- * @property {string} [textTertiary]
- * @property {string} [warning]
- * @property {string} [warningHover]
- */
-/**
- * @typedef {Object} VeraUIConfig
- * @property {VeraColorThemeConfig} [light]
- * @property {VeraColorThemeConfig} [dark]
- * @property {string} [borderRadiusExtraLarge]
- * @property {string} [borderRadiusExtraSmall]
- * @property {string} [borderRadiusLarge]
- * @property {string} [borderRadiusMedium]
- * @property {string} [borderRadiusNone]
- * @property {string} [borderRadiusSmall]
- * @property {string} [fontFamilyPlain]
- * @property {VeraTypographyProperties} [headline]
- * @property {VeraTypographyProperties} [subtitle]
- * @property {VeraTypographyProperties} [heading1]
- * @property {VeraTypographyProperties} [heading2]
- * @property {VeraTypographyProperties} [heading3]
- * @property {VeraTypographyProperties} [heading4]
- * @property {VeraTypographyProperties} [bodyExtended]
- * @property {VeraTypographyProperties} [bodyExtendedSemibold]
- * @property {VeraTypographyProperties} [bodyBase]
- * @property {VeraTypographyProperties} [bodyBaseSemibold]
- * @property {VeraTypographyProperties} [caption]
- * @property {VeraTypographyProperties} [captionSemibold]
- */
+const TYPOGRAPHY_TOKEN_KEYS: VeraTypographyTokenKey[] = [
+  'headline',
+  'subtitle',
+  'heading-1',
+  'heading-2',
+  'heading-3',
+  'heading-4',
+  'body-extended',
+  'body-extended-semibold',
+  'body-base',
+  'body-base-semibold',
+  'caption',
+  'caption-semibold',
+];
 
-/**
- * @param {VeraUIConfig} [config={}]
+const VERA_UI_CONFIG_JSDOC = `/**
+ * @param {import('../veraUI.types').VeraThemeTokens} [config] Optional theme
+ * document (the same standardized designTokens.json shape). When provided, its
+ * values override the baked-in defaults at runtime, which is what enables
+ * live theme updates in dev without regenerating this file.
  */`;
 
-const typographyTokenByConfigKey = {
-  headline: 'headline',
-  subtitle: 'subtitle',
-  heading1: 'heading-1',
-  heading2: 'heading-2',
-  heading3: 'heading-3',
-  heading4: 'heading-4',
-  bodyExtended: 'body-extended',
-  bodyExtendedSemibold: 'body-extended-semibold',
-  bodyBase: 'body-base',
-  bodyBaseSemibold: 'body-base-semibold',
-  caption: 'caption',
-  captionSemibold: 'caption-semibold',
-} as const;
+/**
+ * Runtime resolver helpers that are emitted verbatim into the generated plugin.
+ *
+ * Keeping the branching (?? / ternaries / unit conversions) inside these small,
+ * single-purpose functions is what keeps the main plugin callback linear: each
+ * addBase entry becomes a plain function call instead of an inline conditional
+ * expression. That is what holds the callback's cognitive complexity down.
+ */
+const RUNTIME_RESOLVERS = `/**
+ * Resolves a theme-aware color from the runtime config, falling back to the
+ * value baked in from designTokens.json.
+ */
+const resolveColor = (config, mode, key, fallback) => config.colors?.[mode]?.[key] ?? fallback;
 
-function camelToKebab(value: string): string {
-  return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-}
+/**
+ * Resolves a border radius token. Config values are plain numbers and get a
+ * 'px' suffix; the fallback is already a full px string.
+ */
+const resolveBorderRadius = (config, key, fallback) => {
+  const value = config.borderRadius?.[key];
+  if (value == null) return fallback;
+  return value + 'px';
+};
 
-function buildDefaultVeraUIConfig(): VeraUIConfig {
-  const { color, border, typography } = tsDesignTokens;
+/**
+ * Resolves the plain font-family, falling back to the baked default.
+ */
+const resolveFontFamily = (config, fallback) => config.typography?.['font-family'] ?? fallback;
 
-  const light = Object.fromEntries(
-    Object.entries(color.light).map(([key, token]) => [kebabToCamel(key), token.value])
-  ) as VeraUIConfig['light'];
+/**
+ * Resolves a typography size (font-size / line-height). Config values are px
+ * strings that get converted to rem; the fallback is already a rem string.
+ */
+const resolveTypographySize = (config, viewport, tokenKey, prop, fallback) => {
+  const value = config.typography?.[viewport]?.[tokenKey]?.[prop];
+  if (!value) return fallback;
+  return Number(value.slice(0, -2)) / 16 + 'rem';
+};
 
-  const dark = Object.fromEntries(
-    Object.entries(color.dark).map(([key, token]) => [kebabToCamel(key), token.value])
-  ) as VeraUIConfig['dark'];
+/**
+ * Resolves a typography font-weight. Config values are numbers coerced to a
+ * string; the fallback is already a string.
+ */
+const resolveTypographyWeight = (config, viewport, tokenKey, fallback) => {
+  const value = config.typography?.[viewport]?.[tokenKey]?.['font-weight'];
+  if (value == null) return fallback;
+  return String(value);
+};`;
 
-  const typo = (tokenKey: keyof typeof typographyTokenByConfigKey): VeraUIConfig['headline'] => {
-    const tsKey = typographyTokenByConfigKey[tokenKey];
-    const desktop = typography.typeScale.desktop[tsKey];
-    const mobile = typography.typeScale.mobile[tsKey];
-    return {
-      fontSize: desktop.fontSize.value,
-      lineHeight: desktop.lineHeight.value,
-      fontWeight: String(desktop.fontWeight.value),
-      mobileFontSize: mobile.fontSize.value,
-      mobileLineHeight: mobile.lineHeight.value,
-      mobileFontWeight: String(mobile.fontWeight.value),
-    };
-  };
+type NormalizedTypographyStyle = { fontSize: string; lineHeight: string; fontWeight: string };
 
-  return {
-    light,
-    dark,
-    borderRadiusNone: border.none.value,
-    borderRadiusExtraSmall: border['extra-small'].value,
-    borderRadiusSmall: border.small.value,
-    borderRadiusMedium: border.medium.value,
-    borderRadiusLarge: border.large.value,
-    borderRadiusExtraLarge: border['extra-large'].value,
-    fontFamilyPlain: typography.typeface.plain.value,
-    headline: typo('headline'),
-    subtitle: typo('subtitle'),
-    heading1: typo('heading1'),
-    heading2: typo('heading2'),
-    heading3: typo('heading3'),
-    heading4: typo('heading4'),
-    bodyExtended: typo('bodyExtended'),
-    bodyExtendedSemibold: typo('bodyExtendedSemibold'),
-    bodyBase: typo('bodyBase'),
-    bodyBaseSemibold: typo('bodyBaseSemibold'),
-    caption: typo('caption'),
-    captionSemibold: typo('captionSemibold'),
-  };
-}
-
-function mergeVeraUIConfig(defaults: VeraUIConfig, partial: VeraUIConfig): VeraUIConfig {
-  return {
-    ...defaults,
-    ...partial,
-    light: { ...defaults.light, ...partial.light },
-    dark: { ...defaults.dark, ...partial.dark },
-    headline: { ...defaults.headline, ...partial.headline },
-    subtitle: { ...defaults.subtitle, ...partial.subtitle },
-    heading1: { ...defaults.heading1, ...partial.heading1 },
-    heading2: { ...defaults.heading2, ...partial.heading2 },
-    heading3: { ...defaults.heading3, ...partial.heading3 },
-    heading4: { ...defaults.heading4, ...partial.heading4 },
-    bodyExtended: { ...defaults.bodyExtended, ...partial.bodyExtended },
-    bodyExtendedSemibold: { ...defaults.bodyExtendedSemibold, ...partial.bodyExtendedSemibold },
-    bodyBase: { ...defaults.bodyBase, ...partial.bodyBase },
-    bodyBaseSemibold: { ...defaults.bodyBaseSemibold, ...partial.bodyBaseSemibold },
-    caption: { ...defaults.caption, ...partial.caption },
-    captionSemibold: { ...defaults.captionSemibold, ...partial.captionSemibold },
-  };
-}
-
-function normalizeDesignTokensFromConfig(config: VeraUIConfig): {
+type NormalizedDesignTokens = {
   colors: {
     light: Record<string, string>;
     dark: Record<string, string>;
@@ -201,166 +98,120 @@ function normalizeDesignTokensFromConfig(config: VeraUIConfig): {
   borderRadius: Record<string, string>;
   fontFamily: Record<string, string>;
   fontSize: {
-    desktop: Record<string, { fontSize: string; lineHeight: string; fontWeight: string }>;
-    mobile: Record<string, { fontSize: string; lineHeight: string; fontWeight: string }>;
+    desktop: Record<string, NormalizedTypographyStyle>;
+    mobile: Record<string, NormalizedTypographyStyle>;
   };
-} {
-  const lightColors = Object.fromEntries(
-    Object.entries(config.light ?? {}).map(([key, tokenValue]) => [camelToKebab(key), tokenValue])
-  );
+};
 
-  const darkColors = Object.fromEntries(
-    Object.entries(config.dark ?? {}).map(([key, tokenValue]) => [camelToKebab(key), tokenValue])
-  );
+/**
+ * Converts a px string (e.g. "24px") to a rem string (e.g. "1.5rem") using the
+ * 16px = 1rem base. Non-px values are returned untouched.
+ */
+function pxToRem(value: string): string {
+  if (!value.endsWith('px')) return value;
+  const px = Number(value.slice(0, -2));
+  return `${px / 16}rem`;
+}
 
+/**
+ * Normalizes the designTokens.json document into the kebab-case, emit-ready
+ * shape consumed by the token emitters. This is the single representation used
+ * throughout the pipeline: colors stay kebab-case, border radius numbers become
+ * px strings, and typography px sizes become rem.
+ */
+function normalizeThemeTokens(tokens: VeraThemeTokens): NormalizedDesignTokens {
   const borderRadius = Object.fromEntries(
-    Object.entries(config)
-      .filter(([key]) => key.startsWith('borderRadius'))
-      .map(([key, tokenValue]) => [camelToKebab(key.replace('borderRadius', '')), tokenValue])
-  ) as Record<string, string>;
+    Object.entries(tokens.borderRadius).map(([key, value]) => [key, `${value}px`])
+  );
 
-  const fontFamily = Object.fromEntries(
-    Object.entries(config)
-      .filter(([key]) => key.startsWith('fontFamily'))
-      .map(([key, tokenValue]) => [camelToKebab(key.replace('fontFamily', '')), tokenValue])
-  ) as Record<string, string>;
+  const fontFamily = { plain: tokens.typography['font-family'] };
 
-  const desktopFontSize: Record<
-    string,
-    {
-      fontSize: string;
-      lineHeight: string;
-      fontWeight: string;
-    }
-  > = {};
-
-  const mobileFontSize: Record<
-    string,
-    {
-      fontSize: string;
-      lineHeight: string;
-      fontWeight: string;
-    }
-  > = {};
-
-  for (const [configKey, tokenKey] of Object.entries(typographyTokenByConfigKey)) {
-    const typographyValues = config[configKey as keyof VeraUIConfig] as
-      | {
-          fontSize?: string;
-          lineHeight?: string;
-          fontWeight?: string;
-          mobileFontSize?: string;
-          mobileLineHeight?: string;
-          mobileFontWeight?: string;
-        }
-      | undefined;
-
-    desktopFontSize[tokenKey] = {
-      fontSize: typographyValues?.fontSize ?? '',
-      lineHeight: typographyValues?.lineHeight ?? '',
-      fontWeight: typographyValues?.fontWeight ?? '',
-    };
-
-    mobileFontSize[tokenKey] = {
-      fontSize: typographyValues?.mobileFontSize ?? typographyValues?.fontSize ?? '',
-      lineHeight: typographyValues?.mobileLineHeight ?? typographyValues?.lineHeight ?? '',
-      fontWeight: typographyValues?.mobileFontWeight ?? typographyValues?.fontWeight ?? '',
-    };
-  }
+  const toViewport = (viewport: TypographyScale): Record<string, NormalizedTypographyStyle> =>
+    Object.fromEntries(
+      TYPOGRAPHY_TOKEN_KEYS.map((tokenKey) => {
+        const style = viewport[tokenKey];
+        return [
+          tokenKey,
+          {
+            fontSize: pxToRem(style['font-size']),
+            lineHeight: pxToRem(style['line-height']),
+            fontWeight: String(style['font-weight']),
+          },
+        ];
+      })
+    );
 
   return {
     colors: {
-      light: lightColors,
-      dark: darkColors,
+      light: tokens.colors.light,
+      dark: tokens.colors.dark,
     },
     borderRadius,
     fontFamily,
     fontSize: {
-      desktop: desktopFontSize,
-      mobile: mobileFontSize,
+      desktop: toViewport(tokens.typography.desktop),
+      mobile: toViewport(tokens.typography.mobile),
     },
   };
 }
 
 /**
- * Extracts the config path from a CSS variable name.
- * Examples:
- * - '--vera-accent' -> 'accent'
- * - '--vera-alert-background' -> 'alertBackground'
- * - '--vera-typography-headline-font-size' -> 'headline?.fontSize'
- * - '--vera-typography-heading-1-font-size' -> 'heading1?.fontSize'
- * - '--vera-typography-body-extended-font-size' -> 'bodyExtended?.fontSize'
+ * Produces a single-quoted JS string literal for a fallback value.
  */
-function getCssVariableConfigPath(variableName: string): string {
-  // Remove '--vera-' prefix
-  const withoutPrefix = variableName.replace('--vera-', '');
+function toStringLiteral(value: string): string {
+  const escapedSingleQuote = String.raw`\'`;
+  const escapedValue = value.replaceAll("'", escapedSingleQuote);
+  return `'${escapedValue}'`;
+}
 
-  // Handle typography special case: strip the known property suffix from the end
-  // Properties are always: font-size, line-height, or font-weight
-  if (withoutPrefix.startsWith('typography-')) {
-    const typographySuffix = withoutPrefix.replace('typography-', '');
-    const propertySuffixes = [
-      '-mobile-font-size',
-      '-mobile-line-height',
-      '-mobile-font-weight',
-      '-font-size',
-      '-line-height',
-      '-font-weight',
-    ];
+/**
+ * Builds the runtime lookup expression for a typography/layout CSS variable.
+ * It reads the raw (standardized) config passed to veraUI(), applying the unit
+ * conversions inline (border number -> px, typography px -> rem), and falls
+ * back to the baked value. Examples:
+ * - '--vera-border-radius-medium'          -> config.borderRadius?.medium != null ? config.borderRadius.medium + 'px' : '8px'
+ * - '--vera-font-family-plain'             -> config.typography?.['font-family'] ?? 'Inter, ...'
+ * - '--vera-typography-headline-font-size' -> pxStr ? Number(pxStr.slice(0,-2))/16 + 'rem' : '4.125rem'
+ */
+const BORDER_RADIUS_VARIABLE_PATTERN = /^--vera-border-radius-(.+)$/;
+const TYPOGRAPHY_VARIABLE_PATTERN = /^--vera-typography-(.+)-(font-size|line-height|font-weight)$/;
 
-    for (const suffix of propertySuffixes) {
-      if (typographySuffix.endsWith(suffix)) {
-        const tokenKey = typographySuffix.slice(0, -suffix.length);
-        const propertyKey = kebabToCamel(suffix.slice(1));
-        return `${kebabToCamel(tokenKey)}?.${propertyKey}`;
-      }
+function typographyOrLayoutLookup(cssVarName: string, bakedValue: string): string {
+  const fallback = toStringLiteral(bakedValue);
+
+  const borderRadiusKey = BORDER_RADIUS_VARIABLE_PATTERN.exec(cssVarName);
+  if (borderRadiusKey) {
+    return `resolveBorderRadius(config, '${borderRadiusKey[1]}', ${fallback})`;
+  }
+
+  if (cssVarName === '--vera-font-family-plain') {
+    return `resolveFontFamily(config, ${fallback})`;
+  }
+
+  const typography = TYPOGRAPHY_VARIABLE_PATTERN.exec(cssVarName);
+  if (typography) {
+    const [, rawToken, prop] = typography;
+    const isMobile = rawToken.endsWith('-mobile');
+    const tokenKey = isMobile ? rawToken.slice(0, -'-mobile'.length) : rawToken;
+    const viewport = isMobile ? 'mobile' : 'desktop';
+
+    // font-weight is a number in the config; sizes are px strings -> rem.
+    if (prop === 'font-weight') {
+      return `resolveTypographyWeight(config, '${viewport}', '${tokenKey}', ${fallback})`;
     }
+    return `resolveTypographySize(config, '${viewport}', '${tokenKey}', '${prop}', ${fallback})`;
   }
 
-  return kebabToCamel(withoutPrefix);
+  return fallback;
 }
 
 /**
- * Generates a config lookup expression with fallback value.
- * Example: 'light.accent ?? "#FFFFFF"'
+ * Generates the addBase color and typography CSS variables. Each variable reads
+ * the runtime config (normalized to the internal lookup shape) and falls back
+ * to the value baked in from designTokens.json. This keeps runtime overrides
+ * working (live theme updates) while defaults require no config.
  */
-function generateConfigLookup(
-  theme: 'light' | 'dark',
-  configPath: string,
-  fallbackValue: string
-): string {
-  return `config.${configPath} ?? ${theme}.${configPath} ?? '${fallbackValue}'`;
-}
-
-/**
- * Generates a config lookup expression for non-theme-aware variables.
- * All layout, font, and typography tokens are configurable at the root level.
- */
-function generateGlobalConfigLookup(variableName: string, fallbackValue: string): string {
-  if (variableName.startsWith('--vera-typography-')) {
-    const configPath = getCssVariableConfigPath(variableName);
-    return `config.${configPath} ?? '${fallbackValue}'`;
-  }
-
-  if (variableName.startsWith('--vera-border-radius-')) {
-    const key = variableName.replace('--vera-', '');
-    const configKey = kebabToCamel(key);
-    return `config.${configKey} ?? '${fallbackValue}'`;
-  }
-
-  if (variableName.startsWith('--vera-font-family-')) {
-    const key = variableName.replace('--vera-', '');
-    const configKey = kebabToCamel(key);
-    return `config.${configKey} ?? '${fallbackValue}'`;
-  }
-
-  return `'${fallbackValue}'`;
-}
-
-/**
- * Generates addBase color and typography variables with config lookups.
- */
-function generateAddBaseVariablesWithConfig(
+function generateAddBaseVariables(
   lightColors: Record<string, string>,
   darkColors: Record<string, string>,
   typographyAndLayoutVariables: Record<string, string>,
@@ -371,37 +222,26 @@ function generateAddBaseVariablesWithConfig(
 
   const colorKeys = Object.keys(lightColors).sort((a, b) => a.localeCompare(b));
 
-  // Generate variables in original order: for each key, add theme-aware then static variants
+  // For each color: theme-aware variable (light in :root, dark in dark scope)
+  // plus static light/dark variants. Each reads the runtime override first.
   for (const key of colorKeys) {
-    const lightValue = lightColors[key];
-    const darkValue = darkColors[key];
+    const lightLookup = `resolveColor(config, 'light', '${key}', ${toStringLiteral(lightColors[key])})`;
+    const darkLookup = `resolveColor(config, 'dark', '${key}', ${toStringLiteral(darkColors[key])})`;
     const cssVarName = `--vera-${key}`;
-    const configPath = getCssVariableConfigPath(cssVarName);
-    const lightConfigLookup = generateConfigLookup('light', configPath, lightValue);
-    const darkConfigLookup = generateConfigLookup('dark', configPath, darkValue);
 
-    // Theme-aware color (changes with theme)
-    rootLines.push(`${indentation}'${cssVarName}': ${lightConfigLookup},`);
-    darkLines.push(`${indentation}'${cssVarName}': ${darkConfigLookup},`);
-
-    // Light variant (always uses light theme from config)
-    rootLines.push(`${indentation}'--vera-${key}-light': ${lightConfigLookup},`);
-
-    // Dark variant (always uses dark theme from config)
-    rootLines.push(`${indentation}'--vera-${key}-dark': ${darkConfigLookup},`);
+    // Theme-aware color (changes with theme) plus static light/dark variants.
+    rootLines.push(
+      `${indentation}'${cssVarName}': ${lightLookup},`,
+      `${indentation}'--vera-${key}-light': ${lightLookup},`,
+      `${indentation}'--vera-${key}-dark': ${darkLookup},`
+    );
+    darkLines.push(`${indentation}'${cssVarName}': ${darkLookup},`);
   }
 
-  // Add typography and layout variables (remain static)
-  const typographyKeys = Object.keys(typographyAndLayoutVariables);
-
-  // Add blank line and comment before typography section
-  rootLines.push('');
-  rootLines.push(`${indentation}// Typography and layout design tokens`);
-
-  for (const key of typographyKeys) {
-    const value = typographyAndLayoutVariables[key];
-    const configLookup = generateGlobalConfigLookup(key, value);
-    rootLines.push(`${indentation}'${key}': ${configLookup},`);
+  // Typography and layout variables (not theme-aware)
+  rootLines.push('', `${indentation}// Typography and layout design tokens`);
+  for (const [key, value] of Object.entries(typographyAndLayoutVariables)) {
+    rootLines.push(`${indentation}'${key}': ${typographyOrLayoutLookup(key, value)},`);
   }
 
   return {
@@ -419,8 +259,10 @@ function generateAddBaseVariablesWithConfig(
  * - Overridable by the user
  */
 function generateVeraUIPlugin() {
-  const mergedConfig = mergeVeraUIConfig(buildDefaultVeraUIConfig(), designTokens as VeraUIConfig);
-  const normalizedDesignTokens = normalizeDesignTokensFromConfig(mergedConfig);
+  // designTokens.json is the single source of truth. Its values are normalized
+  // (kebab-case, border numbers -> px, typography px -> rem) and baked directly
+  // into the generated plugin.
+  const normalizedDesignTokens = normalizeThemeTokens(designTokens as VeraThemeTokens);
   const { desktop: fontSizeDesktop, mobile: fontSizeMobile } = normalizedDesignTokens.fontSize;
 
   const { colorTokens } = generateColorTokens(
@@ -441,8 +283,8 @@ function generateVeraUIPlugin() {
     'vera-desktop': { min: '768px' },
   };
 
-  // Generate addBase variables with config lookups
-  const { rootVars, darkVars } = generateAddBaseVariablesWithConfig(
+  // Generate addBase variables with values baked in directly
+  const { rootVars, darkVars } = generateAddBaseVariables(
     normalizedDesignTokens.colors.light,
     normalizedDesignTokens.colors.dark,
     typographyAndLayoutVariables,
@@ -456,12 +298,13 @@ function generateVeraUIPlugin() {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const plugin = require('tailwindcss/plugin');
 
+${RUNTIME_RESOLVERS}
+
 ${VERA_UI_CONFIG_JSDOC}
 
 const veraUI = (config = {}) => {
 return plugin(
   ({ addUtilities, addBase, addVariant }) => {
-    const { light = {}, dark = {} } = config; // also includes typography and layout
     const fontSizeUtilities = {};
     const fontWeightUtilities = {};
 
@@ -519,9 +362,9 @@ ${darkVars}
     theme: {
       extend: {
         borderRadius: ${generateBorderRadiusThemeConfig(borderRadius)},
-        colors: ${JSON.stringify(colorTokens, null, 6).replace(/\n/g, '\n        ')},
+        colors: ${JSON.stringify(colorTokens, null, 6).replaceAll('\n', '\n        ')},
         fontFamily: ${generateFontFamilyThemeConfig(fontFamily)},
-        screens: ${JSON.stringify(screens, null, 6).replace(/\n/g, '\n        ')},
+        screens: ${JSON.stringify(screens, null, 6).replaceAll('\n', '\n        ')},
       },
     },
   }

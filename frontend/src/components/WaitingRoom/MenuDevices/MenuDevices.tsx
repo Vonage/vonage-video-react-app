@@ -80,7 +80,8 @@ const MenuDevices = ({
           </MenuItem>
         ))}
 
-      {shouldDisplayEmptyState && (
+      {/* audiooutput renders its own empty state below (with SoundTest), so exclude it here to avoid a duplicate */}
+      {shouldDisplayEmptyState && mediaDeviceKind !== 'audiooutput' && (
         <MenuItem disabled data-testid={`${mediaDeviceKind}-menu-empty-state`}>
           {t('waitingRoom.devices.noDevicesFound')}
         </MenuItem>

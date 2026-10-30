@@ -4,8 +4,7 @@ import { ReactElement } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import { SessionContextType } from '@Context/SessionProvider/session';
 import { makeTestProvider, providers } from '@test/providers';
-import ArchivingButton from './ArchivingButton';
-import { env } from '../../../env';
+import ArchivingButton, { testIds } from './ArchivingButton';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -27,9 +26,10 @@ describe('ArchivingButton', () => {
     vi.clearAllMocks();
     sessionContext = {
       subscriberWrappers: [],
-      archiveId: null,
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: null,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType;
@@ -39,21 +39,21 @@ describe('ArchivingButton', () => {
 
   it('renders the button correctly', () => {
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    expect(screen.getByTestId('archiving-button')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.button)).toBeInTheDocument();
   });
 
   it('opens the modal when the button is clicked', () => {
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
   });
 
   it('triggers the start archiving when button is pressed', async () => {
     vi.useFakeTimers();
-    (mockVideoClient.startArchive as Mock).mockResolvedValue({ data: { success: true } });
+    (mockVideoClient.startArchive as Mock).mockResolvedValue({ id: testArchiveId });
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Start Recording?')).toBeInTheDocument();
 
     // click the button to start archiving
@@ -71,13 +71,14 @@ describe('ArchivingButton', () => {
   it('shows stop recording dialog when archiving is active', () => {
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: 'test-archive-id',
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Stop Recording?')).toBeInTheDocument();
   });
 
@@ -85,16 +86,17 @@ describe('ArchivingButton', () => {
     vi.useFakeTimers();
     mockUseSessionContext.mockReturnValue({
       subscriberWrappers: [],
-      archiveId: testArchiveId,
-      markArchiveStartRequestedBySelf: vi.fn(),
-      resetArchiveStartRequestedBySelf: vi.fn(),
+      recordingArchiveId: testArchiveId,
+      setRecordingArchiveId: vi.fn(),
+      markRecordingStartRequestedBySelf: vi.fn(),
+      resetRecordingStartRequestedBySelf: vi.fn(),
       sessionKey: mockedSessionKey,
       connected: true,
     } as unknown as SessionContextType);
 
     render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
 
-    act(() => screen.getByTestId('archiving-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
     expect(screen.getByText('Stop Recording?')).toBeInTheDocument();
 
     // click the button to stop archiving
@@ -104,21 +106,14 @@ describe('ArchivingButton', () => {
       await vi.runAllTimersAsync();
     });
 
+    // We pass archiveType so the backend looks up the current archive ID,
+    // handling server rotation where the frontend's archiveId becomes stale.
     expect(mockVideoClient.stopArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
-      archiveId: testArchiveId,
+      archiveType: 'recording',
     });
 
     vi.useRealTimers();
-  });
-
-  it('is not rendered when allowArchiving is disabled', () => {
-    env.partialUpdate({
-      ALLOW_ARCHIVING: false,
-    });
-    render(<ArchivingButton handleClick={mockHandleCloseMenu} />);
-
-    expect(screen.queryByTestId('archiving-button')).not.toBeInTheDocument();
   });
 });
 

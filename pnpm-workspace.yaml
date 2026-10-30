@@ -1,0 +1,9 @@
+nodeLinker: hoisted
+
+allowBuilds:
+  '@swc/core': false
+  esbuild: false
+  nx: false
+  unrs-resolver: false
+overrides:
+  qs: 6.16.1

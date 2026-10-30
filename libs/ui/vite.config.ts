@@ -17,9 +17,9 @@ export default defineConfig(() => ({
     alias: {
       '@ui': path.resolve(__dirname, './src'),
       '@common': path.resolve(__dirname, '../common/src'),
-      '@web': path.resolve(__dirname, '../common/srcBrowser'),
+      '@web': path.resolve(__dirname, '../common/web'),
       '@common-test': path.resolve(__dirname, '../common/test'),
-      '@web-test': path.resolve(__dirname, '../common/testBrowser'),
+      '@web-test': path.resolve(__dirname, '../common/web-test'),
       '@core': path.resolve(__dirname, '../core/src'),
     },
   },
@@ -64,7 +64,7 @@ export default defineConfig(() => ({
       include: [
         `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../common/src')}/**/*.{ts,tsx}`,
-        `${path.resolve(__dirname, '../common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../common/web')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../core/src')}/**/*.{ts,tsx}`,
       ],
       exclude: ['test/**', '**/index.ts'],
