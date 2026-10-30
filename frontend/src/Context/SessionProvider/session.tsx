@@ -55,7 +55,7 @@ export type SessionContextType = {
   sessionDetails: VideoSessionDetails | null;
   unreadCount: number;
   messages: ChatMessageType[];
-  sendChatMessage: (text: string) => void;
+  sendChatMessage: (text: string) => Promise<void>;
   reconnecting: null | boolean;
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
@@ -103,7 +103,7 @@ export const SessionContext = createContext<SessionContextType>({
   sessionDetails: null,
   unreadCount: 0,
   messages: [],
-  sendChatMessage: () => {},
+  sendChatMessage: async () => Promise.resolve(),
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
@@ -276,15 +276,9 @@ const SessionProvider = ({
     }
   };
 
-  const handleEmoji = useCallback(
-    (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
-    },
-    [onEmoji]
-  );
+  const handleEmoji = useStableCallback((emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
+  });
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.

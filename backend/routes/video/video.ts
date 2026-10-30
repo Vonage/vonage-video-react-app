@@ -146,10 +146,20 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 videoRouter.post(
   '/hooks/captions',
   httpHandler(async (req: Request, res: Response) => {
-    const { sessionId, captionId, status } = assertResult(
-      () => CaptionsHookPayloadSchema.parse(req.body),
-      makeBadRequestErrorHandler('Invalid captions hook payload')
-    );
+    const { sessionId, captionsId, status } = assertResult(() => {
+      const parsedPayload = CaptionsHookPayloadSchema.safeParse(req.body);
+
+      if (parsedPayload.success) return parsedPayload.data;
+
+      console.warn('[hooks/captions] Invalid payload', {
+        receivedKeys: Object.keys((req.body ?? {}) as Record<string, unknown>),
+        issues: parsedPayload.error.issues.map(
+          ({ path, message }) => `${path.join('.')}: ${message}`
+        ),
+      });
+
+      throw parsedPayload.error;
+    }, makeBadRequestErrorHandler('Invalid captions hook payload'));
 
     const terminalStatuses: CaptionsStatus[] = ['started', 'stopped', 'failed'];
     const shouldProcessCaptionsEvent = terminalStatuses.includes(status);
@@ -160,7 +170,7 @@ videoRouter.post(
       () =>
         sessionService.setCaptionsId({
           sessionId,
-          captionsId: status === 'started' ? captionId : null,
+          captionsId: status === 'started' ? captionsId : null,
         }),
       makeInternalErrorHandler('Failed to process captions event')
     );

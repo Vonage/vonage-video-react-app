@@ -1,12 +1,13 @@
-import { describe, expect, it, vi, afterEach } from 'vitest';
-import { render as renderBase, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { render as renderBase, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import ChatInput from './ChatInput';
-import { ChatMessageType } from '../../../types/chat';
+import type { ChatMessageType, ChatMessageId } from '@app-types/chat';
 
 const testMessages: ChatMessageType[] = [
   {
+    id: 'message-1' as ChatMessageId,
     participantName: 'User One',
     timestamp: 1726587657728,
     message: 'Hello all',
@@ -16,6 +17,10 @@ const testMessages: ChatMessageType[] = [
 const sendChatMessageMock = vi.fn();
 
 describe('ChatInput', () => {
+  beforeEach(() => {
+    sendChatMessageMock.mockResolvedValue(undefined);
+  });
+
   afterEach(() => {
     cleanup();
     vi.clearAllMocks();
@@ -126,6 +131,49 @@ describe('ChatInput', () => {
     fireEvent.change(input, { target: { value: '   ' } });
     fireEvent.click(sendButton);
     expect(sendChatMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('clears the input once the message is sent successfully', async () => {
+    render(<ChatInput />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
+    const input = screen.getByPlaceholderText<HTMLInputElement>('Send a message');
+
+    fireEvent.change(input, { target: { value: testMessages[0].message } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    await waitFor(() => expect(input.value).toBe(''));
+  });
+
+  it('keeps the typed text when the message fails to send', async () => {
+    expect.assertions(1);
+    sendChatMessageMock.mockRejectedValueOnce(new Error('signal failed'));
+    render(<ChatInput />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.sendChatMessage = sendChatMessageMock;
+          }
+        },
+      },
+    });
+    const input = screen.getByPlaceholderText<HTMLInputElement>('Send a message');
+
+    fireEvent.change(input, { target: { value: testMessages[0].message } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    await waitFor(() => {
+      if (sendChatMessageMock.mock.calls.length === 0) {
+        throw new Error('Expected sendChatMessage to have been called');
+      }
+    });
+    expect(input.value).toBe(testMessages[0].message);
   });
 });
 
