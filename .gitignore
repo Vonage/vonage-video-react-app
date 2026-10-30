@@ -80,3 +80,6 @@ graph.json
 /.agents/tasks
 /.worktrees
 /.playwright-mcp/
+
+# personal kiro preferences, not shared with the team
+~/.kiro/settings/mcp.json

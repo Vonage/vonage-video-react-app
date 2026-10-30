@@ -19,6 +19,14 @@ export default [
         config: path.join(__dirname, 'src/css/index.css'),
         callees: ['twMerge', 'cn', 'classNames', 'tv', 'extendTailwindMerge', 'mergeFieldClasses'],
         ignoredKeys: ['compoundVariants', 'defaultVariants', 'classGroups'],
+        cssFiles: [
+          '**/*.css',
+          '!**/node_modules',
+          '!**/.*',
+          '!**/dist',
+          '!**/build',
+          '!.worktrees',
+        ],
       },
     },
     rules: {
