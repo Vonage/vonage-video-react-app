@@ -310,22 +310,31 @@ describe('SessionProvider', () => {
       });
     });
 
-    it('pushes a warning notification when a resubscribe attempt fails', async () => {
-      await renderAndWaitForConnection();
+    it('pushes one notification when several resubscribes fail together', async () => {
+      expect.assertions(2);
+
+      const { getByTestId } = render(<TestComponent />);
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'true') throw new Error('not connected');
+      });
       const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
       act(() => {
-        vonageVideoClient.emit('resubscribeFailed', { remoteParticipantName: 'Alex' });
+        Array.from({ length: 4 }).forEach(() => {
+          vonageVideoClient.emit('resubscribeFailed', {
+            streamId: 'stream-1',
+            error: new Error('stream not found'),
+          });
+        });
       });
 
-      await waitFor(() => {
-        expect(pushSpy).toHaveBeenCalledWith(
-          expect.objectContaining({
-            type: 'warning',
-            message: "We couldn't reconnect to Alex's video.",
-          })
-        );
-      });
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'warning',
+          message: "Connection issues. Some video couldn't be restored.",
+        })
+      );
     });
   });
 

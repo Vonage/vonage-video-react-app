@@ -37,10 +37,10 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
-import { useTranslation } from 'react-i18next';
+import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { notifications$, runtime$ } from '@core/stores';
+import { runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -187,7 +187,6 @@ const SessionProvider = ({
   initialValue = {},
   skipBrowserUrlUpdate = false,
 }: SessionProviderProps): ReactElement => {
-  const { t } = useTranslation();
   const videoClient = runtime$.useVideoClient();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
@@ -520,17 +519,7 @@ const SessionProvider = ({
     [reconnecting]
   );
 
-  const handleResubscribeFailed = ({
-    remoteParticipantName,
-  }: {
-    remoteParticipantName: string;
-  }) => {
-    notifications$.actions.push({
-      type: 'warning',
-      message: t('subscribingErrors.resubscribeFailed.message', { name: remoteParticipantName }),
-      expirationMs: 6000,
-    });
-  };
+  const { resubscribeFailureNotifier } = useResubscribeFailureNotifier();
 
   /**
    * Connects to the session using the provided credentials.
@@ -565,7 +554,7 @@ const SessionProvider = ({
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
       vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
       vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
-      vonageVideoClient.current.on('resubscribeFailed', handleResubscribeFailed);
+      vonageVideoClient.current.on('resubscribeFailed', resubscribeFailureNotifier);
 
       await vonageVideoClient.current.connect();
       setConnected(true);

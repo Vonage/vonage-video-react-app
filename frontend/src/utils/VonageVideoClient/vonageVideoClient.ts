@@ -46,7 +46,7 @@ type VonageVideoClientEvents = {
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
   localCaptionReceived: [LocalCaptionReceived];
   subscriptionError: [unknown];
-  resubscribeFailed: [{ remoteParticipantName: string }];
+  resubscribeFailed: [{ streamId: string; error: unknown }];
 };
 
 /**
@@ -227,19 +227,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         errorName: isErrorLike(syncError) ? syncError.name : undefined,
       });
 
-      if (isRecoverableError) {
-        // Don't emit subscriptionError for recoverable errors, which would disconnect the user
-        // The stream was likely destroyed before subscription completed (e.g., user refreshed)
-        if (isResubscribeAttempt) {
-          frontendLogger.reportError(syncError, {
-            eventSource: 'vonageVideoClient.subscribeToStream.recoverable',
-          });
-          this.emit('resubscribeFailed', { remoteParticipantName });
-        }
+      if (!isRecoverableError) {
+        this.handleSubscriptionError(syncError);
         return;
       }
 
-      this.handleSubscriptionError(syncError);
+      // Don't emit subscriptionError for recoverable errors, which would disconnect the user
+      // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+      if (!isResubscribeAttempt) {
+        return;
+      }
+
+      this.emit('resubscribeFailed', { streamId, error: syncError });
     }
   };
 
