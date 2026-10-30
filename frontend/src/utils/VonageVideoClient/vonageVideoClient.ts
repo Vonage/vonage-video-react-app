@@ -1,5 +1,6 @@
 import {
   initSession,
+  OTError,
   Publisher,
   Session,
   Stream,

@@ -59,14 +59,12 @@ describe('VonageVideoClient', () => {
 
     mockSession = Object.assign(new EventEmitter(), {
       connect: mockConnect,
-      subscribe: mockSubscribe,
-      unsubscribe: mockUnsubscribe,
       subscribe: Object.assign(mockSubscribe, { promise: mockSubscribePromise }),
+      unsubscribe: mockUnsubscribe,
       disconnect: mockDisconnect,
       forceMuteStream: vi.fn(),
       publish: Object.assign(mockPublish, { promise: mockPublishPromise }),
       unpublish: vi.fn(),
-      unsubscribe: vi.fn(),
       sessionId: fakeSessionId,
       connection: {
         connectionId: 'connection-id',
