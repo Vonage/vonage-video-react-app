@@ -609,6 +609,7 @@ const SessionProvider = ({
           message: t('participants.mute.forceMuteFailed'),
           expirationMs: env.NOTIFICATION_DURATION_MS,
         });
+        throw error;
       }
     },
     [t]

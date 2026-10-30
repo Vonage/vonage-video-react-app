@@ -54,7 +54,8 @@ describe('usePreviewPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should report initPublisher errors via frontendLogger', async () => {
+    it('should report initPublisher errors and leave no publisher behind', async () => {
+      expect.assertions(3);
       const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
@@ -62,16 +63,23 @@ describe('usePreviewPublisher', () => {
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
       (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
+        return mockPublisher;
       });
 
-      const { result } = await render();
+      const { result, rerender } = await render();
       result.current.initLocalPublisher();
+      rerender();
+
       expect(reportErrorSpy).toHaveBeenCalledWith(
         error,
         expect.objectContaining({
           eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
         })
       );
+      expect(result.current.publisher).toBeNull();
+
+      result.current.initLocalPublisher();
+      expect(initPublisher).toHaveBeenCalledTimes(2);
     });
 
     it('should apply background high blur-sm when initialized and changed background', async () => {

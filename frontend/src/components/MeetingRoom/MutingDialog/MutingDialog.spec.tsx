@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { fireEvent, render as renderBase, screen } from '@testing-library/react';
+import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { Stream } from '@vonage/client-sdk-video';
 import MutingDialog, { MutingDialogProps } from './MutingDialog';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
@@ -53,7 +53,9 @@ describe('MutingDialog', () => {
     expect(mockSetIsOpen).toHaveBeenCalledWith(false);
   });
 
-  it('triggers the force mute of the participant and closes the dialog when Mute button is clicked', () => {
+  it('triggers the force mute of the participant and closes the dialog when Mute button is clicked', async () => {
+    expect.assertions(2);
+    mockForceMute.mockResolvedValueOnce(undefined);
     render(<MutingDialog {...defaultProps} />, {
       sessionContext: {
         __interceptor: (context) => {
@@ -64,10 +66,35 @@ describe('MutingDialog', () => {
       },
     });
 
-    const muteButton = screen.getByText('Mute');
-    fireEvent.click(muteButton);
+    await act(async () => {
+      fireEvent.click(screen.getByText('Mute'));
+      await Promise.resolve();
+    });
+
     expect(mockForceMute).toHaveBeenCalledWith(mockStream);
     expect(mockSetIsOpen).toHaveBeenCalledWith(false);
+  });
+
+  it('keeps the dialog open when force mute fails', async () => {
+    expect.assertions(2);
+    mockForceMute.mockRejectedValueOnce(new Error('Force mute failed'));
+    render(<MutingDialog {...defaultProps} />, {
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.forceMute = mockForceMute;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Mute'));
+      await Promise.resolve();
+    });
+
+    expect(mockForceMute).toHaveBeenCalledWith(mockStream);
+    expect(mockSetIsOpen).not.toHaveBeenCalled();
   });
 
   it('does not render the muting dialog when it has not been opened', () => {

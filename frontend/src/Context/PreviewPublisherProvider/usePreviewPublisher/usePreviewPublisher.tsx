@@ -201,15 +201,28 @@ const usePreviewPublisher = (
       videoSource: videoSourceId,
     };
 
-    publisherRef.current = initPublisher(undefined, publisherOptions, (error) => {
+    let publisher: Publisher | null = null;
+    let hasInitFailed = false;
+
+    publisher = initPublisher(undefined, publisherOptions, (error) => {
       if (!error) return;
-      publisherRef.current = null;
+      hasInitFailed = true;
       frontendLogger.reportError(error, {
         eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
       });
+
+      if (publisherRef.current !== publisher) return;
+      publisherRef.current = null;
+      attempt(() => publisher?.destroy());
     });
 
-    addPublisherListeners(publisherRef.current);
+    if (hasInitFailed) {
+      attempt(() => publisher?.destroy());
+      return;
+    }
+
+    publisherRef.current = publisher;
+    addPublisherListeners(publisher);
   });
 
   /**

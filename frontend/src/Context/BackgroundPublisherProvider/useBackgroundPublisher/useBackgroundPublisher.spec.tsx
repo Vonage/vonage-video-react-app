@@ -58,7 +58,7 @@ describe('useBackgroundPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should report initPublisher errors via frontendLogger', () => {
+    it('should report initPublisher errors and leave no publisher behind', () => {
       const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
@@ -66,18 +66,27 @@ describe('useBackgroundPublisher', () => {
       error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
       (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
         callback(error);
+        return mockPublisher;
       });
 
-      const { result } = render();
+      const { result, rerender } = render();
       act(() => {
         result.current.initBackgroundLocalPublisher();
       });
+      rerender();
+
       expect(reportErrorSpy).toHaveBeenCalledWith(
         error,
         expect.objectContaining({
           eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
         })
       );
+      expect(result.current.publisher).toBeNull();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+      expect(initPublisher).toHaveBeenCalledTimes(2);
     });
 
     it('should apply background high blur-sm when initialized and changed background', async () => {

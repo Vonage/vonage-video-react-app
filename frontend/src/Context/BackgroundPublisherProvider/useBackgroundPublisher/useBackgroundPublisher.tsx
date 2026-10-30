@@ -191,14 +191,28 @@ const useBackgroundPublisher = (
       publishVideo: isVideoEnabled,
     };
 
-    backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (error) => {
+    let publisher: Publisher | null = null;
+    let hasInitFailed = false;
+
+    publisher = initPublisher(undefined, publisherOptions, (error) => {
       if (!error) return;
-      backgroundPublisherRef.current = null;
+      hasInitFailed = true;
       frontendLogger.reportError(error, {
         eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
       });
+
+      if (backgroundPublisherRef.current !== publisher) return;
+      backgroundPublisherRef.current = null;
+      attempt(() => publisher?.destroy());
     });
-    addPublisherListeners(backgroundPublisherRef.current);
+
+    if (hasInitFailed) {
+      attempt(() => publisher?.destroy());
+      return;
+    }
+
+    backgroundPublisherRef.current = publisher;
+    addPublisherListeners(publisher);
   }, [addPublisherListeners, isVideoEnabled]);
 
   /**
