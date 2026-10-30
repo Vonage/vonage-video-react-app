@@ -44,10 +44,11 @@ const useWaitingRoom = () => {
   }, [publisher]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
+    if (backgroundPublisher || !publisher || isVideoLoading) return;
+    // Clone so each publisher owns its own track
+    const previewTrack = publisher.getVideoSource()?.track;
+    initBackgroundLocalPublisher(previewTrack ? previewTrack.clone() : undefined);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, publisher, isVideoLoading]);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
