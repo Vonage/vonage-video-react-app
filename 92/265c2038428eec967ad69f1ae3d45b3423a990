@@ -1,0 +1,14 @@
+backend/package.json
+  h_5ddc9d372ac6a1 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "92265c2038428eec967ad69f1ae3d45b3423a990",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
