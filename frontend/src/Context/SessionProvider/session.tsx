@@ -55,7 +55,7 @@ export type SessionContextType = {
   sessionDetails: VideoSessionDetails | null;
   unreadCount: number;
   messages: ChatMessageType[];
-  sendChatMessage: (text: string) => void;
+  sendChatMessage: (text: string) => Promise<void>;
   reconnecting: null | boolean;
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
@@ -103,7 +103,7 @@ export const SessionContext = createContext<SessionContextType>({
   sessionDetails: null,
   unreadCount: 0,
   messages: [],
-  sendChatMessage: () => {},
+  sendChatMessage: async () => Promise.resolve(),
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
