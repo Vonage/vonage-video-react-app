@@ -1,0 +1,55 @@
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  s_16343696230de9::t_d9882dfd7c4c4d 34
+frontend/src/components/MeetingRoom/PopupDialog/PopupDialog.tsx
+  s_16343696230de9::t_3d8f80b3b8c541 61
+  s_16343696230de9::t_81cc5ec7c4afa2 7
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  s_16343696230de9::t_75f64807958730 8
+frontend/src/locales/es-MX.json
+  s_16343696230de9::t_1af63f05becf15 312-314
+frontend/src/locales/ja.json
+  s_16343696230de9::t_8627884efebb5d 322-324
+frontend/src/locales/es.json
+  s_16343696230de9::t_b43333a814bbf3 312-314
+frontend/src/locales/de.json
+  s_16343696230de9::t_793002d74d2183 312-314
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_16343696230de9::t_7a4990f1f92ecc 5,10,12,34,39,50-53,56-57,122-135,137-168,170-171
+  s_2bf7341d619a9d::t_286716ecaa61cc 61-62
+  s_2bf7341d619a9d::t_b50b81b17239c7 60
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.tsx
+  s_16343696230de9::t_57017b067023c7 3-6,10-12,20-33
+  s_16343696230de9::t_b205161f7ece41 34
+frontend/src/locales/it.json
+  s_16343696230de9::t_86e72bf7826992 312-314
+frontend/src/locales/en.json
+  s_16343696230de9::t_de51ec69063bf5 312-314
+backend/routes/video/constants/startArchive.ts
+  s_16343696230de9::t_05db8e632f5869 31-53
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  s_16343696230de9::t_111245c9c2a3c9 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4e7ba4809e98ed4d06233b2184e08afd3bfe51ee",
+  "prompts": {},
+  "sessions": {
+    "s_16343696230de9": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_e8e05981-c88f-4b15-8193-82dba50a1af3",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    },
+    "s_2bf7341d619a9d": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_cfbdda84-453b-4ebc-b79b-28a8ce20ccde",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
