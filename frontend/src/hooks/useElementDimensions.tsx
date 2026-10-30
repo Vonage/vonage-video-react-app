@@ -31,9 +31,8 @@ const useElementDimensions = ({ elementRef }: UseElementDimensionsProps): Dimens
       resizeObserver.current?.observe(elementCurrent);
     }
     return () => {
-      if (elementCurrent) {
-        resizeObserver.current?.unobserve(elementCurrent);
-      }
+      resizeObserver.current?.disconnect();
+      resizeObserver.current = undefined;
     };
   }, [elementRef]);
   return elementDimensions;
