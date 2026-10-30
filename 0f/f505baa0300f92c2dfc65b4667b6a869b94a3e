@@ -1,0 +1,22 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 324-327
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.spec.ts
+  h_6029769cf9ac60 5-7,23-24,29-30,42-46,55,58,61
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.ts
+  h_6029769cf9ac60 8-9,15,29-32
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_6029769cf9ac60 276-280,288
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 49,241
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0ff505baa0300f92c2dfc65b4667b6a869b94a3e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
