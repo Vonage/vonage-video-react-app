@@ -24,7 +24,6 @@ import { testIds as screenSharingButtonTestIds } from '../../ScreenSharingButton
 vi.mock('@hooks/useRoomName');
 vi.mock('@web/platform');
 vi.mock('@utils/isReportIssueEnabled');
-
 const mockOpenEmojiGrid = vi.fn();
 const mockHandleClickAway = vi.fn();
 const mockIsReportIssueEnabled = isReportIssueEnabled as Mock<[], boolean>;
@@ -177,11 +176,12 @@ type RenderOptions = {
 
 function render(ui: ReactElement, { sessionContext, userContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.runtime],
+    [providers.user, providers.session, providers.runtime, providers.miniMode],
     {
       sessionContext,
       userContext,
       runtimeContext: undefined,
+      miniModeContext: undefined,
     }
   );
 

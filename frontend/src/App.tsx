@@ -23,6 +23,7 @@ import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
 import screenShare$ from '@Context/screenShare/screenShare$';
 import LoggerSynchronizer from '@Context/LoggerSynchronizer';
+import { MiniModeProvider } from '@Context/MiniMode';
 
 const InnerApp = () => {
   return (
@@ -53,7 +54,9 @@ const InnerApp = () => {
                         <PublisherProvider>
                           <LoggerSynchronizer />
                           <screenShare$.Provider>
-                            <MeetingRoom />
+                            <MiniModeProvider>
+                              <MeetingRoom />
+                            </MiniModeProvider>
                           </screenShare$.Provider>
                         </PublisherProvider>
                       </SessionProvider>

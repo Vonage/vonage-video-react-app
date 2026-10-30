@@ -14,6 +14,8 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
 import Portal from '@mui/material/Portal';
 import AdvancedSettingsButton from '../AdvancedSettingsButton';
+import MiniModeButton from '../MiniModeButton';
+import { useMiniMode } from '../../../Context/MiniMode';
 import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import getToolbarButtonVisibility from '../Toolbar/helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from '../Toolbar/helpers/isDisplayableToolbarButton';
@@ -76,6 +78,7 @@ const ToolbarOverflowMenu = ({
     subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
   const buttonVisibility = getToolbarButtonVisibility();
+  const { isAvailable: isMiniModeAvailable } = useMiniMode();
 
   const closeMenuWrapper = (onClick?: () => void) => () => {
     if (onClick) {
@@ -103,6 +106,9 @@ const ToolbarOverflowMenu = ({
       onLayoutModeChange={closeMenu}
       key="LayoutButton"
     />,
+    isMiniModeAvailable && (
+      <MiniModeButton isOverflowButton handleClick={closeMenu} key="MiniModeButton" />
+    ),
     buttonVisibility.emojis && (
       <EmojiGridButton
         isEmojiGridOpen={isEmojiGridOpen}

@@ -10,6 +10,7 @@ import VideoTile from '../MeetingRoom/VideoTile';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import useSelfViewMirroring from '../../hooks/useSelfViewMirroring';
 import toRemValue from '@common/helpers/toRemValue';
+import { useMiniMode } from '../../Context/MiniMode';
 
 export type PublisherProps = {
   box: Box;
@@ -31,29 +32,32 @@ const Publisher = ({ box }: PublisherProps): ReactElement => {
     publisher,
     isAudioEnabled,
   } = usePublisherContext();
+  const { hostedElement } = useMiniMode();
+  const isHostedInMiniMode = hostedElement === element;
   const audioLevel = useAudioLevels();
   // We store this in a ref to get a reference to the div so that we can append a video to it
   const pubContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (element && pubContainerRef.current) {
-      element.classList.add('video__element', 'rounded-vera-large');
-
-      // eslint-disable-next-line react-hooks/immutability
-      element.style.width = '100%';
-      element.style.height = '100%';
-      element.style.position = 'absolute';
-      element.style.objectFit = 'contain';
-      element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
-
-      pubContainerRef.current.appendChild(element);
+    if (!element || !pubContainerRef.current || isHostedInMiniMode) {
+      return;
     }
-  }, [element]);
+    element.classList.add('video__element', 'rounded-vera-large');
+
+    // eslint-disable-next-line react-hooks/immutability
+    element.style.width = '100%';
+    element.style.height = '100%';
+    element.style.position = 'absolute';
+    element.style.objectFit = 'contain';
+    element.style.transformOrigin = '50% 50%'; // origin-[50%_50%]
+
+    pubContainerRef.current.appendChild(element);
+  }, [element, isHostedInMiniMode]);
 
   useSelfViewMirroring(element);
 
   const initials = publisher?.stream?.initials;
   const username = publisher?.stream?.name ?? '';
-  const hasVideo = isVideoEnabled && !!element;
+  const hasVideo = isVideoEnabled && !!element && !isHostedInMiniMode;
   const audioIndicatorStyle: React.CSSProperties = {
     position: 'absolute',
     top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
