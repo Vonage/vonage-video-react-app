@@ -1,0 +1,14 @@
+frontend/src/components/AdvancedSettingsDialog/schemas/captionsTranslationLanguage.schema.ts
+  h_737cf808c1c597 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dce95913deac2e381cbc5f5878d3a49b2e8f92d8",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

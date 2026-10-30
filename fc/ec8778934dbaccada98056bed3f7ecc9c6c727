@@ -1,0 +1,21 @@
+backend/routes/feedback.ts
+  s_1041e5b1a0b11b::t_fbb24fc7c6375b 19
+backend/tests/feedback.test.ts
+  s_1041e5b1a0b11b::t_39db0411b2f19e 157-164,170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fcec8778934dbaccada98056bed3f7ecc9c6c727",
+  "prompts": {},
+  "sessions": {
+    "s_1041e5b1a0b11b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b00fdd7f-139e-4883-8ab7-6b4c5654fe06",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
