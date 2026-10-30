@@ -1,0 +1,50 @@
+frontend/src/locales/it.json
+  s_2203d2d1b7044b::t_6b5c966c3df9c3 296
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.spec.ts
+  h_6029769cf9ac60 1-4,5-7,8-22,23-24,25-28,29-30,31-41,42-46,47-50,51-54,55,56,57,58,59,60,61,62-66
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 313-319,323,324-327,328,331-337
+frontend/src/locales/de.json
+  s_2203d2d1b7044b::t_9cbeedd1934770 296
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 40,43,522
+frontend/src/locales/ja.json
+  s_2203d2d1b7044b::t_d6e2312cdbab2a 306
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_6029769cf9ac60 262,266-267,269,276-280,288,289
+frontend/src/locales/es.json
+  s_2203d2d1b7044b::t_0a0bebdee7de36 296
+frontend/src/locales/es-MX.json
+  s_2203d2d1b7044b::t_ea24208cc05296 296
+frontend/src/locales/en.json
+  s_2203d2d1b7044b::t_c3eed7b7046245 296
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 49,230-237,241
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.ts
+  h_6029769cf9ac60 1-7,8-9,10-14,15,16-28,29-32,33-35
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/index.ts
+  h_6029769cf9ac60 1
+frontend/src/utils/generateRoomName/generateRoomName.spec.ts
+  h_6029769cf9ac60 1,12-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7d9cf6641714d991b776bb90631c9e19e5a03b3b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_2203d2d1b7044b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88d653f5-750e-4774-9985-be67cf166726",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
