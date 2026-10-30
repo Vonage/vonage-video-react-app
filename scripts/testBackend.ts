@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
+import withDebuggerAutoAttach from './debugger/withDebuggerAutoAttach';
 
 const VALID_MODES = ['watch', '--watch', 'debug', 'coverage'] as const;
 
@@ -61,7 +62,7 @@ function runDebug(testFilePath?: string) {
   const testPattern = testFilePath ? ` ${testFilePath}` : '';
   execSync(
     `bash -c 'source ../env.sh && vitest run --inspect-brk --no-file-parallelism --disableConsoleIntercept=true --silent=false --reporter=verbose${testPattern}'`,
-    { stdio: 'inherit', cwd: 'backend' }
+    { stdio: 'inherit', cwd: 'backend', env: withDebuggerAutoAttach(process.env) }
   );
 }
 

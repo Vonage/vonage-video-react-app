@@ -1,6 +1,6 @@
 {
   "name": "@vonage/video-reference-apps-common",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "author": {
     "name": "Vonage Video API",
@@ -11,7 +11,7 @@
   "main": "./index.cjs",
   "module": "./index.js",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "public"
+    "registry": "https://registry.npmjs.org",
+    "access": "restricted"
   }
 }
