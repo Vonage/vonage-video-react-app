@@ -41,6 +41,11 @@ describe('Environment Variables', () => {
     expect(process.env.JIRA_EPIC_URL).toBe(jiraEpicUrl);
   });
 
+  test('should have the correct JIRA_ATTACHMENT_MAX_BASE64_LENGTH', () => {
+    const jiraAttachmentMaxBase64Length = '2000000';
+    expect(process.env.JIRA_ATTACHMENT_MAX_BASE64_LENGTH).toBe(jiraAttachmentMaxBase64Length);
+  });
+
   test('should have the correct VONAGE_APP_ID', () => {
     const vonageAppId = 'vonageAppId';
     expect(process.env.VONAGE_APP_ID).toBe(vonageAppId);

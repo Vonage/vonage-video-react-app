@@ -1,38 +1,92 @@
-import { Request, Response, Router } from 'express';
+import express, { Router } from 'express';
+import { StatusCode } from 'status-code-enum';
+import { z } from 'zod';
+import {
+  ApplicationServerError,
+  makeBadRequestErrorHandler,
+  makeInternalErrorHandler,
+} from '@api-lib/errors';
+import { assertResult } from '@api-lib/executions';
+import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import getFeedbackService from '../services/getFeedbackService';
-import { FeedbackOrigin } from '../types/feedback';
+import loadConfig from '../helpers/config';
+import type { FeedbackOrigin } from '../types/feedback';
 
 const feedbackRouter = Router();
 const feedbackService = getFeedbackService();
+const { attachmentMaxBase64Length } = loadConfig();
+const feedbackPayloadLimitInBytes = attachmentMaxBase64Length + 10_000;
+const feedbackJsonParser = express.json({ limit: feedbackPayloadLimitInBytes, type: () => true });
 
-feedbackRouter.post('/report', async (req: Request, res: Response) => {
-  const { headers } = req;
-  const { title, name, issue, attachment } = req.body;
+const FeedbackReportSchema = z.object({
+  title: z.string().min(1).max(255),
+  name: z.string().min(1).max(255),
+  issue: z.string().min(1).max(5000),
+  attachment: z.string().max(attachmentMaxBase64Length).optional().default(''),
+});
 
-  try {
-    let origin: FeedbackOrigin = 'web';
-    const useragent = headers['User-Agent'] || headers['user-agent'];
+const normalizeUserAgent = (userAgentHeader: string | string[] | undefined): string => {
+  if (Array.isArray(userAgentHeader)) return userAgentHeader.join(' ');
+  return userAgentHeader ?? '';
+};
 
-    if (useragent != null) {
-      if (useragent.includes('VeraNativeiOS')) {
-        origin = 'iOS';
-      } else if (useragent.includes('VeraNativeAndroid')) {
-        origin = 'Android';
-      }
+const resolveOrigin = (userAgent: string): FeedbackOrigin => {
+  if (userAgent.includes('VeraNativeiOS')) return 'iOS';
+  if (userAgent.includes('VeraNativeAndroid')) return 'Android';
+  return 'web';
+};
+
+const parseFeedbackPayload: RequestHandler = (request, response, next) => {
+  feedbackJsonParser(request, response, (error: unknown) => {
+    if (!error) {
+      next();
+      return;
     }
 
-    const feedbackData = await feedbackService.reportIssue({
-      title,
-      name,
-      issue,
-      attachment,
-      origin,
-    });
-    return res.status(200).json({ feedbackData });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : error;
-    return res.status(500).json({ message: `Error reporting issue: ${message}` });
+    const errorType = (error as { type?: string }).type;
+
+    if (errorType === 'entity.too.large') {
+      next(
+        new ApplicationServerError({
+          src: error,
+          fallbackConfig: {
+            fallbackMessage: 'Feedback payload too large',
+            statusCode: StatusCode.ClientErrorPayloadTooLarge,
+          },
+        })
+      );
+      return;
+    }
+
+    next(makeBadRequestErrorHandler('Invalid feedback payload')(error));
+  });
+};
+
+feedbackRouter.post(
+  '/report',
+  parseFeedbackPayload,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { title, name, issue, attachment } = assertResult(
+        () => FeedbackReportSchema.parse(req.body),
+        makeBadRequestErrorHandler('Invalid feedback payload')
+      );
+      const userAgent = normalizeUserAgent(req.headers['user-agent']);
+      const origin = resolveOrigin(userAgent);
+
+      const feedbackData = await feedbackService.reportIssue({
+        title,
+        name,
+        issue,
+        attachment,
+        origin,
+      });
+
+      return res.status(200).json({ feedbackData });
+    } catch (error: unknown) {
+      return next(makeInternalErrorHandler('Failed to report issue')(error));
+    }
   }
-});
+);
 
 export default feedbackRouter;

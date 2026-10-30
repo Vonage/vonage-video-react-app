@@ -1,7 +1,8 @@
 // needs to go on top since it also loads environment variables from .env file
 import loadConfig from './helpers/config';
 
-import express, { Express, Request, Response } from 'express';
+import express from 'express';
+import type { Express, Request, Response } from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import { Server } from 'http';
@@ -14,6 +15,7 @@ import {
   helmetMiddleware,
   rateLimitMiddleware,
 } from './middleware';
+import skipForFeedbackReport from './middleware/skipForFeedbackReport';
 import logAuthFeatures from './middleware/authMiddleware/helpers/logAuthFeatures';
 import readCallbackPath from './routes/auth/helpers/readCallbackPath';
 import { SIGN_IN_PATH, SIGN_OUT_PATH } from './routes/auth/constants';
@@ -41,10 +43,10 @@ const app: Express = express();
 
 app.use(helmetMiddleware);
 app.use(rateLimitMiddleware);
-app.use(express.json({ limit: '20mb' }));
-app.use(express.urlencoded({ limit: '20mb', extended: true }));
+app.use(skipForFeedbackReport(express.json({ limit: '20mb' })));
+app.use(skipForFeedbackReport(express.urlencoded({ limit: '20mb', extended: true })));
 app.use(corsMiddleware());
-app.use(bodyParser.json());
+app.use(skipForFeedbackReport(bodyParser.json()));
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.

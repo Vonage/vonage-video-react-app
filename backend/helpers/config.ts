@@ -21,6 +21,24 @@ if (process.env.__IS_CJS__) {
 
 dotenv.config({ path: path.join(runtimeDir, '.env'), override: true });
 
+// Base64 length of the largest file the web FilePicker accepts (maxFileSize = 2e7 bytes):
+// 4 * ceil(2e7 / 3). Full-resolution PNG screenshots on HiDPI displays can reach several MB.
+const DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH = 26_666_668;
+
+const readAttachmentMaxBase64Length = (): number => {
+  const value = process.env.JIRA_ATTACHMENT_MAX_BASE64_LENGTH;
+
+  if (!value) return DEFAULT_ATTACHMENT_MAX_BASE64_LENGTH;
+
+  const parsedValue = Number(value);
+
+  if (!Number.isSafeInteger(parsedValue) || parsedValue <= 0) {
+    throw new Error('Invalid JIRA_ATTACHMENT_MAX_BASE64_LENGTH. Expected a positive integer.');
+  }
+
+  return parsedValue;
+};
+
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
   const sessionKeySecret = process.env.SESSION_KEY_SECRET ?? '';
@@ -43,6 +61,7 @@ const loadConfig = (): Config => {
     epicLink: process.env.JIRA_EPIC_LINK,
     epicUrl: process.env.JIRA_EPIC_URL,
     severityId: process.env.JIRA_SEVERITY_ID,
+    attachmentMaxBase64Length: readAttachmentMaxBase64Length(),
   };
 
   const loggerConfig: LoggerConfig = {

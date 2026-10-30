@@ -29,6 +29,7 @@ const CONFIG: Config = {
   apiSecret: 'test-api-secret',
   sessionKeySecret: 'test-session-key-secret',
   loggerVerbose: false,
+  attachmentMaxBase64Length: 2_000_000,
   corsAllowedOrigins: ['*'],
   authEnabled: true,
   oidcClientId: 'test-client-id',
