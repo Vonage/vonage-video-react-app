@@ -67,6 +67,7 @@ describe('PostCallTranscriptionButton', () => {
     expect(mockVideoClient.startArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       withTranscription: true,
+      withSummary: true,
     });
 
     vi.useRealTimers();
