@@ -1,0 +1,25 @@
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_c847e1696b536f::t_6f88fab0a0ee00 66-74
+  s_c847e1696b536f::t_d9109741d25247 371
+  s_c847e1696b536f::t_7f2346d73ef748 405
+  s_c847e1696b536f::t_979e1bbcfd339d 442
+  s_c847e1696b536f::t_caaa4f4a1928c0 145
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_c847e1696b536f::t_d342a307ceede0 107-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6ace0960edf988d55e6af843bf8b5c229f16d4be",
+  "prompts": {},
+  "sessions": {
+    "s_c847e1696b536f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd0ab09a-1867-43ed-afee-720525f14d72",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

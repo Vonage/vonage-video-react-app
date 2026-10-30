@@ -1,0 +1,32 @@
+.cursorrules
+  h_6029769cf9ac60 1
+.github/copilot-instructions.md
+  h_6029769cf9ac60 1
+.github/instructions/test-files.instructions.md
+  h_6029769cf9ac60 7-8,10-12
+.kiro/steering/comments.md
+  h_6029769cf9ac60 3-4,6,8-9
+.windsurfrules
+  h_6029769cf9ac60 1
+AGENTS.md
+  h_6029769cf9ac60 1-1925
+CLAUDE.md
+  h_6029769cf9ac60 1
+GEMINI.md
+  h_6029769cf9ac60 1
+docs/CONTRIBUTING.md
+  h_6029769cf9ac60 16-35
+docs/TESTING.md
+  h_6029769cf9ac60 50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f69f28d368246e1fe4651b10b27ff11768f6a244",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

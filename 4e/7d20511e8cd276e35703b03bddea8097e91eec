@@ -1,0 +1,638 @@
+.github/actions/deploy-vcr/action.yml
+  h_c939f8fae0de97 17-20,30-73
+.github/copilot-instructions.md
+  h_c939f8fae0de97 61-62
+.github/scripts/readAppHost.sh
+  h_c939f8fae0de97 1-12
+.github/workflows/auto-update-dependencies.yml
+  h_c939f8fae0de97 24-27,32,34
+.github/workflows/check-base-branch.yml
+  h_c939f8fae0de97 24-25,28
+.github/workflows/deploy-to-vcr.yml
+  h_c939f8fae0de97 24-28,33,35,38,43-50,63
+.github/workflows/lint.yml
+  h_c939f8fae0de97 33-37,42,45,77-81,86,89
+.github/workflows/run-tests.yml
+  h_c939f8fae0de97 16,38-42,47,50,100-104,109,114,141-202,220-224,229,234
+.github/workflows/vcr-deploy-on-comment.yml
+  h_c939f8fae0de97 20-21,67-71,76,78,81,85,95-98,102,104-137,152-164
+.github/workflows/video-common-integrity.yml
+  h_c939f8fae0de97 14-17,21,24
+.github/workflows/video-common-publish.yml
+  h_c939f8fae0de97 24-27,31,34-43
+.gitignore
+  h_c939f8fae0de97 81-82
+.kiro/scripts/codegraph.sh
+  h_c939f8fae0de97 15-17
+.kiro/settings/mcp.json
+  h_c939f8fae0de97 55-58
+.prettierignore
+  h_c939f8fae0de97 9
+.vscode/mcp.json
+  h_c939f8fae0de97 43-46
+README.md
+  h_c939f8fae0de97 52,71-116,118-119,126-173
+apps/local-oidc/eslint.config.mjs
+  h_c939f8fae0de97 1-12
+apps/local-oidc/package.json
+  h_c939f8fae0de97 1-8
+apps/local-oidc/project.json
+  h_c939f8fae0de97 1-45
+apps/local-oidc/src/main.ts
+  h_c939f8fae0de97 1-131
+apps/local-oidc/tsconfig.json
+  h_c939f8fae0de97 1-13
+backend/.env.example
+  h_c939f8fae0de97 27,30-36,53-69,71-78,80-95,98-107
+backend/eslint.config.mjs
+  h_c939f8fae0de97 22
+backend/helpers/__mocks__/config.ts
+  h_c939f8fae0de97 1,5
+backend/helpers/assertCorsMatchesAuth.ts
+  h_c939f8fae0de97 1-26
+backend/helpers/config.test.ts
+  h_c939f8fae0de97 1,8,10-12,62-69,73-74,76,79,83,85,88,92,94-97,100,107-108,110-195
+backend/helpers/config.ts
+  h_c939f8fae0de97 3,5-7,9,31-33,46-50,64,66,85,87,100-113,126-139
+backend/helpers/reportFatalErrors.test.ts
+  h_c939f8fae0de97 1-64
+backend/helpers/reportFatalErrors.ts
+  h_c939f8fae0de97 1-24
+backend/helpers/resolveResponseFormat.ts
+  h_c939f8fae0de97 1-18
+backend/index.ts
+  h_c939f8fae0de97 1
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_c939f8fae0de97 2-3,5,7-10,13,15,17,19-21,27-29,35-78,88-95,114,119-120,122-124,126,128-129,132-135,137-140,142-144,146-163,166-170,172-176,178-179,181-182,184-187,189-191,194-211,213-218,220-223,225-226,228-254,257-263,265-266,269-300,302-322,324-328,330-332,334-336,338-368
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_c939f8fae0de97 2-3,6-18,25-29,31-35,55-57,62,70-71,73-93,96-99,102-110,113-114,117-129
+backend/middleware/authMiddleware/errors/SignInRequiredError.ts
+  h_c939f8fae0de97 1-20
+backend/middleware/authMiddleware/helpers/assertAllowedOrigin.ts
+  h_c939f8fae0de97 1-20
+backend/middleware/authMiddleware/helpers/authenticateCookieSession.ts
+  h_c939f8fae0de97 1-116
+backend/middleware/authMiddleware/helpers/introspectAccessToken.ts
+  h_c939f8fae0de97 1-59
+backend/middleware/authMiddleware/helpers/isTokenIssuedToClient.ts
+  h_c939f8fae0de97 1-21
+backend/middleware/authMiddleware/helpers/logAuthFeatures.ts
+  h_c939f8fae0de97 1-9
+backend/middleware/authMiddleware/helpers/makeProviderResponseError.ts
+  h_c939f8fae0de97 1-21
+backend/middleware/authMiddleware/helpers/readBearerToken.ts
+  h_c939f8fae0de97 1-23
+backend/middleware/authMiddleware/helpers/refreshAccessToken.ts
+  h_c939f8fae0de97 1-62
+backend/middleware/authMiddleware/helpers/verifyActiveToken.ts
+  h_c939f8fae0de97 1-26
+backend/middleware/authMiddleware/schemas/AuthConfig.schema.ts
+  h_c939f8fae0de97 7-8,18-35,41-42
+backend/middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema.ts
+  h_c939f8fae0de97 8,18-22
+backend/middleware/corsMiddleware/corsMiddleware.ts
+  h_c939f8fae0de97 1-22
+backend/middleware/corsMiddleware/index.ts
+  h_c939f8fae0de97 1
+backend/middleware/corsMiddleware/schemas/CorsConfig.schema.ts
+  h_c939f8fae0de97 1-32
+backend/middleware/errorHandler.ts
+  h_c939f8fae0de97 5,54,56,61
+backend/middleware/helmetMiddleware/helmetMiddleware.test.ts
+  h_c939f8fae0de97 2-3,5,7,9,14,19,23-30,33-34,48-61,86-87,90
+backend/middleware/helmetMiddleware/helmetMiddleware.ts
+  h_c939f8fae0de97 3,7-18,66-69
+backend/middleware/index.ts
+  h_c939f8fae0de97 5
+backend/package.json
+  h_c939f8fae0de97 3
+backend/project.json
+  h_c939f8fae0de97 65,67,70
+backend/routes/auth/auth.ts
+  h_c939f8fae0de97 2,5-7,10,12-17
+backend/routes/auth/constants.ts
+  h_c939f8fae0de97 1,3,5
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_c939f8fae0de97 1,5-9,11-13,15-18,22,35,39-46,49-54,57-58,62,68-77,79,81-86,89-90,96-99,103,109-122,125-136,138-141,143-144,147,149-150,156-160,162,168,170,177,181-182
+backend/routes/auth/handlers/callbackHandler.ts
+  h_c939f8fae0de97 10-11,14-17,19,34-43,51,53-56,64,68-72,75-77,81-82,85-87,89-108,111-115,121,125-128,130-134
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_c939f8fae0de97 1,5-8,10-12,14-16,29,39,43-50,53-58,107,110-115,118-121,127-131
+backend/routes/auth/handlers/signInHandler.ts
+  h_c939f8fae0de97 9-12,27-34,36-38,46-50,52-58,61,65-70
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_c939f8fae0de97 1-140
+backend/routes/auth/handlers/signOutHandler.ts
+  h_c939f8fae0de97 1-115
+backend/routes/auth/helpers/buildAuthCookieOptions.ts
+  h_c939f8fae0de97 1-25
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_c939f8fae0de97 1-25
+backend/routes/auth/helpers/cookiePayloadFormat.ts
+  h_c939f8fae0de97 1
+backend/routes/auth/helpers/decryptCookiePayload.ts
+  h_c939f8fae0de97 1-54
+backend/routes/auth/helpers/encryptCookiePayload.test.ts
+  h_c939f8fae0de97 1-40
+backend/routes/auth/helpers/encryptCookiePayload.ts
+  h_c939f8fae0de97 1-25
+backend/routes/auth/helpers/isSafeReturnToPath.test.ts
+  h_c939f8fae0de97 1
+backend/routes/auth/helpers/readCallbackPath.ts
+  h_c939f8fae0de97 1-5
+backend/routes/auth/helpers/readCookiePayload.ts
+  h_c939f8fae0de97 1-22
+backend/routes/auth/helpers/revokeTokens.ts
+  h_c939f8fae0de97 1-41
+backend/routes/auth/helpers/writeCookiePayload.ts
+  h_c939f8fae0de97 1-28
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_c939f8fae0de97 1-67
+backend/routes/auth/schemas/AuthTransactionCookie.schema.ts
+  h_c939f8fae0de97 1-11
+backend/routes/auth/schemas/IdTokenCookie.schema.ts
+  h_c939f8fae0de97 1-9
+backend/routes/auth/schemas/SessionCookie.schema.ts
+  h_c939f8fae0de97 1-11
+backend/routes/auth/schemas/SignOutRequestBody.schema.ts
+  h_c939f8fae0de97 1-9
+backend/routes/auth/schemas/TokenExchangeResponse.schema.ts
+  h_c939f8fae0de97 7-11
+backend/routes/video/constants/joinSession.test.ts
+  h_c939f8fae0de97 1
+backend/routes/video/constants/startArchive.ts
+  h_c939f8fae0de97 2-28,31,34
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  h_c939f8fae0de97 4,8,20-23,28,32,34,38-43,45-47,52-53,57-59
+backend/routes/video/video.ts
+  h_c939f8fae0de97 11,57-58,62-65,67-80,82-93,182,210,241-245
+backend/server.ts
+  h_c939f8fae0de97 1-2,10-19,34-39,46,62-64,92
+backend/services/loggerService.ts
+  h_c939f8fae0de97 56
+backend/services/tests/feedbackService.test.ts
+  h_c939f8fae0de97 1,7
+backend/services/tests/jiraFeedbackService.test.ts
+  h_c939f8fae0de97 2,7,18,22,76,78-79,167
+backend/services/tests/loggerService.test.ts
+  h_c939f8fae0de97 1-2,5-6,16-17,26,39,42,50,64,67,132,144
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_c939f8fae0de97 1-2,5-6,11-12,20,32-33,36,38,51,66
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_c939f8fae0de97 1,103-104,109
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_c939f8fae0de97 9,39,124,131-132
+backend/storage/sessionStorage.ts
+  h_c939f8fae0de97 15-16
+backend/storage/vcrSessionStorage.ts
+  h_c939f8fae0de97 140,143,147,151,154
+backend/testSetup/documentPolyfill.test.ts
+  h_c939f8fae0de97 1
+backend/testSetup/setEnvVars.js
+  h_c939f8fae0de97 15-16
+backend/testSetup/setEnvVars.test.ts
+  h_c939f8fae0de97 1,64-66
+backend/tests/apple-app-site-association.test.ts
+  h_c939f8fae0de97 1-2,16
+backend/tests/assetlinks.test.ts
+  h_c939f8fae0de97 1-2,16
+backend/tests/blockCallsForArgs.test.ts
+  h_c939f8fae0de97 2,8,16,18,47,49,80-86
+backend/tests/errorHandler.test.ts
+  h_c939f8fae0de97 1-2,20,24,27,30-31,39,42
+backend/tests/feedback.test.ts
+  h_c939f8fae0de97 1-2,8,10,15,17,42
+backend/tests/health.test.ts
+  h_c939f8fae0de97 1-2,18
+backend/tests/helpers/closeServer.ts
+  h_c939f8fae0de97 1-16
+backend/tests/helpers/doPartialMock.ts
+  h_c939f8fae0de97 3,6-7,37
+backend/tests/helpers/index.ts
+  h_c939f8fae0de97 1
+backend/tests/helpers/makeEncryptedCookieHeader.ts
+  h_c939f8fae0de97 1-8
+backend/tests/helpers/mockVonageVideoSdk.ts
+  h_c939f8fae0de97 1,21,24,36,38,41,43-45,47-49,51-52,56-57,59-60,62,67-74,76-77
+backend/tests/helpers/readEncryptedSetCookie.ts
+  h_c939f8fae0de97 1-21
+backend/tests/helpers/readSetCookie.ts
+  h_c939f8fae0de97 1-16
+backend/tests/helpers/testAuthCookieSecret.ts
+  h_c939f8fae0de97 1
+backend/tests/logger.test.ts
+  h_c939f8fae0de97 1-2,8,10,20,34,40,50,67,143,159,171,177,188,192-197
+backend/tests/redactSensitiveKeys.test.ts
+  h_c939f8fae0de97 1
+backend/tests/session.auth.test.ts
+  h_c939f8fae0de97 1-2,6-7,10,12-15,23-30,33-34,87,89,122-128
+backend/tests/session.test.ts
+  h_c939f8fae0de97 1-3,18,47,50,77,395,410,423,427-461
+backend/tests/sessionStorageService.test.ts
+  h_c939f8fae0de97 1,7
+backend/tsconfig.json
+  h_c939f8fae0de97 10
+backend/types/config.ts
+  h_c939f8fae0de97 12-14,16,35,39-41
+backend/videoService/tests/opentokVideoService.test.ts
+  h_c939f8fae0de97 1,11-13,18,22,42,47,56,58
+backend/videoService/tests/vonageVideoService.test.ts
+  h_c939f8fae0de97 1,3,13,15-16,19,23,26,29,32,35,58
+backend/vitest.config.ts
+  h_c939f8fae0de97 1-41
+customWordList.mjs
+  h_c939f8fae0de97 2,20
+docs/AUTHENTICATION.md
+  h_c939f8fae0de97 5-7,11,14-20,23-31,33,35,39,41-42,44,46,48-51,53,55-57,59,62,64,66,68,70-72,74,76,78,80-82,84,86,88-93,95,97-99,103-107,109,111-136,142,144-147,149,151,153,155-156,158,160,162-163,165,167,169-176,178,182,184-186
+docs/CONFIGURATION.md
+  h_c939f8fae0de97 7,51-63,128
+docs/GETTING_STARTED.md
+  h_c939f8fae0de97 56-57,59-74
+docs/TESTING.md
+  h_c939f8fae0de97 44
+env.defaults.sh
+  h_c939f8fae0de97 1-39
+env.sh
+  h_c939f8fae0de97 2-4,6,8-10,13-14,19-20,24-25,27,29-32,34,42
+eslint.config.mjs
+  h_c939f8fae0de97 67,72
+frontend/.env.example
+  h_c939f8fae0de97 29,42-45
+frontend/package.json
+  h_c939f8fae0de97 3
+frontend/src/App.tsx
+  h_c939f8fae0de97 25,54
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_c939f8fae0de97 9,20,99
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_c939f8fae0de97 2,4,10-11,101,105
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_c939f8fae0de97 11-12,113,117,171,194,210,224,333,338-340,390,393,443
+frontend/src/Context/PublisherProvider/usePublisherOptions/usePublisherOptions.tsx
+  h_c939f8fae0de97 2,5
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  h_c939f8fae0de97 36,49,133,148,154,174,178,194,203,210
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_c939f8fae0de97 9-13,16,57-58,132-133,405,415,422-462
+frontend/src/Context/SessionProvider/session.tsx
+  h_c939f8fae0de97 14,66-69,72-75,114-117,120-123,217-218,223-237,240-241,269-272,393,396-398,400-401,403-420,423-442,471-472,507,538-541,639-646,683-690
+frontend/src/VeraRoom/VeraRoomElement.spec.tsx
+  h_c939f8fae0de97 133-151
+frontend/src/VeraRoom/VeraRoomElement.tsx
+  h_c939f8fae0de97 17-18,34-50,110-119,129-132,134,136-139
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.spec.ts
+  h_c939f8fae0de97 1-45
+frontend/src/VeraRoom/helpers/createBridgeVideoClient.ts
+  h_c939f8fae0de97 1-37
+frontend/src/VeraRoom/hooks/useStateSynchronizer.ts
+  h_c939f8fae0de97 5,16-24,38-41
+frontend/src/VeraRoom/index.ts
+  h_c939f8fae0de97 6-8
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  h_c939f8fae0de97 16-17
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributes.ts
+  h_c939f8fae0de97 1
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  h_c939f8fae0de97 31-40
+frontend/src/VeraRoom/stores/bridge/constants/initialState.ts
+  h_c939f8fae0de97 2,12,17-18
+frontend/src/api/reportFeedback.ts
+  h_c939f8fae0de97 3,24-34
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.spec.tsx
+  h_c939f8fae0de97 83-92
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsAudioTab/AdvancedSettingsAudioTab.tsx
+  h_c939f8fae0de97 4,52,118-133
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.spec.tsx
+  h_c939f8fae0de97 38-55
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCodecPriorityField/AdvancedSettingsCodecPriorityField.tsx
+  h_c939f8fae0de97 1,5,11-17,32,38-49,95-103,118-120,136,139,143-212
+frontend/src/components/Banner/Banner.spec.tsx
+  h_c939f8fae0de97 1,4,7-14,16-19,21-37
+frontend/src/components/Banner/Banner.tsx
+  h_c939f8fae0de97 2,6-7,12-13,28-34
+frontend/src/components/BannerLogout/BannerLogout.tsx
+  h_c939f8fae0de97 1-45
+frontend/src/components/BannerLogout/index.tsx
+  h_c939f8fae0de97 1-3
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.spec.tsx
+  h_c939f8fae0de97 25,72-120
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_c939f8fae0de97 9-14,52,68-88,91-95,97,107,113,115-117,125,147,150-152,172,194-209
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.spec.tsx
+  h_c939f8fae0de97 5,11,18,20
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_c939f8fae0de97 8-11,37,43
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.spec.tsx
+  h_c939f8fae0de97 7,29-32,42,47,53,56,74-77,81,89-92,99,109-110,113
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_c939f8fae0de97 11-15,31,36,40-42,47,80-81,86,91-95,105-121,123-130
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  h_c939f8fae0de97 52-64
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  h_c939f8fae0de97 48,50
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.spec.tsx
+  h_c939f8fae0de97 9,74,80
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_c939f8fae0de97 10-13,34,40,98-119
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.spec.tsx
+  h_c939f8fae0de97 6,19-20,34
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_c939f8fae0de97 7-11,28,34,38-54
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.spec.tsx
+  h_c939f8fae0de97 11,144-157,199-215
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_c939f8fae0de97 14,17-27,55-59,88-89,98-99,107-108,115-120,128-129,137-138,163,168-193,204,211-221
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.spec.tsx
+  h_c939f8fae0de97 7,23-32,121,157,192,214,235,291,308-310,330,349,373,378-492,495-498
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  h_c939f8fae0de97 2,15,18-22,33-44,71,73,76-77,90-104,111-116,118,120,128,140,142
+frontend/src/components/MeetingRoom/DropdownSeparator/DropdownSeparator.tsx
+  h_c939f8fae0de97 4-7,17-18
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.spec.tsx
+  h_c939f8fae0de97 6,34,42
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_c939f8fae0de97 7-10,28,35,43-58,60-68
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_c939f8fae0de97 12-16,27,29,58-63,65-83,85-100
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.spec.tsx
+  h_c939f8fae0de97 5,28,77
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_c939f8fae0de97 8-12,59-62,67,73-74,80-81,85
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_c939f8fae0de97 1,17-21,32,34,67-72,74-76,78-82,84-96,98-117
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  h_c939f8fae0de97 14,62
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_c939f8fae0de97 7-11,36,40-47,49-63
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  h_c939f8fae0de97 1-130
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  h_c939f8fae0de97 1-143
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  h_c939f8fae0de97 8,28,38
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  h_c939f8fae0de97 21-29
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_c939f8fae0de97 7-10,41,47
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  h_c939f8fae0de97 219-224
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_c939f8fae0de97 12,20,25-28,58
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_c939f8fae0de97 14-23,53,56,88,94,106,108-111,127-131,138-187
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_c939f8fae0de97 1-8,14,28-30,97,99-107,113-122,124-132,139-158,173,179-180,182,192,196-200,204-205,215-218,232-237
+frontend/src/components/MeetingRoom/Toolbar/helpers/getToolbarButtonVisibility.ts
+  h_c939f8fae0de97 1-33
+frontend/src/components/MeetingRoom/Toolbar/helpers/isDisplayableToolbarButton.ts
+  h_c939f8fae0de97 1-12
+frontend/src/components/MeetingRoom/ToolbarButton/ToolbarButton.tsx
+  h_c939f8fae0de97 3,5,10-19,26,35,39
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  h_c939f8fae0de97 5-7,12-15,51,66-68,70,72-74,90
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_c939f8fae0de97 9-13,68,75-80
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  h_c939f8fae0de97 2,9-12,14-22,73,79,87-95,102-144,152,162,168
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  h_c939f8fae0de97 1,17-23,78,89-98,106-133,136,144-161,168-169
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.spec.tsx
+  h_c939f8fae0de97 1-25
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.tsx
+  h_c939f8fae0de97 1-32
+frontend/src/components/MeetingRoom/TranscriptionIndicator/index.tsx
+  h_c939f8fae0de97 1-3
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  h_c939f8fae0de97 6,33-34,52-53,63,76,98,120,133,154,177
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.tsx
+  h_c939f8fae0de97 4-7,29,34,36
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_c939f8fae0de97 1,12-16,27,33,62-67,69-87,89-104
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.spec.tsx
+  h_c939f8fae0de97 3,30
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.tsx
+  h_c939f8fae0de97 6-10,30-38
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.spec.tsx
+  h_c939f8fae0de97 5,18,27
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_c939f8fae0de97 7-11,36,61-94
+frontend/src/components/ScreenSharingButton/index.tsx
+  h_c939f8fae0de97 1-2
+frontend/src/components/ScreenSharingButton/shouldDisplayScreenShareButton.ts
+  h_c939f8fae0de97 1-13
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  h_c939f8fae0de97 5,43,55,93,109,126,142
+frontend/src/components/SoundTest/SoundTest.tsx
+  h_c939f8fae0de97 9-13,64,69
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/BackgroundEffectsButton.tsx
+  h_c939f8fae0de97 5,7,10-12,36,55-57,59
+frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds.ts
+  h_c939f8fae0de97 1-5
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  h_c939f8fae0de97 9,113,135
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.spec.tsx
+  h_c939f8fae0de97 141,152-155
+frontend/src/components/WaitingRoom/MenuMoreOptions/MenuMoreOptions.tsx
+  h_c939f8fae0de97 15
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_c939f8fae0de97 68,82
+frontend/src/env.ts
+  h_c939f8fae0de97 39,53,85,95
+frontend/src/hooks/tests/useToolbarButtons.spec.tsx
+  h_c939f8fae0de97 35,100,125,151,177,188-233
+frontend/src/hooks/useMeetingRoom.ts
+  h_c939f8fae0de97 60,63,77,163-164,189,197
+frontend/src/hooks/useToolbarButtons.tsx
+  h_c939f8fae0de97 12,28-29,39,85,123
+frontend/src/index.d.ts
+  h_c939f8fae0de97 17-22
+frontend/src/locales/de.json
+  h_c939f8fae0de97 4,6-14,46-48,303,306-307,311-317,368-369
+frontend/src/locales/en.json
+  h_c939f8fae0de97 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/locales/es-MX.json
+  h_c939f8fae0de97 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/locales/es.json
+  h_c939f8fae0de97 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/locales/it.json
+  h_c939f8fae0de97 4,6-14,46-48,302-303,306-307,311-317,368-369
+frontend/src/locales/ja.json
+  h_c939f8fae0de97 4,6-14,46-48,91-98,141-142,312-313,316-317,321-327,378-379
+frontend/src/logger/event/createClientEvent.spec.ts
+  h_c939f8fae0de97 18,25,28,43,51,56,65,69,72-73,76,80,83-88,95,100
+frontend/src/logger/event/createClientEvent.ts
+  h_c939f8fae0de97 1,13,33-34,39,50-53
+frontend/src/logger/event/index.ts
+  h_c939f8fae0de97 2
+frontend/src/logger/event/splitSessionFromExtra.ts
+  h_c939f8fae0de97 1-24
+frontend/src/logger/providers/backendLoggingProvider.spec.ts
+  h_c939f8fae0de97 57,90
+frontend/src/logger/transport/backendLogTransport.ts
+  h_c939f8fae0de97 5,15,20-21,29,44
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  h_c939f8fae0de97 17-18
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_c939f8fae0de97 23,189,192,429
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_c939f8fae0de97 17,56,63,90-104,148
+frontend/src/services/auth/redirectToAuthProvider.ts
+  h_c939f8fae0de97 1-25
+frontend/src/services/videoClient.spec.ts
+  h_c939f8fae0de97 5,9,34,37-40,42-46,48-52
+frontend/src/services/videoClient.ts
+  h_c939f8fae0de97 3,7-9,17
+frontend/src/utils/VonageVideoClient/index.ts
+  h_c939f8fae0de97 3
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_c939f8fae0de97 306,309-310,316,323-325,327-328,332-335,379
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 25,29-31,33-34,67,84-85,100,144,182,186,188,191-201,203,205-206,216-223,239-248,267-271,281,288,293,295-298,309,311-312,318-320,322-323,426,436,448,457,460-461,466,469-470,489-490
+frontend/src/utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter.ts
+  h_c939f8fae0de97 1-2
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  h_c939f8fae0de97 1,11
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  h_c939f8fae0de97 5,7,9-10,12-14
+frontend/src/utils/hasMediaProcessorSupport/hasMediaProcessorSupport.spec.ts
+  h_c939f8fae0de97 1-47
+frontend/src/utils/hasMediaProcessorSupport/hasMediaProcessorSupport.ts
+  h_c939f8fae0de97 1-22
+frontend/src/utils/hasMediaProcessorSupport/index.ts
+  h_c939f8fae0de97 1-3
+frontend/src/utils/isDeviceEnabledOnJoin/index.ts
+  h_c939f8fae0de97 1
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.spec.ts
+  h_c939f8fae0de97 1-30
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.ts
+  h_c939f8fae0de97 1-20
+frontend/vite.config.ts
+  h_c939f8fae0de97 30,44,156-159,175-185,189
+integration-tests/package.json
+  h_c939f8fae0de97 3
+integration-tests/playwright.auth.config.ts
+  h_c939f8fae0de97 1-2,4-18,20-32,34-53
+integration-tests/test-api/apiIntegrity.test.ts
+  h_c939f8fae0de97 1,8-9,22-23,26-27,30-31,39-40,43-44,47-48,56,58,63,65,68,70,72,81-82,88-89,92,97,132
+integration-tests/test-api/tsconfig.json
+  h_c939f8fae0de97 11
+integration-tests/test-api/vitest.config.ts
+  h_c939f8fae0de97 1-13,15-23,25-26,28
+integration-tests/tests-auth/apiAccess.spec.ts
+  h_c939f8fae0de97 1-36
+integration-tests/tests-auth/authEnabled.setup.ts
+  h_c939f8fae0de97 1-15
+integration-tests/tests-auth/constants.ts
+  h_c939f8fae0de97 1-21
+integration-tests/tests-auth/helpers/readCookie.ts
+  h_c939f8fae0de97 1-15
+integration-tests/tests-auth/helpers/requestAccessToken.ts
+  h_c939f8fae0de97 1-43
+integration-tests/tests-auth/logout.spec.ts
+  h_c939f8fae0de97 1-61
+integration-tests/tests-auth/session.spec.ts
+  h_c939f8fae0de97 1-78
+integration-tests/tests-auth/signIn.spec.ts
+  h_c939f8fae0de97 1-37
+integration-tests/tests/utils.ts
+  h_c939f8fae0de97 28-29
+integration-tests/tests/waitingRoom.spec.ts
+  h_c939f8fae0de97 3-4,32-36,48,72-76,87
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_c939f8fae0de97 6,502-550,554-559,572,584-585
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_c939f8fae0de97 96-98
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  h_c939f8fae0de97 7
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  h_c939f8fae0de97 3,7
+libs/common/manifest.json
+  h_c939f8fae0de97 4
+libs/common/node/errors/handlers/index.ts
+  h_c939f8fae0de97 4
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/index.ts
+  h_c939f8fae0de97 1
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.test.ts
+  h_c939f8fae0de97 1-12
+libs/common/node/errors/handlers/makeForbiddenErrorHandler/makeForbiddenErrorHandler.ts
+  h_c939f8fae0de97 1-16
+libs/common/src/constants/archiveNames.ts
+  h_c939f8fae0de97 1-2
+libs/common/src/constants/index.ts
+  h_c939f8fae0de97 3
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.spec.ts
+  h_c939f8fae0de97 49,54
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.ts
+  h_c939f8fae0de97 13-15,27
+libs/common/src/helpers/index.ts
+  h_c939f8fae0de97 10
+libs/common/src/helpers/isAllowedOrigin/index.ts
+  h_c939f8fae0de97 1
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.test.ts
+  h_c939f8fae0de97 1-29
+libs/common/src/helpers/isAllowedOrigin/isAllowedOrigin.ts
+  h_c939f8fae0de97 1-39
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.spec.ts
+  h_c939f8fae0de97 22,26,37-41
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.ts
+  h_c939f8fae0de97 2,11,26-27
+libs/common/src/schemas/ClientLogEvent/ClientLogSession.schema.ts
+  h_c939f8fae0de97 1-10
+libs/common/src/schemas/ClientLogEvent/index.ts
+  h_c939f8fae0de97 6
+libs/common/src/types/index.ts
+  h_c939f8fae0de97 5,7
+libs/core/src/hooks/index.ts
+  h_c939f8fae0de97 5-11
+libs/core/src/hooks/useArchives/index.ts
+  h_c939f8fae0de97 2-8
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_c939f8fae0de97 16-35,84-98
+package.json
+  h_c939f8fae0de97 3,11,14-38,52-53,55-56,79,81,158
+pnpm-lock.yaml
+  h_c939f8fae0de97 1-17101
+pnpm-workspace.yaml
+  h_c939f8fae0de97 1-9
+scripts/assertPackageManager.mjs
+  h_c939f8fae0de97 1-78
+scripts/assertPnpmInstall.mjs
+  h_c939f8fae0de97 1-99
+scripts/dev.ts
+  h_c939f8fae0de97 16,19,54,61-63
+scripts/generateEnv.ts
+  h_c939f8fae0de97 3-4,7,30-32,35-39,41-42,44,46-50,53-66,69-87,90-103,106-123,126-159,203,213-222,224-231,233
+scripts/generateSecret.ts
+  h_c939f8fae0de97 1-17
+scripts/migrateToYarn.mjs
+  h_c939f8fae0de97 1-134
+scripts/testBackend.ts
+  h_c939f8fae0de97 15,27,31,33,40,46-50,56,61,63,77,79-82,86-88,90,98
+scripts/testFrontend.ts
+  h_c939f8fae0de97 18-19,22-25
+scripts/testIntegration.ts
+  h_c939f8fae0de97 9,54,60-61,66,83-93,184,186,248-252
+scripts/vcrDev.ts
+  h_c939f8fae0de97 7-8,11-15
+sonar-project.properties
+  h_c939f8fae0de97 21,48-49
+specs/app-config.schema.json
+  h_c939f8fae0de97 195-199
+vcr-gha.yml
+  h_c939f8fae0de97 1-2,4-5,7-8,10,12,16,18,21,26,33-34,37,44,47,54,59,62-63,66-126,139-140,142
+vcrBuild.dev.sh
+  h_c939f8fae0de97 7-8,10-15
+vcrBuild.sh
+  h_c939f8fae0de97 7-13,15-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4e7d20511e8cd276e35703b03bddea8097e91eec",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

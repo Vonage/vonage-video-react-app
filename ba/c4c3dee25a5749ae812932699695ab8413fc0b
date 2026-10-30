@@ -1,0 +1,14 @@
+backend/routes/wellKnown.ts
+  h_25498f8d57a266 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bac4c3dee25a5749ae812932699695ab8413fc0b",
+  "prompts": {},
+  "humans": {
+    "h_25498f8d57a266": {
+      "author": "Manuel Vera <manuel.veranieto@vonage.com>"
+    }
+  }
+}

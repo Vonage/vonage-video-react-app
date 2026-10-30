@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  s_50fafda457922a::t_6cc063ad7af57c 47-55
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  s_50fafda457922a::t_3da499b9868631 76-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3fe4c4624a1eb88c53ae705e4a412f0b8356687a",
+  "prompts": {},
+  "sessions": {
+    "s_50fafda457922a": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_b2c0f7ea-322d-4e8f-9dc4-cb5589af7312",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

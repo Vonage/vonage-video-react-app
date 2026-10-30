@@ -1,0 +1,33 @@
+frontend/src/hooks/useChat.tsx
+  s_fc902581b171a8::t_90ae86d247051a 62,68
+frontend/src/Context/SessionProvider/session.tsx
+  s_fc902581b171a8::t_85fa9a2fbceda1 106
+  s_fc902581b171a8::t_999b62b7b87f31 58
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  s_fc902581b171a8::t_40e9494fc78d1a 22,28-29,31,41
+  s_fc902581b171a8::t_04aa616852eec9 32-34
+frontend/src/hooks/tests/useChat.spec.tsx
+  s_fc902581b171a8::t_c084c2688d8be6 112-113
+  s_fc902581b171a8::t_99ed7cbd547959 120
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  s_fc902581b171a8::t_51a5f0a4b9a09d 135-145,147-165,167-170,176-177
+  s_fc902581b171a8::t_bba17f2b6589d4 1-2,20-23
+  s_fc902581b171a8::t_232e89d16f0573 171-175
+  s_fc902581b171a8::t_09d1d0d00da69c 146,166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "73a7f4fe321ceff7a44d8ddd666028cfb1a778ed",
+  "prompts": {},
+  "sessions": {
+    "s_fc902581b171a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0156242a-7c17-46c6-aeab-2285d58d741c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

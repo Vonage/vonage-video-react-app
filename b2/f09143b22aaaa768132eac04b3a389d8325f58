@@ -1,0 +1,27 @@
+frontend/src/Context/SessionProvider/session.tsx
+  s_2203d2d1b7044b::t_a7bcd14bf9ccae 477
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_2203d2d1b7044b::t_ac9897f1b21f73 141
+  s_2203d2d1b7044b::t_1fccf664954fec 229
+  s_2203d2d1b7044b::t_d37980b0dc1061 276
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_2203d2d1b7044b::t_aec605c5605da7 243,248-254,256-257,260,268-274,276-277
+  s_2203d2d1b7044b::t_2f5bea96a3d504 255
+  s_2203d2d1b7044b::t_e125b5564c9aed 275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b2f09143b22aaaa768132eac04b3a389d8325f58",
+  "prompts": {},
+  "sessions": {
+    "s_2203d2d1b7044b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88d653f5-750e-4774-9985-be67cf166726",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+frontend/src/hooks/useLeaveMeeting.ts
+  s_e8065fe0a22a57::t_a36768f80bebb0 1-23
+frontend/src/Context/MiniMode/UnavailableMiniModeProvider.tsx
+  s_e8065fe0a22a57::t_31ef0fd5d9592b 1-25
+  s_e8065fe0a22a57::t_5f84c501f2a9a8 26-27
+integration-tests/tests/miniMode.spec.ts
+  s_e8065fe0a22a57::t_64947197ac2919 6,9-10,14,17-19,21,26,28-29,32-38
+  s_e8065fe0a22a57::t_8c7ea472a14c45 39-41
+frontend/src/Context/MiniMode/isMiniModeSupported.spec.ts
+  s_e8065fe0a22a57::t_0288b385448c71 1-27
+libs/common/web/documentPictureInPicture/syncStylesToWindow.spec.ts
+  s_e8065fe0a22a57::t_3fb13b583d781c 1,5,7-8,11-12,14,17-21,23-24,27-28,31,33,35,38,41-58
+  s_e8065fe0a22a57::t_bf2d69cdebee04 59-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d82ebe0f661da77b5b4c7c40959e1218664f0c92",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_e8065fe0a22a57": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a8ef5497-b136-40f6-82e0-737ad7920bac",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

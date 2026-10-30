@@ -1,0 +1,26 @@
+frontend/src/hooks/useMeetingRoom.ts
+  s_dc5aabab156a0c::t_9850714282785c 136
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  s_dc5aabab156a0c::t_7f98d712549fda 17
+  s_dc5aabab156a0c::t_bd3825117d9803 392
+  s_dc5aabab156a0c::t_917db8652ab15e 360
+  s_dc5aabab156a0c::t_013d8d15d589c3 380-383
+  s_dc5aabab156a0c::t_0aa3afdf1ba62e 43
+  s_dc5aabab156a0c::t_e18305daa356db 370
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b720b7c4748ff11c1f79f329d2b138c864ef6b3",
+  "prompts": {},
+  "sessions": {
+    "s_dc5aabab156a0c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97fb7cc3-0736-432e-928b-c11f40a0a80d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,318 @@
+.claude/skills/configure/SKILL.md
+  h_737cf808c1c597 1-97
+.claude/skills/deploy-vcr/SKILL.md
+  h_737cf808c1c597 1-62
+.claude/skills/feature-flag/SKILL.md
+  h_737cf808c1c597 1-112
+.claude/skills/record-snapshots/SKILL.md
+  h_737cf808c1c597 1-66
+.claude/skills/run-tests/SKILL.md
+  h_737cf808c1c597 1-68
+.claude/skills/setup/SKILL.md
+  h_737cf808c1c597 1-125
+.github/copilot-instructions.md
+  h_737cf808c1c597 47-54
+.kiro/steering/vera-configure.md
+  h_737cf808c1c597 1
+.kiro/steering/vera-deploy-vcr.md
+  h_737cf808c1c597 1
+.kiro/steering/vera-feature-flags.md
+  h_737cf808c1c597 1
+.kiro/steering/vera-setup.md
+  h_737cf808c1c597 1
+.kiro/steering/vera-snapshot-tests.md
+  h_737cf808c1c597 1
+.kiro/steering/vera-testing.md
+  h_737cf808c1c597 1
+README.md
+  h_737cf808c1c597 71-116,118-119
+backend/.env.example
+  h_737cf808c1c597 103-112
+backend/helpers/config.ts
+  h_737cf808c1c597 3,46-50,64,85
+backend/routes/video/constants/startArchive.ts
+  h_737cf808c1c597 2-28,31,34
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  h_737cf808c1c597 4,8,20-23,28,32,34,38-43,45-47,52-53,57-59
+backend/routes/video/schemas/CaptionsHookPayload.schema.ts
+  h_737cf808c1c597 7,22-27
+backend/routes/video/video.ts
+  h_737cf808c1c597 11,57-58,62-65,67-91,93,149-162,173,192,220,251-255
+backend/services/loggerService.ts
+  h_737cf808c1c597 56
+backend/services/tests/loggerService.test.ts
+  h_737cf808c1c597 26,50,64,67,132,144
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_737cf808c1c597 20,32,51,66
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_737cf808c1c597 103-104,109
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_737cf808c1c597 9,39,124,131-132
+backend/storage/sessionStorage.ts
+  h_737cf808c1c597 15-16
+backend/storage/vcrSessionStorage.ts
+  h_737cf808c1c597 140,143,147,151,154
+backend/testSetup/setEnvVars.js
+  h_737cf808c1c597 15
+backend/testSetup/setEnvVars.test.ts
+  h_737cf808c1c597 64-66
+backend/tests/logger.test.ts
+  h_737cf808c1c597 20,50,67,143,159,188,192-197
+backend/tests/session.test.ts
+  h_737cf808c1c597 259,273-306,429,444,457-485,487-493,526
+backend/types/config.ts
+  h_737cf808c1c597 12-14,16,39
+customWordList.mjs
+  h_737cf808c1c597 20
+env.sh
+  h_737cf808c1c597 34
+frontend/.env.example
+  h_737cf808c1c597 29
+frontend/src/App.tsx
+  h_737cf808c1c597 25,54
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_737cf808c1c597 20,99
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_737cf808c1c597 10-11,101,105
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  h_737cf808c1c597 36-38,60-62
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_737cf808c1c597 11-12,113,117,171,194,210,224,333,338-340,390,393,443
+frontend/src/Context/SessionProvider/session.migration.spec.tsx
+  h_737cf808c1c597 36,49,133,148,154,174,178,194,203,210
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_737cf808c1c597 9-13,16,57-58,132-133,405,415,422-462
+frontend/src/Context/SessionProvider/session.tsx
+  h_737cf808c1c597 14,65-68,71-74,113-116,119-122,218-219,224-238,241-242,270-273,394,397-399,401-402,404-421,424-443,468-469,504,535-538,636-643,680-687
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  h_737cf808c1c597 16-17
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.spec.tsx
+  h_737cf808c1c597 25,72-120
+frontend/src/components/GoodBye/ArchiveList/ArchiveList.tsx
+  h_737cf808c1c597 9-14,52,68-88,91-95,97,107,113,115-117,125,147,150-152,172,194-209
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.spec.tsx
+  h_737cf808c1c597 5,11,18,20
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_737cf808c1c597 8-11,37,43
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.spec.tsx
+  h_737cf808c1c597 7,29-32,42,47,53,56,74-77,81,89-92,99,109-110,113
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_737cf808c1c597 11-15,31,36,40-42,47,80-81,86,91-95,105-121,123-130
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.spec.tsx
+  h_737cf808c1c597 9,74,80
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_737cf808c1c597 10-13,34,40,98-119
+frontend/src/components/MeetingRoom/Chat/Chat.spec.tsx
+  h_737cf808c1c597 1,5,11,17,23,29,63-98
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  h_737cf808c1c597 45
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.spec.tsx
+  h_737cf808c1c597 6,19-20,34
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_737cf808c1c597 7-11,28,34,38-54
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  h_737cf808c1c597 6,10
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.spec.tsx
+  h_737cf808c1c597 11,144-157,199-215
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_737cf808c1c597 14,17-27,55-59,88-89,98-99,107-108,115-120,128-129,137-138,163,168-193,204,211-221
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.spec.tsx
+  h_737cf808c1c597 7,23-32,121,157,192,214,235,291,308-310,330,349,373,378-492,495-498
+frontend/src/components/MeetingRoom/DeviceSettingsMenu/DeviceSettingsMenu.tsx
+  h_737cf808c1c597 15,18-22,33-44,71,73,76-77,90-104,111-116,118,120,128,140,142
+frontend/src/components/MeetingRoom/DropdownSeparator/DropdownSeparator.tsx
+  h_737cf808c1c597 4-7,17-18
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.spec.tsx
+  h_737cf808c1c597 6,34,42
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_737cf808c1c597 7-10,28,35,43-58,60-68
+frontend/src/components/MeetingRoom/InputAudioDevices/InputAudioDevices.tsx
+  h_737cf808c1c597 12-16,27,29,58-63,65-83,85-100
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.spec.tsx
+  h_737cf808c1c597 5,28,77
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_737cf808c1c597 8-12,59-62,67,73-74,80-81,85
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputAudioDevices.tsx
+  h_737cf808c1c597 1,17-21,32,34,67-72,74-76,78-82,84-96,98-117
+frontend/src/components/MeetingRoom/OutputAudioDevices/OutputDevices.spec.tsx
+  h_737cf808c1c597 14,62
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_737cf808c1c597 7-11,36,40-47,49-63
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  h_737cf808c1c597 1-130
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  h_737cf808c1c597 1-143
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.spec.tsx
+  h_737cf808c1c597 8,28,38
+frontend/src/components/MeetingRoom/ReduceNoiseTestSpeakers/ReduceNoiseTestSpeakers.tsx
+  h_737cf808c1c597 21-29
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_737cf808c1c597 7-10,41,47
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  h_737cf808c1c597 219-224
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_737cf808c1c597 12,20,25-28,58
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_737cf808c1c597 14-23,53,56,88,94,106,108-111,127-131,138-187
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_737cf808c1c597 1-8,14,28-30,97,99-107,113-122,124-132,139-158,173,179-180,182,192,196-200,204-205,215-218,232-237
+frontend/src/components/MeetingRoom/Toolbar/helpers/getToolbarButtonVisibility.ts
+  h_737cf808c1c597 1-33
+frontend/src/components/MeetingRoom/Toolbar/helpers/isDisplayableToolbarButton.ts
+  h_737cf808c1c597 1-12
+frontend/src/components/MeetingRoom/ToolbarButton/ToolbarButton.tsx
+  h_737cf808c1c597 3,5,10-19,26,35,39
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  h_737cf808c1c597 5-7,12-15,51,66-68,70,72-74,90
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_737cf808c1c597 9-13,47,68,75-80
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  h_737cf808c1c597 2,9-12,14-22,73,79,87-95,102-144,152,162,168
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  h_737cf808c1c597 1,17-23,78,89-98,106-133,136,144-161,168-169
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.spec.tsx
+  h_737cf808c1c597 1-25
+frontend/src/components/MeetingRoom/TranscriptionIndicator/TranscriptionIndicator.tsx
+  h_737cf808c1c597 1-32
+frontend/src/components/MeetingRoom/TranscriptionIndicator/index.tsx
+  h_737cf808c1c597 1-3
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.spec.tsx
+  h_737cf808c1c597 6,33-34,52-53,63,76,98,120,133,154,177
+frontend/src/components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge.tsx
+  h_737cf808c1c597 4-7,29,34,36
+frontend/src/components/MeetingRoom/VideoDevices/VideoDevices.tsx
+  h_737cf808c1c597 1,12-16,27,33,62-67,69-87,89-104
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.spec.tsx
+  h_737cf808c1c597 3,30
+frontend/src/components/MeetingRoom/VideoDevicesOptions/VideoDevicesOptions.tsx
+  h_737cf808c1c597 8-11,30,38
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.spec.tsx
+  h_737cf808c1c597 5,18,27
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_737cf808c1c597 7-11,36,61-94
+frontend/src/components/ScreenSharingButton/index.tsx
+  h_737cf808c1c597 1-2
+frontend/src/components/ScreenSharingButton/shouldDisplayScreenShareButton.ts
+  h_737cf808c1c597 1-13
+frontend/src/components/SoundTest/SoundTest.spec.tsx
+  h_737cf808c1c597 5,43,55,93,109,126,142
+frontend/src/components/SoundTest/SoundTest.tsx
+  h_737cf808c1c597 9-13,64,69
+frontend/src/components/WaitingRoom/MenuDevices/MenuDevices.spec.tsx
+  h_737cf808c1c597 9,113,135
+frontend/src/components/WaitingRoom/VideoContainer/VideoContainer.tsx
+  h_737cf808c1c597 68,82
+frontend/src/env.ts
+  h_737cf808c1c597 39,86
+frontend/src/hooks/tests/useChat.spec.tsx
+  h_737cf808c1c597 27-80,99-104
+frontend/src/hooks/tests/useToolbarButtons.spec.tsx
+  h_737cf808c1c597 35,100,125,151,177,188-233
+frontend/src/hooks/useChat.tsx
+  h_737cf808c1c597 4,16-26,65-66,70
+frontend/src/hooks/useMeetingRoom.ts
+  h_737cf808c1c597 60,63,77,163-164,189,197
+frontend/src/hooks/useToolbarButtons.tsx
+  h_737cf808c1c597 12,28-29,39,85,123
+frontend/src/locales/de.json
+  h_737cf808c1c597 4,6-14,307,310-311,315-321
+frontend/src/locales/en.json
+  h_737cf808c1c597 4,6-14,306-307,310-311,315-321
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 4,6-14,306-307,310-311,315-321
+frontend/src/locales/es.json
+  h_737cf808c1c597 4,6-14,306-307,310-311,315-321
+frontend/src/locales/it.json
+  h_737cf808c1c597 4,6-14,306-307,310-311,315-321
+frontend/src/locales/ja.json
+  h_737cf808c1c597 4,6-14,92-99,145-146,316-317,320-321,325-331
+frontend/src/logger/event/createClientEvent.spec.ts
+  h_737cf808c1c597 18,25,28,43,51,56,65,69,72-73,76,80,83-88,95,100
+frontend/src/logger/event/createClientEvent.ts
+  h_737cf808c1c597 1,13,33-34,39,50-53
+frontend/src/logger/event/index.ts
+  h_737cf808c1c597 2
+frontend/src/logger/event/splitSessionFromExtra.ts
+  h_737cf808c1c597 1-24
+frontend/src/logger/providers/backendLoggingProvider.spec.ts
+  h_737cf808c1c597 57,90
+frontend/src/logger/transport/backendLogTransport.ts
+  h_737cf808c1c597 5,15,20-21,29,44
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  h_737cf808c1c597 17-18
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_737cf808c1c597 23,189,192,429
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_737cf808c1c597 17,56,63,90-104,148
+frontend/src/types/chat.ts
+  h_737cf808c1c597 1-6,8
+frontend/src/utils/VonageVideoClient/index.ts
+  h_737cf808c1c597 3
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_737cf808c1c597 327,330-331,337,344-346,348-349,353-356,400
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 24,28-30,32-33,66,83-84,99,143,181,185,187,190-200,202,204-205,215-222,238-247,266-270,280,287,292,294-297,308,310-311,317-319,321-322,425,435,447,456,459-460,465,468-469,488-489
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.spec.ts
+  h_737cf808c1c597 1,11
+frontend/src/utils/getOverflowMenuButtons/getOverflowMenuButtons.tsx
+  h_737cf808c1c597 5,7,9-10,12-14
+frontend/src/utils/isDeviceEnabledOnJoin/index.ts
+  h_737cf808c1c597 1
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.spec.ts
+  h_737cf808c1c597 1-30
+frontend/src/utils/isDeviceEnabledOnJoin/isDeviceEnabledOnJoin.ts
+  h_737cf808c1c597 1-20
+frontend/vite.config.ts
+  h_737cf808c1c597 30
+integration-tests/tests/postCallTranscription.spec.ts
+  h_737cf808c1c597 1-103
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  h_737cf808c1c597 7
+libs/api/src/schemas/StopArchivePayload.schema.ts
+  h_737cf808c1c597 3,7
+libs/common/manifest.json
+  h_737cf808c1c597 4
+libs/common/src/constants/archiveNames.ts
+  h_737cf808c1c597 1-2
+libs/common/src/constants/index.ts
+  h_737cf808c1c597 3
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.spec.ts
+  h_737cf808c1c597 49,54
+libs/common/src/execution/idempotentCallbackWithRetry/idempotentCallbackWithRetry.ts
+  h_737cf808c1c597 13-15,27
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.spec.ts
+  h_737cf808c1c597 22,26,37-41
+libs/common/src/schemas/ClientLogEvent/ClientLogEvent.schema.ts
+  h_737cf808c1c597 2,11,26-27
+libs/common/src/schemas/ClientLogEvent/ClientLogSession.schema.ts
+  h_737cf808c1c597 1-10
+libs/common/src/schemas/ClientLogEvent/index.ts
+  h_737cf808c1c597 6
+libs/common/src/types/index.ts
+  h_737cf808c1c597 5,7
+libs/core/src/hooks/index.ts
+  h_737cf808c1c597 5-11
+libs/core/src/hooks/useArchives/index.ts
+  h_737cf808c1c597 2-8
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_737cf808c1c597 16-35,84-98
+package.json
+  h_737cf808c1c597 174
+pnpm-lock.yaml
+  h_737cf808c1c597 51-52,185,191,362,957-958,1952-1958,2105-2107,2225-2226,2230-2231,2235-2236,2240-2241,2245-2246,2250-2251,2255-2256,2261-2262,2267-2268,2273-2274,2279-2280,2285-2286,2291-2292,2297-2298,2303-2304,2309-2310,2315-2316,2321-2322,2327-2328,2333-2334,2338-2339,2343-2344,2348-2349,2353-2354,2358-2359,3363-3367,3455-3456,7014-7015,8948,9231,9272,9298,9913,9934,9943,9956,9972,9978,9988-9990,10090,10254-10259,10266-10267,10359-10365,10393,10397,10400,10404,10406,10413,10415,10417,10420,10422,10424,10426,10428,10430,10436,10438,10440,10443,10445,10447,10451,10459,10465,10467,10470,10473,10476,10479,10482,10485,10488,10491,10494,10497,10500,10503,10506,10509,10512,10515,10518,10521,10524,10527,10530,10533,10536,10539,10601,10675,10677,10686,10692,10708,10711-10712,10975,11004,11473,11484,11489,11600,11605-11606,11806,11808,12032,12051-12052,12055-12056,12257,12912,14012,14697,14884,14901,15297,15585,15619,15629,15811,15816,15821,15823,15825-15850,15904,15911,16711,16769,16772-16773,16792
+specs/app-config.schema.json
+  h_737cf808c1c597 195-199
+vcr-gha.yml
+  h_737cf808c1c597 139-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "530443243c1c1497eca67cc299dd4dfca47994fb",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

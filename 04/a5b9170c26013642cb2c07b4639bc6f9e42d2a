@@ -1,0 +1,30 @@
+README.md
+  s_4fa7c30320c977::t_c140735698f752 55-57
+  s_4fa7c30320c977::t_f023836cc8c435 58
+docs/ARCHITECTURE.md
+  s_5c614e1304ebaf::t_48bc53908125cb 61-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "04a5b9170c26013642cb2c07b4639bc6f9e42d2a",
+  "prompts": {},
+  "sessions": {
+    "s_4fa7c30320c977": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a127cbf8-c216-46f6-9c8d-79758ddaf2ff",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_5c614e1304ebaf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d8c3e29-7cc1-4205-884e-ea37c863995c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

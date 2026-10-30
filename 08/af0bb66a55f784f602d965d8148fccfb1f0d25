@@ -1,0 +1,35 @@
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_50fafda457922a::t_cb79e44d50b490 57-59
+  h_737cf808c1c597 14,55-56,211,221
+  s_50fafda457922a::t_b136224a96e117 168-193
+  h_737cf808c1c597 212-220
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.spec.tsx
+  s_50fafda457922a::t_63aded53608307 199-215
+  h_737cf808c1c597 11
+  s_50fafda457922a::t_fe0ef831a19a4c 144-157
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_50fafda457922a::t_ebb74f8a52ccf3 233-234
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  s_50fafda457922a::t_bf877e6a58c4bb 76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08af0bb66a55f784f602d965d8148fccfb1f0d25",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_50fafda457922a": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_b2c0f7ea-322d-4e8f-9dc4-cb5589af7312",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

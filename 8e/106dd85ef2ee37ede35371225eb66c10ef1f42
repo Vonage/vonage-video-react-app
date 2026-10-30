@@ -1,0 +1,14 @@
+integration-tests/tests/videoFeatures.spec.ts
+  h_9cf21c851a7c99 1-387
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8e106dd85ef2ee37ede35371225eb66c10ef1f42",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}

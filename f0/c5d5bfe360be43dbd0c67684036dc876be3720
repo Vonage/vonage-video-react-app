@@ -1,0 +1,24 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_4f27b0f528ff23::t_c2144fcad2e0c6 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0c5d5bfe360be43dbd0c67684036dc876be3720",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_4f27b0f528ff23": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_d0456250-ed32-465f-ac0d-9fc08bcd2ab9",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

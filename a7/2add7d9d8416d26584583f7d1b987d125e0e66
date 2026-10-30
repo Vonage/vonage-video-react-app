@@ -1,0 +1,19 @@
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_c847e1696b536f::t_7d76b846082c29 376,405,409
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a72add7d9d8416d26584583f7d1b987d125e0e66",
+  "prompts": {},
+  "sessions": {
+    "s_c847e1696b536f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd0ab09a-1867-43ed-afee-720525f14d72",
+        "model": "unknown"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

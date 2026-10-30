@@ -1,0 +1,39 @@
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  s_c847e1696b536f::t_3d74d401a687ad 61-62,75-80
+  s_c847e1696b536f::t_f3303e45b98db8 10
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_c847e1696b536f::t_41d1b7b0ccea8f 420-465
+  s_c847e1696b536f::t_a6bb335f7d7480 13
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_c847e1696b536f::t_78732a77d4e43d 125-130,132-134
+  s_c847e1696b536f::t_456672bef2acc2 131
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_c847e1696b536f::t_e71290f52ff9f0 23
+  s_c847e1696b536f::t_fe80bca566387e 206,208-209
+  s_c847e1696b536f::t_62fe871d1fe8bf 204-205
+  s_c847e1696b536f::t_f733353fafbff3 207
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_c847e1696b536f::t_35e4de03f80eea 196,198-199
+  s_c847e1696b536f::t_313df42c2d8af7 24
+  s_c847e1696b536f::t_8302de79b9e0f8 194-195
+  s_c847e1696b536f::t_5d0443059152c5 197
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  s_c847e1696b536f::t_6b3671f15df230 57-58,69-74
+  s_c847e1696b536f::t_ad6c628f2757ca 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6be7a9bcfe742f79e2354ce171e821bb5e3e1319",
+  "prompts": {},
+  "sessions": {
+    "s_c847e1696b536f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dd0ab09a-1867-43ed-afee-720525f14d72",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

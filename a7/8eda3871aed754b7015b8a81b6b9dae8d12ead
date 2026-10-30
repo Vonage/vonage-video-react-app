@@ -1,0 +1,36 @@
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_52de8eb9a0653e::t_3addc1e6bc998f 34-43
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_e8065fe0a22a57::t_a35360bcd83255 202
+  s_e8065fe0a22a57::t_661f5fec94a8f3 199-201
+  s_e8065fe0a22a57::t_974f7b8a1d2549 203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a78eda3871aed754b7015b8a81b6b9dae8d12ead",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_52de8eb9a0653e": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_8c8f4cde-75f6-472f-a9fc-41d421880d11",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    },
+    "s_e8065fe0a22a57": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a8ef5497-b136-40f6-82e0-737ad7920bac",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
