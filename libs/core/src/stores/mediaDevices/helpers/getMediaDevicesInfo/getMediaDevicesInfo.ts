@@ -10,12 +10,8 @@ import { isMobile } from '@web/platform';
  * Retrieves the list of media devices from the browser.
  */
 const getMediaDevicesInfo$ = actions<DevicesAPI>()({
-  getMediaDevicesInfo() {
+  getMediaDevicesInfo({ skipStoreReady = false }: { skipStoreReady?: boolean } = {}) {
     return ({ metadata }): Promise<MediaDeviceInfoJSON[]> => {
-      const shouldSkipStoreReady = metadata.isFirstMediaDevicesInfoQuery;
-
-      metadata.isFirstMediaDevicesInfoQuery = false;
-
       /**
        * Some browsers may intermittently fail to return the device list.
        * This function uses a retry mechanism to improve reliability.
@@ -23,7 +19,9 @@ const getMediaDevicesInfo$ = actions<DevicesAPI>()({
       return idempotentCallbackWithRetry(
         async () => {
           // Wait for permissions to be resolved before querying devices, as some browsers (e.g., Firefox) require permissions to be granted before providing device labels and IDs.
-          if (!shouldSkipStoreReady) {
+          // The bootstrap sync (from setupDeviceStore) passes skipStoreReady so it never awaits the
+          // very isStoreReady promise it is responsible for resolving.
+          if (!skipStoreReady) {
             await metadata.isStoreReady;
           }
 
