@@ -144,4 +144,13 @@ describe('WaitingRoomStage', () => {
     render(<WaitingRoomStage />, { sessionIdentifier: 'bridge-room' });
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
   });
+
+  it('redirects to /waiting-room/:roomIdentifier at the fallback route when bridge has a sessionIdentifier', () => {
+    // Mounted at the fallback /waiting-room (no :roomIdentifier param) but bridge has a
+    // sessionIdentifier: the stage must redirect to /waiting-room/my-room so the room param
+    // resolves. Without the redirect it renders with an empty room param, which throws in
+    // useDecodedSessionKey (crashed/blank waiting room).
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room', sessionIdentifier: 'my-room' });
+    expect(screen.getByTestId('video-container')).toBeInTheDocument();
+  });
 });
