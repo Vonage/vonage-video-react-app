@@ -1,0 +1,35 @@
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 612
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 2,115,579,582,588,590,593-595,597
+  h_6029769cf9ac60 580
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.tsx
+  h_6029769cf9ac60 10,47-54
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_6029769cf9ac60 194-197,199,203-206,208-215
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.spec.tsx
+  h_6029769cf9ac60 2,56-58,69-73,78-99
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_6029769cf9ac60 57-58,66,69,71-72,79-82
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_6029769cf9ac60 204-207,209,213-216,219-225
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 528
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_6029769cf9ac60 254-255,260,266
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_6029769cf9ac60 61,69,72,76-77,84-89
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  h_6029769cf9ac60 11,60-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "12e9bc431ec4f1d699aa161115d8ed3e57fad492",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
