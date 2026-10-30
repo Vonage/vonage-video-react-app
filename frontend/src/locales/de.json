@@ -178,6 +178,7 @@
   "chat.meetingUrl": "Meeting-URL:",
   "chat.open": "Chat öffnen",
   "chat.title": "Chat",
+  "chatErrors.sendFailed": "Ihre Nachricht konnte nicht gesendet werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut.",
   "common.or": "oder",
   "connectionAlert.quality.message": "Bitte überprüfen Sie Ihre Verbindung. Ihr Video kann deaktiviert werden, um das Benutzererlebnis zu verbessern",
   "connectionAlert.quality.title": "Videoquadrat-Problem",

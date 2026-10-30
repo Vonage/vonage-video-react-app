@@ -1,6 +1,7 @@
 import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import useChat from '../useChat';
+import { notifications$ } from '@core/stores';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 
 const mockSignal = vi.fn();
@@ -8,6 +9,7 @@ const mockSignal = vi.fn();
 describe('useChat', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSignal.mockResolvedValue(undefined);
   });
 
   it('onChatMessage should parse message and update messages state', () => {
@@ -78,7 +80,8 @@ describe('useChat', () => {
     expect(result.current.messages).toHaveLength(0);
   });
 
-  it('sendChatMessage should send message via signal', () => {
+  it('sendChatMessage should send message via signal with retryAfterReconnect enabled', async () => {
+    expect.assertions(1);
     const { result } = renderHook(() => useChat({ signal: mockSignal }), {
       userContext: {
         value: {
@@ -89,11 +92,14 @@ describe('useChat', () => {
       },
     });
 
-    result.current.sendChatMessage('Hello there!');
+    await act(async () => {
+      await result.current.sendChatMessage('Hello there!');
+    });
 
     expect(mockSignal).toHaveBeenCalledWith({
       type: 'chat',
       data: '{"participantName":"Local User","text":"Hello there!"}',
+      retryAfterReconnect: true,
     });
   });
 
@@ -101,6 +107,25 @@ describe('useChat', () => {
     const { result } = renderHook(() => useChat({ signal: undefined }));
 
     expect(() => result.current.sendChatMessage('Hello there!')).not.toThrow();
+  });
+
+  it('pushes a visible error notification and rethrows when the signal rejects', async () => {
+    expect.assertions(2);
+    mockSignal.mockRejectedValueOnce(new Error('signal failed'));
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { result } = renderHook(() => useChat({ signal: mockSignal }));
+
+    await act(async () => {
+      await expect(result.current.sendChatMessage('Hello there!')).rejects.toThrow('signal failed');
+    });
+
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'warning',
+        message: "Your message couldn't be sent. Please check your network and try again.",
+      })
+    );
   });
 });
 
