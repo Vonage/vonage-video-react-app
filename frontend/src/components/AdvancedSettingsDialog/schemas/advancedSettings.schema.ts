@@ -31,6 +31,7 @@ export const advancedSettingsSchema = z.object({
   echoCancellationEnabled: z.boolean(),
   noiseSuppressionEnabled: z.boolean(),
   autoGainControlEnabled: z.boolean(),
+  includeTranscriptionSummary: z.boolean(),
   selfViewMirroringEnabled: z.boolean(),
   videoStatsOverlayEnabled: z.boolean(),
   cameraContentHint: contentHintSchema,

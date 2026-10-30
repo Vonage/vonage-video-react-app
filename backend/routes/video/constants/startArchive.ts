@@ -28,13 +28,29 @@ const transcriptionOptions: ArchiveOptionsWithTag = {
 };
 
 const startArchive: HandlersConfig['startArchive'] = {
-  addDefaults: ({ sessionKey, withTranscription, archiveOptions }) => ({
-    sessionKey,
-    archiveOptions: {
-      ...(withTranscription ? transcriptionOptions : recordingOptions),
-      ...archiveOptions,
-    },
-  }),
+  addDefaults: ({ sessionKey, withTranscription, withSummary, archiveOptions }) => {
+    const baseOptions = (() => {
+      if (!withTranscription) return recordingOptions;
+      if (withSummary === false) {
+        return {
+          ...transcriptionOptions,
+          transcriptionProperties: {
+            ...transcriptionOptions.transcriptionProperties,
+            hasSummary: false,
+          },
+        };
+      }
+      return transcriptionOptions;
+    })();
+
+    return {
+      sessionKey,
+      archiveOptions: {
+        ...baseOptions,
+        ...archiveOptions,
+      },
+    };
+  },
 };
 
 export default startArchive;

@@ -2,11 +2,14 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
+import { Field } from '@ui/components';
 import classNames from 'classnames';
+import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
 import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
@@ -28,12 +31,12 @@ export type PostCallTranscriptionButton = {
  * @param {PostCallTranscriptionButton} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- * @returns {ReactElement} - The PostCallTranscriptionButton component.
+ * @returns {ReactElement | false} - The PostCallTranscriptionButton component.
  */
 const PostCallTranscriptionButton = ({
   isOverflowButton = false,
   handleClick,
-}: PostCallTranscriptionButton): ReactElement => {
+}: PostCallTranscriptionButton): ReactElement | false => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
@@ -44,10 +47,19 @@ const PostCallTranscriptionButton = ({
     connected,
   } = useSessionContext();
 
+  const includeTranscriptionSummaryDefault = advancedSettings$.use.select(
+    ({ includeTranscriptionSummary }) => includeTranscriptionSummary
+  );
+
   const isTranscribing = !!transcriptionArchiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [includeSummary, setIncludeSummary] = useState<boolean>(includeTranscriptionSummaryDefault);
+
   const title = isTranscribing ? t('transcribing.stop.title') : t('transcribing.start.title');
   const handleButtonClick = () => {
+    if (!isModalOpen) {
+      setIncludeSummary(includeTranscriptionSummaryDefault);
+    }
     setIsModalOpen((prev) => !prev);
   };
 
@@ -79,11 +91,13 @@ const PostCallTranscriptionButton = ({
     if (action === 'start') {
       if (!transcriptionArchiveId && connected) {
         markTranscriptionStartRequestedBySelf();
+        const withSummary = includeSummary;
         setTimeout(async () => {
           try {
             await videoClient.startArchive({
               sessionKey: sessionKey!,
               withTranscription: true,
+              withSummary,
             });
           } catch (err) {
             resetTranscriptionStartRequestedBySelf();
@@ -105,39 +119,56 @@ const PostCallTranscriptionButton = ({
     handleDialogClick(isTranscribing ? 'stop' : 'start');
   };
 
-  return (
-    <>
-      <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
-        <ToolbarButton
-          onClick={handleButtonClick}
-          data-testid={testIds.button}
-          className={classNames(
-            { transcribing: isTranscribing },
-            isTranscribing &&
-              '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
-          )}
-          icon={
-            <VividIcon
-              name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
-              customSize={-5}
-              style={{
-                color: 'var(--vera-on-secondary-light)',
-              }}
-            />
-          }
-          style={{
-            marginTop: isOverflowButton ? '0px' : '4px',
-          }}
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
-      <PopupDialog
-        isOpen={isModalOpen}
-        handleClose={handleClose}
-        handleActionClick={handleActionClick}
-        actionText={actionText}
+  const startDialogExtraContent = !isTranscribing ? (
+    <Field className="mt-4">
+      <Field.Label htmlFor="post-call-transcription-include-summary">
+        {t('transcribing.start.dialog.includeSummary')}
+      </Field.Label>
+      <Field.Input
+        variant="switch"
+        id="post-call-transcription-include-summary"
+        checked={includeSummary}
+        onChange={(event) => setIncludeSummary(event.currentTarget.checked)}
       />
-    </>
+    </Field>
+  ) : null;
+
+  return (
+    env.ALLOW_POST_CALL_TRANSCRIPTION && (
+      <>
+        <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
+          <ToolbarButton
+            onClick={handleButtonClick}
+            data-testid="post-call-transcription-button"
+            className={classNames(
+              { transcribing: isTranscribing },
+              isTranscribing &&
+                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            )}
+            icon={
+              <VividIcon
+                name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
+                customSize={-5}
+                style={{
+                  color: 'var(--vera-on-secondary-light)',
+                }}
+              />
+            }
+            style={{
+              marginTop: isOverflowButton ? '0px' : '4px',
+            }}
+            isOverflowButton={isOverflowButton}
+          />
+        </Tooltip>
+        <PopupDialog
+          isOpen={isModalOpen}
+          handleClose={handleClose}
+          handleActionClick={handleActionClick}
+          actionText={actionText}
+          extraContent={startDialogExtraContent}
+        />
+      </>
+    )
   );
 };
 export default PostCallTranscriptionButton;
