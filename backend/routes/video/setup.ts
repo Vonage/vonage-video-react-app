@@ -1,7 +1,7 @@
 import getSessionStorageService from '../../sessionStorageService';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { videoHandler } from './video';
-import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
+import { createRtcStatsUrl, getOrCreateSessionKeyFromRoomName } from '../../helpers';
 
 const sessionService = getSessionStorageService();
 
@@ -83,3 +83,20 @@ videoHandler.override$('disableCaptions', async (opts) => {
 });
 
 // #endregion Legacy endpoints for android and old links with roomName.
+
+/**
+ * Optional rtcstats integration (https://rtcstats.com), off unless RTCSTATS_ENDPOINT and
+ * RTCSTATS_JWT_SECRET are set. Runs after the Vonage token is minted, so it never changes how that
+ * token is created, and adds the signed rtcstats-server URL to the joinSession result. The claims
+ * come from the decoded session, never from client input. The frontend passes the URL to
+ * rtcStatsTrace.connect when ENABLE_RTCSTATS is on.
+ */
+videoHandler.onSettled$('joinSession', ({ error, result }) => {
+  if (error || !result) return;
+
+  const rtcStatsUrl = createRtcStatsUrl(result);
+
+  if (!rtcStatsUrl) return;
+
+  Object.assign(result, { rtcStatsUrl });
+});
