@@ -1,0 +1,14 @@
+.github/workflows/check-base-branch.yml
+  h_6029769cf9ac60 6,20,22-23,25-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c46f59c8d21c9ae4383d7ad63150f158650b5718",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
