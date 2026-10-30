@@ -19,23 +19,26 @@ const ChatInput = (): ReactElement => {
   const [isComposing, setIsComposing] = useState(false);
   const { sendChatMessage } = useSessionContext();
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     // Ensure composition has ended before sending the message
     if (isComposing) {
       return;
     }
     const trimmedText = text.trim();
-    if (trimmedText.length) {
-      sendChatMessage(trimmedText);
+    if (!trimmedText.length) {
+      return;
     }
-    setText('');
+
+    await sendChatMessage(trimmedText)
+      .then(() => setText(''))
+      .catch(() => {});
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     // If enter press then send message unless shift also pressed to allow for multiline messages
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault();
-      handleSendMessage();
+      void handleSendMessage();
     }
   };
 

@@ -22,12 +22,16 @@ import {
 } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import isErrorLike from '@common/assertions/isErrorLike';
 import frontendLogger from '../../logger';
 import { decodeSessionKey } from '@common/helpers';
 
+export type ArchiveStartedEvent = { id: string; name: string };
+export type ArchiveStoppedEvent = { id: string; name: string };
+
 type VonageVideoClientEvents = {
-  archiveStarted: [string];
-  archiveStopped: [];
+  archiveStarted: [ArchiveStartedEvent];
+  archiveStopped: [ArchiveStoppedEvent];
   screenshareStreamCreated: [];
   sessionDisconnected: [{ reason?: string }];
   sessionReconnected: [];
@@ -56,11 +60,12 @@ type VonageVideoClientEvents = {
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session;
-  private readonly credential: Credential;
   private readonly applicationId: string;
+  private readonly credential: Credential;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
   private readonly streams = new Map<string, Stream>();
+  private readonly subscribersByStreamId = new Map<string, Set<Subscriber>>();
   private disconnected = false;
 
   /**
@@ -75,10 +80,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
     const { sessionId, applicationId } = decodeSessionKey({ sessionKey: credential.sessionKey });
 
-    this.applicationId = applicationId;
     this.sessionId = sessionId;
+    this.applicationId = applicationId;
 
-    this.clientSession = initSession(applicationId, sessionId);
+    frontendLogger.setContext({ sessionId, partnerId: applicationId });
+
+    this.clientSession = initSession(applicationId, sessionId, {
+      sessionMigration: true,
+    });
 
     this.attachEventListeners();
   }
@@ -90,7 +99,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    */
   private attachEventListeners = () => {
     this.clientSession.on('archiveStarted', (event) => this.handleArchiveStarted(event));
-    this.clientSession.on('archiveStopped', () => this.handleArchiveStopped());
+    this.clientSession.on('archiveStopped', (event) => this.handleArchiveStopped(event));
     this.clientSession.on('sessionDisconnected', (event) => this.handleSessionDisconnected(event));
     this.clientSession.on('sessionReconnected', () => this.handleReconnected());
     this.clientSession.on('sessionReconnecting', () => this.handleReconnecting());
@@ -134,7 +143,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return;
     }
 
-    const { streamId, videoType } = stream;
+    const { streamId, videoType, name: remoteParticipantName } = stream;
     const isScreenshare = videoType === 'screen';
     const subscriberOptions: SubscriberProperties = {
       insertMode: 'append',
@@ -172,17 +181,31 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
             subscriber,
             streamId,
             isScreenshare,
+            remoteParticipantName,
           });
         });
 
-      frontendLogger.log('vonageVideoClient: subscribe attempt to stream', {
+      frontendLogger.log('vonageVideoClient:SubscribeAttempt', {
         streamId,
+        remoteParticipantName,
       });
 
-      await idempotentCallbackWithRetry(() => subscribe());
+      await idempotentCallbackWithRetry(() => subscribe(), {
+        onRetry: (retryError, attempt) => {
+          frontendLogger.log('vonageVideoClient:SubscribeRetry', {
+            streamId,
+            remoteParticipantName,
+            attempt,
+            subscriberCount: this.getSubscriberCount(streamId),
+            errorName: isErrorLike(retryError) ? retryError.name : undefined,
+          });
+        },
+      });
 
-      frontendLogger.log('vonageVideoClient: subscribed to stream', {
+      frontendLogger.log('vonageVideoClient:Subscribed', {
         streamId,
+        remoteParticipantName,
+        subscriberCount: this.getSubscriberCount(streamId),
       });
 
       if (isScreenshare) {
@@ -192,6 +215,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       // Check if this is a recoverable error that should not disconnect the user
       const isRecoverableError = this.isRecoverableSubscriptionError(syncError);
 
+      frontendLogger.log('vonageVideoClient:SubscribeFailed', {
+        streamId,
+        remoteParticipantName,
+        isRecoverableError,
+        subscriberCount: this.getSubscriberCount(streamId),
+        errorName: isErrorLike(syncError) ? syncError.name : undefined,
+      });
+
       if (isRecoverableError) {
         // Don't emit subscriptionError for recoverable errors
         // The stream was likely destroyed before subscription completed (e.g., user refreshed)
@@ -199,13 +230,22 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       }
 
       // Only emit subscriptionError for critical errors
-      console.error('[SUBSCRIBER] Critical subscription error:', syncError);
       this.handleSubscriptionError(syncError);
     }
   };
 
   hasStream = (streamId: string): boolean => {
     return this.streams.has(streamId);
+  };
+
+  /**
+   * Number of live Subscriber instances currently attached to a stream. Any value above one means
+   * the same remote stream is being received more than once, which duplicates its audio.
+   * @param {string} streamId - The ID of the stream
+   * @returns {number} the amount of subscribers attached to the stream
+   */
+  getSubscriberCount = (streamId: string): number => {
+    return this.subscribersByStreamId.get(streamId)?.size ?? 0;
   };
 
   getStream = (streamId: string): Stream | undefined => {
@@ -226,6 +266,11 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       return;
     }
 
+    frontendLogger.log('vonageVideoClient:Resubscribe', {
+      streamId,
+      subscriberCount: this.getSubscriberCount(streamId),
+    });
+
     await this.subscribeToStream(stream);
   };
 
@@ -235,17 +280,24 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Subscriber} params.subscriber - The subscriber object
    * @param {string} params.streamId - The ID of the stream
    * @param {boolean} params.isScreenshare - Whether the stream is a screenshare
+   * @param {string} params.remoteParticipantName - The display name of the participant publishing the stream
    * @private
    */
   private setupSubscriberListeners = ({
     subscriber,
     streamId,
     isScreenshare,
+    remoteParticipantName,
   }: {
     subscriber: Subscriber;
     streamId: string;
     isScreenshare: boolean;
+    remoteParticipantName: string;
   }) => {
+    const subscribersForStream = this.subscribersByStreamId.get(streamId) ?? new Set<Subscriber>();
+
+    subscribersForStream.add(subscriber);
+    this.subscribersByStreamId.set(streamId, subscribersForStream);
     subscriber.on('videoElementCreated', (videoElementCreatedEvent: VideoElementCreatedEvent) => {
       const { element } = videoElementCreatedEvent;
       const subscriberWrapper: SubscriberWrapper = {
@@ -256,15 +308,21 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         subscriber,
       };
 
-      frontendLogger.log('vonageVideoClient: subscriber video element created', {
+      frontendLogger.log('vonageVideoClient:SubscriberVideoElementCreated', {
         streamId,
+        remoteParticipantName,
+        subscriberCount: subscribersForStream.size,
       });
       this.emit('subscriberVideoElementCreated', subscriberWrapper);
     });
 
     subscriber.on('destroyed', () => {
-      frontendLogger.log('vonageVideoClient: subscriber destroyed', {
+      subscribersForStream.delete(subscriber);
+
+      frontendLogger.log('vonageVideoClient:SubscriberDestroyed', {
         streamId,
+        remoteParticipantName,
+        subscriberCount: subscribersForStream.size,
       });
       this.emit('subscriberDestroyed', streamId);
     });
@@ -335,7 +393,6 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   private handleSubscriptionError = (error: unknown) => {
     frontendLogger.reportError(error, {
       eventSource: 'vonageVideoClient.handleSubscriptionError',
-      partnerId: this.applicationId,
     });
 
     this.emit('subscriptionError', error ?? new Error('Unknown subscription error'));
@@ -368,9 +425,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnecting = () => {
-    frontendLogger.log('vonageVideoClient: is reconnecting', {
-      partnerId: this.applicationId,
-    });
+    frontendLogger.log('vonageVideoClient:Reconnecting');
 
     this.emit('sessionReconnecting');
   };
@@ -380,9 +435,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @private
    */
   private handleReconnected = () => {
-    frontendLogger.log('vonageVideoClient: reconnected', {
-      partnerId: this.applicationId,
-    });
+    frontendLogger.log('vonageVideoClient:Reconnected');
 
     this.emit('sessionReconnected');
   };
@@ -394,9 +447,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   private handleSessionDisconnected = (event: { reason?: string }) => {
     const reason = event?.reason || 'unknown';
 
-    frontendLogger.log('vonageVideoClient: handle session disconnected', {
+    frontendLogger.log('vonageVideoClient:SessionDisconnected', {
       reason,
-      partnerId: this.applicationId,
     });
 
     this.emit('sessionDisconnected', { reason });
@@ -404,19 +456,20 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
 
   /**
    * Emits an event when an archive starts.
-   * @param {{ id: string }} param - The archive ID.
+   * @param {{ id: string; name: string }} param - The archive ID and name.
    * @private
    */
-  private handleArchiveStarted = ({ id }: { id: string }) => {
-    this.emit('archiveStarted', id);
+  private handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
+    this.emit('archiveStarted', { id, name });
   };
 
   /**
    * Emits an event when an archive stops.
+   * @param {{ id: string; name: string }} param - The archive ID and name.
    * @private
    */
-  private handleArchiveStopped = () => {
-    this.emit('archiveStopped');
+  private handleArchiveStopped = ({ id, name }: { id: string; name: string }) => {
+    this.emit('archiveStopped', { id, name });
   };
 
   /**
@@ -431,18 +484,14 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         if (err) {
           frontendLogger.reportError(err, {
             eventSource: 'vonageVideoClient.connect.error',
-            sessionId: this.sessionId,
-            connectionId: this.connectionId,
-            partnerId: this.applicationId,
           });
 
           reject(err);
         } else {
+          frontendLogger.setContext({ connectionId: this.connectionId });
+
           frontendLogger.log('EnterMeeting', {
             eventSource: 'vonageVideoClient.connect.success',
-            sessionId: this.sessionId,
-            connectionId: this.connectionId,
-            partnerId: this.applicationId,
           });
 
           resolve();
@@ -484,45 +533,54 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
-  publish = (publisher: Publisher): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.clientSession.publish(publisher, (error) => {
-        if (error) {
-          frontendLogger.reportError(error, {
-            eventSource: 'vonageVideoClient.publish.error',
-            errorCode: (error as { code?: number })?.code,
-            partnerId: this.applicationId,
-          });
-          const errorName = error.name || 'OTError';
-          const errorMessage = error.message || 'Unknown publish error';
-          reject(new Error(`${errorName}: ${errorMessage}`));
-          return;
-        }
-
-        // the following is needed for the local subscriber to be able to receive captions
-        // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
-        if (publisher.stream) {
-          this.hiddenSubscriber =
-            this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
-              audioVolume: 0,
-            }) ?? null;
-
-          this.hiddenSubscriber?.on('captionReceived', (captionEvent) => {
-            this.emit('localCaptionReceived', captionEvent);
-          });
-        }
-
-        resolve();
+  publish = async (publisher: Publisher): Promise<void> => {
+    try {
+      await this.clientSession.publish.promise(publisher);
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.publish.error',
+        errorCode: (error as { code?: number })?.code,
+        partnerId: this.applicationId,
       });
-    });
+      const errorName = (error as OTError)?.name || 'OTError';
+      const errorMessage = (error as OTError)?.message || 'Unknown publish error';
+      throw new Error(`${errorName}: ${errorMessage}`, { cause: error });
+    }
+
+    // the following is needed for the local subscriber to be able to receive captions
+    // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
+    if (publisher.stream) {
+      try {
+        this.hiddenSubscriber = await this.clientSession.subscribe.promise(
+          publisher.stream,
+          document.createElement('div'),
+          { audioVolume: 0 }
+        );
+
+        this.hiddenSubscriber.on('captionReceived', (captionEvent) => {
+          this.emit('localCaptionReceived', captionEvent);
+        });
+      } catch (error) {
+        frontendLogger.reportError(error, {
+          eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
+          partnerId: this.applicationId,
+        });
+      }
+    }
   };
 
   /**
    * Sends a signal to all participants in the session.
    * @param {SignalType} data - The signal data to be sent.
+   * @throws {OTError} Re-throws if the signal fails to send, after reporting it.
    */
-  signal = (data: SignalType) => {
-    this.clientSession.signal(data)?.catch(() => {});
+  signal = async (data: SignalType): Promise<void> => {
+    try {
+      await this.clientSession.signal(data);
+    } catch (err) {
+      frontendLogger.reportError(err, { eventSource: 'vonageVideoClient.signal.error' });
+      throw err;
+    }
   };
 
   /**

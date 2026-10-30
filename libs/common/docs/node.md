@@ -1,6 +1,6 @@
 # Node.js API
 
-All exports available from `@vonage/video-common/node`. This entry re-exports everything from the [universal layer](./universal.md) — only Node.js-specific additions are documented here.
+All exports available from `@vonage/video-reference-apps-common/node`. This entry re-exports everything from the [universal layer](./universal.md) — only Node.js-specific additions are documented here.
 
 ---
 
@@ -9,7 +9,7 @@ All exports available from `@vonage/video-common/node`. This entry re-exports ev
 Zod schemas for Vonage Video API server-side operations. Require `zod` and `@vonage/video` as dependencies.
 
 ```ts
-import { SessionIdSchema, ArchiveOptionsSchema } from '@vonage/video-common/node/schemas';
+import { SessionIdSchema, ArchiveOptionsSchema } from '@vonage/video-reference-apps-common/node/schemas';
 ```
 
 ### Session schemas
@@ -20,7 +20,7 @@ import { SessionIdSchema, ArchiveOptionsSchema } from '@vonage/video-common/node
 | `SessionKeySchema` | Valid Vonage session key string |
 
 ```ts
-import { SessionIdSchema } from '@vonage/video-common/node/schemas';
+import { SessionIdSchema } from '@vonage/video-reference-apps-common/node/schemas';
 
 const sessionId = SessionIdSchema.parse(rawId); // throws if invalid
 ```
@@ -44,7 +44,7 @@ const sessionId = SessionIdSchema.parse(rawId); // throws if invalid
 | `ArchiveOptionsSchema` | Union of all archive option variants |
 
 ```ts
-import { ArchiveOptionsSchema } from '@vonage/video-common/node/schemas';
+import { ArchiveOptionsSchema } from '@vonage/video-reference-apps-common/node/schemas';
 
 const options = ArchiveOptionsSchema.parse(requestBody);
 // options is typed as the correct variant based on the input shape
@@ -66,7 +66,7 @@ Re-exports all [universal types](./universal.md#types) plus archive-related type
 | `ArchiveWithoutTranscription` | Archive options without transcription |
 
 ```ts
-import type { ArchiveOptionsWithMaxBitrate } from '@vonage/video-common/node/types';
+import type { ArchiveOptionsWithMaxBitrate } from '@vonage/video-reference-apps-common/node/types';
 ```
 
 ---
@@ -86,7 +86,7 @@ Re-exports all [universal helpers](./universal.md#helpers). No Node-specific hel
 Server-specific error handling. Re-exports all [universal errors](./universal.md#errors) plus Node-specific additions.
 
 ```ts
-import { ApplicationServerError, makeInternalErrorHandler } from '@vonage/video-common/node/errors';
+import { ApplicationServerError, makeInternalErrorHandler } from '@vonage/video-reference-apps-common/node/errors';
 ```
 
 ### ApplicationServerError
@@ -107,7 +107,7 @@ Factory functions that return error handlers wrapping errors as `ApplicationServ
 | `makeVideoApiErrorHandler` | 502 (with OpenTok error parsing) |
 
 ```ts
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@vonage/video-common/node/errors';
+import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@vonage/video-reference-apps-common/node/errors';
 
 const handleInternalError = makeInternalErrorHandler('Something went wrong');
 const handleThirdPartyError = makeThirdPartyErrorHandler({ fallbackMessage: 'Service error', mapThirdPartyErrors: true });
@@ -134,7 +134,7 @@ const handleThirdPartyError = makeThirdPartyErrorHandler({ fallbackMessage: 'Ser
 Re-exports all [universal execution utilities](./universal.md#execution). The server-specific `assertResult` shadows the base version.
 
 ```ts
-import { assertResult } from '@vonage/video-common/node/executions';
+import { assertResult } from '@vonage/video-reference-apps-common/node/executions';
 ```
 
 ### assertResult
@@ -142,8 +142,8 @@ import { assertResult } from '@vonage/video-common/node/executions';
 Wraps a callback execution and, on failure, produces an `ApplicationServerError` with the provided fallback configuration. The server version is typed against `ApplicationServerError` rather than the base `ApplicationError`.
 
 ```ts
-import { assertResult } from '@vonage/video-common/node/executions';
-import { makeInternalErrorHandler } from '@vonage/video-common/node/errors';
+import { assertResult } from '@vonage/video-reference-apps-common/node/executions';
+import { makeInternalErrorHandler } from '@vonage/video-reference-apps-common/node/errors';
 
 const session = await assertResult(
   () => videoClient.createSession(),

@@ -21,15 +21,26 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
-          registry-url: https://npm.pkg.github.com
-          scope: '@vonage'
+          cache: pnpm
 
       - name: Install dependencies
-        run: yarn install --ignore-scripts --frozen-lockfile
+        run: pnpm install --ignore-scripts --frozen-lockfile
+
+      # Scoping @vonage to GitHub Packages has to happen after the install: the public
+      # @vonage/* runtime dependencies are not published there and would fail to resolve.
+      - name: Authenticate with GitHub Packages
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://npm.pkg.github.com
+          scope: '@vonage'
 
       - name: Check registry
         id: registry-check

@@ -12,7 +12,7 @@
     "waitingRoomSettings",
     "meetingRoomSettings"
   ],
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "metadata": {
       "description": "Document metadata: name, version, creation date and description.",
@@ -191,6 +191,11 @@
           "type": "boolean",
           "description": "When true, users can start and stop recording (archiving) of the meeting.",
           "x-envVar": "ALLOW_ARCHIVING"
+        },
+        "allowPostCallTranscription": {
+          "type": "boolean",
+          "description": "When true, users can start and stop post-call transcription of the meeting.",
+          "x-envVar": "ALLOW_POST_CALL_TRANSCRIPTION"
         },
         "allowCaptions": {
           "type": "boolean",
