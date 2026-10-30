@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VividIcon from '@ui/components/VividIcon';
-import { BACKGROUNDS_PATH } from '@utils/constants';
+import { BACKGROUND_THUMBNAILS_PATH } from '@utils/constants';
 import SelectableOption from '../SelectableOption';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
 
@@ -99,7 +99,9 @@ const BackgroundGallery = (): ReactElement => {
       })}
 
       {backgrounds.map((bg) => {
-        const path = `${BACKGROUNDS_PATH}/${bg.file}`;
+        // The grid only shows a 68px preview, so load the small thumbnail here. The
+        // full-size image is fetched by the SDK on selection (handleBackgroundChange).
+        const thumbnailPath = `${BACKGROUND_THUMBNAILS_PATH}/${bg.file}`;
         return (
           <SelectableOption
             key={bg.id}
@@ -107,7 +109,7 @@ const BackgroundGallery = (): ReactElement => {
             id={bg.id}
             isSelected={backgroundSelected === bg.file}
             onClick={() => handleBackgroundChange(bg.file)}
-            image={path}
+            image={thumbnailPath}
           />
         );
       })}
