@@ -133,7 +133,7 @@ const useMeetingRoom = () => {
 
   useEffect(() => {
     if (connected && publisher && publish) {
-      void publish();
+      void publish().catch(() => {});
     }
   }, [publisher, publish, connected]);
 

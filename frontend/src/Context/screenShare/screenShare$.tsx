@@ -12,7 +12,12 @@ import {
   handleApplyAdvancedSettingsError,
 } from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { attempt } from '@common/execution';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import { isNil } from 'json-storage-formatter';
+import frontendLogger from '../../logger';
+import i18n from '../../i18n';
+import { env } from '../../env';
+import { notifications$ } from '@core/stores';
 import resolveScreenSharePreferredVideoCodecs from './helpers/resolveScreenSharePreferredVideoCodecs';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 
@@ -98,6 +103,8 @@ const screenShare$ = createContext(initialState, {
             codecPriority,
           });
 
+          const partnerId = session.sessionDetails?.applicationId ?? null;
+
           const publisher = initPublisher(
             undefined,
             {
@@ -178,7 +185,30 @@ const screenShare$ = createContext(initialState, {
           });
 
           // Publishing the screen sharing stream
-          await publish(publisher);
+          try {
+            await idempotentCallbackWithRetry(() => publish(publisher), {
+              retries: 2,
+              delayMs: 500,
+            });
+          } catch (error) {
+            frontendLogger.reportError(error, {
+              eventSource: 'screenShare$.toggleShareScreen.publish',
+              partnerId,
+            });
+
+            publisher.destroy();
+
+            notifications$.actions.push({
+              type: 'warning',
+              message: i18n.t('screenSharing.errors', {
+                shareScreenError: error instanceof Error ? error.message : 'Unknown error',
+              }),
+              expirationMs: env.NOTIFICATION_DURATION_MS,
+            });
+
+            actions$.onScreenShareStopped();
+            return;
+          }
 
           if (screenShareBitrateMode !== null) {
             await attempt(
