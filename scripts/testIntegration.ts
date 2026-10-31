@@ -1,6 +1,7 @@
 #!/usr/bin/env npx tsx
 
 import { execSync } from 'child_process';
+import withDebuggerAutoAttach from './debugger/withDebuggerAutoAttach';
 
 const args = process.argv.slice(2);
 
@@ -33,13 +34,16 @@ const isFilePath = (str: string): boolean => {
 /**
  * Helper to execute shell commands with visible output.
  * Clears NODE_OPTIONS by default to prevent debugger from attaching to child processes.
- * Pass preserveNodeOptions=true to keep debugger for debug/inspect modes.
+ * Pass preserveNodeOptions=true for debug/inspect modes to keep the debugger and make it attach to
+ * every child process.
  */
 const runCommand = (command: string, { preserveNodeOptions = false } = {}) => {
   console.log(`\n🚀 Running: ${command}\n`);
   execSync(command, {
     stdio: 'inherit',
-    env: preserveNodeOptions ? process.env : { ...process.env, NODE_OPTIONS: '' },
+    env: preserveNodeOptions
+      ? withDebuggerAutoAttach(process.env)
+      : { ...process.env, NODE_OPTIONS: '' },
   });
 };
 
