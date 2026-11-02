@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import generateRoomName from '.';
 
 describe('generateRoomName', () => {
@@ -9,8 +9,14 @@ describe('generateRoomName', () => {
     expect(adjectiveAnimalCombo.split('-').length).toBeGreaterThanOrEqual(2);
   });
 
-  it('should generate different combinations', () => {
-    // Not a perfect test, but 1 in 6580 chance of them being the same.
-    expect(generateRoomName()).not.toBe(generateRoomName());
+  it('builds the name from the randomly picked adjective and animal', () => {
+    vi.spyOn(Math, 'random')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0.999999)
+      .mockReturnValueOnce(0.999999);
+
+    expect(generateRoomName()).toBe('red-aardvark');
+    expect(generateRoomName()).toBe('serene-zebra');
   });
 });
