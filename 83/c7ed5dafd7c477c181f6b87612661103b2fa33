@@ -1,0 +1,14 @@
+integration-tests/tests/multiparty.spec.ts
+  h_c939f8fae0de97 1,272-408
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "83c7ed5dafd7c477c181f6b87612661103b2fa33",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
