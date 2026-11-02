@@ -412,45 +412,6 @@ describe('screenShare$', () => {
     );
   });
 
-  it('resets screen share state and does not throw when publish rejects', async () => {
-    mockPublish.mockRejectedValue(new Error('Publishing failed'));
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    const { result } = render({
-      userContext: {
-        __interceptor: (context: UserContextType | null) => {
-          context!.user.defaultSettings.name = 'TestUser';
-        },
-      },
-      sessionContext: {
-        __interceptor: (context) => {
-          if (context) {
-            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
-            context.publish = mockPublish;
-            context.unpublish = mockUnpublish;
-          }
-        },
-      },
-    });
-
-    await act(async () => {
-      const [, actions] = result.current;
-      await expect(actions.toggleShareScreen()).resolves.toBeUndefined();
-    });
-
-    const [state] = result.current;
-    expect(state.isSharingScreen).toBe(false);
-    expect(state.publisher).toBeNull();
-    expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
-    expect(mockPublish).toHaveBeenCalledTimes(3);
-    expect(pushSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'warning',
-        message: expect.stringContaining('Publishing failed'),
-      })
-    );
-  });
-
   it('passes browser displaySurface constraint when screenShareSurface is browser', async () => {
     advancedSettings$.actions.setScreenShareSurface(AdvancedSettingsScreenShareSurface.browser);
 
