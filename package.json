@@ -35,6 +35,7 @@
     "vcr:dev": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/vcrDev.ts",
     "generate:secret": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/generateSecret.ts",
     "publish:package": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/publishPackage.ts",
+    "prepare:package": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/preparePackage.ts",
     "migrate:yarn": "node scripts/migrateToYarn.mjs"
   },
   "scriptsInfo": {
@@ -53,6 +54,7 @@
     "generate:secret": "Print a random 32-byte base64 secret for SESSION_KEY_SECRET or AUTH_COOKIE_SECRET. Usage: 'yarn generate:secret' (run once per secret and per environment)",
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying",
     "publish:package": "Publish a personal dev package to GitHub Packages. Usage: 'yarn publish:package common' (prompts for token, hidden input), 'yarn publish:package common dry' (dry run, validates without publishing), 'GH_TOKEN=<token> yarn publish:package common' (recommended for CI)",
+    "prepare:package": "Validate a package before publishing: quality-check, version bump against origin/develop, tests, build and npm publish --dry-run. Usage: 'yarn prepare:package common'. Optional NPM_TOKEN=<token> also checks the token and the published versions.",
     "migrate:yarn": "Convert the repository back to yarn as its package manager. Usage: 'yarn migrate:yarn' (prints the plan), 'yarn migrate:yarn --yes' (applies it). Restores resolutions from pnpm overrides, removes the pnpm lockfile, workspace file and install guard, then runs yarn install to generate a fresh yarn.lock. CI workflows, git hooks and vcrBuild.sh must be reverted from git history separately."
   },
   "repository": {

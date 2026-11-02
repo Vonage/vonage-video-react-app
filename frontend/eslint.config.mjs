@@ -18,6 +18,14 @@ export default [
       tailwindcss: {
         config: path.join(__dirname, 'src/css/index.css'),
         callees: ['twMerge', 'cn', 'classNames'],
+        cssFiles: [
+          '**/*.css',
+          '!**/node_modules',
+          '!**/.*',
+          '!**/dist',
+          '!**/build',
+          '!.worktrees',
+        ],
       },
     },
     rules: {

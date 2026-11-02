@@ -49,28 +49,35 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/common",
-        "command": "npx tsx scripts/updatePackageHash.ts"
+        "command": "npx tsx ../../scripts/commonPackage/hash.ts update"
       }
     },
     "hash:check": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/common",
-        "command": "npx tsx scripts/checkPackageHash.ts"
+        "command": "npx tsx ../../scripts/commonPackage/hash.ts check"
       }
     },
-    "registry:compare": {
+    "version": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/common",
-        "command": "npx tsx scripts/compareRegistryHash.ts; EXIT_CODE=$?; if [ $EXIT_CODE -eq 2 ]; then exit 0; else exit $EXIT_CODE; fi"
+        "command": "npx tsx ../../scripts/commonPackage/hash.ts version"
+      }
+    },
+    "version:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/common",
+        "command": "npx tsx ../../scripts/commonPackage/checkVersionBump.ts"
       }
     },
     "publish": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/common",
-        "command": "npx tsx scripts/publishPackage.ts"
+        "command": "npx tsx ../../scripts/commonPackage/publish.ts"
       }
     },
     "publish:dev": {

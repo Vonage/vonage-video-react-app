@@ -308,6 +308,7 @@ async function main(): Promise<void> {
 
   distPackageJson.name = devName;
   distPackageJson.version = devVersion;
+  distPackageJson.publishConfig = { registry: REGISTRY };
 
   fs.writeFileSync(DIST_PACKAGE_JSON_PATH, JSON.stringify(distPackageJson, null, 2) + '\n');
 
