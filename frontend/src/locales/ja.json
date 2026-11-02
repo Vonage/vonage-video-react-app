@@ -304,6 +304,7 @@
   "publishingErrors.blocked.title": "ルームへの参加に関する困難",
   "subscribingErrors.blocked.message": "会議室の他の人と接続する際に問題が発生しました。ネットワークを確認してもう一度お試しください。",
   "subscribingErrors.blocked.title": "ルームへの参加に関する困難",
+  "subscribingErrors.resubscribeFailed.message": "接続に問題があります。一部の映像を復元できませんでした。",
   "recording.start.dialog.content": "全員の準備ができていることを確認してください！ ルームを退出した後、「さようなら」ページから録画をダウンロードできます。",
   "recording.start.dialog.title": "録画を開始しますか?",
   "recording.start.title": "録画を開始",

@@ -46,6 +46,7 @@ type VonageVideoClientEvents = {
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
   localCaptionReceived: [LocalCaptionReceived];
   subscriptionError: [unknown];
+  resubscribeFailed: [{ streamId: string; error: unknown }];
 };
 
 /**
@@ -138,7 +139,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.streams.delete(streamId);
   }
 
-  private subscribeToStream = async (stream: Stream) => {
+  private subscribeToStream = async (
+    stream: Stream,
+    { isResubscribeAttempt = false }: { isResubscribeAttempt?: boolean } = {}
+  ) => {
     if (this.disconnected) {
       return;
     }
@@ -158,6 +162,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     };
     try {
       const subscribe = () =>
+        // subscribe.promise() resolves only after streamCreated/error has already fired
+        // (opentok.js:68371), so listeners here must attach before that, off the sync return.
         new Promise<Subscriber>((resolve, reject) => {
           const subscriber = this.clientSession.subscribe(
             stream,
@@ -223,14 +229,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         errorName: isErrorLike(syncError) ? syncError.name : undefined,
       });
 
-      if (isRecoverableError) {
-        // Don't emit subscriptionError for recoverable errors
-        // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+      if (!isRecoverableError) {
+        this.handleSubscriptionError(syncError);
         return;
       }
 
-      // Only emit subscriptionError for critical errors
-      this.handleSubscriptionError(syncError);
+      // Don't emit subscriptionError for recoverable errors, which would disconnect the user
+      // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+      if (!isResubscribeAttempt) {
+        return;
+      }
+
+      this.emit('resubscribeFailed', { streamId, error: syncError });
     }
   };
 
@@ -271,7 +281,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       subscriberCount: this.getSubscriberCount(streamId),
     });
 
-    await this.subscribeToStream(stream);
+    await this.subscribeToStream(stream, { isResubscribeAttempt: true });
   };
 
   /**
