@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
@@ -28,40 +28,44 @@ export type ParticipantListButtonProps = {
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ParticipantListButton
  */
-const ParticipantListButton = ({
-  handleClick,
-  isOpen,
-  participantCount,
-  isOverflowButton = false,
-}: ParticipantListButtonProps): ReactElement => {
-  const { t } = useTranslation();
+const ParticipantListButton = memo(
+  ({
+    handleClick,
+    isOpen,
+    participantCount,
+    isOverflowButton = false,
+  }: ParticipantListButtonProps): ReactElement => {
+    const { t } = useTranslation();
 
-  return (
-    <Tooltip
-      title={isOpen ? t('participants.list.close') : t('participants.list.open')}
-      aria-label={t('participants.list.ariaLabel')}
-    >
-      <Badge
-        className="z-1 [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
-        badgeContent={participantCount}
-        overlap="circular"
+    return (
+      <Tooltip
+        title={isOpen ? t('participants.list.close') : t('participants.list.open')}
+        aria-label={t('participants.list.ariaLabel')}
       >
-        <ToolbarButton
-          data-testid={testIds.button}
-          onClick={handleClick}
-          icon={
-            <VividIcon
-              name="group-solid"
-              customSize={-4}
-              data-testid={testIds.icon}
-              className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
-            />
-          }
-          isOverflowButton={isOverflowButton}
-        />
-      </Badge>
-    </Tooltip>
-  );
-};
+        <Badge
+          className="z-1 [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
+          badgeContent={participantCount}
+          overlap="circular"
+        >
+          <ToolbarButton
+            data-testid={testIds.button}
+            onClick={handleClick}
+            icon={
+              <VividIcon
+                name="group-solid"
+                customSize={-4}
+                data-testid={testIds.icon}
+                className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
+              />
+            }
+            isOverflowButton={isOverflowButton}
+          />
+        </Badge>
+      </Tooltip>
+    );
+  }
+);
+
+ParticipantListButton.displayName = 'ParticipantListButton';
 
 export default ParticipantListButton;

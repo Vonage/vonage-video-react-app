@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, ReactElement } from 'react';
+import { useState, useRef, useCallback, memo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
@@ -40,187 +40,188 @@ export type DeviceControlButtonProps = {
  *  @property {Function} toggleBackgroundEffects - function to toggle background effects for video devices.
  * @returns {ReactElement} The DeviceControlButton component.
  */
-const DeviceControlButton = ({
-  deviceType,
-  toggleBackgroundEffects,
-}: DeviceControlButtonProps): ReactElement => {
-  const { t } = useTranslation();
-  const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
-  const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
+const DeviceControlButton = memo(
+  ({ deviceType, toggleBackgroundEffects }: DeviceControlButtonProps): ReactElement => {
+    const { t } = useTranslation();
+    const { isVideoEnabled, toggleAudio, toggleVideo, isAudioEnabled } = usePublisherContext();
+    const { toggleVideo: toggleBackgroundVideoPublisher } = useBackgroundPublisherContext();
 
-  const isAudio = deviceType === 'audio';
-  const [open, setOpen] = useState<boolean>(false);
-  const anchorRef = useRef<HTMLInputElement | null>(null);
-  const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
-  const shouldDisplayBackgroundEffects =
-    hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
-  const hasDeviceSettings = isAudio
-    ? env.MEETING_ROOM_ALLOW_DEVICE_SELECTION
-    : env.MEETING_ROOM_ALLOW_DEVICE_SELECTION || shouldDisplayBackgroundEffects;
+    const isAudio = deviceType === 'audio';
+    const [open, setOpen] = useState<boolean>(false);
+    const anchorRef = useRef<HTMLInputElement | null>(null);
+    const isButtonDisabled = isAudio ? !env.ALLOW_MICROPHONE_CONTROL : !env.ALLOW_CAMERA_CONTROL;
+    const shouldDisplayBackgroundEffects =
+      hasMediaProcessorSupport('video') && env.ALLOW_BACKGROUND_EFFECTS;
+    const hasDeviceSettings = isAudio
+      ? env.MEETING_ROOM_ALLOW_DEVICE_SELECTION
+      : env.MEETING_ROOM_ALLOW_DEVICE_SELECTION || shouldDisplayBackgroundEffects;
 
-  const tooltipTitle = getControlButtonTooltip({
-    isAudio,
-    isAudioEnabled,
-    isVideoEnabled,
-    allowMicrophoneControl: env.ALLOW_MICROPHONE_CONTROL,
-    allowCameraControl: env.ALLOW_CAMERA_CONTROL,
-    t,
-  });
+    const tooltipTitle = getControlButtonTooltip({
+      isAudio,
+      isAudioEnabled,
+      isVideoEnabled,
+      allowMicrophoneControl: env.ALLOW_MICROPHONE_CONTROL,
+      allowCameraControl: env.ALLOW_CAMERA_CONTROL,
+      t,
+    });
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
+    const handleToggle = () => {
+      setOpen((prevOpen) => !prevOpen);
+    };
 
-  const handleClose = useCallback((event: MouseEvent | TouchEvent) => {
-    if (anchorRef?.current?.contains(event.target as Node)) {
-      return;
-    }
-    setOpen(false);
-  }, []);
+    const handleClose = useCallback((event: MouseEvent | TouchEvent) => {
+      if (anchorRef?.current?.contains(event.target as Node)) {
+        return;
+      }
+      setOpen(false);
+    }, []);
 
-  const renderControlIcon = () => {
-    if (isAudio) {
-      if (!env.ALLOW_MICROPHONE_CONTROL) {
+    const renderControlIcon = () => {
+      if (isAudio) {
+        if (!env.ALLOW_MICROPHONE_CONTROL) {
+          return (
+            <VividIcon
+              name="microphone-solid"
+              customSize={-5}
+              data-testid={testIds.microphoneDisabledIcon}
+              className="text-vera-text-disabled"
+            />
+          );
+        }
+        if (isAudioEnabled) {
+          return (
+            <VividIcon
+              name="microphone-solid"
+              customSize={-5}
+              data-testid={testIds.microphoneOnIcon}
+              className="text-vera-on-secondary-light"
+            />
+          );
+        }
         return (
           <VividIcon
-            name="microphone-solid"
+            name="mic-mute-solid"
             customSize={-5}
-            data-testid={testIds.microphoneDisabledIcon}
+            data-testid={testIds.microphoneOffIcon}
+            className="text-vera-error -scale-x-100"
+          />
+        );
+      }
+
+      if (!env.ALLOW_CAMERA_CONTROL) {
+        return (
+          <VividIcon
+            name="video-solid"
+            customSize={-5}
+            data-testid={testIds.cameraDisabledIcon}
             className="text-vera-text-disabled"
           />
         );
       }
-      if (isAudioEnabled) {
+      if (isVideoEnabled) {
         return (
           <VividIcon
-            name="microphone-solid"
+            name="video-solid"
             customSize={-5}
-            data-testid={testIds.microphoneOnIcon}
+            data-testid={testIds.cameraOnIcon}
             className="text-vera-on-secondary-light"
           />
         );
       }
       return (
         <VividIcon
-          name="mic-mute-solid"
+          name="video-off-solid"
           customSize={-5}
-          data-testid={testIds.microphoneOffIcon}
-          className="text-vera-error -scale-x-100"
+          data-testid={testIds.cameraOffIcon}
+          className="text-vera-error"
         />
       );
-    }
+    };
 
-    if (!env.ALLOW_CAMERA_CONTROL) {
-      return (
-        <VividIcon
-          name="video-solid"
-          customSize={-5}
-          data-testid={testIds.cameraDisabledIcon}
-          className="text-vera-text-disabled"
-        />
-      );
-    }
-    if (isVideoEnabled) {
-      return (
-        <VividIcon
-          name="video-solid"
-          customSize={-5}
-          data-testid={testIds.cameraOnIcon}
-          className="text-vera-on-secondary-light"
-        />
-      );
-    }
+    const handleDeviceStateChange = () => {
+      if (isAudio) {
+        toggleAudio();
+      } else {
+        toggleVideo();
+        toggleBackgroundVideoPublisher();
+      }
+    };
+
+    usePushToTalk({
+      enabled: isAudio && env.ALLOW_MICROPHONE_CONTROL,
+      isAudioEnabled,
+      toggleAudio,
+    });
+
     return (
-      <VividIcon
-        name="video-off-solid"
-        customSize={-5}
-        data-testid={testIds.cameraOffIcon}
-        className="text-vera-error"
-      />
-    );
-  };
-
-  const handleDeviceStateChange = () => {
-    if (isAudio) {
-      toggleAudio();
-    } else {
-      toggleVideo();
-      toggleBackgroundVideoPublisher();
-    }
-  };
-
-  usePushToTalk({
-    enabled: isAudio && env.ALLOW_MICROPHONE_CONTROL,
-    isAudioEnabled,
-    toggleAudio,
-  });
-
-  return (
-    <>
-      {isAudio && <MutedAlert />}
-      <ButtonGroup
-        disableElevation
-        className="bg-vera-dark-grey flex items-center rounded-[30px]! p-0.5"
-        variant="contained"
-        ref={anchorRef}
-        aria-label={t('devices.buttons.ariaLabel')}
-      >
-        {hasDeviceSettings && (
-          <IconButton
-            size="small"
-            aria-controls={open ? 'split-button-menu' : undefined}
-            aria-expanded={open ? 'true' : undefined}
-            aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
-            aria-haspopup="menu"
-            onClick={handleToggle}
-            className="size-11 rounded-[50%]!"
-            data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
-          >
-            {open ? (
-              <VividIcon
-                name="chevron-down-line"
-                customSize={-6}
-                className="text-vera-on-secondary-light"
-              />
-            ) : (
-              <VividIcon
-                name="chevron-up-line"
-                customSize={-6}
-                className="text-vera-on-secondary-light"
-              />
-            )}
-          </IconButton>
-        )}
-        <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
-          <Box>
-            {/* We add the Box here so that the tooltip is present if the button is disabled */}
+      <>
+        {isAudio && <MutedAlert />}
+        <ButtonGroup
+          disableElevation
+          className="bg-vera-dark-grey flex items-center rounded-[30px]! p-0.5"
+          variant="contained"
+          ref={anchorRef}
+          aria-label={t('devices.buttons.ariaLabel')}
+        >
+          {hasDeviceSettings && (
             <IconButton
-              onClick={handleDeviceStateChange}
-              disabled={isButtonDisabled}
-              aria-label={
-                isAudio ? t('devices.audio.microphone.full') : t('devices.video.camera.full')
-              }
               size="small"
+              aria-controls={open ? 'split-button-menu' : undefined}
+              aria-expanded={open ? 'true' : undefined}
+              aria-label={isAudio ? t('devices.audio.ariaLabel') : t('devices.video.ariaLabel')}
+              aria-haspopup="menu"
+              onClick={handleToggle}
               className="size-11 rounded-[50%]!"
+              data-testid={isAudio ? testIds.audioDropdownButton : testIds.videoDropdownButton}
             >
-              {renderControlIcon()}
+              {open ? (
+                <VividIcon
+                  name="chevron-down-line"
+                  customSize={-6}
+                  className="text-vera-on-secondary-light"
+                />
+              ) : (
+                <VividIcon
+                  name="chevron-up-line"
+                  customSize={-6}
+                  className="text-vera-on-secondary-light"
+                />
+              )}
             </IconButton>
-          </Box>
-        </Tooltip>
-      </ButtonGroup>
-      {hasDeviceSettings && (
-        <DeviceSettingsMenu
-          deviceType={deviceType}
-          handleToggle={handleToggle}
-          toggleBackgroundEffects={toggleBackgroundEffects}
-          anchorRef={anchorRef}
-          isOpen={open}
-          handleClose={handleClose}
-          setIsOpen={setOpen}
-        />
-      )}
-    </>
-  );
-};
+          )}
+          <Tooltip title={tooltipTitle} aria-label={t('devices.settings.ariaLabel')}>
+            <Box>
+              {/* We add the Box here so that the tooltip is present if the button is disabled */}
+              <IconButton
+                onClick={handleDeviceStateChange}
+                disabled={isButtonDisabled}
+                aria-label={
+                  isAudio ? t('devices.audio.microphone.full') : t('devices.video.camera.full')
+                }
+                size="small"
+                className="size-11 rounded-[50%]!"
+              >
+                {renderControlIcon()}
+              </IconButton>
+            </Box>
+          </Tooltip>
+        </ButtonGroup>
+        {hasDeviceSettings && (
+          <DeviceSettingsMenu
+            deviceType={deviceType}
+            handleToggle={handleToggle}
+            toggleBackgroundEffects={toggleBackgroundEffects}
+            anchorRef={anchorRef}
+            isOpen={open}
+            handleClose={handleClose}
+            setIsOpen={setOpen}
+          />
+        )}
+      </>
+    );
+  }
+);
+
+DeviceControlButton.displayName = 'DeviceControlButton';
 
 export default DeviceControlButton;

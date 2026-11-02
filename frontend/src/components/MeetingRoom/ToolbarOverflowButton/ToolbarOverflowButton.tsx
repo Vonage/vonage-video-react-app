@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
+import { Dispatch, ReactElement, memo, useState, SetStateAction } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import { useTranslation } from 'react-i18next';
@@ -36,65 +36,69 @@ export type ToolbarOverflowButtonProps = {
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The ToolbarOverflowButton Component.
  */
-const ToolbarOverflowButton = ({
-  toggleShareScreen,
-  isSharingScreen,
-  toolbarButtonsCount,
-  captionsState,
-}: ToolbarOverflowButtonProps): ReactElement => {
-  const { t } = useTranslation();
-  const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
-  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(false);
+const ToolbarOverflowButton = memo(
+  ({
+    toggleShareScreen,
+    isSharingScreen,
+    toolbarButtonsCount,
+    captionsState,
+  }: ToolbarOverflowButtonProps): ReactElement => {
+    const { t } = useTranslation();
+    const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
+    const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(false);
 
-  const handleButtonToggle = () => {
-    setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
-  };
+    const handleButtonToggle = () => {
+      setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
+    };
 
-  const handleClickAway = (event?: MouseEvent | TouchEvent) => {
-    if (event) {
-      const target = event.target as HTMLElement;
-      if (target.closest('#hidden-toolbar-items')) {
-        return;
+    const handleClickAway = (event?: MouseEvent | TouchEvent) => {
+      if (event) {
+        const target = event.target as HTMLElement;
+        if (target.closest('#hidden-toolbar-items')) {
+          return;
+        }
       }
-    }
-    setIsToolbarOverflowMenuOpen(false);
-  };
+      setIsToolbarOverflowMenuOpen(false);
+    };
 
-  return (
-    <>
-      <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
-        <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
-          <ToolbarButton
-            data-testid={testIds.button}
-            id="hidden-toolbar-items"
-            onClick={handleButtonToggle}
-            icon={
-              <VividIcon
-                name="more-vertical-solid"
-                customSize={-5}
-                data-testid={testIds.icon}
-                className={
-                  isToolbarOverflowMenuOpen
-                    ? 'text-vera-secondary-light'
-                    : 'text-vera-on-secondary-light'
-                }
-              />
-            }
-          />
-        </UnreadMessagesBadge>
-      </Tooltip>
-      <ToolbarOverflowMenu
-        isOpen={isToolbarOverflowMenuOpen}
-        isEmojiGridOpen={openEmojiGridMobile}
-        setIsEmojiGridOpen={setOpenEmojiGridMobile}
-        toggleShareScreen={toggleShareScreen}
-        isSharingScreen={isSharingScreen}
-        closeMenu={handleClickAway}
-        toolbarButtonsCount={toolbarButtonsCount}
-        captionsState={captionsState}
-      />
-    </>
-  );
-};
+    return (
+      <>
+        <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
+          <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
+            <ToolbarButton
+              data-testid={testIds.button}
+              id="hidden-toolbar-items"
+              onClick={handleButtonToggle}
+              icon={
+                <VividIcon
+                  name="more-vertical-solid"
+                  customSize={-5}
+                  data-testid={testIds.icon}
+                  className={
+                    isToolbarOverflowMenuOpen
+                      ? 'text-vera-secondary-light'
+                      : 'text-vera-on-secondary-light'
+                  }
+                />
+              }
+            />
+          </UnreadMessagesBadge>
+        </Tooltip>
+        <ToolbarOverflowMenu
+          isOpen={isToolbarOverflowMenuOpen}
+          isEmojiGridOpen={openEmojiGridMobile}
+          setIsEmojiGridOpen={setOpenEmojiGridMobile}
+          toggleShareScreen={toggleShareScreen}
+          isSharingScreen={isSharingScreen}
+          closeMenu={handleClickAway}
+          toolbarButtonsCount={toolbarButtonsCount}
+          captionsState={captionsState}
+        />
+      </>
+    );
+  }
+);
+
+ToolbarOverflowButton.displayName = 'ToolbarOverflowButton';
 
 export default ToolbarOverflowButton;

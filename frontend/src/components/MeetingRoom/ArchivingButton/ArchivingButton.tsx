@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
@@ -30,104 +30,107 @@ export type ArchivingButtonProps = {
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
  * @returns {ReactElement} - The ArchivingButton component.
  */
-const ArchivingButton = ({
-  isOverflowButton = false,
-  handleClick,
-}: ArchivingButtonProps): ReactElement => {
-  const videoClient = runtime$.useVideoClient();
-  const { t } = useTranslation();
-  const {
-    recordingArchiveId,
-    markRecordingStartRequestedBySelf,
-    resetRecordingStartRequestedBySelf,
-    sessionKey,
-    connected,
-  } = useSessionContext();
+const ArchivingButton = memo(
+  ({ isOverflowButton = false, handleClick }: ArchivingButtonProps): ReactElement => {
+    const videoClient = runtime$.useVideoClient();
+    const { t } = useTranslation();
+    const {
+      recordingArchiveId,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      sessionKey,
+      connected,
+    } = useSessionContext();
 
-  const isRecording = !!recordingArchiveId;
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
-  const handleButtonClick = () => {
-    setIsModalOpen((prev) => !prev);
-  };
+    const isRecording = !!recordingArchiveId;
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const title = isRecording ? t('recording.stop.title') : t('recording.start.title');
+    const handleButtonClick = () => {
+      setIsModalOpen((prev) => !prev);
+    };
 
-  const startRecordingText: DialogTexts = {
-    title: t('recording.start.dialog.title'),
-    contents: t('recording.start.dialog.content'),
-    primaryActionText: t('recording.start.title'),
-    secondaryActionText: t('button.cancel'),
-  };
+    const startRecordingText: DialogTexts = {
+      title: t('recording.start.dialog.title'),
+      contents: t('recording.start.dialog.content'),
+      primaryActionText: t('recording.start.title'),
+      secondaryActionText: t('button.cancel'),
+    };
 
-  const stopRecordingText: DialogTexts = {
-    title: t('recording.stop.dialog.title'),
-    contents: t('recording.stop.dialog.content'),
-    primaryActionText: t('recording.stop.title'),
-    secondaryActionText: t('button.cancel'),
-  };
+    const stopRecordingText: DialogTexts = {
+      title: t('recording.stop.dialog.title'),
+      contents: t('recording.stop.dialog.content'),
+      primaryActionText: t('recording.stop.title'),
+      secondaryActionText: t('button.cancel'),
+    };
 
-  const actionText = isRecording ? stopRecordingText : startRecordingText;
+    const actionText = isRecording ? stopRecordingText : startRecordingText;
 
-  const handleClose = () => {
-    setIsModalOpen(false);
+    const handleClose = () => {
+      setIsModalOpen(false);
 
-    if (isOverflowButton && handleClick) {
-      handleClick();
-    }
-  };
-
-  const handleDialogClick = (action: 'start' | 'stop') => {
-    if (action === 'start') {
-      if (!recordingArchiveId && connected) {
-        markRecordingStartRequestedBySelf();
-        setTimeout(async () => {
-          try {
-            await videoClient.startArchive({ sessionKey: sessionKey! });
-          } catch (err) {
-            resetRecordingStartRequestedBySelf();
-            console.log(err);
-          }
-        }, RECORDING_START_DELAY);
+      if (isOverflowButton && handleClick) {
+        handleClick();
       }
-    } else if (recordingArchiveId) {
-      void videoClient.stopArchive({
-        sessionKey: sessionKey!,
-        archiveType: RECORDING_ARCHIVE_NAME,
-      });
-    }
-  };
+    };
 
-  const handleActionClick = () => {
-    handleClose();
-    void handleDialogClick(isRecording ? 'stop' : 'start');
-  };
+    const handleDialogClick = (action: 'start' | 'stop') => {
+      if (action === 'start') {
+        if (!recordingArchiveId && connected) {
+          markRecordingStartRequestedBySelf();
+          setTimeout(async () => {
+            try {
+              await videoClient.startArchive({ sessionKey: sessionKey! });
+            } catch (err) {
+              resetRecordingStartRequestedBySelf();
+              console.log(err);
+            }
+          }, RECORDING_START_DELAY);
+        }
+      } else if (recordingArchiveId) {
+        void videoClient.stopArchive({
+          sessionKey: sessionKey!,
+          archiveType: RECORDING_ARCHIVE_NAME,
+        });
+      }
+    };
 
-  return (
-    <>
-      <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
-        <ToolbarButton
-          onClick={handleButtonClick}
-          data-testid={testIds.button}
-          className={classNames(
-            { recording: isRecording },
-            isRecording && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
-          )}
-          icon={
-            <VividIcon
-              name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
-              customSize={-5}
-              className="text-vera-on-secondary-light"
-            />
-          }
-          isOverflowButton={isOverflowButton}
+    const handleActionClick = () => {
+      handleClose();
+      void handleDialogClick(isRecording ? 'stop' : 'start');
+    };
+
+    return (
+      <>
+        <Tooltip title={title} aria-label={t('recording.tooltip.ariaLabel')}>
+          <ToolbarButton
+            onClick={handleButtonClick}
+            data-testid={testIds.button}
+            className={classNames(
+              { recording: isRecording },
+              isRecording &&
+                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            )}
+            icon={
+              <VividIcon
+                name={isRecording ? 'radio-checked-2-line' : 'radio-checked-2-solid'}
+                customSize={-5}
+                className="text-vera-on-secondary-light"
+              />
+            }
+            isOverflowButton={isOverflowButton}
+          />
+        </Tooltip>
+        <PopupDialog
+          isOpen={isModalOpen}
+          handleClose={handleClose}
+          handleActionClick={handleActionClick}
+          actionText={actionText}
         />
-      </Tooltip>
-      <PopupDialog
-        isOpen={isModalOpen}
-        handleClose={handleClose}
-        handleActionClick={handleActionClick}
-        actionText={actionText}
-      />
-    </>
-  );
-};
+      </>
+    );
+  }
+);
+
+ArchivingButton.displayName = 'ArchivingButton';
+
 export default ArchivingButton;

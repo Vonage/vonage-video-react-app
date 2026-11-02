@@ -1,5 +1,5 @@
 import Tooltip from '@mui/material/Tooltip';
-import { ReactElement, useRef } from 'react';
+import { ReactElement, memo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import VividIcon from '@ui/components/VividIcon';
@@ -24,34 +24,34 @@ export type ReportIssueButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} The ReportIssueButton component.
  */
-const ReportIssueButton = ({
-  handleClick,
-  isOpen,
-  isOverflowButton = false,
-}: ReportIssueButtonProps): ReactElement => {
-  const { t } = useTranslation();
-  const anchorRef = useRef<HTMLButtonElement>(null);
+const ReportIssueButton = memo(
+  ({ handleClick, isOpen, isOverflowButton = false }: ReportIssueButtonProps): ReactElement => {
+    const { t } = useTranslation();
+    const anchorRef = useRef<HTMLButtonElement>(null);
 
-  return (
-    <Tooltip
-      title={isOpen ? t('feedbackForm.close') : t('feedbackForm.open')}
-      aria-label={t('feedbackForm.ariaLabel')}
-    >
-      <ToolbarButton
-        data-testid={testIds.button}
-        onClick={handleClick}
-        icon={
-          <VividIcon
-            customSize={-5}
-            name="feedback-solid"
-            className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
-          />
-        }
-        ref={anchorRef}
-        isOverflowButton={isOverflowButton}
-      />
-    </Tooltip>
-  );
-};
+    return (
+      <Tooltip
+        title={isOpen ? t('feedbackForm.close') : t('feedbackForm.open')}
+        aria-label={t('feedbackForm.ariaLabel')}
+      >
+        <ToolbarButton
+          data-testid={testIds.button}
+          onClick={handleClick}
+          icon={
+            <VividIcon
+              customSize={-5}
+              name="feedback-solid"
+              className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
+            />
+          }
+          ref={anchorRef}
+          isOverflowButton={isOverflowButton}
+        />
+      </Tooltip>
+    );
+  }
+);
+
+ReportIssueButton.displayName = 'ReportIssueButton';
 
 export default ReportIssueButton;

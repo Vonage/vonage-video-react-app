@@ -1,6 +1,6 @@
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
-import { ReactElement } from 'react';
+import { ReactElement, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import useSessionContext from '@hooks/useSessionContext';
@@ -18,7 +18,7 @@ export type ExitButtonProps = {
  *  @property {() => void} handleLeave - a function that handles the leave action.
  * @returns {ReactElement} The exit button component
  */
-const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
+const ExitButton = memo(({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { sessionKey } = useSessionContext();
@@ -47,6 +47,8 @@ const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
       />
     </Tooltip>
   );
-};
+});
+
+ExitButton.displayName = 'ExitButton';
 
 export default ExitButton;

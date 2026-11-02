@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
@@ -27,66 +27,70 @@ export type LayoutButtonProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} The LayoutButton component.
  */
-const LayoutButton = ({
-  isScreenSharePresent,
-  isPinningPresent,
-  isOverflowButton = false,
-  onLayoutModeChange,
-}: LayoutButtonProps): ReactElement => {
-  const { t } = useTranslation();
-  const { layoutMode, setLayoutMode } = useSessionContext();
-  const isGrid = layoutMode === 'grid';
-  const isDisabled = isScreenSharePresent || isPinningPresent;
-  const handleClick = () => {
-    if (isDisabled) {
-      return;
-    }
+const LayoutButton = memo(
+  ({
+    isScreenSharePresent,
+    isPinningPresent,
+    isOverflowButton = false,
+    onLayoutModeChange,
+  }: LayoutButtonProps): ReactElement => {
+    const { t } = useTranslation();
+    const { layoutMode, setLayoutMode } = useSessionContext();
+    const isGrid = layoutMode === 'grid';
+    const isDisabled = isScreenSharePresent || isPinningPresent;
+    const handleClick = () => {
+      if (isDisabled) {
+        return;
+      }
 
-    setLayoutMode((prev) => (prev === 'grid' ? 'active-speaker' : 'grid'));
-    onLayoutModeChange?.();
-  };
+      setLayoutMode((prev) => (prev === 'grid' ? 'active-speaker' : 'grid'));
+      onLayoutModeChange?.();
+    };
 
-  const getTooltipTitle = () => {
-    if (isScreenSharePresent) {
-      return t('layout.tooltip.isScreenSharePresent');
-    }
-    if (isPinningPresent) {
-      return t('layout.tooltip.isPinningPresent');
-    }
-    return isGrid ? t('layout.tooltip.switchToActiveSpeaker') : t('layout.tooltip.switchToGrid');
-  };
+    const getTooltipTitle = () => {
+      if (isScreenSharePresent) {
+        return t('layout.tooltip.isScreenSharePresent');
+      }
+      if (isPinningPresent) {
+        return t('layout.tooltip.isPinningPresent');
+      }
+      return isGrid ? t('layout.tooltip.switchToActiveSpeaker') : t('layout.tooltip.switchToGrid');
+    };
 
-  const iconColorClassName = isDisabled
-    ? 'text-vera-secondary-light'
-    : 'text-vera-on-secondary-light';
+    const iconColorClassName = isDisabled
+      ? 'text-vera-secondary-light'
+      : 'text-vera-on-secondary-light';
 
-  return (
-    <Tooltip title={getTooltipTitle()} aria-label={t('recording.tooltip.ariaLabel')}>
-      <ToolbarButton
-        onClick={handleClick}
-        data-testid={testIds.button}
-        icon={
-          !isGrid ? (
-            <VividIcon
-              name="layout-2-solid"
-              customSize={-5}
-              data-testid={testIds.icon}
-              className={iconColorClassName}
-            />
-          ) : (
-            <VividIcon
-              name="apps-solid"
-              customSize={-5}
-              data-testid={testIds.icon}
-              className={iconColorClassName}
-            />
-          )
-        }
-        className={isDisabled ? 'cursor-not-allowed!' : 'cursor-pointer!'}
-        isOverflowButton={isOverflowButton}
-      />
-    </Tooltip>
-  );
-};
+    return (
+      <Tooltip title={getTooltipTitle()} aria-label={t('recording.tooltip.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleClick}
+          data-testid={testIds.button}
+          icon={
+            !isGrid ? (
+              <VividIcon
+                name="layout-2-solid"
+                customSize={-5}
+                data-testid={testIds.icon}
+                className={iconColorClassName}
+              />
+            ) : (
+              <VividIcon
+                name="apps-solid"
+                customSize={-5}
+                data-testid={testIds.icon}
+                className={iconColorClassName}
+              />
+            )
+          }
+          className={isDisabled ? 'cursor-not-allowed!' : 'cursor-pointer!'}
+          isOverflowButton={isOverflowButton}
+        />
+      </Tooltip>
+    );
+  }
+);
+
+LayoutButton.displayName = 'LayoutButton';
 
 export default LayoutButton;
