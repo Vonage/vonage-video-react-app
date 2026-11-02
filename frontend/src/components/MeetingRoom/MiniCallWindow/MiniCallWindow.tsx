@@ -104,7 +104,10 @@ const MiniCallWindow = ({
           aria-label={t('miniMode.expand.ariaLabel')}
           onClick={onExpand}
         >
-          <MiniModeIcon name="export-solid" className="rotate-180 text-vera-on-secondary-light" />
+          <MiniModeIcon
+            name="devices-solid"
+            className="-rotate-90 -scale-x-100 text-vera-on-secondary-light"
+          />
         </MiniCallWindowButton>
         <MiniCallWindowButton
           data-testid="mini-mode-leave"

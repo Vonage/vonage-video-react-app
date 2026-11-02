@@ -30,7 +30,7 @@ const MiniModeIcon = ({ name, className }: MiniModeIconProps): ReactElement => {
 
   return (
     <div
-      className={twMerge('inline-flex size-5', className)}
+      className={twMerge('inline-flex size-4.5', className)}
       data-testid={`mini-mode-icon-${name}`}
       dangerouslySetInnerHTML={{ __html: svgContent }}
     />

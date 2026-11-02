@@ -11,7 +11,7 @@ const MINI_MODE_ICONS = [
   'mic-mute-solid',
   'video-solid',
   'video-off-solid',
-  'export-solid',
+  'devices-solid',
   'end-call-solid',
 ];
 

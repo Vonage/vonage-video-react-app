@@ -36,7 +36,11 @@ const MiniModeButton = ({ isOverflowButton, handleClick }: MiniModeButtonProps):
         isOverflowButton={isOverflowButton}
         data-testid="mini-mode-button"
         icon={
-          <VividIcon name="export-solid" customSize={-5} className="text-vera-on-secondary-light" />
+          <VividIcon
+            name="devices-solid"
+            customSize={-5}
+            className="-rotate-90 -scale-x-100 text-vera-on-secondary-light"
+          />
         }
       />
     </Tooltip>

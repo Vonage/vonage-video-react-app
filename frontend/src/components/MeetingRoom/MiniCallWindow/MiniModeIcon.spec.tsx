@@ -48,7 +48,7 @@ describe('MiniModeIcon', () => {
     render(<MiniModeIcon name="styled-icon" className="rotate-180 text-vera-error" />);
 
     const icon = screen.getByTestId('mini-mode-icon-styled-icon');
-    expect(icon).toHaveClass('inline-flex', 'size-5', 'rotate-180', 'text-vera-error');
+    expect(icon).toHaveClass('inline-flex', 'size-[19px]', 'rotate-180', 'text-vera-error');
   });
 
   it('does not refetch an icon that is already cached', async () => {
