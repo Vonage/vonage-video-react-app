@@ -1,0 +1,46 @@
+backend/package.json
+  h_c939f8fae0de97 3
+frontend/package.json
+  h_c939f8fae0de97 3
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  h_c939f8fae0de97 587-605
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_c939f8fae0de97 21,161-167
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_c939f8fae0de97 70,80-90,386-419,431-448
+frontend/src/Context/SessionProvider/session.tsx
+  h_c939f8fae0de97 107,517-528,538,566-568
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 415-453
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_c939f8fae0de97 9,135-202
+frontend/src/hooks/useMeetingRoom.ts
+  h_c939f8fae0de97 15,73,118-124,170-173,305-337
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_c939f8fae0de97 2,35-36,38,63,76-77,85-86,114-117,120-128,249,253-318
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 479,482-483,485,487-488,490-496,502,509-517,520-528,613
+integration-tests/baseUrl.ts
+  h_c939f8fae0de97 1-15
+integration-tests/fixtures/testWithLogging.ts
+  h_c939f8fae0de97 10
+integration-tests/package.json
+  h_c939f8fae0de97 3
+integration-tests/playwright.config.ts
+  h_c939f8fae0de97 5,11,69-70,137-145,147-153
+integration-tests/tests/videoFeatures.spec.ts
+  h_c939f8fae0de97 1-439
+package.json
+  h_c939f8fae0de97 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fd588f18a8cd55604418c27dfe536c551ad0c140",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

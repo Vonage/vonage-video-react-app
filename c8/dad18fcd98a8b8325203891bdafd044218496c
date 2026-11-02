@@ -1,0 +1,22 @@
+.gitignore
+  h_6029769cf9ac60 83-87
+libs/common/package.json
+  h_6029769cf9ac60 14-15
+libs/common/scripts/compareRegistryHash.ts
+  h_6029769cf9ac60 18
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 34,281,327
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 38,41,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c8dad18fcd98a8b8325203891bdafd044218496c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
