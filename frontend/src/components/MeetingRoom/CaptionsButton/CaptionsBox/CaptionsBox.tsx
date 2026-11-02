@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import UserCaption from './UserCaption';
 import useSessionContext from '../../../../hooks/useSessionContext';
 import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
+import { useTranslation } from 'react-i18next';
 
 /**
  * CaptionsBox Component
@@ -11,7 +12,8 @@ import useIsSmallViewport from '../../../../hooks/useIsSmallViewport';
  * @returns {ReactElement} The captions box component.
  */
 const CaptionsBox = (): ReactElement => {
-  const { subscriberWrappers, ownCaptions } = useSessionContext();
+  const { t } = useTranslation();
+  const { subscriberWrappers, ownCaptionsSubscriber } = useSessionContext();
   const isSmallViewPort = useIsSmallViewport();
 
   const sxBox = {
@@ -37,18 +39,19 @@ const CaptionsBox = (): ReactElement => {
       className="bg-vera-dark-grey-opacity text-vera-on-dark-grey"
       sx={sxBox}
     >
-      {ownCaptions && (
+      {ownCaptionsSubscriber && (
         <UserCaption
           key="local-publisher"
-          subscriber={null}
+          subscriber={ownCaptionsSubscriber}
+          speakerName={t('user.you')}
           isSmallViewPort={isSmallViewPort}
-          caption={ownCaptions}
         />
       )}
       {(subscriberWrappers ?? []).map((wrapper) => (
         <UserCaption
           key={wrapper.id}
           subscriber={wrapper.subscriber}
+          speakerName={wrapper.subscriber.stream?.name ?? ''}
           isSmallViewPort={isSmallViewPort}
         />
       ))}

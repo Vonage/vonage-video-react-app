@@ -10,6 +10,8 @@ import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
 import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
 import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab';
 import { AdvancedSettingsScreenSharingTab } from './components/AdvancedSettingsScreenSharingTab';
+import { AdvancedSettingsCaptionsTab } from './components/AdvancedSettingsCaptionsTab';
+import isCaptionsTabAvailable from './helpers/isCaptionsTabAvailable';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
@@ -21,7 +23,11 @@ const AdvancedSettingsDialog = (): ReactElement => {
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
     if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
-    return <AdvancedSettingsStatisticsTab />;
+    if (selectedTab === 'captions' && isCaptionsTabAvailable()) {
+      return <AdvancedSettingsCaptionsTab />;
+    }
+    if (selectedTab === 'statistics') return <AdvancedSettingsStatisticsTab />;
+    return <AdvancedSettingsGeneralTab />;
   })();
 
   return (

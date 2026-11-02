@@ -17,7 +17,6 @@ import type { VideoClient } from '@core/services';
 import { notifications$ } from '@core/stores';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { notifications$ } from '@core/stores';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');

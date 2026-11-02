@@ -39,6 +39,7 @@ const EnvironmentVariablesSchema = z.object({
   ALLOW_POST_CALL_TRANSCRIPTION: boolean({ default: true }),
   ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
   ALLOW_CAPTIONS: boolean({ default: true }),
+  ALLOW_CAPTION_TRANSLATION: boolean({ default: false }),
   ALLOW_CHAT: boolean({ default: true }),
   MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_EMOJIS: boolean({ default: true }),
@@ -84,6 +85,7 @@ export class Env implements IEnvironmentVariables {
   public ALLOW_ARCHIVING!: boolean;
   public ALLOW_POST_CALL_TRANSCRIPTION!: boolean;
   public ALLOW_CAPTIONS!: boolean;
+  public ALLOW_CAPTION_TRANSLATION!: boolean;
   public ALLOW_CHAT!: boolean;
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_EMOJIS!: boolean;

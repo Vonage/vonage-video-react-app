@@ -17,7 +17,6 @@ import {
   SignalEvent,
   SignalType,
   SubscriberAudioLevelUpdatedEvent,
-  LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
@@ -44,7 +43,7 @@ type VonageVideoClientEvents = {
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
-  localCaptionReceived: [LocalCaptionReceived];
+  ownCaptionsSubscriberChanged: [Subscriber | null];
   subscriptionError: [unknown];
   resubscribeFailed: [{ streamId: string; error: unknown }];
 };
@@ -520,6 +519,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       if (this.hiddenSubscriber) {
         this.clientSession.unsubscribe(this.hiddenSubscriber);
         this.hiddenSubscriber = null;
+        this.emit('ownCaptionsSubscriberChanged', null);
       }
     } catch (error) {
       frontendLogger.reportError(error, {
@@ -575,9 +575,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           { audioVolume: 0 }
         );
 
-        this.hiddenSubscriber.on('captionReceived', (captionEvent) => {
-          this.emit('localCaptionReceived', captionEvent);
-        });
+        this.emit('ownCaptionsSubscriberChanged', this.hiddenSubscriber);
       } catch (error) {
         frontendLogger.reportError(error, {
           eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
@@ -610,6 +608,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     if (this.hiddenSubscriber) {
       this.clientSession.unsubscribe(this.hiddenSubscriber);
       this.hiddenSubscriber = null;
+      this.emit('ownCaptionsSubscriberChanged', null);
     }
 
     this.clientSession.unpublish(publisher);

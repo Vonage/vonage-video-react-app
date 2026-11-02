@@ -425,14 +425,6 @@ describe('VonageVideoClient', () => {
       expect(mockSubscribePromise).toHaveBeenCalledWith(mockStream, expect.anything(), {
         audioVolume: 0,
       });
-
-      const localCaptionReceivedPromise = new Promise((resolve) => {
-        vonageVideoClient?.on('localCaptionReceived', resolve);
-      });
-
-      mockSubscriber.emit('captionReceived', { caption: 'hello' });
-
-      await expect(localCaptionReceivedPromise).resolves.toEqual({ caption: 'hello' });
     });
 
     it('resolves publish and reports the error when the hidden subscriber fails to attach', async () => {
@@ -488,6 +480,23 @@ describe('VonageVideoClient', () => {
       await expect(vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         'OTError: Unknown publish error'
       );
+    });
+
+    it('exposes the own captions subscriber while publishing', async () => {
+      const ownCaptionsSubscriberChanges: (Subscriber | null)[] = [];
+      const publisherWithStream = {
+        id: 'publisher-id',
+        stream: { streamId: 'own-stream' },
+      } as unknown as Publisher;
+
+      await vonageVideoClient?.connect();
+      vonageVideoClient?.on('ownCaptionsSubscriberChanged', (subscriber) => {
+        ownCaptionsSubscriberChanges.push(subscriber);
+      });
+      await vonageVideoClient?.publish(publisherWithStream);
+      vonageVideoClient?.unpublish(publisherWithStream);
+
+      expect(ownCaptionsSubscriberChanges).toEqual([mockSubscriber, null]);
     });
   });
 
