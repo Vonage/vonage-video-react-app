@@ -103,14 +103,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     HTMLVideoElement | HTMLObjectElement | null
   >(initialValue?.publisherVideoElement ?? null);
 
-  const [publisher, setPublisher] = useState<Publisher | null>(initialValue.publisher ?? null);
-  const publisherRef = useRef<Publisher | null>(publisher);
-  const quality = usePublisherQuality(publisher);
-
-  const assignPublisher = useCallback((nextPublisher: Publisher | null) => {
-    publisherRef.current = nextPublisher;
-    setPublisher(nextPublisher);
-  }, []);
+  const publisherRef = useRef<Publisher | null>(initialValue.publisher ?? null);
+  const quality = usePublisherQuality(publisherRef.current);
 
   const [isPublishing, setIsPublishing] = useState(initialValue?.isPublishing ?? false);
 
@@ -184,8 +178,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   const handleDestroyed = useCallback(() => {
     frontendLogger.log('usePublisher:Destroyed');
 
-    assignPublisher(null);
-  }, [assignPublisher]);
+    publisherRef.current = null;
+  }, []);
 
   /**
    * Change background replacement or blur effect
@@ -246,27 +240,24 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
 
     if (publisherRef?.current) {
       publisherRef.current.destroy();
-      assignPublisher(null);
+      publisherRef.current = null;
     }
-  }, [assignPublisher]);
+  }, []);
 
-  const handleAccessDenied = useCallback(
-    (event: AccessDeniedEvent) => {
-      const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
-      isInitializingPublisherRef.current = false;
-      // We check the first word of the message to see if the microphone or camera was denied access.
-      setDeviceAccess((prev) => ({
-        ...prev,
-        [deviceDeniedAccess]: false,
-      }));
+  const handleAccessDenied = useCallback((event: AccessDeniedEvent) => {
+    const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';
+    isInitializingPublisherRef.current = false;
+    // We check the first word of the message to see if the microphone or camera was denied access.
+    setDeviceAccess((prev) => ({
+      ...prev,
+      [deviceDeniedAccess]: false,
+    }));
 
-      if (publisherRef.current) {
-        publisherRef.current.destroy();
-      }
-      assignPublisher(null);
-    },
-    [assignPublisher]
-  );
+    if (publisherRef.current) {
+      publisherRef.current.destroy();
+    }
+    publisherRef.current = null;
+  }, []);
 
   /**
    * Method to unpublish from session and destroy publisher
@@ -345,7 +336,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         const publisher = initPublisher(undefined, options);
         // Add listeners synchronously as some events could be fired before callback is invoked
         addPublisherListeners(publisher);
-        assignPublisher(publisher);
+        publisherRef.current = publisher;
 
         frontendLogger.log('usePublisher:InitLocalPublisher');
 
@@ -361,7 +352,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         }
       }
     },
-    [addPublisherListeners, assignPublisher]
+    [addPublisherListeners]
   );
 
   /**
@@ -470,7 +461,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         const shouldTreatAsTransient = reconnectingRef.current || !connected || !isBrowserOnline;
 
         const publisherToCleanup = publisherRef.current;
-        assignPublisher(null);
+        publisherRef.current = null;
 
         try {
           publisherToCleanup?.destroy();
@@ -502,7 +493,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     return () => {
       OT.off('exception', exceptionHandler);
     };
-  }, [assignPublisher, connected, handlePublishingError]);
+  }, [connected, handlePublishingError]);
 
   return {
     initializeLocalPublisher,
@@ -512,7 +503,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
     publishingError,
     isVideoEnabled,
     publish,
-    publisher,
+    publisher: publisherRef.current,
     publisherVideoElement,
     quality,
     stream,
