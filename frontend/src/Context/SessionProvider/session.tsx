@@ -11,6 +11,7 @@ import {
   ReactElement,
 } from 'react';
 import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
 import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
@@ -40,7 +41,7 @@ import wait from '@common/execution/wait';
 import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { runtime$ } from '@core/stores';
+import { notifications$, runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -188,6 +189,7 @@ const SessionProvider = ({
   skipBrowserUrlUpdate = false,
 }: SessionProviderProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
+  const { t } = useTranslation();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -600,11 +602,24 @@ const SessionProvider = ({
    * Force mutes a participant.
    * @param {Stream} stream - The stream that is going to be muted.
    */
-  const forceMute = useCallback(async (stream: Stream) => {
-    if (vonageVideoClient.current) {
-      await vonageVideoClient.current.forceMuteStream(stream);
-    }
-  }, []);
+  const forceMute = useCallback(
+    async (stream: Stream) => {
+      if (!vonageVideoClient.current) return;
+
+      try {
+        await vonageVideoClient.current.forceMuteStream(stream);
+      } catch (error) {
+        frontendLogger.reportError(error, { eventSource: 'session.forceMute.error' });
+        notifications$.actions.push({
+          type: 'warning',
+          message: t('participants.mute.forceMuteFailed'),
+          expirationMs: env.NOTIFICATION_DURATION_MS,
+        });
+        throw error;
+      }
+    },
+    [t]
+  );
 
   /**
    * Publishes a stream to the session.

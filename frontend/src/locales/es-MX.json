@@ -280,6 +280,7 @@
   "participants.list.open": "Abrir lista de participantes",
   "participants.maxPin": "No puedes fijar más mosaicos",
   "participants.mute.dialog.content": "¿Silenciar a {{participantName}} para todos en la llamada? Solo {{participantName}} puede encenderse de nuevo.",
+  "participants.mute.forceMuteFailed": "No pudimos silenciar a este participante. Inténtalo de nuevo.",
   "participants.mute.tooltip": "Silenciar micrófono de {{participantName}}",
   "participants.pin": "Fijar a {{participantName}}",
   "participants.pin.video": "Fijar video de {{participantName}}",

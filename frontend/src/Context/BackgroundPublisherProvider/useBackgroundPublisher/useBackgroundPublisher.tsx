@@ -21,6 +21,7 @@ import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
+import { frontendLogger } from '../../../logger';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -190,15 +191,28 @@ const useBackgroundPublisher = (
       publishVideo: isVideoEnabled,
     };
 
-    backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        backgroundPublisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
-      }
+    let publisher: Publisher | null = null;
+    let hasInitFailed = false;
+
+    publisher = initPublisher(undefined, publisherOptions, (error) => {
+      if (!error) return;
+      hasInitFailed = true;
+      frontendLogger.reportError(error, {
+        eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+      });
+
+      if (backgroundPublisherRef.current !== publisher) return;
+      backgroundPublisherRef.current = null;
+      attempt(() => publisher?.destroy());
     });
-    addPublisherListeners(backgroundPublisherRef.current);
+
+    if (hasInitFailed) {
+      attempt(() => publisher?.destroy());
+      return;
+    }
+
+    backgroundPublisherRef.current = publisher;
+    addPublisherListeners(publisher);
   }, [addPublisherListeners, isVideoEnabled]);
 
   /**

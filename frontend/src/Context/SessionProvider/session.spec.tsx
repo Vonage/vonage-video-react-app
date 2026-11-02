@@ -16,6 +16,8 @@ import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
 import { notifications$ } from '@core/stores';
 import { env } from '../../env';
+import frontendLogger from '../../logger';
+import { notifications$ } from '@core/stores';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -122,7 +124,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              void forceMute({} as unknown as Stream);
+              forceMute({} as unknown as Stream).catch(() => {});
             }
           }}
           type="button"
@@ -663,6 +665,33 @@ describe('SessionProvider', () => {
     });
 
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
+  });
+
+  it('forceMute should report once and surface a notification when forceMuteStream fails', async () => {
+    expect.assertions(5);
+    const error = new Error('Force mute failed');
+    vi.mocked(vonageVideoClient.forceMuteStream).mockRejectedValueOnce(error);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { getByTestId } = await renderAndWaitForConnection();
+
+    await act(async () => {
+      getByTestId('forceMute').click();
+      await Promise.resolve();
+    });
+
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({ eventSource: 'session.forceMute.error' })
+    );
+    expect(reportErrorSpy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'warning',
+        message: expect.any(String),
+      })
+    );
   });
 
   it('joinRoom should call joinSession and connect', async () => {

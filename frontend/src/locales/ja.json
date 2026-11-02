@@ -290,6 +290,7 @@
   "participants.list.open": "参加者リストを開く",
   "participants.maxPin": "これ以上ピン留めできません",
   "participants.mute.dialog.content": "通話中の全員に対して {{participantName}} をミュートしますか? {{participantName}} のみミュート解除できます。",
+  "participants.mute.forceMuteFailed": "この参加者をミュートできませんでした。もう一度お試しください。",
   "participants.mute.tooltip": "{{participantName}} のマイクをミュート",
   "participants.pin": "{{participantName}} をピン留め",
   "participants.pin.video": "{{participantName}} のビデオをピン留め",
