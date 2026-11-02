@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  h_c939f8fae0de97 11-12,62-72,121-122,124-131,133-136,138-148,152,157,169,210,229,242
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1b8ca72a6298f7f647b310e49d7ea10b0aa5ce07",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
