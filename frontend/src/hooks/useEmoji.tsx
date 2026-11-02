@@ -39,8 +39,6 @@ export type EmojiWrapper = {
 const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
   const [emojiQueue, setEmojiQueue] = useState<EmojiWrapper[]>([]);
 
-  // Track the emoji auto-dismiss timers so they can be cleared on unmount — otherwise a
-  // pending timer would call setEmojiQueue after the component is gone.
   const displayTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   useEffect(() => {
@@ -124,8 +122,6 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
         try {
           emojiData = JSON.parse(data);
         } catch {
-          // Malformed or non-JSON emoji signal — skip to avoid breaking the
-          // signal handler for the whole session.
           return;
         }
         const { emoji, time } = emojiData;

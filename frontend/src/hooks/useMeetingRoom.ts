@@ -115,8 +115,6 @@ const useMeetingRoom = () => {
         return session.sessionKey;
       })();
 
-      // The user may have navigated away while createSession was in flight — don't join
-      // on a stale/unmounted context.
       if (cancelled) return;
 
       await joinRoom({ sessionKey: resolvedSessionKey });

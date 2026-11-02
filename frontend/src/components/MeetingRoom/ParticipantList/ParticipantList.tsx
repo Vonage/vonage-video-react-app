@@ -71,7 +71,6 @@ const ParticipantList = ({ handleClose, isOpen }: ParticipantListProps): ReactEl
 
   const copiedResetTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Clear the "copied" reset timer on unmount so it can't call setIsCopied afterwards.
   useEffect(() => {
     return () => {
       if (copiedResetTimerRef.current) clearTimeout(copiedResetTimerRef.current);
