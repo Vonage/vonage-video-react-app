@@ -1,13 +1,14 @@
 import type { Publisher } from '@vonage/client-sdk-video';
-import { assertResult } from '@common/execution';
-import tryCatch from '@common/execution/tryCatch';
+import { assertResult, attempt } from '@common/execution';
 import { makeApplicationErrorMapper } from '@core/errors';
-import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/types/types';
+import handleApplyAdvancedSettingsError from './handleApplyAdvancedSettingsError';
+import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/schemas';
 import type {
   AdvancedSettingsBitrateMode,
+  AdvancedSettingsContentHint,
   AdvancedSettingsCustomVideoBitrate,
   AdvancedSettingsFrameRate,
-} from '@components/AdvancedSettingsDialog/types/types';
+} from '@components/AdvancedSettingsDialog/schemas';
 import { t } from 'i18next';
 import { Resolution } from '@common/types';
 
@@ -40,6 +41,17 @@ export const applyResolution = async (
   );
 };
 
+export const applyContentHint = async (
+  publisher: Publisher | null,
+  contentHint: AdvancedSettingsContentHint
+): Promise<void> => {
+  if (!publisher) return;
+  const hasVideoTrack = publisher?.getVideoSource()?.track;
+  if (!hasVideoTrack) return;
+
+  await publisher.setVideoContentHint(contentHint);
+};
+
 export const applyBitrate = async (
   publisher: Publisher | null,
   bitrateMode: AdvancedSettingsBitrateMode,
@@ -69,33 +81,42 @@ const applyAdvancedSettingsToPublisher = async (
     resolution: Resolution;
     bitrateMode: AdvancedSettingsBitrateMode;
     customVideoBitrate: AdvancedSettingsCustomVideoBitrate;
+    contentHint: AdvancedSettingsContentHint;
   }
 ): Promise<void> => {
-  const { frameRate, resolution, bitrateMode, customVideoBitrate } = args;
+  const { frameRate, resolution, bitrateMode, customVideoBitrate, contentHint } = args;
 
-  const { error: frameRateError } = await tryCatch(() => applyFrameRate(publisher, frameRate));
-
-  if (frameRateError)
-    console.error('applyAdvancedSettingsToPublisher: setPreferredFrameRate failed', frameRateError);
-
-  const { error: resolutionError } = await tryCatch(() => applyResolution(publisher, resolution));
-  if (resolutionError)
-    console.error(
-      'applyAdvancedSettingsToPublisher: setPreferredResolution failed',
-      resolutionError
-    );
-
-  const { error: bitrateError } = await tryCatch(() =>
-    applyBitrate(publisher, bitrateMode, customVideoBitrate)
+  await attempt(
+    () => applyFrameRate(publisher, frameRate),
+    handleApplyAdvancedSettingsError({
+      message: 'Failed to apply frame rate',
+      eventSource: 'applyAdvancedSettingsToPublisher.applyFrameRate',
+    })
   );
 
-  if (bitrateError) {
-    const methodName =
-      bitrateMode === ADVANCED_SETTINGS_BITRATE_MODE.custom
-        ? 'setMaxVideoBitrate'
-        : 'setVideoBitratePreset';
-    console.error(`applyAdvancedSettingsToPublisher: ${methodName} failed`, bitrateError);
-  }
+  await attempt(
+    () => applyResolution(publisher, resolution),
+    handleApplyAdvancedSettingsError({
+      message: 'Failed to apply resolution',
+      eventSource: 'applyAdvancedSettingsToPublisher.applyResolution',
+    })
+  );
+
+  await attempt(
+    () => applyBitrate(publisher, bitrateMode, customVideoBitrate),
+    handleApplyAdvancedSettingsError({
+      message: 'Failed to apply bitrate',
+      eventSource: 'applyAdvancedSettingsToPublisher.applyBitrate',
+    })
+  );
+
+  await attempt(
+    () => applyContentHint(publisher, contentHint),
+    handleApplyAdvancedSettingsError({
+      message: 'Failed to apply content hint',
+      eventSource: 'applyAdvancedSettingsToPublisher.applyContentHint',
+    })
+  );
 };
 
 export default applyAdvancedSettingsToPublisher;

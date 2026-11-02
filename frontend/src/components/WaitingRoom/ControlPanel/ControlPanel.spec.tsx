@@ -8,6 +8,7 @@ import ControlPanel from '.';
 import composeProviders from '@web/helpers/composeProviders';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { env } from '../../../env';
 
 describe('ControlPanel', () => {
   beforeEach(() => {
@@ -30,6 +31,7 @@ describe('ControlPanel', () => {
   afterEach(() => {
     cleanup();
     vi.resetAllMocks();
+    env.reset();
   });
 
   it('should render', () => {
@@ -137,6 +139,28 @@ describe('ControlPanel', () => {
       />
     );
     expect(screen.getByTestId('audiooutput-menu')).toBeVisible();
+  });
+
+  it('should not render device menus when WAITING_ROOM_ALLOW_DEVICE_SELECTION is false', () => {
+    env.partialUpdate({ WAITING_ROOM_ALLOW_DEVICE_SELECTION: false });
+
+    render(
+      <ControlPanel
+        handleAudioInputOpen={() => {}}
+        handleVideoInputOpen={() => {}}
+        handleAudioOutputOpen={() => {}}
+        handleClose={() => {}}
+        openAudioInput
+        openVideoInput
+        openAudioOutput
+        anchorEl={null}
+      />
+    );
+
+    expect(screen.getByTestId('ControlPanel')).toBeVisible();
+    expect(screen.queryByTestId('audioinput-menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('videoinput-menu')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('audiooutput-menu')).not.toBeInTheDocument();
   });
 });
 

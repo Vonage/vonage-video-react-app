@@ -1,8 +1,8 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
 const mockOpentokConfig = () => {
   return {
-    default: jest.fn().mockImplementation(() => {
+    default: vi.fn().mockImplementation(() => {
       return {
         apiKey: 'test-api-key',
         apiSecret: 'test-api-secret',
@@ -11,6 +11,7 @@ const mockOpentokConfig = () => {
         provider: 'opentok',
         gollumUrl: 'https://example.com',
         loggerVerbose: false,
+        authEnabled: false,
       };
     }),
   };

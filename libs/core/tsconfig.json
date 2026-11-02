@@ -23,16 +23,16 @@
       "@core/*": ["./src/*"],
       "@core-test": ["./test"],
       "@core-test/*": ["./test/*"],
-      "@web": ["../common/srcBrowser"],
-      "@web/*": ["../common/srcBrowser/*"],
+      "@web": ["../common/web"],
+      "@web/*": ["../common/web/*"],
       "@common-test": ["../common/test"],
       "@common-test/*": ["../common/test/*"],
-      "@web-test": ["../common/testBrowser"],
-      "@web-test/*": ["../common/testBrowser/*"],
+      "@web-test": ["../common/web-test"],
+      "@web-test/*": ["../common/web-test/*"],
 
       // video-router
       "@api-lib/*": ["../api/src/*"],
-      "@node/*": ["../common/srcNode/*"]
+      "@node/*": ["../common/node/*"]
     },
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   }

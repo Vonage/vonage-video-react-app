@@ -19,9 +19,11 @@ describe('ClientLogEventSchema', () => {
     const full = {
       ...validEvent,
       variation: 'Success',
+      session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey', userId: 'u1' },
       sessionId: 's1',
       connectionId: 'c1',
       partnerId: 'apiKey',
+      referrer: 'u1',
       payload: { key: 'value' },
       clientVersion: '1.0',
       sdkId: '2.0',
@@ -30,6 +32,11 @@ describe('ClientLogEventSchema', () => {
       name: 'vera',
     };
     expect(ClientLogEventSchema.safeParse(full).success).toBe(true);
+  });
+
+  it('rejects a session with a non-string identifier', () => {
+    const invalid = { ...validEvent, session: { sessionId: 1 } };
+    expect(ClientLogEventSchema.safeParse(invalid).success).toBe(false);
   });
 
   it('rejects missing required action', () => {

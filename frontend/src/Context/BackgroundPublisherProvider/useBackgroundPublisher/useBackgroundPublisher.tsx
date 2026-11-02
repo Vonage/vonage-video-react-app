@@ -4,9 +4,9 @@ import {
   Event,
   initPublisher,
   VideoFilter,
-  hasMediaProcessorSupport,
   PublisherProperties,
 } from '@vonage/client-sdk-video';
+import hasMediaProcessorSupport from '@utils/hasMediaProcessorSupport';
 import usePermissions from '../../../hooks/usePermissions';
 import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
@@ -17,7 +17,7 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
@@ -96,7 +96,7 @@ const useBackgroundPublisher = (
   );
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [customImages, setCustomImages] = useState<StoredImage[]>(
@@ -177,7 +177,7 @@ const useBackgroundPublisher = (
     if (backgroundPublisherRef.current) return;
 
     let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('both')) {
+    if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
       videoFilter = initialBackgroundRef.current;
     }
 
@@ -253,7 +253,7 @@ const useBackgroundPublisher = (
       // If the deleted image was the currently applied background filter, clear it
       const currentBackgroundFilter = getInitialBackgroundFilter(backgroundPublisherRef.current);
       if (imageToDelete.dataUrl === currentBackgroundFilter) {
-        changeBackground(backgroundSelected).catch(() => {
+        changeBackground('none').catch(() => {
           throw new Error('Failed to reset background filter after deleting custom image');
         });
       }

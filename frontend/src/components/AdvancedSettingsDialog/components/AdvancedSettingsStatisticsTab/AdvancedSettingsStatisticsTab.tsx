@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import usePublisherContext from '@hooks/usePublisherContext';
-import { SwitchField } from '@ui/components';
+import { Field } from '@ui/components';
 import PublisherStatistics from './components/PublisherStatistics';
 import usePreviewPublisherContext from '@hooks/usePreviewPublisherContext';
 import SubscriberStatistics from './components/SubscriberStatistics';
@@ -24,29 +24,36 @@ const AdvancedSettingsStatisticsTab = (): ReactElement => {
 
   return (
     <div className="flex flex-col gap-8">
-      <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+      <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
         {t('advancedSettings.tabs.statistics')}
       </h2>
-      <SwitchField
-        id="advanced-settings-statistics-enable-publisher"
-        label={t('advancedSettings.statistics.collection.enablePublisher.label')}
-        checked={publisherStatisticsEnabled}
-        onChange={setPublisherStatisticsEnabled}
-        description={t('advancedSettings.statistics.collection.enablePublisher.description')}
-      />
+      <Field>
+        <Field.Label htmlFor="advanced-settings-statistics-enable-publisher">
+          {t('advancedSettings.statistics.collection.enablePublisher.label')}
+        </Field.Label>
+        <Field.Input
+          variant="switch"
+          id="advanced-settings-statistics-enable-publisher"
+          checked={publisherStatisticsEnabled}
+          onChange={(event) => setPublisherStatisticsEnabled(event.currentTarget.checked)}
+        />
+        <Field.Description>
+          {t('advancedSettings.statistics.collection.enablePublisher.description')}
+        </Field.Description>
+      </Field>
 
       <div className="flex flex-col gap-4">
         {publisher && <PublisherStatistics publisher={publisher} />}
 
         {subscriberWrappers.length > 0 && (
-          <h4 className="font-vera-plain text-vera-heading-4 text-vera-secondary">
+          <h4 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary">
             {t('advancedSettings.statistics.groups.subscribers')}
           </h4>
         )}
 
-        {subscriberWrappers.map(({ subscriber }, index) => (
-          <SubscriberStatistics subscriber={subscriber} key={subscriber.id ?? index} />
-        ))}
+        {subscriberWrappers.map((subscriber) => {
+          return <SubscriberStatistics subscriberWrapper={subscriber} key={subscriber.id} />;
+        })}
       </div>
     </div>
   );

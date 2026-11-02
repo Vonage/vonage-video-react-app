@@ -6,6 +6,7 @@ interface SessionData {
   captionsId: string | null;
   captionsUserCount: number;
   archiveIds: string[];
+  serverRotationPending: number;
 }
 
 class InMemorySessionStorage implements SessionStorage {
@@ -17,6 +18,10 @@ class InMemorySessionStorage implements SessionStorage {
     return this.sessions[roomName]?.sessionKey || null;
   }
 
+  async getSessionKeyBySessionId({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.sessionKeyBySessionId[sessionId] ?? null;
+  }
+
   async setSession({
     roomName,
     sessionKey,
@@ -26,12 +31,16 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    this.sessions[roomName] = {
-      sessionKey,
-      captionsId: null,
-      captionsUserCount: 0,
-      archiveIds: [],
-    };
+    const existingSession = this.sessions[roomName];
+    this.sessions[roomName] = existingSession
+      ? { ...existingSession, sessionKey }
+      : {
+          sessionKey,
+          captionsId: null,
+          captionsUserCount: 0,
+          archiveIds: [],
+          serverRotationPending: 0,
+        };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
       this.sessionKeyBySessionId[sessionId] = sessionKey;
@@ -108,6 +117,22 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getArchiveIds({ sessionId }: { sessionId: string }): Promise<string[]> {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
+  }
+
+  async setServerRotationPending({
+    sessionId,
+    pending,
+  }: {
+    sessionId: string;
+    pending: number;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.serverRotationPending = pending;
+  }
+
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
+    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? 0;
   }
 }
 export default InMemorySessionStorage;

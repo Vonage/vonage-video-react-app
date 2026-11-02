@@ -7,6 +7,7 @@ export enum Lang {
   ES_MX = 'es-MX',
   EN_US = 'en-US',
   DE = 'de',
+  JA = 'ja',
 }
 
 export const LangSchema = z.enum(Lang);

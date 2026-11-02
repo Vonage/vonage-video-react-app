@@ -9,8 +9,6 @@ import { defaultAudioDevice } from '@utils/mockData/device';
 import useSpeakingDetector, { UseSpeakingDetectorOptions } from '@hooks/useSpeakingDetector';
 import useLayoutManager, { GetLayout } from '@hooks/useLayoutManager';
 import useActiveSpeaker from '@hooks/useActiveSpeaker';
-import useScreenShare, { UseScreenShareType } from '@hooks/useScreenShare';
-import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
 import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
@@ -22,6 +20,7 @@ import MeetingRoom from './MeetingRoom';
 import type { Box } from 'opentok-layout-js';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import type { VideoClient } from '@core/services';
+import { testIds as unreadMessagesBadgeTestIds } from '../../components/MeetingRoom/UnreadMessagesBadge/UnreadMessagesBadge';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
@@ -69,7 +68,6 @@ vi.mock('@mui/material/useMediaQuery', () => ({
 vi.mock('@hooks/useSpeakingDetector');
 vi.mock('@hooks/useLayoutManager');
 vi.mock('@hooks/useActiveSpeaker');
-vi.mock('@hooks/useScreenShare.tsx');
 vi.mock('@hooks/useToolbarButtons');
 
 vi.mock('@web/platform', async (importOriginal) => {
@@ -111,7 +109,6 @@ vi.mock('opentok-layout-js', async () => {
 const mockUseSpeakingDetector = useSpeakingDetector as Mock<[UseSpeakingDetectorOptions], boolean>;
 const mockUseLayoutManager = useLayoutManager as Mock<[], GetLayout>;
 const mockUseActiveSpeaker = useActiveSpeaker as Mock<[], string | undefined>;
-const mockUseScreenShare = useScreenShare as Mock<[], UseScreenShareType>;
 const mockUseToolbarButtons = useToolbarButtons as Mock<
   [UseToolbarButtonsProps],
   UseToolbarButtons
@@ -187,19 +184,12 @@ describe('MeetingRoom', () => {
       }) as Box[];
     });
     mockUseActiveSpeaker.mockReturnValue(undefined);
-    mockUseScreenShare.mockReturnValue({
-      toggleShareScreen: () => Promise.resolve(),
-      isSharingScreen: false,
-      isEntireScreen: false,
-      screenshareVideoElement: undefined,
-      screensharingPublisher: null,
-    });
     (useMediaQuery as Mock).mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
-      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+      ({ numberOfToolbarButtons, rightPanelButtonCount }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
           displayTimeRoomName: true,
-          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          centerButtonLimit: numberOfToolbarButtons - rightPanelButtonCount,
           rightButtonLimit: numberOfToolbarButtons,
         };
         return renderedToolbarButtons;
@@ -436,7 +426,7 @@ describe('MeetingRoom', () => {
     sessionContext.current.unreadCount = 4;
 
     await waitFor(() => {
-      expect(screen.getByTestId('chat-button-unread-count')).toHaveTextContent('4');
+      expect(screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount)).toHaveTextContent('4');
     });
   });
 
@@ -562,7 +552,13 @@ function render(
   } = {}
 ) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.runtime],
+    [
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+      providers.screenShare,
+    ],
     {
       userContext: {
         ...userContext,
@@ -576,6 +572,7 @@ function render(
       sessionContext,
       publisherContext,
       runtimeContext: { videoClient: mockVideoClient },
+      screenShareContext: undefined,
     }
   );
 

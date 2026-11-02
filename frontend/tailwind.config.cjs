@@ -1,7 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const veraUI = require('../libs/ui/src/theme/helpers/tailwind/veraUI.cjs');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const designTokens = require('../designTokens.json');
+const validateVeraThemeTokens = require('../libs/ui/src/theme/helpers/tailwind/validateVeraThemeTokens.cjs');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const designTokens = validateVeraThemeTokens(require('../theme.json'));
+
+const VIDEO_CONTAINER_HEIGHT_WR = 360;
 
 const config = {
   darkMode: 'class',
@@ -13,6 +17,9 @@ const config = {
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-in-out',
+      },
+      height: {
+        'video-container': `${VIDEO_CONTAINER_HEIGHT_WR}px`,
       },
     },
   },

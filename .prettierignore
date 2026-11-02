@@ -6,6 +6,7 @@ frontend/docs/
 *.md
 
 # Build and dependency folders
+pnpm-lock.yaml
 dist/
 node_modules/
 coverage/
@@ -17,4 +18,5 @@ integration-tests/test-results/
 
 # Public compiled assets
 public/js/
+.kiro
 

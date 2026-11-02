@@ -21,11 +21,11 @@ const ArchiveHookPayloadSchema = z
     name: z.string().optional(),
     createdAt: z.number(),
     duration: z.number(),
-    partnerId: z.union([z.string(), z.number()]),
+    partnerId: z.union([z.string(), z.number()]).optional(),
     resolution: z.string().optional(),
     size: z.number(),
-    url: z.string().nullable(),
-    reason: z.string(),
+    url: z.string().nullable().optional(),
+    reason: z.string().optional(),
     streamMode: z.enum(['auto', 'manual']).optional(),
     streams: z
       .array(

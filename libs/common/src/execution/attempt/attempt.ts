@@ -1,6 +1,6 @@
 import isPromise from '@common/assertions/isPromise';
 
-type AnyCallback = () => void | Promise<void>;
+type ErrorCallback = (error: unknown) => void;
 
 /**
  * Attempts to execute a callback function and handles any errors that may occur during its execution.
@@ -8,16 +8,25 @@ type AnyCallback = () => void | Promise<void>;
  * @example
  * attempt(() => analytics.trackEvent('button_click'));
  */
-function attempt<T extends AnyCallback>(
-  callback: T,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onError?: (error: any) => void
-): void {
+function attempt(callback: () => Promise<void>, onError?: ErrorCallback): Promise<void>;
+
+/**
+ * Attempts to execute a callback function and handles any errors that may occur during its execution.
+ *
+ * @example
+ * attempt(() => analytics.trackEvent('button_click'));
+ */
+function attempt(callback: () => void, onError?: ErrorCallback): void;
+
+function attempt(
+  callback: () => void | Promise<void>,
+  onError?: ErrorCallback
+): void | Promise<void> {
   try {
     const result = callback();
 
     if (isPromise(result)) {
-      result.catch((error) => {
+      return result.catch((error) => {
         onError?.(error);
       });
     }

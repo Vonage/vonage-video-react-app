@@ -1,11 +1,12 @@
 import { waitFor, renderHook as renderHookBase } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useMeetingRoom from '../useMeetingRoom';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import { MemoryRouter } from 'react-router-dom';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
 import type { VideoClient } from '@core/services';
+import frontendLogger from '../../logger';
 
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
 const validSessionKey =
@@ -38,15 +39,6 @@ vi.mock('../useIsSmallViewport', () => ({
   default: () => false,
 }));
 
-vi.mock('../useScreenShare', () => ({
-  default: () => ({
-    isSharingScreen: false,
-    screensharingPublisher: null,
-    screenshareVideoElement: null,
-    toggleShareScreen: vi.fn(),
-  }),
-}));
-
 vi.mock('../useBackgroundPublisherContext', () => ({
   default: () => ({
     initBackgroundLocalPublisher: vi.fn(),
@@ -57,15 +49,10 @@ vi.mock('../useBackgroundPublisherContext', () => ({
 
 describe('useMeetingRoom', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
     mockCreateSessionMutate.mockResolvedValue({ sessionKey: validSessionKey });
     mockJoinSessionMutate.mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   it('returns all expected fields', async () => {
@@ -145,6 +132,74 @@ describe('useMeetingRoom', () => {
     });
   });
 
+  it('reports and redirects to goodbye (does not throw) when resolving the session before joining fails', async () => {
+    expect.assertions(2);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const joinFailure = new Error('create session failed');
+    mockCreateSessionMutate.mockRejectedValue(joinFailure);
+
+    renderHook(() => useMeetingRoom());
+
+    await waitFor(() => {
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      joinFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
+      })
+    );
+  });
+
+  it('reports and redirects to goodbye (does not throw) when connect() itself rejects', async () => {
+    expect.assertions(2);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const connectFailure = new Error('connect failed');
+    const mockJoinRoom = vi.fn().mockRejectedValue(connectFailure);
+
+    renderHook(() => useMeetingRoom(), {
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.joinRoom = mockJoinRoom;
+        },
+      },
+    });
+
+    await waitFor(() => {
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      connectFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
+      })
+    );
+  });
+
   it('does not navigate to goodbye when reconnecting is true', async () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
 
@@ -173,7 +228,13 @@ function renderHook<Result>(
   { userContext, sessionContext, publisherContext }: RenderOptions = {}
 ) {
   const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.publisher, providers.runtime],
+    [
+      providers.user,
+      providers.session,
+      providers.publisher,
+      providers.runtime,
+      providers.screenShare,
+    ],
     {
       userContext: {
         value: { defaultSettings: { name: 'Test User' } },
@@ -181,7 +242,8 @@ function renderHook<Result>(
       },
       sessionContext,
       publisherContext,
-      runtimeContext: { videoClient: mockVideoClient as unknown as VideoClient },
+      runtimeContext: { videoClient: mockVideoClient as VideoClient },
+      screenShareContext: undefined,
     }
   );
 

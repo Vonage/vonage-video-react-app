@@ -1,10 +1,10 @@
-import { afterEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SessionStorage } from '../storage/sessionStorage';
 import VcrSessionStorage from '../storage/vcrSessionStorage';
 
 describe('getSessionStorageService', () => {
   afterEach(() => {
-    jest.resetModules(); // Clear module cache between tests
+    vi.resetModules(); // Clear module cache between tests
     delete process.env.VCR_PORT; // Clean up the environment variable after each test
   });
 

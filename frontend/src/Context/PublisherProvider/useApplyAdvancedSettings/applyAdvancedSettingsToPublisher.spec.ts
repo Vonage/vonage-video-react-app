@@ -6,6 +6,7 @@ import applyAdvancedSettingsToPublisher, {
   applyResolution,
 } from './applyAdvancedSettingsToPublisher';
 import { Resolution } from '@common/types';
+import { frontendLogger } from '../../../logger';
 
 const createMockPublisher = () =>
   ({
@@ -14,6 +15,7 @@ const createMockPublisher = () =>
     setPreferredResolution: vi.fn().mockResolvedValue(undefined),
     setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
     setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
+    setVideoContentHint: vi.fn(),
   }) as unknown as Publisher;
 
 describe('applyAdvancedSettingsToPublisher', () => {
@@ -52,7 +54,7 @@ describe('applyAdvancedSettingsToPublisher', () => {
 
   it('continues applying remaining settings when frame rate update fails', async () => {
     const publisher = createMockPublisher();
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
 
     publisher.setPreferredFrameRate = vi.fn().mockRejectedValue(new Error('frame rate failure'));
 
@@ -61,19 +63,20 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
+      contentHint: '' as const,
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'applyAdvancedSettingsToPublisher: setPreferredFrameRate failed',
-      expect.any(Error)
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({ eventSource: 'applyAdvancedSettingsToPublisher.applyFrameRate' })
     );
     expect(publisher.setPreferredResolution).toHaveBeenCalledWith({ width: 640, height: 480 });
     expect(publisher.setVideoBitratePreset).toHaveBeenCalledWith('default');
   });
 
-  it('logs the custom bitrate method name when a custom bitrate update fails', async () => {
+  it('reports the error when a custom bitrate update fails', async () => {
     const publisher = createMockPublisher();
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
 
     publisher.setMaxVideoBitrate = vi.fn().mockRejectedValue(new Error('bitrate failure'));
 
@@ -82,17 +85,18 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'custom',
       customVideoBitrate: 750_000,
+      contentHint: '' as const,
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'applyAdvancedSettingsToPublisher: setMaxVideoBitrate failed',
-      expect.any(Error)
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({ eventSource: 'applyAdvancedSettingsToPublisher.applyBitrate' })
     );
   });
 
-  it('logs the preset bitrate method name when a preset bitrate update fails', async () => {
+  it('reports the error when a preset bitrate update fails', async () => {
     const publisher = createMockPublisher();
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
 
     publisher.setVideoBitratePreset = vi.fn().mockRejectedValue(new Error('bitrate failure'));
 
@@ -101,11 +105,12 @@ describe('applyAdvancedSettingsToPublisher', () => {
       resolution: Resolution.VGA_LANDSCAPE,
       bitrateMode: 'default',
       customVideoBitrate: 500_000,
+      contentHint: '' as const,
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'applyAdvancedSettingsToPublisher: setVideoBitratePreset failed',
-      expect.any(Error)
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({ eventSource: 'applyAdvancedSettingsToPublisher.applyBitrate' })
     );
   });
 });

@@ -3,6 +3,7 @@ import DE from './de.json';
 import ES from './es.json';
 import IT from './it.json';
 import ES_MX from './es-MX.json';
+import JA from './ja.json';
 
 export default {
   en: {
@@ -31,5 +32,8 @@ export default {
   },
   it: {
     translation: IT,
+  },
+  ja: {
+    translation: JA,
   },
 };

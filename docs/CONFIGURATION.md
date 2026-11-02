@@ -4,7 +4,7 @@ This document covers the environment variables, feature flags, theming, and Stor
 
 ## Environment Configuration
 
-The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are configured through [`env.sh`](../env.sh).
+The app has two parts — a **backend** server and a **frontend** UI. The backend is configured through `backend/.env`. Frontend settings are defined in [`app-config.json`](../app-config.json) and compiled into [`env.sh`](../env.sh) via `yarn sync:env`. Project defaults that are not in `app-config.json` (web-only frontend values and backend auth settings) live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources.
 
 For initial setup instructions (creating `.env` files, obtaining credentials), see [Getting Started](./GETTING_STARTED.md).
 
@@ -48,6 +48,19 @@ OT_API_KEY='your-api-key'
 OT_API_SECRET='your-api-secret'
 ```
 
+#### Allowed web origins (CORS)
+
+`CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only: with `AUTH_ENABLED='true'` and an `https` `OIDC_WEB_REDIRECT_URI`, the server refuses to start with `*`.
+
+| Environment | Value |
+|---|---|
+| Local (`backend/.env.example`) | `*` |
+| CI (`run-tests.yml`) and backend unit tests | `*` |
+| VCR main deploy (`vcr-gha.yml`) | `https://<APP_HOST>`, filled by the deploy workflow |
+| VCR per-PR deploy | The PR instance URL, set by the workflow |
+
+Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, requests from an origin outside this list are also rejected with `403`.
+
 #### Vonage Cloud Runtime (VCR)
 
 | Variable | Required | Description |
@@ -70,22 +83,50 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 | `JIRA_EPIC_LINK` | Epic link field value |
 | `JIRA_EPIC_URL` | URL to the target epic |
 
----
+#### OIDC token authentication (optional)
 
-### Frontend (`env.sh`)
+See [Authentication](./AUTHENTICATION.md) for the full authentication guide including all env var details.
+
+### Frontend (`app-config.json` → `env.sh`)
 
 Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.
 
-All frontend configuration lives in [`env.sh`](../env.sh). To change a setting, update the relevant `export` line and restart the app or trigger a new build.
+The source of truth is [`app-config.json`](../app-config.json), a unified, platform-agnostic config shared across the Vonage Video web, iOS, and Android apps. The build tooling (dev/build/test) reads [`env.sh`](../env.sh), which is **generated** from `app-config.json`. Do not edit `env.sh` by hand — it is overwritten on every sync.
 
-```bash
-# env.sh
-export ALLOW_CHAT=false
-export DEFAULT_LAYOUT_MODE='grid'
-export I18N_SUPPORTED_LANGUAGES='en|es'
+To change a setting:
+
+1. Edit the relevant value in [`app-config.json`](../app-config.json).
+2. Regenerate `env.sh`:
+
+   ```bash
+   yarn sync:env
+   ```
+
+3. Restart the app or trigger a new build.
+
+`app-config.json` uses grouped, nested keys instead of flat variable names. For example:
+
+```json
+{
+  "meetingRoomSettings": {
+    "allowChat": false,
+    "defaultLayoutMode": "activeSpeaker"
+  },
+  "localizationSettings": {
+    "supportedLanguages": ["en", "es"]
+  }
+}
 ```
 
-> **Note:** Changes to [`env.sh`](../env.sh) are applied at build time. Restart `yarn dev` locally or create a new build/deployment for the changes to take effect.
+The generator maps each key to its `env.sh` variable, joins lists with `|`, and serializes types into shell format. The tables below use the `env.sh` variable names.
+
+> **Note:** Changes are applied at build time. After `yarn sync:env`, restart `yarn dev` locally or create a new build/deployment for them to take effect.
+
+#### Things to know about the mapping
+
+- **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `app-config.json`.
+- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources: `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
+- **Network settings.** `API_URL`, `TUNNEL_DOMAIN`, and `VONAGE_VIDEO_HOST` are **not** generated from `app-config.json` by `yarn sync:env`. They are runtime/environment values, so set them via [`frontend/.env`](../frontend/.env.example) (which layers over `env.sh`) or by exporting them in your shell before running the app. See the [Network](#network) table below.
 
 #### Value types
 
@@ -99,6 +140,8 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 ---
 
 #### Network
+
+These are runtime/environment values and are **not** generated from `app-config.json`. Set them in [`frontend/.env`](../frontend/.env.example) or export them in your shell before running the app.
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
@@ -145,7 +188,6 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
-| `DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Enable device selection globally |
 | `WAITING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors in the waiting room |
 | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` | `boolean` | `true` | `true` \| `false` | Show device selectors inside the meeting room |
 
@@ -198,15 +240,15 @@ export I18N_SUPPORTED_LANGUAGES='en|es'
 
 ## UI Customization
 
-The app theme is configured through the root `designTokens.json` file.
+The app theme is configured through the root `theme.json` file.
 
 ### Customize your theme
 
-1. Edit `designTokens.json` at the project root with your palette/theme values.
+1. Edit `theme.json` at the project root with your palette/theme values.
 2. Sync theme artifacts:
 
 ```bash
 yarn sync:theme-tokens
 ```
 
-This command always regenerates `designTokens.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `designTokens.json` when present, creates root `designTokens.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.
+This command always regenerates `theme.example.json`, syncs `libs/ui/src/theme/helpers/designTokens/designTokens.json` from root `theme.json` when present, creates root `theme.json` from defaults when missing, rebuilds the Tailwind plugin, and formats the generated plugin file.

@@ -13,9 +13,8 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "../common/src/**/*.ts",
-    "../common/srcNode/**/*.ts",
+    "../common/node/**/*.ts",
     "../common/test/**/*.ts",
-    "../common/testNode/**/*.ts",
-    "../common/src/types/FacingMode.ts"
+    "../common/node-test/**/*.ts"
   ]
 }

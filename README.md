@@ -49,7 +49,7 @@ For details on the workspace structure, libraries, and module boundaries, see [A
 | Minimum device width | 360px |
 | Media Processors | Chromium-based browsers only (see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport)) |
 | Node.js | v22 |
-| Package manager | [yarn](https://yarnpkg.com) |
+| Package manager | [pnpm](https://pnpm.io) for installing. [yarn](https://yarnpkg.com) still runs the scripts, see [Package manager](#package-manager) |
 | Version manager (optional) | [nvm](https://github.com/creationix/nvm) |
 
 ## Features
@@ -68,55 +68,112 @@ This application provides features for common conferencing use cases, such as:
     <summary>A post-call page to navigate users to the landing page, re-enter the left room, and display archive(s), if any.</summary>
     <img src="docs/assets/Goodbye.png" alt="Screenshot of goodbye page">
   </details>
-- A video conferencing "room" supporting up to 25 participants and the following features:
-- <details>
-    <summary>Input and output device selectors.</summary>
-    <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">
-  </details>
-- <details>
-    <summary>Noise suppression toggles in meeting room</summary>
-    <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
-  </details>
-- <details>
-    <summary>
-      Video effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Video effects are not supported in non-Chromium-based browsers or on iOS.
-      
-    Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
-    </summary>
-  
-    <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
-  </details>
-- <details>
-    <summary>Composed archiving capabilities to record your meetings.</summary>
-    <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
-  </details>
-- <details>
-    <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
-    <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
-  </details>
-- Active speaker detection.
-- Layout manager with options to display active speaker, screen share, or all participants in a grid view.
-- The dynamic display adjusts to show new joiners, hide video tiles to conserve bandwidth, and show the "next" participant when someone previously speaking leaves.
-- <details>
-    <summary>Ability to mute other participants during the meeting.</summary>
-    <img src="docs/assets/MutingParticipant.png" alt="Screenshot of muting participant dialog box">
-  </details>
-- <details>
-    <summary>Call participant list with audio on/off indicator.</summary>
-    <img src="docs/assets/ParticipantList.png" alt="Screenshot of participant list">
-  </details>
-- Meeting information with an easy-to-share URL to join the meeting.
-- <details>
-    <summary>A reporting tool to enable participants to file any in-call issues.</summary>
-    <img src="docs/assets/ReportIssue.png" alt="Screenshot of report issue pane">
-  </details>
+- A video conferencing "room" supporting around 100 participants and the following features:
   - <details>
- <summary>Advanced settings panel available in both the waiting room and meeting room, allowing fine-grained control over video, audio and metrics</summary>
- </details>
+      <summary>Input and output device selectors.</summary>
+      <img src="docs/assets/DeviceSelector.png" alt="Screenshot of audio devices selector">
+    </details>
+  - <details>
+      <summary>Noise suppression toggles in meeting room</summary>
+      <img src="docs/assets/NoiseSupression.png" alt="Screenshot of noise supression toggle">
+    </details>
+  - <details>
+      <summary>
+        Video effects in meeting and waiting room. You can set predefined images, custom image or slight/strong background blur. Images can be uploaded from local device or URL in these formats: JPG, PNG, GIF or BMP. Video effects are not supported in non-Chromium-based browsers or on iOS.
+        
+      Please see [OT.hasMediaProcessorSupport](https://vonage.github.io/video-docs/video-js-reference/latest/OT.html#hasMediaProcessorSupport) for more information.
+      </summary>
+    
+      <img src="docs/assets/BGEffects.png" alt="Screenshot of video effects">
+    </details>
+  - <details>
+      <summary>Composed archiving capabilities to record your meetings.</summary>
+      <img src="docs/assets/Archiving.png" alt="Screenshot of archiving dialog box">
+    </details>
+  - <details>
+      <summary>Individual archiving capabilities to transcript your meetings.</summary>
+      <img src="docs/assets/Transcribing.png" alt="Screenshot of transcript dialog box">
+    </details>
+  - <details>
+      <summary>In-call tools such as screen sharing (subscriber can zoom in/out if hasMediaProcessorSupport), group chat function, and emoji reactions.</summary>
+      <img src="docs/assets/Emojis.png" alt="Screenshot of emojis">
+    </details>
+  - Active speaker detection.
+  - Layout manager with options to display active speaker, screen share, or all participants in a grid view.
+  - The dynamic display adjusts to show new joiners, hide video tiles to conserve bandwidth, and show the "next" participant when someone previously speaking leaves.
+  - <details>
+      <summary>Ability to mute other participants during the meeting.</summary>
+      <img src="docs/assets/MutingParticipant.png" alt="Screenshot of muting participant dialog box">
+    </details>
+  - <details>
+      <summary>Call participant list with audio on/off indicator.</summary>
+      <img src="docs/assets/ParticipantList.png" alt="Screenshot of participant list">
+    </details>
+  - Meeting information with an easy-to-share URL to join the meeting.
+  - <details>
+      <summary>A reporting tool to enable participants to file any in-call issues.</summary>
+      <img src="docs/assets/ReportIssue.png" alt="Screenshot of report issue pane">
+    </details>
+- <details>
+    <summary>Advanced settings panel available in both the waiting room and meeting room, allowing fine-grained control over video, audio and metrics.</summary>
+    <img src="docs/assets/Settings.png" alt="Screenshot of advanced settings window">
+  </details>
 
 ## Running Locally
 
 See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonage account, environment variables, multi-device testing, and VCR deployment).
+
+You can safely generate the backend secrets (`SESSION_KEY_SECRET`, and `AUTH_COOKIE_SECRET` when auth is enabled) with `yarn generate:secret`. Use a different value for each variable and each environment.
+
+### Package manager
+
+Dependencies are installed with **pnpm**, and `pnpm-lock.yaml` is the only lockfile in the repository.
+
+```bash
+npm i -g pnpm@12.11.2
+pnpm install
+```
+
+pnpm links dependencies from a shared store instead of copying them, which is substantially faster than yarn on this dependency tree.
+
+pnpm 12 or newer is required, and the install is blocked below that. Earlier versions do not set the executable bit on package binaries, which makes `yarn prettier` and `yarn quality-check` fail with "Permission denied". Avoid `corepack enable` for this repository, since corepack currently ships pnpm 11.
+
+#### Still want to use yarn?
+
+You can, for running scripts. Only installing is pnpm-only.
+
+Once dependencies are installed with pnpm, yarn works as a task runner exactly as before:
+
+```bash
+yarn dev
+yarn test:frontend
+yarn nx run-many -t build
+```
+
+`yarn run` does not read the lockfile, so the absence of `yarn.lock` makes no difference to it. Installing is the exception: `yarn install` and `npm install` stop with a message pointing here, because a second lockfile would drift from `pnpm-lock.yaml`.
+
+If a [corepack](https://nodejs.org/api/corepack.html)-managed yarn refuses to run a script because `packageManager` is set to pnpm, run it with pnpm instead (`pnpm dev`), or use a globally installed yarn.
+
+#### Upgrading an existing checkout
+
+If you already had the project installed with yarn, the scripts detect it and tell you. Running `yarn dev` prints a notice that installs moved to pnpm, and offers to run `pnpm install` for you. Accept it, or run `pnpm install` yourself. Nothing else about your workflow changes.
+
+#### Going back to yarn entirely
+
+If the project ever needs to return to yarn as its package manager:
+
+```bash
+yarn migrate:yarn          # prints what it will do
+yarn migrate:yarn --yes    # applies it
+```
+
+This restores `resolutions` in `package.json` from the pnpm overrides, resets `packageManager`, removes the install guard, deletes `pnpm-lock.yaml` and `pnpm-workspace.yaml`, and runs `yarn install` to generate a fresh `yarn.lock`.
+
+Two caveats. The generated `yarn.lock` will not match the pnpm versions exactly, because yarn re-resolves the tree; direct dependencies are almost all pinned, so the drift is limited to transitive ones. And the CI workflows, git hooks and `vcrBuild.sh` still invoke pnpm: the script lists them on completion so they can be reverted from git history.
+
+### OIDC token authentication (optional)
+
+See [Authentication](./docs/AUTHENTICATION.md) for the full guide.
 
 ## Documentation
 
@@ -125,6 +182,8 @@ See [Getting Started](./docs/GETTING_STARTED.md) for the full setup guide (Vonag
 | [Getting Started](./docs/GETTING_STARTED.md) | Environment setup, local development, and deployment guide |
 | [Architecture](./docs/ARCHITECTURE.md) | Nx workspace structure, projects, and library boundaries |
 | [Configuration](./docs/CONFIGURATION.md) | Environment variables, feature flags, theming, and Storybook |
+| [Authentication](./docs/AUTHENTICATION.md) | OIDC/BFF authentication architecture, setup, and troubleshooting |
+| [Session Migration](./docs/SESSION_MIGRATION.md) | Server rotation support, archiving recovery, and testing |
 | [Testing](./docs/TESTING.md) | Integration tests, screenshot tests, and unit test suites |
 | [Code Style](./docs/CODE_STYLE.md) | Linting, formatting, naming conventions, and doc generation |
 | [Contributing](./docs/CONTRIBUTING.md) | How to contribute to the project |

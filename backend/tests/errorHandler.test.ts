@@ -1,8 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { MockInstance } from 'vitest';
 import type { Request, Response, NextFunction } from 'express';
 import { StatusCode } from 'status-code-enum';
 import { errorHandler } from '../middleware/errorHandler';
-import ApplicationServerError from '@api-lib/errors/ApplicationServerError';
+import { ApplicationServerError } from '@api-lib/errors';
 
 function createMockRequest(overrides: Partial<Request> = {}): Request {
   return {
@@ -16,18 +17,18 @@ function createMockResponse(): Response {
   const res = {
     headersSent: false,
     statusCode: 200,
-    status: jest.fn(function (this: Response, code: number) {
+    status: vi.fn(function (this: Response, code: number) {
       this.statusCode = code;
       return this;
     }) as unknown as (code: number) => Response,
-    json: jest.fn(function (this: Response) {
+    json: vi.fn(function (this: Response) {
       return this;
     }) as unknown as (body?: unknown) => Response,
-    send: jest.fn(function (this: Response) {
+    send: vi.fn(function (this: Response) {
       return this;
     }) as unknown as (body?: unknown) => Response,
-    render: jest.fn() as (view: string, options?: object) => void,
-    setHeader: jest.fn(),
+    render: vi.fn() as (view: string, options?: object) => void,
+    setHeader: vi.fn(),
   } as unknown as Response;
   return res;
 }
@@ -35,10 +36,10 @@ function createMockResponse(): Response {
 const noopNext: NextFunction = () => {};
 
 describe('errorHandler', () => {
-  let consoleErrorSpy: ReturnType<typeof jest.spyOn>;
+  let consoleErrorSpy: MockInstance;
 
   beforeEach(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
