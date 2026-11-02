@@ -112,7 +112,7 @@ const usePreviewPublisher = (
   const [isVideoLoading, setIsVideoLoading] = useState(isVideoEnabled);
 
   // Sync publisher with selected devices from store (handles device changes and disconnections)
-  useSyncPublisherDevices(() => publisherRef.current, { setIsAudioEnabled, setIsVideoEnabled });
+  useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
 
   /**
    * Change background replacement or blur effect

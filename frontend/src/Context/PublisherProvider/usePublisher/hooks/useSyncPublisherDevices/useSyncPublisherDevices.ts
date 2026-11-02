@@ -11,7 +11,7 @@ import type { UnsubscribeCallback } from 'react-global-state-hooks';
  * This is temporal until we refactor the publishers and we implement a more robust solution syncing with the publisher.
  */
 const useSyncPublisherDevices = (
-  getPublisher: () => Publisher | null,
+  publisherRef: React.RefObject<Publisher | null>,
   args: {
     setIsAudioEnabled?: (enabled: boolean) => void;
     setIsVideoEnabled?: (enabled: boolean) => void;
@@ -24,8 +24,8 @@ const useSyncPublisherDevices = (
         ? mediaDevices$.subscribe(
             ({ videoinput }) => videoinput,
             async (input) => {
-              const didChanged = getPublisher()?.getVideoSource()?.deviceId !== input;
-              if (didChanged) void attempt(() => getPublisher()?.setVideoSource(input!));
+              const didChanged = publisherRef.current?.getVideoSource()?.deviceId !== input;
+              if (didChanged) void attempt(() => publisherRef.current?.setVideoSource(input!));
 
               const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
@@ -34,7 +34,7 @@ const useSyncPublisherDevices = (
 
               if (hasDevices('videoinput')) return;
               attempt(() => {
-                getPublisher()?.publishVideo(false);
+                publisherRef.current?.publishVideo(false);
               });
               args.setIsVideoEnabled?.(false);
             },
@@ -48,8 +48,8 @@ const useSyncPublisherDevices = (
         ? mediaDevices$.subscribe(
             ({ audioinput }) => audioinput,
             async (input) => {
-              const didChanged = getPublisher()?.getAudioSource()?.id !== input;
-              if (didChanged) void attempt(() => getPublisher()?.setAudioSource(input!));
+              const didChanged = publisherRef.current?.getAudioSource()?.id !== input;
+              if (didChanged) void attempt(() => publisherRef.current?.setAudioSource(input!));
 
               const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
@@ -58,7 +58,7 @@ const useSyncPublisherDevices = (
 
               if (hasDevices('audioinput')) return;
               attempt(() => {
-                getPublisher()?.publishAudio(false);
+                publisherRef.current?.publishAudio(false);
               });
               args.setIsAudioEnabled?.(false);
             },
