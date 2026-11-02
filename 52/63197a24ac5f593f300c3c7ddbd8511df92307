@@ -1,0 +1,14 @@
+integration-tests/tests/recording.spec.ts
+  h_9cf21c851a7c99 1,3,6-9,32,51-52,130-430
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5263197a24ac5f593f300c3c7ddbd8511df92307",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
