@@ -131,11 +131,6 @@ const envVariableGroups: EnvVariableGroup[] = [
         format: 'raw',
       },
       {
-        name: 'DEVICE_SELECTION',
-        sourcePath: 'meetingRoomSettings.allowDeviceSelection',
-        format: 'raw',
-      },
-      {
         name: 'MEETING_ROOM_ALLOW_ADVANCED_SETTINGS',
         sourcePath: 'meetingRoomSettings.allowSettings',
         format: 'raw',

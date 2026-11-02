@@ -136,8 +136,8 @@ instance:
       value: '/oauth2/v1/token'
     - name: AUTH_INTROSPECTION_TIMEOUT_MS
       value: '5000'
-    - name: GOLLUM_BASE_URL
-      secret: GOLLUM_BASE_URL
+    - name: KIBANA_BASE_URL
+      secret: KIBANA_BASE_URL
 debug:
   # Command `vcr debug` uses to start the app.
   entrypoint: [node, bundle.cjs]

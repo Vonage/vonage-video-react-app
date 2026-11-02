@@ -2,7 +2,9 @@ export type * from './Prettify';
 export { SPY_MARK, type Mockable } from './Mockable';
 export {
   ClientLogEventSchema,
+  ClientLogSessionSchema,
   type ClientLogEvent,
+  type ClientLogSession,
   type SerializedError,
 } from '../schemas/ClientLogEvent';
 export type * from './DecodedSessionId';

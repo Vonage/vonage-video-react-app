@@ -10,7 +10,7 @@ type EmojiDataType = {
 };
 
 export type UseEmojiProps = {
-  signal: ((data: SignalType) => void) | undefined;
+  signal: ((data: SignalType) => Promise<void>) | undefined;
   getConnectionId: () => string | undefined;
 };
 
@@ -29,7 +29,7 @@ export type EmojiWrapper = {
 /**
  * React hook to queue emojis into an array for display and provides functions for sending and receiving emojis.
  * @param {UseEmojiProps}  props - props for the hook
- *  @property {((data: SignalType) => void) | undefined} signal - function to send signal to all participants
+ *  @property {((data: SignalType) => Promise<void>) | undefined} signal - function to send signal to all participants
  *  @property {() => string | undefined} getConnectionId - get the connection ID of the current user
  * @returns {UseEmoji} returned object
  *  @property {(emoji: string) => void} sendEmoji - function to send emojis
@@ -52,7 +52,7 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
         }
 
         const data = JSON.stringify({ emoji, time: new Date().getTime() });
-        signal({ type: 'emoji', data });
+        signal({ type: 'emoji', data, retryAfterReconnect: false })?.catch(() => {});
       },
       500,
       { leading: true, trailing: false }

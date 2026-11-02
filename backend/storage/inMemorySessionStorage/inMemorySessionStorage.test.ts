@@ -82,6 +82,19 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
+  describe('setSession idempotency', () => {
+    it('preserves archiveIds and captionsId when setSession is called again for the same room', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      await storage.setArchiveIds({ sessionId, archiveIds: ['archive-1'] });
+      await storage.setCaptionsId({ sessionId, captionsId: 'captions-1' });
+
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+
+      expect(await storage.getArchiveIds({ sessionId })).toEqual(['archive-1']);
+      expect(await storage.getCaptionsId({ sessionId })).toBe('captions-1');
+    });
+  });
+
   describe('setArchiveIds / getArchiveIds', () => {
     it('should set and retrieve archive ids', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
@@ -100,13 +113,13 @@ describe('InMemorySessionStorage', () => {
   describe('setServerRotationPending / getServerRotationPending', () => {
     it('should set and retrieve the pending flag', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.setServerRotationPending({ sessionId, pending: true });
-      expect(await storage.getServerRotationPending({ sessionId })).toBe(true);
+      await storage.setServerRotationPending({ sessionId, pending: 2 });
+      expect(await storage.getServerRotationPending({ sessionId })).toBe(2);
     });
 
     it('should silently no-op for an unknown sessionId', async () => {
       await expect(
-        storage.setServerRotationPending({ sessionId, pending: true })
+        storage.setServerRotationPending({ sessionId, pending: 1 })
       ).resolves.toBeUndefined();
     });
   });

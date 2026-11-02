@@ -17,6 +17,7 @@ const customWordList = [
   'Hydrateable',
   'firefoxUserPrefs',
   'gollum',
+  'kibana',
   'PWDEBUG',
   'unstub',
   'vonageAPIURL',

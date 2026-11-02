@@ -10,9 +10,9 @@ type RetryOptions = {
  * Executes an idempotent asynchronous callback with retry logic.
  * @param callback - The asynchronous callback to execute.
  * @param options - Configuration options for retries.
- * @param options.retries - Number of retry attempts after the initial attempt (default: 2).
- *                          Total attempts = retries + 1. Example: retries=2 means up to 3 total attempts.
- * @param options.delayMs - Delay in milliseconds between retry attempts (default: 200).
+ * @param options.retries - Number of retry attempts after the initial attempt (default: 4).
+ *                          Total attempts = retries + 1. Example: retries=4 means up to 5 total attempts.
+ * @param options.delayMs - Delay in milliseconds between retry attempts (default: 600).
  * @param options.onRetry - Optional callback invoked on each retry with the error and attempt number.
  * @returns The result of the successful callback execution.
  * @throws Will throw the last encountered error if all retries fail.
@@ -24,7 +24,7 @@ async function idempotentCallbackWithRetry<T>(
   callback: () => Promise<T>,
   options: RetryOptions = {}
 ): Promise<T> {
-  const { retries = 2, delayMs = 200, onRetry } = options;
+  const { retries = 4, delayMs = 600, onRetry } = options;
   const maxAttempts = retries + 1;
 
   let attempt = 1;

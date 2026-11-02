@@ -5,6 +5,10 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import VividIcon from '@ui/components/VividIcon';
 import ToolbarButton from '../ToolbarButton';
 
+export const testIds = {
+  button: 'advanced-settings-button',
+} as const;
+
 export type AdvancedSettingsButtonProps = {
   isOverflowButton?: boolean;
 };
@@ -30,19 +34,13 @@ const AdvancedSettingsButton = ({
       aria-label={t('advancedSettings.ariaLabel')}
     >
       <ToolbarButton
-        data-testid="advanced-settings-button"
-        sx={{
-          marginTop: '0px',
-          marginRight: '12px',
-        }}
+        data-testid={testIds.button}
         onClick={handleClick}
         icon={
           <VividIcon
             name="gear-solid"
             customSize={-5}
-            style={{
-              color: isOpen ? 'var(--vera-secondary-light)' : 'var(--vera-on-secondary-light)',
-            }}
+            className={isOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'}
           />
         }
         isOverflowButton={isOverflowButton}

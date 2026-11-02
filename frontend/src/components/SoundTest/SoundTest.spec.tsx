@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { act, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import VividIcon from '@ui/components/VividIcon';
-import SoundTest from './SoundTest';
+import SoundTest, { testIds } from './SoundTest';
 import { nativeDevices } from '../../utils/mockData/device';
 import { makeTestProvider } from '@test/providers';
 import { ReactElement } from 'react';
@@ -40,7 +40,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    const renderedSoundTest = screen.getByTestId('soundTest');
+    const renderedSoundTest = screen.getByTestId(testIds.button);
 
     expect(renderedSoundTest).toBeInTheDocument();
   });
@@ -52,7 +52,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    const renderedSoundTest = screen.getByTestId('soundTest');
+    const renderedSoundTest = screen.getByTestId(testIds.button);
     act(() => {
       renderedSoundTest.click();
     });
@@ -90,7 +90,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    const renderedSoundTest = screen.getByTestId('soundTest');
+    const renderedSoundTest = screen.getByTestId(testIds.button);
     act(() => {
       renderedSoundTest.click();
     });
@@ -106,7 +106,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    expect(screen.getByTestId('soundTestLabel')).toHaveClass('text-vera-body-extended');
+    expect(screen.getByTestId(testIds.label)).toHaveClass('text-vera-body-extended');
   });
 
   it('does not throw if setSinkId is undefined', () => {
@@ -123,7 +123,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    const renderedSoundTest = screen.getByTestId('soundTest');
+    const renderedSoundTest = screen.getByTestId(testIds.button);
     act(() => {
       renderedSoundTest.click();
     });
@@ -139,7 +139,7 @@ describe('SoundTest', () => {
       </SoundTest>
     );
 
-    const renderedSoundTest = screen.getByTestId('soundTest');
+    const renderedSoundTest = screen.getByTestId(testIds.button);
     act(() => {
       renderedSoundTest.click();
     });
