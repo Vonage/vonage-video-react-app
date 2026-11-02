@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Connection } from '@vonage/client-sdk-video';
 import throttle from '@common/execution/throttle';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
@@ -38,6 +38,16 @@ export type EmojiWrapper = {
  */
 const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
   const [emojiQueue, setEmojiQueue] = useState<EmojiWrapper[]>([]);
+
+  const displayTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  useEffect(() => {
+    const timers = displayTimersRef.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
 
   /**
    * Sends an emoji to all participants in the room.
@@ -107,7 +117,14 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
     ({ data, from: sendingConnection }: SignalEvent, subscriberWrappers: SubscriberWrapper[]) => {
       if (data && sendingConnection) {
         const senderName = getSenderName(sendingConnection, subscriberWrappers) ?? '';
-        const { emoji, time }: EmojiDataType = JSON.parse(data);
+
+        let emojiData: EmojiDataType;
+        try {
+          emojiData = JSON.parse(data);
+        } catch {
+          return;
+        }
+        const { emoji, time } = emojiData;
 
         const emojiWrapper: EmojiWrapper = {
           name: senderName,
@@ -116,9 +133,11 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
         };
         setEmojiQueue((previousEmojiQueue) => [...previousEmojiQueue, emojiWrapper]);
 
-        setTimeout(() => {
+        const timer = setTimeout(() => {
+          displayTimersRef.current.delete(timer);
           setEmojiQueue((previousEmojiQueue) => previousEmojiQueue.slice(1));
         }, EMOJI_DISPLAY_DURATION);
+        displayTimersRef.current.add(timer);
       }
     },
     [getSenderName]
