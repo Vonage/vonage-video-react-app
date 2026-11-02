@@ -1,0 +1,14 @@
+frontend/src/utils/helpers/getSubscribersInDisplayOrder/getSubscribersInDisplayOrder.ts
+  h_c939f8fae0de97 112-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bfcb11088d2701cdde363382fcf5453527323dfd",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
