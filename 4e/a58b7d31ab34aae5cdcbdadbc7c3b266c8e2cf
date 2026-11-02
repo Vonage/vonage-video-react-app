@@ -1,0 +1,25 @@
+frontend/src/Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices/useSyncPublisherDevices.ts
+  s_3cdb86436cb45c::t_02e54ac223bb34 61
+  s_3cdb86436cb45c::t_8a49a39b36b21c 37
+  s_3cdb86436cb45c::t_9206e1f1192725 36
+  s_3cdb86436cb45c::t_8d165d3662bad5 38
+  s_3cdb86436cb45c::t_40d8e0df015fe7 60
+  s_3cdb86436cb45c::t_61e59aacfcda31 62
+  s_3cdb86436cb45c::t_6df1a7ac1d2ef6 30,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4ea58b7d31ab34aae5cdcbdadbc7c3b266c8e2cf",
+  "prompts": {},
+  "sessions": {
+    "s_3cdb86436cb45c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5cdb08b4-f1f3-49c5-b442-9d06b33aad8c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
