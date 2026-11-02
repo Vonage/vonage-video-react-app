@@ -138,7 +138,7 @@ describe('MenuMoreOptions', () => {
     );
   });
 
-  it('disables precall network test on Firefox even when video media processor is supported', () => {
+  it('disables precall network test and video effects on Firefox even when media processor is supported', () => {
     Object.defineProperty(navigator, 'userAgent', {
       configurable: true,
       value: FIREFOX_UA,
@@ -149,7 +149,10 @@ describe('MenuMoreOptions', () => {
       'aria-disabled',
       'true'
     );
-    expect(screen.getByText(/video effects/i).closest('li')).not.toHaveAttribute('aria-disabled');
+    expect(screen.getByText(/video effects/i).closest('li')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
   });
 
   it('shows an unsupported-feature tooltip for disabled menu items', async () => {

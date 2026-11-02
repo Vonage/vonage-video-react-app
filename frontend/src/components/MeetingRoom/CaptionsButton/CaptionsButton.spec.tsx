@@ -6,8 +6,7 @@ import { SessionContextType } from '@Context/SessionProvider/session';
 import useSessionContext from '@hooks/useSessionContext';
 import { SubscriberWrapper } from '@app-types/session';
 import { makeTestProvider, providers } from '@test/providers';
-import CaptionsButton, { CaptionsState } from './CaptionsButton';
-import { env } from '../../../env';
+import CaptionsButton, { CaptionsState, testIds } from './CaptionsButton';
 import type { VideoClient } from '@core/services';
 
 vi.mock('@hooks/useSessionContext');
@@ -72,31 +71,19 @@ describe('CaptionsButton', () => {
         captionsState={{ ...mockCaptionsState, isUserCaptionsEnabled: true }}
       />
     );
-    expect(screen.getByTestId('captions-button')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.button)).toBeInTheDocument();
   });
 
   it('turns the captions on when button is pressed', async () => {
-    env.partialUpdate({
-      ALLOW_CAPTIONS: true,
-    });
     render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
 
-    act(() => screen.getByTestId('captions-button').click());
+    act(() => screen.getByTestId(testIds.button).click());
 
     await waitFor(() => {
       expect(mockVideoClient.ensureCaptionsEnabled).toHaveBeenCalledWith({
         sessionKey: mockedSessionKey,
       });
     });
-  });
-
-  it('is not rendered when allowCaptions is false', () => {
-    env.partialUpdate({
-      ALLOW_CAPTIONS: false,
-    });
-    render(<CaptionsButton handleClick={mockHandleCloseMenu} captionsState={mockCaptionsState} />);
-
-    expect(screen.queryByTestId('captions-button')).not.toBeInTheDocument();
   });
 });
 

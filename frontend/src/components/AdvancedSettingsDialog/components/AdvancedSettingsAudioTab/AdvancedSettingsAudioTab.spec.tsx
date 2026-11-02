@@ -80,6 +80,16 @@ describe('AdvancedSettingsAudioTab', () => {
     expect(screen.getByRole('checkbox', { name: /enable opus dtx/i })).not.toBeChecked();
   });
 
+  it('hides advanced noise suppression when the media processor is not supported', () => {
+    vi.mocked(hasMediaProcessorSupport).mockReturnValue(false);
+
+    render(<AdvancedSettingsAudioTab />);
+
+    expect(
+      screen.queryByRole('checkbox', { name: /advanced noise suppression/i })
+    ).not.toBeInTheDocument();
+  });
+
   it('applies advanced noise suppression to the running publisher, not just the store', async () => {
     expect.assertions(4);
 

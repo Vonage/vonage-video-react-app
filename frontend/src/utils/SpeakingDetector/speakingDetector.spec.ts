@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SpeakingDetector from './speakingDetector';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { waitForEvent } from '../../../../libs/common/testNode/helpers';
+import { waitForEvent } from '../../../../libs/common/node-test/helpers';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 import { mediaDevicesEnvelop } from '@core/interceptors';

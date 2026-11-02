@@ -11,14 +11,13 @@ import { isSinkIdSupported } from '@web/platform';
  * It also checks if the current selected devices are still valid with the new media devices info and updates the selection if necessary.
  */
 function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
-  return async (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
-    const meta = store.getMetadata();
+  return (store: DevicesAPI): Promise<MediaDeviceInfoJSON[]> => {
     const { getMediaDevicesInfo } = getMediaDevicesInfo$(store);
 
     // cancel ongoing update
-    void meta.loadingMediaDevices?.cancel();
+    void store.metadata.loadingMediaDevices?.cancel();
 
-    meta.loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
+    const loadingMediaDevices = new CancelablePromise<MediaDeviceInfoJSON[]>(
       async (resolve, reject, { isCanceled }) => {
         try {
           const mediaDeviceInfo = await getMediaDevicesInfo();
@@ -54,7 +53,9 @@ function syncMediaDevicesInfo(this: DevicesAPI['actions']) {
       }
     );
 
-    return meta.loadingMediaDevices;
+    store.metadata.loadingMediaDevices = loadingMediaDevices;
+
+    return loadingMediaDevices;
   };
 }
 

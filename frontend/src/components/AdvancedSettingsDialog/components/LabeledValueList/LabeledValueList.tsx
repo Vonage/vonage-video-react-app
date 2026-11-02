@@ -13,7 +13,7 @@ export type LabeledValueListProps = {
 const LabeledValueList = ({ title, items }: LabeledValueListProps): ReactElement => {
   return (
     <div className="flex flex-col gap-1.5">
-      <h4 className="font-vera-plain text-vera-body-extended-semibold text-vera-secondary">
+      <h4 className="font-vera-plain text-vera-body-extended-semibold text-vera-text-secondary">
         {title}
       </h4>
 
@@ -23,10 +23,10 @@ const LabeledValueList = ({ title, items }: LabeledValueListProps): ReactElement
             key={item.label}
             className="flex items-center justify-between gap-2 border-b border-vera-border py-1"
           >
-            <span className="font-vera-plain text-vera-body-base text-vera-tertiary">
+            <span className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
               {item.label}
             </span>
-            <span className="font-vera-plain text-vera-body-base text-vera-secondary">
+            <span className="font-vera-plain text-vera-body-base text-vera-text-secondary">
               {item.value}
             </span>
           </li>

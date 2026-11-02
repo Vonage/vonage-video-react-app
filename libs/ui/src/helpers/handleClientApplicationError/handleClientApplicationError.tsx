@@ -52,7 +52,7 @@ function makeErrorDetails(error: ApplicationClientError) {
       <Collapsible.Details
         className={classNames(
           'flex flex-col gap-3 whitespace-pre-line w-[calc(100%+34px)]',
-          'whitespace-pre-wrap text-vera-tertiary'
+          'whitespace-pre-wrap text-vera-text-tertiary'
         )}
       >
         {error.issues.map((issue: unknown, index) => {
@@ -60,7 +60,7 @@ function makeErrorDetails(error: ApplicationClientError) {
 
           return (
             <div key={index} className="text-vera-body-base">
-              <span className="text-vera-secondary">
+              <span className="text-vera-text-secondary">
                 ✖ {isZodIssue ? issueLabel(issue) : (issue as string)}
               </span>
 

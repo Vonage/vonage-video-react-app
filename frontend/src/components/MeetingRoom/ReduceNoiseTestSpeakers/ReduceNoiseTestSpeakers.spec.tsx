@@ -5,6 +5,7 @@ import { makeTestProvider } from '@test/providers';
 import { makeMediaDeviceInfos } from '@web-test/fixtures';
 import { mediaDevices$ } from '@core/stores';
 import ReduceNoiseTestSpeakers from './ReduceNoiseTestSpeakers';
+import { testIds as soundTestTestIds } from '../../SoundTest/SoundTest';
 
 describe('ReduceNoiseTestSpeakers', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('ReduceNoiseTestSpeakers', () => {
 
     render(<ReduceNoiseTestSpeakers />);
 
-    expect(screen.queryByTestId('soundTest')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(soundTestTestIds.button)).not.toBeInTheDocument();
   });
 
   it('renders the SoundTest if audiooutput devices are available', () => {
@@ -34,7 +35,7 @@ describe('ReduceNoiseTestSpeakers', () => {
 
     render(<ReduceNoiseTestSpeakers />);
 
-    expect(screen.getByTestId('soundTest')).toBeInTheDocument();
+    expect(screen.getByTestId(soundTestTestIds.button)).toBeInTheDocument();
   });
 });
 

@@ -28,6 +28,16 @@ const bridgeAttributesMap = {
     type: 'string',
     default: '',
   }),
+
+  /**
+   * Fetch `RequestCredentials` for API calls: 'include' (default), 'same-origin' or 'omit'.
+   * Ignored when a `videoClient` is set on the element.
+   */
+  credentials: new BridgeAttributeMeta({
+    key: 'credentials',
+    type: 'string',
+    default: 'include',
+  }),
 } as const;
 
 export default bridgeAttributesMap;

@@ -5,6 +5,11 @@ import ToolbarButton from '../ToolbarButton';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  button: 'layout-button',
+  icon: 'ViewSidebarIcon',
+} as const;
+
 export type LayoutButtonProps = {
   isScreenSharePresent: boolean;
   isPinningPresent: boolean;
@@ -51,40 +56,33 @@ const LayoutButton = ({
     return isGrid ? t('layout.tooltip.switchToActiveSpeaker') : t('layout.tooltip.switchToGrid');
   };
 
+  const iconColorClassName = isDisabled
+    ? 'text-vera-secondary-light'
+    : 'text-vera-on-secondary-light';
+
   return (
     <Tooltip title={getTooltipTitle()} aria-label={t('recording.tooltip.ariaLabel')}>
       <ToolbarButton
         onClick={handleClick}
-        data-testid="layout-button"
+        data-testid={testIds.button}
         icon={
           !isGrid ? (
             <VividIcon
               name="layout-2-solid"
               customSize={-5}
-              data-testid="ViewSidebarIcon"
-              style={{
-                color: isDisabled
-                  ? 'var(--vera-secondary-light)'
-                  : 'var(--vera-on-secondary-light)',
-              }}
+              data-testid={testIds.icon}
+              className={iconColorClassName}
             />
           ) : (
             <VividIcon
               name="apps-solid"
               customSize={-5}
-              data-testid="ViewSidebarIcon"
-              style={{
-                color: isDisabled
-                  ? 'var(--vera-secondary-light)'
-                  : 'var(--vera-on-secondary-light)',
-              }}
+              data-testid={testIds.icon}
+              className={iconColorClassName}
             />
           )
         }
-        sx={{
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-          marginTop: isOverflowButton ? '0px' : '4px',
-        }}
+        className={isDisabled ? 'cursor-not-allowed!' : 'cursor-pointer!'}
         isOverflowButton={isOverflowButton}
       />
     </Tooltip>

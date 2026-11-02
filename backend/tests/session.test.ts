@@ -1,97 +1,53 @@
-/* eslint-disable @typescript-eslint/await-thenable */
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import closeServer from './helpers/closeServer';
+import type { Mock } from 'vitest';
 import request from 'supertest';
 import { Server } from 'http';
 import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 import getSessionStorageService from '../sessionStorageService';
+import mockVonageVideoSdk, {
+  DEFAULT_CAPTIONS_ID as validCaptionsId,
+  DEFAULT_VALID_SESSION_ID as validSessionId,
+} from './helpers/mockVonageVideoSdk';
 
-// base64('2~vonageAppId~0.0.0.0~2024-01-01') — valid format for decodeSessionId
-const validSessionId = '1_Mn52b25hZ2VBcHBJZH4wLjAuMC4wfjIwMjQtMDEtMDE=';
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiIxX01YNWtNVEkxWWpGbU1DMWtZMkl5TFRRM05EY3RZamxrWVMxa09ESTVOMkk0WkdFME9UZC1makUzTnpVM09UWXhOVGd3TWpkLWFqaElOU3RYZEV4VU5sYzBZbE5vZGs5UVNYVllVRmRDZm41LSIsInJvb21OYW1lIjoiYXdlc29tZS1yb29tLW5hbWUiLCJpYXQiOjE3NzU5NjMzMjh9.QcNVXp6gatPTV82IJa8VgDG6rOLBkFjU3r7j_BcxM-c';
 
-await jest.unstable_mockModule('../helpers/config', mockOpentokConfig);
+vi.doMock('../helpers/config', mockOpentokConfig);
 
-// Mock third-party Vonage SDKs only
-const actualAuth = await import('@vonage/auth');
-const actualVideo = await import('@vonage/video');
+await mockVonageVideoSdk({
+  validSessionId,
+  videoOverrides: {
+    stopArchive: (archiveId: string) => {
+      if (archiveId === 'b8-c9-d10') {
+        return Promise.reject(new Error('invalid archive'));
+      }
 
-await jest.unstable_mockModule('@vonage/auth', () => ({
-  ...actualAuth,
-  Auth: jest.fn().mockImplementation(() => ({ applicationId: 'vonageAppId' })),
-}));
-
-await jest.unstable_mockModule('@vonage/video', () => ({
-  ...actualVideo,
-  Video: jest.fn().mockImplementation(() => ({
-    createSession: jest
-      .fn<() => Promise<{ sessionId: string }>>()
-      .mockResolvedValue({ sessionId: validSessionId }),
-    generateClientToken: jest.fn().mockReturnValue('someToken'),
-    startArchive: jest
-      .fn<(sessionId: string) => Promise<{ id: string; status: string }>>()
-      .mockResolvedValue({ id: 'archiveId', status: 'started' }),
-    stopArchive: jest
-      .fn<(archiveId: string) => Promise<{ id: string; status: string }>>()
-      .mockImplementation((archiveId: string) => {
-        if (archiveId === 'b8-c9-d10') {
-          return Promise.reject(new Error('invalid archive'));
-        }
-
-        return Promise.resolve({ id: archiveId, status: 'stopped' });
-      }),
-    searchArchives: jest
-      .fn<(filters: { sessionId: string }) => Promise<{ items: Archive[]; count: number }>>()
-      .mockResolvedValue({
+      return Promise.resolve({ id: archiveId, status: 'stopped' });
+    },
+    searchArchives: () =>
+      Promise.resolve({
         items: [{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[],
         count: 2,
       }),
-    enableCaptions: jest
-      .fn<() => Promise<{ captionsId: string }>>()
-      .mockResolvedValue({ captionsId: '123e4567-a12b-41a2-a123-123456789012' }),
-    disableCaptions: jest
-      .fn<(captionsId: string) => Promise<void>>()
-      .mockImplementation((captionsId: string) => {
-        if (captionsId === 'wrongCaptionId') {
-          return Promise.reject(new Error('Invalid caption ID'));
-        }
+    disableCaptions: (captionsId: string) => {
+      if (captionsId === 'wrongCaptionId') {
+        return Promise.reject(new Error('Invalid caption ID'));
+      }
 
-        return Promise.resolve(undefined);
-      }),
-  })),
-}));
-
-await jest.unstable_mockModule('../videoService/opentokVideoService.ts', () => {
-  return {
-    default: jest.fn().mockImplementation(() => {
-      return {
-        startArchive: jest.fn<() => Promise<string>>().mockResolvedValue('archiveId'),
-        stopArchive: jest.fn<() => Promise<string>>().mockRejectedValue('invalid archive'),
-        enableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('captionsId'),
-        disableCaptions: jest.fn<() => Promise<string>>().mockResolvedValue('invalid caption'),
-        generateToken: jest
-          .fn<() => Promise<{ token: string; apiKey: string }>>()
-          .mockResolvedValue({
-            token: 'someToken',
-            apiKey: 'someApiKey',
-          }),
-        createSession: jest.fn<() => Promise<string>>().mockResolvedValue(validSessionId),
-        searchArchives: jest
-          .fn<() => Promise<Archive[]>>()
-          .mockResolvedValue([{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[]),
-      };
-    }),
-  };
+      return Promise.resolve(undefined);
+    },
+  },
 });
 
 const startServer = (await import('../server')).default;
 const sessionService = getSessionStorageService();
-type MockedVideoInstance = { startArchive: jest.Mock };
+type MockedVideoInstance = { startArchive: Mock };
 
 const { Video: VideoMock } = (await import('@vonage/video')) as unknown as {
-  Video: jest.Mock<(...args: unknown[]) => MockedVideoInstance>;
+  Video: Mock<unknown[], MockedVideoInstance>;
 };
 
 /**
@@ -118,9 +74,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
       });
     });
 
-    afterAll((done) => {
-      server.close(done);
-    });
+    afterAll(() => closeServer(server));
 
     describe('GET requests', () => {
       it('returns a 200 when creating a room', async () => {
@@ -195,7 +149,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
         });
 
         it('returns a 200 when disabling captions in a room', async () => {
-          const captionsId = '123e4567-a12b-41a2-a123-123456789012';
+          const captionsId = validCaptionsId;
           const res = await request(server)
             .post(`/session/${roomName}/${captionsId}/disableCaptions`)
             .set('Content-Type', 'application/json');
@@ -218,6 +172,15 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .set('Accept', 'application/json');
 
           expect(res.statusCode).toEqual(502);
+        });
+
+        it('returns a 404 when stopping captions in a non-existent room', async () => {
+          const invalidRoomName = 'nonExistingRoomName';
+          const captionsId = validCaptionsId;
+          const res = await request(server)
+            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
+            .set('Content-Type', 'application/json');
+          expect(res.statusCode).toEqual(404);
         });
       });
 
@@ -293,7 +256,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .send(
               createCaptionsHookPayload({
                 status: 'started',
-                captionId: 'captions-id-updated',
+                captionsId: 'captions-id-updated',
               })
             );
 
@@ -305,6 +268,40 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(captionsIdAfterIgnored).toEqual('captions-id-initial');
           expect(startedResponse.statusCode).toEqual(200);
           expect(captionsIdAfterStarted).toEqual('captions-id-updated');
+        });
+
+        it('accepts captions events that omit stream', async () => {
+          const { stream: _stream, ...payload } = createCaptionsHookPayload({
+            captionsId: 'captions-id-from-vonage',
+          });
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send(payload);
+
+          const captionsId = await sessionService.getCaptionsId({ sessionId: validSessionId });
+
+          expect(response.statusCode).toEqual(200);
+          expect(captionsId).toEqual('captions-id-from-vonage');
+        });
+
+        it('logs only the received keys when a captions event is invalid', async () => {
+          const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+          const response = await request(server)
+            .post('/v2/hooks/captions')
+            .set('Content-Type', 'application/json')
+            .send({ sessionId: validSessionId, secretValue: 'do-not-log' });
+
+          expect(response.statusCode).toEqual(400);
+          expect(warnSpy).toHaveBeenCalledWith(
+            '[hooks/captions] Invalid payload',
+            expect.objectContaining({ receivedKeys: ['sessionId', 'secretValue'] })
+          );
+          expect(JSON.stringify(warnSpy.mock.calls)).not.toContain('do-not-log');
+
+          warnSpy.mockRestore();
         });
 
         it('handles non-actionable, started, and stopped archive events', async () => {
@@ -351,7 +348,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
         it('ignores non-destroyed session events and cleans up on sessionDestroyed', async () => {
           await sessionService.setCaptionsId({
             sessionId: validSessionId,
-            captionsId: '123e4567-a12b-41a2-a123-123456789012',
+            captionsId: validCaptionsId,
           });
 
           await sessionService.setArchiveIds({
@@ -384,7 +381,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           });
 
           expect(ignoredResponse.statusCode).toEqual(200);
-          expect(captionsIdAfterIgnored).toEqual('123e4567-a12b-41a2-a123-123456789012');
+          expect(captionsIdAfterIgnored).toEqual(validCaptionsId);
           expect(archiveIdsAfterIgnored).toEqual(['archive-id-1']);
           expect(destroyedResponse.statusCode).toEqual(200);
           expect(captionsIdAfterDestroyed).toBeNull();
@@ -429,7 +426,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPending).toBe(true);
+            expect(serverRotationPending).toBe(1);
             expect(captionsIdAfterRotation).toEqual('captions-id-preserved');
             expect(archiveIdsAfterRotation).toEqual(['archive-id-active']);
           });
@@ -444,7 +441,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
 
             await sessionService.setServerRotationPending({
               sessionId: validSessionId,
-              pending: true,
+              pending: 1,
             });
 
             const response = await request(server)
@@ -457,8 +454,43 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             });
 
             expect(response.statusCode).toEqual(200);
-            expect(serverRotationPendingAfter).toBe(false);
+            expect(serverRotationPendingAfter).toBe(0);
             expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+          });
+
+          it('/hooks/archive stopped with name=transcription triggers startArchive with withTranscription=true', async () => {
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['transcription-archive-id'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId: validSessionId,
+              pending: 1,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(
+                createArchiveHookPayload({
+                  status: 'stopped',
+                  id: 'transcription-archive-id',
+                  name: 'transcription',
+                })
+              );
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                hasTranscription: true,
+                name: 'transcription',
+              })
+            );
           });
 
           it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
@@ -491,7 +523,7 @@ function getMockedVideoInstances(): MockedVideoInstance[] {
 
 function createCaptionsHookPayload(overrides: Partial<Record<string, unknown>> = {}) {
   return {
-    captionId: 'caption-id-1',
+    captionsId: 'caption-id-1',
     projectId: 'project-id-1',
     sessionId: validSessionId,
     status: 'started',

@@ -2,7 +2,7 @@ import { cleanup, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
-import LayoutButton from './LayoutButton';
+import LayoutButton, { testIds } from './LayoutButton';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 
 describe('LayoutButton', () => {
@@ -25,7 +25,7 @@ describe('LayoutButton', () => {
         },
       },
     });
-    expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.icon)).toBeInTheDocument();
   });
 
   it('should call the set layout mode function when triggered', async () => {
@@ -74,7 +74,7 @@ describe('LayoutButton', () => {
         },
       },
     });
-    expect(screen.getByTestId('ViewSidebarIcon')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.icon)).toBeInTheDocument();
   });
 
   it('should render the tooltip title that mentions switching to grid layout', async () => {

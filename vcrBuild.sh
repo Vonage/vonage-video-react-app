@@ -4,9 +4,16 @@ set -e
 # build artifact
 source ./env.sh
 
+# Remove once VIDSOL-1350 (#851) is merged into main. Comment-triggered deploys run the workflow
+# from the default branch, which still sets up yarn, so pnpm has to be provisioned here.
+PNPM_VERSION=12.11.2
+if [ "$(pnpm --version 2> /dev/null)" != "$PNPM_VERSION" ]; then
+  npm install --global "pnpm@$PNPM_VERSION"
+fi
+
 # run install skipping post install script which requires husky
-yarn install --production=false --ignore-scripts --frozen-lockfile
-yarn build
+pnpm install --prod=false --ignore-scripts --frozen-lockfile
+pnpm build
 
 # copy VCR manifest to the build output (FAIL if missing)
 if [ -f ./vcr-gha.yml ]; then

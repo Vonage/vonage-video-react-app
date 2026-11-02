@@ -3,7 +3,7 @@ import { Video, type SingleArchiveResponse, ArchiveMode } from '@vonage/video';
 import { Auth } from '@vonage/auth';
 import jwt from 'jsonwebtoken';
 import VideoClient from '.';
-import { TokenRole } from '@api-lib/types';
+import { TokenRole, type VideoClientConfig } from '@api-lib/types';
 
 vi.mock('@vonage/video');
 vi.mock('@vonage/auth');
@@ -499,10 +499,64 @@ describe('VideoClient', () => {
     });
   });
 
+  describe('constructor options', () => {
+    it('should reuse a provided Auth instance instead of building one', () => {
+      vi.clearAllMocks();
+
+      const providedAuth = Object.assign(Object.create(Auth.prototype), { apiKey: mockApiKey });
+      (Video as unknown as Mock).mockImplementation(() => ({}));
+
+      const videoClient = new VideoClient({ auth: providedAuth, videoParams: {} });
+
+      expect(videoClient.auth).toBe(providedAuth);
+      expect(Auth).not.toHaveBeenCalled();
+    });
+
+    it('should use the configured session signing secret and algorithm', () => {
+      const { videoClient } = createVideoClient({
+        sessionSigning: { secret: 'explicit-secret', algorithm: 'HS512' },
+      });
+
+      expect(videoClient._sessionSigning).toEqual({
+        secret: 'explicit-secret',
+        algorithm: 'HS512',
+      });
+    });
+
+    it('should sign with the application id when no secret is configured', () => {
+      const { videoClient } = createVideoClient({ authInstance: { applicationId: 'app-id' } });
+
+      expect(videoClient._sessionSigning).toEqual({ secret: 'app-id', algorithm: 'HS256' });
+    });
+
+    it('should resolve a function default against the payload', async () => {
+      const { videoClient, mocks } = createVideoClient({
+        handlersDefaults: {
+          startArchive: ({ sessionKey }: { sessionKey: string }) => ({
+            archiveOptions: { name: `archive-${sessionKey.length}` },
+          }),
+        },
+      });
+
+      mocks.video.startArchive.mockResolvedValue({ id: 'archive-id' } as SingleArchiveResponse);
+
+      await videoClient.startArchive({ sessionKey: mockSessionKey });
+
+      expect(mocks.video.startArchive).toHaveBeenCalledWith(mockSessionId, {
+        name: `archive-${mockSessionKey.length}`,
+      });
+    });
+  });
+
   /**
    * Helper function to create a VideoClient instance with mocked dependencies
    */
-  function createVideoClient(options?: { videoParams?: object }) {
+  function createVideoClient(options?: {
+    videoParams?: object;
+    sessionSigning?: VideoClientConfig['sessionSigning'];
+    handlersDefaults?: VideoClientConfig['handlersDefaults'];
+    authInstance?: Partial<Auth>;
+  }) {
     const mockVideoInstance = {
       createSession: vi.fn(),
       startArchive: vi.fn(),
@@ -515,7 +569,7 @@ describe('VideoClient', () => {
       generateClientToken: vi.fn().mockReturnValue('mock-token-12345'),
     };
 
-    const mockAuthInstance = { apiKey: mockApiKey } as Auth;
+    const mockAuthInstance = { apiKey: mockApiKey, ...options?.authInstance } as Auth;
 
     (Auth as unknown as Mock).mockImplementation(() => mockAuthInstance);
     (Video as unknown as Mock).mockImplementation(() => mockVideoInstance);
@@ -527,6 +581,8 @@ describe('VideoClient', () => {
         apiSecret: mockApiSecret,
       },
       videoParams: options?.videoParams || {},
+      ...(options?.sessionSigning ? { sessionSigning: options.sessionSigning } : {}),
+      ...(options?.handlersDefaults ? { handlersDefaults: options.handlersDefaults } : {}),
     });
 
     return {

@@ -82,7 +82,7 @@ const buildRoomZip = () => {
 };
 
 /**
- * Builds the @vonage/video-common library package.
+ * Builds the @vonage/video-reference-apps-common library package.
  */
 const buildCommon = () => {
   runCommand('nx run common:build');
@@ -95,7 +95,7 @@ const buildCommon = () => {
  * - No args: Build both frontend and backend
  * - frontend: Build only frontend
  * - backend: Build only backend
- * - common: Build @vonage/video-common library
+ * - common: Build @vonage/video-reference-apps-common library
  * - room: Build VeraRoom web component
  * - room zip: Build and zip VeraRoom artifact
  *
@@ -103,7 +103,7 @@ const buildCommon = () => {
  * - yarn build           (build frontend and backend)
  * - yarn build frontend  (build only frontend)
  * - yarn build backend   (build only backend)
- * - yarn build common   (build @vonage/video-common library)
+ * - yarn build common   (build @vonage/video-reference-apps-common library)
  * - yarn build room      (build VeraRoom web component)
  * - yarn build room zip  (build and zip VeraRoom artifact)
  */

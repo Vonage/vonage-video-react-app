@@ -9,7 +9,11 @@ export type FeedbackConfig = {
   epicLink?: string;
   epicUrl?: string;
   severityId?: string;
+};
+
+export type LoggerConfig = {
   gollumUrl?: string;
+  loggerVerbose: boolean;
 };
 
 export type VonageConfig = {
@@ -28,10 +32,12 @@ export type OpentokConfig = {
 export type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
 
 import type { AuthConfig } from '../middleware/authMiddleware/schemas/AuthConfig.schema';
+import type { CorsConfig } from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 
 export type Config = (VonageConfig | OpentokConfig) &
   FeedbackConfig &
-  AuthConfig & {
+  LoggerConfig &
+  AuthConfig &
+  CorsConfig & {
     sessionKeySecret: string;
-    loggerVerbose: boolean;
   };

@@ -30,7 +30,7 @@ function runAllTests(lib: LibraryName) {
  */
 function runSpecificTest(lib: LibraryName, testPattern: string) {
   console.log(`\n🤖 Running specific ${lib} test: ${testPattern}\n`);
-  execSync(`yarn nx test ${lib} --run ${testPattern}`, {
+  execSync(`yarn nx test ${lib} --reporter=verbose --run ${testPattern}`, {
     stdio: 'inherit',
   });
 }

@@ -18,9 +18,12 @@ function makeKey(resource: StorageResource, id: string): string {
 
 class VcrSessionStorage implements SessionStorage {
   dbState = vcr.getInstanceState();
-  private async setKeyExpiry(key: string): Promise<void> {
+  private async setKeyExpiry(
+    key: string,
+    expirationTime: number = ENTRY_EXPIRATION_TIME
+  ): Promise<void> {
     // if you try to access a room after the expiry time, you will land on a different session.
-    await this.dbState.expire(key, ENTRY_EXPIRATION_TIME);
+    await this.dbState.expire(key, expirationTime);
   }
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
     const key = makeKey(StorageResource.SessionKeyByRoomName, roomName);
@@ -134,22 +137,21 @@ class VcrSessionStorage implements SessionStorage {
     pending,
   }: {
     sessionId: string;
-    pending: boolean;
+    pending: number;
   }): Promise<void> {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
-    if (!pending) {
+    if (pending <= 0) {
       await this.dbState.delete(key);
       return;
     }
-    // Short TTL — if archive hook doesn't arrive within 30s, the flag is stale anyway.
-    await this.dbState.set(key, '1');
+    await this.dbState.set(key, String(pending));
     await this.dbState.expire(key, 30);
   }
 
-  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<boolean> {
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
     const value: string | null = await this.dbState.get(key);
-    return value === '1';
+    return value ? Number.parseInt(value, 10) : 0;
   }
 }
 export default VcrSessionStorage;

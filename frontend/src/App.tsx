@@ -16,13 +16,13 @@ import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary'
 import WaitingRoomSkeleton from '@pages/WaitingRoom/WaitingRoom.skeleton';
 import MeetingRoomSkeleton from '@pages/MeetingRoom/MeetingRoom.skeleton';
 import SessionProvider from '@Context/SessionProvider/session';
-import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 import { ErrorPage } from './pages/ErrorBoundary';
 import { runtime$ } from '@core/stores';
 import { videoClient } from './services';
 import { NotificationsContainer } from '@ui/components';
 import { BackendLoggingProvider } from './logger/providers';
 import screenShare$ from '@Context/screenShare/screenShare$';
+import LoggerSynchronizer from '@Context/LoggerSynchronizer';
 
 const InnerApp = () => {
   return (
@@ -50,8 +50,8 @@ const InnerApp = () => {
                   <SuspenseBoundary fallback={<MeetingRoomSkeleton />}>
                     <RoomProvider>
                       <SessionProvider>
-                        <LoggerSynchronizer />
                         <PublisherProvider>
+                          <LoggerSynchronizer />
                           <screenShare$.Provider>
                             <MeetingRoom />
                           </screenShare$.Provider>

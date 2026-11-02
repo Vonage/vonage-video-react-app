@@ -35,6 +35,23 @@ describe('AdvancedSettingsCodecPriorityField', () => {
       .getAllByRole('listitem')
       .map((item) => item.textContent);
 
-    expect(codecItems).toEqual(expect.arrayContaining(['1VP9', '2VP8', '3H.264']));
+    expect(codecItems).toEqual(['1VP9', '2VP8', '3H.264']);
+  });
+
+  it('reorders codecs with the move buttons, so the control works without a pointer', () => {
+    const setCodecPriority = vi.fn();
+
+    render(
+      <AdvancedSettingsCodecPriorityField
+        codecPriority={['vp9', 'vp8', 'h264']}
+        setCodecPriority={setCodecPriority}
+      />
+    );
+
+    screen.getByRole('button', { name: 'Move VP9 down' }).click();
+    expect(setCodecPriority).toHaveBeenCalledWith(['vp8', 'vp9', 'h264']);
+
+    screen.getByRole('button', { name: 'Move H.264 up' }).click();
+    expect(setCodecPriority).toHaveBeenCalledWith(['vp9', 'h264', 'vp8']);
   });
 });

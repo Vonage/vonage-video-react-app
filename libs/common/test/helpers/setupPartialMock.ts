@@ -1,6 +1,6 @@
 import isFunction from '@common/assertions/isFunction';
 import { type Mockable, SPY_MARK } from '@common/types/Mockable';
-import type { Any } from 'react-hooks-global-states';
+import type { Any } from '@common/types';
 import { vi, afterEach } from 'vitest';
 
 const RESTORES = Symbol('setupPartialMock:restores');

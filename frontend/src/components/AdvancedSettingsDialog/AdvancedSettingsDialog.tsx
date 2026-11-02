@@ -40,7 +40,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
     >
       <div className="flex h-full flex-col bg-vera-surface">
         <div className="relative border-b border-vera-border bg-vera-surface px-6 pb-4 pt-6">
-          <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+          <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
             {t('advancedSettings.title')}
           </h2>
           <button

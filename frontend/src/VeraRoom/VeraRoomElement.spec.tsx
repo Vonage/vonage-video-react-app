@@ -130,3 +130,22 @@ it('waits for isBridgeReady before dispatching when bridge is not yet ready', as
 
   expect(partialUpdateSpy).toHaveBeenCalledWith({ language: 'es' });
 });
+
+it('pushes a host-provided videoClient into the bridge once it is ready', async () => {
+  const element = new VeraRoomElement();
+  document.body.appendChild(element);
+
+  await element.isBridgeReady.promise;
+
+  const partialUpdateSpy = vi.fn();
+  element.context!.current.actions.partialUpdate = partialUpdateSpy;
+
+  const hostVideoClient = { createSession: vi.fn() } as never;
+  element.videoClient = hostVideoClient;
+  await element.isBridgeReady.promise;
+
+  expect(element.videoClient).toBe(hostVideoClient);
+  expect(partialUpdateSpy).toHaveBeenCalledWith({ videoClient: hostVideoClient });
+
+  element.remove();
+});

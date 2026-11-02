@@ -27,12 +27,15 @@ const useSyncPublisherDevices = (
               const didChanged = getPublisher()?.getVideoSource()?.deviceId !== input;
               if (didChanged) void attempt(() => getPublisher()?.setVideoSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }
 
               if (hasDevices('videoinput')) return;
+              attempt(() => {
+                getPublisher()?.publishVideo(false);
+              });
               args.setIsVideoEnabled?.(false);
             },
             {
@@ -48,12 +51,15 @@ const useSyncPublisherDevices = (
               const didChanged = getPublisher()?.getAudioSource()?.id !== input;
               if (didChanged) void attempt(() => getPublisher()?.setAudioSource(input!));
 
-              const { isStoreReady } = mediaDevices$.getMetadata();
+              const { isStoreReady } = mediaDevices$.metadata;
               if (isStoreReady.status === 'pending') {
                 await isStoreReady;
               }
 
               if (hasDevices('audioinput')) return;
+              attempt(() => {
+                getPublisher()?.publishAudio(false);
+              });
               args.setIsAudioEnabled?.(false);
             },
             {

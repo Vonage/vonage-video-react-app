@@ -19,7 +19,7 @@ export default [
             'CallExpression[callee.name=/^(describe|it|test|xdescribe|xit|xtest|fdescribe|fit)$/], ' +
             'CallExpression[callee.object.name=/^(describe|it|test)$/][callee.property.name=/^(only|skip|each)$/]',
           message:
-            'tests/helpers is for test utilities only and is ignored by Jest. Move test suites into tests/ instead.',
+            'tests/helpers is for test utilities only and is ignored by Vitest. Move test suites into tests/ instead.',
         },
       ],
     },

@@ -41,13 +41,13 @@ yarn test
 yarn test:backend
 ```
 
-- For additional CLI options, see [jest docs](https://jestjs.io/docs/cli).
+- For additional CLI options, see [vitest docs](https://vitest.dev/guide/cli#options).
 
 ## Frontend Suite
 
 We have frontend tests using [vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro). We recommend using the [vitest VSCode integration](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) to run tests.
 
-For guidance on writing unit tests, see the [Test Instructions](../.github/instructions/test-files.instructions.md).
+For guidance on writing unit tests, see the **Test Authoring** section of [AGENTS.md](../AGENTS.md).
 
 Alternatively you can run the tests in the terminal:
 - To run frontend tests once:
