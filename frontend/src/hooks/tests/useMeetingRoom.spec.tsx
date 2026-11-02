@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { env } from '../../env';
 import type { VideoClient } from '@core/services';
+import frontendLogger from '../../logger';
 
 const mockSessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
 const validSessionKey =
@@ -129,6 +130,74 @@ describe('useMeetingRoom', () => {
         })
       );
     });
+  });
+
+  it('reports and redirects to goodbye (does not throw) when resolving the session before joining fails', async () => {
+    expect.assertions(2);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const joinFailure = new Error('create session failed');
+    mockCreateSessionMutate.mockRejectedValue(joinFailure);
+
+    renderHook(() => useMeetingRoom());
+
+    await waitFor(() => {
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      joinFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
+      })
+    );
+  });
+
+  it('reports and redirects to goodbye (does not throw) when connect() itself rejects', async () => {
+    expect.assertions(2);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const connectFailure = new Error('connect failed');
+    const mockJoinRoom = vi.fn().mockRejectedValue(connectFailure);
+
+    renderHook(() => useMeetingRoom(), {
+      sessionContext: {
+        __interceptor: (ctx) => {
+          if (ctx) ctx.joinRoom = mockJoinRoom;
+        },
+      },
+    });
+
+    await waitFor(() => {
+      if (reportErrorSpy.mock.calls.length === 0) {
+        throw new Error('reportError not called yet');
+      }
+    });
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      connectFailure,
+      expect.objectContaining({
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey: 'test-room',
+      })
+    );
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/goodbye/test-room',
+      expect.objectContaining({
+        state: expect.objectContaining({
+          header: expect.any(String),
+          caption: expect.any(String),
+        }),
+      })
+    );
   });
 
   it('does not navigate to goodbye when reconnecting is true', async () => {
