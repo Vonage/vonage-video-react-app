@@ -1,0 +1,14 @@
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_c939f8fae0de97 1,70-74,144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbaca3765196a65eeb24119af82d1724f38453cf",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
