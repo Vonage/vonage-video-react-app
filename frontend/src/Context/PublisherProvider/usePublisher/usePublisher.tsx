@@ -18,6 +18,7 @@ import useSessionContext from '../../../hooks/useSessionContext';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import frontendLogger from '../../../logger';
+import { useMountEffect } from '@web/hooks';
 
 type PublisherStreamCreatedEvent = Event<'streamCreated', Publisher> & {
   stream: Stream;
@@ -156,6 +157,13 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       setPublishingError(accessDeniedError);
     }
   }, [deviceAccess, t]);
+
+  useMountEffect(() => {
+    return () => {
+      publisherRef.current?.destroy?.();
+      publisherRef.current = null;
+    };
+  });
 
   reconnectingRef.current = reconnecting === true;
 
@@ -389,8 +397,8 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
       });
       frontendLogger.log('usePublisher:PublishSuccess');
       // Don't reset isPublishingToSessionRef here - wait for streamCreated event
-    } catch (err: unknown) {
-      frontendLogger.reportError(err, { eventSource: 'usePublisher.publish' });
+    } catch (error: unknown) {
+      frontendLogger.reportError(error, { eventSource: 'usePublisher.publish' });
       // Reset the flag on error since we won't get streamCreated
       isPublishingToSessionRef.current = false;
 
@@ -399,7 +407,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
         handlePublishingError();
       }
 
-      console.error(err);
+      throw error;
     }
   }, [connected, reconnecting, sessionPublish, handlePublishingError]);
 

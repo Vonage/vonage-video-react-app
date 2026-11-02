@@ -59,6 +59,7 @@ type VonageVideoClientEvents = {
  */
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session;
+  private readonly applicationId: string;
   private readonly credential: Credential;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
@@ -79,6 +80,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     const { sessionId, applicationId } = decodeSessionKey({ sessionKey: credential.sessionKey });
 
     this.sessionId = sessionId;
+    this.applicationId = applicationId;
 
     frontendLogger.setContext({ sessionId, partnerId: applicationId });
 
@@ -473,49 +475,57 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Connects to the Vonage Video session using the provided credentials.
    * @returns {Promise<void>} Resolves when the connection is successful, rejects on error.
    */
-  connect = (): Promise<void> => {
+  connect = async (): Promise<void> => {
     const { token } = this.credential;
 
-    return new Promise((resolve, reject) => {
-      this.clientSession.connect(token, (err?: OTError) => {
-        if (err) {
-          frontendLogger.reportError(err, {
-            eventSource: 'vonageVideoClient.connect.error',
-          });
+    try {
+      await this.clientSession.connect.promise(token);
 
-          reject(err);
-        } else {
-          frontendLogger.setContext({ connectionId: this.connectionId });
+      frontendLogger.setContext({ connectionId: this.connectionId });
 
-          frontendLogger.log('EnterMeeting', {
-            eventSource: 'vonageVideoClient.connect.success',
-          });
-
-          resolve();
-        }
+      frontendLogger.log('EnterMeeting', {
+        eventSource: 'vonageVideoClient.connect.success',
       });
-    });
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.connect.error',
+      });
+
+      throw error;
+    }
   };
 
   /**
    * Disconnects from the current session and cleans up the session object.
    */
-  disconnect = () => {
+  disconnect = async (): Promise<void> => {
     if (this.disconnected) {
       return;
     }
 
     this.disconnected = true;
 
-    // Clean up the hidden subscriber used for captions
-    if (this.hiddenSubscriber) {
-      this.clientSession.unsubscribe(this.hiddenSubscriber);
-      this.hiddenSubscriber = null;
-      this.emit('ownCaptionsSubscriberChanged', null);
+    try {
+      if (this.hiddenSubscriber) {
+        this.clientSession.unsubscribe(this.hiddenSubscriber);
+        this.hiddenSubscriber = null;
+        this.emit('ownCaptionsSubscriberChanged', null);
+      }
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.disconnect.unsubscribeHiddenSubscriber.error',
+      });
     }
 
-    this.clientSession.disconnect()?.catch(() => {});
-    this.clientSession = null as unknown as Session;
+    try {
+      await this.clientSession.disconnect();
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.disconnect.error',
+      });
+    } finally {
+      this.clientSession = null as unknown as Session;
+    }
   };
 
   /**
@@ -531,42 +541,52 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @param {Publisher} publisher - The publisher object to be published.
    * @throws {Error} Throws an error if publishing fails.
    */
-  publish = (publisher: Publisher): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.clientSession.publish(publisher, (error) => {
-        if (error) {
-          frontendLogger.reportError(error, {
-            eventSource: 'vonageVideoClient.publish.error',
-            errorCode: (error as { code?: number })?.code,
-          });
-          const errorName = error.name || 'OTError';
-          const errorMessage = error.message || 'Unknown publish error';
-          reject(new Error(`${errorName}: ${errorMessage}`));
-          return;
-        }
-
-        // the following is needed for the local subscriber to be able to receive captions
-        // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
-        if (publisher.stream) {
-          this.hiddenSubscriber =
-            this.clientSession.subscribe(publisher.stream, document.createElement('div'), {
-              audioVolume: 0,
-            }) ?? null;
-
-          this.emit('ownCaptionsSubscriberChanged', this.hiddenSubscriber);
-        }
-
-        resolve();
+  publish = async (publisher: Publisher): Promise<void> => {
+    try {
+      await this.clientSession.publish.promise(publisher);
+    } catch (error) {
+      frontendLogger.reportError(error, {
+        eventSource: 'vonageVideoClient.publish.error',
+        errorCode: (error as { code?: number })?.code,
+        partnerId: this.applicationId,
       });
-    });
+      const errorName = (error as OTError)?.name || 'OTError';
+      const errorMessage = (error as OTError)?.message || 'Unknown publish error';
+      throw new Error(`${errorName}: ${errorMessage}`, { cause: error });
+    }
+
+    // the following is needed for the local subscriber to be able to receive captions
+    // More information: https://developer.vonage.com/en/video/guides/live-caption#receiving-your-own-live-captions
+    if (publisher.stream) {
+      try {
+        this.hiddenSubscriber = await this.clientSession.subscribe.promise(
+          publisher.stream,
+          document.createElement('div'),
+          { audioVolume: 0 }
+        );
+
+        this.emit('ownCaptionsSubscriberChanged', this.hiddenSubscriber);
+      } catch (error) {
+        frontendLogger.reportError(error, {
+          eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
+          partnerId: this.applicationId,
+        });
+      }
+    }
   };
 
   /**
    * Sends a signal to all participants in the session.
    * @param {SignalType} data - The signal data to be sent.
+   * @throws {OTError} Re-throws if the signal fails to send, after reporting it.
    */
-  signal = (data: SignalType) => {
-    this.clientSession.signal(data)?.catch(() => {});
+  signal = async (data: SignalType): Promise<void> => {
+    try {
+      await this.clientSession.signal(data);
+    } catch (err) {
+      frontendLogger.reportError(err, { eventSource: 'vonageVideoClient.signal.error' });
+      throw err;
+    }
   };
 
   /**
@@ -589,7 +609,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * @returns {string | undefined} The connection ID.
    */
   get connectionId(): string | undefined {
-    return this.clientSession.connection?.connectionId;
+    return this.clientSession?.connection?.connectionId;
   }
 }
 

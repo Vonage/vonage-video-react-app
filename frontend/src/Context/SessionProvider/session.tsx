@@ -54,7 +54,7 @@ export type SessionContextType = {
   sessionDetails: VideoSessionDetails | null;
   unreadCount: number;
   messages: ChatMessageType[];
-  sendChatMessage: (text: string) => void;
+  sendChatMessage: (text: string) => Promise<void>;
   reconnecting: null | boolean;
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
@@ -102,7 +102,7 @@ export const SessionContext = createContext<SessionContextType>({
   sessionDetails: null,
   unreadCount: 0,
   messages: [],
-  sendChatMessage: () => {},
+  sendChatMessage: async () => Promise.resolve(),
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
@@ -277,15 +277,9 @@ const SessionProvider = ({
     }
   };
 
-  const handleEmoji = useCallback(
-    (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
-    },
-    [onEmoji]
-  );
+  const handleEmoji = useStableCallback((emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
+  });
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -516,6 +510,18 @@ const SessionProvider = ({
   );
 
   /**
+   * Disconnects from the current session and cleans up session-related resources.
+   */
+  const disconnect = useCallback(() => {
+    if (vonageVideoClient.current) {
+      void vonageVideoClient.current.disconnect();
+      vonageVideoClient.current = null;
+
+      setConnected(false);
+    }
+  }, []);
+
+  /**
    * Connects to the session using the provided credentials.
    * @param {Credential} credential - The sessionKey and token for the session.
    * @returns {Promise<void>} A promise that resolves when the session is connected.
@@ -524,6 +530,7 @@ const SessionProvider = ({
     if (vonageVideoClient.current) {
       return;
     }
+
     try {
       vonageVideoClient.current = new VonageVideoClient(credential);
       vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
@@ -551,8 +558,9 @@ const SessionProvider = ({
 
       await vonageVideoClient.current.connect();
       setConnected(true);
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (error: unknown) {
+      disconnect();
+      throw error;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -580,18 +588,6 @@ const SessionProvider = ({
     },
     [connect, videoClient, skipBrowserUrlUpdate]
   );
-
-  /**
-   * Disconnects from the current session and cleans up session-related resources.
-   */
-  const disconnect = useCallback(() => {
-    if (vonageVideoClient.current) {
-      vonageVideoClient.current.disconnect();
-      vonageVideoClient.current = null;
-
-      setConnected(false);
-    }
-  }, []);
 
   /**
    * Force mutes a participant.
