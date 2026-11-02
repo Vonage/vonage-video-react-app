@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { RefObject } from 'react';
 import useElementDimensions from '../useElementDimensions';
@@ -19,11 +19,6 @@ describe('useElementDimensions', () => {
       writable: true,
       value: 2,
     });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.unstubAllGlobals();
   });
 
   it('initially returns dimensions as { width: 0, height: 0 }', () => {
