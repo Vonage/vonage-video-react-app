@@ -1,0 +1,30 @@
+AGENTS.md
+  h_6029769cf9ac60 275-295
+backend/routes/video/video.ts
+  h_6029769cf9ac60 16,22-25
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 3,41-42,45-46,56
+  h_6029769cf9ac60 43,47,57,80-87,89,112-116,142-146
+backend/routes/video/types/VideoRouteContext.ts
+  h_6029769cf9ac60 1-10
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 2,5-8,13-15,17-28,32,36-39,41-45,49-52
+  h_6029769cf9ac60 29,40,53
+.gitignore
+  h_6029769cf9ac60 83-87
+backend/server.ts
+  h_6029769cf9ac60 9,54-55
+backend/routes/video/helpers/hasVerifiedSessionKey.ts
+  h_6029769cf9ac60 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5ee34bda0c4bb11d7437826c7d428f12ccc8f68",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
