@@ -79,6 +79,10 @@ test.describe('active speaker', () => {
     isMobile,
   }) => {
     test.skip(isMobile, 'The active speaker layout needs room for a large tile');
+    test.skip(
+      browserName === 'firefox',
+      'With its fake microphone on CI, Firefox never switches the active speaker'
+    );
     const roomName = crypto.randomBytes(5).toString('hex');
     const alicePage = await context.newPage();
     const bobPage = await context.newPage();
