@@ -69,16 +69,12 @@ const VideoTileCanvas = ({
     sessionHasScreenshare || layoutMode === 'active-speaker' || !!pinnedSubscriberCount;
 
   // Check which subscribers we will display, in large calls we will hide some subscribers
-  const { hiddenSubscribers, subscribersOnScreen } = useMemo(
-    () =>
-      getSubscribersToDisplay({
-        subscriberWrappers,
-        isViewingLargeTile,
-        isSharingScreen: !!screensharingPublisher,
-        pinnedSubscriberCount,
-      }),
-    [subscriberWrappers, isViewingLargeTile, screensharingPublisher, pinnedSubscriberCount]
-  );
+  const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay({
+    subscriberWrappers,
+    isViewingLargeTile,
+    isSharingScreen: !!screensharingPublisher,
+    pinnedSubscriberCount,
+  });
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen
   const subscribersInDisplayOrder = useSubscribersInDisplayOrder(subscribersOnScreen);

@@ -55,10 +55,7 @@ const ScreenshareVideoTile = forwardRef(
       y: 0,
     });
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number }>({
-      x: 0,
-      y: 0,
-    });
+    const lastMousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
     const pendingMouseMove = useRef<{ x: number; y: number } | null>(null);
     const rafId = useRef<number | null>(null);
 
@@ -114,7 +111,7 @@ const ScreenshareVideoTile = forwardRef(
     const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
       if (zoomLevel > 1) {
         setIsDragging(true);
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
+        lastMousePositionRef.current = { x: event.clientX, y: event.clientY };
       }
     };
 
@@ -122,12 +119,15 @@ const ScreenshareVideoTile = forwardRef(
       if (!pendingMouseMove.current) return;
 
       const { x, y } = pendingMouseMove.current;
-      setPanOffset((prev) => ({
-        x: prev.x + (x - lastMousePosition.x),
-        y: prev.y + (y - lastMousePosition.y),
-      }));
-      setLastMousePosition({ x, y });
+      const deltaX = x - lastMousePositionRef.current.x;
+      const deltaY = y - lastMousePositionRef.current.y;
+      lastMousePositionRef.current = { x, y };
       pendingMouseMove.current = null;
+
+      setPanOffset((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }));
     };
 
     const flushPendingMouseMove = () => {
