@@ -12,7 +12,7 @@ export type UpcomingMeetingRowProps = ComponentProps<'li'> & {
 };
 
 /**
- * One saved meeting in a list: icon tile, name, when, number of extra roles and quick actions.
+ * One saved meeting in a list: icon tile, name, when and quick actions.
  */
 const UpcomingMeetingRow = ({
   meeting,

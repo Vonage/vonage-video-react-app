@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import mockupMeta, { type MockupArgs } from '../storybook/mockupMeta';
 import LandingAgenda from './LandingAgenda';
+import LandingCreateOrJoinOnly from './LandingCreateOrJoinOnly';
 import LandingNextUp from './LandingNextUp';
 import LandingStackedCards from './LandingStackedCards';
 import LandingStackedCollapsible from './LandingStackedCollapsible';
@@ -44,4 +45,12 @@ export const CNextUp: Story = {
 export const DCombined: Story = {
   name: 'D · Stacked cards with collapsible rows',
   render: () => <LandingStackedCollapsible />,
+};
+
+/**
+ * D before the meetings list ships: only the create-or-join card with the "Room id" field, no second card.
+ */
+export const DWithoutMeetingsList: Story = {
+  name: 'D · Without the meetings list',
+  render: () => <LandingCreateOrJoinOnly />,
 };

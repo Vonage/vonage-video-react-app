@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { twMerge } from 'tailwind-merge';
 import VividIcon from '@ui/components/VividIcon';
-import RoleBadge from '../../../components/RoleBadge';
 import formatMeetingDate from '../../../helpers/formatMeetingDate';
 import useLocale from '../../../hooks/useLocale';
 import type { SavedMeeting } from '../../../types/SavedMeeting';
@@ -17,7 +16,7 @@ export type AgendaRowProps = ComponentProps<'li'> & {
 };
 
 /**
- * Agenda entry: start time on the left, meeting and its roles in the middle, the next action on the right.
+ * Agenda entry: start time on the left, the meeting in the middle, the next action on the right.
  */
 const AgendaRow = ({ meeting, now, className, ...props }: AgendaRowProps): ReactElement => {
   const { t } = useTranslation();
@@ -29,7 +28,6 @@ const AgendaRow = ({ meeting, now, className, ...props }: AgendaRowProps): React
     return Math.round((schedule.startsAt.getTime() - now.getTime()) / 60_000);
   })();
   const isStartingSoon = minutesUntilStart !== null && minutesUntilStart <= SOON_THRESHOLD_MINUTES;
-  const invitedRoles = meeting.links.filter(({ role }) => role !== 'moderator');
 
   return (
     <li
@@ -52,25 +50,17 @@ const AgendaRow = ({ meeting, now, className, ...props }: AgendaRowProps): React
         </span>
       </div>
       <div className="h-10 w-1 shrink-0 rounded-full bg-vera-primary" />
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="flex items-center gap-2 truncate font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
-          {meeting.name ?? t('meetingFlow.common.untitledMeeting')}
-          {schedule && schedule.recurrence !== 'none' && (
-            <VividIcon
-              name="reload-line"
-              customSize={-6}
-              aria-label={t(`meetingFlow.recurrence.${schedule.recurrence}`)}
-              style={{ color: 'var(--vera-text-tertiary)' }}
-            />
-          )}
-        </span>
-        <div className="flex flex-wrap gap-1">
-          {invitedRoles.length === 0 && <RoleBadge meetingRole="moderator" />}
-          {invitedRoles.map(({ role }) => (
-            <RoleBadge key={role} meetingRole={role} />
-          ))}
-        </div>
-      </div>
+      <span className="flex min-w-0 flex-1 items-center gap-2 truncate font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
+        {meeting.name ?? t('meetingFlow.common.untitledMeeting')}
+        {schedule && schedule.recurrence !== 'none' && (
+          <VividIcon
+            name="reload-line"
+            customSize={-6}
+            aria-label={t(`meetingFlow.recurrence.${schedule.recurrence}`)}
+            style={{ color: 'var(--vera-text-tertiary)' }}
+          />
+        )}
+      </span>
       {isStartingSoon ? (
         <div className="flex shrink-0 flex-col items-end gap-1">
           <Button variant="contained" size="small">

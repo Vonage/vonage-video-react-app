@@ -19,7 +19,7 @@ const timerButton = tv(
 );
 
 /**
- * Entry point of variant C: a moderator-only timer in the toolbar; it turns amber in the last minutes.
+ * Entry point of variant C: a timer in the toolbar; it turns amber in the last minutes.
  */
 const ExtensionTimerButton = (): ReactElement => {
   const { t } = useTranslation();

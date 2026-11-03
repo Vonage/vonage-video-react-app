@@ -6,7 +6,7 @@ import createRoomWizard$ from '../../../context/createRoomWizardContext';
 import useDraftSchedule from '../../../hooks/useDraftSchedule';
 
 /**
- * Confirmation heading of the share step: meeting name, when, and how long the links last.
+ * Confirmation heading of the share step: meeting name, when, and how long the link lasts.
  */
 const ShareMeetingHeader = (): ReactElement => {
   const { t } = useTranslation();

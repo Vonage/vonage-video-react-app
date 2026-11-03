@@ -64,7 +64,7 @@ const ExtensionToast = (): ReactElement => {
       </div>
       <div className="flex items-center justify-between gap-3 border-t border-vera-border pt-3">
         <span className="font-vera-plain text-vera-caption text-vera-text-tertiary">
-          {hasExtensions ? usedLabel : t('meetingFlow.extension.moderatorOnly')}
+          {hasExtensions ? usedLabel : ''}
         </span>
         <Button variant="text" size="small" onClick={() => setOpen(false)}>
           {t('meetingFlow.common.notNow')}

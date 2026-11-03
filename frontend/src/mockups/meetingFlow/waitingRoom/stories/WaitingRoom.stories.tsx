@@ -7,7 +7,7 @@ import ScheduleStatesBoard from './ScheduleStatesBoard';
 import WaitingRoomPageFrame from './WaitingRoomPageFrame';
 
 const meta = {
-  title: 'Mockups/Meeting flow/7. Waiting room',
+  title: 'Mockups/Meeting flow/6. Waiting room',
   ...mockupMeta,
 } satisfies Meta<MockupArgs>;
 

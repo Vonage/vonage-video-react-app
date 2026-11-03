@@ -1,6 +1,5 @@
 import type { SavedMeeting } from '../types/SavedMeeting';
 import type { SavedMeetingId } from '../types/SavedMeetingId';
-import makeSampleLinks from './makeSampleLinks';
 
 const sampleMeetings: SavedMeeting[] = [
   {
@@ -12,10 +11,6 @@ const sampleMeetings: SavedMeeting[] = [
       durationMinutes: 45,
       recurrence: 'none',
     },
-    links: makeSampleLinks({
-      seed: 'RGVzaWduUmV2',
-      roles: ['moderator', 'publisher', 'subscriber'],
-    }),
     isArchived: false,
   },
   {
@@ -27,7 +22,6 @@ const sampleMeetings: SavedMeeting[] = [
       durationMinutes: 30,
       recurrence: 'weekly',
     },
-    links: makeSampleLinks({ seed: 'V2Vla2x5U3lu', roles: ['moderator', 'publisher'] }),
     isArchived: false,
   },
   {
@@ -39,10 +33,6 @@ const sampleMeetings: SavedMeeting[] = [
       durationMinutes: 60,
       recurrence: 'none',
     },
-    links: makeSampleLinks({
-      seed: 'QWNtZU9uYm9h',
-      roles: ['moderator', 'publisher', 'subscriber', 'publisherOnly'],
-    }),
     isArchived: false,
   },
   {
@@ -54,10 +44,6 @@ const sampleMeetings: SavedMeeting[] = [
       durationMinutes: 90,
       recurrence: 'monthly',
     },
-    links: makeSampleLinks({
-      seed: 'QWxsSGFuZHM',
-      roles: ['moderator', 'subscriber', 'publisherOnly'],
-    }),
     isArchived: false,
   },
   {
@@ -65,7 +51,6 @@ const sampleMeetings: SavedMeeting[] = [
     name: 'Open help desk',
     createdAt: new Date(2026, 9, 2, 8, 0),
     schedule: null,
-    links: makeSampleLinks({ seed: 'SGVscERlc2s', roles: ['moderator'] }),
     isArchived: false,
   },
   {
@@ -77,19 +62,17 @@ const sampleMeetings: SavedMeeting[] = [
       durationMinutes: 60,
       recurrence: 'none',
     },
-    links: makeSampleLinks({ seed: 'UTNQbGFubmlu', roles: ['moderator', 'publisher'] }),
     isArchived: true,
   },
   {
     id: 'meeting:frontend-interview' as SavedMeetingId,
-    name: 'Interview: frontend role',
+    name: 'Interview: frontend engineer',
     createdAt: new Date(2026, 9, 21, 15, 0),
     schedule: {
       startsAt: new Date(2026, 9, 28, 15, 30),
       durationMinutes: 45,
       recurrence: 'none',
     },
-    links: makeSampleLinks({ seed: 'SW50ZXJ2aWV3', roles: ['moderator', 'publisher'] }),
     isArchived: true,
   },
   {
@@ -97,7 +80,6 @@ const sampleMeetings: SavedMeeting[] = [
     name: null,
     createdAt: new Date(2026, 9, 20, 18, 12),
     schedule: null,
-    links: makeSampleLinks({ seed: 'MGExZlVudGl0', roles: ['moderator'] }),
     isArchived: true,
   },
 ];

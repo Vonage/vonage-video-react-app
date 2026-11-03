@@ -1,5 +1,4 @@
 import type { MeetingSchedule } from './MeetingSchedule';
-import type { RoleLink } from './RoleLink';
 import type { SavedMeetingId } from './SavedMeetingId';
 
 export type SavedMeeting = {
@@ -7,7 +6,6 @@ export type SavedMeeting = {
   name: string | null;
   createdAt: Date;
   schedule: MeetingSchedule | null;
-  links: RoleLink[];
   isArchived: boolean;
 };
 

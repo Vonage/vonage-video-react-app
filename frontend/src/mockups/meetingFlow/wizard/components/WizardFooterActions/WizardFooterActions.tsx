@@ -5,12 +5,12 @@ import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 
 /**
- * Back / Next buttons for the current step; on the share step, the two exits: save for later or join now.
+ * Create meeting on the details step; on the share step, the two exits: save for later or join now.
  */
 const WizardFooterActions = (): ReactElement => {
   const { t } = useTranslation();
   const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
-  const { goBack, goNext } = createRoomWizard$.use.actions();
+  const { goNext } = createRoomWizard$.use.actions();
 
   if (activeStep === 'share') {
     return (
@@ -44,18 +44,9 @@ const WizardFooterActions = (): ReactElement => {
   }
 
   return (
-    <>
-      {activeStep !== 'details' && (
-        <Button variant="text" onClick={goBack}>
-          {t('meetingFlow.common.back')}
-        </Button>
-      )}
-      <Button variant="contained" onClick={goNext}>
-        {activeStep === 'roles'
-          ? t('meetingFlow.wizard.createLinks')
-          : t('meetingFlow.common.next')}
-      </Button>
-    </>
+    <Button variant="contained" onClick={goNext}>
+      {t('meetingFlow.wizard.createMeeting')}
+    </Button>
   );
 };
 

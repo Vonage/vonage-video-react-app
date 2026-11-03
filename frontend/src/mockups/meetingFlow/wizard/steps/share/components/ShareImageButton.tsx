@@ -4,7 +4,7 @@ import Button, { type ButtonProps } from '@mui/material/Button';
 import VividIcon from '@ui/components/VividIcon';
 
 /**
- * Shares the role's QR card as an image (Web Share API, download as fallback).
+ * Shares the meeting's QR card as an image (Web Share API, download as fallback).
  */
 const ShareImageButton = (
   props: Omit<ButtonProps, 'startIcon' | 'children' | 'sx'>

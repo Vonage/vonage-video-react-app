@@ -11,7 +11,7 @@ import MeetingRoomWithToast from '../variants/MeetingRoomWithToast';
 import sampleExtensionStates, { type SampleExtensionStateKey } from './sampleExtensionStates';
 
 const meta = {
-  title: 'Mockups/Meeting flow/8. Meeting extension',
+  title: 'Mockups/Meeting flow/7. Meeting extension',
   ...mockupMeta,
 } satisfies Meta<MockupArgs>;
 

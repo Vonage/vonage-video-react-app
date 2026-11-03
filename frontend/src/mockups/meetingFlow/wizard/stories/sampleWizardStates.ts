@@ -15,18 +15,7 @@ const scheduledDetails: Partial<CreateRoomWizardState> = {
 const sampleWizardStates = {
   detailsScheduled: { ...scheduledDetails, activeStep: 'details' },
   detailsUnscheduled: { name: 'Open help desk', activeStep: 'details' },
-  roles: {
-    ...scheduledDetails,
-    activeStep: 'roles',
-    hasExtraRoles: true,
-    selectedRoles: ['publisher', 'subscriber'],
-  },
-  share: {
-    ...scheduledDetails,
-    activeStep: 'share',
-    hasExtraRoles: true,
-    selectedRoles: ['publisher', 'subscriber'],
-  },
+  share: { ...scheduledDetails, activeStep: 'share' },
 } satisfies Record<string, Partial<CreateRoomWizardState>>;
 
 export default sampleWizardStates;

@@ -1,22 +1,18 @@
 import type { ReactElement } from 'react';
 import SidebarWizard from '../SidebarWizard';
 import DetailsChoiceCards from '../steps/details/DetailsChoiceCards';
-import RolesSwitchList from '../steps/roles/RolesSwitchList';
-import ShareLinkList from '../steps/share/ShareLinkList';
+import ShareLinkFirst from '../steps/share/ShareLinkFirst';
 
 /**
- * Wizard A: sidebar shell, radio cards for the schedule, switches for roles, a link list to share.
+ * Wizard A: sidebar shell, radio cards for the schedule, the link first with the QR code on demand.
  */
 const CreateRoomWizardA = (): ReactElement => (
   <SidebarWizard>
     <SidebarWizard.Step step="details">
       <DetailsChoiceCards />
     </SidebarWizard.Step>
-    <SidebarWizard.Step step="roles">
-      <RolesSwitchList />
-    </SidebarWizard.Step>
     <SidebarWizard.Step step="share">
-      <ShareLinkList initialQrRole="publisher" />
+      <ShareLinkFirst isQrInitiallyOpen />
     </SidebarWizard.Step>
   </SidebarWizard>
 );

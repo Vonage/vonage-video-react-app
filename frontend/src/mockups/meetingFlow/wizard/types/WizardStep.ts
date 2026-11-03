@@ -1,3 +1,3 @@
-export type WizardStep = 'details' | 'roles' | 'share';
+export type WizardStep = 'details' | 'share';
 
 export default WizardStep;

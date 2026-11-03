@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import { twMerge } from 'tailwind-merge';
 import VividIcon from '@ui/components/VividIcon';
-import RoleBadge from '../../../components/RoleBadge';
 import useMeetingWhenLabel from '../../../hooks/useMeetingWhenLabel';
 import type { SavedMeeting } from '../../../types/SavedMeeting';
 
@@ -50,11 +49,6 @@ const NextUpSpotlight = ({
         <span className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
           {whenLabel}
         </span>
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {meeting.links.map(({ role }) => (
-          <RoleBadge key={role} meetingRole={role} />
-        ))}
       </div>
       <div className="flex gap-3">
         <Button variant="contained" className="flex-1">

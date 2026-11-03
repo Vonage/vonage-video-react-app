@@ -1,11 +1,10 @@
-import type { InviteeRole } from '../../types/InviteeRole';
 import type { MeetingRecurrence } from '../../types/MeetingRecurrence';
 import type { WizardStep } from '../types/WizardStep';
 
 export type CreateRoomWizardState = ReturnType<typeof getInitialWizardState>;
 
 /**
- * Empty draft: no name, no schedule, moderator link only.
+ * Empty draft: no name, no schedule.
  */
 function getInitialWizardState() {
   return {
@@ -16,8 +15,6 @@ function getInitialWizardState() {
     time: '10:00',
     durationMinutes: 60,
     recurrence: 'none' as MeetingRecurrence,
-    hasExtraRoles: false,
-    selectedRoles: [] as InviteeRole[],
   };
 }
 

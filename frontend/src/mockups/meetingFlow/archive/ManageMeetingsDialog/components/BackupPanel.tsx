@@ -5,7 +5,7 @@ import VividIcon from '@ui/components/VividIcon';
 import Notice from '../../../components/Notice';
 
 /**
- * Backup and restore tab: export with the moderator-link warning, import through a drop zone.
+ * Backup and restore tab: export with the meeting-link warning, import through a drop zone.
  */
 const BackupPanel = (): ReactElement => {
   const { t } = useTranslation();

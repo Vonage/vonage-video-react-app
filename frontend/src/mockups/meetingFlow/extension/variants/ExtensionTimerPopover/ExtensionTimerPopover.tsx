@@ -29,8 +29,7 @@ const ExtensionTimerPopover = (): ReactElement => {
           {t('meetingFlow.extension.extendMeeting')}
         </span>
         <span className="font-vera-plain text-vera-caption text-vera-text-tertiary">
-          {t('meetingFlow.extension.endsAt', { time: endsAtLabel })} ·{' '}
-          {t('meetingFlow.extension.moderatorOnly')}
+          {t('meetingFlow.extension.endsAt', { time: endsAtLabel })}
         </span>
       </div>
       {isAtCap ? (

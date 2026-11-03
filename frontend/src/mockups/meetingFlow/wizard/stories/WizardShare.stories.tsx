@@ -7,7 +7,7 @@ import sampleWizardStates from './sampleWizardStates';
 import WizardStoryFrame from './WizardStoryFrame';
 
 const meta = {
-  title: 'Mockups/Meeting flow/5. Wizard, share',
+  title: 'Mockups/Meeting flow/4. Wizard, share',
   ...mockupMeta,
 } satisfies Meta<MockupArgs>;
 
@@ -16,25 +16,25 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * A: a row per role with link, copy and share-as-image; the QR code unfolds inside the row.
+ * A: the meeting link first with copy and share-as-image; the QR code unfolds underneath.
  */
-export const ALinkList: Story = {
-  name: 'A · Sidebar, link list',
+export const ALinkFirst: Story = {
+  name: 'A · Sidebar, link first',
   render: () => <WizardStoryFrame wizard={CreateRoomWizardA} state={sampleWizardStates.share} />,
 };
 
 /**
- * B: one role per tab with a large QR code to scan straight from the screen.
+ * B: a large QR code to scan straight from the screen, with the link to copy underneath.
  */
-export const BRoleTabs: Story = {
-  name: 'B · Stepper, tabbed QR',
+export const BQrFirst: Story = {
+  name: 'B · Stepper, QR first',
   render: () => <WizardStoryFrame wizard={CreateRoomWizardB} state={sampleWizardStates.share} />,
 };
 
 /**
- * C: invitation cards, one per role, with QR thumbnail, link and image share.
+ * C: a preview of the invitation people receive, with copy and share-as-image under it.
  */
-export const CInviteCards: Story = {
-  name: 'C · Accordion, invitation cards',
+export const CInvitePreview: Story = {
+  name: 'C · Accordion, invitation preview',
   render: () => <WizardStoryFrame wizard={CreateRoomWizardC} state={sampleWizardStates.share} />,
 };

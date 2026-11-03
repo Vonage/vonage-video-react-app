@@ -26,7 +26,7 @@ export const AChoiceCards: Story = {
 };
 
 /**
- * A, with no schedule: the warning explains the links never expire.
+ * A, with no schedule: the warning explains the link never expires.
  */
 export const AChoiceCardsUnscheduled: Story = {
   name: 'A · Sidebar, no schedule warning',
