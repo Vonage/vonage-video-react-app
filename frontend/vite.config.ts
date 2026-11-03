@@ -194,7 +194,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+      include: [
+        '@emotion/react',
+        '@emotion/styled',
+        '@mui/material/Tooltip',
+        '@vonage/client-sdk-video',
+        'react-i18next',
+        '@tanstack/react-query',
+      ],
     },
     plugins: [
       tailwindcss(),
@@ -242,6 +249,31 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       minify: 'terser',
       cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': [
+              'react',
+              'react-dom',
+              'react-router-dom',
+              'react-i18next',
+              'react-global-state-hooks',
+              '@mui/material',
+              '@vonage/vivid',
+              '@emotion/react',
+              '@emotion/styled',
+              'tailwind-merge',
+              'tailwind-variants',
+            ],
+            'vendor-vonage': [
+              '@vonage/client-sdk-video',
+              '@vonage/video-client-network-test',
+              'opentok-layout-js',
+            ],
+            'vendor-axios': ['axios'],
+          },
+        },
+      },
       terserOptions: {
         format: {
           comments: false,
