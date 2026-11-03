@@ -1,0 +1,18 @@
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  h_c939f8fae0de97 58,114,122-126,128-129
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.tsx
+  h_c939f8fae0de97 72-77
+frontend/src/hooks/useEmoji.tsx
+  h_c939f8fae0de97 151-156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f489f1c5bf0e4a4b2628f32674b805ae12cdee0f",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
