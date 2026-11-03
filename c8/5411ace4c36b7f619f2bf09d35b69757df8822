@@ -1,0 +1,38 @@
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_c939f8fae0de97 16-50,52
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_c939f8fae0de97 33-45,47-52,54-59,61-66,68,70-71,73-76,78-89,91-97,99-102,104-121,123-133
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  h_c939f8fae0de97 36-46,48-52,54-55,57-58,60-62,64-68,70-71,73-79,81-82,84-90,92-95,97-122
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  h_c939f8fae0de97 30-35,37-56,58
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_c939f8fae0de97 43-49,51-59,61-68,70-72,74-79,81-83,86,88,93,96,98,105,107-108,111,113-141,143-150,152-196,198-202,206,208-224,226
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_c939f8fae0de97 30-40,42-58,60,62-70,72
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  h_c939f8fae0de97 21,50,52
+frontend/src/components/MeetingRoom/LayoutButton/LayoutButton.tsx
+  h_c939f8fae0de97 30-43,45-47,49-57,59-61,63-90,92
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  h_c939f8fae0de97 31-37,39-47,49-65,67
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  h_c939f8fae0de97 27-33,35-55,57
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_c939f8fae0de97 75-105,107-108,110-158,160-161,163-196,198-206,208-216,218-229,231-235,237-242,244-255,257-266,269,272-285,287
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  h_c939f8fae0de97 39-47,49-51,53-57,59-61,63-98,100
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_c939f8fae0de97 31-39,41-42,44-46,48-53,55-58,60-96,98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c85411ace4c36b7f619f2bf09d35b69757df8822",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
