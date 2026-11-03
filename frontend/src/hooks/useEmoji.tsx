@@ -4,6 +4,12 @@ import throttle from '@common/execution/throttle';
 import { EMOJI_DISPLAY_DURATION } from '../utils/constants';
 import { SignalEvent, SignalType, SubscriberWrapper } from '../types/session';
 
+const useCancelThrottleOnChange = (throttledFunc: { cancel?: () => void }) => {
+  useEffect(() => {
+    return () => throttledFunc.cancel?.();
+  }, [throttledFunc]);
+};
+
 type EmojiDataType = {
   emoji: string;
   time: number;
@@ -69,6 +75,8 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
     );
     return throttledFunc;
   }, [signal]);
+
+  useCancelThrottleOnChange(sendEmoji);
 
   /**
    * Checks if the given connection belongs to the current user.

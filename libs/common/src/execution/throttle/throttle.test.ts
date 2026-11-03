@@ -51,4 +51,18 @@ describe('throttle', () => {
     vi.advanceTimersByTime(500);
     expect(callback).toHaveBeenCalledTimes(5);
   });
+
+  it('cancel discards a pending trailing call', () => {
+    const callback = vi.fn();
+    const throttled = throttle(callback, 500, { leading: true, trailing: true });
+
+    throttled('leading');
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    throttled('pending trailing');
+    throttled.cancel();
+
+    vi.advanceTimersByTime(500);
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
 });

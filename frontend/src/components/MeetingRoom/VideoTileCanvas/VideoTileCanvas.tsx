@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
@@ -56,41 +56,65 @@ const VideoTileCanvas = ({
   const { connected, reconnecting, subscriberWrappers, layoutMode } = useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
-  const pinnedSubscriberCount = subscriberWrappers.filter(
-    (subWrapper) => subWrapper.isPinned
-  ).length;
-  const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+  const pinnedSubscriberCount = useMemo(
+    () => subscriberWrappers.filter((subWrapper) => subWrapper.isPinned).length,
+    [subscriberWrappers]
+  );
+  const isViewingScreenshare = useMemo(
+    () => subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare),
+    [subscriberWrappers]
+  );
   const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
   const isViewingLargeTile =
     sessionHasScreenshare || layoutMode === 'active-speaker' || !!pinnedSubscriberCount;
 
   // Check which subscribers we will display, in large calls we will hide some subscribers
-  const { hiddenSubscribers, subscribersOnScreen } = getSubscribersToDisplay({
-    subscriberWrappers,
-    isViewingLargeTile,
-    isSharingScreen: !!screensharingPublisher,
-    pinnedSubscriberCount,
-  });
+  const { hiddenSubscribers, subscribersOnScreen } = useMemo(
+    () =>
+      getSubscribersToDisplay({
+        subscriberWrappers,
+        isViewingLargeTile,
+        isSharingScreen: !!screensharingPublisher,
+        pinnedSubscriberCount,
+      }),
+    [subscriberWrappers, isViewingLargeTile, screensharingPublisher, pinnedSubscriberCount]
+  );
 
   // We keep track of the current position of subscribers so we can maintain position to avoid subscribers jumping around the screen
   const subscribersInDisplayOrder = useSubscribersInDisplayOrder(subscribersOnScreen);
 
   // Get the layout Boxes which specify exact position, height, and width for all video tiles
 
-  const layoutBoxes = getLayoutBoxes({
-    activeSpeakerId,
-    getLayout,
-    pinnedSubscriberCount,
-    hiddenSubscribers,
-    isSharingScreen,
-    layoutMode,
-    publisher,
-    screensharingPublisher,
-    sessionHasScreenshare,
-    subscribersInDisplayOrder,
-    wrapDimensions,
-    wrapRef,
-  });
+  const layoutBoxes = useMemo(
+    () =>
+      getLayoutBoxes({
+        activeSpeakerId,
+        getLayout,
+        pinnedSubscriberCount,
+        hiddenSubscribers,
+        isSharingScreen,
+        layoutMode,
+        publisher,
+        screensharingPublisher,
+        sessionHasScreenshare,
+        subscribersInDisplayOrder,
+        wrapDimensions,
+        wrapRef,
+      }),
+    [
+      activeSpeakerId,
+      getLayout,
+      pinnedSubscriberCount,
+      hiddenSubscribers,
+      isSharingScreen,
+      layoutMode,
+      publisher,
+      screensharingPublisher,
+      sessionHasScreenshare,
+      subscribersInDisplayOrder,
+      wrapDimensions,
+    ]
+  );
 
   const isSmallViewport = useIsSmallViewport();
 
@@ -137,7 +161,7 @@ const VideoTileCanvas = ({
           <Subscriber
             key={subscriberWrapper.id}
             subscriberWrapper={subscriberWrapper}
-            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+            isHidden={index >= subscribersInDisplayOrder.length}
             box={layoutBoxes.subscriberBoxes?.[index]}
             isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
           />
