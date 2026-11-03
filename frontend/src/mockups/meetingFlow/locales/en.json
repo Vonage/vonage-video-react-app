@@ -41,6 +41,7 @@
   "meetingFlow.landing.upcoming.archived": "Archived ({{count}})",
   "meetingFlow.landing.upcoming.startsIn": "Starts in {{minutes}} min",
   "meetingFlow.landing.upcoming.share": "Share links",
+  "meetingFlow.landing.upcoming.addToCalendar": "Add to calendar",
   "meetingFlow.landing.upcoming.archive": "Archive",
   "meetingFlow.landing.nextUp": "Next up",
   "meetingFlow.landing.nextUp.join": "Join now",

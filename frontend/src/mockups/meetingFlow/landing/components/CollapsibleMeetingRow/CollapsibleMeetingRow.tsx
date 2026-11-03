@@ -1,10 +1,11 @@
 import type { ComponentProps, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { twMerge } from 'tailwind-merge';
 import { Collapsible } from '@ui/components';
 import VividIcon from '@ui/components/VividIcon';
-import RoleBadge from '../../../components/RoleBadge';
 import useMeetingWhenLabel from '../../../hooks/useMeetingWhenLabel';
 import type { SavedMeeting } from '../../../types/SavedMeeting';
 
@@ -14,7 +15,7 @@ export type CollapsibleMeetingRowProps = ComponentProps<'li'> & {
 };
 
 /**
- * Upcoming meeting as a borderless collapsible list item: essentials when collapsed, roles and actions when expanded.
+ * Upcoming meeting as a borderless collapsible list item: essentials when collapsed, actions when expanded.
  */
 const CollapsibleMeetingRow = ({
   meeting,
@@ -28,7 +29,7 @@ const CollapsibleMeetingRow = ({
 
   return (
     <li className={twMerge('border-b border-vera-border last:border-b-0', className)} {...props}>
-      <Collapsible open={nextUp !== null} className="py-3">
+      <Collapsible open={nextUp !== null} className="py-4 open:gap-5">
         <Collapsible.Summary className="gap-3">
           <div className="flex size-10 shrink-0 items-center justify-center rounded-vera-medium bg-vera-background">
             <VividIcon
@@ -37,7 +38,7 @@ const CollapsibleMeetingRow = ({
               style={{ color: 'var(--vera-text-primary)' }}
             />
           </div>
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             {nextUp && (
               <span className="flex items-center gap-1 font-vera-plain text-vera-caption-semibold text-vera-text-primary">
                 <VividIcon
@@ -60,30 +61,30 @@ const CollapsibleMeetingRow = ({
           </div>
           <Collapsible.Icon customSize={-5} style={{ color: 'var(--vera-text-tertiary)' }} />
         </Collapsible.Summary>
-        <Collapsible.Details className="flex flex-col gap-3 pl-13">
-          <div className="flex flex-wrap gap-1">
-            {meeting.links.map(({ role }) => (
-              <RoleBadge key={role} meetingRole={role} />
-            ))}
-          </div>
-          <div className="flex gap-3">
-            <Button variant="contained" className="flex-1">
-              {t('meetingFlow.common.join')}
-            </Button>
-            <Button
-              variant="outlined"
-              className="flex-1"
-              startIcon={
+        <Collapsible.Details className="flex items-center gap-3 pl-13">
+          <Button variant="contained" className="flex-1">
+            {t('meetingFlow.common.join')}
+          </Button>
+          <Tooltip title={t('meetingFlow.landing.upcoming.share')}>
+            <IconButton size="small" aria-label={t('meetingFlow.landing.upcoming.share')}>
+              <VividIcon
+                name="share-line"
+                customSize={-5}
+                style={{ color: 'var(--vera-primary)' }}
+              />
+            </IconButton>
+          </Tooltip>
+          {isScheduled && (
+            <Tooltip title={t('meetingFlow.landing.upcoming.addToCalendar')}>
+              <IconButton size="small" aria-label={t('meetingFlow.landing.upcoming.addToCalendar')}>
                 <VividIcon
-                  name="share-line"
+                  name="calendar-plus-line"
                   customSize={-5}
                   style={{ color: 'var(--vera-primary)' }}
                 />
-              }
-            >
-              {t('meetingFlow.landing.upcoming.share')}
-            </Button>
-          </div>
+              </IconButton>
+            </Tooltip>
+          )}
         </Collapsible.Details>
       </Collapsible>
     </li>
