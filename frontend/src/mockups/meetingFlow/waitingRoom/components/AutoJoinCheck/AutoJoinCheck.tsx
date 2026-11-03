@@ -30,7 +30,7 @@ const AutoJoinCheck = (): ReactElement => {
       </label>
       {!hasUsername && (
         <span className="pl-6 font-vera-plain text-vera-caption text-vera-text-tertiary">
-          {t('meetingFlow.waitingRoom.autoJoinHint')}
+          {t('meetingFlow.waitingRoom.autoJoinNameHint')}
         </span>
       )}
     </div>

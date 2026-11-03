@@ -32,7 +32,7 @@ export const AStatusLinePage: Story = {
 };
 
 /**
- * B, every state: a countdown panel carries the wait and holds the auto-join option.
+ * B, every state: a countdown panel carries the wait under the meeting name.
  */
 export const BCountdownPanelStates: Story = {
   name: 'B · Countdown panel, all states',
@@ -66,7 +66,7 @@ export const CButtonStatePage: Story = {
 };
 
 /**
- * The started state on the page, with the toast, for the recommended variant B.
+ * The started state on the page for the recommended variant B, with Join available.
  */
 export const BCountdownPanelStartedPage: Story = {
   name: 'B · Countdown panel, started page',

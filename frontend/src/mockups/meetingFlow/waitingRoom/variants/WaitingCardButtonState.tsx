@@ -15,7 +15,7 @@ const statusChip = tv(
     base: 'inline-flex items-center gap-1.5 self-start rounded-full px-3 py-1 font-vera-plain text-vera-caption-semibold',
     variants: {
       tone: {
-        neutral: 'bg-vera-background text-vera-text-secondary',
+        neutral: 'bg-vera-background text-vera-text-tertiary',
         live: 'bg-vera-success/10 text-vera-success',
         ended: 'bg-vera-disabled text-vera-text-tertiary',
       },
@@ -56,30 +56,42 @@ const WaitingCardButtonState = (): ReactElement => {
     };
   })();
 
+  const extraStatusText =
+    status.kind === 'ended' || (status.kind !== 'unscheduled' && isWaiting && status.isRecurring)
+      ? statusText
+      : null;
+
   return (
     <PrepareToJoinCard>
       {chip && (
-        <span className={statusChip({ tone: chip.tone })}>
-          <VividIcon name={chip.icon} customSize={-6} style={{ color: 'currentColor' }} />
-          {chip.label}
-        </span>
+        <PrepareToJoinCard.Schedule>
+          <div className="flex w-full flex-col gap-1.5">
+            <span className={statusChip({ tone: chip.tone })}>
+              <VividIcon name={chip.icon} customSize={-6} style={{ color: 'currentColor' }} />
+              {chip.label}
+            </span>
+            {extraStatusText && (
+              <span className="font-vera-plain text-vera-caption text-vera-text-tertiary">
+                {extraStatusText}
+              </span>
+            )}
+          </div>
+        </PrepareToJoinCard.Schedule>
       )}
-      {(status.kind === 'ended' ||
-        (status.kind !== 'unscheduled' && isWaiting && status.isRecurring)) && (
-        <span className="font-vera-plain text-vera-body-base text-vera-text-tertiary">
-          {statusText}
-        </span>
-      )}
-      <Button
-        variant="contained"
-        color="primary"
-        fullWidth
-        disabled={!isJoinEnabled}
-        className={`tabular-nums ${disabledButtonClassName}`}
-      >
-        {joinLabel}
-      </Button>
-      {isWaiting && <AutoJoinCheck />}
+      <PrepareToJoinCard.Actions>
+        <div className="flex w-full flex-col gap-3">
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={!isJoinEnabled}
+            className={`tabular-nums ${disabledButtonClassName}`}
+          >
+            {joinLabel}
+          </Button>
+          {isWaiting && <AutoJoinCheck />}
+        </div>
+      </PrepareToJoinCard.Actions>
     </PrepareToJoinCard>
   );
 };

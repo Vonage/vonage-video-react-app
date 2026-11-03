@@ -1,14 +1,10 @@
 import type { ComponentType, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import NotificationItem from '@ui/components/NotificationItem';
-import type { NotificationId } from '@core/stores/notifications';
 import formatCountdown from '../../helpers/formatCountdown';
 import getScheduleStatus from '../../helpers/getScheduleStatus';
 import mockupNow from '../../sampleData/mockupNow';
 import meetingSchedule$ from '../context/meetingScheduleContext';
 import sampleScheduleStates, { type SampleScheduleState } from './sampleScheduleStates';
-
-const STARTED_TOAST_ID = 'notification:meeting-started' as NotificationId;
 
 /**
  * Every waiting-room state of one card variant side by side, each labelled with the tab title it would set.
@@ -42,16 +38,6 @@ const ScheduleStatesBoard = ({ card: CardVariant }: { card: ComponentType }): Re
               {t('meetingFlow.waitingRoom.tabTitle', { title: getTabTitle(sample) })}
             </span>
           </div>
-          {sample.key === 'started' && (
-            <NotificationItem
-              id={STARTED_TOAST_ID}
-              type="success"
-              message={t('meetingFlow.waitingRoom.startedToast')}
-              expirationMs={null}
-              onDismiss={() => {}}
-              className="w-full"
-            />
-          )}
           <meetingSchedule$.Provider
             value={(state) => ({
               ...state,

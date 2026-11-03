@@ -10,6 +10,7 @@ export type ScheduleCopy = {
   statusText: string;
   countdownText: string | null;
   joinLabel: string;
+  joinOpensText: string | null;
   timeRange: string | null;
   isJoinEnabled: boolean;
   isWaiting: boolean;
@@ -81,9 +82,7 @@ const useScheduleCopy = (): ScheduleCopy => {
     return null;
   })();
 
-  const joinLabel = (() => {
-    if (status.kind === 'unscheduled' || status.kind === 'started') return t('button.join');
-    if (status.kind === 'ended') return t('meetingFlow.waitingRoom.meetingEnded');
+  const joinOpensText = (() => {
     if (status.kind === 'withinFiveMinutes') {
       return t('meetingFlow.waitingRoom.joinOpensIn', {
         countdown: formatCountdown(status.secondsLeft),
@@ -95,15 +94,32 @@ const useScheduleCopy = (): ScheduleCopy => {
     if (status.kind === 'withinDay') {
       return t('meetingFlow.waitingRoom.joinOpensAt', { time: formatTime(status.startsAt) });
     }
-    return t('meetingFlow.waitingRoom.joinOpensOn', {
-      date: formatMeetingDate({ date: status.startsAt, locale, format: 'date' }),
-    });
+    if (status.kind === 'daysAway') {
+      return t('meetingFlow.waitingRoom.joinOpensOn', {
+        date: formatMeetingDate({ date: status.startsAt, locale, format: 'date' }),
+      });
+    }
+    return null;
+  })();
+
+  const joinLabel = (() => {
+    if (status.kind === 'ended') return t('meetingFlow.waitingRoom.meetingEnded');
+    return joinOpensText ?? t('button.join');
   })();
 
   const isJoinEnabled = status.kind === 'unscheduled' || status.kind === 'started';
   const isWaiting = !isJoinEnabled && status.kind !== 'ended';
 
-  return { status, statusText, countdownText, joinLabel, timeRange, isJoinEnabled, isWaiting };
+  return {
+    status,
+    statusText,
+    countdownText,
+    joinLabel,
+    joinOpensText,
+    timeRange,
+    isJoinEnabled,
+    isWaiting,
+  };
 };
 
 export default useScheduleCopy;
