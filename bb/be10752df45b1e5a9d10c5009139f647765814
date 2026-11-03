@@ -1,0 +1,16 @@
+frontend/src/components/MeetingRoom/EmojiGrid/EmojiGrid.tsx
+  h_c939f8fae0de97 6,56,58,62,80,84-87,89,93
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  h_c939f8fae0de97 33,49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bbbe10752df45b1e5a9d10c5009139f647765814",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

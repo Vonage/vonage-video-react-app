@@ -1,0 +1,134 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 568
+  s_12947bc1d7eb0a::t_d4c4a2ad33371f 512
+  s_12947bc1d7eb0a::t_b8c99a50d0a1c9 509-511
+  s_12947bc1d7eb0a::t_d1e599f58ec28b 513-515
+  h_737cf808c1c597 62,83,478,481-482,484,486-487,489-495,501,508,516-517,520-528,544-551,553-567,569-575,581,583-589,612
+.cursorrules
+  h_737cf808c1c597 1
+.github/copilot-instructions.md
+  h_737cf808c1c597 1
+.github/instructions/test-files.instructions.md
+  h_737cf808c1c597 7-8,10-12
+.github/workflows/check-base-branch.yml
+  h_737cf808c1c597 12,20,22-23,25-27
+.github/workflows/deploy-to-vcr-prod.yml
+  h_737cf808c1c597 1-146
+.kiro/steering/comments.md
+  h_737cf808c1c597 3-4,6,8-9
+.windsurfrules
+  h_737cf808c1c597 1
+AGENTS.md
+  h_737cf808c1c597 1-1935
+CLAUDE.md
+  h_737cf808c1c597 1
+GEMINI.md
+  h_737cf808c1c597 1
+apps/local-oidc/package.json
+  h_737cf808c1c597 6
+backend/package.json
+  h_737cf808c1c597 3,8
+backend/routes/wellKnown.ts
+  h_737cf808c1c597 34-35
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_737cf808c1c597 85-97
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_737cf808c1c597 34-43
+backend/tests/assetlinks.test.ts
+  h_737cf808c1c597 56
+docs/CONTRIBUTING.md
+  h_737cf808c1c597 16-35
+docs/TESTING.md
+  h_737cf808c1c597 50
+frontend/package.json
+  h_737cf808c1c597 3
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  h_737cf808c1c597 17,43,360,370,380-383,392,587-605
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_737cf808c1c597 21,161-167,400-401,410
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.spec.tsx
+  h_737cf808c1c597 33-47,49,57-92
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.tsx
+  h_737cf808c1c597 39-40,42-53
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_737cf808c1c597 9,26,40-41,61,68,72-75,78-88,152-154,165-166,314-351,384-417,429-446
+frontend/src/Context/SessionProvider/session.tsx
+  h_737cf808c1c597 57,105,280-282,512-523,533,561-563
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_737cf808c1c597 12,381-419
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_737cf808c1c597 15,17-20,106-107,188-211
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  h_737cf808c1c597 1-2,20-23,135-177
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  h_737cf808c1c597 22,28-29,31-34,41
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  h_737cf808c1c597 1,72-79,86-87
+frontend/src/hooks/tests/useChat.spec.tsx
+  h_737cf808c1c597 4,12,83-84,95-97,102,111-129
+frontend/src/hooks/tests/useElementDimensions.spec.tsx
+  h_737cf808c1c597 1,28-43
+frontend/src/hooks/tests/useEmoji.spec.tsx
+  h_737cf808c1c597 36
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_737cf808c1c597 9,135-202
+frontend/src/hooks/useChat.tsx
+  h_737cf808c1c597 6-7,10,16,32,36,48,53-69,71
+frontend/src/hooks/useElementDimensions.tsx
+  h_737cf808c1c597 34-35
+frontend/src/hooks/useEmoji.tsx
+  h_737cf808c1c597 1,13,32,42-51,65,120-127,136-137,140
+frontend/src/hooks/useMeetingRoom.ts
+  h_737cf808c1c597 15-16,74,102-103,118-119,123-132,135,153,179-182,314-346
+frontend/src/locales/de.json
+  h_737cf808c1c597 185,334
+frontend/src/locales/en.json
+  h_737cf808c1c597 185,334
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 185,334
+frontend/src/locales/es.json
+  h_737cf808c1c597 185,334
+frontend/src/locales/it.json
+  h_737cf808c1c597 185,334
+frontend/src/locales/ja.json
+  h_737cf808c1c597 195,344
+frontend/src/types/session.ts
+  h_737cf808c1c597 45
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_737cf808c1c597 2,35-36,38-39,42,62-63,66,76-77,79-80,85-86,114-117,120-128,249,253-318,337-374,381,385,388-406,433,440-446,448-453,455-468
+integration-tests/baseUrl.ts
+  h_737cf808c1c597 1-15
+integration-tests/fixtures/testWithLogging.ts
+  h_737cf808c1c597 10
+integration-tests/package.json
+  h_737cf808c1c597 3
+integration-tests/playwright.config.ts
+  h_737cf808c1c597 5,11,69-70,137-145,147-153
+integration-tests/tests/multiparty.spec.ts
+  h_737cf808c1c597 1,272-408
+integration-tests/tests/videoFeatures.spec.ts
+  h_737cf808c1c597 1-439
+package.json
+  h_737cf808c1c597 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "95481152a277e5c45e49c8c315f34fd3ba69c27c",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_12947bc1d7eb0a": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_3124006b-fd5b-4e58-866b-8dd6919e52cb",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.ts
+  s_12947bc1d7eb0a::t_525f943b7ffbb4 130-136
+  s_12947bc1d7eb0a::t_b19982a1c47a87 76-85
+  s_12947bc1d7eb0a::t_1861afd3764a41 120,122-124,127
+  s_12947bc1d7eb0a::t_8f67952037a89e 118-119,121
+  h_737cf808c1c597 38-39,58,75
+  s_12947bc1d7eb0a::t_e403b83342fc2c 53
+  s_12947bc1d7eb0a::t_6d6f8c86fc68a4 109,111-114,116-117,125-126,128-129
+  h_737cf808c1c597 21-24
+integration-tests/tests/activeSpeaker.spec.ts
+  s_12947bc1d7eb0a::t_ee9236f6a34a97 4-6,8-17
+  s_12947bc1d7eb0a::t_f9c49969a8430c 18-28
+  s_12947bc1d7eb0a::t_709080905a006a 75
+  s_12947bc1d7eb0a::t_44dc9cc2d1ad85 74,76-96,98-125
+  s_12947bc1d7eb0a::t_bceb3d7cc0a506 7
+  s_12947bc1d7eb0a::t_0ed8c97632ed7a 97
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.tsx
+  s_12947bc1d7eb0a::t_77409d15309d87 4,12,22,32-33,35-37
+  h_737cf808c1c597 5
+  s_12947bc1d7eb0a::t_14f443b1659939 27-30
+  s_12947bc1d7eb0a::t_0df0f97826aabd 31
+  s_12947bc1d7eb0a::t_61630201496197 38-40
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_12947bc1d7eb0a::t_63aca584adf218 331
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.spec.ts
+  s_12947bc1d7eb0a::t_8efde77e143bb1 13,17,19-65,133,193
+  s_12947bc1d7eb0a::t_b034696dba48df 12
+  s_12947bc1d7eb0a::t_7d1cb4c432a3b1 14-16
+  s_12947bc1d7eb0a::t_55547f9e15ba45 18
+  s_12947bc1d7eb0a::t_da539192b08548 131-132
+  s_12947bc1d7eb0a::t_ec35560e4065b6 134-136
+  s_12947bc1d7eb0a::t_0a65c47e1cfcc7 192
+  s_12947bc1d7eb0a::t_147b212870fcc0 194-196
+  h_737cf808c1c597 2,197
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "358f06040a0f13530a6631ceadfb5c0d3209fb56",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_12947bc1d7eb0a": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_3124006b-fd5b-4e58-866b-8dd6919e52cb",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

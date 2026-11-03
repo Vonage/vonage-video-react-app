@@ -1,0 +1,22 @@
+frontend/src/hooks/useEmoji.tsx
+  h_c939f8fae0de97 73-76
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.spec.ts
+  h_c939f8fae0de97 11
+libs/common/manifest.json
+  h_c939f8fae0de97 4
+libs/common/src/execution/throttle/throttle.test.ts
+  h_c939f8fae0de97 54-67
+libs/common/src/execution/throttle/throttle.ts
+  h_c939f8fae0de97 8-13,29-30,36,69,87-91,93-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "00e32681e64e53ead2c4bfb257ed4bd9b6f0e9d9",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.spec.tsx
+  s_2add80813c1c37::t_65c8d06e7075d1 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "815669ba44b43bac23b8440ad6990f79c6ae2667",
+  "prompts": {},
+  "sessions": {
+    "s_2add80813c1c37": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f9c3f4c4-ac53-4f99-90b0-02e0836077ec",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

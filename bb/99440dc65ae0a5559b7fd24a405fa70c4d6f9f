@@ -1,0 +1,34 @@
+frontend/src/components/MeetingRoom/MiniModeButton/MiniModeButton.tsx
+  s_2add80813c1c37::t_e177fa0ceaf4b4 43
+  h_737cf808c1c597 39-42
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.tsx
+  h_737cf808c1c597 33
+frontend/src/components/MeetingRoom/MiniCallWindow/useIconSvg.ts
+  h_737cf808c1c597 14
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.spec.tsx
+  s_2add80813c1c37::t_a520de81e17b9c 51
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindow.tsx
+  h_737cf808c1c597 108-109
+  h_737cf808c1c597 107,110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bb99440dc65ae0a5559b7fd24a405fa70c4d6f9f",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_2add80813c1c37": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f9c3f4c4-ac53-4f99-90b0-02e0836077ec",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
