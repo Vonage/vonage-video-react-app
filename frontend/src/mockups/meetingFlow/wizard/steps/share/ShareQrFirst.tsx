@@ -13,13 +13,13 @@ const ShareQrFirst = (): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 sm:gap-4">
       <ShareMeetingHeader />
-      <div className="flex flex-col items-center gap-4 rounded-vera-large bg-vera-background p-6">
+      <div className="flex flex-col items-center gap-4 rounded-vera-large bg-vera-background p-6 sm:gap-3 sm:p-4">
         <QrPlaceholder
           seed={draftMeetingLink}
           label={t('meetingFlow.common.qrPlaceholder')}
-          className="w-56 max-w-full border border-vera-border"
+          className="w-56 max-w-full border border-vera-border sm:w-36"
         />
         <span className="text-center font-vera-plain text-vera-body-base text-vera-text-secondary">
           {t('meetingFlow.wizard.share.scanHint')}
