@@ -1,0 +1,22 @@
+frontend/src/VeraRoom/vite.veraroom.config.ts
+  s_99faf6d57e6e27::t_c598750c0ef8d3 36-38
+  s_99faf6d57e6e27::t_f507ac7d1d72b5 35
+  s_99faf6d57e6e27::t_d02e9993fea66b 39
+  s_99faf6d57e6e27::t_e70678357b7502 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "97a8be6a8f9b556e7a0ed60e7d993fdcf9c2d36d",
+  "prompts": {},
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
