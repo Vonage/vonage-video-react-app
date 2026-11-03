@@ -3,6 +3,7 @@ import mockupMeta, { type MockupArgs } from '../storybook/mockupMeta';
 import LandingAgenda from './LandingAgenda';
 import LandingNextUp from './LandingNextUp';
 import LandingStackedCards from './LandingStackedCards';
+import LandingStackedCollapsible from './LandingStackedCollapsible';
 
 const meta = {
   title: 'Mockups/Meeting flow/1. Landing',
@@ -35,4 +36,12 @@ export const BAgenda: Story = {
 export const CNextUp: Story = {
   name: 'C · Next-up spotlight',
   render: () => <LandingNextUp />,
+};
+
+/**
+ * D: A's two cards, with each upcoming meeting as a borderless collapsible row; the soonest one is open on arrival.
+ */
+export const DCombined: Story = {
+  name: 'D · Stacked cards with collapsible rows',
+  render: () => <LandingStackedCollapsible />,
 };
