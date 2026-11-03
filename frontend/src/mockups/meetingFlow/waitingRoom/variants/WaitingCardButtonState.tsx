@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import { tv } from 'tailwind-variants';
 import VividIcon from '@ui/components/VividIcon';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import disabledButtonClassName from '../../constants/disabledButtonClassName';
 import formatMeetingDate from '../../helpers/formatMeetingDate';
 import useLocale from '../../hooks/useLocale';
@@ -80,15 +81,19 @@ const WaitingCardButtonState = (): ReactElement => {
       )}
       <PrepareToJoinCard.Actions>
         <div className="flex w-full flex-col gap-3">
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!isJoinEnabled}
-            className={`tabular-nums ${disabledButtonClassName}`}
-          >
-            {joinLabel}
-          </Button>
+          {status.kind === 'ended' ? (
+            <GoToLandingPageButton />
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!isJoinEnabled}
+              className={`tabular-nums ${disabledButtonClassName}`}
+            >
+              {joinLabel}
+            </Button>
+          )}
           {isWaiting && <AutoJoinCheck />}
         </div>
       </PrepareToJoinCard.Actions>

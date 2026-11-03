@@ -138,7 +138,6 @@
   "meetingFlow.waitingRoom.joinOpensAt": "Join opens at {{time}}",
   "meetingFlow.waitingRoom.joinOpensIn": "Join opens in {{countdown}}",
   "meetingFlow.waitingRoom.joinOpensOn": "Join opens {{date}}",
-  "meetingFlow.waitingRoom.meetingEnded": "Meeting ended",
   "meetingFlow.waitingRoom.autoJoin": "Join automatically when it starts",
   "meetingFlow.waitingRoom.autoJoinNameHint": "Enter your name to turn this on",
   "meetingFlow.waitingRoom.tabTitle": "Browser tab: {{title}}",

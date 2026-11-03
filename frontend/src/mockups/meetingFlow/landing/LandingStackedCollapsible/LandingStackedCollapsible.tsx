@@ -29,7 +29,7 @@ const LandingStackedCollapsible = (): ReactElement => {
     <LandingShell>
       <div className="flex w-full flex-col gap-6 py-6 lg:max-w-125">
         <CreateOrJoinCard />
-        <Card className="gap-2">
+        <Card className="gap-5">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex flex-col">
               <h6 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary">

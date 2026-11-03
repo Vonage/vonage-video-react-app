@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import classNames from 'classnames';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import disabledButtonClassName from '../../constants/disabledButtonClassName';
 import AutoJoinCheck from '../components/AutoJoinCheck';
 import PrepareToJoinCard from '../components/PrepareToJoinCard';
@@ -69,15 +70,19 @@ const WaitingCardCountdownPanel = (): ReactElement => {
       )}
       <PrepareToJoinCard.Actions>
         <div className="flex w-full flex-col gap-3">
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!isJoinEnabled}
-            className={disabledButtonClassName}
-          >
-            {t('button.join')}
-          </Button>
+          {status.kind === 'ended' ? (
+            <GoToLandingPageButton />
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!isJoinEnabled}
+              className={disabledButtonClassName}
+            >
+              {t('button.join')}
+            </Button>
+          )}
           {isWaiting && <AutoJoinCheck />}
         </div>
       </PrepareToJoinCard.Actions>

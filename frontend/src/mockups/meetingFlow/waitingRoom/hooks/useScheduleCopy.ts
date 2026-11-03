@@ -102,10 +102,7 @@ const useScheduleCopy = (): ScheduleCopy => {
     return null;
   })();
 
-  const joinLabel = (() => {
-    if (status.kind === 'ended') return t('meetingFlow.waitingRoom.meetingEnded');
-    return joinOpensText ?? t('button.join');
-  })();
+  const joinLabel = joinOpensText ?? t('button.join');
 
   const isJoinEnabled = status.kind === 'unscheduled' || status.kind === 'started';
   const isWaiting = !isJoinEnabled && status.kind !== 'ended';

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import disabledButtonClassName from '../../constants/disabledButtonClassName';
 import type { ScheduleStatusKind } from '../../types/ScheduleStatus';
 import AutoJoinCheck from '../components/AutoJoinCheck';
@@ -59,15 +60,19 @@ const WaitingCardStatusLine = (): ReactElement => {
       </PrepareToJoinCard.Schedule>
       <PrepareToJoinCard.Actions>
         <div className="flex w-full flex-col gap-3">
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!isJoinEnabled}
-            className={disabledButtonClassName}
-          >
-            {t('button.join')}
-          </Button>
+          {status.kind === 'ended' ? (
+            <GoToLandingPageButton />
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!isJoinEnabled}
+              className={disabledButtonClassName}
+            >
+              {t('button.join')}
+            </Button>
+          )}
           {joinOpensText && (
             <span className="text-center font-vera-plain text-vera-caption text-vera-text-tertiary">
               {joinOpensText}
