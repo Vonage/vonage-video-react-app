@@ -4,6 +4,8 @@ import isMiniModeSupported from './isMiniModeSupported';
 
 const ANDROID_CHROME_USER_AGENT =
   'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36';
+const DESKTOP_FIREFOX_USER_AGENT =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 14.0; rv:151.0) Gecko/20100101 Firefox/151.0';
 
 describe('isMiniModeSupported', () => {
   afterEach(() => {
@@ -21,7 +23,11 @@ describe('isMiniModeSupported', () => {
     expect(isMiniModeSupported()).toBe(false);
 
     env.partialUpdate({ ALLOW_MINI_MODE: true });
-    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(ANDROID_CHROME_USER_AGENT);
+    const userAgentSpy = vi.spyOn(navigator, 'userAgent', 'get');
+    userAgentSpy.mockReturnValue(ANDROID_CHROME_USER_AGENT);
+    expect(isMiniModeSupported()).toBe(false);
+
+    userAgentSpy.mockReturnValue(DESKTOP_FIREFOX_USER_AGENT);
     expect(isMiniModeSupported()).toBe(false);
   });
 });

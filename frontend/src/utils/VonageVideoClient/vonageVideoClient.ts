@@ -21,6 +21,7 @@ import {
   StreamPropertyChangedEvent,
 } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
+import sampleAudioLevelWhilePageHidden from './helpers/sampleAudioLevelWhilePageHidden';
 import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
 import isErrorLike from '@common/assertions/isErrorLike';
 import frontendLogger from '../../logger';
@@ -328,10 +329,17 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     // Create moving average tracker and add handler for subscriber audioLevelUpdated event emitted periodically with subscriber audio volume
     // See for reference: https://developer.vonage.com/en/video/guides/ui-customization/general-customization#adjusting-user-interface-based-on-audio-levels
     const getMovingAverageAudioLevel = createMovingAvgAudioLevelTracker();
-    subscriber.on('audioLevelUpdated', ({ audioLevel }) => {
+    const reportAudioLevel = (audioLevel: number) => {
       const { logMovingAvg } = getMovingAverageAudioLevel(audioLevel);
       this.emit('subscriberAudioLevelUpdated', { movingAvg: logMovingAvg, subscriberId: streamId });
+    };
+    subscriber.on('audioLevelUpdated', ({ audioLevel }) => reportAudioLevel(audioLevel));
+
+    const stopHiddenPageAudioSampling = sampleAudioLevelWhilePageHidden({
+      subscriber,
+      onAudioLevel: reportAudioLevel,
     });
+    subscriber.once('destroyed', stopHiddenPageAudioSampling);
   };
 
   /**

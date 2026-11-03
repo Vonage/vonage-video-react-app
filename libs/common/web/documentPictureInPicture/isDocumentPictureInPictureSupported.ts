@@ -15,7 +15,7 @@ declare global {
 
 /**
  * Whether the Document Picture-in-Picture API is available in this browser.
- * Chromium-only as of 2026; Safari and Firefox do not implement it.
+ * Available in desktop Chromium 116+ and Firefox 151+; Safari does not implement it.
  * @returns {boolean} true when `documentPictureInPicture.requestWindow` exists
  */
 const isDocumentPictureInPictureSupported = (): boolean =>
