@@ -33,91 +33,90 @@ export type CaptionsButtonProps = {
  *  @property {CaptionsState} captionsState - the state of the captions, including whether they are enabled and functions to set error messages
  * @returns {ReactElement} - The CaptionsButton component.
  */
-const CaptionsButton = memo(
-  ({ isOverflowButton = false, handleClick, captionsState }: CaptionsButtonProps): ReactElement => {
-    const videoClient = runtime$.useVideoClient();
-    const { t } = useTranslation();
-    const { sessionKey } = useSessionContext();
-    const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
-      captionsState;
-    const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
+const CaptionsButton = ({
+  isOverflowButton = false,
+  handleClick,
+  captionsState,
+}: CaptionsButtonProps): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
+  const { t } = useTranslation();
+  const { sessionKey } = useSessionContext();
+  const { isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse } =
+    captionsState;
+  const title = isUserCaptionsEnabled ? t('captions.disable') : t('captions.enable');
 
-    const handleClose = () => {
-      if (isOverflowButton && handleClick) {
-        handleClick();
+  const handleClose = () => {
+    if (isOverflowButton && handleClick) {
+      handleClick();
+    }
+  };
+
+  const handleCaptionsErrorResponse = (message: string | null) => {
+    setCaptionsErrorResponse(message || t('errors.unknown'));
+
+    setIsUserCaptionsEnabled(false);
+  };
+
+  const handleCaptionsEnable = async () => {
+    try {
+      await videoClient.ensureCaptionsEnabled({ sessionKey: sessionKey! });
+
+      setIsUserCaptionsEnabled(true);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        handleCaptionsErrorResponse(error.response?.data.message);
       }
-    };
+    }
+  };
 
-    const handleCaptionsErrorResponse = (message: string | null) => {
-      setCaptionsErrorResponse(message || t('errors.unknown'));
-
+  const handleCaptionsDisable = () => {
+    try {
       setIsUserCaptionsEnabled(false);
-    };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        handleCaptionsErrorResponse(error.response?.data.message);
+      }
+    }
+  };
 
-    const handleCaptionsEnable = async () => {
-      try {
-        await videoClient.ensureCaptionsEnabled({ sessionKey: sessionKey! });
+  const handleCaptions = async (action: 'enable' | 'disable') => {
+    if (action === 'enable') {
+      await handleCaptionsEnable();
+    } else if (action === 'disable') {
+      handleCaptionsDisable();
+    }
+  };
 
-        setIsUserCaptionsEnabled(true);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          handleCaptionsErrorResponse(error.response?.data.message);
+  const handleActionClick = () => {
+    void handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
+    handleClose();
+  };
+
+  return (
+    <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
+      <ToolbarButton
+        onClick={handleActionClick}
+        data-testid={testIds.button}
+        icon={
+          !isUserCaptionsEnabled ? (
+            <VividIcon
+              name="closed-captioning-solid"
+              customSize={-5}
+              className="text-vera-on-secondary-light"
+            />
+          ) : (
+            <VividIcon
+              name="closed-captioning-off-solid"
+              customSize={-5}
+              className="text-vera-error"
+            />
+          )
         }
-      }
-    };
-
-    const handleCaptionsDisable = () => {
-      try {
-        setIsUserCaptionsEnabled(false);
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          handleCaptionsErrorResponse(error.response?.data.message);
-        }
-      }
-    };
-
-    const handleCaptions = async (action: 'enable' | 'disable') => {
-      if (action === 'enable') {
-        await handleCaptionsEnable();
-      } else if (action === 'disable') {
-        handleCaptionsDisable();
-      }
-    };
-
-    const handleActionClick = () => {
-      void handleCaptions(isUserCaptionsEnabled ? 'disable' : 'enable');
-      handleClose();
-    };
-
-    return (
-      <Tooltip title={title} aria-label={t('captions.ariaLabel')}>
-        <ToolbarButton
-          onClick={handleActionClick}
-          data-testid={testIds.button}
-          icon={
-            !isUserCaptionsEnabled ? (
-              <VividIcon
-                name="closed-captioning-solid"
-                customSize={-5}
-                className="text-vera-on-secondary-light"
-              />
-            ) : (
-              <VividIcon
-                name="closed-captioning-off-solid"
-                customSize={-5}
-                className="text-vera-error"
-              />
-            )
-          }
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
-    );
-  }
-);
-
-CaptionsButton.displayName = 'CaptionsButton';
-
-export default CaptionsButton;
+        isOverflowButton={isOverflowButton}
+      />
+    </Tooltip>
+  );
+};
+export default memo(CaptionsButton);

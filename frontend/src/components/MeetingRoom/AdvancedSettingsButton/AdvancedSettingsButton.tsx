@@ -13,42 +13,40 @@ export type AdvancedSettingsButtonProps = {
   isOverflowButton?: boolean;
 };
 
-const AdvancedSettingsButton = memo(
-  ({ isOverflowButton = false }: AdvancedSettingsButtonProps): ReactElement => {
-    const { t } = useTranslation();
-    const [isOpen, { open, close }] = advancedSettings$.use(({ isOpen }) => isOpen);
+const AdvancedSettingsButton = ({
+  isOverflowButton = false,
+}: AdvancedSettingsButtonProps): ReactElement => {
+  const { t } = useTranslation();
+  const [isOpen, { open, close }] = advancedSettings$.use(({ isOpen }) => isOpen);
 
-    const handleClick = () => {
-      if (isOpen) {
-        close();
-        return;
-      }
+  const handleClick = () => {
+    if (isOpen) {
+      close();
+      return;
+    }
 
-      open();
-    };
+    open();
+  };
 
-    return (
-      <Tooltip
-        title={isOpen ? t('advancedSettings.close') : t('advancedSettings.open')}
-        aria-label={t('advancedSettings.ariaLabel')}
-      >
-        <ToolbarButton
-          data-testid={testIds.button}
-          onClick={handleClick}
-          icon={
-            <VividIcon
-              name="gear-solid"
-              customSize={-5}
-              className={isOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'}
-            />
-          }
-          isOverflowButton={isOverflowButton}
-        />
-      </Tooltip>
-    );
-  }
-);
+  return (
+    <Tooltip
+      title={isOpen ? t('advancedSettings.close') : t('advancedSettings.open')}
+      aria-label={t('advancedSettings.ariaLabel')}
+    >
+      <ToolbarButton
+        data-testid={testIds.button}
+        onClick={handleClick}
+        icon={
+          <VividIcon
+            name="gear-solid"
+            customSize={-5}
+            className={isOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'}
+          />
+        }
+        isOverflowButton={isOverflowButton}
+      />
+    </Tooltip>
+  );
+};
 
-AdvancedSettingsButton.displayName = 'AdvancedSettingsButton';
-
-export default AdvancedSettingsButton;
+export default memo(AdvancedSettingsButton);

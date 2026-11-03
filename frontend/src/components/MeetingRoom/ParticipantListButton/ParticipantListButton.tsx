@@ -28,44 +28,40 @@ export type ParticipantListButtonProps = {
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ParticipantListButton
  */
-const ParticipantListButton = memo(
-  ({
-    handleClick,
-    isOpen,
-    participantCount,
-    isOverflowButton = false,
-  }: ParticipantListButtonProps): ReactElement => {
-    const { t } = useTranslation();
+const ParticipantListButton = ({
+  handleClick,
+  isOpen,
+  participantCount,
+  isOverflowButton = false,
+}: ParticipantListButtonProps): ReactElement => {
+  const { t } = useTranslation();
 
-    return (
-      <Tooltip
-        title={isOpen ? t('participants.list.close') : t('participants.list.open')}
-        aria-label={t('participants.list.ariaLabel')}
+  return (
+    <Tooltip
+      title={isOpen ? t('participants.list.close') : t('participants.list.open')}
+      aria-label={t('participants.list.ariaLabel')}
+    >
+      <Badge
+        className="z-1 [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
+        badgeContent={participantCount}
+        overlap="circular"
       >
-        <Badge
-          className="z-1 [&_.MuiBadge-badge]:text-vera-on-tertiary [&_.MuiBadge-badge]:bg-vera-tertiary"
-          badgeContent={participantCount}
-          overlap="circular"
-        >
-          <ToolbarButton
-            data-testid={testIds.button}
-            onClick={handleClick}
-            icon={
-              <VividIcon
-                name="group-solid"
-                customSize={-4}
-                data-testid={testIds.icon}
-                className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
-              />
-            }
-            isOverflowButton={isOverflowButton}
-          />
-        </Badge>
-      </Tooltip>
-    );
-  }
-);
+        <ToolbarButton
+          data-testid={testIds.button}
+          onClick={handleClick}
+          icon={
+            <VividIcon
+              name="group-solid"
+              customSize={-4}
+              data-testid={testIds.icon}
+              className={isOpen ? 'text-vera-secondary' : 'text-vera-on-secondary-light'}
+            />
+          }
+          isOverflowButton={isOverflowButton}
+        />
+      </Badge>
+    </Tooltip>
+  );
+};
 
-ParticipantListButton.displayName = 'ParticipantListButton';
-
-export default ParticipantListButton;
+export default memo(ParticipantListButton);

@@ -27,50 +27,46 @@ export type EmojiGridProps = {
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - The EmojiGridButton Component.
  */
-const EmojiGridButton = memo(
-  ({
-    isEmojiGridOpen,
-    setIsEmojiGridOpen,
-    isParentOpen,
-    isOverflowButton = false,
-  }: EmojiGridProps): ReactElement => {
-    const { t } = useTranslation();
-    const anchorRef = useRef<HTMLButtonElement>(null);
-    const handleToggle = () => {
-      setIsEmojiGridOpen((prevOpen) => !prevOpen);
-    };
+const EmojiGridButton = ({
+  isEmojiGridOpen,
+  setIsEmojiGridOpen,
+  isParentOpen,
+  isOverflowButton = false,
+}: EmojiGridProps): ReactElement => {
+  const { t } = useTranslation();
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const handleToggle = () => {
+    setIsEmojiGridOpen((prevOpen) => !prevOpen);
+  };
 
-    return (
-      <>
-        <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleToggle}
-            icon={
-              <VividIcon
-                name="emoji-solid"
-                customSize={-5}
-                className={
-                  isEmojiGridOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'
-                }
-              />
-            }
-            ref={anchorRef}
-            data-testid={testIds.button}
-            isOverflowButton={isOverflowButton}
-          />
-        </Tooltip>
-
-        <EmojiGrid
-          anchorRef={anchorRef}
-          isEmojiGridOpen={isEmojiGridOpen}
-          setIsEmojiGridOpen={setIsEmojiGridOpen}
-          isParentOpen={isParentOpen}
+  return (
+    <>
+      <Tooltip title={t('emoji.tooltip')} aria-label={t('emoji.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleToggle}
+          icon={
+            <VividIcon
+              name="emoji-solid"
+              customSize={-5}
+              className={
+                isEmojiGridOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'
+              }
+            />
+          }
+          ref={anchorRef}
+          data-testid={testIds.button}
+          isOverflowButton={isOverflowButton}
         />
-      </>
-    );
-  }
-);
+      </Tooltip>
 
-EmojiGridButton.displayName = 'EmojiGridButton';
+      <EmojiGrid
+        anchorRef={anchorRef}
+        isEmojiGridOpen={isEmojiGridOpen}
+        setIsEmojiGridOpen={setIsEmojiGridOpen}
+        isParentOpen={isParentOpen}
+      />
+    </>
+  );
+};
 
-export default EmojiGridButton;
+export default memo(EmojiGridButton);

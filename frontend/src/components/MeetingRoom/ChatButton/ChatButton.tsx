@@ -27,32 +27,32 @@ export type ChatButtonProps = {
  *   @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  * @returns {ReactElement} - ChatButton
  */
-const ChatButton = memo(
-  ({ handleClick, isOpen, isOverflowButton = false }: ChatButtonProps): ReactElement => {
-    const { t } = useTranslation();
+const ChatButton = ({
+  handleClick,
+  isOpen,
+  isOverflowButton = false,
+}: ChatButtonProps): ReactElement => {
+  const { t } = useTranslation();
 
-    return (
-      <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
-        <UnreadMessagesBadge>
-          <ToolbarButton
-            data-testid={testIds.button}
-            onClick={handleClick}
-            icon={
-              <VividIcon
-                customSize={-5}
-                name="chat-solid"
-                className={isOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'}
-                data-testid={testIds.icon}
-              />
-            }
-            isOverflowButton={isOverflowButton}
-          />
-        </UnreadMessagesBadge>
-      </Tooltip>
-    );
-  }
-);
+  return (
+    <Tooltip title={isOpen ? t('chat.close') : t('chat.open')} aria-label={t('chat.ariaLabel')}>
+      <UnreadMessagesBadge>
+        <ToolbarButton
+          data-testid={testIds.button}
+          onClick={handleClick}
+          icon={
+            <VividIcon
+              customSize={-5}
+              name="chat-solid"
+              className={isOpen ? 'text-vera-secondary-light' : 'text-vera-on-secondary-light'}
+              data-testid={testIds.icon}
+            />
+          }
+          isOverflowButton={isOverflowButton}
+        />
+      </UnreadMessagesBadge>
+    </Tooltip>
+  );
+};
 
-ChatButton.displayName = 'ChatButton';
-
-export default ChatButton;
+export default memo(ChatButton);

@@ -18,7 +18,7 @@ export type ExitButtonProps = {
  *  @property {() => void} handleLeave - a function that handles the leave action.
  * @returns {ReactElement} The exit button component
  */
-const ExitButton = memo(({ handleLeave }: ExitButtonProps): ReactElement => {
+const ExitButton = ({ handleLeave }: ExitButtonProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { sessionKey } = useSessionContext();
@@ -47,8 +47,6 @@ const ExitButton = memo(({ handleLeave }: ExitButtonProps): ReactElement => {
       />
     </Tooltip>
   );
-});
+};
 
-ExitButton.displayName = 'ExitButton';
-
-export default ExitButton;
+export default memo(ExitButton);
