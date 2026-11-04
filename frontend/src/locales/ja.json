@@ -407,6 +407,8 @@
   "waitingRoom.schedule.joinOpensIn": "あと{{countdown}}で参加できます",
   "waitingRoom.schedule.tabTitle.countdown": "{{countdown}} · {{name}}",
   "waitingRoom.schedule.tabTitle.started": "● 開始済み · {{name}}",
+  "waitingRoom.schedule.autoJoin": "開始時に自動で参加する",
+  "waitingRoom.schedule.autoJoinNameHint": "有効にするには名前を入力してください",
   "zoom.reset": "ズームをリセット",
   "zoom.start": "ズームを開始",
   "zoom.out": "ズームアウト",

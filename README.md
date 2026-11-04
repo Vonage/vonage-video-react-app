@@ -188,6 +188,7 @@ See [Authentication](./docs/AUTHENTICATION.md) for the full guide.
 | [Configuration](./docs/CONFIGURATION.md) | Environment variables, feature flags, theming, and Storybook |
 | [Authentication](./docs/AUTHENTICATION.md) | OIDC/BFF authentication architecture, setup, and troubleshooting |
 | [Meeting Timer](./docs/MEETING_TIMER.md) | Time left in a scheduled meeting and the end-of-meeting warning |
+| [Waiting Room](./docs/WAITING_ROOM.md) | Joining a scheduled meeting automatically when it starts |
 | [Session Migration](./docs/SESSION_MIGRATION.md) | Server rotation support, archiving recovery, and testing |
 | [Testing](./docs/TESTING.md) | Integration tests, screenshot tests, and unit test suites |
 | [Code Style](./docs/CODE_STYLE.md) | Linting, formatting, naming conventions, and doc generation |
