@@ -1,0 +1,38 @@
+README.md
+  h_6029769cf9ac60 191
+docs/WAITING_ROOM.md
+  h_6029769cf9ac60 1-13
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 96-179
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 20-21,60,77,98,119-125,184-191
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinCheckbox/AutoJoinCheckbox.tsx
+  h_6029769cf9ac60 1-56
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinCheckbox/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useAutoJoin.ts
+  h_6029769cf9ac60 1-31
+frontend/src/locales/de.json
+  h_6029769cf9ac60 389-390
+frontend/src/locales/en.json
+  h_6029769cf9ac60 389-390
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 389-390
+frontend/src/locales/es.json
+  h_6029769cf9ac60 389-390
+frontend/src/locales/it.json
+  h_6029769cf9ac60 389-390
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 399-400
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "de8f4ca501122a8c787362352da6046938c43bc6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
