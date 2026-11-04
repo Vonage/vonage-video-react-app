@@ -5,6 +5,7 @@ import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import { Server } from 'http';
 import router from './routes';
+import { setStaticAssetCacheHeaders } from './helpers';
 import { fileURLToPath } from 'url';
 import {
   authMiddleware,
@@ -75,12 +76,7 @@ app.use((_req, res, next) => {
 const veraPath = path.join(runtimeDir, './dist');
 app.use(
   express.static(veraPath, {
-    maxAge: '1d',
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.html')) {
-        res.set('Cache-Control', 'public, max-age=0, must-revalidate');
-      }
-    },
+    setHeaders: setStaticAssetCacheHeaders,
   })
 );
 
