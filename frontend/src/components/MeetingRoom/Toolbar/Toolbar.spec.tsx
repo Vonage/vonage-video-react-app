@@ -9,6 +9,7 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { SessionKeyClaim } from '@common/constants';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
@@ -195,7 +196,42 @@ describe('Toolbar', () => {
       expect.objectContaining({ numberOfToolbarButtons: 6 })
     );
   });
+
+  it('shows the meeting timer for a scheduled sessionKey and nothing for an unscheduled one', () => {
+    const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+    const startsAtSeconds = Math.floor(Date.now() / 1000) - 30;
+
+    const unscheduled = renderWithSessionKey(makeSessionKey({ sessionId }));
+
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+
+    unscheduled.unmount();
+    renderWithSessionKey(
+      makeSessionKey({ sessionId, [SessionKeyClaim.schedule]: { at: startsAtSeconds, min: 60 } })
+    );
+
+    expect(screen.getByRole('timer')).toHaveTextContent('59 min left');
+  });
+
+  function renderWithSessionKey(sessionKey: string) {
+    const { wrapper } = makeTestProvider(
+      [providers.runtime, providers.user, providers.session, providers.miniMode],
+      {
+        runtimeContext: undefined,
+        userContext: undefined,
+        sessionContext: { initialValue: { sessionKey } },
+        miniModeContext: undefined,
+      }
+    );
+
+    return renderBase(<Toolbar {...defaultProps} />, { wrapper });
+  }
 });
+
+function makeSessionKey(payload: Record<string, unknown>): string {
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
+  return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
+}
 
 function render(
   ui: ReactElement,

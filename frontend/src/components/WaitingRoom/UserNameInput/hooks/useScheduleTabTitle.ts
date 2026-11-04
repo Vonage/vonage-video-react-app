@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isNil } from '@common/assertions';
-import formatCountdown from '../helpers/formatCountdown';
+import { formatCountdown } from '@common/helpers';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
 
 const useScheduleTabTitle = ({

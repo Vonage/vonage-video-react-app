@@ -9,3 +9,4 @@ export { default as decodeJwt } from './decodeJwt';
 export { default as isZodError } from './isZodError';
 export { default as isAllowedOrigin } from './isAllowedOrigin';
 export { default as readScheduleClaim } from './readScheduleClaim';
+export { default as formatCountdown } from './formatCountdown';
