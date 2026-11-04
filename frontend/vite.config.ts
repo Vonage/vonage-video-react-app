@@ -41,6 +41,7 @@ const appEnvKeys = [
   'API_URL',
   'TUNNEL_DOMAIN',
   'SHOW_VIDEO_STATS',
+  'ENABLE_RTCSTATS',
   'VONAGE_VIDEO_HOST',
   'AUTH_ENABLED',
 ] as const;
