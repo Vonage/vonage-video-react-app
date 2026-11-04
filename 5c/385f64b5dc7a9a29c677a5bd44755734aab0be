@@ -1,0 +1,22 @@
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingScheduleWindow.ts
+  h_6029769cf9ac60 4,23
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 9,30
+libs/api/src/schemas/ExtensionConfig.schema.ts
+  h_6029769cf9ac60 3-4,8,26
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/readExtendedClaim/readExtendedClaim.ts
+  h_6029769cf9ac60 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5c385f64b5dc7a9a29c677a5bd44755734aab0be",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
