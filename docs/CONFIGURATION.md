@@ -102,6 +102,28 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 See [Authentication](./AUTHENTICATION.md) for the full authentication guide including all env var details.
 
+#### Scheduled meeting extension (video handler option)
+
+A running scheduled meeting can be extended through the `extendSession` action. This is not an environment variable: it is the optional `extension` object passed to `createVideoHandler` (or `createVideoRouter`, or `new VideoClient`) from `libs/api`. When it is given, both fields are required.
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `maxTotalMinutes` | `120` | Most minutes all extensions of one meeting may add up to. |
+| `options` | `[20, 40, 60]` | Minutes a single extension may add. Each must be a positive integer no greater than `maxTotalMinutes`. |
+
+```ts
+createVideoHandler({
+  auth,
+  extension: { maxTotalMinutes: 60, options: [15, 30] },
+});
+```
+
+An invalid `extension` object stops the handler from being created. The public `getServerSettings` action returns the options in use, next to the server time.
+
+`extendSession` only accepts a sessionKey whose meeting is running, a value from `options`, and a total within `maxTotalMinutes`. It returns a new sessionKey that ends later, a token that expires at the new end, and a grant valid for 10 minutes. Anyone else holding the meeting's sessionKey passes that grant to `renewSessionKey` to get the same new end. When two people extend from the same sessionKey at the same time, the longer extension is kept rather than both being added.
+
+Concurrent extensions are resolved in memory by default, per server process. To run several instances behind a load balancer, pass an `extensionStore` whose `commitExtension({ sessionId, extendedMinutes })` atomically keeps and returns the larger of the stored and the given value.
+
 ### Frontend (`app-config.json` → `env.sh`)
 
 Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.

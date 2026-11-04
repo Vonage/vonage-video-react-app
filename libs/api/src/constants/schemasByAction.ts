@@ -10,6 +10,8 @@ import {
   CreateEphemeralTokenPayloadSchema,
   CreateSessionAndJoinPayloadSchema,
   GetServerSettingsPayloadSchema,
+  ExtendSessionPayloadSchema,
+  RenewSessionKeyPayloadSchema,
 } from '../schemas';
 import type { ZodType } from 'zod';
 
@@ -25,6 +27,8 @@ const schemasByAction = {
   [VideoAction.createEphemeralToken]: CreateEphemeralTokenPayloadSchema,
   [VideoAction.joinSession]: JoinSessionPayloadSchema,
   [VideoAction.getServerSettings]: GetServerSettingsPayloadSchema.optional(),
+  [VideoAction.extendSession]: ExtendSessionPayloadSchema,
+  [VideoAction.renewSessionKey]: RenewSessionKeyPayloadSchema,
 } as const satisfies Record<VideoAction, ZodType>;
 
 export default schemasByAction;

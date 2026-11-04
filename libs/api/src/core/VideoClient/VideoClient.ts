@@ -16,13 +16,19 @@ import {
   decodeSessionKey,
   createSessionAndJoin,
   getServerSettings,
+  extendSession,
+  renewSessionKey,
 } from '@api-lib/handlers';
 import {
   type HandlersDefaults,
   VideoAction,
   type VideoClientConfig,
   type SessionSigning,
+  type ExtensionConfig,
+  type ExtensionStore,
 } from '@api-lib/types';
+import defaultExtensionConfig from '@api-lib/extension/defaultExtensionConfig';
+import defaultExtensionStore from '@api-lib/extension/defaultExtensionStore';
 import schemasByAction from '@api-lib/constants/schemasByAction';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
 import { isFunction } from '@common/assertions';
@@ -52,6 +58,10 @@ class VideoClient implements IVideoClient {
 
   public readonly _sessionSigning: SessionSigning;
 
+  public readonly _extension: ExtensionConfig;
+
+  public readonly _extensionStore: ExtensionStore;
+
   constructor(config: VideoClientConfig) {
     assertVideoClientConfig(config);
 
@@ -74,6 +84,9 @@ class VideoClient implements IVideoClient {
       secret: config.sessionSigning?.secret || this.auth.applicationId || this.auth.apiKey,
       algorithm: config.sessionSigning?.algorithm || 'HS256',
     };
+
+    this._extension = config.extension ?? defaultExtensionConfig;
+    this._extensionStore = config.extensionStore ?? defaultExtensionStore;
   }
 
   /**
@@ -180,6 +193,16 @@ class VideoClient implements IVideoClient {
     VideoAction.getServerSettings,
     getServerSettings
   );
+
+  /**
+   * Extends a running scheduled session and returns the extended sessionKey, a token and a renewal grant
+   */
+  public extendSession = this.createVideoHandler(VideoAction.extendSession, extendSession);
+
+  /**
+   * Renews a sessionKey with the extension carried by a grant from extendSession
+   */
+  public renewSessionKey = this.createVideoHandler(VideoAction.renewSessionKey, renewSessionKey);
 }
 
 export default VideoClient;
