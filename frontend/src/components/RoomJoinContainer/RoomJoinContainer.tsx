@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
 import Card from '@ui/components/Card';
@@ -7,6 +6,7 @@ import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
+import CreateRoomWizard from '../CreateRoomWizard';
 
 /**
  * RoomJoinContainer Component
@@ -17,14 +17,14 @@ import JoinExistingRoom from '../JoinExistingRoom';
 const RoomJoinContainer = (): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const [createdSessionKey, setCreatedSessionKey] = useState<string | null>(null);
 
   const handleNewRoom = async () => {
     const randomRoom = generateRoomName();
 
     const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
 
-    void navigate(`/waiting-room/${sessionKey}`);
+    setCreatedSessionKey(sessionKey);
   };
 
   return (
@@ -41,6 +41,14 @@ const RoomJoinContainer = (): ReactElement => {
       </h6>
 
       <JoinExistingRoom />
+
+      {createdSessionKey && (
+        <CreateRoomWizard sessionKey={createdSessionKey} onClose={() => setCreatedSessionKey(null)}>
+          <CreateRoomWizard.Step step="share">
+            <CreateRoomWizard.ShareStep />
+          </CreateRoomWizard.Step>
+        </CreateRoomWizard>
+      )}
     </Card>
   );
 };
