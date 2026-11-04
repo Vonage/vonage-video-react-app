@@ -1,0 +1,28 @@
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 9,119,128,130,133,137,140-143,296-297,310-311
+libs/api/src/handlers/createEphemeralToken.ts
+  h_6029769cf9ac60 6,15-16,51-52
+libs/api/src/handlers/createSession.ts
+  h_6029769cf9ac60 42
+libs/api/src/handlers/joinSession.ts
+  h_6029769cf9ac60 2,20-21
+libs/api/src/schedule/isScheduleError.ts
+  h_6029769cf9ac60 1-8
+libs/api/src/schemas/CreateSessionAndJoinPayload.schema.ts
+  h_6029769cf9ac60 5-7
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/types/VideoSessionDetails.ts
+  h_6029769cf9ac60 3,6-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7c14a50a0523a525f5e953c9e4a06cab6f83637",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
