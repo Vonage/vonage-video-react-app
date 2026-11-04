@@ -18,7 +18,7 @@ declare interface ActiveSpeakerTracker {
   on(event: 'activeSpeakerChanged', listener: (payload: ActiveSpeakerChangedPayload) => void): this;
 }
 
-const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 250;
+const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 500;
 const SPEECH_LEVEL_RELEASE_TIME_MS = 600;
 const ACTIVE_SPEAKER_HOLD_TIME_MS = 500;
 const MIN_ACTIVE_SPEAKER_LEVEL = 0.2;
