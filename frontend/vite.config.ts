@@ -251,26 +251,19 @@ export default defineConfig(({ mode }) => {
       cssMinify: true,
       rollupOptions: {
         output: {
-          manualChunks: {
-            'vendor-react': [
-              'react',
-              'react-dom',
-              'react-router-dom',
-              'react-i18next',
-              'react-global-state-hooks',
-              '@mui/material',
-              '@vonage/vivid',
-              '@emotion/react',
-              '@emotion/styled',
-              'tailwind-merge',
-              'tailwind-variants',
-            ],
-            'vendor-vonage': [
-              '@vonage/client-sdk-video',
-              '@vonage/video-client-network-test',
-              'opentok-layout-js',
-            ],
-            'vendor-axios': ['axios'],
+          manualChunks: (moduleId: string) => {
+            // Keeps vendor-vonage from importing vendor and inheriting its hash.
+            if (moduleId === '\0commonjsHelpers.js') return 'vendor-helpers';
+            if (!moduleId.includes('/node_modules/')) return undefined;
+            if (
+              /\/node_modules\/(@vonage\/client-sdk-video|@vonage\/video-client-network-test|opentok-layout-js)\//.test(
+                moduleId
+              )
+            ) {
+              return 'vendor-vonage';
+            }
+            if (/\/node_modules\/axios\//.test(moduleId)) return 'vendor-axios';
+            return 'vendor';
           },
         },
       },
