@@ -25,12 +25,26 @@ test('should navigate to waiting room then publish in room via room name textbox
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
 
-test('should navigate to waiting room then publish in room via Create room button', async ({
+test('should create a meeting, copy its link, then join and publish via Create room button', async ({
   page,
+  context,
+  browserName,
 }) => {
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
-  await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
+  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+
+  await wizard.getByRole('button', { name: 'Copy link' }).click();
+  await expect(wizard.getByRole('button', { name: 'Link copied' })).toBeVisible();
+  if (browserName === 'chromium') {
+    await context.grantPermissions(['clipboard-read']);
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(meetingLink);
+  }
+
+  await wizard.getByRole('button', { name: 'Join now' }).click();
+
+  await expect(page).toHaveURL(meetingLink ?? '');
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
