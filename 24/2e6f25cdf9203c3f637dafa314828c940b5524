@@ -1,0 +1,14 @@
+backend/server.ts
+  h_c939f8fae0de97 76-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "242e6f25cdf9203c3f637dafa314828c940b5524",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
