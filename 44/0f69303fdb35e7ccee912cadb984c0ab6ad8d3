@@ -1,0 +1,45 @@
+frontend/src/components/MeetingRoom/ChatButton/ChatButton.tsx
+  s_99faf6d57e6e27::t_4995fca33273a6 1
+  s_99faf6d57e6e27::t_8a6b237250b6ff 58
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsButton.tsx
+  s_be1243695e72e8::t_b4c770dc41f905 1
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_be1243695e72e8::t_072e6876ad1323 1
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  s_be1243695e72e8::t_988c2e10f57b57 3
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_be1243695e72e8::t_8071184848e67e 88,90
+frontend/src/components/MeetingRoom/ParticipantListButton/ParticipantListButton.tsx
+  s_99faf6d57e6e27::t_ce6ac9097f9613 1
+  s_99faf6d57e6e27::t_4f05b80538d642 67
+frontend/src/components/MeetingRoom/ReportIssueButton/ReportIssueButton.tsx
+  s_99faf6d57e6e27::t_7dc4f13a1f9d14 2
+  s_99faf6d57e6e27::t_66814deefc4af4 57
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.tsx
+  s_99faf6d57e6e27::t_389863b04c0cd5 1
+  s_99faf6d57e6e27::t_472f616f8ef185 100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "440f69303fdb35e7ccee912cadb984c0ab6ad8d3",
+  "prompts": {},
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    },
+    "s_be1243695e72e8": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_13b3e2e9-3ef6-426a-a698-4000ceeaef23",
+        "model": "auto"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
