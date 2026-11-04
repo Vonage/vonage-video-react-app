@@ -1,24 +1,42 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { makeTestProvider, providers } from '@test/providers';
+import type { VideoClient } from '@core/services';
 import CreateRoomWizard from './index';
 import { testIds as footerTestIds } from './components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions';
 import { testIds as linkCopyTestIds } from './components/ShareStep/components/LinkCopyField/LinkCopyField';
+
+vi.mock('../../utils/generateRoomName', () => ({
+  __esModule: true,
+  default: () => 'mocked-room',
+}));
+
+const createSession = vi.fn();
+const videoClient = { createSession } as unknown as VideoClient;
 
 describe('CreateRoomWizard', () => {
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it('shows the meeting link, copies it, and closes on Done', async () => {
-    expect.assertions(6);
-    vi.useFakeTimers();
-    userEvent.setup();
+  beforeEach(() => {
+    createSession.mockResolvedValue({ sessionKey: 'test-session-key' });
+  });
+
+  it('creates an unscheduled meeting, shows its link, copies it, and closes on Done', async () => {
+    expect.assertions(8);
+    const user = userEvent.setup();
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
     const onClose = vi.fn();
 
     renderWizard({ onClose });
+
+    expect(screen.getByRole('note')).toHaveTextContent('the link never expires');
+    await user.click(screen.getByRole('button', { name: 'Create meeting' }));
+    expect(createSession).toHaveBeenCalledWith({ roomName: 'mocked-room' });
+    vi.useFakeTimers();
 
     const meetingLink = `${window.location.origin}/waiting-room/test-session-key`;
     expect(screen.getByTestId(linkCopyTestIds.link)).toHaveTextContent(meetingLink);
@@ -49,37 +67,64 @@ describe('CreateRoomWizard', () => {
 
   it('does not say the link is copied when the clipboard write fails', async () => {
     expect.assertions(2);
-    const user = userEvent.setup();
-    const writeText = vi
-      .spyOn(navigator.clipboard, 'writeText')
-      .mockRejectedValue(new Error('denied'));
+    userEvent.setup();
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockRejectedValue(new Error('denied'));
     renderWizard({ onClose: vi.fn() });
 
-    await user.click(screen.getByTestId(linkCopyTestIds.copyButton));
+    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await userEvent.click(await screen.findByTestId(linkCopyTestIds.copyButton));
 
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Copy link');
   });
 
-  it('opens the waiting room of the meeting on Join now', async () => {
-    expect.assertions(1);
-
+  it('creates a scheduled meeting with the typed name, the next full hour and the chosen duration', async () => {
+    expect.assertions(4);
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2030, 0, 15, 9, 20));
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByTestId(footerTestIds.joinButton));
+    await userEvent.type(screen.getByLabelText('Meeting name (optional)'), 'Weekly-Sync');
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Set a date and time' }));
+    expect(screen.getByRole('button', { name: '1 hour' })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(screen.getByRole('button', { name: '2 hours' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
 
-    expect(screen.getByRole('status')).toHaveTextContent('waiting room test-session-key');
+    expect(createSession).toHaveBeenCalledWith({
+      roomName: 'weekly-sync',
+      schedule: { startsAt: new Date(2030, 0, 15, 10, 0).getTime(), durationMinutes: 120 },
+    });
+    expect(await screen.findByText('weekly-sync')).toBeInTheDocument();
+    expect(screen.getByText(/2 hours/)).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it('opens the waiting room of the new meeting on Join now', async () => {
+    expect.assertions(1);
+    renderWizard({ onClose: vi.fn() });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await userEvent.click(await screen.findByTestId(footerTestIds.joinButton));
+
+    expect(screen.getByText('waiting room test-session-key')).toBeInTheDocument();
   });
 });
 
 function renderWizard({ onClose }: { onClose: () => void }) {
-  return render(
+  const { wrapper } = makeTestProvider([providers.runtime], {
+    runtimeContext: { videoClient },
+  });
+
+  return renderBase(
     <MemoryRouter initialEntries={['/']}>
       <Routes>
         <Route
           path="/"
           element={
-            <CreateRoomWizard sessionKey="test-session-key" onClose={onClose}>
+            <CreateRoomWizard onClose={onClose}>
+              <CreateRoomWizard.Step step="details">
+                <CreateRoomWizard.DetailsStep />
+              </CreateRoomWizard.Step>
               <CreateRoomWizard.Step step="share">
                 <CreateRoomWizard.ShareStep />
               </CreateRoomWizard.Step>
@@ -88,11 +133,12 @@ function renderWizard({ onClose }: { onClose: () => void }) {
         />
         <Route path="/waiting-room/:sessionKey" element={<WaitingRoomProbe />} />
       </Routes>
-    </MemoryRouter>
+    </MemoryRouter>,
+    { wrapper }
   );
 }
 
 function WaitingRoomProbe() {
   const { sessionKey } = useParams();
-  return <span role="status">waiting room {sessionKey}</span>;
+  return <span>waiting room {sessionKey}</span>;
 }
