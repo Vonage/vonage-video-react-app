@@ -21,6 +21,7 @@ export * from './AuthParams.schema';
 export * from './ResponseTypes.schema';
 export * from './ConfigParams.schema';
 export * from './CaptionOptions.schema';
+export * from './CaptionsTranslationLevel.schema';
 export * from './ClientTokenOptions.schema';
 export * from './SessionOptions.schema';
 export * from './CreateEphemeralTokenPayload.schema';

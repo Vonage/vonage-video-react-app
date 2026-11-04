@@ -5,6 +5,7 @@ export const ADVANCED_SETTINGS_TAB = {
   video: 'video',
   screenSharing: 'screenSharing',
   audio: 'audio',
+  captions: 'captions',
   statistics: 'statistics',
 } as const;
 
@@ -13,6 +14,7 @@ export const advancedSettingsTabSchema = z.enum([
   ADVANCED_SETTINGS_TAB.video,
   ADVANCED_SETTINGS_TAB.screenSharing,
   ADVANCED_SETTINGS_TAB.audio,
+  ADVANCED_SETTINGS_TAB.captions,
   ADVANCED_SETTINGS_TAB.statistics,
 ]);
 

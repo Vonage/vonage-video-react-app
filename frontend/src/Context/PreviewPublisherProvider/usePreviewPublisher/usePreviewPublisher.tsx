@@ -20,6 +20,7 @@ import { useMountEffect } from '@web/hooks';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { env } from '../../../env';
+import { frontendLogger } from '../../../logger';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -200,16 +201,28 @@ const usePreviewPublisher = (
       videoSource: videoSourceId,
     };
 
-    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
-      }
+    let publisher: Publisher | null = null;
+    let hasInitFailed = false;
+
+    publisher = initPublisher(undefined, publisherOptions, (error) => {
+      if (!error) return;
+      hasInitFailed = true;
+      frontendLogger.reportError(error, {
+        eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
+      });
+
+      if (publisherRef.current !== publisher) return;
+      publisherRef.current = null;
+      attempt(() => publisher?.destroy());
     });
 
-    addPublisherListeners(publisherRef.current);
+    if (hasInitFailed) {
+      attempt(() => publisher?.destroy());
+      return;
+    }
+
+    publisherRef.current = publisher;
+    addPublisherListeners(publisher);
   });
 
   /**

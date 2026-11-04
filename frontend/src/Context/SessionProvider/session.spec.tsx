@@ -14,7 +14,9 @@ import type {
 } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import { notifications$ } from '@core/stores';
 import { env } from '../../env';
+import frontendLogger from '../../logger';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -65,7 +67,7 @@ describe('SessionProvider', () => {
 
     useEffect(() => {
       if (joinRoom) {
-        void joinRoom({ sessionKey: validSessionKey });
+        joinRoom({ sessionKey: validSessionKey }).catch(() => {});
       }
     }, [joinRoom]);
 
@@ -75,6 +77,17 @@ describe('SessionProvider', () => {
 
     return (
       <div>
+        <button
+          data-testid="joinRoom"
+          onClick={() => {
+            if (joinRoom) {
+              joinRoom({ sessionKey: validSessionKey }).catch(() => {});
+            }
+          }}
+          type="button"
+        >
+          Join Room
+        </button>
         <button
           data-testid="publish"
           onClick={() => {
@@ -110,7 +123,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              void forceMute({} as unknown as Stream);
+              forceMute({} as unknown as Stream).catch(() => {});
             }
           }}
           type="button"
@@ -360,6 +373,33 @@ describe('SessionProvider', () => {
         expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
       });
     });
+
+    it('pushes one notification when several resubscribes fail together', async () => {
+      expect.assertions(2);
+
+      const { getByTestId } = render(<TestComponent />);
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'true') throw new Error('not connected');
+      });
+      const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+      act(() => {
+        Array.from({ length: 4 }).forEach(() => {
+          vonageVideoClient.emit('resubscribeFailed', {
+            streamId: 'stream-1',
+            error: new Error('stream not found'),
+          });
+        });
+      });
+
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'warning',
+          message: "Connection issues. Some video couldn't be restored.",
+        })
+      );
+    });
   });
 
   describe('session', () => {
@@ -370,6 +410,40 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
+    it('connect rejecting should rethrow, tear down via disconnect(), and let a retry attempt a new connection', async () => {
+      expect.assertions(4);
+      const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+      vonageVideoClient.connect = vi.fn().mockRejectedValueOnce(new Error('connect failed'));
+
+      const { getByTestId } = render(<TestComponent />);
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 1) {
+          throw new Error('VonageVideoClient not constructed yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(1);
+      expect(getByTestId('connected')).toHaveTextContent('false');
+
+      await waitFor(() => {
+        if (vi.mocked(vonageVideoClient.disconnect).mock.calls.length < 1) {
+          throw new Error('disconnect not called yet');
+        }
+      });
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        getByTestId('joinRoom').click();
+      });
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 2) {
+          throw new Error('VonageVideoClient not retried yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(2);
+    });
+
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
@@ -378,6 +452,24 @@ describe('SessionProvider', () => {
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it('disconnect should null the ref and set connected to false without waiting for VonageVideoClient.disconnect() to settle', async () => {
+      vonageVideoClient.disconnect = vi.fn().mockReturnValue(new Promise<void>(() => {}));
+
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'false') {
+          throw new Error('connected not false yet');
+        }
+      });
+      expect(getByTestId('connected')).toHaveTextContent('false');
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 
@@ -572,6 +664,33 @@ describe('SessionProvider', () => {
     });
 
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
+  });
+
+  it('forceMute should report once and surface a notification when forceMuteStream fails', async () => {
+    expect.assertions(5);
+    const error = new Error('Force mute failed');
+    vi.mocked(vonageVideoClient.forceMuteStream).mockRejectedValueOnce(error);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { getByTestId } = await renderAndWaitForConnection();
+
+    await act(async () => {
+      getByTestId('forceMute').click();
+      await Promise.resolve();
+    });
+
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({ eventSource: 'session.forceMute.error' })
+    );
+    expect(reportErrorSpy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'warning',
+        message: expect.any(String),
+      })
+    );
   });
 
   it('joinRoom should call joinSession and connect', async () => {
