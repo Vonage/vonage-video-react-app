@@ -170,7 +170,7 @@ class VcrSessionStorage implements SessionStorage {
   async getTranscriptionWithSummary({ sessionId }: { sessionId: string }): Promise<boolean> {
     const key = makeKey(StorageResource.TranscriptionWithSummary, sessionId);
     const value: string | null = await this.dbState.get(key);
-    return value === 'false' ? false : true;
+    return value !== 'false';
   }
 }
 export default VcrSessionStorage;
