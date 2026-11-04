@@ -4,4 +4,5 @@ export { default as NotificationItem } from './NotificationItem';
 export { default as Card } from './Card';
 export { default as Field } from './Field';
 export { default as SelectField } from './SelectField';
+export { default as QrCode } from './QrCode';
 export { default as VividIcon } from './VividIcon';
