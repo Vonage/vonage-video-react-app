@@ -2,15 +2,19 @@ import z from 'zod';
 import { AuthParamsSchema, AuthParams } from './AuthParams.schema';
 import ConfigParamsSchema from './ConfigParams.schema';
 import { SessionSigningSchema, type SessionSigning } from './SessionSigning.schema';
+import { ExtensionConfigSchema, type ExtensionConfig } from './ExtensionConfig.schema';
+import { ExtensionStoreSchema } from './ExtensionStore.schema';
 import { Auth } from '@vonage/auth';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
-import type { HandlersDefaults } from '@api-lib/types';
+import type { ExtensionStore, HandlersDefaults } from '@api-lib/types';
 
 export const VideoClientConfigSchema = z.object({
   auth: AuthParamsSchema.or(z.instanceof(Auth)),
   videoParams: ConfigParamsSchema.optional(),
   handlersDefaults: z.object({}).loose().optional(),
   sessionSigning: SessionSigningSchema.optional(),
+  extension: ExtensionConfigSchema.optional(),
+  extensionStore: ExtensionStoreSchema.optional(),
 }) satisfies z.ZodType<VideoClientConfig>;
 
 export type VideoClientConfig = {
@@ -35,6 +39,17 @@ export type VideoClientConfig = {
    * Not intended for authentication or authorization.
    */
   sessionSigning?: SessionSigning;
+
+  /**
+   * How much a running scheduled session can be extended. Defaults to `{ maxTotalMinutes: 120, options: [20, 40, 60] }`.
+   */
+  extension?: ExtensionConfig;
+
+  /**
+   * Resolves concurrent extensions of the same session. Defaults to a process-wide in-memory store;
+   * provide a shared store when several server instances handle the same sessions.
+   */
+  extensionStore?: ExtensionStore;
 };
 
 export function assertVideoClientConfig(config: unknown): asserts config is VideoClientConfig {

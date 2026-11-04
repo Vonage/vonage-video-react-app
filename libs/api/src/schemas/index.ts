@@ -30,3 +30,7 @@ export * from './TRPCRuntimeConfigOptions.schema';
 export * from './SessionSigning.schema';
 export * from './MeetingSchedule.schema';
 export * from './GetServerSettingsPayload.schema';
+export * from './ExtensionConfig.schema';
+export * from './ExtensionStore.schema';
+export * from './ExtendSessionPayload.schema';
+export * from './RenewSessionKeyPayload.schema';
