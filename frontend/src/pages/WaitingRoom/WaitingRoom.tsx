@@ -6,6 +6,7 @@ import Footer from '@components/Footer/Footer';
 import ControlPanel from '@components/WaitingRoom/ControlPanel';
 import VideoContainer from '@components/WaitingRoom/VideoContainer';
 import UsernameInput from '@components/WaitingRoom/UserNameInput';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
@@ -40,6 +41,8 @@ const WaitingRoom: FC = () => {
     accessStatus,
     isRoomReady,
     roomName,
+    sessionKey,
+    scheduleWindow,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
@@ -87,7 +90,11 @@ const WaitingRoom: FC = () => {
                   username={username}
                   setUsername={setUsername}
                   roomName={roomName}
-                />
+                  sessionKey={sessionKey}
+                  scheduleWindow={scheduleWindow}
+                >
+                  <GoToLandingPageButton />
+                </UsernameInput>
               )}
 
               {!isRoomReady && <UsernameInputSkeleton />}
