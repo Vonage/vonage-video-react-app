@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.tsx
+  h_c939f8fae0de97 1,59-66,72-81,88-117,164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c85115935be14876719e376e50799232721d22d9",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

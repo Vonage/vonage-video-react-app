@@ -1,0 +1,53 @@
+scripts/debugger/withDebuggerAutoAttach.ts
+  h_6029769cf9ac60 1-29
+scripts/commonPackage/publishTarball.cjs
+  h_6029769cf9ac60 1-131
+scripts/testBackend.ts
+  h_6029769cf9ac60 3,65
+.github/workflows/video-common-publish.yml
+  h_6029769cf9ac60 4-14,19-22,25-26,29-32,34-35,39-40,48-52,54-57,59-73,75-79,81-85,89-90
+scripts/commonPackage/checkVersionBump.ts
+  h_6029769cf9ac60 1,8-20,22-23,25-26,28-32,35,37-40,42,44-46,49-61,63-74,76-77,79-81,84-91
+scripts/commonPackage/hash.ts
+  h_6029769cf9ac60 1,3,6-11,15-18,20-27,29-37,39,41-71,85-116,119-123,125-126,130,132-138,140-141,143-159,185-219,223-334
+  h_6029769cf9ac60 72-84,139,142,160-184
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+  h_6029769cf9ac60 2
+scripts/preparePackage.ts
+  h_6029769cf9ac60 1-2,9-24,26-34,38-51,53-54,56-58,60,62-63,66
+.github/workflows/video-common-integrity.yml
+  h_6029769cf9ac60 5-8,12,15-18,20-21,25-26,35,38-48
+libs/ui/eslint.config.mjs
+  h_6029769cf9ac60 19-26
+libs/common/package.json
+  h_6029769cf9ac60 14-15
+  h_6029769cf9ac60 3
+libs/common/project.json
+  h_6029769cf9ac60 52,59,62,66-73,80
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 311
+scripts/commonPackage/publish.ts
+  h_6029769cf9ac60 1,5,9-18,20-27,29-32,34-63,65-87,89,91-98,100-103,106-108,110,112-116,119-124,126-128,131-135,138-186,188-191,193,195-252
+scripts/testIntegration.ts
+  h_6029769cf9ac60 4,37-38,44-46
+frontend/eslint.config.mjs
+  h_6029769cf9ac60 21-28
+scripts/testFrontend.ts
+  h_6029769cf9ac60 4,22-25,29,74-75
+.gitignore
+  h_6029769cf9ac60 83-87
+package.json
+  h_6029769cf9ac60 38,57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5ecd7dfbdcfa9cec8e59dbe589545f90d2a9848a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

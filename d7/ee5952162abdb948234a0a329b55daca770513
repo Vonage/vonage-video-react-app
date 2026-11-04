@@ -1,0 +1,34 @@
+libs/common/scripts/publishPackage.ts
+  h_6029769cf9ac60 38,41,69
+.gitignore
+  h_6029769cf9ac60 83-87
+libs/common/scripts/compareRegistryHash.ts
+  h_6029769cf9ac60 18
+libs/common/package.json
+  h_6029769cf9ac60 14-15
+libs/common/scripts/publishPackage.dev.ts
+  h_6029769cf9ac60 34,281,327
+libs/ui/eslint.config.mjs
+  h_6029769cf9ac60 19-26
+frontend/eslint.config.mjs
+  h_6029769cf9ac60 21-28
+scripts/debugger/withDebuggerAutoAttach.ts
+  h_6029769cf9ac60 1-33
+scripts/testBackend.ts
+  h_6029769cf9ac60 3,65
+scripts/testFrontend.ts
+  h_6029769cf9ac60 4,22,26,71-72
+scripts/testIntegration.ts
+  h_6029769cf9ac60 4,43-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7ee5952162abdb948234a0a329b55daca770513",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

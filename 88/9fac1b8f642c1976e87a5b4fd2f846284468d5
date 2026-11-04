@@ -1,0 +1,18 @@
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.spec.tsx
+  h_6029769cf9ac60 5,89,148-156
+frontend/src/hooks/tests/useWaitingRoom.spec.tsx
+  h_6029769cf9ac60 198
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_6029769cf9ac60 16-17,51-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "889fac1b8f642c1976e87a5b4fd2f846284468d5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_99faf6d57e6e27::t_2ebe205677e2db 1,33-43,45-50,52-57,59-64,66,68-69,71-74,76-93,95,97-100,102-127,129-135
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c27536393978ae763e6273b2ee0f15a2b7914235",
+  "prompts": {},
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "unknown"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

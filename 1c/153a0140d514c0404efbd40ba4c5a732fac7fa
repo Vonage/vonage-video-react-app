@@ -1,0 +1,24 @@
+integration-tests/tests/activeSpeaker.spec.ts
+  s_75a0b2bd3a0657::t_bc02b5533e0797 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1c153a0140d514c0404efbd40ba4c5a732fac7fa",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_75a0b2bd3a0657": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_57d3a558-85e3-411a-89aa-52dd9e948e4e",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

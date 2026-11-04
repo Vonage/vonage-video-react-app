@@ -1,0 +1,62 @@
+README.md
+  h_737cf808c1c597 55-58
+docs/ARCHITECTURE.md
+  h_737cf808c1c597 61-64
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_737cf808c1c597 10,61-62,69,72-85,89
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_737cf808c1c597 24,194-206,208-215
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_737cf808c1c597 13,57-59,66,69-80,82
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_737cf808c1c597 23,204-216,219-225
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_737cf808c1c597 17,19,126,376-402,669-695
+frontend/src/Context/SessionProvider/session.tsx
+  h_737cf808c1c597 14,40,43,191,515-516,563,602-619
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/index.ts
+  h_737cf808c1c597 1
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.spec.ts
+  h_737cf808c1c597 1-72
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.ts
+  h_737cf808c1c597 1-37
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_737cf808c1c597 66-74,145,371,406,443
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_737cf808c1c597 108-118
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  h_737cf808c1c597 11,60-67
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.spec.tsx
+  h_737cf808c1c597 2,56-58,69-73,78-99
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.tsx
+  h_737cf808c1c597 10,47-54
+frontend/src/locales/de.json
+  h_737cf808c1c597 287,302
+frontend/src/locales/en.json
+  h_737cf808c1c597 287,302
+frontend/src/locales/es-MX.json
+  h_737cf808c1c597 287,302
+frontend/src/locales/es.json
+  h_737cf808c1c597 287,302
+frontend/src/locales/it.json
+  h_737cf808c1c597 287,302
+frontend/src/locales/ja.json
+  h_737cf808c1c597 297,312
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_737cf808c1c597 247-307,391-405
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_737cf808c1c597 48,141-144,164-165,231-232,236-242,283,545
+frontend/src/utils/generateRoomName/generateRoomName.spec.ts
+  h_737cf808c1c597 1,12-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5271d8cf0f76a65be109c2144961e0df4d59426e",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

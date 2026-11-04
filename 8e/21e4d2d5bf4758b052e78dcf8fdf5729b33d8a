@@ -1,0 +1,21 @@
+frontend/src/hooks/useEmoji.tsx
+  s_99faf6d57e6e27::t_9e57f87a233345 7-12
+  s_99faf6d57e6e27::t_d4239e8e63add7 79
+  s_99faf6d57e6e27::t_d93ccd79cbe35c 80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8e21e4d2d5bf4758b052e78dcf8fdf5729b33d8a",
+  "prompts": {},
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
