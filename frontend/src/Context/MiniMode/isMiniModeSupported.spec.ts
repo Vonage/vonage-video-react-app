@@ -28,6 +28,6 @@ describe('isMiniModeSupported', () => {
     expect(isMiniModeSupported()).toBe(false);
 
     userAgentSpy.mockReturnValue(DESKTOP_FIREFOX_USER_AGENT);
-    expect(isMiniModeSupported()).toBe(false);
+    expect(isMiniModeSupported()).toBe(true);
   });
 });

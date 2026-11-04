@@ -200,7 +200,7 @@ These are runtime/environment values and are **not** generated from `app-config.
 | `ALLOW_CAPTIONS` | `boolean` | `true` | `true` \| `false` | Enable live captions |
 | `ALLOW_CHAT` | `boolean` | `true` | `true` \| `false` | Enable the in-call group chat |
 | `ALLOW_EMOJIS` | `boolean` | `true` | `true` \| `false` | Enable emoji reactions |
-| `ALLOW_MINI_MODE` | `boolean` | `true` | `true` \| `false` | Enable Meet-style Mini Mode (Document Picture-in-Picture, desktop Chromium only). Opening it automatically on tab switch needs HTTPS, so it does not happen on `http://localhost` |
+| `ALLOW_MINI_MODE` | `boolean` | `true` | `true` \| `false` | Enable Meet-style Mini Mode (Document Picture-in-Picture, desktop Chromium 116+ and Firefox 151+). Opening it automatically on tab switch needs HTTPS, so it does not happen on `http://localhost` |
 | `ALLOW_SCREEN_SHARE` | `boolean` | `true` | `true` \| `false` | Enable screen sharing |
 
 ---

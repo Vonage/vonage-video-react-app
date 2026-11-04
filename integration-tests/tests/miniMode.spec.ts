@@ -14,8 +14,8 @@ const joinMeeting = async (page: Page, username: string) => {
   await expect(page.getByTestId('meetingRoom')).toBeVisible({ timeout: 30_000 });
 };
 
-const isDesktopChromium = (browserName: string, isMobile: boolean) =>
-  browserName === 'chromium' && !isMobile;
+const hasDocumentPictureInPicture = (page: Page) =>
+  page.evaluate(() => 'documentPictureInPicture' in window);
 
 test.describe('Mini Mode', () => {
   test('opens the call in a Document Picture-in-Picture window only where it is supported', async ({
@@ -27,7 +27,9 @@ test.describe('Mini Mode', () => {
 
     await joinMeeting(page, `Mini ${browserName}`);
 
-    if (!isDesktopChromium(browserName, isMobile)) {
+    const isMiniModeSupported = !isMobile && (await hasDocumentPictureInPicture(page));
+
+    if (!isMiniModeSupported) {
       await expect(miniModeButton).toHaveCount(0);
       return;
     }
