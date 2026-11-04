@@ -1,0 +1,16 @@
+README.md
+  h_6029769cf9ac60 190
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d97e47e6fff456cd2463a42b08435eaa63a5362d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

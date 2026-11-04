@@ -1,0 +1,14 @@
+AGENTS.md
+  h_6029769cf9ac60 230-237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1115905e8d0dd8197b267af157efea29f55bdc58",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

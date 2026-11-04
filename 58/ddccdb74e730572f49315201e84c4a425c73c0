@@ -1,0 +1,68 @@
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.spec.tsx
+  h_6029769cf9ac60 88-90
+frontend/src/hooks/tests/useAutoSaveMeeting.spec.tsx
+  h_6029769cf9ac60 1-39
+frontend/src/hooks/tests/useWaitingRoom.spec.tsx
+  h_6029769cf9ac60 198-200
+frontend/src/hooks/useAutoSaveMeeting.ts
+  h_6029769cf9ac60 1-21
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 7,19-20
+libs/core/src/hooks/index.ts
+  h_6029769cf9ac60 5-7
+libs/core/src/hooks/useMeetings/index.ts
+  h_6029769cf9ac60 1-2
+libs/core/src/hooks/useMeetings/meetingsQueryKey.ts
+  h_6029769cf9ac60 1-3
+libs/core/src/hooks/useMeetings/useMeetings.test.ts
+  h_6029769cf9ac60 1-46
+libs/core/src/hooks/useMeetings/useMeetings.ts
+  h_6029769cf9ac60 1-34
+libs/core/src/hooks/useSaveMeeting/index.ts
+  h_6029769cf9ac60 1
+libs/core/src/hooks/useSaveMeeting/useSaveMeeting.ts
+  h_6029769cf9ac60 1-32
+libs/core/src/services/index.ts
+  h_6029769cf9ac60 2-3
+libs/core/src/services/meetingsService/helpers/isArchivedBeyondRetention.ts
+  h_6029769cf9ac60 1-12
+libs/core/src/services/meetingsService/helpers/toSavedMeetingId.ts
+  h_6029769cf9ac60 1-10
+libs/core/src/services/meetingsService/index.ts
+  h_6029769cf9ac60 1-2
+libs/core/src/services/meetingsService/meetingsService.test.ts
+  h_6029769cf9ac60 1-80
+libs/core/src/services/meetingsService/meetingsService.ts
+  h_6029769cf9ac60 1-140
+libs/core/src/services/meetingsService/schemas/MeetingsExport.schema.ts
+  h_6029769cf9ac60 1-29
+libs/core/src/services/meetingsService/types/MeetingsExport.ts
+  h_6029769cf9ac60 1-9
+libs/core/src/services/meetingsService/types/SavedMeeting.ts
+  h_6029769cf9ac60 1-11
+libs/core/src/services/meetingsService/types/SavedMeetingId.ts
+  h_6029769cf9ac60 1-5
+libs/core/src/services/meetingsService/types/index.ts
+  h_6029769cf9ac60 1-3
+libs/core/src/stores/runtime/hooks/index.ts
+  h_6029769cf9ac60 4
+libs/core/src/stores/runtime/hooks/useMutation.ts
+  h_6029769cf9ac60 1-23
+libs/core/src/stores/runtime/runtime$.ts
+  h_6029769cf9ac60 5,29-34
+libs/core/test/fixtures/index.ts
+  h_6029769cf9ac60 2
+libs/core/test/fixtures/installIndexedDbFake.ts
+  h_6029769cf9ac60 1-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58ddccdb74e730572f49315201e84c4a425c73c0",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
