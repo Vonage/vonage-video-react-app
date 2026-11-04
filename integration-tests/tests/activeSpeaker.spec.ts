@@ -79,6 +79,7 @@ test.describe('active speaker', () => {
     isMobile,
   }) => {
     test.skip(isMobile, 'The active speaker layout needs room for a large tile');
+    // Firefox cannot play the speech WAV as fake microphone input, so no speaker switch is detected.
     test.skip(
       browserName === 'firefox',
       'With its fake microphone on CI, Firefox never switches the active speaker'
