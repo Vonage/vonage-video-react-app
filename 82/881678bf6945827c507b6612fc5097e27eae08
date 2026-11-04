@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.tsx
+  s_ec09f619ddf440::t_a5e0cc6e56ce0a 84-97
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  s_ec09f619ddf440::t_b8ec71647a419b 156-166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82881678bf6945827c507b6612fc5097e27eae08",
+  "prompts": {},
+  "sessions": {
+    "s_ec09f619ddf440": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_2a3c2709-63dc-4b87-95fd-042032ecdaee",
+        "model": "auto"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
