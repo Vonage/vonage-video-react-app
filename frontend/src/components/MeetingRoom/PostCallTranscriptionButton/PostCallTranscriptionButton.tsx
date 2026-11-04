@@ -9,7 +9,6 @@ import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import { Field } from '@ui/components';
 import classNames from 'classnames';
-import { env } from '../../../env';
 import { RECORDING_START_DELAY } from '@utils/constants';
 import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 
@@ -31,12 +30,12 @@ export type PostCallTranscriptionButton = {
  * @param {PostCallTranscriptionButton} props - the props for the component
  *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
  *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
- * @returns {ReactElement | false} - The PostCallTranscriptionButton component.
+ * @returns {ReactElement} - The PostCallTranscriptionButton component.
  */
 const PostCallTranscriptionButton = ({
   isOverflowButton = false,
   handleClick,
-}: PostCallTranscriptionButton): ReactElement | false => {
+}: PostCallTranscriptionButton): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const {
@@ -134,41 +133,40 @@ const PostCallTranscriptionButton = ({
   ) : null;
 
   return (
-    env.ALLOW_POST_CALL_TRANSCRIPTION && (
-      <>
-        <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
-          <ToolbarButton
-            onClick={handleButtonClick}
-            data-testid="post-call-transcription-button"
-            className={classNames(
-              { transcribing: isTranscribing },
-              isTranscribing &&
-                '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
-            )}
-            icon={
-              <VividIcon
-                name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
-                customSize={-5}
-                style={{
-                  color: 'var(--vera-on-secondary-light)',
-                }}
-              />
-            }
-            style={{
-              marginTop: isOverflowButton ? '0px' : '4px',
-            }}
-            isOverflowButton={isOverflowButton}
-          />
-        </Tooltip>
-        <PopupDialog
-          isOpen={isModalOpen}
-          handleClose={handleClose}
-          handleActionClick={handleActionClick}
-          actionText={actionText}
-          extraContent={startDialogExtraContent}
+    <>
+      <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleButtonClick}
+          data-testid={testIds.button}
+          className={classNames(
+            { transcribing: isTranscribing },
+            isTranscribing &&
+              '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+          )}
+          icon={
+            <VividIcon
+              name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
+              customSize={-5}
+              style={{
+                color: 'var(--vera-on-secondary-light)',
+              }}
+            />
+          }
+          style={{
+            marginTop: isOverflowButton ? '0px' : '4px',
+          }}
+          isOverflowButton={isOverflowButton}
         />
-      </>
-    )
+      </Tooltip>
+      <PopupDialog
+        isOpen={isModalOpen}
+        handleClose={handleClose}
+        handleActionClick={handleActionClick}
+        actionText={actionText}
+        extraContent={startDialogExtraContent}
+      />
+    </>
   );
 };
+
 export default PostCallTranscriptionButton;
