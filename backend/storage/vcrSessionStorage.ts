@@ -10,6 +10,7 @@ enum StorageResource {
   CaptionsUserCount = 'captionsUserCount',
   ArchiveIds = 'archiveIds',
   ServerRotationPending = 'serverRotationPending',
+  TranscriptionWithSummary = 'transcriptionWithSummary',
 }
 
 function makeKey(resource: StorageResource, id: string): string {
@@ -152,6 +153,24 @@ class VcrSessionStorage implements SessionStorage {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
     const value: string | null = await this.dbState.get(key);
     return value ? Number.parseInt(value, 10) : 0;
+  }
+
+  async setTranscriptionWithSummary({
+    sessionId,
+    withSummary,
+  }: {
+    sessionId: string;
+    withSummary: boolean;
+  }): Promise<void> {
+    const key = makeKey(StorageResource.TranscriptionWithSummary, sessionId);
+    await this.dbState.set(key, String(withSummary));
+    await this.setKeyExpiry(key);
+  }
+
+  async getTranscriptionWithSummary({ sessionId }: { sessionId: string }): Promise<boolean> {
+    const key = makeKey(StorageResource.TranscriptionWithSummary, sessionId);
+    const value: string | null = await this.dbState.get(key);
+    return value === 'false' ? false : true;
   }
 }
 export default VcrSessionStorage;

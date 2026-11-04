@@ -140,6 +140,26 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   });
 });
 
+videoHandler.onSettled$(async ({ videoAction, error, result, input }) => {
+  if (error) return;
+  if (videoAction !== VideoAction.startArchive) return;
+
+  const { withTranscription, withSummary } = input as {
+    withTranscription?: boolean;
+    withSummary?: boolean;
+  };
+
+  if (!withTranscription) return;
+
+  const archive = result as { sessionId: string };
+  const resolvedWithSummary = withSummary !== false;
+
+  await sessionService.setTranscriptionWithSummary({
+    sessionId: archive.sessionId,
+    withSummary: resolvedWithSummary,
+  });
+});
+
 /**
  * Listen to captions enabled/disabled events
  */
