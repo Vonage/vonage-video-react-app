@@ -10,3 +10,4 @@ export { default as isZodError } from './isZodError';
 export { default as isAllowedOrigin } from './isAllowedOrigin';
 export { default as getScheduleWindow } from './getScheduleWindow';
 export { default as readScheduleClaim } from './readScheduleClaim';
+export { default as readExtendedClaim } from './readExtendedClaim';

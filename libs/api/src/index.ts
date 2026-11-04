@@ -5,5 +5,6 @@ export * from './executions';
 export * from './handlers';
 export * from './routing';
 export * from './schedule';
+export * from './extension';
 export * from './schemas';
 export * from './types';

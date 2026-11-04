@@ -13,6 +13,8 @@ export enum VideoAction {
   joinSession = 'joinSession',
   ensureCaptionsEnabled = 'ensureCaptionsEnabled',
   getServerSettings = 'getServerSettings',
+  extendSession = 'extendSession',
+  renewSessionKey = 'renewSessionKey',
 }
 
 export default VideoAction;

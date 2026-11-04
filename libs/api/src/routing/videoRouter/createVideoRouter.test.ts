@@ -174,6 +174,28 @@ describe('createVideoHandler', () => {
     expect(serverTime).toEqual(expect.any(Number));
   });
 
+  it('returns the default extension options from getServerSettings when none are configured', async () => {
+    expect.assertions(1);
+
+    const response = await request(createTestApp())
+      .post('/video/getServerSettings')
+      .send({})
+      .expect(200);
+
+    const { extension } = extractResponseData<{ extension: unknown }>(response.body);
+
+    expect(extension).toEqual({ maxTotalMinutes: 120, options: [20, 40, 60] });
+  });
+
+  it('fails at handler creation when an extension option exceeds maxTotalMinutes', () => {
+    expect(() =>
+      createVideoHandler({
+        auth: { authType: 'apiKey', apiKey: mockApiKey, apiSecret: 'test-api-secret' },
+        extension: { maxTotalMinutes: 30, options: [20, 40] },
+      })
+    ).toThrow('Every extension option must be less than or equal to maxTotalMinutes');
+  });
+
   describe('decodeSessionId', () => {
     it('should decode a valid sessionId via VideoClient method (not a TRPC route)', async () => {
       const app = createTestApp();
