@@ -1,0 +1,70 @@
+frontend/src/locales/de.json
+  h_6029769cf9ac60 341-345
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 1-20
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 12,190-215,218-222
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 1-89
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 341-345
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 1-19
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 15-16,31,101,231-233
+README.md
+  h_6029769cf9ac60 190
+frontend/src/locales/en.json
+  h_6029769cf9ac60 341-345
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 13
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 4
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingScheduleWindow.ts
+  h_6029769cf9ac60 1-27
+frontend/src/hooks/useToolbarButtons.tsx
+  h_6029769cf9ac60 110,113-115,121-123
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+frontend/src/locales/es.json
+  h_6029769cf9ac60 341-345
+libs/common/src/helpers/formatCountdown/index.ts
+  h_6029769cf9ac60 1
+libs/common/web/hooks/index.ts
+  h_6029769cf9ac60 12
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 1-21
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 14-15,52,67
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1-42
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 1-2
+libs/common/web/hooks/useServerNow/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 1-26
+frontend/src/components/MeetingRoom/MeetingTimer/helpers/isMeetingEndingSoon.ts
+  h_6029769cf9ac60 1-10
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 4
+frontend/src/locales/it.json
+  h_6029769cf9ac60 341-345
+frontend/src/components/MeetingRoom/MeetingTimer/helpers/getTimeLeftText.ts
+  h_6029769cf9ac60 1-21
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 351-355
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0f326427b10944d7032af1fb94de31934883114",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
