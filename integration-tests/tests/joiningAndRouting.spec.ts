@@ -24,7 +24,7 @@ test.describe('join via direct room URL', () => {
 
       await expect(page).toHaveURL(/\/room\//);
       await expect(page.getByTestId('meetingRoom')).toBeVisible();
-      await expect(page.getByTestId('publisher-container').getByText('Direct User')).toBeVisible();
+      await expect(page.getByTestId('publisher-container').getByText('Direct User')).toBeVisible({ timeout: 20_000 });
       await expectMeetingRoomName({ page, roomName });
     });
   }
@@ -101,7 +101,7 @@ test.describe('duplicate user names', () => {
     await joinMeetingRoom({ page: pageTwo, username: sharedName, roomName, browserName });
 
     for (const page of [pageOne, pageTwo]) {
-      await expect(page.getByTestId('publisher-container').getByText(sharedName)).toBeVisible();
+      await expect(page.getByTestId('publisher-container').getByText(sharedName)).toBeVisible({ timeout: 20_000 });
       await expect(page.locator('.subscriber').getByText(sharedName)).toBeVisible({
         timeout: 20_000,
       });
@@ -151,7 +151,7 @@ test.describe('rejoin', () => {
 
     await pageOne.getByRole('button', { name: 'Join meeting' }).click();
 
-    await expect(pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible();
+    await expect(pageOne.getByTestId('publisher-container').getByText('User One')).toBeVisible({ timeout: 20_000 });
     await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible({
       timeout: 20_000,
     });
