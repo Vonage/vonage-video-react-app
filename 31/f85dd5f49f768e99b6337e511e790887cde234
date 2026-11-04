@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 104-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "31f85dd5f49f768e99b6337e511e790887cde234",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
