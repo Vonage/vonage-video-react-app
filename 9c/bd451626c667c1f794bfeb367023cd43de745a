@@ -1,0 +1,21 @@
+backend/tests/session.test.ts
+  s_2bf7341d619a9d::t_8c2d226dd2f78e 496-538
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_2bf7341d619a9d::t_ac5a8a3ed33397 126-148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9cbd451626c667c1f794bfeb367023cd43de745a",
+  "prompts": {},
+  "sessions": {
+    "s_2bf7341d619a9d": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_cfbdda84-453b-4ebc-b79b-28a8ce20ccde",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}
