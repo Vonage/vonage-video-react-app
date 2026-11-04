@@ -1,3 +1,3 @@
-export type CreateRoomWizardStepName = 'share';
+export type CreateRoomWizardStepName = 'details' | 'share';
 
 export default CreateRoomWizardStepName;

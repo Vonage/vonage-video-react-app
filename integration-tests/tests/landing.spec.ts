@@ -33,6 +33,8 @@ test('should create a meeting, copy its link, then join and publish via Create r
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
   const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+  await expect(wizard.getByText('the link never expires')).toBeVisible();
+  await wizard.getByRole('button', { name: 'Create meeting' }).click();
   const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
 
   await wizard.getByRole('button', { name: 'Copy link' }).click();
@@ -55,6 +57,30 @@ test('should create a meeting, copy its link, then join and publish via Create r
   await expect(page).toHaveURL(/\/room\/.+/);
 
   await page.waitForSelector('.publisher', { state: 'visible' });
+});
+
+test('should create a named meeting scheduled for two hours and open its waiting room', async ({
+  page,
+}) => {
+  await page.getByRole('button', { name: 'Create a new room' }).click();
+
+  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+  await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
+  await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+  await expect(wizard.getByRole('button', { name: '1 hour' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await wizard.getByRole('button', { name: '2 hours' }).click();
+  await wizard.getByRole('button', { name: 'Create meeting' }).click();
+
+  await expect(wizard.getByText('weekly-sync')).toBeVisible();
+  await expect(wizard.getByText(/ · 2 hours$/)).toBeVisible();
+  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+
+  await wizard.getByRole('button', { name: 'Join now' }).click();
+
+  await expect(page).toHaveURL(meetingLink ?? '');
 });
 
 test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, context }) => {
