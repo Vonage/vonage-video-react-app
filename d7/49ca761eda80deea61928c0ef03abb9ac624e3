@@ -1,0 +1,50 @@
+README.md
+  h_6029769cf9ac60 190
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 1-19
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 1-89
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1-37
+frontend/src/components/MeetingRoom/MeetingTimer/helpers/getTimeLeftText.ts
+  h_6029769cf9ac60 1-21
+frontend/src/components/MeetingRoom/MeetingTimer/helpers/isMeetingEndingSoon.ts
+  h_6029769cf9ac60 1-10
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 1-26
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingScheduleWindow.ts
+  h_6029769cf9ac60 1-27
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 1-21
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 1-2
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 1-16
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 12,190-215,218-222
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 15,30,100,230
+frontend/src/locales/de.json
+  h_6029769cf9ac60 341-345
+frontend/src/locales/en.json
+  h_6029769cf9ac60 341-345
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 341-345
+frontend/src/locales/es.json
+  h_6029769cf9ac60 341-345
+frontend/src/locales/it.json
+  h_6029769cf9ac60 341-345
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 351-355
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d749ca761eda80deea61928c0ef03abb9ac624e3",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

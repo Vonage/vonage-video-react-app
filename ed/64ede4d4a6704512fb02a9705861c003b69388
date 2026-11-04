@@ -1,0 +1,44 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 7-8
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 14-19,30,34
+frontend/src/components/MeetingRoom/MeetingTimer/helpers/getTimeLeftText.ts
+  h_6029769cf9ac60 2
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 4
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 5,11-14
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 14-15,52,67
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 16,231-233
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 2
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 4
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 4
+frontend/src/hooks/useToolbarButtons.tsx
+  h_6029769cf9ac60 110,113-115,121-123
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/formatCountdown/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 13
+libs/common/web/hooks/index.ts
+  h_6029769cf9ac60 12
+libs/common/web/hooks/useServerNow/index.ts
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed64ede4d4a6704512fb02a9705861c003b69388",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
