@@ -1,0 +1,31 @@
+frontend/src/Context/MiniMode/isMiniModeSupported.ts
+  s_8061a5786fc312::t_d30ae9b9993d88 2,7,10
+frontend/src/Context/MiniMode/isMiniModeSupported.spec.ts
+  s_8061a5786fc312::t_749f827431699b 31
+integration-tests/tests/miniMode.spec.ts
+  s_8061a5786fc312::t_7bfb49a1edaf3b 17-18
+  h_737cf808c1c597 30-32
+docs/CONFIGURATION.md
+  s_8061a5786fc312::t_34a7e2c5c212d9 203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "af0426d926c5484145daf01a7dcdc2e17bfa1693",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_8061a5786fc312": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_84852367-e3ea-40bc-9dae-750e5f755edb",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

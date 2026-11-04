@@ -1,0 +1,14 @@
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.ts
+  h_737cf808c1c597 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eae6bfe67c821a8ebf41daf71d31e24845ec6d07",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
