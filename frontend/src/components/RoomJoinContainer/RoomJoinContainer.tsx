@@ -37,7 +37,7 @@ const RoomJoinContainer = (): ReactElement => {
       <JoinContainerSeparator />
 
       <h6 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4">
-        {t('button.joinExistingMeeting')}
+        {t('button.joinRoom')}
       </h6>
 
       <JoinExistingRoom />
