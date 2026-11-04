@@ -396,6 +396,8 @@
   "waitingRoom.schedule.joinOpensIn": "Join opens in {{countdown}}",
   "waitingRoom.schedule.tabTitle.countdown": "{{countdown}} · {{name}}",
   "waitingRoom.schedule.tabTitle.started": "● Started · {{name}}",
+  "waitingRoom.schedule.autoJoin": "Join automatically when it starts",
+  "waitingRoom.schedule.autoJoinNameHint": "Enter your name to turn this on",
   "zoom.reset": "Reset Zoom",
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",

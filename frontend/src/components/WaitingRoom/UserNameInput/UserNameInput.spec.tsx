@@ -103,6 +103,90 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId('room-design-review')).toBeInTheDocument();
   });
 
+  it('joins at the start by server time without pressing Join when auto-join is ticked', async () => {
+    expect.assertions(3);
+
+    vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () =>
+        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+    });
+
+    render(
+      <UsernameInput
+        username="Ana"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey="scheduled-session-key"
+        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+      />,
+      { runtimeContext: { videoClient } }
+    );
+
+    expect(await screen.findByText('Join opens in 0:05')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Join automatically when it starts' }));
+
+    await act(() => vi.advanceTimersByTimeAsync(4_000));
+
+    expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.getByTestId('room-scheduled-session-key')).toBeInTheDocument();
+  });
+
+  it('stays in the waiting room at the start when auto-join is not ticked', async () => {
+    expect.assertions(3);
+
+    vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () =>
+        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+    });
+
+    render(
+      <UsernameInput
+        username="Ana"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey="scheduled-session-key"
+        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+      />,
+      { runtimeContext: { videoClient } }
+    );
+
+    expect(
+      await screen.findByRole('checkbox', { name: 'Join automatically when it starts' })
+    ).not.toBeChecked();
+
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+
+    expect(screen.getByRole('button', { name: 'Join meeting' })).toBeEnabled();
+    expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
+  });
+
+  it('disables auto-join until a name is entered', () => {
+    vi.setSystemTime(startsAt - 60 * 60_000);
+
+    render(
+      <UsernameInput
+        username=""
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey="scheduled-session-key"
+        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+      />
+    );
+
+    expect(
+      screen.getByRole('checkbox', { name: 'Join automatically when it starts' })
+    ).toBeDisabled();
+    expect(screen.getByText('Enter your name to turn this on')).toBeInTheDocument();
+  });
+
   it('hides Join and keeps its children once the meeting has ended', async () => {
     vi.setSystemTime(startsAt + 2 * 60 * 60_000);
 
