@@ -1,0 +1,14 @@
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.tsx
+  h_6029769cf9ac60 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "344bdb0af813bce995c07ba75cad350c6954e1b1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

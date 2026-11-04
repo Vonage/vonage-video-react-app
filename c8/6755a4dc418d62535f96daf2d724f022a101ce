@@ -1,0 +1,44 @@
+backend/routes/video/schemas/RoomAccessConfig.schema.ts
+  h_6029769cf9ac60 1-9
+backend/routes/video/helpers/hasVerifiedSessionKey.ts
+  h_6029769cf9ac60 1-23
+backend/server.ts
+  h_6029769cf9ac60 9,54-55
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 36
+backend/routes/video/video.ts
+  h_6029769cf9ac60 16,22-25
+env.defaults.sh
+  h_6029769cf9ac60 40-43
+backend/types/config.ts
+  h_6029769cf9ac60 36,42-43
+backend/helpers/config.ts
+  h_6029769cf9ac60 8-10,35,71,93,106-111
+backend/routes/video/types/VideoRouteContext.ts
+  h_6029769cf9ac60 1-10
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 33
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 2,4-8,12-28,31,35,39-61,63-67
+  h_6029769cf9ac60 62
+AGENTS.md
+  h_6029769cf9ac60 275-295
+.gitignore
+  h_6029769cf9ac60 83-87
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 3,41-42,45-46,56
+  h_6029769cf9ac60 43,47,57,80-87,89,112-116,142-146
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 30,41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c86755a4dc418d62535f96daf2d724f022a101ce",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
