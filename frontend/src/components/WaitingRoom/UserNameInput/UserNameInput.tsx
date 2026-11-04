@@ -17,6 +17,8 @@ import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
 import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
 import { serverSettings$ } from '@core/stores';
+import AutoJoinCheckbox from './components/AutoJoinCheckbox';
+import useAutoJoin from './hooks/useAutoJoin';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
 import { testIds } from './testIds';
 
@@ -55,6 +57,7 @@ const UsernameInput = ({
   const navigate = useNavigate();
 
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
+  const [isAutoJoinChecked, setIsAutoJoinChecked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scheduleStatus = serverSettings$.useScheduleStatus();
@@ -71,6 +74,7 @@ const UsernameInput = ({
     const inputUserName = e.target.value;
     setIsUserNameInvalid(false);
     setUsername(inputUserName);
+    if (!isValidUserName(inputUserName)) setIsAutoJoinChecked(false);
   };
 
   const handleInputFocus = () => {
@@ -85,8 +89,7 @@ const UsernameInput = ({
     return true;
   };
 
-  const handleJoinClick = (event: MouseEvent) => {
-    event.preventDefault();
+  const join = () => {
     if (validateForm() && sessionKey) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
@@ -106,6 +109,13 @@ const UsernameInput = ({
       });
     }
   };
+
+  const handleJoinClick = (event: MouseEvent) => {
+    event.preventDefault();
+    join();
+  };
+
+  useAutoJoin({ isAutoJoinChecked, scheduleStatus, username, join });
 
   return (
     <Card
@@ -198,6 +208,14 @@ const UsernameInput = ({
       )}
 
       {isWaiting && <JoinBlockerText id={joinBlockerTextId} waitingStatus={scheduleStatus} />}
+
+      {isWaiting && (
+        <AutoJoinCheckbox
+          isChecked={isAutoJoinChecked}
+          isDisabled={!isValidUserName(username)}
+          onCheckedChange={setIsAutoJoinChecked}
+        />
+      )}
     </Card>
   );
 };
