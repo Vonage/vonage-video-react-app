@@ -81,36 +81,20 @@ const VideoTileCanvas = ({
 
   // Get the layout Boxes which specify exact position, height, and width for all video tiles
 
-  const layoutBoxes = useMemo(
-    () =>
-      getLayoutBoxes({
-        activeSpeakerId,
-        getLayout,
-        pinnedSubscriberCount,
-        hiddenSubscribers,
-        isSharingScreen,
-        layoutMode,
-        publisher,
-        screensharingPublisher,
-        sessionHasScreenshare,
-        subscribersInDisplayOrder,
-        wrapDimensions,
-        wrapRef,
-      }),
-    [
-      activeSpeakerId,
-      getLayout,
-      pinnedSubscriberCount,
-      hiddenSubscribers,
-      isSharingScreen,
-      layoutMode,
-      publisher,
-      screensharingPublisher,
-      sessionHasScreenshare,
-      subscribersInDisplayOrder,
-      wrapDimensions,
-    ]
-  );
+  const layoutBoxes = getLayoutBoxes({
+    activeSpeakerId,
+    getLayout,
+    pinnedSubscriberCount,
+    hiddenSubscribers,
+    isSharingScreen,
+    layoutMode,
+    publisher,
+    screensharingPublisher,
+    sessionHasScreenshare,
+    subscribersInDisplayOrder,
+    wrapDimensions,
+    wrapRef,
+  });
 
   const isSmallViewport = useIsSmallViewport();
 

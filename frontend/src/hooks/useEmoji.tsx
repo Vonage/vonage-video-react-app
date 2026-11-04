@@ -70,8 +70,6 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
     return throttledFunc;
   }, [signal]);
 
-  useCancelThrottleOnChange(sendEmoji);
-
   /**
    * Checks if the given connection belongs to the current user.
    * @param {Connection} sendingConnection - The connection of a user.
@@ -147,11 +145,5 @@ const useEmoji = ({ signal, getConnectionId }: UseEmojiProps): UseEmoji => {
 
   return { sendEmoji, emojiQueue, onEmoji };
 };
-
-function useCancelThrottleOnChange(throttledFunction: { cancel: () => void }) {
-  useEffect(() => {
-    return () => throttledFunction.cancel();
-  }, [throttledFunction]);
-}
 
 export default useEmoji;

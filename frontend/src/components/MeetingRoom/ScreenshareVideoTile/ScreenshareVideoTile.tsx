@@ -8,7 +8,6 @@ import {
   useState,
   MouseEvent,
   useEffect,
-  useMemo,
   useRef,
 } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
@@ -154,19 +153,17 @@ const ScreenshareVideoTile = forwardRef(
     };
 
     // Apply zoom transform style
-    const transformStyle = useMemo(() => {
-      let cursor = 'default';
-      if (zoomLevel > 1) {
-        cursor = isDragging ? 'grabbing' : 'grab';
-      }
+    const cursor = (() => {
+      if (zoomLevel <= 1) return 'default';
+      return isDragging ? 'grabbing' : 'grab';
+    })();
 
-      return {
-        transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
-        transformOrigin: 'center',
-        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-        cursor,
-      };
-    }, [zoomLevel, panOffset, isDragging]);
+    const transformStyle = {
+      transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+      transformOrigin: 'center',
+      transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+      cursor,
+    };
 
     const resetZoom = () => {
       setZoomLevel(1);

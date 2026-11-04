@@ -8,7 +8,7 @@ vi.mock('@common/execution/throttle');
 
 describe('ActiveSpeakerTracker', () => {
   beforeEach(() => {
-    vi.mocked(throttle).mockImplementation((fn) => Object.assign(fn, { cancel: vi.fn() }));
+    vi.mocked(throttle).mockImplementation((fn) => fn);
   });
 
   test('activeSpeakerChanged fired when participant audio level updated', async () => {

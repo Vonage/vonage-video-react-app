@@ -5,12 +5,6 @@ type ThrottleOptions = {
   trailing?: boolean;
 };
 
-export type ThrottledFunction<T extends (...args: Any[]) => void> = ((
-  ...args: Parameters<T>
-) => void) & {
-  cancel: () => void;
-};
-
 /**
  * Rate-limits a function so it executes at most once per `wait` milliseconds.
  * Useful for high-frequency events (scroll, resize, mouse move) where executing on every
@@ -26,14 +20,13 @@ export type ThrottledFunction<T extends (...args: Any[]) => void> = ((
  * @param options - Control leading/trailing behavior.
  * @param options.leading - Fire on the leading edge of the interval. Defaults to `true`.
  * @param options.trailing - Fire on the trailing edge of the interval. Defaults to `true`.
- * @returns A throttled version of the callback with the same parameter signature, plus a
- * `cancel` method that discards any pending trailing call.
+ * @returns A throttled version of the callback with the same parameter signature.
  */
 function throttle<T extends (...args: Any[]) => void>(
   callback: T,
   wait: number,
   options: ThrottleOptions = {}
-): ThrottledFunction<T> {
+): (...args: Parameters<T>) => void {
   const { leading = true, trailing = true } = options;
 
   let trailingCallTimer: ReturnType<typeof setTimeout> | null = null;
@@ -66,7 +59,7 @@ function throttle<T extends (...args: Any[]) => void>(
     }, delay);
   };
 
-  const throttled = ((...args: Parameters<T>) => {
+  return (...args: Parameters<T>) => {
     const now = Date.now();
     const timeSinceLastExecution = now - lastCallbackExecutionTime;
     const canExecuteImmediately = timeSinceLastExecution >= wait;
@@ -84,14 +77,7 @@ function throttle<T extends (...args: Any[]) => void>(
     const remainingWaitTime = canExecuteImmediately ? wait : wait - timeSinceLastExecution;
 
     scheduleTrailingCall(remainingWaitTime);
-  }) as ThrottledFunction<T>;
-
-  throttled.cancel = () => {
-    cancelTrailingCall();
-    latestTrailingArgs = null;
   };
-
-  return throttled;
 }
 
 export default throttle;
