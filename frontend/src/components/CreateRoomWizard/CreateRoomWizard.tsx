@@ -1,28 +1,25 @@
 import type { PropsWithChildren, ReactElement } from 'react';
 import CreateRoomWizardDialog from './components/CreateRoomWizardDialog';
 import CreateRoomWizardStep from './components/CreateRoomWizardStep';
+import DetailsStep from './components/DetailsStep';
 import ShareStep from './components/ShareStep';
 import createRoomWizard$ from './context/createRoomWizardContext';
 
 export type CreateRoomWizardProps = PropsWithChildren<{
-  sessionKey: string;
   onClose: () => void;
 }>;
 
 /**
- * Dialog shown after creating a meeting. Its steps are given as `CreateRoomWizard.Step` children.
+ * Dialog that creates a meeting and shows its link. Its steps are given as `CreateRoomWizard.Step` children.
  */
-const CreateRoomWizard = ({
-  sessionKey,
-  onClose,
-  children,
-}: CreateRoomWizardProps): ReactElement => (
-  <createRoomWizard$.Provider value={(state) => ({ ...state, sessionKey })}>
+const CreateRoomWizard = ({ onClose, children }: CreateRoomWizardProps): ReactElement => (
+  <createRoomWizard$.Provider>
     <CreateRoomWizardDialog onClose={onClose}>{children}</CreateRoomWizardDialog>
   </createRoomWizard$.Provider>
 );
 
 CreateRoomWizard.Step = CreateRoomWizardStep;
+CreateRoomWizard.DetailsStep = DetailsStep;
 CreateRoomWizard.ShareStep = ShareStep;
 
 export default CreateRoomWizard;
