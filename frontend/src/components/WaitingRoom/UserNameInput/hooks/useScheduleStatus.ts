@@ -1,9 +1,9 @@
 import { useServerSettings } from '@core/hooks';
 import { isNil, isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
+import useServerNow from '@web/hooks/useServerNow';
 import getScheduleStatus from '../helpers/getScheduleStatus';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
-import useServerNow from './useServerNow';
 
 const serverTimeRetryMilliseconds = 10_000;
 

@@ -11,6 +11,8 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import RecordingIndicator from '../RecordingIndicator';
 import TranscriptionIndicator from '../TranscriptionIndicator';
 import useDistinctLabelMediaDevices from '@ui/hooks/useDistinctLabelMediaDevices/useDistinctLabelMediaDevices';
+import { isNotNil } from '@common/assertions';
+import MeetingTimer, { useMeetingScheduleWindow } from '../MeetingTimer';
 import { useSwitchCameraFacingModeHandler } from './hooks';
 
 /**
@@ -47,6 +49,7 @@ const SmallViewportHeader = (): ReactElement => {
   const { isVideoEnabled } = usePublisherContext();
 
   const { switchCameraFacingModeHandler } = useSwitchCameraFacingModeHandler();
+  const scheduleWindow = useMeetingScheduleWindow();
 
   return (
     <Box
@@ -61,6 +64,7 @@ const SmallViewportHeader = (): ReactElement => {
         </Box>
       </Box>
       <Box className="-mx-1 flex items-center gap-1">
+        {isNotNil(scheduleWindow) && <MeetingTimer scheduleWindow={scheduleWindow} isCompact />}
         {isVideoEnabled && videoInputDevices.length > 1 && (
           <Tooltip title={t('devices.video.camera.switch')} placement="bottom">
             <IconButton className="text-vera-on-dark-grey" onClick={switchCameraFacingModeHandler}>
