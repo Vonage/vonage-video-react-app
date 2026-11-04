@@ -493,6 +493,49 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             );
           });
 
+          it('/hooks/archive stopped with name=transcription preserves withSummary=false preference', async () => {
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId: validSessionId,
+              archiveIds: ['transcription-archive-id'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId: validSessionId,
+              pending: 1,
+            });
+
+            await sessionService.setTranscriptionWithSummary({
+              sessionId: validSessionId,
+              withSummary: false,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(
+                createArchiveHookPayload({
+                  status: 'stopped',
+                  id: 'transcription-archive-id',
+                  name: 'transcription',
+                })
+              );
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                hasTranscription: true,
+                name: 'transcription',
+                transcriptionProperties: expect.objectContaining({
+                  hasSummary: false,
+                }),
+              })
+            );
+          });
+
           it('/hooks/archive stopped without serverRotationPending does NOT trigger startArchive', async () => {
             singletonVideoInstance.startArchive.mockClear();
 
