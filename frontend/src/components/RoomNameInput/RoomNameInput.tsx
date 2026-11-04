@@ -1,11 +1,10 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
-import { isValidRoomName } from '@common/assertions';
 
 export type RoomNameInputProps = {
-  setRoomName: Dispatch<SetStateAction<string>>;
-  roomName: string;
+  setRoomId: Dispatch<SetStateAction<string>>;
+  roomId: string;
   hasError: boolean;
   setHasError: Dispatch<SetStateAction<boolean>>;
 };
@@ -13,37 +12,25 @@ export type RoomNameInputProps = {
 /**
  * RoomNameInput Component
  *
- * Input box for setting a custom room name.
+ * "Room ID" input box that takes a sessionKey or a room name.
  * @param {RoomNameInputProps} props - The props for the component.
- *  @property {Dispatch<SetStateAction<string>>} setRoomName - Function to update the room name.
- *  @property {string} roomName - The room name set by the user.
+ *  @property {Dispatch<SetStateAction<string>>} setRoomId - Function to update the room id.
+ *  @property {string} roomId - The room id typed by the user.
  *  @property {boolean} hasError - The error state indicating whether user added an input with an error.
  *  @property {Dispatch<SetStateAction<boolean>>} setHasError - Function to update the error state.
  * @returns {ReactElement} - The RoomNameInput component.
  */
 const RoomNameInput = ({
-  setRoomName,
-  roomName,
+  setRoomId,
+  roomId,
   hasError,
   setHasError,
 }: RoomNameInputProps): ReactElement => {
   const { t } = useTranslation();
+
   const handleChange = (textChangeEvent: ChangeEvent<HTMLInputElement>) => {
-    const newValue = textChangeEvent.target.value.toLowerCase();
-
-    if (newValue === '') {
-      // If the input is empty, reset the room name and clear the error
-      setRoomName('');
-      setHasError(false);
-      return;
-    }
-
-    if (isValidRoomName(newValue)) {
-      setHasError(false);
-      setRoomName(newValue);
-    } else {
-      setHasError(true);
-    }
+    setRoomId(textChangeEvent.target.value);
+    setHasError(false);
   };
 
   return (
@@ -52,13 +39,11 @@ const RoomNameInput = ({
       id="room-name"
       fullWidth
       label={t('room.input.label')}
-      value={roomName}
+      placeholder={t('room.input.hint')}
+      value={roomId}
       onChange={handleChange}
       error={hasError}
-      helperText={hasError ? t('room.input.helper') : ''}
-      slotProps={{
-        htmlInput: { maxLength: 60 },
-      }}
+      helperText={hasError ? t('room.input.helper') : t('room.input.hint')}
     />
   );
 };

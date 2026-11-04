@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
+  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
 
   await page.locator('button:text("Join waiting room")').click();
 
@@ -53,7 +53,7 @@ test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, cont
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
+  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
 
   await page.keyboard.press('Enter');
 
@@ -81,42 +81,42 @@ test('should keep landing content equivalent across languages', async ({ page })
     {
       languageOption: 'English',
       sectionHeading: 'Start a new video meeting',
-      joinHeading: 'Join existing meeting',
-      roomNameLabel: 'Room name',
+      joinHeading: 'Join room',
+      roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'English (US)',
       sectionHeading: 'Start a new video meeting',
-      joinHeading: 'Join existing meeting',
-      roomNameLabel: 'Room name',
+      joinHeading: 'Join room',
+      roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'Deutsch',
       sectionHeading: 'Neues Videomeeting starten',
-      joinHeading: 'Bestehendem Meeting beitreten',
-      roomNameLabel: 'Raumname',
+      joinHeading: 'Raum beitreten',
+      roomNameLabel: 'Raum-ID',
       joinWaitingRoomButton: 'Warteraum betreten',
-      emptyRoomNameErrorText: 'Kann nicht leer sein und darf',
+      emptyRoomNameErrorText: 'Geben Sie eine gültige Raum-ID',
     },
     {
       languageOption: 'Italiano',
       sectionHeading: 'Inizia una nuova',
-      joinHeading: 'Unisciti a una riunione',
-      roomNameLabel: 'Nome della stanza',
+      joinHeading: 'Unisciti a una stanza',
+      roomNameLabel: 'ID della stanza',
       joinWaitingRoomButton: "Unisciti alla sala d'attesa",
-      emptyRoomNameErrorText: 'Non può essere vuoto,',
+      emptyRoomNameErrorText: 'Inserisci un ID della stanza',
     },
     {
       languageOption: 'Español (México)',
       sectionHeading: 'Iniciar una nueva',
-      joinHeading: 'Unirse a una reunión existente',
-      roomNameLabel: 'Nombre de sala',
+      joinHeading: 'Unirse a una sala',
+      roomNameLabel: 'ID de sala',
       joinWaitingRoomButton: 'Unirse a la sala de espera',
-      emptyRoomNameErrorText: 'No se permite dejar el campo',
+      emptyRoomNameErrorText: 'Escribe un ID de sala',
     },
   ];
 
