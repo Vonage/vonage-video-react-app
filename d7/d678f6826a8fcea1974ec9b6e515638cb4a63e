@@ -1,0 +1,21 @@
+frontend/vite.config.ts
+  s_99faf6d57e6e27::t_f4b907fab8625c 266
+  s_99faf6d57e6e27::t_2c0d0ffe08c563 254,257-265
+  s_99faf6d57e6e27::t_6466b4e461bdc0 255-256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7d678f6826a8fcea1974ec9b6e515638cb4a63e",
+  "prompts": {},
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
