@@ -401,6 +401,8 @@
   "waitingRoom.schedule.tabTitle.started": "● Started · {{name}}",
   "waitingRoom.schedule.tabTitle.countdownUnnamed": "{{countdown}}",
   "waitingRoom.schedule.tabTitle.startedUnnamed": "● Started",
+  "waitingRoom.schedule.autoJoin": "Join automatically when it starts",
+  "waitingRoom.schedule.autoJoinNameHint": "Enter your name to turn this on",
   "zoom.reset": "Reset Zoom",
   "zoom.start": "Start Zooming",
   "zoom.out": "Zoom out",

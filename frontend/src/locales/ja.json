@@ -411,6 +411,8 @@
   "waitingRoom.schedule.tabTitle.started": "● 開始済み · {{name}}",
   "waitingRoom.schedule.tabTitle.countdownUnnamed": "{{countdown}}",
   "waitingRoom.schedule.tabTitle.startedUnnamed": "● 開始済み",
+  "waitingRoom.schedule.autoJoin": "開始時に自動で参加する",
+  "waitingRoom.schedule.autoJoinNameHint": "有効にするには名前を入力してください",
   "zoom.reset": "ズームをリセット",
   "zoom.start": "ズームを開始",
   "zoom.out": "ズームアウト",
