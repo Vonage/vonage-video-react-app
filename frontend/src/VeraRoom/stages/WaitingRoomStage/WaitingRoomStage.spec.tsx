@@ -2,6 +2,7 @@ import { render as renderBase, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ReactElement } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { meetingsService } from '@core/services';
 import bridge$ from '../../stores/bridge';
 import WaitingRoomStage from './WaitingRoomStage';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
@@ -143,5 +144,14 @@ describe('WaitingRoomStage', () => {
   it('renders content when bridge has a sessionIdentifier', () => {
     render(<WaitingRoomStage />, { sessionIdentifier: 'bridge-room' });
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
+  });
+
+  it('does not keep the opened meeting on this device', async () => {
+    const putMeeting = vi.spyOn(meetingsService, 'putMeeting');
+    const sessionKey =
+      'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+    render(<WaitingRoomStage />, { initialRoute: `/waiting-room/${sessionKey}` });
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(putMeeting).not.toHaveBeenCalled();
   });
 });
