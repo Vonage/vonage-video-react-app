@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, memo, useState, SetStateAction } from 'react';
+import { Dispatch, ReactElement, useState, SetStateAction } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
 import { useTranslation } from 'react-i18next';
@@ -97,4 +97,4 @@ const ToolbarOverflowButton = ({
   );
 };
 
-export default memo(ToolbarOverflowButton);
+export default ToolbarOverflowButton;

@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, SetStateAction, memo } from 'react';
+import { Dispatch, ReactElement, SetStateAction } from 'react';
 import { AxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '@hooks/useSessionContext';
@@ -119,4 +119,4 @@ const CaptionsButton = ({
     </Tooltip>
   );
 };
-export default memo(CaptionsButton);
+export default CaptionsButton;

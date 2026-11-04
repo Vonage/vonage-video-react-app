@@ -1,4 +1,4 @@
-import { ReactElement, memo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
@@ -64,4 +64,4 @@ const ParticipantListButton = ({
   );
 };
 
-export default memo(ParticipantListButton);
+export default ParticipantListButton;

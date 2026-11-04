@@ -85,15 +85,9 @@ const Toolbar = ({
 }: ToolbarProps): ReactElement => {
   const { disconnect, subscriberWrappers } = useSessionContext();
   const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
-  const isViewingScreenShare = useMemo(
-    () => subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare),
-    [subscriberWrappers]
-  );
+  const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
-  const isPinningPresent = useMemo(
-    () => subscriberWrappers.some((subWrapper) => subWrapper.isPinned),
-    [subscriberWrappers]
-  );
+  const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
   const handleLeave = useCallback(() => {
     if (!disconnect) {
       return;

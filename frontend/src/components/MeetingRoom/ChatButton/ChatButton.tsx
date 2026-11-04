@@ -1,4 +1,4 @@
-import { ReactElement, memo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
@@ -55,4 +55,4 @@ const ChatButton = ({
   );
 };
 
-export default memo(ChatButton);
+export default ChatButton;

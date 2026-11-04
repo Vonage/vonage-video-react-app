@@ -1,4 +1,4 @@
-import { ReactElement, memo } from 'react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSessionContext from '../../../hooks/useSessionContext';
 import ToolbarButton from '../ToolbarButton';
@@ -89,4 +89,4 @@ const LayoutButton = ({
   );
 };
 
-export default memo(LayoutButton);
+export default LayoutButton;

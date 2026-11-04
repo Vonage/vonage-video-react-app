@@ -1,4 +1,4 @@
-import { ReactElement, memo, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
@@ -109,7 +109,7 @@ const ArchivingButton = ({
           data-testid={testIds.button}
           className={classNames(
             { recording: isRecording },
-            isRecording && '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+            isRecording && 'bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]!'
           )}
           icon={
             <VividIcon
@@ -130,4 +130,4 @@ const ArchivingButton = ({
     </>
   );
 };
-export default memo(ArchivingButton);
+export default ArchivingButton;

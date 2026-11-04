@@ -1,5 +1,5 @@
 import Tooltip from '@mui/material/Tooltip';
-import { ReactElement, memo, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import VividIcon from '@ui/components/VividIcon';
@@ -54,4 +54,4 @@ const ReportIssueButton = ({
   );
 };
 
-export default memo(ReportIssueButton);
+export default ReportIssueButton;
