@@ -1,0 +1,24 @@
+docs/MEETINGS.md
+  h_6029769cf9ac60 7-27,31-32,35
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  h_6029769cf9ac60 36
+integration-tests/tests-auth/session.spec.ts
+  h_6029769cf9ac60 70
+integration-tests/tests-auth/signIn.spec.ts
+  h_6029769cf9ac60 35
+integration-tests/tests/landing.spec.ts
+  h_6029769cf9ac60 36-37,62-85
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 1,53-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "845caf56b00f4ba1855dfbb2cbe04942e3b9f8a6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
