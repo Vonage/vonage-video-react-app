@@ -2,7 +2,7 @@ import type { Prettify } from '@common/types';
 
 import runtimeStore from './runtimeStore';
 import RuntimeProvider from './RuntimeProvider';
-import { useLanguage, useVideoClient, useQuery } from './hooks';
+import { useLanguage, useVideoClient, useQuery, useMutation } from './hooks';
 
 const extensions = {
   /**
@@ -26,6 +26,12 @@ const extensions = {
    * Consumers inside runtime$.Provider automatically use the correct QueryClient.
    */
   useQuery,
+
+  /**
+   * useMutation bound to the runtime$ isolated QueryClient.
+   * Consumers inside runtime$.Provider automatically use the correct QueryClient.
+   */
+  useMutation,
 };
 
 // Spread instead of Object.assign to avoid mutating the runtimeStore object.
