@@ -4,13 +4,11 @@ import { notifications$ } from '@core/stores';
 
 const endOfMeetingWarningMilliseconds = 10_000;
 
-/**
- * Tells everyone once per end time that the meeting is about to finish.
- */
-const useEndOfMeetingWarning = ({ endsAt }: { endsAt: number }) => {
+const useEndOfMeetingWarning = ({ isEnabled }: { isEnabled: boolean }) => {
   const { t } = useTranslation();
-
   useEffect(() => {
+    if (!isEnabled) return;
+
     const notificationId = notifications$.actions.push({
       type: 'warning',
       message: t('meetingTimer.endingSoon'),
@@ -20,7 +18,7 @@ const useEndOfMeetingWarning = ({ endsAt }: { endsAt: number }) => {
     return function dismissEndOfMeetingWarning() {
       notifications$.actions.dismiss(notificationId);
     };
-  }, [endsAt, t]);
+  }, [isEnabled, t]);
 };
 
 export default useEndOfMeetingWarning;
