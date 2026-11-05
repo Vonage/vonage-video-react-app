@@ -350,8 +350,6 @@
   "toolbar.tooltip.title": "Accedi agli strumenti aggiuntivi",
   "meetingTimer.ariaLabel": "Tempo rimanente della riunione",
   "meetingTimer.timeLeft": "{{timeLeft}} rimanenti",
-  "meetingTimer.minutes": "{{minutes}} min",
-  "meetingTimer.hoursAndMinutes": "{{hours}} h {{minutes}} min",
   "meetingTimer.endingSoon": "La riunione sta per terminare",
   "unsupportedBrowser.header": "Browser non supportato",
   "unsupportedBrowser.message": "Controlla l'elenco e scegli un browser supportato.",

@@ -7,12 +7,12 @@ const endOfMeetingWarningMilliseconds = 10_000;
 /**
  * Tells everyone once that the meeting is about to finish.
  */
-const useEndOfMeetingWarning = ({ shouldWarn }: { shouldWarn: boolean }) => {
+const useEndOfMeetingWarning = () => {
   const { t } = useTranslation();
   const hasWarnedRef = useRef(false);
 
   useEffect(() => {
-    if (!shouldWarn || hasWarnedRef.current) return;
+    if (hasWarnedRef.current) return;
 
     hasWarnedRef.current = true;
     notifications$.actions.push({
@@ -20,7 +20,7 @@ const useEndOfMeetingWarning = ({ shouldWarn }: { shouldWarn: boolean }) => {
       message: t('meetingTimer.endingSoon'),
       expirationMs: endOfMeetingWarningMilliseconds,
     });
-  }, [shouldWarn, t]);
+  }, [t]);
 };
 
 export default useEndOfMeetingWarning;

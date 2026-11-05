@@ -360,8 +360,6 @@
   "toolbar.tooltip.title": "追加のツールバーアイテムにアクセス",
   "meetingTimer.ariaLabel": "会議の残り時間",
   "meetingTimer.timeLeft": "残り{{timeLeft}}",
-  "meetingTimer.minutes": "{{minutes}}分",
-  "meetingTimer.hoursAndMinutes": "{{hours}}時間{{minutes}}分",
   "meetingTimer.endingSoon": "会議はまもなく終了します",
   "unsupportedBrowser.header": "お客様のブラウザーはサポートされていません。",
   "unsupportedBrowser.message": "リストを確認して、サポートされているブラウザーを選択してください。",

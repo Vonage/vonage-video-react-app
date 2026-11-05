@@ -158,23 +158,19 @@ test.describe('Waiting page schedule UI test', () => {
 test.describe('Meeting room timer UI test', () => {
   const minuteInMilliseconds = 60_000;
   const colorSchemes = ['light', 'dark'] as const;
-  for (const colorScheme of colorSchemes) {
-    test(`time left ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
-      test.skip(
-        colorScheme === 'dark' && browserName === 'firefox',
-        'Firefox ignores the emulated dark color scheme'
-      );
-      await openScheduledMeetingRoom({
-        page,
-        request,
-        isMobile,
-        browserName,
-        colorScheme,
-        minutesLeft: 42,
-      });
-      await expect(page.getByRole('timer')).toHaveText('42 min left');
-      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+  test('before the last five minutes', async ({ page, request, isMobile, browserName }) => {
+    await openScheduledMeetingRoom({
+      page,
+      request,
+      isMobile,
+      browserName,
+      colorScheme: 'light',
+      minutesLeft: 6,
     });
+    await expect(page.getByRole('timer')).toBeHidden();
+    await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+  });
+  for (const colorScheme of colorSchemes) {
     test(`about to finish ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
       test.skip(
         colorScheme === 'dark' && browserName === 'firefox',
@@ -190,7 +186,7 @@ test.describe('Meeting room timer UI test', () => {
       });
       await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
       await expect(page.getByText('The meeting is about to finish')).toBeVisible();
-      await expect(page.getByRole('timer')).toHaveText('4:00 left');
+      await expect(page.getByRole('timer')).toHaveText('4 min 0 sec left');
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
       await page.getByRole('button', { name: 'Dismiss notification' }).click();
       await expect(page.getByText('The meeting is about to finish')).toBeHidden();
