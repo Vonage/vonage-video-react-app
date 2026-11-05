@@ -98,7 +98,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       joinHeading: 'Join room',
       roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'English (US)',
@@ -106,7 +106,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       joinHeading: 'Join room',
       roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'Deutsch',
@@ -114,7 +114,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       joinHeading: 'Raum beitreten',
       roomNameLabel: 'Raum-ID',
       joinWaitingRoomButton: 'Warteraum betreten',
-      emptyRoomNameErrorText: 'Kann nicht leer sein und darf',
+      emptyRoomNameErrorText: 'Geben Sie eine gültige Raum-ID',
     },
     {
       languageOption: 'Italiano',
@@ -122,7 +122,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       joinHeading: 'Unisciti a una stanza',
       roomNameLabel: 'ID della stanza',
       joinWaitingRoomButton: "Unisciti alla sala d'attesa",
-      emptyRoomNameErrorText: 'Non può essere vuoto,',
+      emptyRoomNameErrorText: 'Inserisci un ID della stanza',
     },
     {
       languageOption: 'Español (México)',
@@ -130,7 +130,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       joinHeading: 'Unirse a una sala',
       roomNameLabel: 'ID de sala',
       joinWaitingRoomButton: 'Unirse a la sala de espera',
-      emptyRoomNameErrorText: 'No se permite dejar el campo',
+      emptyRoomNameErrorText: 'Escribe un ID de sala',
     },
   ];
 

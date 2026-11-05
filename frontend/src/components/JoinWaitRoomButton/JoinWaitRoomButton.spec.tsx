@@ -1,15 +1,7 @@
-import { render as renderBase, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useNavigate, MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
-import { makeTestProvider, providers } from '@test/providers';
-import type { VideoClient } from '@core/services';
 import JoinWaitRoomButton from './JoinWaitRoomButton';
-
-const mockMutate = vi.fn();
-
-const mockVideoClient = {
-  createSession: (...args: unknown[]): unknown => mockMutate(...args),
-} as unknown as VideoClient;
 
 vi.mock('react-router-dom', async () => {
   const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -24,30 +16,26 @@ const mockSetHasError = vi.fn();
 
 describe('JoinWaitRoomButtonComponent', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockMutate.mockResolvedValue({ sessionKey: 'resolved-session-key' });
+    (useNavigate as Mock).mockReturnValue(mockNavigate);
   });
 
-  it('should navigate to the waiting room if the room name is valid', async () => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
+  it('should navigate to the waiting room of the room id', () => {
     render(
       <MemoryRouter>
-        <JoinWaitRoomButton roomName="test-room" isDisabled={false} setHasError={mockSetHasError} />
+        <JoinWaitRoomButton roomId="Test-Room" isDisabled={false} setHasError={mockSetHasError} />
       </MemoryRouter>
     );
 
     fireEvent.click(screen.getByRole('button'));
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/resolved-session-key');
-    });
+    expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/test-room');
+    expect(mockSetHasError).not.toHaveBeenCalled();
   });
 
-  it('should not navigate and set error if the room name is empty', () => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
+  it('should not navigate and set error if the room id is invalid', () => {
     render(
       <MemoryRouter>
-        <JoinWaitRoomButton roomName="" isDisabled={false} setHasError={mockSetHasError} />
+        <JoinWaitRoomButton roomId="" isDisabled={false} setHasError={mockSetHasError} />
       </MemoryRouter>
     );
 
@@ -57,10 +45,3 @@ describe('JoinWaitRoomButtonComponent', () => {
     expect(mockSetHasError).toHaveBeenCalledWith(true);
   });
 });
-
-function render(ui: React.ReactElement) {
-  const { wrapper } = makeTestProvider([providers.runtime], {
-    runtimeContext: { videoClient: mockVideoClient },
-  });
-  return renderBase(ui, { wrapper });
-}
