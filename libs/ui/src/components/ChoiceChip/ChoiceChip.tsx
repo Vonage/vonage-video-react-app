@@ -19,9 +19,6 @@ const choiceChip = tv(
   { twMerge: false }
 );
 
-/**
- * Pill-shaped button for picking one option out of a few.
- */
 const ChoiceChip = ({ isSelected, className, ...props }: ChoiceChipProps): ReactElement => {
   return (
     <button

@@ -4,9 +4,6 @@ import classNames from 'classnames';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import createRoomWizardSteps from '../../constants/createRoomWizardSteps';
 
-/**
- * Name of the active step, "Step 1 of 2", and a segmented progress bar.
- */
 const WizardStepProgress = ({ className, ...props }: ComponentProps<'div'>): ReactElement => {
   const { t } = useTranslation();
   const activeStep = createRoomWizard$.use.select((state) => state.activeStep);

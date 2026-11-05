@@ -7,9 +7,6 @@ import meetingDurationOptions from '../../../constants/meetingDurationOptions';
 import meetingDurationLabelKeys from '../../../constants/meetingDurationLabelKeys';
 import useIsMeetingStartValid from '../../../hooks/useIsMeetingStartValid';
 
-/**
- * Start date, start time and duration of a scheduled meeting.
- */
 const ScheduleFields = (): ReactElement => {
   const { t } = useTranslation();
   const startDate = createRoomWizard$.use.select((state) => state.startDate);
