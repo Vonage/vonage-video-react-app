@@ -1,0 +1,22 @@
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/MeetingNameField.tsx
+  h_6029769cf9ac60 4-5,26-45
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/ScheduleFields.tsx
+  h_6029769cf9ac60 4,25-52
+libs/ui/src/components/Field/Field.tsx
+  h_6029769cf9ac60 4,41-43,46-56
+libs/ui/src/components/Field/FieldInput.test.tsx
+  h_6029769cf9ac60 73-79
+libs/ui/src/components/Field/FieldInput.tsx
+  h_6029769cf9ac60 45-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "60d04faa2139a374e41f257f40e81dc7dbc82eab",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
