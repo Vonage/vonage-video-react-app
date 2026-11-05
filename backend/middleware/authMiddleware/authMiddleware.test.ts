@@ -15,6 +15,7 @@ vi.mock('axios');
 const mockPost = vi.spyOn(axios, 'post');
 
 const SESSION_COOKIE_NAME = 'test_session';
+const SIGNED_IN_HINT_COOKIE_NAME = 'test_session-signed-in';
 const CLIENT_ID = 'test-client-id';
 const INTROSPECTION_ENDPOINT = 'https://example.com/introspect';
 const TOKEN_ENDPOINT = 'https://example.com/token';
@@ -298,6 +299,9 @@ describe('authMiddleware', () => {
       expect(session).toEqual(
         expect.objectContaining({ accessToken: 'new-access-token', refreshToken: 'refresh-2' })
       );
+      expect(readSetCookie({ headers: res.headers, name: SIGNED_IN_HINT_COOKIE_NAME })).toMatch(
+        /^test_session-signed-in=1;/
+      );
     });
 
     it('refreshes when introspection reports the token inactive', async () => {
@@ -355,6 +359,9 @@ describe('authMiddleware', () => {
       expect(readSetCookie({ headers: apiResponse.headers, name: SESSION_COOKIE_NAME })).toMatch(
         /Expires=Thu, 01 Jan 1970/
       );
+      expect(
+        readSetCookie({ headers: apiResponse.headers, name: SIGNED_IN_HINT_COOKIE_NAME })
+      ).toMatch(/Expires=Thu, 01 Jan 1970/);
     });
 
     it('does not redirect when the refresh request itself fails', async () => {
