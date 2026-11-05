@@ -41,8 +41,11 @@ import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
 import { notifications$, runtime$ } from '@core/stores';
-import { decodeSessionKey } from '@common/helpers';
+import { decodeSessionKey, getScheduleWindow, readExtendedClaim } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
+import { isNil, isNotNil, isString } from '@common/assertions';
+import tryCatch from '@common/execution/tryCatch';
+import { getFormattedTime } from '@utils/dateTime';
 
 export type { ChatMessageType } from '@app-types/chat';
 
@@ -50,6 +53,7 @@ export type SessionContextType = {
   vonageVideoClient: null | VonageVideoClient;
   disconnect: null | (() => void);
   joinRoom: null | ((params: { sessionKey: string }) => Promise<void>);
+  applyExtendedCredential: (credential: Credential) => void;
   forceMute: null | ((stream: Stream) => Promise<void>);
   connected: null | boolean;
   sessionKey: string | null;
@@ -98,6 +102,7 @@ export const SessionContext = createContext<SessionContextType>({
   vonageVideoClient: null,
   disconnect: null,
   joinRoom: null,
+  applyExtendedCredential: () => {},
   forceMute: null,
   connected: null,
   sessionKey: null,
@@ -188,7 +193,7 @@ const SessionProvider = ({
   skipBrowserUrlUpdate = false,
 }: SessionProviderProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -352,6 +357,58 @@ const SessionProvider = ({
 
     return decodeSessionKey({ sessionKey });
   }, [sessionKey]);
+
+  /**
+   * Swaps the sessionKey and token of the connection for an extended pair, only when it ends later.
+   * @param {Credential} credential - The extended sessionKey and its token.
+   */
+  const applyExtendedCredential = useStableCallback((credential: Credential) => {
+    const client = vonageVideoClient.current;
+    if (isNil(client)) return;
+
+    const extendedSession = decodeSessionKey({ sessionKey: credential.sessionKey });
+    const currentSession = decodeSessionKey({ sessionKey: client.sessionKey });
+    const addedMinutes = readExtendedClaim(extendedSession) - readExtendedClaim(currentSession);
+    const scheduleWindow = getScheduleWindow(extendedSession);
+    const isLaterEnd = addedMinutes > 0 && isNotNil(scheduleWindow);
+    if (!isLaterEnd) return;
+
+    client.renewCredential(credential);
+    setSessionKey(credential.sessionKey);
+    if (!skipBrowserUrlUpdate) {
+      window.history.replaceState(null, '', `/room/${credential.sessionKey}`);
+    }
+
+    notifications$.actions.push({
+      type: 'success',
+      message: t('meetingExtension.extended', {
+        minutes: addedMinutes,
+        time: getFormattedTime(i18n.language, scheduleWindow.endsAt),
+      }),
+      expirationMs: env.NOTIFICATION_DURATION_MS,
+    });
+  });
+
+  const handleMeetingExtendedSignal = useStableCallback(async ({ data, from }: SignalEvent) => {
+    const client = vonageVideoClient.current;
+    const isOwnSignal = isNotNil(from) && from.connectionId === client?.connectionId;
+    if (isNil(client) || isNil(data) || isOwnSignal) return;
+
+    const { result: payload } = tryCatch(() => JSON.parse(data) as { grant?: unknown } | null);
+    const grant = payload?.grant;
+    if (!isString(grant)) return;
+
+    const { result: renewedSession, error } = await tryCatch(() =>
+      videoClient.renewSessionKey({ sessionKey: client.sessionKey, grant })
+    );
+
+    if (isNil(renewedSession)) {
+      frontendLogger.reportError(error, { eventSource: 'session.renewSessionKey.error' });
+      return;
+    }
+
+    applyExtendedCredential({ sessionKey: renewedSession.sessionKey, token: renewedSession.token });
+  });
 
   /**
    * Handles changes to stream properties. This triggers a re-render when a stream property changes
@@ -549,6 +606,9 @@ const SessionProvider = ({
         vonageVideoClient.current.on('signal:chat', handleChatSignal);
       }
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
+      vonageVideoClient.current.on('signal:meeting-extended', (event) => {
+        void handleMeetingExtendedSignal(event);
+      });
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
         handleSubscriberAudioLevelUpdated
@@ -659,6 +719,7 @@ const SessionProvider = ({
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
+      applyExtendedCredential,
       forceMute,
       connected,
       sessionKey,
@@ -708,6 +769,7 @@ const SessionProvider = ({
       messages,
       sendChatMessage,
       joinRoom,
+      applyExtendedCredential,
       forceMute,
       connected,
       sessionKey,

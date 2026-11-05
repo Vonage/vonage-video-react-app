@@ -39,6 +39,7 @@ type VonageVideoClientEvents = {
   'signal:chat': [SignalEvent];
   'signal:emoji': [SignalEvent];
   'signal:captions': [SignalEvent];
+  'signal:meeting-extended': [SignalEvent];
   streamPropertyChanged: [StreamPropertyChangedEvent];
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
@@ -61,7 +62,7 @@ type VonageVideoClientEvents = {
 class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   public clientSession: Session;
   private readonly applicationId: string;
-  private readonly credential: Credential;
+  private credential: Credential;
   public readonly sessionId: string;
   private hiddenSubscriber: Subscriber | null = null;
   private readonly streams = new Map<string, Stream>();
@@ -427,6 +428,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     if (type === 'signal:chat' || type === 'signal:emoji' || type === 'signal:captions') {
       this.emit(type, event);
     }
+
+    if (type === 'signal:meeting-extended') {
+      this.emit(type, event);
+    }
   };
 
   /**
@@ -621,6 +626,22 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
   get connectionId(): string | undefined {
     return this.clientSession?.connection?.connectionId;
   }
+
+  /**
+   * The sessionKey this connection currently holds.
+   * @returns {string} The sessionKey.
+   */
+  get sessionKey(): string {
+    return this.credential.sessionKey;
+  }
+
+  /**
+   * Replaces the sessionKey and token held for this connection, without reconnecting.
+   * @param {Credential} credential - The renewed sessionKey and token.
+   */
+  renewCredential = (credential: Credential) => {
+    this.credential = credential;
+  };
 }
 
 export default VonageVideoClient;

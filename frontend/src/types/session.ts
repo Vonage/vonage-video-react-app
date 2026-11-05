@@ -40,7 +40,7 @@ export type SignalEvent = {
 };
 
 export type SignalType = {
-  type: 'emoji' | 'chat' | 'captions';
+  type: 'emoji' | 'chat' | 'captions' | 'meeting-extended';
   data: string;
   retryAfterReconnect?: boolean;
 };

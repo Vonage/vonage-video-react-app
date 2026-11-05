@@ -21,3 +21,18 @@ can join the meeting after its scheduled end.
 At the scheduled end, by the server's clock, every browser in the meeting leaves it the same way the leave button does
 and opens the goodbye page with **This meeting has ended**. The meeting tokens expire at the same time. Meetings without
 a schedule are not affected.
+
+## Adding time
+
+When the timer appears, it opens **Extend meeting** by itself, and selecting the timer opens it again. It lists
+**+20 min**, **+40 min** and **+60 min**, each with the time the meeting would then end. Choose an option and select
+**Extend**, or select **Not now** to close it.
+
+- A meeting can be extended by 120 minutes in total. Options that would go past that limit are greyed out.
+- Once the limit is reached, the timer shows a lock, the popover says so, and it no longer opens by itself.
+- When anyone extends the meeting, everyone in it sees a short message with the new end time, and their timer
+  follows it. Nobody is disconnected and nobody has to rejoin.
+- Someone who opens the meeting link for the first time after an extension still sees the original end time, and
+  cannot join after the original end.
+
+The options and the limit are set on the server; see [Configuration](./CONFIGURATION.md).

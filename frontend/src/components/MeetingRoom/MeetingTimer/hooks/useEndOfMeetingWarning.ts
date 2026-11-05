@@ -4,7 +4,10 @@ import { notifications$ } from '@core/stores';
 
 const endOfMeetingWarningMilliseconds = 10_000;
 
-const useEndOfMeetingWarning = () => {
+/**
+ * Tells everyone once per end time that the meeting is about to finish.
+ */
+const useEndOfMeetingWarning = ({ endsAt }: { endsAt: number }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -17,7 +20,7 @@ const useEndOfMeetingWarning = () => {
     return function dismissEndOfMeetingWarning() {
       notifications$.actions.dismiss(notificationId);
     };
-  }, [t]);
+  }, [endsAt, t]);
 };
 
 export default useEndOfMeetingWarning;
