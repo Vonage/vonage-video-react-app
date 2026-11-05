@@ -1,0 +1,62 @@
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 356-365
+frontend/src/locales/en.json
+  h_6029769cf9ac60 346-355
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 44,46-48,56,105,196,361-411,608-610,721,771
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 42,65,431-434,629-644
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 1-134
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 8,10-16,18,21-22,24,30
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 346-355
+frontend/src/types/session.ts
+  h_6029769cf9ac60 43
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendPopoverOpenState.ts
+  h_6029769cf9ac60 1-34
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/extendOptionRowVariants.ts
+  h_6029769cf9ac60 1-20
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1,4,6,15,24,26,28-31,33-37,40-68
+frontend/src/locales/it.json
+  h_6029769cf9ac60 346-355
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 1-36
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 20-34
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/ExtendOptionRow.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendMeeting.ts
+  h_6029769cf9ac60 1-51
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 2,6,13,42,46,72-132,135-148,161,164-168
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 18,35,38,707-761,764-774
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/helpers/getExtensionOptions.ts
+  h_6029769cf9ac60 1-23
+frontend/src/locales/de.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/es.json
+  h_6029769cf9ac60 346-355
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 5,9
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/index.ts
+  h_6029769cf9ac60 1-3
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 166,171-173,176-235,266-273,302
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae28785c8c77855b55c4776f62ad055dd3a7c332",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
