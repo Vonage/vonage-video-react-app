@@ -13,6 +13,7 @@ import {
   authMiddleware,
   corsMiddleware,
   errorHandler,
+  guestRateLimitMiddleware,
   helmetMiddleware,
   rateLimitMiddleware,
 } from './middleware';
@@ -35,6 +36,7 @@ const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
 const PUBLIC_BUILD_FOLDERS = ['assets', 'images', 'background'];
 const MEETING_LINK_PATHS = ['/waiting-room/:roomIdentifier', '/room/:roomIdentifier'];
+const GUEST_REPORT_PATHS = ['/client-logs', '/feedback/report'];
 
 const authCallbackPaths = (() => {
   const authConfig = loadConfig();
@@ -59,6 +61,8 @@ app.set('trust proxy', 1);
  * Should be placed before the authMiddleware to allow the videoRouter to handle it's own auth.
  */
 app.use('/v2', authMiddleware({ mode: 'optional' }), videoRouter);
+
+app.use(GUEST_REPORT_PATHS, authMiddleware({ mode: 'optional' }), guestRateLimitMiddleware());
 
 // Before the public meeting-link routes so they also get the header.
 app.use((_req, res, next) => {
@@ -93,6 +97,9 @@ app.use(
       '/v2/hooks/session',
       '/v2/hooks/captions',
       '/v2/hooks/archive',
+      '/client-logs',
+      '/client-logs/batch',
+      '/feedback/report',
       '/.well-known/apple-app-site-association',
       '/.well-known/assetlinks.json',
       SIGN_IN_PATH,
