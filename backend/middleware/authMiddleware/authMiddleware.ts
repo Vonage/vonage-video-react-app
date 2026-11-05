@@ -1,15 +1,18 @@
 import type { NextFunction, Request, Response } from 'express';
-import { isRecord } from '@common/assertions';
+import { isNil, isRecord } from '@common/assertions';
 import { tryCatch } from '@common/execution';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
 import loadConfig from '../../helpers/config';
 import { SIGN_IN_PATH } from '../../routes/auth/constants';
-import SessionCookieSchema from '../../routes/auth/schemas/SessionCookie.schema';
+import SessionCookieSchema, {
+  type SessionCookie,
+} from '../../routes/auth/schemas/SessionCookie.schema';
 import readCookiePayload from '../../routes/auth/helpers/readCookiePayload';
 import writeSessionCookies from '../../routes/auth/helpers/writeSessionCookies';
 import clearSessionCookies from '../../routes/auth/helpers/clearSessionCookies';
 import resolveResponseFormat from '../../helpers/resolveResponseFormat';
+import type { EnabledAuthConfig } from './schemas/AuthConfig.schema';
 import type { ActiveTokenIntrospectionResponse } from './schemas/TokenIntrospectionResponse.schema';
 import { makeSignInRequiredErrorHandler } from './errors/SignInRequiredError';
 import readBearerToken from './helpers/readBearerToken';
@@ -54,115 +57,149 @@ function authMiddleware(
   }
 
   const isOptional = options.mode === 'optional';
-
   const excludedPaths = new Set(options.excludedPaths ?? []);
-  const {
-    oidcClientId,
-    authHeaderName,
-    authScheme,
-    authCookieSecret,
-    authSessionCookieName,
-    corsAllowedOrigins,
-  } = authConfig;
 
   return async function handleRequest(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    if (excludedPaths.has(req.path)) {
-      next();
-      return;
-    }
+    if (excludedPaths.has(req.path)) return next();
 
-    const bearerToken = readBearerToken({ req, authHeaderName, authScheme });
+    const bearerToken = readBearerToken({
+      req,
+      authHeaderName: authConfig.authHeaderName,
+      authScheme: authConfig.authScheme,
+    });
 
-    const { error: originError } = tryCatch(() =>
-      assertAllowedOrigin({ req, allowedOrigins: corsAllowedOrigins })
+    const { didFail: isOriginRejected, error: originError } = tryCatch(() =>
+      assertAllowedOrigin({ req, allowedOrigins: authConfig.corsAllowedOrigins })
     );
 
-    if (originError) {
-      next(makeInternalErrorHandler('Unexpected error in authMiddleware')(originError));
-      return;
-    }
+    if (isOriginRejected) return next(wrapUnexpectedError(originError));
 
-    try {
-      if (bearerToken) {
-        const introspectionData = await introspectAccessToken({
-          accessToken: bearerToken,
-          authConfig,
-        });
+    const { didFail: hasAuthenticationFailed, error } = await tryCatch(() =>
+      authenticateRequest({ req, res, bearerToken, authConfig, isOptional })
+    );
 
-        (req as RequestWithTokenAuth).user = verifyActiveToken({
-          introspectionData,
-          clientId: oidcClientId,
-        });
-        next();
-        return;
-      }
+    if (!hasAuthenticationFailed) return next();
 
-      const session = readCookiePayload({
-        req,
-        name: authSessionCookieName,
-        secret: authCookieSecret,
-        schema: SessionCookieSchema,
-      });
+    const isSignInRequired = isSignInRequiredError(error);
+    const isCookieSignInRequired = isSignInRequired && !bearerToken;
 
-      if (!session) {
-        if (isOptional) {
-          next();
-          return;
-        }
+    if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
+    if (isOptional && isSignInRequired) return next();
+    if (isCookieSignInRequired && isPageRequest(req)) return redirectToSignIn({ req, res });
 
-        throw makeSignInRequiredErrorHandler(
-          `Missing access token in the "${authHeaderName}" header or the session cookie`
-        )(null);
-      }
-
-      const sessionOutcome = await authenticateCookieSession({ session, authConfig });
-
-      if (sessionOutcome.status === 'refreshed') {
-        writeSessionCookies({
-          res,
-          tokenResponse: sessionOutcome.tokenResponse,
-          previousRefreshToken: session.refreshToken,
-          authConfig,
-        });
-      }
-
-      (req as RequestWithTokenAuth).user = sessionOutcome.user;
-
-      next();
-    } catch (error) {
-      const isCookieSignInRequired =
-        isRecord(error) && error.isSignInRequired === true && !bearerToken;
-
-      if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
-
-      const isSignedOutOptionalRequest =
-        isOptional && isRecord(error) && error.isSignInRequired === true;
-
-      if (isSignedOutOptionalRequest) {
-        next();
-        return;
-      }
-
-      const isSignInRequiredPageRequest =
-        isCookieSignInRequired && req.method === 'GET' && resolveResponseFormat(req) === 'html';
-
-      if (isSignInRequiredPageRequest) {
-        res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
-        return;
-      }
-
-      if (isApplicationError(error)) {
-        next(error);
-        return;
-      }
-
-      next(makeInternalErrorHandler('Unexpected error in authMiddleware')(error));
-    }
+    next(toApplicationError(error));
   };
 }
 
 export default authMiddleware;
+
+async function authenticateRequest({
+  req,
+  res,
+  bearerToken,
+  authConfig,
+  isOptional,
+}: {
+  req: Request;
+  res: Response;
+  bearerToken: string | undefined;
+  authConfig: EnabledAuthConfig;
+  isOptional: boolean;
+}): Promise<void> {
+  if (bearerToken) {
+    (req as RequestWithTokenAuth).user = await authenticateBearerToken({ bearerToken, authConfig });
+    return;
+  }
+
+  const session = readSessionCookie({ req, authConfig });
+
+  if (isNil(session) && isOptional) return;
+
+  if (isNil(session)) {
+    throw makeSignInRequiredErrorHandler(
+      `Missing access token in the "${authConfig.authHeaderName}" header or the session cookie`
+    )(null);
+  }
+
+  (req as RequestWithTokenAuth).user = await authenticateAndRefreshCookieSession({
+    session,
+    res,
+    authConfig,
+  });
+}
+
+async function authenticateBearerToken({
+  bearerToken,
+  authConfig,
+}: {
+  bearerToken: string;
+  authConfig: EnabledAuthConfig;
+}): Promise<ActiveTokenIntrospectionResponse> {
+  const introspectionData = await introspectAccessToken({ accessToken: bearerToken, authConfig });
+
+  return verifyActiveToken({ introspectionData, clientId: authConfig.oidcClientId });
+}
+
+function readSessionCookie({
+  req,
+  authConfig,
+}: {
+  req: Request;
+  authConfig: EnabledAuthConfig;
+}): SessionCookie | undefined {
+  return readCookiePayload({
+    req,
+    name: authConfig.authSessionCookieName,
+    secret: authConfig.authCookieSecret,
+    schema: SessionCookieSchema,
+  });
+}
+
+async function authenticateAndRefreshCookieSession({
+  session,
+  res,
+  authConfig,
+}: {
+  session: SessionCookie;
+  res: Response;
+  authConfig: EnabledAuthConfig;
+}): Promise<ActiveTokenIntrospectionResponse> {
+  const sessionOutcome = await authenticateCookieSession({ session, authConfig });
+
+  if (sessionOutcome.status === 'refreshed') {
+    writeSessionCookies({
+      res,
+      tokenResponse: sessionOutcome.tokenResponse,
+      previousRefreshToken: session.refreshToken,
+      authConfig,
+    });
+  }
+
+  return sessionOutcome.user;
+}
+
+function isSignInRequiredError(error: unknown): boolean {
+  return isRecord(error) && error.isSignInRequired === true;
+}
+
+function isPageRequest(req: Request): boolean {
+  return req.method === 'GET' && resolveResponseFormat(req) === 'html';
+}
+
+function redirectToSignIn({ req, res }: { req: Request; res: Response }): void {
+  res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
+}
+
+function toApplicationError(error: unknown) {
+  if (isApplicationError(error)) return error;
+
+  return wrapUnexpectedError(error);
+}
+
+function wrapUnexpectedError(error: unknown) {
+  return makeInternalErrorHandler('Unexpected error in authMiddleware')(error);
+}
