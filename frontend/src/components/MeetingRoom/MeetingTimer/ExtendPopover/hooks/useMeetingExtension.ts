@@ -17,8 +17,8 @@ export type MeetingExtension = {
  * or null until the server settings are known.
  */
 const useMeetingExtension = (): MeetingExtension | null => {
-  const { sessionDetails } = useSessionContext();
-  const { data: serverSettings } = useServerSettings();
+  const { sessionDetails, sessionKey } = useSessionContext();
+  const { data: serverSettings } = useServerSettings({ sessionKey });
 
   if (isNil(serverSettings)) return null;
 
