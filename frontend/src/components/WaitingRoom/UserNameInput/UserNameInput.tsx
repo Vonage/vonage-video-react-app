@@ -14,7 +14,6 @@ import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import Separator from '@components/Separator';
 import { CardProps } from '@mui/material';
 import { twMerge } from 'tailwind-merge';
-import { isValidRoomName } from '@common/assertions';
 
 export type UserNameInputProps = Omit<CardProps, 'sx'> & {
   username: string;
@@ -66,10 +65,7 @@ const UsernameInput = ({
 
   const handleJoinClick = (event: MouseEvent) => {
     event.preventDefault();
-    if (validateForm() && roomName) {
-      if (!isValidRoomName(roomName)) {
-        return;
-      }
+    if (validateForm() && sessionKey) {
       setUser((prevUser: UserType) => ({
         ...prevUser,
         defaultSettings: {
