@@ -5,9 +5,6 @@ import type { SessionSigning } from '@api-lib/schemas/SessionSigning.schema';
 import { readExtendedClaim } from '@common/helpers';
 import extensionGrantAudience from './extensionGrantAudience';
 
-/**
- * Verifies an extension grant issued for the given session and returns the extended minutes it carries.
- */
 function verifyExtensionGrant({
   sessionSigning,
   sessionId,

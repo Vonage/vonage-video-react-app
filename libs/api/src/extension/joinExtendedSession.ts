@@ -4,9 +4,6 @@ import { isNil } from '@common/assertions';
 import { getScheduleWindow } from '@common/helpers';
 import signExtendedSessionKey from './signExtendedSessionKey';
 
-/**
- * Signs the sessionKey with the extended minutes and joins it with a token that expires at the extended end.
- */
 function joinExtendedSession({
   videoClient,
   sessionKey,

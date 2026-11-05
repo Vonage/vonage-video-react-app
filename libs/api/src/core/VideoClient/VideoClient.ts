@@ -194,14 +194,8 @@ class VideoClient implements IVideoClient {
     getServerSettings
   );
 
-  /**
-   * Extends a running scheduled session and returns the extended sessionKey, a token and a renewal grant
-   */
   public extendSession = this.createVideoHandler(VideoAction.extendSession, extendSession);
 
-  /**
-   * Renews a sessionKey with the extension carried by a grant from extendSession
-   */
   public renewSessionKey = this.createVideoHandler(VideoAction.renewSessionKey, renewSessionKey);
 }
 
