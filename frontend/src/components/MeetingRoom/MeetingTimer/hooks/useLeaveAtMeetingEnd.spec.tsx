@@ -134,7 +134,12 @@ function render({
       serverSettingsContext: { sessionKey },
       runtimeContext: {
         queryClient,
-        videoClient: makeVideoClientMock({ getServerSettings }),
+        videoClient: makeVideoClientMock({
+          getServerSettings: async () => ({
+            ...(await getServerSettings()),
+            extension: { options: [20, 40, 60] },
+          }),
+        }),
       },
       userContext: undefined,
       sessionContext: {
