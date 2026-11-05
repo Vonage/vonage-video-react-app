@@ -1,0 +1,38 @@
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_737cf808c1c597 51
+  s_b82d81c31ac279::t_47ba769c326dda 32
+backend/testSetup/setEnvVars.js
+  s_b82d81c31ac279::t_4190b11b68fb55 15
+vcr-gha.yml
+  h_737cf808c1c597 140
+  s_b82d81c31ac279::t_d44ab4e3b98e22 139
+backend/.env.example
+  s_b82d81c31ac279::t_e79a2e4185e359 108
+backend/services/loggerService.ts
+  s_b82d81c31ac279::t_0e048694a2b8b9 56
+backend/helpers/config.ts
+  h_737cf808c1c597 49
+backend/testSetup/setEnvVars.test.ts
+  h_737cf808c1c597 64-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "99ec9ff8f927e1d18a15f1833662adc10a38c459",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_b82d81c31ac279": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_bb8651c3-a5b7-4a74-9186-fd524c09257b",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
