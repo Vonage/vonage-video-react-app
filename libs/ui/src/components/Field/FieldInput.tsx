@@ -42,7 +42,21 @@ const FieldInput = ({ className, ...props }: FieldInputProps): ReactElement => {
     );
   }
 
-  return <input className={className} {...props} />;
+  const isInvalid = props['aria-invalid'] === true || props['aria-invalid'] === 'true';
+
+  return (
+    <input
+      className={classNames(
+        'w-full rounded-vera-medium border bg-vera-surface px-3 py-2 font-vera-plain text-vera-body-base text-vera-text-secondary outline-none transition-colors scheme-light dark:scheme-dark',
+        {
+          'border-vera-error': isInvalid,
+          'border-vera-border focus:border-vera-primary': !isInvalid,
+        },
+        className
+      )}
+      {...props}
+    />
+  );
 };
 
 export default FieldInput;
