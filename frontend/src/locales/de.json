@@ -374,7 +374,6 @@
   "waitingRoom.precallNetworkTest.videoSupported": "Video wird unterstützt",
   "waitingRoom.precallNetworkTest.videoNotSupported": "Video wird nicht unterstützt",
   "waitingRoom.user.input.error": "Name kann nicht leer sein oder Sonderzeichen enthalten.",
-  "waitingRoom.untitledMeeting": "Unbenanntes Meeting",
   "waitingRoom.schedule.startsIn": "Beginnt in",
   "waitingRoom.schedule.countdown.days_one": "{{count}} Tag",
   "waitingRoom.schedule.countdown.days_other": "{{count}} Tagen",
