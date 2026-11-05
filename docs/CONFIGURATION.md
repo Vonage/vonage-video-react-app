@@ -104,25 +104,28 @@ See [Authentication](./AUTHENTICATION.md) for the full authentication guide incl
 
 #### Scheduled meeting extension (video handler option)
 
-A running scheduled meeting can be extended through the `extendSession` action. This is not an environment variable: it is the optional `extension` object passed to `createVideoHandler` (or `createVideoRouter`, or `new VideoClient`) from `libs/api`. When it is given, both fields are required.
+A running scheduled meeting can be extended through the `extendSession` action. This is not an environment variable: it is the optional `extension` object passed to `createVideoHandler` (or `createVideoRouter`, or `new VideoClient`) from `libs/api`.
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `maxTotalMinutes` | `120` | Most minutes all extensions of one meeting may add up to. |
-| `options` | `[20, 40, 60]` | Minutes a single extension may add. Each must be a positive integer no greater than `maxTotalMinutes`. |
+| `options` | `[20, 40, 60]` | Minutes a single extension may add. Each must be a positive integer no greater than 120. |
 
 ```ts
 createVideoHandler({
   auth,
-  extension: { maxTotalMinutes: 60, options: [15, 30] },
+  extension: { options: [15, 30] },
 });
 ```
 
 An invalid `extension` object stops the handler from being created. The public `getServerSettings` action returns the options in use, next to the server time.
 
-`extendSession` only accepts a sessionKey whose meeting is running, a value from `options`, and a total within `maxTotalMinutes`. It returns a new sessionKey that ends later, a token that expires at the new end, and a grant valid for 10 minutes. Anyone else holding the meeting's sessionKey passes that grant to `renewSessionKey` to get the same new end. When two people extend from the same sessionKey at the same time, the longer extension is kept rather than both being added.
+All extensions of one meeting add up to at most 120 minutes. This cap is fixed and cannot be configured.
+
+`extendSession` only accepts a sessionKey whose meeting is running, a value from `options`, and a total within 120 minutes. It returns a new sessionKey that ends later, a token that expires at the new end, and a grant valid for 10 minutes. Anyone else holding the meeting's sessionKey passes that grant to `renewSessionKey` to get the same new end. When two people extend from the same sessionKey at the same time, the longer extension is kept rather than both being added.
 
 Concurrent extensions are resolved in memory by default, per server process. To run several instances behind a load balancer, pass an `extensionStore` whose `commitExtension({ sessionId, extendedMinutes })` atomically keeps and returns the larger of the stored and the given value.
+
+In the Vera backend, when `AUTH_ENABLED` is `true`, only a signed-in user can call `extendSession`; anyone else gets a 401. `renewSessionKey` stays open to every holder of the meeting's sessionKey, guests included. With `AUTH_ENABLED='false'` everyone can extend.
 
 ### Frontend (`app-config.json` → `env.sh`)
 

@@ -1,25 +1,19 @@
 import z from 'zod';
+import { MAX_TOTAL_EXTENSION_MINUTES } from '@common/constants';
 
-const ExtensionOptionSchema = z.number().int().positive();
+const ExtensionOptionSchema = z
+  .number()
+  .int()
+  .positive()
+  .max(MAX_TOTAL_EXTENSION_MINUTES, {
+    message: `Every extension option must be less than or equal to ${MAX_TOTAL_EXTENSION_MINUTES}`,
+  });
 
-export const ExtensionConfigSchema = z
-  .object({
-    maxTotalMinutes: z.number().int().positive(),
-    options: z.tuple([ExtensionOptionSchema], ExtensionOptionSchema),
-  })
-  .refine(
-    ({ maxTotalMinutes, options }) => options.every((minutes) => minutes <= maxTotalMinutes),
-    {
-      message: 'Every extension option must be less than or equal to maxTotalMinutes',
-      path: ['options'],
-    }
-  ) satisfies z.ZodType<ExtensionConfig>;
+export const ExtensionConfigSchema = z.object({
+  options: z.tuple([ExtensionOptionSchema], ExtensionOptionSchema),
+}) satisfies z.ZodType<ExtensionConfig>;
 
 export type ExtensionConfig = {
-  /**
-   * Maximum number of minutes a scheduled session can be extended by, in total
-   */
-  maxTotalMinutes: number;
   /**
    * Number of minutes a single extension can add
    */

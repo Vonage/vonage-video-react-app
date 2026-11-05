@@ -188,16 +188,16 @@ describe('createVideoHandler', () => {
 
     const { extension } = extractResponseData<{ extension: unknown }>(response.body);
 
-    expect(extension).toEqual({ maxTotalMinutes: 120, options: [20, 40, 60] });
+    expect(extension).toEqual({ options: [20, 40, 60] });
   });
 
-  it('fails at handler creation when an extension option exceeds maxTotalMinutes', () => {
+  it('fails at handler creation when an extension option exceeds the total extension cap', () => {
     expect(() =>
       createVideoHandler({
         auth: { authType: 'apiKey', apiKey: mockApiKey, apiSecret: 'test-api-secret' },
-        extension: { maxTotalMinutes: 30, options: [20, 40] },
+        extension: { options: [20, 180] },
       })
-    ).toThrow('Every extension option must be less than or equal to maxTotalMinutes');
+    ).toThrow('Every extension option must be less than or equal to 120');
   });
 
   describe('decodeSessionId', () => {
