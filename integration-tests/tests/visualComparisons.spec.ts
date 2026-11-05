@@ -158,10 +158,6 @@ test.describe('Meeting room timer UI test', () => {
   });
   for (const colorScheme of colorSchemes) {
     test(`about to finish ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
-      test.skip(
-        colorScheme === 'dark' && browserName === 'firefox',
-        'Firefox ignores the emulated dark color scheme'
-      );
       const { endsAt } = await openScheduledMeetingRoom({
         page,
         request,
@@ -235,7 +231,6 @@ test.describe('Meeting room timer UI test', () => {
       const payload = { result: { data: { serverTime: clientNow } } };
       await route.fulfill({ json: isBatchRequest ? [payload] : payload });
     });
-    await page.emulateMedia({ colorScheme });
     await page.clock.setFixedTime(clientNow);
     await openMeetingRoomWithSettings({
       page,
@@ -252,6 +247,11 @@ test.describe('Meeting room timer UI test', () => {
       timeout: TIMEOUTS.DEFAULT * 3,
     });
     await page.clock.setFixedTime(clientNow);
+    await page.emulateMedia({ colorScheme });
+    await page.waitForFunction(
+      (isDark) => document.documentElement.classList.contains('dark') === isDark,
+      colorScheme === 'dark'
+    );
     await page.mouse.move(0, 0);
     await expect(page.getByRole('tooltip')).toBeHidden();
     return { endsAt };
