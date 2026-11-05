@@ -18,7 +18,10 @@ declare interface ActiveSpeakerTracker {
   on(event: 'activeSpeakerChanged', listener: (payload: ActiveSpeakerChangedPayload) => void): this;
 }
 
-const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 1500;
+const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 500;
+const SPEECH_LEVEL_RELEASE_TIME_MS = 600;
+const ACTIVE_SPEAKER_HOLD_TIME_MS = 500;
+const MIN_ACTIVE_SPEAKER_LEVEL = 0.2;
 /**
  * ActiveSpeakerTracker class - keeps track of current active speaker and emits event 'activeSpeakerChanged'
  * with active speaker details.
@@ -32,6 +35,8 @@ const CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME = 1500;
  */
 class ActiveSpeakerTracker extends EventEmitter {
   _subscriberAudioLevelsBySubscriberId: SubscriberAudioLevels = {};
+  _lastAudioLevelUpdateTimeBySubscriberId: Record<string, number> = {};
+  _candidate: { subscriberId: string | undefined; since: number } | null = null;
   activeSpeaker: ActiveSpeakerInfo;
   calculateActiveSpeaker: () => void;
 
@@ -45,15 +50,12 @@ class ActiveSpeakerTracker extends EventEmitter {
     this.calculateActiveSpeaker = throttle(
       this._calculateActiveSpeaker,
       CALCULATE_ACTIVE_SPEAKER_THROTTLE_TIME,
-      {
-        // So we don't send events after subscriber is destroyed
-        leading: true,
-        trailing: false,
-      }
+      { leading: true, trailing: true }
     );
   }
   onSubscriberDestroyed = (subscriberId: string) => {
     delete this._subscriberAudioLevelsBySubscriberId[subscriberId];
+    delete this._lastAudioLevelUpdateTimeBySubscriberId[subscriberId];
     if (this.activeSpeaker.subscriberId === subscriberId) {
       this.activeSpeaker = {
         subscriberId: undefined,
@@ -70,7 +72,17 @@ class ActiveSpeakerTracker extends EventEmitter {
     subscriberId: string;
     movingAvg: number;
   }) => {
-    this._subscriberAudioLevelsBySubscriberId[subscriberId] = movingAvg;
+    const now = Date.now();
+    const previousLevel = this._subscriberAudioLevelsBySubscriberId[subscriberId] ?? 0;
+    const previousUpdateTime = this._lastAudioLevelUpdateTimeBySubscriberId[subscriberId] ?? now;
+    const releasedPreviousLevel =
+      previousLevel * Math.exp(-(now - previousUpdateTime) / SPEECH_LEVEL_RELEASE_TIME_MS);
+
+    this._subscriberAudioLevelsBySubscriberId[subscriberId] = Math.max(
+      movingAvg,
+      releasedPreviousLevel
+    );
+    this._lastAudioLevelUpdateTimeBySubscriberId[subscriberId] = now;
     this.calculateActiveSpeaker();
   };
 
@@ -94,17 +106,34 @@ class ActiveSpeakerTracker extends EventEmitter {
       }
     );
 
-    if (
+    const isNewLoudestSpeaker =
       activeSpeaker.subscriberId !== this.activeSpeaker.subscriberId &&
-      activeSpeaker.movingAvg > 0.2
-    ) {
-      const previousActiveSpeaker = { ...this.activeSpeaker };
-      this.activeSpeaker = activeSpeaker;
-      this.emit('activeSpeakerChanged', {
-        newActiveSpeaker: activeSpeaker,
-        previousActiveSpeaker,
-      });
+      activeSpeaker.movingAvg > MIN_ACTIVE_SPEAKER_LEVEL;
+    if (!isNewLoudestSpeaker) {
+      this._candidate = null;
+      return;
     }
+
+    const now = Date.now();
+    const isSameCandidate =
+      this._candidate !== null && this._candidate.subscriberId === activeSpeaker.subscriberId;
+    const candidate =
+      isSameCandidate && this._candidate
+        ? this._candidate
+        : { subscriberId: activeSpeaker.subscriberId, since: now };
+    this._candidate = candidate;
+
+    const hasCurrentSpeaker = this.activeSpeaker.subscriberId !== undefined;
+    const hasHeldLoudest = now - candidate.since >= ACTIVE_SPEAKER_HOLD_TIME_MS;
+    if (hasCurrentSpeaker && !hasHeldLoudest) return;
+
+    this._candidate = null;
+    const previousActiveSpeaker = { ...this.activeSpeaker };
+    this.activeSpeaker = activeSpeaker;
+    this.emit('activeSpeakerChanged', {
+      newActiveSpeaker: activeSpeaker,
+      previousActiveSpeaker,
+    });
   };
 }
 

@@ -1,0 +1,106 @@
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import MiniCallWindow from './MiniCallWindow';
+import type { MiniCallWindowProps } from './MiniCallWindow';
+import type { MiniModeIconProps } from './MiniModeIcon';
+
+vi.mock('./MiniModeIcon', () => ({
+  default: ({ name }: MiniModeIconProps) => <span data-testid={`icon-${name}`} />,
+}));
+
+const makeProps = (overrides: Partial<MiniCallWindowProps> = {}): MiniCallWindowProps => ({
+  participant: { element: null, name: 'Maya Adeyemi', initials: 'MA', hasVideo: true },
+  containerWidth: 360,
+  isAudioEnabled: true,
+  isVideoEnabled: true,
+  isRecording: false,
+  onToggleAudio: vi.fn(),
+  onToggleVideo: vi.fn(),
+  onExpand: vi.fn(),
+  onLeave: vi.fn(),
+  ...overrides,
+});
+
+describe('MiniCallWindow', () => {
+  it('renders the control buttons and fires the matching callbacks on click', () => {
+    const props = makeProps();
+
+    render(<MiniCallWindow {...props} />);
+
+    expect(screen.getByTestId('mini-call-window')).toBeVisible();
+
+    screen.getByTestId('mini-mode-mute').click();
+    screen.getByTestId('mini-mode-camera').click();
+    screen.getByTestId('mini-mode-expand').click();
+    screen.getByTestId('mini-mode-leave').click();
+
+    expect(props.onToggleAudio).toHaveBeenCalledOnce();
+    expect(props.onToggleVideo).toHaveBeenCalledOnce();
+    expect(props.onExpand).toHaveBeenCalledOnce();
+    expect(props.onLeave).toHaveBeenCalledOnce();
+  });
+
+  it('shows the microphone icon when audio is enabled and muted icon when disabled', () => {
+    const { rerender } = render(<MiniCallWindow {...makeProps({ isAudioEnabled: true })} />);
+    expect(screen.getByTestId('icon-microphone-solid')).toBeInTheDocument();
+
+    rerender(<MiniCallWindow {...makeProps({ isAudioEnabled: false })} />);
+    expect(screen.getByTestId('icon-mic-mute-solid')).toBeInTheDocument();
+  });
+
+  it('shows the video icon when video is enabled and video-off icon when disabled', () => {
+    const { rerender } = render(<MiniCallWindow {...makeProps({ isVideoEnabled: true })} />);
+    expect(screen.getByTestId('icon-video-solid')).toBeInTheDocument();
+
+    rerender(<MiniCallWindow {...makeProps({ isVideoEnabled: false })} />);
+    expect(screen.getByTestId('icon-video-off-solid')).toBeInTheDocument();
+  });
+
+  it('renders the recording indicator only while recording', () => {
+    const { rerender } = render(<MiniCallWindow {...makeProps({ isRecording: true })} />);
+
+    const indicator = screen.getByTestId('mini-mode-recording-indicator');
+    expect(indicator).toBeInTheDocument();
+    expect(indicator.querySelector('[data-testid="recordingIndicator"]')).not.toBeNull();
+
+    rerender(<MiniCallWindow {...makeProps({ isRecording: false })} />);
+    expect(screen.queryByTestId('mini-mode-recording-indicator')).not.toBeInTheDocument();
+  });
+
+  it('shows the avatar and name when there is no video element', () => {
+    render(<MiniCallWindow {...makeProps()} />);
+
+    expect(screen.getByText('MA')).toBeInTheDocument();
+    expect(screen.getByText('Maya Adeyemi')).toBeInTheDocument();
+  });
+
+  it('renders the participant name with the same NameDisplay as the main meeting UI', () => {
+    render(<MiniCallWindow {...makeProps({ containerWidth: 360 })} />);
+
+    const nameContainer = screen.getByText('Maya Adeyemi').parentElement;
+    expect(nameContainer).toHaveClass('bg-vera-dark-grey-opacity', 'text-vera-accent');
+    expect(nameContainer).toHaveStyle({ maxWidth: '328px' });
+  });
+
+  it('shows the video while the participant has video, and the avatar when it does not', () => {
+    const videoElement = document.createElement('video');
+    const tile = document.body.appendChild(document.createElement('div'));
+    tile.appendChild(videoElement);
+    const participant = { element: videoElement, name: 'Maya Adeyemi', initials: 'MA' };
+
+    const { rerender, unmount } = render(
+      <MiniCallWindow {...makeProps({ participant: { ...participant, hasVideo: true } })} />
+    );
+    expect(screen.getByTestId('mini-call-window').contains(videoElement)).toBe(true);
+    expect(videoElement.style.objectFit).toBe('cover');
+    expect(screen.queryByText('MA')).not.toBeInTheDocument();
+
+    rerender(
+      <MiniCallWindow {...makeProps({ participant: { ...participant, hasVideo: false } })} />
+    );
+    expect(screen.getByText('MA')).toBeInTheDocument();
+
+    unmount();
+    expect(videoElement.parentElement).toBe(tile);
+  });
+});
