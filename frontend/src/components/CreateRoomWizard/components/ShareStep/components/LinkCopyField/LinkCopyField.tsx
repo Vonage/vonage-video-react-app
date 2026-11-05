@@ -9,9 +9,6 @@ export type LinkCopyFieldProps = ComponentProps<'div'> & {
   url: string;
 };
 
-/**
- * Read-only link box with an inline button that copies the link to the clipboard.
- */
 const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactElement => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);

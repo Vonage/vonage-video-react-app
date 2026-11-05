@@ -9,9 +9,6 @@ export type CreateRoomWizardFooterActionsProps = {
   onClose: () => void;
 };
 
-/**
- * The two exits of the share step: close the wizard, or join the meeting now.
- */
 const CreateRoomWizardFooterActions = ({
   onClose,
 }: CreateRoomWizardFooterActionsProps): ReactElement => {
