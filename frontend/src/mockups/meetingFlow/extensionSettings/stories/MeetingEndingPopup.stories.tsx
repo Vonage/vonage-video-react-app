@@ -5,15 +5,11 @@ import NotificationItem from '@ui/components/NotificationItem';
 import type { NotificationId } from '@core/stores/notifications';
 import mockupMeta, { type MockupArgs } from '../../storybook/mockupMeta';
 import MeetingRoomWithMeetingTimer from '../components/MeetingRoomWithMeetingTimer';
-import SettingsDialogMockup from '../components/SettingsDialogMockup';
-import EndingSoonAtCap from '../endingSoon/EndingSoonAtCap';
-import EndingSoonQuickChoices from '../endingSoon/EndingSoonQuickChoices';
-import EndingSoonSingleAction from '../endingSoon/EndingSoonSingleAction';
-import MeetingTabRows from '../variants/MeetingTabRows/MeetingTabRows';
+import MeetingEndingPopup from '../meetingEnding/MeetingEndingPopup';
 import WithMeetingTabState from './WithMeetingTabState';
 
 const meta = {
-  title: 'Mockups/Meeting flow/9. Ending soon popup',
+  title: 'Mockups/Meeting flow/9. Meeting ending popup',
   ...mockupMeta,
 } satisfies Meta<MockupArgs>;
 
@@ -38,55 +34,53 @@ const GuestToast = (): ReactElement => {
 };
 
 /**
- * A: at 3:56 PM a signed-in participant gets a central popup with +20, +40 and +60 and "Not now".
+ * At 3:56 PM a signed-in participant gets "Meeting ending" with Got it and Extend.
  */
-export const AQuickChoices: Story = {
-  name: 'A · Quick choices',
+export const SimpleStep1: Story = {
+  name: 'Simple · Step 1',
   render: () => (
     <WithMeetingTabState stateKey="canExtend">
       <MeetingRoomWithMeetingTimer />
-      <EndingSoonQuickChoices />
+      <MeetingEndingPopup initialStep="notice" initialMinutes={null} />
     </WithMeetingTabState>
   ),
 };
 
 /**
- * B: one primary "Extend 20 min"; "More options" opens Settings > Meeting; "Not now" closes it.
+ * After Extend, the same dialog asks how long, with 20 min chosen.
  */
-export const BSingleAction: Story = {
-  name: 'B · Single action',
+export const SimpleStep2: Story = {
+  name: 'Simple · Step 2, 20 min chosen',
   render: () => (
     <WithMeetingTabState stateKey="canExtend">
       <MeetingRoomWithMeetingTimer />
-      <EndingSoonSingleAction />
+      <MeetingEndingPopup initialStep="chooseDuration" initialMinutes={20} />
     </WithMeetingTabState>
   ),
 };
 
 /**
- * B after "More options": the Settings dialog on the Meeting tab (variant A of screen 8).
+ * After 80 min of extensions only 40 min are left under the cap, so 60 min is disabled; nothing is chosen yet.
  */
-export const BSingleActionMoreOptions: Story = {
-  name: 'B · Single action, More options opened',
+export const SimpleStep2NearCap: Story = {
+  name: 'Simple · Step 2, near the cap',
   render: () => (
-    <WithMeetingTabState stateKey="canExtend">
+    <WithMeetingTabState stateKey="nearCap">
       <MeetingRoomWithMeetingTimer />
-      <SettingsDialogMockup>
-        <MeetingTabRows />
-      </SettingsDialogMockup>
+      <MeetingEndingPopup initialStep="chooseDuration" initialMinutes={null} />
     </WithMeetingTabState>
   ),
 };
 
 /**
- * Both variants once the 2 h cap is used: the popup informs and offers only OK.
+ * Once the 2 h cap is used the popup has one step and a single Got it.
  */
-export const AllAtCap: Story = {
-  name: 'All · At the cap, OK only',
+export const SimpleAtCap: Story = {
+  name: 'Simple · At the cap',
   render: () => (
     <WithMeetingTabState stateKey="atCap">
       <MeetingRoomWithMeetingTimer />
-      <EndingSoonAtCap />
+      <MeetingEndingPopup initialStep="notice" initialMinutes={null} />
     </WithMeetingTabState>
   ),
 };
@@ -94,8 +88,8 @@ export const AllAtCap: Story = {
 /**
  * Guests keep today's toast and the toolbar timer; no popup.
  */
-export const AllGuestToast: Story = {
-  name: 'All · Guest keeps the toast',
+export const SimpleGuestToast: Story = {
+  name: 'Simple · Guest toast',
   render: () => (
     <WithMeetingTabState stateKey="guest">
       <MeetingRoomWithMeetingTimer>

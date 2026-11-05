@@ -7,8 +7,7 @@ import extensionViewer$ from '../context/extensionViewerContext';
 import formatDurationMinutes from '../helpers/formatDurationMinutes';
 
 const useMeetingNumbers = meetingExtension$.use.createSelectorHook(
-  ({ meetingName, scheduledEnd, extendedMinutes, maxTotalMinutes, options, now }) => ({
-    meetingName,
+  ({ scheduledEnd, extendedMinutes, maxTotalMinutes, options, now }) => ({
     scheduledEnd,
     extendedMinutes,
     maxTotalMinutes,
@@ -22,60 +21,35 @@ const useScheduledStart = extensionViewer$.use.createSelectorHook(
 );
 
 /**
- * Words and numbers for the Settings > Meeting tab and the ending-soon popup.
+ * Words and numbers for the Settings > Meeting tab and the meeting ending popup.
  */
 const useMeetingTabCopy = () => {
   const { t } = useTranslation();
   const locale = useLocale();
-  const { meetingName, scheduledEnd, extendedMinutes, maxTotalMinutes, options, now } =
-    useMeetingNumbers();
+  const { scheduledEnd, extendedMinutes, maxTotalMinutes, options, now } = useMeetingNumbers();
   const scheduledStart = useScheduledStart();
 
   const formatTime = (date: Date) => formatMeetingDate({ date, locale, format: 'time' });
-  const addMinutes = (date: Date, minutes: number) => new Date(date.getTime() + minutes * 60_000);
-  const endsAt = addMinutes(scheduledEnd, extendedMinutes);
+  const endsAt = new Date(scheduledEnd.getTime() + extendedMinutes * 60_000);
   const secondsLeft = Math.max(0, Math.round((endsAt.getTime() - now.getTime()) / 1000));
-  const leftToAddMinutes = Math.max(0, maxTotalMinutes - extendedMinutes);
-  const maxLabel = formatDurationMinutes({ minutes: maxTotalMinutes, t });
-  const leftToAddLabel = formatDurationMinutes({ minutes: leftToAddMinutes, t });
-
-  const optionCopies = getExtensionOptions({ options, maxTotalMinutes, extendedMinutes }).map(
-    (option) => ({
-      ...option,
-      label: t('meetingFlow.extension.option', { count: option.minutes }),
-      endsAtLabel: formatTime(addMinutes(endsAt, option.minutes)),
-      resultLabel: option.isAvailable
-        ? t('meetingFlow.meetingTab.optionEndsAt', {
-            time: formatTime(addMinutes(endsAt, option.minutes)),
-          })
-        : t('meetingFlow.extension.optionUnavailable', { hours: maxTotalMinutes / 60 }),
-    })
-  );
+  const totalMilliseconds = endsAt.getTime() - scheduledStart.getTime();
+  const elapsedMilliseconds = now.getTime() - scheduledStart.getTime();
 
   return {
-    meetingName,
-    scheduledStart,
-    scheduledEnd,
-    endsAt,
-    extendedMinutes,
-    maxTotalMinutes,
-    leftToAddMinutes,
-    formatTime,
-    scheduledRangeLabel: t('meetingFlow.meetingTab.scheduledRange', {
-      start: formatTime(scheduledStart),
-      end: formatTime(scheduledEnd),
-    }),
+    startLabel: formatTime(scheduledStart),
     endsAtLabel: formatTime(endsAt),
-    maxLabel,
-    leftToAddLabel,
-    leftToAddValueLabel: t('meetingFlow.meetingTab.leftToAddValue', {
-      left: leftToAddLabel,
-      max: maxLabel,
+    elapsedPercent: Math.min(100, (elapsedMilliseconds / totalMilliseconds) * 100),
+    timeLeftLabel: t('meetingFlow.meetingTab.timeLeft', {
+      duration: formatDurationMinutes({ minutes: Math.ceil(secondsLeft / 60), t }),
     }),
-    optionCopies,
-    isAtCap: leftToAddMinutes === 0,
+    durationChoices: getExtensionOptions({ options, maxTotalMinutes, extendedMinutes }).map(
+      (option) => ({
+        ...option,
+        label: t('meetingFlow.duration.minutes', { minutes: option.minutes }),
+      })
+    ),
+    isAtCap: extendedMinutes >= maxTotalMinutes,
     isEndingSoon: secondsLeft <= 300,
-    minutesLeft: Math.ceil(secondsLeft / 60),
     timerLabel: t('meetingFlow.meetingTimer.timeLeft', {
       timeLeft: t('meetingFlow.meetingTimer.minutesAndSeconds', {
         minutes: Math.floor(secondsLeft / 60),

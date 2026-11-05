@@ -2,7 +2,7 @@ import type { ComponentProps, ReactElement } from 'react';
 import { tv } from 'tailwind-variants';
 import VividIcon from '@ui/components/VividIcon';
 
-type NoticeTone = 'warning' | 'information' | 'success';
+type NoticeTone = 'warning' | 'information';
 
 export type NoticeProps = ComponentProps<'div'> & {
   tone: NoticeTone;
@@ -15,7 +15,6 @@ const notice = tv(
       tone: {
         warning: 'border-vera-warning bg-vera-warning/10 text-vera-warning',
         information: 'border-vera-information bg-vera-information/10 text-vera-information',
-        success: 'border-vera-success bg-vera-success/10 text-vera-success',
       },
     },
   },
@@ -25,7 +24,6 @@ const notice = tv(
 const toneIcon: Record<NoticeTone, string> = {
   warning: 'warning-line',
   information: 'info-line',
-  success: 'check-circle-line',
 };
 
 /**
