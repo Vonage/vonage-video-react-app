@@ -13,6 +13,8 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import useAutoSaveMeeting from '@hooks/useAutoSaveMeeting';
 
 /**
  * WaitingRoom Component
@@ -45,6 +47,10 @@ const WaitingRoom: FC = () => {
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
+
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+
+  useAutoSaveMeeting({ sessionKey, sessionKeyStatus });
 
   return (
     <backgroundEffectsDialog$.Provider>
