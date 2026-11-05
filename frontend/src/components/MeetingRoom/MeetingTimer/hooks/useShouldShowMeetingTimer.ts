@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { useServerSettings } from '@core/hooks';
 import { isNil, isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
+import useSessionContext from '@hooks/useSessionContext';
 
 const endingSoonMilliseconds = 5 * 60_000;
 const checkIntervalMilliseconds = 1000;
@@ -14,7 +15,9 @@ const useShouldShowMeetingTimer = ({
 }: {
   scheduleWindow: ScheduleWindow | null;
 }): boolean => {
+  const { sessionKey } = useSessionContext();
   const { data: serverSettings } = useServerSettings({
+    sessionKey,
     queryOptions: { enabled: isNotNil(scheduleWindow) },
   });
 
