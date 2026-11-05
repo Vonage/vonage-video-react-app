@@ -6,7 +6,10 @@ import { errorHandler } from '../../middleware/errorHandler';
 import authMiddleware from '../../middleware/authMiddleware/authMiddleware';
 import { TEST_AUTH_COOKIE_SECRET } from '../../tests/helpers/testAuthCookieSecret';
 import makeEncryptedCookieHeader from '../../tests/helpers/makeEncryptedCookieHeader';
-import mockVonageVideoSdk from '../../tests/helpers/mockVonageVideoSdk';
+import mockVonageVideoSdk, {
+  DEFAULT_VALID_SESSION_ID,
+} from '../../tests/helpers/mockVonageVideoSdk';
+import jwt from 'jsonwebtoken';
 
 vi.mock('axios');
 
@@ -14,9 +17,15 @@ const mockPost = vi.spyOn(axios, 'post');
 
 const OIDC_CLIENT_ID = 'test-client-id';
 
+const CURRENT_SIGNING_SECRET = process.env.SESSION_KEY_SECRET!;
+
+const LEGACY_SIGNING_SECRET = 'vonageAppId';
+
 await mockVonageVideoSdk();
 
 const videoRouter = (await import('.')).default;
+
+const sessionService = (await import('../../sessionStorageService')).default();
 
 function buildApp(): Express {
   const app = express();
@@ -27,6 +36,18 @@ function buildApp(): Express {
   app.use(errorHandler);
 
   return app;
+}
+
+function joinSessionAsSignedInUser({ app, sessionKey }: { app: Express; sessionKey: string }) {
+  mockPost.mockResolvedValueOnce({
+    status: 200,
+    data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID },
+  });
+
+  return request(app)
+    .post('/v2/joinSession')
+    .set('Authorization', 'Bearer valid-token')
+    .send({ sessionKey });
 }
 
 function createSessionAsSignedInUser({ app, roomName }: { app: Express; roomName: string }) {
@@ -166,6 +187,79 @@ describe('video route access policy', () => {
         .send({ sessionKey: 'not-a-session-key' });
 
       expect(res.statusCode).toEqual(401);
+    });
+
+    describe('with a sessionKey signed with the Application ID', () => {
+      const legacyClaims = {
+        sessionId: DEFAULT_VALID_SESSION_ID,
+        roomName: 'legacy-room',
+        schedule: { startsAt: '2030-01-01T10:00:00.000Z' },
+      };
+      const legacySessionKey = jwt.sign(legacyClaims, LEGACY_SIGNING_SECRET);
+
+      it('re-signs it for a signed-in user, keeps every claim and replaces the stored entry', async () => {
+        const res = await joinSessionAsSignedInUser({
+          app: buildApp(),
+          sessionKey: legacySessionKey,
+        });
+        const { sessionKey } = res.body.result.data as { sessionKey: string };
+
+        expect(res.statusCode).toEqual(200);
+        expect(sessionKey).not.toEqual(legacySessionKey);
+        expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).toMatchObject(legacyClaims);
+        expect(await sessionService.getSessionKeyByRoomName({ roomName: 'legacy-room' })).toEqual(
+          sessionKey
+        );
+      });
+
+      it('re-signs the key stored for a room name and replaces it', async () => {
+        await sessionService.setSession({
+          roomName: 'legacy-room',
+          sessionKey: legacySessionKey,
+          sessionId: DEFAULT_VALID_SESSION_ID,
+        });
+
+        const res = await createSessionAsSignedInUser({ app: buildApp(), roomName: 'legacy-room' });
+        const { sessionKey, sessionId } = res.body.result.data as {
+          sessionKey: string;
+          sessionId: string;
+        };
+
+        expect(res.statusCode).toEqual(200);
+        expect(sessionId).toEqual(DEFAULT_VALID_SESSION_ID);
+        expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).toMatchObject(legacyClaims);
+        expect(await sessionService.getSessionKeyByRoomName({ roomName: 'legacy-room' })).toEqual(
+          sessionKey
+        );
+      });
+
+      it('rejects it for an anonymous caller', async () => {
+        const res = await request(buildApp())
+          .post('/v2/joinSession')
+          .send({ sessionKey: legacySessionKey });
+
+        expect(res.statusCode).toEqual(401);
+      });
+
+      it('rejects it for a signed-in user when LEGACY_SESSION_KEYS_ENABLED is false', async () => {
+        process.env.LEGACY_SESSION_KEYS_ENABLED = 'false';
+
+        const res = await joinSessionAsSignedInUser({
+          app: buildApp(),
+          sessionKey: legacySessionKey,
+        });
+
+        expect(res.statusCode).toEqual(400);
+      });
+    });
+
+    it('returns a sessionKey signed with the current secret unchanged', async () => {
+      const sessionKey = jwt.sign({ sessionId: DEFAULT_VALID_SESSION_ID }, CURRENT_SIGNING_SECRET);
+
+      const res = await joinSessionAsSignedInUser({ app: buildApp(), sessionKey });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.result.data.sessionKey).toEqual(sessionKey);
     });
   });
 });

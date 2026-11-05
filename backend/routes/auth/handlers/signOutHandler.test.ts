@@ -28,6 +28,7 @@ const CONFIG: Config = {
   apiKey: 'test-api-key',
   apiSecret: 'test-api-secret',
   sessionKeySecret: 'test-session-key-secret',
+  legacySessionKeysEnabled: true,
   loggerVerbose: false,
   corsAllowedOrigins: ['*'],
   authEnabled: true,

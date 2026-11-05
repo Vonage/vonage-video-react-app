@@ -7,6 +7,9 @@ import { assertResult } from '@api-lib/executions';
 import loadConfig from '../../helpers/config';
 import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
 import assertAnonymousSessionCreationLimit from './helpers/assertAnonymousSessionCreationLimit';
+import verifySessionKeySignature from './helpers/verifySessionKeySignature';
+import resignSessionKey from './helpers/resignSessionKey';
+import { isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
@@ -26,6 +29,30 @@ videoHandler.use$((opts) => {
   throw makeUnauthorizedErrorHandler(
     `${videoAction} requires a signed-in user or a valid sessionKey`
   )(null);
+});
+
+videoHandler.use$((opts) => {
+  const { ctx, input, next } = opts;
+  const config = loadConfig();
+  const isLegacySessionKeyAllowed =
+    config.legacySessionKeysEnabled && (!config.authEnabled || Boolean(ctx.user));
+
+  if (!isLegacySessionKeyAllowed) return next();
+  if (!isRecord(input) || typeof input.sessionKey !== 'string') return next();
+
+  const sessionKeySignature = verifySessionKeySignature({
+    sessionKey: input.sessionKey,
+    videoClient: ctx.videoClient,
+  });
+
+  if (sessionKeySignature.signature !== 'legacy') return next();
+
+  const sessionKey = resignSessionKey({
+    claims: sessionKeySignature.claims,
+    videoClient: ctx.videoClient,
+  });
+
+  return next({ input: { ...input, sessionKey } });
 });
 
 videoHandler.use$('createSessionAndJoin', async ({ ctx, next }) => {

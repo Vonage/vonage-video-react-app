@@ -24,6 +24,7 @@ dotenv.config({ path: path.join(runtimeDir, '.env'), override: true });
 const loadConfig = (): Config => {
   const provider = process.env.VIDEO_SERVICE_PROVIDER ?? '';
   const sessionKeySecret = process.env.SESSION_KEY_SECRET ?? '';
+  const legacySessionKeysEnabled = process.env.LEGACY_SESSION_KEYS_ENABLED !== 'false';
 
   const loggerVerbose = process.env.LOGGER_VERBOSE === 'true';
 
@@ -69,6 +70,7 @@ const loadConfig = (): Config => {
       provider: 'vonage',
       videoHost,
       sessionKeySecret,
+      legacySessionKeysEnabled,
     };
   }
 
@@ -89,6 +91,7 @@ const loadConfig = (): Config => {
       apiSecret,
       provider: 'opentok',
       sessionKeySecret,
+      legacySessionKeysEnabled,
     };
   }
 
