@@ -1,9 +1,6 @@
 import type { TFunction } from 'i18next';
 import type { WaitingStatus } from '../types/ScheduleStatus';
 
-/**
- * Time left until a waiting meeting starts, at the precision its state calls for.
- */
 function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; t: TFunction }) {
   if (waitingStatus.kind === 'daysAway') {
     return t('waitingRoom.schedule.countdown.days', { count: waitingStatus.daysLeft });

@@ -6,9 +6,6 @@ const minuteInMilliseconds = 60_000;
 const hourInMilliseconds = 60 * minuteInMilliseconds;
 const dayInMilliseconds = 24 * hourInMilliseconds;
 
-/**
- * Resolves which waiting-room state a schedule is in at a given moment, both in epoch milliseconds.
- */
 function getScheduleStatus({
   scheduleWindow,
   now,

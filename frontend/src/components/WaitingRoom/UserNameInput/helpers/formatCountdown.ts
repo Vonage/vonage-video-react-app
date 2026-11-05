@@ -1,6 +1,3 @@
-/**
- * Formats a number of seconds as `m:ss`.
- */
 function formatCountdown(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;

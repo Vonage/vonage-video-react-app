@@ -7,9 +7,6 @@ import useServerNow from './useServerNow';
 
 const serverTimeRetryMilliseconds = 10_000;
 
-/**
- * Waiting-room state of a meeting, kept current by the server clock.
- */
 const useScheduleStatus = ({
   sessionKey,
   scheduleWindow,
