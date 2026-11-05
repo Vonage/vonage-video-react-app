@@ -5,6 +5,8 @@ import getScheduleStatus from '../helpers/getScheduleStatus';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
 import useServerNow from './useServerNow';
 
+const serverTimeRetryMilliseconds = 10_000;
+
 /**
  * Waiting-room state of a meeting, kept current by the server clock.
  */
@@ -17,9 +19,14 @@ const useScheduleStatus = ({
 }): ScheduleStatus => {
   const hasSchedule = isNotNil(scheduleWindow);
 
-  const { data: serverSettings } = useServerSettings({
+  const { data: serverSettings, isError: isServerTimeUnavailable } = useServerSettings({
     sessionKey,
-    queryOptions: { enabled: hasSchedule },
+    queryOptions: {
+      enabled: hasSchedule,
+      retry: false,
+      refetchInterval: (query) =>
+        query.state.status === 'error' ? serverTimeRetryMilliseconds : false,
+    },
   });
 
   const now = useServerNow({
@@ -28,7 +35,8 @@ const useScheduleStatus = ({
   });
 
   const scheduleStatus = getScheduleStatus({ scheduleWindow, now });
-  const isStartUnconfirmed = scheduleStatus.kind === 'started' && isNil(serverSettings);
+  const isStartUnconfirmed =
+    scheduleStatus.kind === 'started' && isNil(serverSettings) && !isServerTimeUnavailable;
 
   if (isStartUnconfirmed) {
     return {
