@@ -1,0 +1,14 @@
+integration-tests/tests/joiningAndRouting.spec.ts
+  h_9cf21c851a7c99 27-29,106-108,158-160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9cd033b82843154ce9d59f05f29c37f7b7f70618",
+  "prompts": {},
+  "humans": {
+    "h_9cf21c851a7c99": {
+      "author": "rserebrennykov <roman.serebrennykov@vonage.com>"
+    }
+  }
+}
