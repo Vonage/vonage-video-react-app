@@ -9,13 +9,18 @@ import useServerNow from './useServerNow';
  * Waiting-room state of a meeting, kept current by the server clock.
  */
 const useScheduleStatus = ({
+  sessionKey,
   scheduleWindow,
 }: {
+  sessionKey: string;
   scheduleWindow: ScheduleWindow | null;
 }): ScheduleStatus => {
   const hasSchedule = isNotNil(scheduleWindow);
 
-  const { data: serverSettings } = useServerSettings({ queryOptions: { enabled: hasSchedule } });
+  const { data: serverSettings } = useServerSettings({
+    sessionKey,
+    queryOptions: { enabled: hasSchedule },
+  });
 
   const now = useServerNow({
     clockOffset: serverSettings?.clockOffset ?? 0,
