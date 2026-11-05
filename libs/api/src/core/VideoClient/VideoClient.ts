@@ -176,9 +176,6 @@ class VideoClient implements IVideoClient {
    */
   public joinSession = this.createVideoHandler(VideoAction.joinSession, joinSession);
 
-  /**
-   * Returns public server settings, such as the server time in epoch milliseconds
-   */
   public getServerSettings = this.createVideoHandler(
     VideoAction.getServerSettings,
     getServerSettings
