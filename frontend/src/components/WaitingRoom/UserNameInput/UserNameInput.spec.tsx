@@ -18,10 +18,10 @@ describe('UsernameInput', () => {
     vi.useRealTimers();
   });
 
-  it('enables Join at the start by server time and joins with the sessionKey', async () => {
-    expect.assertions(5);
+  it('enables Join and the name field at the start by server time and joins with the sessionKey', async () => {
+    expect.assertions(8);
 
-    vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
+    vi.setSystemTime(startsAt - serverAheadMilliseconds - 65_000);
 
     const videoClient = makeVideoClientMock({
       getServerSettings: () =>
@@ -39,13 +39,19 @@ describe('UsernameInput', () => {
       { runtimeContext: { videoClient } }
     );
 
-    expect(await screen.findByText('Join opens in 0:05')).toBeInTheDocument();
+    expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+
+    await act(() => vi.advanceTimersByTimeAsync(60_000));
+
+    expect(screen.getByText('Join opens in 5 sec')).toBeInTheDocument();
 
     await act(() => vi.advanceTimersByTimeAsync(5_000));
 
     expect(screen.getByText('The meeting has started')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeEnabled();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
@@ -110,6 +116,7 @@ describe('UsernameInput', () => {
 
     expect(screen.getByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Join meeting' })).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
   });
 
   it('shows no title when the session key carries no room name', () => {

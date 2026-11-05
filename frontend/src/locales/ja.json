@@ -389,6 +389,8 @@
   "waitingRoom.schedule.countdown.days_other": "{{count}}日",
   "waitingRoom.schedule.countdown.hoursAndMinutes": "{{hours}}時間{{minutes}}分",
   "waitingRoom.schedule.countdown.minutes": "{{minutes}}分",
+  "waitingRoom.schedule.countdown.minutesAndSeconds": "{{minutes}}分{{seconds}}秒",
+  "waitingRoom.schedule.countdown.seconds": "{{seconds}}秒",
   "waitingRoom.schedule.daysAway_one": "明日開始、{{date}}",
   "waitingRoom.schedule.daysAway_other": "{{count}}日後に開始、{{date}}",
   "waitingRoom.schedule.withinDay": "{{time}}に開始、あと{{countdown}}",

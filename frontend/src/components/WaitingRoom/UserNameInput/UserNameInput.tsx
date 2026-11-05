@@ -136,13 +136,24 @@ const UsernameInput = ({
           id="user-name"
           name="username"
           error={isUserNameInvalid}
+          disabled={!isJoinEnabled}
           helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
           autoComplete="nickname"
           autoFocus
           value={username}
           slotProps={{
-            htmlInput: { maxLength: 60 },
-            inputLabel: { required: false },
+            htmlInput: {
+              maxLength: 60,
+              className: 'disabled:[-webkit-text-fill-color:var(--vera-text-disabled)]',
+            },
+            input: {
+              className:
+                '[&.Mui-disabled_.MuiOutlinedInput-notchedOutline]:border-vera-text-disabled!',
+            },
+            inputLabel: {
+              required: false,
+              className: '[&.Mui-disabled]:text-vera-text-disabled!',
+            },
           }}
           inputRef={inputRef}
         />
