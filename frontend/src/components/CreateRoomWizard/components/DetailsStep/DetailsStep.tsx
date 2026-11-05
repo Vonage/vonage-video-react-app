@@ -5,9 +5,6 @@ import createRoomWizard$ from '../../context/createRoomWizardContext';
 import MeetingNameField from './components/MeetingNameField';
 import ScheduleFields from './components/ScheduleFields';
 
-/**
- * First step of the wizard: an optional name and an optional schedule for the meeting.
- */
 const DetailsStep = (): ReactElement => {
   const { t } = useTranslation();
   const isScheduled = createRoomWizard$.use.select((state) => state.isScheduled);

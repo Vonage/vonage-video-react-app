@@ -8,9 +8,6 @@ import getCreateSessionPayload from '../../helpers/getCreateSessionPayload';
 import useIsMeetingStartValid from '../../hooks/useIsMeetingStartValid';
 import useMeetingDraft from '../../hooks/useMeetingDraft';
 
-/**
- * Creates the meeting from the details step and moves the wizard to the share step.
- */
 const CreateMeetingButton = (): ReactElement => {
   const { t } = useTranslation();
   const videoClient = runtime$.useVideoClient();
