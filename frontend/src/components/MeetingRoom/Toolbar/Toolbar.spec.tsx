@@ -240,7 +240,11 @@ describe('Toolbar', () => {
         serverSettingsContext: { sessionKey: null },
         runtimeContext: {
           videoClient: makeVideoClientMock({
-            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+            getServerSettings: () =>
+              Promise.resolve({
+                serverTime: Date.now(),
+                extension: { maxTotalMinutes: 120, options: [20, 40, 60] },
+              }),
           }),
         },
         userContext: undefined,
