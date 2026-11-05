@@ -29,14 +29,11 @@ videoHandler.use$((opts) => {
 
 videoHandler.override$('createSession', async (opts) => {
   try {
-    const { assertInput, videoClient, ctx, input: rawInput } = opts;
+    const { assertInput, videoClient, ctx } = opts;
 
     const input = assertInput(opts.input);
     const { roomName } = input ?? {};
-    const hasAccess =
-      !loadConfig().authEnabled ||
-      Boolean(ctx.user) ||
-      hasVerifiedSessionKey({ input: rawInput, videoClient });
+    const hasAccess = !loadConfig().authEnabled || Boolean(ctx.user);
 
     if (!hasAccess) {
       throw makeUnauthorizedErrorHandler('Creating or joining a room requires a signed-in user')(
