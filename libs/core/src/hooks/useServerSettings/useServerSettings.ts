@@ -12,6 +12,7 @@ export type ServerSettingsResult = ServerSettings & {
 };
 
 export type UseServerSettingsProps<TData = ServerSettingsResult> = {
+  sessionKey: string | null;
   queryOptions?: QueryOptions<ServerSettingsResult, TData>;
 };
 
@@ -19,13 +20,14 @@ export type UseServerSettingsProps<TData = ServerSettingsResult> = {
  * Hook to read the public server settings and the offset between the local and the server clock.
  *
  * @example
- * const { data } = useServerSettings();
+ * const { data } = useServerSettings({ sessionKey });
  *
  * const serverNow = Date.now() + (data?.clockOffset ?? 0);
  */
 const useServerSettings = <Selected = ServerSettingsResult>({
+  sessionKey,
   queryOptions,
-}: UseServerSettingsProps<Selected> = {}) => {
+}: UseServerSettingsProps<Selected>) => {
   const videoClient = runtime$.useVideoClient();
 
   return runtime$.useQuery({
@@ -33,7 +35,7 @@ const useServerSettings = <Selected = ServerSettingsResult>({
     staleTime: Infinity,
     queryFn: async (): Promise<ServerSettingsResult> => {
       const requestedAt = Date.now();
-      const settings = await videoClient.getServerSettings();
+      const settings = await videoClient.getServerSettings({ sessionKey: sessionKey ?? undefined });
       const receivedAt = Date.now();
 
       const clockOffset = settings.serverTime - (requestedAt + receivedAt) / 2;
