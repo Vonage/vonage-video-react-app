@@ -85,15 +85,28 @@ test.describe('Waiting page schedule UI test', () => {
 
   const colorSchemes = ['light', 'dark'] as const;
 
-  for (const { state, schedule } of scheduleStates) {
+  const namedScheduleStates = scheduleStates.map((scheduleState) => ({
+    ...scheduleState,
+    nameCase: 'with name',
+    roomName: 'weekly-sync',
+  }));
+
+  const unnamedScheduleStates = scheduleStates
+    .filter(({ state }) => state === 'unscheduled' || state === 'days away')
+    .map((scheduleState) => ({ ...scheduleState, nameCase: 'without name', roomName: undefined }));
+
+  for (const { state, schedule, nameCase, roomName } of [
+    ...namedScheduleStates,
+    ...unnamedScheduleStates,
+  ]) {
     for (const colorScheme of colorSchemes) {
-      test(`${state} ${colorScheme}`, async ({ page, request, isMobile }) => {
+      test(`${state} ${nameCase} ${colorScheme}`, async ({ page, request, isMobile }) => {
         if (!isMobile) {
           await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
         }
 
         const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
-          data: { schedule },
+          data: { roomName, schedule },
         });
         expect(createSessionResponse.ok()).toBe(true);
         const { result } = await createSessionResponse.json();

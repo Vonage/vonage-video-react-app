@@ -111,6 +111,20 @@ describe('UsernameInput', () => {
     expect(screen.getByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Join meeting' })).not.toBeInTheDocument();
   });
+
+  it('shows no title when the session key carries no room name', () => {
+    render(
+      <UsernameInput
+        username="Ana"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey="unnamed-session-key"
+        scheduleWindow={null}
+      />
+    );
+
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+  });
 });
 
 type RenderOptions = {

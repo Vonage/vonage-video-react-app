@@ -57,10 +57,9 @@ const UsernameInput = ({
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const meetingName = roomName ?? t('waitingRoom.untitledMeeting');
   const scheduleStatus = useScheduleStatus({ scheduleWindow });
 
-  useScheduleTabTitle({ scheduleStatus, meetingName });
+  useScheduleTabTitle({ scheduleStatus, meetingName: roomName });
 
   const isScheduled = scheduleStatus.kind !== 'unscheduled';
   const isEnded = scheduleStatus.kind === 'ended';
@@ -115,9 +114,11 @@ const UsernameInput = ({
       {...cardProps}
     >
       <div className="flex w-full flex-col gap-3">
-        <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary break-words">
-          {meetingName}
-        </h2>
+        {!isNil(roomName) && (
+          <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary break-words">
+            {roomName}
+          </h2>
+        )}
 
         {isScheduled && <ScheduleCountdownPanel scheduleStatus={scheduleStatus} />}
       </div>
