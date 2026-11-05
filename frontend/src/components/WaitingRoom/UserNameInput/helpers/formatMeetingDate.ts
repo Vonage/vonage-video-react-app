@@ -12,9 +12,6 @@ const formatOptions: Record<MeetingDateFormat, Intl.DateTimeFormatOptions> = {
   time: { hour: 'numeric', minute: '2-digit' },
 };
 
-/**
- * Formats an epoch-milliseconds timestamp in the user's language.
- */
 function formatMeetingDate({
   timestamp,
   locale,
