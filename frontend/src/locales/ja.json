@@ -387,6 +387,7 @@
   "waitingRoom.schedule.startsIn": "開始まで",
   "waitingRoom.schedule.countdown.days_one": "{{count}}日",
   "waitingRoom.schedule.countdown.days_other": "{{count}}日",
+  "waitingRoom.schedule.countdown.hours": "{{hours}}時間",
   "waitingRoom.schedule.countdown.hoursAndMinutes": "{{hours}}時間{{minutes}}分",
   "waitingRoom.schedule.countdown.minutes": "{{minutes}}分",
   "waitingRoom.schedule.countdown.minutesAndSeconds": "{{minutes}}分{{seconds}}秒",
