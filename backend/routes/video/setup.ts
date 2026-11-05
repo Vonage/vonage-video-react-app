@@ -9,6 +9,7 @@ import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
 import assertAnonymousSessionCreationLimit from './helpers/assertAnonymousSessionCreationLimit';
 import verifySessionKeySignature from './helpers/verifySessionKeySignature';
 import resignSessionKey from './helpers/resignSessionKey';
+import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
 import { isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
@@ -33,11 +34,8 @@ videoHandler.use$((opts) => {
 
 videoHandler.use$((opts) => {
   const { ctx, input, next } = opts;
-  const config = loadConfig();
-  const isLegacySessionKeyAllowed =
-    config.legacySessionKeysEnabled && (!config.authEnabled || Boolean(ctx.user));
 
-  if (!isLegacySessionKeyAllowed) return next();
+  if (!isLegacySessionKeyAllowed({ user: ctx.user })) return next();
   if (!isRecord(input) || typeof input.sessionKey !== 'string') return next();
 
   const sessionKeySignature = verifySessionKeySignature({
@@ -82,7 +80,7 @@ videoHandler.override$('createSession', async (opts) => {
     if (!roomName) return videoClient.createSession(input);
 
     const sessionKey = await assertResult(
-      () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName }),
+      () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.user }),
       makeInternalErrorHandler('Failed to get or create the session for the room name')
     );
 

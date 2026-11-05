@@ -3,18 +3,21 @@ import getSessionStorageService from '../sessionStorageService';
 import blockCallsForArgs from './blockCallsForArgs';
 import { isValidRoomName } from '@common/assertions';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
-import loadConfig from './config';
 import verifySessionKeySignature from '../routes/video/helpers/verifySessionKeySignature';
 import resignSessionKey from '../routes/video/helpers/resignSessionKey';
+import isLegacySessionKeyAllowed from '../routes/video/helpers/isLegacySessionKeyAllowed';
+import type { RequestWithTokenAuth } from '../middleware/authMiddleware/authMiddleware';
 
 const sessionService = getSessionStorageService();
 
 const getOrCreateSessionKeyFromRoomName = async ({
   videoClient,
   roomName,
+  user,
 }: {
   roomName: string;
   videoClient: VideoClient;
+  user: RequestWithTokenAuth['user'];
 }) => {
   return blockCallsForArgs(async () => {
     const storedSessionKey = await sessionService.getSessionKeyByRoomName({ roomName });
@@ -24,10 +27,12 @@ const getOrCreateSessionKeyFromRoomName = async ({
         sessionKey: storedSessionKey,
         videoClient,
       });
+      const isStoredSessionKeyLegacy = storedSessionKeySignature.signature === 'legacy';
       const shouldResignStoredSessionKey =
-        storedSessionKeySignature.signature === 'legacy' && loadConfig().legacySessionKeysEnabled;
+        isStoredSessionKeyLegacy && isLegacySessionKeyAllowed({ user });
 
-      const isStoredSessionKeyUnverifiable = storedSessionKeySignature.signature === 'unverifiable';
+      const isStoredSessionKeyUnusable =
+        storedSessionKeySignature.signature === 'unverifiable' || isStoredSessionKeyLegacy;
 
       if (shouldResignStoredSessionKey) {
         const sessionKey = resignSessionKey({
@@ -41,7 +46,7 @@ const getOrCreateSessionKeyFromRoomName = async ({
         return sessionKey;
       }
 
-      if (!isStoredSessionKeyUnverifiable) return storedSessionKey;
+      if (!isStoredSessionKeyUnusable) return storedSessionKey;
     }
 
     if (!isValidRoomName(roomName)) {
