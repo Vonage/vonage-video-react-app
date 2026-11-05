@@ -4,9 +4,6 @@ import { notifications$ } from '@core/stores';
 
 const endOfMeetingWarningMilliseconds = 10_000;
 
-/**
- * Tells everyone once that the meeting is about to finish.
- */
 const useEndOfMeetingWarning = () => {
   const { t } = useTranslation();
   const hasWarnedRef = useRef(false);

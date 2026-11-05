@@ -5,9 +5,6 @@ import { getScheduleWindow, readScheduleClaim } from '@common/helpers';
 import type { ScheduleWindow } from '@common/types';
 import useSessionContext from '@hooks/useSessionContext';
 
-/**
- * Start and end of the current meeting, or null when its sessionKey carries no schedule.
- */
 const useMeetingScheduleWindow = (): ScheduleWindow | null => {
   const { sessionDetails } = useSessionContext();
 

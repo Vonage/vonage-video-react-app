@@ -7,9 +7,6 @@ import useSessionContext from '@hooks/useSessionContext';
 const endingSoonMilliseconds = 5 * 60_000;
 const checkIntervalMilliseconds = 1000;
 
-/**
- * Whether a scheduled meeting is in its last five minutes by server time. Re-renders only when that changes.
- */
 const useShouldShowMeetingTimer = ({
   scheduleWindow,
 }: {

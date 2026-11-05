@@ -3,9 +3,6 @@ import type { ScheduleWindow } from '@common/types';
 import useServerNow from '@web/hooks/useServerNow';
 import useSessionContext from '@hooks/useSessionContext';
 
-/**
- * Seconds left until the meeting's scheduled end, kept current by the server clock.
- */
 const useMeetingSecondsLeft = ({ scheduleWindow }: { scheduleWindow: ScheduleWindow }): number => {
   const { sessionKey } = useSessionContext();
   const { data: serverSettings } = useServerSettings({ sessionKey });
