@@ -377,6 +377,7 @@
   "waitingRoom.schedule.startsIn": "Inizia tra",
   "waitingRoom.schedule.countdown.days_one": "{{count}} giorno",
   "waitingRoom.schedule.countdown.days_other": "{{count}} giorni",
+  "waitingRoom.schedule.countdown.hours": "{{hours}} h",
   "waitingRoom.schedule.countdown.hoursAndMinutes": "{{hours}} h {{minutes}} min",
   "waitingRoom.schedule.countdown.minutes": "{{minutes}} min",
   "waitingRoom.schedule.countdown.minutesAndSeconds": "{{minutes}} min {{seconds}} s",
