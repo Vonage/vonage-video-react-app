@@ -18,8 +18,8 @@ describe('UsernameInput', () => {
     vi.useRealTimers();
   });
 
-  it('enables Join and the name field at the start by server time and joins with the sessionKey', async () => {
-    expect.assertions(8);
+  it('keeps the name field editable, enables Join at the start by server time and joins with the sessionKey', async () => {
+    expect.assertions(7);
 
     vi.setSystemTime(startsAt - serverAheadMilliseconds - 65_000);
 
@@ -41,7 +41,7 @@ describe('UsernameInput', () => {
 
     expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
 
     await act(() => vi.advanceTimersByTimeAsync(60_000));
 
@@ -51,7 +51,6 @@ describe('UsernameInput', () => {
 
     expect(screen.getByText('The meeting has started')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeEnabled();
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 

@@ -136,7 +136,7 @@ const UsernameInput = ({
           id="user-name"
           name="username"
           error={isUserNameInvalid}
-          disabled={!isJoinEnabled}
+          disabled={isEnded}
           helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
           autoComplete="nickname"
           autoFocus
