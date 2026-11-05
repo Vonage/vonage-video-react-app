@@ -2,14 +2,13 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/components/VividIcon';
 import type { ScheduleWindow } from '@common/types';
-import getTimeLeftText from './helpers/getTimeLeftText';
-import isMeetingEndingSoon from './helpers/isMeetingEndingSoon';
+import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
 import useEndOfMeetingWarning from './hooks/useEndOfMeetingWarning';
 import useMeetingSecondsLeft from './hooks/useMeetingSecondsLeft';
 import meetingTimerVariants from './meetingTimerVariants';
 
 /**
- * Time left in a scheduled meeting; it turns amber in the last five minutes.
+ * Time left in the last five minutes of a scheduled meeting.
  */
 export type MeetingTimerProps = {
   scheduleWindow: ScheduleWindow;
@@ -18,23 +17,24 @@ export type MeetingTimerProps = {
 
 const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps): ReactElement => {
   const { t } = useTranslation();
-  const { secondsLeft, isServerTimeKnown } = useMeetingSecondsLeft({ scheduleWindow });
-  const isEndingSoon = isMeetingEndingSoon(secondsLeft);
+  const secondsLeft = useMeetingSecondsLeft({ scheduleWindow });
 
-  useEndOfMeetingWarning({ shouldWarn: isEndingSoon && isServerTimeKnown });
+  useEndOfMeetingWarning();
 
   return (
     <div
       role="timer"
       aria-label={t('meetingTimer.ariaLabel')}
-      className={meetingTimerVariants({ isEndingSoon, isCompact })}
+      className={meetingTimerVariants({ isCompact })}
     >
       <VividIcon
         name="clock-line"
         customSize={isCompact ? -6 : -5}
-        style={{ color: isEndingSoon ? 'var(--vera-on-warning)' : 'var(--vera-on-dark-grey)' }}
+        style={{ color: 'var(--vera-on-warning)' }}
       />
-      {t('meetingTimer.timeLeft', { timeLeft: getTimeLeftText({ secondsLeft, t }) })}
+      {t('meetingTimer.timeLeft', {
+        timeLeft: formatMinutesAndSeconds({ totalSeconds: secondsLeft, t }),
+      })}
     </div>
   );
 };
