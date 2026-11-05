@@ -9,9 +9,6 @@ export type JoinBlockerTextProps = ComponentProps<'p'> & {
   waitingStatus: WaitingStatus;
 };
 
-/**
- * Says when Join opens while a scheduled meeting has not started.
- */
 const JoinBlockerText = ({
   waitingStatus,
   className,
