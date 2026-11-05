@@ -353,8 +353,6 @@
   "toolbar.tooltip.title": "Access additional toolbar items",
   "meetingTimer.ariaLabel": "Time left in the meeting",
   "meetingTimer.timeLeft": "{{timeLeft}} left",
-  "meetingTimer.minutes": "{{minutes}} min",
-  "meetingTimer.hoursAndMinutes": "{{hours}} h {{minutes}} min",
   "meetingTimer.endingSoon": "The meeting is about to finish",
   "unsupportedBrowser.header": "Your browser is not compatible.",
   "unsupportedBrowser.message": "Check the list and choose a supported browser.",

@@ -31,7 +31,7 @@ import DeviceControlButton from '../DeviceControlButton';
 import MiniModeButton from '../MiniModeButton';
 import { useMiniMode } from '../../../Context/MiniMode';
 import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
-import MeetingTimer, { useMeetingScheduleWindow } from '../MeetingTimer';
+import MeetingTimer, { useMeetingScheduleWindow, useShouldShowMeetingTimer } from '../MeetingTimer';
 import getToolbarButtonVisibility from './helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from './helpers/isDisplayableToolbarButton';
 
@@ -100,6 +100,7 @@ const Toolbar = ({
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const buttonVisibility = getToolbarButtonVisibility();
   const scheduleWindow = useMeetingScheduleWindow();
+  const shouldShowMeetingTimer = useShouldShowMeetingTimer({ scheduleWindow });
 
   const centerToolbarButtons: ReactElement[] = useMemo(
     () =>
@@ -265,7 +266,7 @@ const Toolbar = ({
               captionsState={captionsState}
             />
           )}
-          {!isMobile() && isNotNil(scheduleWindow) && (
+          {!isMobile() && shouldShowMeetingTimer && isNotNil(scheduleWindow) && (
             <MeetingTimer scheduleWindow={scheduleWindow} />
           )}
           <ExitButton handleLeave={handleLeave} />
