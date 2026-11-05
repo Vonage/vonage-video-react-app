@@ -361,6 +361,7 @@
   "meetingTimer.ariaLabel": "会議の残り時間",
   "meetingTimer.timeLeft": "残り{{timeLeft}}",
   "meetingTimer.endingSoon": "会議はまもなく終了します",
+  "meetingTimer.meetingEnded": "この会議は終了しました",
   "unsupportedBrowser.header": "お客様のブラウザーはサポートされていません。",
   "unsupportedBrowser.message": "リストを確認して、サポートされているブラウザーを選択してください。",
   "unsupportedBrowser.supported.visitPage": "ページにアクセス",

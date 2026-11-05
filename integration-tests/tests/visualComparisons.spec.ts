@@ -195,6 +195,28 @@ test.describe('Meeting room timer UI test', () => {
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
     });
   }
+  test('ended', async ({ page, request, isMobile, browserName }) => {
+    const { endsAt } = await openScheduledMeetingRoom({
+      page,
+      request,
+      isMobile,
+      browserName,
+      colorScheme: 'light',
+      minutesLeft: 6,
+    });
+
+    await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
+    await expect(page.getByText('The meeting is about to finish')).toBeVisible();
+    await page.getByRole('button', { name: 'Dismiss notification' }).click();
+    await expect(page.getByText('The meeting is about to finish')).toBeHidden();
+
+    await page.clock.setFixedTime(endsAt);
+
+    await expect(page).toHaveURL(/goodbye/);
+    await expect(page.getByText('This meeting has ended')).toBeVisible();
+    await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+  });
+
   async function openScheduledMeetingRoom({
     page,
     request,

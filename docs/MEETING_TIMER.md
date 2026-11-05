@@ -15,3 +15,9 @@ Before the last five minutes there is no timer. Meetings without a schedule have
 
 When the timer appears, a message tells everyone that the meeting is about to finish. The message shows once. Nobody
 can join the meeting after its scheduled end.
+
+## The end of the meeting
+
+At the scheduled end, by the server's clock, every browser in the meeting leaves it the same way the leave button does
+and opens the goodbye page with **This meeting has ended**. The meeting tokens expire at the same time. Meetings without
+a schedule are not affected.
