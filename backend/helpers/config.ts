@@ -7,6 +7,7 @@ import CorsConfigSchema, {
 } from '../middleware/corsMiddleware/schemas/CorsConfig.schema';
 import { fileURLToPath } from 'node:url';
 import assertCorsMatchesAuth from './assertCorsMatchesAuth';
+import assertSessionKeySecretMatchesAuth from './assertSessionKeySecretMatchesAuth';
 
 /**
  * The runtimeDirectory works different on CJS and ESM
@@ -32,6 +33,7 @@ const loadConfig = (): Config => {
   const corsConfig = loadCorsConfig();
 
   assertCorsMatchesAuth({ authConfig, corsConfig });
+  assertSessionKeySecretMatchesAuth({ authConfig, sessionKeySecret });
 
   const feedbackConfig: FeedbackConfig = {
     url: process.env.JIRA_URL,
