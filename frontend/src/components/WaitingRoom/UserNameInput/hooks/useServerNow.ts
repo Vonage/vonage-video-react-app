@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 
 const tickIntervalMilliseconds = 1000;
 
-/**
- * Current server time in epoch milliseconds, refreshed every second while ticking.
- */
 const useServerNow = ({
   clockOffset,
   isTicking,
