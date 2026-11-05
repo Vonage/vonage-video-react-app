@@ -97,6 +97,20 @@ describe('video route access policy', () => {
       expect(joined.statusCode).toEqual(200);
     });
 
+    it('lets an anonymous holder of a sessionKey run createSessionAndJoin, but not open another room by name', async () => {
+      const app = buildApp();
+      const created = await createSessionAsSignedInUser({ app, roomName: 'room-a' });
+      const { sessionKey } = created.body.result.data as { sessionKey: string };
+
+      const networkTest = await request(app).post('/v2/createSessionAndJoin').send({ sessionKey });
+      const otherRoom = await request(app)
+        .post('/v2/createSession')
+        .send({ sessionKey, roomName: 'room-b' });
+
+      expect(networkTest.statusCode).toEqual(200);
+      expect(otherRoom.statusCode).toEqual(401);
+    });
+
     it('limits anonymous createSessionAndJoin calls per IP, but not a signed-in user', async () => {
       const app = buildApp();
       const created = await createSessionAsSignedInUser({ app, roomName: 'limited-room' });
