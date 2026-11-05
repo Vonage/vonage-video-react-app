@@ -3,8 +3,9 @@ import type { TokenExchangeResponse } from '../schemas/TokenExchangeResponse.sch
 import type { SessionCookie } from '../schemas/SessionCookie.schema';
 import type { IdTokenCookie } from '../schemas/IdTokenCookie.schema';
 import type { EnabledAuthConfig } from '../../../middleware/authMiddleware/schemas/AuthConfig.schema';
-import { SIGN_OUT_PATH } from '../constants';
+import { SIGN_OUT_PATH, SIGNED_IN_HINT_COOKIE_SUFFIX } from '../constants';
 import writeCookiePayload from './writeCookiePayload';
+import buildAuthCookieOptions from './buildAuthCookieOptions';
 
 /**
  * Writes the session from a token endpoint response (code exchange or refresh). Providers that
@@ -48,6 +49,15 @@ function writeSessionCookies({
     path: '/',
     maxAge,
     authConfig,
+  });
+
+  res.cookie(`${authConfig.authSessionCookieName}${SIGNED_IN_HINT_COOKIE_SUFFIX}`, '1', {
+    ...buildAuthCookieOptions({
+      path: '/',
+      maxAge,
+      oidcWebRedirectUri: authConfig.oidcWebRedirectUri,
+    }),
+    httpOnly: false,
   });
 
   if (!tokenResponse.id_token) return;

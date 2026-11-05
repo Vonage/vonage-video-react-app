@@ -108,6 +108,7 @@ describe('authMiddleware', () => {
 
     expect(res.statusCode).toEqual(200);
     expect(mockPost).not.toHaveBeenCalled();
+    expect(res.headers['set-cookie']).toBeUndefined();
   });
 
   it('throws at construction when auth is enabled but a required field is missing', () => {

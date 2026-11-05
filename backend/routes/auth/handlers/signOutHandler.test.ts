@@ -7,6 +7,7 @@ import makeEncryptedCookieHeader from '../../../tests/helpers/makeEncryptedCooki
 import readSetCookie from '../../../tests/helpers/readSetCookie';
 
 const SESSION_COOKIE_NAME = 'test_session';
+const SIGNED_IN_HINT_COOKIE_NAME = 'test_session-signed-in';
 const ID_TOKEN_COOKIE_NAME = 'test_id_token';
 const TRANSACTION_COOKIE_NAME = 'test_transaction';
 
@@ -106,6 +107,9 @@ describe('signOutHandler', () => {
     );
 
     expect(readSetCookie({ headers: res.headers, name: SESSION_COOKIE_NAME })).toMatch(
+      /Expires=Thu, 01 Jan 1970/
+    );
+    expect(readSetCookie({ headers: res.headers, name: SIGNED_IN_HINT_COOKIE_NAME })).toMatch(
       /Expires=Thu, 01 Jan 1970/
     );
   });
