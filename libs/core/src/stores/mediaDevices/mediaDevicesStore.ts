@@ -1,5 +1,5 @@
 import { createGlobalState, type InferAPI } from 'react-global-state-hooks';
-import { syncMediaDevicesInfo, selectDevice, getUserMedia } from './actions';
+import { syncMediaDevicesInfo, selectDevice, getUserMedia, requestDeviceLabels } from './actions';
 import { initialValue, metadata } from './constants';
 import { setupDeviceStore } from './helpers';
 import type { DevicesStoreState } from './types';
@@ -32,6 +32,13 @@ const mediaDevicesStore = createGlobalState(initialValue, {
      * the store in sync with granted media permissions.
      */
     getUserMedia,
+
+    /**
+     * Reveals device labels when required (e.g. entering the Waiting Room).
+     * On Firefox labels are hidden until a media permission has been granted, so this briefly
+     * requests access to populate them. Must NOT be called at store init — see #723.
+     */
+    requestDeviceLabels,
   },
   localStorage: {
     key: 'vera-devices-store',
