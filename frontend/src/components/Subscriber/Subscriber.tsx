@@ -24,6 +24,18 @@ export type SubscriberProps = {
   isActiveSpeaker: boolean;
 };
 
+const audioIndicatorStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  height: '1.5rem',
+  width: '1.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: 'auto',
+};
+
 /**
  * Subscriber Component
  *
@@ -98,17 +110,6 @@ const Subscriber = ({
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
-  const audioIndicatorStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    height: '1.5rem',
-    width: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 'auto',
-  };
 
   return isScreenShare ? (
     <ScreenshareVideoTile
