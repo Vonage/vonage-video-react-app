@@ -351,6 +351,7 @@
   "meetingTimer.ariaLabel": "Time left in the meeting",
   "meetingTimer.timeLeft": "{{timeLeft}} left",
   "meetingTimer.endingSoon": "The meeting is about to finish",
+  "meetingTimer.meetingEnded": "This meeting has ended",
   "unsupportedBrowser.header": "Your browser is not compatible.",
   "unsupportedBrowser.message": "Check the list and choose a supported browser.",
   "unsupportedBrowser.supported.visitPage": "Visit page",
