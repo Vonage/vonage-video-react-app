@@ -69,7 +69,8 @@ videoHandler.override$('createSession', async (opts) => {
     const { assertInput, videoClient, ctx } = opts;
 
     const input = assertInput(opts.input);
-    const { roomName } = input ?? {};
+    const { roomName, schedule } = input ?? {};
+    const isScheduledMeeting = Boolean(schedule);
     const hasAccess = !isAnonymousCaller(ctx);
 
     if (!hasAccess) {
@@ -78,7 +79,7 @@ videoHandler.override$('createSession', async (opts) => {
       );
     }
 
-    if (!roomName) return videoClient.createSession(input);
+    if (!roomName || isScheduledMeeting) return videoClient.createSession(input);
 
     const sessionKey = await assertResult(
       () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.req.user }),
