@@ -88,7 +88,7 @@ test.describe('Waiting page schedule UI test', () => {
   const namedScheduleStates = scheduleStates.map((scheduleState) => ({
     ...scheduleState,
     nameCase: 'with name',
-    roomName: 'weekly-sync',
+    roomName: scheduleState.schedule ? 'weekly-sync' : 'team-standup',
   }));
 
   const unnamedScheduleStates = scheduleStates

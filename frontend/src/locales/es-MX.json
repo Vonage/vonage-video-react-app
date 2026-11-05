@@ -379,6 +379,8 @@
   "waitingRoom.schedule.countdown.days_other": "{{count}} días",
   "waitingRoom.schedule.countdown.hoursAndMinutes": "{{hours}} h {{minutes}} min",
   "waitingRoom.schedule.countdown.minutes": "{{minutes}} min",
+  "waitingRoom.schedule.countdown.minutesAndSeconds": "{{minutes}} min {{seconds}} s",
+  "waitingRoom.schedule.countdown.seconds": "{{seconds}} s",
   "waitingRoom.schedule.daysAway_one": "Comienza mañana, {{date}}",
   "waitingRoom.schedule.daysAway_other": "Comienza en {{count}} días, {{date}}",
   "waitingRoom.schedule.withinDay": "Comienza a las {{time}}, en {{countdown}}",
