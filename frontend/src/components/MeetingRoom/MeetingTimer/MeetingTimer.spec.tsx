@@ -80,7 +80,7 @@ describe('MeetingTimer', () => {
       runtimeContext: { videoClient: makeServerClockAhead() },
     });
 
-    expect(await screen.findByText('5 min 0 sec left')).toBeInTheDocument();
+    expect(await screen.findByText('5 min left')).toBeInTheDocument();
     expect(pushSpy).toHaveBeenCalledTimes(1);
 
     rerender(<MeetingTimer scheduleWindow={{ ...scheduleWindow, endsAt: endsAt + 20 * 60_000 }} />);
@@ -98,7 +98,7 @@ describe('MeetingTimer', () => {
       sessionKey: makeSessionKey({ extendedMinutes: 80 }),
     });
 
-    expect(await screen.findByText('5 min 0 sec left')).toBeInTheDocument();
+    expect(await screen.findByText('5 min left')).toBeInTheDocument();
     expect(screen.getByRole('dialog', { name: 'Extend meeting' })).toBeInTheDocument();
     expect(screen.getByRole('radio', { name: /\+20 min/ })).toBeChecked();
     expect(screen.getByRole('radio', { name: /\+60 min Over the 120 min limit/ })).toBeDisabled();
@@ -131,7 +131,7 @@ describe('MeetingTimer', () => {
       sessionKey: makeSessionKey({ extendedMinutes: 120 }),
     });
 
-    expect(await screen.findByText('4 min 0 sec left')).toBeInTheDocument();
+    expect(await screen.findByText('4 min left')).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
     fireEvent.click(getTimerButton());
