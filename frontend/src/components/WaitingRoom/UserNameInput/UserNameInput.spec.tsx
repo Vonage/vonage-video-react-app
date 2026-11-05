@@ -128,7 +128,7 @@ describe('UsernameInput', () => {
       { runtimeContext: { videoClient } }
     );
 
-    expect(await screen.findByText('Join opens in 0:05')).toBeInTheDocument();
+    expect(await screen.findByText('Join opens in 5 sec')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('checkbox', { name: 'Join automatically when it starts' }));
 
