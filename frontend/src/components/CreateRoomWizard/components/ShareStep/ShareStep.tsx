@@ -4,9 +4,6 @@ import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import LinkCopyField from './components/LinkCopyField';
 
-/**
- * Last step of the wizard: confirms the meeting is ready and shows its link to copy.
- */
 const ShareStep = (): ReactElement => {
   const { t } = useTranslation();
   const sessionKey = createRoomWizard$.use.select((state) => state.sessionKey);
