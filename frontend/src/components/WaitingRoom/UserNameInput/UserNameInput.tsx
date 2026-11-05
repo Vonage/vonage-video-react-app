@@ -17,7 +17,7 @@ import type { ScheduleWindow } from '@common/types';
 import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
 import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
-import AutoJoinCheckbox from './components/AutoJoinCheckbox';
+import AutoJoinText from './components/AutoJoinText';
 import useAutoJoin from './hooks/useAutoJoin';
 import useScheduleStatus from './hooks/useScheduleStatus';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
@@ -57,7 +57,7 @@ const UsernameInput = ({
   const navigate = useNavigate();
 
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
-  const [isAutoJoinChecked, setIsAutoJoinChecked] = useState(false);
+  const [isAutoJoinRequested, setIsAutoJoinRequested] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scheduleStatus = useScheduleStatus({ scheduleWindow });
@@ -69,12 +69,15 @@ const UsernameInput = ({
   const isPending = scheduleStatus.kind === 'pending';
   const isJoinEnabled = scheduleStatus.kind === 'unscheduled' || scheduleStatus.kind === 'started';
   const isWaiting = scheduleStatus.kind !== 'ended' && !isPending && !isJoinEnabled;
+  const isWaitingWithInvalidName = isWaiting && !isValidUserName(username);
+  const shouldShowNameError = isUserNameInvalid || (isWaitingWithInvalidName && username !== '');
+  const isWaitingToJoin = isWaiting && isAutoJoinRequested;
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
     setIsUserNameInvalid(false);
     setUsername(inputUserName);
-    if (!isValidUserName(inputUserName)) setIsAutoJoinChecked(false);
+    if (!isValidUserName(inputUserName)) setIsAutoJoinRequested(false);
   };
 
   const handleInputFocus = () => {
@@ -112,10 +115,20 @@ const UsernameInput = ({
 
   const handleJoinClick = (event: MouseEvent) => {
     event.preventDefault();
+    if (isWaiting) {
+      setIsAutoJoinRequested(!isAutoJoinRequested);
+      return;
+    }
     join();
   };
 
-  useAutoJoin({ isAutoJoinChecked, scheduleStatus, username, join });
+  const joinButtonText = (() => {
+    if (isWaitingToJoin) return t('waitingRoom.schedule.waitingToStart');
+    if (isWaiting) return t('waitingRoom.schedule.joinAtStart');
+    return t('button.join');
+  })();
+
+  useAutoJoin({ isAutoJoinRequested, scheduleStatus, username, join });
 
   return (
     <Card
@@ -168,9 +181,9 @@ const UsernameInput = ({
           required
           id="user-name"
           name="username"
-          error={isUserNameInvalid}
+          error={shouldShowNameError}
           disabled={isEnded}
-          helperText={isUserNameInvalid ? t('waitingRoom.user.input.error') : ''}
+          helperText={shouldShowNameError ? t('waitingRoom.user.input.error') : ''}
           autoComplete="nickname"
           autoFocus
           value={username}
@@ -193,26 +206,25 @@ const UsernameInput = ({
       {!isEnded && (
         <Button
           onClick={handleJoinClick}
-          variant="contained"
+          variant={isWaitingToJoin ? 'outlined' : 'contained'}
           color="primary"
           type="submit"
           fullWidth
-          disabled={!isJoinEnabled}
+          disabled={isWaitingWithInvalidName}
+          aria-pressed={isWaiting ? isWaitingToJoin : undefined}
           aria-describedby={isWaiting ? joinBlockerTextId : undefined}
           className="disabled:bg-vera-disabled! disabled:text-vera-text-disabled! disabled:border-vera-disabled!"
         >
-          {t('button.join')}
+          {joinButtonText}
         </Button>
       )}
 
-      {isWaiting && <JoinBlockerText id={joinBlockerTextId} waitingStatus={scheduleStatus} />}
+      {isWaitingToJoin && (
+        <AutoJoinText id={joinBlockerTextId} startsAt={scheduleStatus.startsAt} />
+      )}
 
-      {isWaiting && (
-        <AutoJoinCheckbox
-          isChecked={isAutoJoinChecked}
-          isDisabled={!isValidUserName(username)}
-          onCheckedChange={setIsAutoJoinChecked}
-        />
+      {isWaiting && !isWaitingToJoin && (
+        <JoinBlockerText id={joinBlockerTextId} waitingStatus={scheduleStatus} />
       )}
     </Card>
   );

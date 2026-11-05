@@ -46,7 +46,7 @@ describe('UsernameInput', () => {
     );
 
     expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Join at start' })).toBeEnabled();
     expect(screen.getByRole('textbox', { name: 'Your name' })).toBeEnabled();
 
     for (let elapsedSeconds = 0; elapsedSeconds < 60; elapsedSeconds += 1) {
@@ -65,7 +65,7 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId(roomStubTestIds.root('scheduled-session-key'))).toBeInTheDocument();
   });
 
-  it('keeps Join disabled past the start by the local clock until the server time is known', () => {
+  it('does not offer Join meeting past the start by the local clock until the server time is known', () => {
     vi.setSystemTime(startsAt + 5 * 60_000);
 
     const videoClient = makeVideoClientMock({
@@ -107,8 +107,8 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId(roomStubTestIds.root('design-review'))).toBeInTheDocument();
   });
 
-  it('joins at the start by server time without pressing Join when auto-join is ticked', async () => {
-    expect.assertions(3);
+  it('joins at the start by server time after Join at start is pressed', async () => {
+    expect.assertions(4);
 
     vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
 
@@ -130,7 +130,9 @@ describe('UsernameInput', () => {
 
     expect(await screen.findByText('Join opens in 5 sec')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Join automatically when it starts' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Join at start' }));
+
+    expect(screen.getByText("You'll join automatically at 9:30 AM")).toBeInTheDocument();
 
     await act(() => vi.advanceTimersByTimeAsync(4_000));
 
@@ -141,8 +143,8 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId('room-scheduled-session-key')).toBeInTheDocument();
   });
 
-  it('stays in the waiting room at the start when auto-join is not ticked', async () => {
-    expect.assertions(3);
+  it('cancels auto-join when the waiting button is pressed again', async () => {
+    expect.assertions(4);
 
     vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
 
@@ -162,9 +164,14 @@ describe('UsernameInput', () => {
       { runtimeContext: { videoClient } }
     );
 
-    expect(
-      await screen.findByRole('checkbox', { name: 'Join automatically when it starts' })
-    ).not.toBeChecked();
+    fireEvent.click(await screen.findByRole('button', { name: 'Join at start' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Waiting to start…' }));
+
+    expect(screen.getByRole('button', { name: 'Join at start' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    );
+    expect(screen.getByText('Join opens in 5 sec')).toBeInTheDocument();
 
     await act(() => vi.advanceTimersByTimeAsync(5_000));
 
@@ -172,12 +179,12 @@ describe('UsernameInput', () => {
     expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
   });
 
-  it('disables auto-join until a name is entered', () => {
+  it('disables Join at start and shows the reason while the name is invalid', () => {
     vi.setSystemTime(startsAt - 60 * 60_000);
 
     render(
       <UsernameInput
-        username=""
+        username="Ana!"
         setUsername={vi.fn()}
         roomName={undefined}
         sessionKey="scheduled-session-key"
@@ -185,10 +192,10 @@ describe('UsernameInput', () => {
       />
     );
 
+    expect(screen.getByRole('button', { name: 'Join at start' })).toBeDisabled();
     expect(
-      screen.getByRole('checkbox', { name: 'Join automatically when it starts' })
-    ).toBeDisabled();
-    expect(screen.getByText('Enter your name to turn this on')).toBeInTheDocument();
+      screen.getByText('Name cannot be empty or contain special characters.')
+    ).toBeInTheDocument();
   });
 
   it('hides Join and keeps its children once the meeting has ended', async () => {
