@@ -35,4 +35,4 @@ When the timer appears, it opens **Extend meeting** by itself, and selecting the
 - Someone who opens the meeting link for the first time after an extension still sees the original end time, and
   cannot join after the original end.
 
-The options and the limit are set on the server; see [Configuration](./CONFIGURATION.md).
+The options are set on the server, and the 120-minute limit is fixed; see [Configuration](./CONFIGURATION.md).

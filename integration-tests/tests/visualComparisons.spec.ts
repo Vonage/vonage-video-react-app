@@ -294,7 +294,7 @@ test.describe('Meeting room timer UI test', () => {
         result: {
           data: {
             serverTime: clientNow,
-            extension: { maxTotalMinutes: 120, options: [20, 40, 60] },
+            extension: { options: [20, 40, 60] },
           },
         },
       };
