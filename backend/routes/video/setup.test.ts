@@ -81,6 +81,24 @@ describe('video route access policy', () => {
     expect(joined.body.result.data.sessionKey).toEqual(created.body.result.data.sessionKey);
   });
 
+  it('with auth disabled, does not limit createSessionAndJoin calls', async () => {
+    process.env = { ...originalEnv, AUTH_ENABLED: 'false' };
+    const app = buildApp();
+    const created = await request(app).post('/v2/createSession').send({ roomName: 'open-test' });
+    const { sessionKey } = created.body.result.data as { sessionKey: string };
+
+    const statuses: number[] = [];
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const response = await request(app)
+        .post('/v2/createSessionAndJoin')
+        .set('X-Forwarded-For', '203.0.113.30')
+        .send({ sessionKey });
+      statuses.push(response.statusCode);
+    }
+
+    expect(statuses).toEqual([200, 200, 200, 200, 200, 200]);
+  });
+
   describe('with auth enabled', () => {
     beforeEach(() => {
       process.env = {
@@ -160,7 +178,35 @@ describe('video route access policy', () => {
 
       expect(allowedStatuses).toEqual([200, 200, 200, 200, 200]);
       expect(limited.statusCode).toEqual(429);
+      expect(limited.body.error.message).toEqual(
+        'Too many sessions created, please try again later.'
+      );
       expect(signedIn.statusCode).toEqual(200);
+    });
+
+    it('counts each createSessionAndJoin call in a batch against the anonymous limit', async () => {
+      const app = buildApp();
+      const created = await createSessionAsSignedInUser({ app, roomName: 'batched-room' });
+      const { sessionKey } = created.body.result.data as { sessionKey: string };
+      const callAnonymously = () =>
+        request(app)
+          .post('/v2/createSessionAndJoin')
+          .set('X-Forwarded-For', '203.0.113.20')
+          .send({ sessionKey });
+
+      const batch = await request(app)
+        .post('/v2/createSessionAndJoin,createSessionAndJoin?batch=1')
+        .set('X-Forwarded-For', '203.0.113.20')
+        .send({ 0: { sessionKey }, 1: { sessionKey } });
+      const allowedStatuses: number[] = [];
+      for (let attempt = 0; attempt < 3; attempt++) {
+        allowedStatuses.push((await callAnonymously()).statusCode);
+      }
+      const limited = await callAnonymously();
+
+      expect(batch.statusCode).toEqual(200);
+      expect(allowedStatuses).toEqual([200, 200, 200]);
+      expect(limited.statusCode).toEqual(429);
     });
 
     it('returns a provider error instead of 401 when the identity provider fails for a session cookie', async () => {

@@ -1,6 +1,7 @@
-import type { ActiveTokenIntrospectionResponse } from '../../../middleware/authMiddleware/schemas/TokenIntrospectionResponse.schema';
+import type { Response } from 'express';
+import type { RequestWithTokenAuth } from '../../../middleware/authMiddleware/authMiddleware';
 
 export type VideoRouteContext = {
-  user?: ActiveTokenIntrospectionResponse;
-  ipAddress: string | undefined;
+  req: RequestWithTokenAuth;
+  res: Response;
 };

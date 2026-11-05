@@ -4,9 +4,10 @@ import { videoHandler } from './video';
 import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
 import { VideoAction } from '@api-lib';
 import { assertResult } from '@api-lib/executions';
-import loadConfig from '../../helpers/config';
+import { runExpressMiddleware } from '@api-lib/routing';
 import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
-import assertAnonymousSessionCreationLimit from './helpers/assertAnonymousSessionCreationLimit';
+import isAnonymousCaller from './helpers/isAnonymousCaller';
+import anonymousSessionCreationLimiter from '../../middleware/anonymousSessionCreationLimiter';
 import verifySessionKeySignature from './helpers/verifySessionKeySignature';
 import resignSessionKey from './helpers/resignSessionKey';
 import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
@@ -23,8 +24,7 @@ videoHandler.use$((opts) => {
   const { videoAction, ctx, input, next } = opts;
 
   if (videoAction === VideoAction.createSession) return next();
-  if (!loadConfig().authEnabled) return next();
-  if (ctx.user) return next();
+  if (!isAnonymousCaller(ctx)) return next();
   if (hasVerifiedSessionKey({ input, videoClient: ctx.videoClient })) return next();
 
   throw makeUnauthorizedErrorHandler(
@@ -35,7 +35,7 @@ videoHandler.use$((opts) => {
 videoHandler.use$((opts) => {
   const { ctx, input, next } = opts;
 
-  if (!isLegacySessionKeyAllowed({ user: ctx.user })) return next();
+  if (!isLegacySessionKeyAllowed({ user: ctx.req.user })) return next();
   if (!isRecord(input) || typeof input.sessionKey !== 'string') return next();
 
   const sessionKeySignature = verifySessionKeySignature({
@@ -53,15 +53,20 @@ videoHandler.use$((opts) => {
   return next({ input: { ...input, sessionKey } });
 });
 
-videoHandler.use$('createSessionAndJoin', async ({ ctx, next }) => {
-  const isAnonymousCaller = loadConfig().authEnabled && !ctx.user;
+videoHandler.use$(
+  VideoAction.createSessionAndJoin,
+  async function limitAnonymousSessionCreation({ ctx, next }) {
+    if (!isAnonymousCaller(ctx)) return next();
 
-  if (!isAnonymousCaller) return next();
+    await runExpressMiddleware({
+      middleware: anonymousSessionCreationLimiter,
+      req: ctx.req,
+      res: ctx.res,
+    });
 
-  await assertAnonymousSessionCreationLimit({ ipAddress: ctx.ipAddress });
-
-  return next();
-});
+    return next();
+  }
+);
 
 videoHandler.override$('createSession', async (opts) => {
   try {
@@ -69,7 +74,7 @@ videoHandler.override$('createSession', async (opts) => {
 
     const input = assertInput(opts.input);
     const { roomName } = input ?? {};
-    const hasAccess = !loadConfig().authEnabled || Boolean(ctx.user);
+    const hasAccess = !isAnonymousCaller(ctx);
 
     if (!hasAccess) {
       throw makeUnauthorizedErrorHandler('Creating or joining a room requires a signed-in user')(
@@ -80,7 +85,7 @@ videoHandler.override$('createSession', async (opts) => {
     if (!roomName) return videoClient.createSession(input);
 
     const sessionKey = await assertResult(
-      () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.user }),
+      () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.req.user }),
       makeInternalErrorHandler('Failed to get or create the session for the room name')
     );
 
