@@ -27,7 +27,7 @@ describe('UsernameInput', () => {
       getServerSettings: () =>
         Promise.resolve({
           serverTime: Date.now() + serverAheadMilliseconds,
-          extension: { maxTotalMinutes: 120, options: [20, 40, 60] },
+          extension: { options: [20, 40, 60] },
         }),
     });
 
