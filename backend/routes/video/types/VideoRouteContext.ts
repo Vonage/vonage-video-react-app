@@ -2,4 +2,5 @@ import type { ActiveTokenIntrospectionResponse } from '../../../middleware/authM
 
 export type VideoRouteContext = {
   user?: ActiveTokenIntrospectionResponse;
+  ipAddress: string | undefined;
 };

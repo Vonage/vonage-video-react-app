@@ -6,6 +6,7 @@ import { VideoAction } from '@api-lib';
 import { assertResult } from '@api-lib/executions';
 import loadConfig from '../../helpers/config';
 import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
+import assertAnonymousSessionCreationLimit from './helpers/assertAnonymousSessionCreationLimit';
 
 const sessionService = getSessionStorageService();
 
@@ -25,6 +26,16 @@ videoHandler.use$((opts) => {
   throw makeUnauthorizedErrorHandler(
     `${videoAction} requires a signed-in user or a valid sessionKey`
   )(null);
+});
+
+videoHandler.use$('createSessionAndJoin', async ({ ctx, next }) => {
+  const isAnonymousCaller = loadConfig().authEnabled && !ctx.user;
+
+  if (!isAnonymousCaller) return next();
+
+  await assertAnonymousSessionCreationLimit({ ipAddress: ctx.ipAddress });
+
+  return next();
 });
 
 videoHandler.override$('createSession', async (opts) => {

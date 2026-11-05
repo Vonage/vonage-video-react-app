@@ -20,6 +20,7 @@ const videoRouter = (await import('.')).default;
 function buildApp(): Express {
   const app = express();
 
+  app.set('trust proxy', true);
   app.use(express.json());
   app.use('/v2', authMiddleware({ mode: 'optional' }), videoRouter);
   app.use(errorHandler);
@@ -93,6 +94,37 @@ describe('video route access policy', () => {
 
       expect(created.statusCode).toEqual(200);
       expect(joined.statusCode).toEqual(200);
+    });
+
+    it('limits anonymous createSessionAndJoin calls per IP, but not a signed-in user', async () => {
+      const app = buildApp();
+      const created = await createSessionAsSignedInUser({ app, roomName: 'limited-room' });
+      const { sessionKey } = created.body.result.data as { sessionKey: string };
+      const callAnonymously = () =>
+        request(app)
+          .post('/v2/createSessionAndJoin')
+          .set('X-Forwarded-For', '203.0.113.10')
+          .send({ sessionKey });
+
+      const allowedStatuses: number[] = [];
+      for (let attempt = 0; attempt < 5; attempt++) {
+        allowedStatuses.push((await callAnonymously()).statusCode);
+      }
+      const limited = await callAnonymously();
+
+      mockPost.mockResolvedValueOnce({
+        status: 200,
+        data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID },
+      });
+      const signedIn = await request(app)
+        .post('/v2/createSessionAndJoin')
+        .set('X-Forwarded-For', '203.0.113.10')
+        .set('Authorization', 'Bearer valid-token')
+        .send({ sessionKey });
+
+      expect(allowedStatuses).toEqual([200, 200, 200, 200, 200]);
+      expect(limited.statusCode).toEqual(429);
+      expect(signedIn.statusCode).toEqual(200);
     });
 
     it('rejects an anonymous caller without a valid sessionKey on any other action', async () => {

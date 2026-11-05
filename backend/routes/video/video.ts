@@ -23,6 +23,7 @@ const sessionService = getSessionStorageService();
 export const videoHandler = createVideoHandler<VideoRouteContext, object>({
   createContext: ({ req }) => ({
     user: (req as RequestWithTokenAuth).user,
+    ipAddress: req.ip,
   }),
   auth: {
     authType: 'jwt',
