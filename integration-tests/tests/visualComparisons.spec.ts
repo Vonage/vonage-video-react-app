@@ -172,7 +172,7 @@ test.describe('Meeting room timer UI test', () => {
       });
       await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
       await expect(page.getByText('The meeting is about to finish')).toBeVisible();
-      await expect(page.getByRole('timer')).toHaveText('4 min 0 sec left');
+      await expect(page.getByRole('timer')).toHaveText('4 min left');
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
       await page.getByRole('button', { name: 'Dismiss notification' }).click();
       await expect(page.getByText('The meeting is about to finish')).toBeHidden();
