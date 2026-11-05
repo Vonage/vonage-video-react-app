@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
@@ -42,9 +43,15 @@ describe('useLeaveAtMeetingEnd', () => {
       sessionId,
       [SessionKeyClaim.schedule]: { at: startsAt / 1000, min: 60 },
     });
-    const { sessionContext, backgroundPublisherContext } = render({ sessionKey });
+    const { sessionContext, backgroundPublisherContext, queryClient } = render({ sessionKey });
 
-    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+    await act(async () => {
+      await vi.waitFor(() => {
+        const serverSettings = queryClient.getQueryData(['serverSettings']);
+        if (!serverSettings) throw new Error('The server time has not arrived');
+      });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
     await act(() => vi.advanceTimersByTimeAsync(2_000));
 
     expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
@@ -80,6 +87,7 @@ function makeSessionKey(payload: Record<string, unknown>): string {
 }
 
 function render({ sessionKey }: { sessionKey: string }) {
+  const queryClient = new QueryClient();
   const { wrapper, sessionContext, backgroundPublisherContext } = makeTestProvider(
     [
       providers.runtime,
@@ -91,6 +99,7 @@ function render({ sessionKey }: { sessionKey: string }) {
     ],
     {
       runtimeContext: {
+        queryClient,
         videoClient: makeVideoClientMock({
           getServerSettings: () =>
             Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
@@ -115,5 +124,5 @@ function render({ sessionKey }: { sessionKey: string }) {
 
   renderHook(() => useLeaveAtMeetingEnd(), { wrapper });
 
-  return { sessionContext, backgroundPublisherContext };
+  return { sessionContext, backgroundPublisherContext, queryClient };
 }
