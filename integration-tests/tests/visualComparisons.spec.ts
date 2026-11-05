@@ -183,6 +183,7 @@ test.describe('Meeting room timer UI test', () => {
       await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
       await expect(page.getByText('The meeting is about to finish')).toBeVisible();
       await expect(page.getByRole('timer')).toHaveText('4 min left');
+      await expect(page.getByRole('dialog', { name: 'Extend meeting' })).toBeVisible();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
       await page.getByRole('button', { name: 'Dismiss notification' }).click();
       await expect(page.getByText('The meeting is about to finish')).toBeHidden();
@@ -190,6 +191,66 @@ test.describe('Meeting room timer UI test', () => {
       await expect(page.getByRole('tooltip')).toBeHidden();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
     });
+    test(`extend ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
+      test.skip(
+        colorScheme === 'dark' && browserName === 'firefox',
+        'Firefox ignores the emulated dark color scheme'
+      );
+      await openScheduledMeetingRoom({
+        page,
+        request,
+        isMobile,
+        browserName,
+        colorScheme,
+        minutesLeft: 42,
+      });
+      const extendPopover = page.getByRole('dialog', { name: 'Extend meeting' });
+      await expect(page.getByRole('timer')).toHaveText('42 min left');
+
+      await openExtendPopover(page);
+      await expect(extendPopover.getByRole('radio', { name: /\+20 min/ })).toBeChecked();
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+
+      await extendMeeting({ page, minutes: 60 });
+      await expect(page.getByRole('timer')).toHaveText('1 h 42 min left');
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+      await dismissExtendedMessage(page);
+
+      await openExtendPopover(page);
+      await extendMeeting({ page, minutes: 20 });
+      await dismissExtendedMessage(page);
+      await openExtendPopover(page);
+      await expect(extendPopover.getByRole('radio', { name: /\+60 min/ })).toBeDisabled();
+      await expect(extendPopover.getByText('Extended by 80 of 120 min')).toBeVisible();
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+
+      await extendMeeting({ page, minutes: 40 });
+      await dismissExtendedMessage(page);
+      await openExtendPopover(page);
+      await expect(extendPopover.getByRole('note')).toHaveText(
+        'This meeting reached its 120 min extension limit'
+      );
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+    });
+  }
+  async function openExtendPopover(page: Page) {
+    await page.getByRole('button', { name: / left$/ }).click();
+    await expect(page.getByRole('dialog', { name: 'Extend meeting' })).toBeVisible();
+    await page.mouse.move(0, 0);
+  }
+  async function extendMeeting({ page, minutes }: { page: Page; minutes: number }) {
+    const extendPopover = page.getByRole('dialog', { name: 'Extend meeting' });
+    await extendPopover.getByRole('radio', { name: new RegExp(`\\+${minutes} min`) }).check();
+    await extendPopover.getByRole('button', { name: 'Extend', exact: true }).click();
+    await expect(
+      page.getByText(`Meeting extended by ${minutes} min.`, { exact: false })
+    ).toBeVisible();
+    await expect(extendPopover).toBeHidden();
+    await page.mouse.move(0, 0);
+  }
+  async function dismissExtendedMessage(page: Page) {
+    await page.getByRole('button', { name: 'Dismiss notification' }).click();
+    await expect(page.getByText('Meeting extended by', { exact: false })).toBeHidden();
   }
   test('ended', async ({ page, request, isMobile, browserName }) => {
     const { endsAt } = await openScheduledMeetingRoom({
@@ -245,7 +306,14 @@ test.describe('Meeting room timer UI test', () => {
     const { result } = await createSessionResponse.json();
     await page.route(/\/v2\/getServerSettings/, async (route) => {
       const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
-      const payload = { result: { data: { serverTime: clientNow } } };
+      const payload = {
+        result: {
+          data: {
+            serverTime: clientNow,
+            extension: { maxTotalMinutes: 120, options: [20, 40, 60] },
+          },
+        },
+      };
       await route.fulfill({ json: isBatchRequest ? [payload] : payload });
     });
     await page.clock.setFixedTime(clientNow);
@@ -278,6 +346,7 @@ test.describe('Meeting room timer UI test', () => {
       mask: [
         page.locator('[data-testid="app-version"]'),
         page.locator('[data-testid="time-room-name"]'),
+        page.getByText(/Ends at|It now ends at/),
       ],
       maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
       timeout: TIMEOUTS.DEFAULT,

@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants';
 
 const meetingTimerVariants = tv(
   {
-    base: 'flex shrink-0 items-center whitespace-nowrap rounded-full bg-vera-warning font-vera-plain text-vera-on-warning tabular-nums',
+    base: 'flex shrink-0 cursor-pointer items-center whitespace-nowrap rounded-full bg-vera-warning font-vera-plain text-vera-on-warning tabular-nums',
     variants: {
       isCompact: {
         true: 'h-8 gap-1.5 px-3 text-vera-caption-semibold',
