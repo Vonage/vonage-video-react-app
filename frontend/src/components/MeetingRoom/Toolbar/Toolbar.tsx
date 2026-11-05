@@ -3,7 +3,6 @@ import {
   type ReactElement,
   type SetStateAction,
   memo,
-  useCallback,
   useMemo,
   useRef,
   useState,
@@ -11,7 +10,7 @@ import {
 import useSessionContext from '@hooks/useSessionContext';
 import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useToolbarButtons from '@hooks/useToolbarButtons';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import Box from '@mui/material/Box';
 import classNames from 'classnames';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -27,6 +26,8 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import MiniModeButton from '../MiniModeButton';
+import { useMiniMode } from '../../../Context/MiniMode';
 import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import getToolbarButtonVisibility from './helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from './helpers/isDisplayableToolbarButton';
@@ -83,18 +84,16 @@ const Toolbar = ({
   participantCount,
   captionsState,
 }: ToolbarProps): ReactElement => {
-  const { disconnect, subscriberWrappers } = useSessionContext();
-  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+  const { subscriberWrappers } = useSessionContext();
+  const leaveMeeting = useLeaveMeeting();
+  const { isAvailable: isMiniModeAvailable, exit: exitMiniMode } = useMiniMode();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const handleLeave = useCallback(() => {
-    if (!disconnect) {
-      return;
-    }
-    disconnect();
-    destroyBackgroundPublisher();
-  }, [destroyBackgroundPublisher, disconnect]);
+  const handleLeave = () => {
+    exitMiniMode();
+    leaveMeeting();
+  };
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const buttonVisibility = getToolbarButtonVisibility();
 
@@ -114,6 +113,7 @@ const Toolbar = ({
           key="LayoutButton"
           isPinningPresent={isPinningPresent}
         />,
+        isMiniModeAvailable && <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
         buttonVisibility.emojis && (
           <EmojiGridButton
             isEmojiGridOpen={openEmojiGridDesktop}
@@ -145,6 +145,7 @@ const Toolbar = ({
       isViewingScreenShare,
       isScreenSharePresent,
       isPinningPresent,
+      isMiniModeAvailable,
       openEmojiGridDesktop,
       setOpenEmojiGridDesktop,
       captionsState,

@@ -105,7 +105,7 @@ const DeviceControlButton = ({
           name="mic-mute-solid"
           customSize={-5}
           data-testid={testIds.microphoneOffIcon}
-          className="text-vera-error -scale-x-100"
+          className="text-vera-error"
         />
       );
     }
