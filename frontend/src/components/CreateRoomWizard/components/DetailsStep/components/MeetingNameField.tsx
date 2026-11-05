@@ -1,7 +1,8 @@
 import { useState, type ChangeEvent, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isValidRoomName } from '@common/assertions';
-import InputField from '@ui/components/InputField';
+import classNames from 'classnames';
+import Field from '@ui/components/Field';
 import createRoomWizard$ from '../../../context/createRoomWizardContext';
 
 /**
@@ -22,16 +23,26 @@ const MeetingNameField = (): ReactElement => {
   };
 
   return (
-    <InputField
-      id="create-room-wizard-meeting-name"
-      label={t('createRoomWizard.details.name.label')}
-      description={t('createRoomWizard.details.name.description')}
-      hasError={hasError}
-      value={name}
-      maxLength={60}
-      autoComplete="off"
-      onChange={handleChange}
-    />
+    <Field>
+      <Field.Label htmlFor="create-room-wizard-meeting-name">
+        {t('createRoomWizard.details.name.label')}
+      </Field.Label>
+      <Field.Input
+        id="create-room-wizard-meeting-name"
+        aria-invalid={hasError}
+        aria-describedby="create-room-wizard-meeting-name-description"
+        value={name}
+        maxLength={60}
+        autoComplete="off"
+        onChange={handleChange}
+      />
+      <Field.Description
+        id="create-room-wizard-meeting-name-description"
+        className={classNames('text-vera-body-base!', { 'text-vera-error': hasError })}
+      >
+        {t('createRoomWizard.details.name.description')}
+      </Field.Description>
+    </Field>
   );
 };
 
