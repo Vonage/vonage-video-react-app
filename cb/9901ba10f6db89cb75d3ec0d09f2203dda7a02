@@ -1,0 +1,20 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 207-220
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 65,133-137
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 15,20
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 134-147,149,155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cb9901ba10f6db89cb75d3ec0d09f2203dda7a02",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
