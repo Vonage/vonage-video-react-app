@@ -10,10 +10,10 @@ import videoRouter, { makeVideoClient$ } from './routes/video';
 import hasVerifiedSessionKey from './routes/video/helpers/hasVerifiedSessionKey';
 import { fileURLToPath } from 'url';
 import {
+  anonymousRateLimitMiddleware,
   authMiddleware,
   corsMiddleware,
   errorHandler,
-  guestRateLimitMiddleware,
   helmetMiddleware,
   rateLimitMiddleware,
 } from './middleware';
@@ -36,7 +36,7 @@ const defaultPort = Number(process.env.VCR_PORT ?? 3345);
 
 const PUBLIC_BUILD_FOLDERS = ['assets', 'images', 'background'];
 const MEETING_LINK_PATHS = ['/waiting-room/:roomIdentifier', '/room/:roomIdentifier'];
-const GUEST_REPORT_PATHS = ['/client-logs', '/feedback/report'];
+const ANONYMOUS_REPORT_PATHS = ['/client-logs', '/feedback/report'];
 
 const authCallbackPaths = (() => {
   const authConfig = loadConfig();
@@ -59,7 +59,11 @@ app.set('trust proxy', 1);
 
 app.use('/v2', authMiddleware({ mode: 'optional' }), videoRouter);
 
-app.use(GUEST_REPORT_PATHS, authMiddleware({ mode: 'optional' }), guestRateLimitMiddleware());
+app.use(
+  ANONYMOUS_REPORT_PATHS,
+  authMiddleware({ mode: 'optional' }),
+  anonymousRateLimitMiddleware()
+);
 
 app.use((_req, res, next) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');

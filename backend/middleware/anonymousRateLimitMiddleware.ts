@@ -4,7 +4,7 @@ import { StatusCode } from 'status-code-enum';
 import loadConfig from '../helpers/config';
 import type { RequestWithTokenAuth } from './authMiddleware/authMiddleware';
 
-function guestRateLimitMiddleware(): RequestHandler {
+function anonymousRateLimitMiddleware(): RequestHandler {
   const { authEnabled } = loadConfig();
 
   return rateLimit({
@@ -18,4 +18,4 @@ function guestRateLimitMiddleware(): RequestHandler {
   });
 }
 
-export default guestRateLimitMiddleware;
+export default anonymousRateLimitMiddleware;

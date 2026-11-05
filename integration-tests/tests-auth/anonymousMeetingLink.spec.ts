@@ -3,14 +3,14 @@ import { test } from '../fixtures/testWithLogging';
 import { APP_URL } from './constants';
 import requestAccessToken from './helpers/requestAccessToken';
 
-test('a signed-out guest with a meeting link runs the network test and joins without signing in', async ({
+test('an anonymous caller with a meeting link runs the network test and joins without signing in', async ({
   page,
   request,
 }) => {
   const accessToken = await requestAccessToken(request);
   const createSessionResponse = await request.post(`${APP_URL}/v2/createSession`, {
     headers: { Accept: 'application/json', Authorization: `Bearer ${accessToken}` },
-    data: { roomName: 'e2e-auth-guest-link-room' },
+    data: { roomName: 'e2e-auth-anonymous-link-room' },
   });
   const {
     result: {
@@ -36,7 +36,7 @@ test('a signed-out guest with a meeting link runs the network test and joins wit
   await page.getByTestId('menu-more-options').getByText('Pre-call network test').click();
   expect((await networkTestResponse).status()).toEqual(200);
   await page.getByRole('dialog').getByRole('button', { name: 'Close' }).first().click();
-  await page.getByLabel('Name').fill('e2e-auth-guest');
+  await page.getByLabel('Name').fill('e2e-auth-anonymous');
   await page.getByRole('button', { name: 'Join meeting' }).click();
   await expect(page.locator('.publisher')).toBeVisible();
 });

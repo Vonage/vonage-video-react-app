@@ -118,7 +118,7 @@ describe('useNetworkTest', () => {
     );
   });
 
-  it('testQuality sends the meeting sessionKey so a guest holding the link is authorized', async () => {
+  it('testQuality sends the meeting sessionKey so an anonymous caller holding the link is authorized', async () => {
     const sessionKey =
       'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
     const { result } = render(() => useNetworkTest());

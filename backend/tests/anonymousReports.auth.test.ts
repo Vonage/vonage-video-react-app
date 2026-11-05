@@ -48,7 +48,7 @@ const logPayload = {
   level: 'info',
 };
 
-describe('guest reports when AUTH_ENABLED=true', () => {
+describe('anonymous reports when AUTH_ENABLED=true', () => {
   let server: Server;
 
   beforeAll(async () => {
@@ -60,7 +60,7 @@ describe('guest reports when AUTH_ENABLED=true', () => {
     return closeServer(server);
   });
 
-  it('accepts logs and feedback from a signed-out guest up to the guest limit, and does not limit a signed-in user', async () => {
+  it('accepts logs and feedback from an anonymous caller up to the anonymous limit, and does not limit a signed-in user', async () => {
     mockPost.mockResolvedValue({
       status: 200,
       data: { active: true, sub: 'user-1', client_id: OIDC_CLIENT_ID },
@@ -68,7 +68,7 @@ describe('guest reports when AUTH_ENABLED=true', () => {
 
     const feedback = await request(server)
       .post('/feedback/report')
-      .send({ title: 'Audio', name: 'Guest', issue: 'No audio', attachment: '' });
+      .send({ title: 'Audio', name: 'Anonymous', issue: 'No audio', attachment: '' });
 
     const logStatuses: number[] = [];
     for (let attempt = 0; attempt < 59; attempt++) {

@@ -52,7 +52,7 @@ OT_API_SECRET='your-api-secret'
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LEGACY_SESSION_KEYS_ENABLED` | `'true'` | While `SESSION_KEY_SECRET` is set, accepts sessionKeys signed with `VONAGE_APP_ID` (`OT_API_KEY` for OpenTok), the key used when `SESSION_KEY_SECRET` is empty, and re-signs them with `SESSION_KEY_SECRET` in the same video session. This applies to signed-in users, or to everyone when `AUTH_ENABLED` is not `'true'`. Guests always need a key signed with `SESSION_KEY_SECRET`. Set to `'false'` to reject these keys for everyone |
+| `LEGACY_SESSION_KEYS_ENABLED` | `'true'` | While `SESSION_KEY_SECRET` is set, accepts sessionKeys signed with `VONAGE_APP_ID` (`OT_API_KEY` for OpenTok), the key used when `SESSION_KEY_SECRET` is empty, and re-signs them with `SESSION_KEY_SECRET` in the same video session. This applies to signed-in users, or to everyone when `AUTH_ENABLED` is not `'true'`. Anonymous callers always need a key signed with `SESSION_KEY_SECRET`. Set to `'false'` to reject these keys for everyone |
 
 #### Allowed web origins (CORS)
 

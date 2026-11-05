@@ -24,7 +24,7 @@ describe('UsernameInput', () => {
           <Routes>
             <Route
               path="/waiting-room/:roomIdentifier"
-              element={<UsernameInput roomName="" username="Guest" setUsername={vi.fn()} />}
+              element={<UsernameInput roomName="" username="Anonymous" setUsername={vi.fn()} />}
             />
             <Route path="/room/:roomIdentifier" element={<MeetingRoomMarker />} />
           </Routes>
