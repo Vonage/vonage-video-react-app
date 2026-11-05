@@ -7,9 +7,6 @@ import useEndOfMeetingWarning from './hooks/useEndOfMeetingWarning';
 import useMeetingSecondsLeft from './hooks/useMeetingSecondsLeft';
 import meetingTimerVariants from './meetingTimerVariants';
 
-/**
- * Time left in the last five minutes of a scheduled meeting.
- */
 export type MeetingTimerProps = {
   scheduleWindow: ScheduleWindow;
   isCompact?: boolean;
