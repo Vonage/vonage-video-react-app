@@ -354,6 +354,7 @@
   "meetingTimer.ariaLabel": "Tiempo restante de la reunión",
   "meetingTimer.timeLeft": "Quedan {{timeLeft}}",
   "meetingTimer.endingSoon": "La reunión está a punto de terminar",
+  "meetingTimer.meetingEnded": "Esta reunión ha terminado",
   "unsupportedBrowser.header": "Tu navegador no es compatible",
   "unsupportedBrowser.message": "Revisa la lista y elige un navegador compatible.",
   "unsupportedBrowser.supported.visitPage": "Visitar la página",
