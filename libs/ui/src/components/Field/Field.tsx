@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ComponentProps, PropsWithChildren, ReactElement } from 'react';
 import FieldDescription from './FieldDescription';
-import FieldInput from './FieldInput';
+import FieldInput, { type FieldInputProps } from './FieldInput';
 import FieldLabel from './FieldLabel';
 import { findSlotByDisplayName } from '../../helpers';
 import { twMerge } from 'tailwind-merge';
@@ -38,12 +38,22 @@ const FieldRoot = ({
     (child) => ![label, input, description].includes(child)
   );
 
+  const isNativeInput =
+    React.isValidElement<FieldInputProps>(input) && input.props.variant !== 'switch';
+
   return (
     <div className={twMerge('Field flex flex-col gap-1.5', className)} {...props}>
-      <div className="flex items-center justify-between gap-4">
-        {label}
-        {input}
-      </div>
+      {isNativeInput ? (
+        <>
+          {label}
+          {input}
+        </>
+      ) : (
+        <div className="flex items-center justify-between gap-4">
+          {label}
+          {input}
+        </div>
+      )}
       {description}
       {remainingChildren}
     </div>
