@@ -9,9 +9,6 @@ export type ScheduleCopy = {
   detailText: string | null;
 };
 
-/**
- * The words the countdown panel shows for a scheduled meeting's current state.
- */
 const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
   const { t, i18n } = useTranslation();
 
