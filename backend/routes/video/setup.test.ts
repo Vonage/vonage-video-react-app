@@ -117,13 +117,17 @@ describe('video route access policy', () => {
       };
     });
 
-    it('rejects an anonymous caller creating or joining a room by name', async () => {
-      const res = await request(buildApp())
-        .post('/v2/createSession')
-        .send({ roomName: 'guessed-room' });
+    it.each([
+      { action: 'createSession', body: { roomName: 'guessed-room' } },
+      { action: 'joinSession', body: { sessionKey: 'not-a-session-key' } },
+    ])(
+      'rejects an anonymous caller of $action without a valid sessionKey',
+      async ({ action, body }) => {
+        const res = await request(buildApp()).post(`/v2/${action}`).send(body);
 
-      expect(res.statusCode).toEqual(401);
-    });
+        expect(res.statusCode).toEqual(401);
+      }
+    );
 
     it('lets a signed-in user create a room, and an anonymous holder of its sessionKey join it', async () => {
       const app = buildApp();
@@ -225,14 +229,6 @@ describe('video route access policy', () => {
         .send({ roomName: 'some-room' });
 
       expect(res.statusCode).toEqual(502);
-    });
-
-    it('rejects an anonymous caller without a valid sessionKey on any other action', async () => {
-      const res = await request(buildApp())
-        .post('/v2/joinSession')
-        .send({ sessionKey: 'not-a-session-key' });
-
-      expect(res.statusCode).toEqual(401);
     });
 
     describe('with a sessionKey signed with the Application ID', () => {

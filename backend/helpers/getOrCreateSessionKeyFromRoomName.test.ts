@@ -45,43 +45,35 @@ describe('getOrCreateSessionKeyFromRoomName with a stored legacy sessionKey', ()
     process.env = originalEnv;
   });
 
-  it.each([
-    { label: 'auth on and a signed-in user', env: AUTH_ENABLED_ENV, user: signedInUser },
-    { label: 'auth off', env: { AUTH_ENABLED: 'false' }, user: undefined },
-  ])('re-signs it with $label', async ({ env, user }) => {
-    process.env = { ...originalEnv, ...env };
-    const legacySessionKey = await storeLegacySessionKey();
-
-    const sessionKey = await getOrCreateSessionKeyFromRoomName({
-      videoClient: makeVideoClient$(),
-      roomName: 'legacy-room',
-      user,
-    });
-
-    expect(sessionKey).not.toEqual(legacySessionKey);
-    expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).toMatchObject(legacyClaims);
-  });
+  const { schedule } = legacyClaims;
 
   it.each([
-    { label: 'auth on and no user', env: AUTH_ENABLED_ENV, user: undefined },
+    { label: 'auth on and a signed-in user', env: AUTH_ENABLED_ENV, user: signedInUser, schedule },
+    { label: 'auth off', env: { AUTH_ENABLED: 'false' }, user: undefined, schedule },
+    { label: 'auth on and no user', env: AUTH_ENABLED_ENV, user: undefined, schedule: undefined },
     {
       label: 'LEGACY_SESSION_KEYS_ENABLED false',
       env: { ...AUTH_ENABLED_ENV, LEGACY_SESSION_KEYS_ENABLED: 'false' },
       user: signedInUser,
+      schedule: undefined,
     },
-  ])('neither re-signs nor returns it with $label', async ({ env, user }) => {
-    process.env = { ...originalEnv, ...env };
-    const legacySessionKey = await storeLegacySessionKey();
+  ])(
+    'signs a new key, keeping the legacy claims only when allowed, with $label',
+    async (testCase) => {
+      process.env = { ...originalEnv, ...testCase.env };
+      const legacySessionKey = await storeLegacySessionKey();
 
-    const sessionKey = await getOrCreateSessionKeyFromRoomName({
-      videoClient: makeVideoClient$(),
-      roomName: 'legacy-room',
-      user,
-    });
+      const sessionKey = await getOrCreateSessionKeyFromRoomName({
+        videoClient: makeVideoClient$(),
+        roomName: 'legacy-room',
+        user: testCase.user,
+      });
+      const claims = jwt.verify(sessionKey, CURRENT_SIGNING_SECRET) as Record<string, unknown>;
 
-    expect(sessionKey).not.toEqual(legacySessionKey);
-    expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).not.toHaveProperty('schedule');
-  });
+      expect(sessionKey).not.toEqual(legacySessionKey);
+      expect(claims.schedule).toEqual(testCase.schedule);
+    }
+  );
 });
 
 async function storeLegacySessionKey(): Promise<string> {

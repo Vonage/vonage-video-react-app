@@ -151,10 +151,6 @@ describe('loadConfig', () => {
       );
     });
 
-    test('should accept a SESSION_KEY_SECRET', () => {
-      expect(loadConfig().sessionKeySecret).toBe('test-session-key-secret');
-    });
-
     test.each([
       ['OIDC_CLIENT_ID', /oidcClientId/],
       ['OIDC_WEB_REDIRECT_URI', /oidcWebRedirectUri/],
@@ -209,6 +205,7 @@ describe('loadConfig', () => {
       const config = loadConfig();
 
       expect(config.authEnabled).toBe(true);
+      expect(config.sessionKeySecret).toBe('test-session-key-secret');
       if (config.authEnabled) {
         expect(config.authSessionCookieName).toBe('custom_session');
         expect(config.authProviderTimeoutMs).toBe(9000);
