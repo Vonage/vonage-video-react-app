@@ -18,7 +18,7 @@ import introspectAccessToken from './helpers/introspectAccessToken';
 import verifyActiveToken from './helpers/verifyActiveToken';
 import authenticateCookieSession from './helpers/authenticateCookieSession';
 
-type RequestWithTokenAuth = Request & {
+export type RequestWithTokenAuth = Request & {
   user?: ActiveTokenIntrospectionResponse;
 };
 

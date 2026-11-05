@@ -13,7 +13,8 @@ import { assertResult } from '@api-lib/executions';
 import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
-import type { RequestWithTokenAuth, VideoRouteContext } from './types/VideoRouteContext';
+import type { VideoRouteContext } from './types/VideoRouteContext';
+import type { RequestWithTokenAuth } from '../../middleware/authMiddleware/authMiddleware';
 
 const videoRouter = Router();
 
