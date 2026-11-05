@@ -15,12 +15,8 @@ import { isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
-/**
- * Without a signed-in user, an action passes only when its input carries a sessionKey whose
- * signature verifies. Other IDs in the input, such as archiveId or captionsId, are not checked
- * against that key's session. createSession is exempt: its override below decides access.
- */
-videoHandler.use$((opts) => {
+/** Only the sessionKey is checked: other IDs in the input (archiveId, captionsId) are not matched to its meeting. */
+videoHandler.use$(function requireSignedInUserOrVerifiedSessionKey(opts) {
   const { videoAction, ctx, input, next } = opts;
 
   if (videoAction === VideoAction.createSession) return next();
@@ -32,7 +28,7 @@ videoHandler.use$((opts) => {
   )(null);
 });
 
-videoHandler.use$((opts) => {
+videoHandler.use$(function resignAllowedLegacySessionKey(opts) {
   const { ctx, input, next } = opts;
 
   if (!isLegacySessionKeyAllowed({ user: ctx.req.user })) return next();
