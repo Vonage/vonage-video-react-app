@@ -57,14 +57,10 @@ app.use(bodyParser.json());
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
 app.set('trust proxy', 1);
 
-/**
- * Should be placed before the authMiddleware to allow the videoRouter to handle it's own auth.
- */
 app.use('/v2', authMiddleware({ mode: 'optional' }), videoRouter);
 
 app.use(GUEST_REPORT_PATHS, authMiddleware({ mode: 'optional' }), guestRateLimitMiddleware());
 
-// Before the public meeting-link routes so they also get the header.
 app.use((_req, res, next) => {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
   next();
@@ -73,7 +69,6 @@ app.use((_req, res, next) => {
 const veraPath = path.join(runtimeDir, './dist');
 const meetingLinkVideoClient = makeVideoClient$();
 
-// Before the strict gate: signed-out guests with a valid link load these.
 PUBLIC_BUILD_FOLDERS.forEach((folder) => {
   app.use(`/${folder}`, express.static(path.join(veraPath, folder)));
 });
