@@ -11,9 +11,9 @@ import assertAnonymousSessionCreationLimit from './helpers/assertAnonymousSessio
 const sessionService = getSessionStorageService();
 
 /**
- * An action is self-authorized when it carries a sessionKey, because the key is signed and is
- * verified here before the handler runs. Anything else must prove an identity, so an action added
- * later is closed by default. createSession is exempt: it is the entry point that decides below.
+ * Without a signed-in user, an action passes only when its input carries a sessionKey whose
+ * signature verifies. Other IDs in the input, such as archiveId or captionsId, are not checked
+ * against that key's session. createSession is exempt: its override below decides access.
  */
 videoHandler.use$((opts) => {
   const { videoAction, ctx, input, next } = opts;
