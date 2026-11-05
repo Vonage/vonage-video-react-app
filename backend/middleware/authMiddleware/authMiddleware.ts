@@ -139,7 +139,10 @@ function authMiddleware(
 
       if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
 
-      if (isOptional) {
+      const isSignedOutOptionalRequest =
+        isOptional && isRecord(error) && error.isSignInRequired === true;
+
+      if (isSignedOutOptionalRequest) {
         next();
         return;
       }

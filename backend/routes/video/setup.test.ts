@@ -5,6 +5,7 @@ import request from 'supertest';
 import { errorHandler } from '../../middleware/errorHandler';
 import authMiddleware from '../../middleware/authMiddleware/authMiddleware';
 import { TEST_AUTH_COOKIE_SECRET } from '../../tests/helpers/testAuthCookieSecret';
+import makeEncryptedCookieHeader from '../../tests/helpers/makeEncryptedCookieHeader';
 import mockVonageVideoSdk from '../../tests/helpers/mockVonageVideoSdk';
 
 vi.mock('axios');
@@ -125,6 +126,24 @@ describe('video route access policy', () => {
       expect(allowedStatuses).toEqual([200, 200, 200, 200, 200]);
       expect(limited.statusCode).toEqual(429);
       expect(signedIn.statusCode).toEqual(200);
+    });
+
+    it('returns a provider error instead of 401 when the identity provider fails for a session cookie', async () => {
+      mockPost.mockRejectedValue(new Error('connect ECONNREFUSED'));
+      const sessionCookie = makeEncryptedCookieHeader({
+        name: 'test_session',
+        payload: {
+          accessToken: 'session-access-token',
+          accessTokenExpiresAt: Date.now() + 3600 * 1000,
+        },
+      });
+
+      const res = await request(buildApp())
+        .post('/v2/createSession')
+        .set('Cookie', sessionCookie)
+        .send({ roomName: 'some-room' });
+
+      expect(res.statusCode).toEqual(502);
     });
 
     it('rejects an anonymous caller without a valid sessionKey on any other action', async () => {
