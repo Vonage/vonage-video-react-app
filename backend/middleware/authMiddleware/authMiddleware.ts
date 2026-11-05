@@ -84,12 +84,12 @@ function authMiddleware(
 
     if (!hasAuthenticationFailed) return next();
 
-    const isSignInRequired = isSignInRequiredError(error);
-    const isCookieSignInRequired = isSignInRequired && !bearerToken;
+    const hasNoValidCredential = isMissingOrRejectedCredentialError(error);
+    const hasNoValidCookieSession = hasNoValidCredential && !bearerToken;
 
-    if (isCookieSignInRequired) clearSessionCookies({ res, authConfig });
-    if (isOptional && isSignInRequired) return next();
-    if (isCookieSignInRequired && isPageRequest(req)) return redirectToSignIn({ req, res });
+    if (hasNoValidCookieSession) clearSessionCookies({ res, authConfig });
+    if (isOptional && hasNoValidCredential) return next();
+    if (hasNoValidCookieSession && isPageRequest(req)) return redirectToSignIn({ req, res });
 
     next(toApplicationError(error));
   };
@@ -182,7 +182,7 @@ async function authenticateAndRefreshCookieSession({
   return sessionOutcome.user;
 }
 
-function isSignInRequiredError(error: unknown): boolean {
+function isMissingOrRejectedCredentialError(error: unknown): boolean {
   return isRecord(error) && error.isSignInRequired === true;
 }
 
