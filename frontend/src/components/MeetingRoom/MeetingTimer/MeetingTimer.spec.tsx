@@ -1,24 +1,36 @@
 import type { ReactElement } from 'react';
-import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render as renderBase,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { notifications$ } from '@core/stores';
 import { SessionKeyClaim } from '@common/constants';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { env } from '../../../env';
 import MeetingTimer from './MeetingTimer';
 
 const endsAt = new Date(2026, 10, 4, 11, 0).getTime();
 const scheduleWindow = { startsAtMs: endsAt - 2 * 60 * 60_000, endsAtMs: endsAt };
 const serverAheadMilliseconds = 60_000;
 const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+const signedInHintCookie = 'vera-session-signed-in';
 
 describe('MeetingTimer', () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+    env.partialUpdate({ AUTH_ENABLED: true });
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    env.reset();
+    document.cookie = `${signedInHintCookie}=; max-age=0`;
   });
 
   it('counts down the time left by server time with labelled minutes and seconds', async () => {
@@ -37,8 +49,8 @@ describe('MeetingTimer', () => {
     expect(screen.getByRole('timer')).toHaveTextContent('45 sec left');
   });
 
-  it('shows the about-to-finish message once', async () => {
-    expect.assertions(2);
+  it('shows guests the about-to-finish message once, without the meeting ending dialog', async () => {
+    expect.assertions(3);
 
     vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
     const pushSpy = vi.spyOn(notifications$.actions, 'push');
@@ -53,6 +65,7 @@ describe('MeetingTimer', () => {
     expect(pushSpy).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'warning', message: 'The meeting is about to finish' })
     );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('dismisses the about-to-finish message when the meeting room closes', () => {
@@ -70,81 +83,78 @@ describe('MeetingTimer', () => {
     expect(hasEndingSoonNotification()).toBe(false);
   });
 
-  it('shows the about-to-finish message again for the new end of an extended meeting', async () => {
-    expect.assertions(3);
-
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    const { rerender } = render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
+  describe('signed in', () => {
+    beforeEach(() => {
+      document.cookie = `${signedInHintCookie}=1`;
     });
 
-    expect(await screen.findByText('5 min left')).toBeInTheDocument();
-    expect(pushSpy).toHaveBeenCalledTimes(1);
+    it('shows the meeting ending dialog instead of the message, and Got it closes it', async () => {
+      expect.assertions(3);
+      vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
+      const pushSpy = vi.spyOn(notifications$.actions, 'push');
 
-    rerender(<MeetingTimer scheduleWindow={{ ...scheduleWindow, endsAt: endsAt + 20 * 60_000 }} />);
-    await act(() => vi.advanceTimersByTimeAsync(20 * 60_000));
+      render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
+        runtimeContext: { videoClient: makeServerClockAhead() },
+        sessionKey: makeSessionKey({ extendedMinutes: 0 }),
+      });
 
-    expect(pushSpy).toHaveBeenCalledTimes(2);
-  });
+      const dialog = await screen.findByRole('dialog', { name: 'Meeting ending' });
 
-  it('opens the extend popover by itself, with options past the limit disabled', async () => {
-    expect.assertions(5);
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
+      expect(within(dialog).getByText('The current meeting is about to end.')).toBeInTheDocument();
+      expect(pushSpy).not.toHaveBeenCalled();
 
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-      sessionKey: makeSessionKey({ extendedMinutes: 80 }),
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Got it' }));
+      await waitForElementToBeRemoved(dialog);
+
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    expect(await screen.findByText('5 min left')).toBeInTheDocument();
-    expect(screen.getByRole('dialog', { name: 'Extend meeting' })).toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: /\+20 min/ })).toBeChecked();
-    expect(screen.getByRole('radio', { name: /\+60 min Over the 120 min limit/ })).toBeDisabled();
-    expect(screen.getByText('Extended by 80 of 120 min')).toBeInTheDocument();
-  });
+    it('extends by the chosen minutes, with choices past the cap disabled', async () => {
+      expect.assertions(4);
+      vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
+      const sessionKey = makeSessionKey({ extendedMinutes: 80 });
+      const videoClient = makeServerClockAhead();
 
-  it('closes the extend popover once the scheduled end has passed', async () => {
-    expect.assertions(3);
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 2_000);
+      render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
+        runtimeContext: { videoClient },
+        sessionKey,
+      });
 
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-      sessionKey: makeSessionKey({ extendedMinutes: 0 }),
+      const dialog = await screen.findByRole('dialog', { name: 'Meeting ending' });
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Extend' }));
+
+      expect(screen.getByRole('dialog', { name: 'How long do you want to extend?' })).toBeVisible();
+      expect(screen.getByRole('button', { name: '60 min' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+
+      fireEvent.click(screen.getByRole('button', { name: '20 min' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+
+      expect(videoClient.extendSession).toHaveBeenCalledWith({ sessionKey, minutes: 20 });
     });
 
-    expect(await screen.findByText('2 sec left')).toBeInTheDocument();
-    expect(screen.getByRole('dialog', { name: 'Extend meeting' })).toBeInTheDocument();
+    it('only says the meeting cannot be extended further at the cap', async () => {
+      expect.assertions(2);
+      vi.setSystemTime(endsAt - serverAheadMilliseconds - 4 * 60_000);
 
-    await act(() => vi.advanceTimersByTimeAsync(3_000));
+      render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
+        runtimeContext: { videoClient: makeServerClockAhead() },
+        sessionKey: makeSessionKey({ extendedMinutes: 120 }),
+      });
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
+      const dialog = await screen.findByRole('dialog', { name: 'Meeting ending' });
 
-  it('does not open by itself at the extension limit, and opens on demand to say so', async () => {
-    expect.assertions(3);
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 4 * 60_000);
-
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-      sessionKey: makeSessionKey({ extendedMinutes: 120 }),
+      expect(
+        await within(dialog).findByText(/This meeting cannot be extended further\./)
+      ).toBeInTheDocument();
+      expect(
+        within(dialog)
+          .getAllByRole('button')
+          .map(({ textContent }) => textContent)
+      ).toEqual(['Got it']);
     });
-
-    expect(await screen.findByText('4 min left')).toBeInTheDocument();
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-
-    fireEvent.click(getTimerButton());
-
-    expect(screen.getByRole('note')).toHaveTextContent(
-      'This meeting reached its 120 min extension limit'
-    );
   });
 });
-
-function getTimerButton() {
-  return screen.getByRole('button', { name: / left$/ });
-}
 
 function makeSessionKey({ extendedMinutes }: { extendedMinutes: number }): string {
   const payload = {
@@ -163,6 +173,7 @@ function makeServerClockAhead() {
         serverTime: Date.now() + serverAheadMilliseconds,
         extension: { options: [20, 40, 60] },
       }),
+    extendSession: () => new Promise(() => {}),
   });
 }
 

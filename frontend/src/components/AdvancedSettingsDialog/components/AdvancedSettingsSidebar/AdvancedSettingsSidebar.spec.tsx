@@ -2,6 +2,9 @@ import { render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vitest';
+import { makeVideoClientMock } from '@core-test/fixtures';
+import { SessionKeyClaim } from '@common/constants';
+import { makeTestProvider, providers } from '@test/providers';
 import { env } from '../../../../env';
 import AdvancedSettingsSidebar from './AdvancedSettingsSidebar';
 
@@ -43,6 +46,27 @@ describe('AdvancedSettingsSidebar', () => {
     });
   });
 
+  describe('meeting tab', () => {
+    it('is hidden outside a scheduled meeting', () => {
+      render(<AdvancedSettingsSidebar />);
+
+      expect(screen.queryByTestId('advanced-settings-tab-meeting')).not.toBeInTheDocument();
+    });
+
+    it('follows General in a scheduled meeting', () => {
+      const { wrapper } = makeTestProvider([providers.runtime, providers.user, providers.session], {
+        runtimeContext: { videoClient: makeVideoClientMock({}) },
+        userContext: undefined,
+        sessionContext: { initialValue: { sessionKey: makeScheduledSessionKey() } },
+      });
+
+      renderBase(<AdvancedSettingsSidebar />, { wrapper });
+
+      const tabNames = screen.getAllByRole('button').map(({ textContent }) => textContent);
+      expect(tabNames.slice(0, 2)).toEqual(['General', 'Meeting']);
+    });
+  });
+
   it('updates selected tab when clicking another tab', async () => {
     const user = userEvent.setup();
     render(<AdvancedSettingsSidebar />);
@@ -55,4 +79,13 @@ describe('AdvancedSettingsSidebar', () => {
 
 function render(ui: ReactElement) {
   return renderBase(ui);
+}
+
+function makeScheduledSessionKey(): string {
+  const payload = {
+    sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+    [SessionKeyClaim.schedule]: { at: Math.floor(Date.now() / 1000), min: 60 },
+  };
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
+  return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
 }
