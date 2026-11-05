@@ -7,9 +7,6 @@ export type AutoJoinTextProps = ComponentProps<'p'> & {
   startsAt: number;
 };
 
-/**
- * Says when the person will join a scheduled meeting by themselves.
- */
 const AutoJoinText = ({ startsAt, className, ...props }: AutoJoinTextProps): ReactElement => {
   const { t, i18n } = useTranslation();
 

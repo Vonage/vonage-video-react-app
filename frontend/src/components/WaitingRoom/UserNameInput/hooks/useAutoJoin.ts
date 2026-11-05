@@ -2,9 +2,6 @@ import { useEffect, useEffectEvent } from 'react';
 import isValidUserName from '@utils/isValidUserName';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
 
-/**
- * Runs `join` when a scheduled meeting starts by server time, if auto-join was requested and the name is valid.
- */
 const useAutoJoin = ({
   isAutoJoinRequested,
   scheduleStatus,
