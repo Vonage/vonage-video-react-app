@@ -10,7 +10,7 @@ import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
 import isScheduleError from '@api-lib/schedule/isScheduleError';
 import type { ExtendSessionPayload, IVideoClient } from '@api-lib/types';
 import { isNil } from '@common/assertions';
-import { SessionKeyClaim } from '@common/constants';
+import { MAX_TOTAL_EXTENSION_MINUTES, SessionKeyClaim } from '@common/constants';
 import { getScheduleWindow } from '@common/helpers';
 
 /**
@@ -30,7 +30,7 @@ async function extendSession(this: IVideoClient, payload: ExtendSessionPayload) 
 
     assertScheduleOpen(scheduleWindow);
 
-    const { maxTotalMinutes, options } = this._extension;
+    const { options } = this._extension;
 
     if (!options.includes(minutes)) {
       throw makeBadRequestErrorHandler(
@@ -40,9 +40,9 @@ async function extendSession(this: IVideoClient, payload: ExtendSessionPayload) 
 
     const requestedExtendedMinutes = (session[SessionKeyClaim.extended] ?? 0) + minutes;
 
-    if (requestedExtendedMinutes > maxTotalMinutes) {
+    if (requestedExtendedMinutes > MAX_TOTAL_EXTENSION_MINUTES) {
       throw makeForbiddenErrorHandler(
-        `A session cannot be extended by more than ${maxTotalMinutes} minutes in total`
+        `A session cannot be extended by more than ${MAX_TOTAL_EXTENSION_MINUTES} minutes in total`
       )(null);
     }
 

@@ -41,7 +41,7 @@ export type VideoClientConfig = {
   sessionSigning?: SessionSigning;
 
   /**
-   * How much a running scheduled session can be extended. Defaults to `{ maxTotalMinutes: 120, options: [20, 40, 60] }`.
+   * How much a single extension of a running scheduled session can add. Defaults to `{ options: [20, 40, 60] }`.
    */
   extension?: ExtensionConfig;
 
