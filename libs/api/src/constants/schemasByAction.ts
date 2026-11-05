@@ -9,8 +9,9 @@ import {
   StopArchivePayloadSchema,
   CreateEphemeralTokenPayloadSchema,
   CreateSessionAndJoinPayloadSchema,
+  GetServerSettingsPayloadSchema,
 } from '../schemas';
-import { z, type ZodType } from 'zod';
+import type { ZodType } from 'zod';
 
 const schemasByAction = {
   [VideoAction.createSession]: CreateSessionPayloadSchema.optional(),
@@ -23,7 +24,7 @@ const schemasByAction = {
   [VideoAction.disableCaptions]: DisableCaptionsPayloadSchema,
   [VideoAction.createEphemeralToken]: CreateEphemeralTokenPayloadSchema,
   [VideoAction.joinSession]: JoinSessionPayloadSchema,
-  [VideoAction.getServerSettings]: z.object({}).optional(),
+  [VideoAction.getServerSettings]: GetServerSettingsPayloadSchema.optional(),
 } as const satisfies Record<VideoAction, ZodType>;
 
 export default schemasByAction;
