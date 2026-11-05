@@ -4,9 +4,6 @@ import { isNil } from '@common/assertions';
 import formatCountdown from '../helpers/formatCountdown';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
 
-/**
- * Shows the last-minutes countdown and the started state in the browser tab title.
- */
 const useScheduleTabTitle = ({
   scheduleStatus,
   meetingName,

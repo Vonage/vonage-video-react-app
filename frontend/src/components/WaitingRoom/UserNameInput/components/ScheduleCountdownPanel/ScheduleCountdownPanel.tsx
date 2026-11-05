@@ -9,9 +9,6 @@ export type ScheduleCountdownPanelProps = ComponentProps<'div'> & {
   scheduleStatus: ScheduledStatus;
 };
 
-/**
- * Countdown to a scheduled meeting's start; it turns green once the meeting has started.
- */
 const ScheduleCountdownPanel = ({
   scheduleStatus,
   className,
