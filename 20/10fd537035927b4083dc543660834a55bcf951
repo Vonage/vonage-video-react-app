@@ -1,0 +1,30 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 21-22,24,42,44-48,54,119
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 145,151-162
+frontend/src/locales/de.json
+  h_6029769cf9ac60 382-383
+frontend/src/locales/en.json
+  h_6029769cf9ac60 382-383
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 382-383
+frontend/src/locales/es.json
+  h_6029769cf9ac60 382-383
+frontend/src/locales/it.json
+  h_6029769cf9ac60 382-383
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 392-393
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2010fd537035927b4083dc543660834a55bcf951",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
