@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  h_6029769cf9ac60 96-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cda8b479f6c526f3271163067596b4f3e3070fc4",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
