@@ -374,7 +374,6 @@
   "waitingRoom.precallNetworkTest.videoSupported": "Il video è supportato",
   "waitingRoom.precallNetworkTest.videoNotSupported": "Il video non è supportato",
   "waitingRoom.user.input.error": "Il nome non può essere vuoto né contenere caratteri speciali.",
-  "waitingRoom.untitledMeeting": "Riunione senza titolo",
   "waitingRoom.schedule.startsIn": "Inizia tra",
   "waitingRoom.schedule.countdown.days_one": "{{count}} giorno",
   "waitingRoom.schedule.countdown.days_other": "{{count}} giorni",

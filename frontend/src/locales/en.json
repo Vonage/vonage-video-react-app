@@ -374,7 +374,6 @@
   "waitingRoom.precallNetworkTest.videoSupported": "Video is supported",
   "waitingRoom.precallNetworkTest.videoNotSupported": "Video is not supported",
   "waitingRoom.user.input.error": "Name cannot be empty or contain special characters.",
-  "waitingRoom.untitledMeeting": "Untitled meeting",
   "waitingRoom.schedule.startsIn": "Starts in",
   "waitingRoom.schedule.countdown.days_one": "{{count}} day",
   "waitingRoom.schedule.countdown.days_other": "{{count}} days",

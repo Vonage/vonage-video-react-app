@@ -384,7 +384,6 @@
   "waitingRoom.precallNetworkTest.videoSupported": "ビデオはサポートされています",
   "waitingRoom.precallNetworkTest.videoNotSupported": "ビデオはサポートされていません",
   "waitingRoom.user.input.error": "名前は空にすることはできず、特殊文字を含むことはできません。",
-  "waitingRoom.untitledMeeting": "無題の会議",
   "waitingRoom.schedule.startsIn": "開始まで",
   "waitingRoom.schedule.countdown.days_one": "{{count}}日",
   "waitingRoom.schedule.countdown.days_other": "{{count}}日",

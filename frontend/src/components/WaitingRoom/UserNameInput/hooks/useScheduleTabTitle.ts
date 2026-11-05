@@ -12,11 +12,12 @@ const useScheduleTabTitle = ({
   meetingName,
 }: {
   scheduleStatus: ScheduleStatus;
-  meetingName: string;
+  meetingName: string | undefined;
 }) => {
   const { t } = useTranslation();
 
   const tabTitle = (() => {
+    if (isNil(meetingName)) return null;
     if (scheduleStatus.kind === 'started') {
       return t('waitingRoom.schedule.tabTitle.started', { name: meetingName });
     }
