@@ -27,17 +27,21 @@ const getOrCreateSessionKeyFromRoomName = async ({
       const shouldResignStoredSessionKey =
         storedSessionKeySignature.signature === 'legacy' && loadConfig().legacySessionKeysEnabled;
 
-      if (!shouldResignStoredSessionKey) return storedSessionKey;
+      const isStoredSessionKeyUnverifiable = storedSessionKeySignature.signature === 'unverifiable';
 
-      const sessionKey = resignSessionKey({
-        claims: storedSessionKeySignature.claims,
-        videoClient,
-      });
-      const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
+      if (shouldResignStoredSessionKey) {
+        const sessionKey = resignSessionKey({
+          claims: storedSessionKeySignature.claims,
+          videoClient,
+        });
+        const { sessionId } = videoClient.decodeSessionKey({ sessionKey });
 
-      await sessionService.setSession({ roomName, sessionKey, sessionId });
+        await sessionService.setSession({ roomName, sessionKey, sessionId });
 
-      return sessionKey;
+        return sessionKey;
+      }
+
+      if (!isStoredSessionKeyUnverifiable) return storedSessionKey;
     }
 
     if (!isValidRoomName(roomName)) {

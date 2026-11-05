@@ -261,5 +261,28 @@ describe('video route access policy', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.result.data.sessionKey).toEqual(sessionKey);
     });
+
+    it('creates a new session for a room whose stored key verifies with neither secret', async () => {
+      const unverifiableSessionKey = jwt.sign(
+        { sessionId: DEFAULT_VALID_SESSION_ID, roomName: 'stale-room' },
+        'unknown-secret'
+      );
+      await sessionService.setSession({
+        roomName: 'stale-room',
+        sessionKey: unverifiableSessionKey,
+        sessionId: DEFAULT_VALID_SESSION_ID,
+      });
+
+      const res = await createSessionAsSignedInUser({ app: buildApp(), roomName: 'stale-room' });
+      const { sessionKey } = res.body.result.data as { sessionKey: string };
+
+      expect(res.statusCode).toEqual(200);
+      expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).toMatchObject({
+        roomName: 'stale-room',
+      });
+      expect(await sessionService.getSessionKeyByRoomName({ roomName: 'stale-room' })).toEqual(
+        sessionKey
+      );
+    });
   });
 });
