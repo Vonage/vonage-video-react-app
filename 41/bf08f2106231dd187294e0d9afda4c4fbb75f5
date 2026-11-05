@@ -1,0 +1,102 @@
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useServerNow.ts
+  h_6029769cf9ac60 1-31
+libs/api/src/constants/schemasByAction.ts
+  h_6029769cf9ac60 13,26
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_6029769cf9ac60 18,178-185
+libs/api/src/handlers/getServerSettings.ts
+  h_6029769cf9ac60 1-7
+libs/api/src/handlers/index.ts
+  h_6029769cf9ac60 13
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  h_6029769cf9ac60 135-148
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_6029769cf9ac60 216-222
+libs/api/src/types/HandlersConfig.ts
+  h_6029769cf9ac60 7,9
+libs/api/src/types/VideoAction.ts
+  h_6029769cf9ac60 15
+libs/core/src/hooks/index.ts
+  h_6029769cf9ac60 12-13
+libs/core/src/hooks/useServerSettings/index.ts
+  h_6029769cf9ac60 1-2
+libs/core/src/hooks/useServerSettings/useServerSettings.test.ts
+  h_6029769cf9ac60 1-45
+libs/core/src/hooks/useServerSettings/useServerSettings.ts
+  h_6029769cf9ac60 1-47
+frontend/src/components/WaitingRoom/UserNameInput/helpers/formatCountdown.ts
+  h_6029769cf9ac60 1-11
+frontend/src/components/WaitingRoom/UserNameInput/helpers/formatMeetingDate.ts
+  h_6029769cf9ac60 1-30
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 1-24
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.spec.ts
+  h_6029769cf9ac60 1-28
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.ts
+  h_6029769cf9ac60 1-59
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 1-40
+frontend/src/components/WaitingRoom/UserNameInput/types/ScheduleStatus.ts
+  h_6029769cf9ac60 1-19
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 12
+libs/common/src/helpers/readScheduleClaim/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.test.ts
+  h_6029769cf9ac60 1-13
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.ts
+  h_6029769cf9ac60 1-21
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  h_6029769cf9ac60 70-71,115-116
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 1-144
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 2,16-21,25-27,31-32,40,45-46,50,60-69,88-93,96,108,119-120,123-131,156,158-171,173
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/JoinBlockerText.tsx
+  h_6029769cf9ac60 1-49
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  h_6029769cf9ac60 1-51
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/scheduleCountdownPanelVariants.ts
+  h_6029769cf9ac60 1-24
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  h_6029769cf9ac60 1-64
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 1-44
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 9-11,16,21-32,108
+frontend/src/locales/de.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/en.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/es.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/it.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 377-393
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_6029769cf9ac60 9,44-45,93-97
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 53-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "41bf08f2106231dd187294e0d9afda4c4fbb75f5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
