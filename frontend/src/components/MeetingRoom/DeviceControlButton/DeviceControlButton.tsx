@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, ReactElement } from 'react';
+import { useState, useRef, useCallback, memo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from '@hooks/usePublisherContext';
 import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
@@ -223,4 +223,4 @@ const DeviceControlButton = ({
   );
 };
 
-export default DeviceControlButton;
+export default memo(DeviceControlButton);
