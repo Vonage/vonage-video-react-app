@@ -53,7 +53,7 @@ export async function forwardToGollum(event: ClientLogEvent): Promise<void> {
 
   if (!gollumUrl) {
     console.warn(
-      '[logger] KIBANA_BASE_URL not configured - logs will not be forwarded to Kibana. Set KIBANA_BASE_URL in backend .env if you need log ingestion.'
+      '[logger] LOG_INGEST_URL not configured - logs will not be forwarded to Kibana. Set LOG_INGEST_URL in backend .env if you need log ingestion.'
     );
     gollumWarningAcknowledged = true;
 
