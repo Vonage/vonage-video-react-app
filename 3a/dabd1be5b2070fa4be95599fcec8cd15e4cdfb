@@ -1,0 +1,14 @@
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 18-19,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3adabd1be5b2070fa4be95599fcec8cd15e4cdfb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
