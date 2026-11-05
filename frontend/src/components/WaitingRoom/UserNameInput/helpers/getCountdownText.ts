@@ -1,6 +1,5 @@
 import type { TFunction } from 'i18next';
 import type { WaitingStatus } from '../types/ScheduleStatus';
-import formatCountdown from './formatCountdown';
 
 /**
  * Time left until a waiting meeting starts, at the precision its state calls for.
@@ -18,7 +17,12 @@ function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; 
   if (waitingStatus.kind === 'withinHour') {
     return t('waitingRoom.schedule.countdown.minutes', { minutes: waitingStatus.minutesLeft });
   }
-  return formatCountdown(waitingStatus.secondsLeft);
+  const minutes = Math.floor(waitingStatus.secondsLeft / 60);
+  const seconds = waitingStatus.secondsLeft % 60;
+  if (minutes === 0) {
+    return t('waitingRoom.schedule.countdown.seconds', { seconds });
+  }
+  return t('waitingRoom.schedule.countdown.minutesAndSeconds', { minutes, seconds });
 }
 
 export default getCountdownText;
