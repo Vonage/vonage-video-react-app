@@ -6,7 +6,6 @@ import VideoClient from '.';
 import { TokenRole, type VideoClientConfig } from '@api-lib/types';
 import { SessionKeyClaim } from '@common/constants';
 import { tryCatch } from '@common/execution';
-import { MeetingEndedError, MeetingNotStartedError } from '@api-lib/schedule';
 
 vi.mock('@vonage/video');
 vi.mock('@vonage/auth');
@@ -312,8 +311,7 @@ describe('VideoClient', () => {
 
       const { error } = tryCatch(() => videoClient.joinSession({ sessionKey }));
 
-      expect(error).toBeInstanceOf(MeetingNotStartedError);
-      expect(error).toMatchObject({ statusCode: 403 });
+      expect(error).toMatchObject({ name: 'MeetingNotStartedError', statusCode: 403 });
       expect(mocks.video.generateClientToken).not.toHaveBeenCalled();
     });
 
@@ -326,9 +324,23 @@ describe('VideoClient', () => {
 
       const { error } = tryCatch(() => videoClient.joinSession({ sessionKey }));
 
-      expect(error).toBeInstanceOf(MeetingEndedError);
-      expect(error).toMatchObject({ statusCode: 403 });
+      expect(error).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
       expect(mocks.video.generateClientToken).not.toHaveBeenCalled();
+    });
+
+    it('allows a join exactly at the scheduled start and refuses one exactly at the scheduled end', () => {
+      const { videoClient } = createVideoClient();
+      const startsAt = Math.floor(Date.now() / 1000) * 1000 + 60 * 60 * 1000;
+      const sessionKey = signScheduledSessionKey({ startsAt, durationMinutes: 60 });
+
+      vi.useFakeTimers({ now: startsAt });
+      const { error: errorAtStart } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+      vi.setSystemTime(startsAt + 60 * 60 * 1000);
+      const { error: errorAtEnd } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+      vi.useRealTimers();
+
+      expect(errorAtStart).toBeNull();
+      expect(errorAtEnd).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
     });
 
     it('never issues a token that outlives the scheduled end', () => {
