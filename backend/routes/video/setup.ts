@@ -11,8 +11,7 @@ import anonymousSessionCreationLimiter from '../../middleware/anonymousSessionCr
 import verifySessionKeySignature from './helpers/verifySessionKeySignature';
 import resignSessionKey from './helpers/resignSessionKey';
 import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
-import { isNil, isRecord } from '@common/assertions';
-import loadConfig from '../../helpers/config';
+import { isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
@@ -65,10 +64,8 @@ videoHandler.use$(
   }
 );
 
-videoHandler.use$('extendSession', ({ ctx, next }) => {
-  const isAnonymousCaller = loadConfig().authEnabled && isNil(ctx.user);
-
-  if (isAnonymousCaller) {
+videoHandler.use$(VideoAction.extendSession, function requireSignedInUserToExtend({ ctx, next }) {
+  if (isAnonymousCaller(ctx)) {
     throw makeUnauthorizedErrorHandler('Extending a meeting requires a signed-in user')(null);
   }
 
