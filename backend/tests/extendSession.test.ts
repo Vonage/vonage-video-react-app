@@ -1,6 +1,8 @@
+import type { Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { tryCatch } from '@common/execution';
 import mockVonageVideoSdk from './helpers/mockVonageVideoSdk';
+import type { RequestWithTokenAuth } from '../middleware/authMiddleware/authMiddleware';
 
 const config = vi.hoisted(() => ({ authEnabled: true }));
 
@@ -14,9 +16,10 @@ const { videoHandler } = await import('../routes/video');
 
 const signedInUser = { active: true, sub: 'user-1', client_id: 'test-client-id' };
 
-function makeCaller(context: { user?: typeof signedInUser }) {
+function makeCaller({ user }: { user?: typeof signedInUser }) {
   return videoHandler.router$.createCaller({
-    ...context,
+    req: { user } as RequestWithTokenAuth,
+    res: {} as Response,
     videoClient: videoHandler.makeVideoClient$(),
   });
 }
