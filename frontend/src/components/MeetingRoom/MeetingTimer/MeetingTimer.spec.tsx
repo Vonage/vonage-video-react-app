@@ -49,7 +49,7 @@ describe('MeetingTimer', () => {
     expect(screen.getByRole('timer')).toHaveTextContent('45 sec left');
   });
 
-  it('shows guests the about-to-finish message once, without the meeting ending dialog', async () => {
+  it('shows anonymous users the about-to-finish message once, without the meeting ending dialog', async () => {
     expect.assertions(3);
 
     vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);

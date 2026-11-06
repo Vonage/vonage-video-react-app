@@ -13,7 +13,7 @@ Before the last five minutes there is no timer. Meetings without a schedule have
 
 ## The end-of-meeting warning
 
-When the timer appears, a message tells guests that the meeting is about to finish. People who can extend the meeting
+When the timer appears, a message tells anonymous users that the meeting is about to finish. People who can extend the meeting
 see the **Meeting ending** dialog instead (see [Adding time](#adding-time)). Either shows once. Nobody can join the
 meeting after its scheduled end.
 
@@ -33,7 +33,7 @@ Only signed-in people can extend a meeting. Where sign-in is turned off, everyon
   the end time, filled up to now, and the time left. **Extend** there offers the same choices.
 - A meeting can be extended by 120 minutes in total. Choices that would go past that limit are greyed out. Once the
   limit is reached, the dialog and the tab say **This meeting cannot be extended further.**
-- Guests see the bar and **Sign in to extend this meeting.** Meetings without a schedule have no **Meeting** tab.
+- Anonymous users see the bar and **Sign in to extend this meeting.** Meetings without a schedule have no **Meeting** tab.
 - When anyone extends the meeting, everyone in it sees a short message with the new end time, and their timer and the
   end of the meeting follow it. Nobody is disconnected and nobody has to rejoin.
 - Someone who opens the meeting link for the first time after an extension still sees the original end time, and

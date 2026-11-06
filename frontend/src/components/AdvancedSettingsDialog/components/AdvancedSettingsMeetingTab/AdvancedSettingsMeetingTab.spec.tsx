@@ -25,7 +25,7 @@ describe('AdvancedSettingsMeetingTab', () => {
     document.cookie = `${signedInHintCookie}=; max-age=0`;
   });
 
-  it('shows guests the progress and asks them to sign in to extend', async () => {
+  it('shows anonymous users the progress and asks them to sign in to extend', async () => {
     expect.assertions(3);
 
     render({ extendedMinutes: 0 });
