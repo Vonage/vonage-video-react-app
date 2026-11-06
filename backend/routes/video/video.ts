@@ -120,9 +120,13 @@ videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
 videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   const isCreatingOrJoiningSession =
     !error &&
-    [VideoAction.createSession, VideoAction.createSessionAndJoin, VideoAction.joinSession].includes(
-      videoAction
-    );
+    [
+      VideoAction.createSession,
+      VideoAction.createSessionAndJoin,
+      VideoAction.joinSession,
+      VideoAction.extendSession,
+      VideoAction.renewSessionKey,
+    ].includes(videoAction);
 
   if (!isCreatingOrJoiningSession) return;
 
