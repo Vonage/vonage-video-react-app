@@ -1,11 +1,12 @@
 import { type FC } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import bridge$ from '../../stores/bridge';
 import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { Box } from '@mui/material';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
@@ -29,10 +30,10 @@ import { PageLayoutEmbed } from '@ui';
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
-  const { roomIdentifier = '' } = useParams<{ roomIdentifier: string }>();
+  const { sessionKey } = useSessionKeyParam();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
-  const missingRoomIdentifier = !roomIdentifier;
+  const missingRoomIdentifier = !sessionKey;
   const canRedirect = missingRoomIdentifier && !!sessionIdentifier;
   const isConfigError = missingRoomIdentifier && !sessionIdentifier;
 
