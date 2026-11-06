@@ -2,10 +2,12 @@ import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
+import advancedSettings$ from '@Context/AdvancedSettings';
 import ToolbarButton from '../ToolbarButton';
 import PopupDialog, { DialogTexts } from '../PopupDialog';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
+import { Field } from '@ui/components';
 import classNames from 'classnames';
 import { RECORDING_START_DELAY } from '@utils/constants';
 import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
@@ -44,10 +46,19 @@ const PostCallTranscriptionButton = ({
     connected,
   } = useSessionContext();
 
+  const includeTranscriptionSummaryDefault = advancedSettings$.use.select(
+    ({ includeTranscriptionSummary }) => includeTranscriptionSummary
+  );
+
   const isTranscribing = !!transcriptionArchiveId;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [includeSummary, setIncludeSummary] = useState<boolean>(includeTranscriptionSummaryDefault);
+
   const title = isTranscribing ? t('transcribing.stop.title') : t('transcribing.start.title');
   const handleButtonClick = () => {
+    if (!isModalOpen) {
+      setIncludeSummary(includeTranscriptionSummaryDefault);
+    }
     setIsModalOpen((prev) => !prev);
   };
 
@@ -84,6 +95,7 @@ const PostCallTranscriptionButton = ({
             await videoClient.startArchive({
               sessionKey: sessionKey!,
               withTranscription: true,
+              withSummary: includeSummary,
             });
           } catch (err) {
             resetTranscriptionStartRequestedBySelf();
@@ -104,6 +116,20 @@ const PostCallTranscriptionButton = ({
     handleClose();
     handleDialogClick(isTranscribing ? 'stop' : 'start');
   };
+
+  const startDialogExtraContent = !isTranscribing ? (
+    <Field>
+      <Field.Label htmlFor="post-call-transcription-include-summary">
+        {t('transcribing.start.dialog.includeSummary')}
+      </Field.Label>
+      <Field.Input
+        variant="switch"
+        id="post-call-transcription-include-summary"
+        checked={includeSummary}
+        onChange={(event) => setIncludeSummary(event.currentTarget.checked)}
+      />
+    </Field>
+  ) : null;
 
   return (
     <>
@@ -136,8 +162,10 @@ const PostCallTranscriptionButton = ({
         handleClose={handleClose}
         handleActionClick={handleActionClick}
         actionText={actionText}
+        extraContent={startDialogExtraContent}
       />
     </>
   );
 };
+
 export default PostCallTranscriptionButton;

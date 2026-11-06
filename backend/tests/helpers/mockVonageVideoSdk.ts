@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 
-type ArchiveResponse = { id: string; status: string };
+type ArchiveResponse = { id: string; status: string; sessionId?: string };
 type CaptionsResponse = { captionsId: string };
 
 // base64('2~vonageAppId~0.0.0.0~2024-01-01') — valid format for decodeSessionId
@@ -47,7 +47,7 @@ async function mockVonageVideoSdk({
       generateClientToken: vi.fn().mockReturnValue('someToken'),
       startArchive: vi
         .fn<[sessionId: string], Promise<ArchiveResponse>>()
-        .mockResolvedValue({ id: 'archiveId', status: 'started' }),
+        .mockResolvedValue({ id: 'archiveId', status: 'started', sessionId: validSessionId }),
       stopArchive: vi
         .fn<[archiveId: string], Promise<ArchiveResponse>>()
         .mockImplementation((archiveId: string) =>

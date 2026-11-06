@@ -5,6 +5,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
 import { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 
 export type DialogTexts = {
   title?: string;
@@ -19,6 +20,7 @@ export type DialogProps = {
   handleActionClick: () => void;
   actionText: DialogTexts;
   disableDismiss?: boolean;
+  extraContent?: ReactNode;
 };
 
 /**
@@ -39,6 +41,7 @@ const PopupDialog = ({
   handleActionClick,
   actionText,
   disableDismiss = false,
+  extraContent,
 }: DialogProps): ReactElement => {
   return (
     <Dialog
@@ -54,8 +57,9 @@ const PopupDialog = ({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">{actionText.title}</DialogTitle>
-      <DialogContent>
+      <DialogContent className="flex flex-col gap-4">
         <DialogContentText id="alert-dialog-description">{actionText.contents}</DialogContentText>
+        {extraContent}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>{actionText.secondaryActionText}</Button>

@@ -7,6 +7,7 @@ interface SessionData {
   captionsUserCount: number;
   archiveIds: string[];
   serverRotationPending: number;
+  transcriptionWithSummary: boolean;
 }
 
 class InMemorySessionStorage implements SessionStorage {
@@ -40,6 +41,7 @@ class InMemorySessionStorage implements SessionStorage {
           captionsUserCount: 0,
           archiveIds: [],
           serverRotationPending: 0,
+          transcriptionWithSummary: true,
         };
     this.roomNameBySessionKey[sessionKey] = roomName;
     if (sessionId) {
@@ -134,5 +136,22 @@ class InMemorySessionStorage implements SessionStorage {
   async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
     return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? 0;
   }
+
+  async setTranscriptionWithSummary({
+    sessionId,
+    withSummary,
+  }: {
+    sessionId: string;
+    withSummary: boolean;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.transcriptionWithSummary = withSummary;
+  }
+
+  async getTranscriptionWithSummary({ sessionId }: { sessionId: string }): Promise<boolean> {
+    return this.getSessionBySessionId(sessionId)?.transcriptionWithSummary ?? true;
+  }
 }
+
 export default InMemorySessionStorage;
