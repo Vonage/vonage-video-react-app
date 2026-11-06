@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
+  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
 
   await page.locator('button:text("Join waiting room")').click();
 
@@ -25,12 +25,28 @@ test('should navigate to waiting room then publish in room via room name textbox
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
 
-test('should navigate to waiting room then publish in room via Create room button', async ({
+test('should create a meeting, copy its link, then join and publish via Create room button', async ({
   page,
+  context,
+  browserName,
 }) => {
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
-  await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
+  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+  await expect(wizard.getByText('the link never expires')).toBeVisible();
+  await wizard.getByRole('button', { name: 'Create meeting' }).click();
+  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+
+  await wizard.getByRole('button', { name: 'Copy link' }).click();
+  await expect(wizard.getByRole('button', { name: 'Link copied' })).toBeVisible();
+  if (browserName === 'chromium') {
+    await context.grantPermissions(['clipboard-read']);
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(meetingLink);
+  }
+
+  await wizard.getByRole('button', { name: 'Join now' }).click();
+
+  await expect(page).toHaveURL(meetingLink ?? '');
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -43,6 +59,30 @@ test('should navigate to waiting room then publish in room via Create room butto
   await page.waitForSelector('.publisher', { state: 'visible' });
 });
 
+test('should create a named meeting scheduled for two hours and open its waiting room', async ({
+  page,
+}) => {
+  await page.getByRole('button', { name: 'Create a new room' }).click();
+
+  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+  await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
+  await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+  await expect(wizard.getByRole('button', { name: '1 hour' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  await wizard.getByRole('button', { name: '2 hours' }).click();
+  await wizard.getByRole('button', { name: 'Create meeting' }).click();
+
+  await expect(wizard.getByText('weekly-sync')).toBeVisible();
+  await expect(wizard.getByText(/ · 2 hours$/)).toBeVisible();
+  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+
+  await wizard.getByRole('button', { name: 'Join now' }).click();
+
+  await expect(page).toHaveURL(meetingLink ?? '');
+});
+
 test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, context }) => {
   const [newPage] = await Promise.all([
     context.waitForEvent('page'),
@@ -53,7 +93,7 @@ test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, cont
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByRole('textbox', { name: /Room name/i }).fill('some-room');
+  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
 
   await page.keyboard.press('Enter');
 
@@ -81,42 +121,42 @@ test('should keep landing content equivalent across languages', async ({ page })
     {
       languageOption: 'English',
       sectionHeading: 'Start a new video meeting',
-      joinHeading: 'Join existing meeting',
-      roomNameLabel: 'Room name',
+      joinHeading: 'Join room',
+      roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'English (US)',
       sectionHeading: 'Start a new video meeting',
-      joinHeading: 'Join existing meeting',
-      roomNameLabel: 'Room name',
+      joinHeading: 'Join room',
+      roomNameLabel: 'Room ID',
       joinWaitingRoomButton: 'Join waiting room',
-      emptyRoomNameErrorText: 'Cannot be empty, contain',
+      emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
       languageOption: 'Deutsch',
       sectionHeading: 'Neues Videomeeting starten',
-      joinHeading: 'Bestehendem Meeting beitreten',
-      roomNameLabel: 'Raumname',
+      joinHeading: 'Raum beitreten',
+      roomNameLabel: 'Raum-ID',
       joinWaitingRoomButton: 'Warteraum betreten',
-      emptyRoomNameErrorText: 'Kann nicht leer sein und darf',
+      emptyRoomNameErrorText: 'Geben Sie eine gültige Raum-ID',
     },
     {
       languageOption: 'Italiano',
       sectionHeading: 'Inizia una nuova',
-      joinHeading: 'Unisciti a una riunione',
-      roomNameLabel: 'Nome della stanza',
+      joinHeading: 'Unisciti a una stanza',
+      roomNameLabel: 'ID della stanza',
       joinWaitingRoomButton: "Unisciti alla sala d'attesa",
-      emptyRoomNameErrorText: 'Non può essere vuoto,',
+      emptyRoomNameErrorText: 'Inserisci un ID della stanza',
     },
     {
       languageOption: 'Español (México)',
       sectionHeading: 'Iniciar una nueva',
-      joinHeading: 'Unirse a una reunión existente',
-      roomNameLabel: 'Nombre de sala',
+      joinHeading: 'Unirse a una sala',
+      roomNameLabel: 'ID de sala',
       joinWaitingRoomButton: 'Unirse a la sala de espera',
-      emptyRoomNameErrorText: 'No se permite dejar el campo',
+      emptyRoomNameErrorText: 'Escribe un ID de sala',
     },
   ];
 
