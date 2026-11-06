@@ -7,6 +7,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import Button from '@mui/material/Button';
+import tryCatch from '@common/execution/tryCatch';
 
 type MutingDialogTexts = {
   contents: string;
@@ -43,11 +44,14 @@ const MutingDialog = ({ isOpen, setIsOpen, stream }: MutingDialogProps): ReactEl
     setIsOpen(false);
   };
 
-  const handleActionClick = () => {
-    if (forceMute && stream) {
-      void forceMute(stream);
-      handleClose();
-    }
+  const handleActionClick = async () => {
+    const isForceMuteUnavailable = !forceMute || !stream;
+    if (isForceMuteUnavailable) return;
+
+    const { didFail } = await tryCatch(() => forceMute(stream));
+    if (didFail) return;
+
+    handleClose();
   };
 
   return (

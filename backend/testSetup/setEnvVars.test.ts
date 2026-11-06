@@ -61,8 +61,8 @@ describe('Environment Variables', () => {
     expect(process.env.OT_API_SECRET).toBe(openTokAPISecret);
   });
 
-  test('should have the correct KIBANA_BASE_URL', () => {
-    const kibanaBaseUrl = 'https://example.com';
-    expect(process.env.KIBANA_BASE_URL).toBe(kibanaBaseUrl);
+  test('should have the correct LOG_INGEST_URL', () => {
+    const logIngestUrl = 'https://example.com';
+    expect(process.env.LOG_INGEST_URL).toBe(logIngestUrl);
   });
 });

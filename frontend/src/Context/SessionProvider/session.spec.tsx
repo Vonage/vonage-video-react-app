@@ -6,6 +6,7 @@ import { Publisher, Stream } from '@vonage/client-sdk-video';
 import useSessionContext from '@hooks/useSessionContext';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import { EMOJI_DISPLAY_DURATION } from '@utils/constants';
 import type {
   SignalEvent,
   StreamPropertyChangedEvent,
@@ -13,7 +14,9 @@ import type {
 } from '@app-types/session';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
+import { notifications$ } from '@core/stores';
 import { env } from '../../env';
+import frontendLogger from '../../logger';
 
 vi.mock('@utils/ActiveSpeakerTracker');
 vi.mock('@utils/VonageVideoClient');
@@ -22,6 +25,7 @@ vi.mock('@utils/VonageVideoClient');
 vi.mock('@utils/constants', () => ({
   MAX_PIN_COUNT_MOBILE: 1,
   MAX_PIN_COUNT_DESKTOP: 1,
+  EMOJI_DISPLAY_DURATION: 5000,
 }));
 
 vi.mock('@api/fetchCredentials');
@@ -34,6 +38,8 @@ const mockVideoClient = {
 // A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
 const validSessionKey =
   'eyJhbGciOiJIUzI1NiJ9.eyJzZXNzaW9uSWQiOiIxX01YNHhNak0wTlRZM09INC1WR2gxSUVabFlpQXlOeUF3T0Rvek1qb3pOQ0JRVTFRZ01qQXlNSDR3TGpJME5EWXhNakUiLCJyb29tTmFtZSI6IlRlc3RDb21wb25lbnRSb29tIn0.fakesig';
+
+const subscriberWrappersRefHistory: SubscriberWrapper[][] = [];
 
 describe('SessionProvider', () => {
   let activeSpeakerTracker: ActiveSpeakerTracker;
@@ -54,18 +60,34 @@ describe('SessionProvider', () => {
       pinSubscriber,
       isMaxPinned,
       lastStreamUpdate,
+      emojiQueue,
       messages,
       unreadCount,
     } = useSessionContext();
 
     useEffect(() => {
       if (joinRoom) {
-        void joinRoom({ sessionKey: validSessionKey });
+        joinRoom({ sessionKey: validSessionKey }).catch(() => {});
       }
     }, [joinRoom]);
 
+    useEffect(() => {
+      subscriberWrappersRefHistory.push(subscriberWrappers);
+    }, [subscriberWrappers]);
+
     return (
       <div>
+        <button
+          data-testid="joinRoom"
+          onClick={() => {
+            if (joinRoom) {
+              joinRoom({ sessionKey: validSessionKey }).catch(() => {});
+            }
+          }}
+          type="button"
+        >
+          Join Room
+        </button>
         <button
           data-testid="publish"
           onClick={() => {
@@ -101,7 +123,7 @@ describe('SessionProvider', () => {
           data-testid="forceMute"
           onClick={() => {
             if (forceMute) {
-              void forceMute({} as unknown as Stream);
+              forceMute({} as unknown as Stream).catch(() => {});
             }
           }}
           type="button"
@@ -129,6 +151,9 @@ describe('SessionProvider', () => {
         <span data-testid="reconnecting">{String(reconnecting)}</span>
         <span data-testid="archiveId">{String(archiveId)}</span>
         <span data-testid="isMaxPinned">{String(isMaxPinned)}</span>
+        <span data-testid="emojiSenders">
+          {emojiQueue.map((emojiWrapper) => emojiWrapper.name).join(',')}
+        </span>
         <span data-testid="unreadCount">{unreadCount}</span>
         <span data-testid="messageCount">{messages.length}</span>
         <span data-testid="streamPropertyChanged">
@@ -139,6 +164,8 @@ describe('SessionProvider', () => {
   };
 
   beforeEach(() => {
+    subscriberWrappersRefHistory.length = 0;
+
     activeSpeakerTracker = Object.assign(new EventEmitter(), {
       onSubscriberDestroyed: vi.fn(),
       onSubscriberAudioLevelUpdated: vi.fn(),
@@ -286,6 +313,44 @@ describe('SessionProvider', () => {
       });
     });
 
+    it('resolves the emoji sender from the current subscribers without replacing the subscriberWrappers array', async () => {
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        vonageVideoClient.emit('subscriberVideoElementCreated', {
+          id: 'sub1',
+          isScreenshare: false,
+          subscriber: {
+            stream: { connection: { connectionId: 'sub1-connection' }, name: 'Sub One' },
+          },
+        } as unknown as SubscriberWrapper);
+      });
+      await waitFor(() => expect(getByTestId('subscriberWrappers')).toHaveTextContent('sub1'));
+
+      const wrappersBeforeEmoji = subscriberWrappersRefHistory.at(-1);
+
+      const realSetTimeout = globalThis.setTimeout;
+      vi.spyOn(globalThis, 'setTimeout').mockImplementation(((
+        handler: TimerHandler,
+        timeout?: number,
+        ...args: unknown[]
+      ) => {
+        if (timeout === EMOJI_DISPLAY_DURATION) return 0;
+        return realSetTimeout(handler, timeout, ...args);
+      }) as typeof setTimeout);
+
+      act(() => {
+        vonageVideoClient.emit('signal:emoji', {
+          type: 'signal:emoji',
+          data: JSON.stringify({ emoji: '👍', time: 1 }),
+          from: { connectionId: 'sub1-connection' },
+        } as unknown as SignalEvent);
+      });
+
+      await waitFor(() => expect(getByTestId('emojiSenders')).toHaveTextContent('Sub One'));
+      expect(subscriberWrappersRefHistory.at(-1)).toBe(wrappersBeforeEmoji);
+    });
+
     it('removing a subscriber should remove it from the subscriberWrappers', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
@@ -308,6 +373,33 @@ describe('SessionProvider', () => {
         expect(getByTestId('subscriberWrappers')).not.toHaveTextContent('sub1');
       });
     });
+
+    it('pushes one notification when several resubscribes fail together', async () => {
+      expect.assertions(2);
+
+      const { getByTestId } = render(<TestComponent />);
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'true') throw new Error('not connected');
+      });
+      const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+      act(() => {
+        Array.from({ length: 4 }).forEach(() => {
+          vonageVideoClient.emit('resubscribeFailed', {
+            streamId: 'stream-1',
+            error: new Error('stream not found'),
+          });
+        });
+      });
+
+      expect(pushSpy).toHaveBeenCalledTimes(1);
+      expect(pushSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'warning',
+          message: "Connection issues. Some video couldn't be restored.",
+        })
+      );
+    });
   });
 
   describe('session', () => {
@@ -318,6 +410,40 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
 
+    it('connect rejecting should rethrow, tear down via disconnect(), and let a retry attempt a new connection', async () => {
+      expect.assertions(4);
+      const mockedVonageVideoClient = vi.mocked(VonageVideoClient);
+      vonageVideoClient.connect = vi.fn().mockRejectedValueOnce(new Error('connect failed'));
+
+      const { getByTestId } = render(<TestComponent />);
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 1) {
+          throw new Error('VonageVideoClient not constructed yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(1);
+      expect(getByTestId('connected')).toHaveTextContent('false');
+
+      await waitFor(() => {
+        if (vi.mocked(vonageVideoClient.disconnect).mock.calls.length < 1) {
+          throw new Error('disconnect not called yet');
+        }
+      });
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        getByTestId('joinRoom').click();
+      });
+
+      await waitFor(() => {
+        if (mockedVonageVideoClient.mock.calls.length < 2) {
+          throw new Error('VonageVideoClient not retried yet');
+        }
+      });
+      expect(mockedVonageVideoClient).toHaveBeenCalledTimes(2);
+    });
+
     it('disconnect should call disconnect on VonageVideoClient and set connected to false', async () => {
       const { getByTestId } = await renderAndWaitForConnection();
 
@@ -326,6 +452,24 @@ describe('SessionProvider', () => {
       });
 
       await waitFor(() => expect(getByTestId('connected')).toHaveTextContent('false'));
+      expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
+    });
+
+    it('disconnect should null the ref and set connected to false without waiting for VonageVideoClient.disconnect() to settle', async () => {
+      vonageVideoClient.disconnect = vi.fn().mockReturnValue(new Promise<void>(() => {}));
+
+      const { getByTestId } = await renderAndWaitForConnection();
+
+      act(() => {
+        getByTestId('disconnect').click();
+      });
+
+      await waitFor(() => {
+        if (getByTestId('connected').textContent !== 'false') {
+          throw new Error('connected not false yet');
+        }
+      });
+      expect(getByTestId('connected')).toHaveTextContent('false');
       expect(vonageVideoClient.disconnect).toHaveBeenCalledTimes(1);
     });
 
@@ -522,12 +666,56 @@ describe('SessionProvider', () => {
     await waitFor(() => expect(vonageVideoClient.forceMuteStream).toHaveBeenCalledTimes(1));
   });
 
+  it('forceMute should report once and surface a notification when forceMuteStream fails', async () => {
+    expect.assertions(5);
+    const error = new Error('Force mute failed');
+    vi.mocked(vonageVideoClient.forceMuteStream).mockRejectedValueOnce(error);
+    const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { getByTestId } = await renderAndWaitForConnection();
+
+    await act(async () => {
+      getByTestId('forceMute').click();
+      await Promise.resolve();
+    });
+
+    expect(reportErrorSpy).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({ eventSource: 'session.forceMute.error' })
+    );
+    expect(reportErrorSpy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'warning',
+        message: expect.any(String),
+      })
+    );
+  });
+
   it('joinRoom should call joinSession and connect', async () => {
     await renderAndWaitForConnection();
 
     await waitFor(() => {
       expect(mockJoinSessionMutate).toHaveBeenCalledTimes(1);
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('joinRoom replaces the URL with the sessionKey the backend returns', async () => {
+    const resignedSessionKey = validSessionKey.replace('fakesig', 'resignedsig');
+    mockJoinSessionMutate.mockResolvedValue({
+      token: 'token',
+      sessionId: 'sessionId',
+      sessionKey: resignedSessionKey,
+    });
+
+    await renderAndWaitForConnection();
+
+    expect(window.location.pathname).toBe(`/room/${resignedSessionKey}`);
+    expect(VonageVideoClient).toHaveBeenCalledWith({
+      sessionKey: resignedSessionKey,
+      token: 'token',
     });
   });
 });

@@ -21,6 +21,7 @@ import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
+import { frontendLogger } from '../../../logger';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -197,7 +198,6 @@ const useBackgroundPublisher = (
         videoFilter = initialBackgroundRef.current;
       }
 
-      // Reuse the preview publisher's already-captured camera track
       const publisherOptions: PublisherProperties = {
         insertDefaultUI: false,
         videoFilter,
@@ -207,20 +207,31 @@ const useBackgroundPublisher = (
         publishVideo: isVideoEnabled,
       };
 
-      backgroundPublisherRef.current = initPublisher(
-        undefined,
-        publisherOptions,
-        (err: unknown) => {
-          if (err instanceof Error) {
-            backgroundPublisherRef.current = null;
-            destroySharedVideoTrack();
-            if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-              console.error('initPublisher error: ', err);
-            }
-          }
-        }
-      );
-      addPublisherListeners(backgroundPublisherRef.current);
+      let publisher: Publisher | null = null;
+      let hasInitFailed = false;
+
+      publisher = initPublisher(undefined, publisherOptions, (error) => {
+        if (!error) return;
+        hasInitFailed = true;
+        frontendLogger.reportError(error, {
+          eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+        });
+
+        destroySharedVideoTrack();
+
+        if (backgroundPublisherRef.current !== publisher) return;
+        backgroundPublisherRef.current = null;
+        attempt(() => publisher?.destroy());
+      });
+
+      if (hasInitFailed) {
+        attempt(() => publisher?.destroy());
+        destroySharedVideoTrack();
+        return;
+      }
+
+      backgroundPublisherRef.current = publisher;
+      addPublisherListeners(publisher);
     },
     [addPublisherListeners, isVideoEnabled]
   );

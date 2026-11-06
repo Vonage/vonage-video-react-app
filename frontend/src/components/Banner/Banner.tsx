@@ -5,6 +5,7 @@ import BannerLogo from '../BannerLogo';
 import BannerLanguage from '../BannerLanguage';
 import BannerLogout from '../BannerLogout';
 import { env } from '../../env';
+import isSignedIn from '../../utils/isSignedIn';
 
 /**
  * Banner Component
@@ -26,7 +27,7 @@ const Banner = (): ReactElement => {
       </div>
 
       <div className="bg-vera-surface vera-desktop:bg-vera-background! flex-1 max-sm:p-6 p-10 flex justify-end items-center gap-4 h-full">
-        {env.AUTH_ENABLED && (
+        {env.AUTH_ENABLED && isSignedIn() && (
           <>
             <BannerLogout />
             <Divider orientation="vertical" flexItem variant="middle" />
