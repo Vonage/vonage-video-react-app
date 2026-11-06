@@ -18,6 +18,6 @@ describe('JoinExistingRoom', () => {
 
     expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
     expect(screen.getByText('Join waiting room')).toBeInTheDocument();
-    expect(screen.getAllByText(/Room name/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Room ID/i)[0]).toBeInTheDocument();
   });
 });
