@@ -213,6 +213,13 @@ function createVideoRouter<
       },
     }),
 
+    getServerSettings: makeMutation({
+      key: VideoAction.getServerSettings,
+      config: undefined,
+      callback: (videoClient, input) => {
+        return videoClient.getServerSettings(input);
+      },
+    }),
     createSessionAndJoin: makeMutation({
       key: VideoAction.createSessionAndJoin,
       config: {

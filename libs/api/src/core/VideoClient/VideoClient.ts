@@ -15,6 +15,7 @@ import {
   joinSession,
   decodeSessionKey,
   createSessionAndJoin,
+  getServerSettings,
 } from '@api-lib/handlers';
 import {
   type HandlersDefaults,
@@ -174,6 +175,11 @@ class VideoClient implements IVideoClient {
    * Joins an existing session
    */
   public joinSession = this.createVideoHandler(VideoAction.joinSession, joinSession);
+
+  public getServerSettings = this.createVideoHandler(
+    VideoAction.getServerSettings,
+    getServerSettings
+  );
 }
 
 export default VideoClient;
