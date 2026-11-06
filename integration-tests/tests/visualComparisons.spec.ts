@@ -167,6 +167,7 @@ test.describe('Waiting page auto-join UI test', () => {
       if (!isMobile) {
         await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
       }
+      await serveStaticFilesFromCache(page);
 
       const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
         data: { roomName: 'weekly-sync', schedule },
