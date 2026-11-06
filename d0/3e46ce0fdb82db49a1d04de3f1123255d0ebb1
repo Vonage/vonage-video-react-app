@@ -1,0 +1,14 @@
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d03e46ce0fdb82db49a1d04de3f1123255d0ebb1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

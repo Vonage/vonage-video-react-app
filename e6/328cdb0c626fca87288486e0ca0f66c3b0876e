@@ -1,0 +1,121 @@
+frontend/src/components/CreateRoomWizard/types/MeetingDurationMinutes.ts
+  h_6029769cf9ac60 1-5
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  h_6029769cf9ac60 1-45
+frontend/src/components/CreateRoomWizard/helpers/getMeetingStartsAt/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/MeetingNameField.tsx
+  h_6029769cf9ac60 1-38
+frontend/src/components/CreateRoomWizard/hooks/useIsMeetingStartValid.ts
+  h_6029769cf9ac60 1-12
+frontend/src/components/CreateRoomWizard/helpers/getCreateSessionPayload/index.ts
+  h_6029769cf9ac60 1-2
+frontend/src/components/CreateRoomWizard/helpers/getDefaultMeetingStart/getDefaultMeetingStart.ts
+  h_6029769cf9ac60 1-19
+frontend/src/components/CreateRoomWizard/components/DetailsStep/DetailsStep.tsx
+  h_6029769cf9ac60 1-44
+integration-tests/tests-auth/signIn.spec.ts
+  h_6029769cf9ac60 35
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 134-179,181-203
+  h_6029769cf9ac60 120,133,180
+frontend/src/components/CreateRoomWizard/context/createRoomWizardContext.ts
+  h_6029769cf9ac60 3-5,10-48
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/CreateRoomWizardDialog.tsx
+  h_6029769cf9ac60 9,62
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/MeetingScheduleSummary/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/CreateRoomWizard/helpers/getCreateSessionPayload/getCreateSessionPayload.spec.ts
+  h_6029769cf9ac60 1-40
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 201-213,218,223-225
+frontend/src/locales/es.json
+  h_6029769cf9ac60 191-203,208,213-215
+libs/ui/src/components/InputField/index.ts
+  h_6029769cf9ac60 1-4
+frontend/src/components/CreateRoomWizard/helpers/isMeetingStartValid/isMeetingStartValid.spec.ts
+  h_6029769cf9ac60 1-11
+backend/tests/scheduledSession.test.ts
+  h_6029769cf9ac60 1-35
+frontend/src/components/CreateRoomWizard/constants/createRoomWizardSteps.ts
+  h_6029769cf9ac60 1-5
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/ScheduleFields.tsx
+  h_6029769cf9ac60 1-68
+frontend/src/components/CreateRoomWizard/hooks/useMeetingDraft.ts
+  h_6029769cf9ac60 1-17
+frontend/src/components/CreateRoomWizard/helpers/getDefaultMeetingStart/index.ts
+  h_6029769cf9ac60 1
+frontend/src/locales/en.json
+  h_6029769cf9ac60 191-203,208,213-215
+docs/MEETINGS.md
+  h_6029769cf9ac60 7-27,31-32,35
+frontend/src/components/CreateRoomWizard/components/WizardStepProgress/WizardStepProgress.tsx
+  h_6029769cf9ac60 1-43
+libs/ui/src/components/ChoiceChip/index.ts
+  h_6029769cf9ac60 1-4
+libs/ui/src/components/InputField/InputField.tsx
+  h_6029769cf9ac60 1-60
+frontend/src/components/CreateRoomWizard/components/DetailsStep/index.ts
+  h_6029769cf9ac60 1-3
+libs/ui/src/components/index.ts
+  h_6029769cf9ac60 7-8
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  h_6029769cf9ac60 43-44,53-58
+frontend/src/components/CreateRoomWizard/components/WizardStepProgress/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/CreateRoomWizard/components/ShareStep/ShareStep.tsx
+  h_6029769cf9ac60 6,11-12,27,29,31-33
+frontend/src/components/CreateRoomWizard/helpers/getCreateSessionPayload/getCreateSessionPayload.ts
+  h_6029769cf9ac60 1-37
+frontend/src/components/CreateRoomWizard/types/CreateRoomWizardStepName.ts
+  h_6029769cf9ac60 1
+frontend/src/components/CreateRoomWizard/helpers/isMeetingStartValid/index.ts
+  h_6029769cf9ac60 1
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 72-73,82
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  h_6029769cf9ac60 1,4-6,9-16,18-23,29-30,32-34,42-61,63-64,67-68,75-79,85-88,97-98
+frontend/src/components/CreateRoomWizard/helpers/getMeetingStartsAt/getMeetingStartsAt.ts
+  h_6029769cf9ac60 1-14
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions.tsx
+  h_6029769cf9ac60 7,14,21,24-25
+integration-tests/tests-auth/session.spec.ts
+  h_6029769cf9ac60 70
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/MeetingScheduleSummary/MeetingScheduleSummary.tsx
+  h_6029769cf9ac60 1-41
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/index.ts
+  h_6029769cf9ac60 1-3
+libs/ui/src/components/ChoiceChip/ChoiceChip.tsx
+  h_6029769cf9ac60 1-36
+frontend/src/locales/de.json
+  h_6029769cf9ac60 191-203,208,213-215
+frontend/src/components/CreateRoomWizard/constants/meetingDurationLabelKeys.ts
+  h_6029769cf9ac60 1-9
+frontend/src/components/CreateRoomWizard/constants/meetingDurationOptions.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/CreateRoomWizard/helpers/isMeetingStartValid/isMeetingStartValid.ts
+  h_6029769cf9ac60 1-23
+frontend/src/locales/it.json
+  h_6029769cf9ac60 191-203,208,213-215
+integration-tests/tests/landing.spec.ts
+  h_6029769cf9ac60 36-37,62-85
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.tsx
+  h_6029769cf9ac60 4,13,15-16,22
+frontend/src/components/CreateRoomWizard/types/MeetingDraft.ts
+  h_6029769cf9ac60 1-11
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_6029769cf9ac60 17,19-20,38-42
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 191-203,208,213-215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e6328cdb0c626fca87288486e0ca0f66c3b0876e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
