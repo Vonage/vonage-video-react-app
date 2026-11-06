@@ -1,6 +1,12 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { TIMEOUTS, VIEWPORT, SCREENSHOT } from './utils';
+import {
+  TIMEOUTS,
+  VIEWPORT,
+  SCREENSHOT,
+  openMeetingRoomWithSettings,
+  waitUntilReady,
+} from './utils';
 
 test('Landing page UI test', async ({ page, isMobile }) => {
   if (!isMobile) {
@@ -133,6 +139,133 @@ test.describe('Waiting page schedule UI test', () => {
         });
       });
     }
+  }
+});
+test.describe('Meeting room timer UI test', () => {
+  const minuteInMilliseconds = 60_000;
+  const colorSchemes = ['light', 'dark'] as const;
+  test('before the last five minutes', async ({ page, request, isMobile, browserName }) => {
+    await openScheduledMeetingRoom({
+      page,
+      request,
+      isMobile,
+      browserName,
+      colorScheme: 'light',
+      minutesLeft: 6,
+    });
+    await expect(page.getByRole('timer')).toBeHidden();
+    await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+  });
+  for (const colorScheme of colorSchemes) {
+    test(`about to finish ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
+      const { endsAt } = await openScheduledMeetingRoom({
+        page,
+        request,
+        isMobile,
+        browserName,
+        colorScheme,
+        minutesLeft: 6,
+      });
+      await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
+      await expect(page.getByText('The meeting is about to finish')).toBeVisible();
+      await expect(page.getByRole('timer')).toHaveText('4 min left');
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+      await page.getByRole('button', { name: 'Dismiss notification' }).click();
+      await expect(page.getByText('The meeting is about to finish')).toBeHidden();
+      await page.mouse.move(0, 0);
+      await expect(page.getByRole('tooltip')).toBeHidden();
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+    });
+  }
+  test('ended', async ({ page, request, isMobile, browserName }) => {
+    const { endsAt } = await openScheduledMeetingRoom({
+      page,
+      request,
+      isMobile,
+      browserName,
+      colorScheme: 'light',
+      minutesLeft: 6,
+    });
+
+    await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
+    await expect(page.getByText('The meeting is about to finish')).toBeVisible();
+    await page.getByRole('button', { name: 'Dismiss notification' }).click();
+    await expect(page.getByText('The meeting is about to finish')).toBeHidden();
+
+    await page.clock.setFixedTime(endsAt);
+
+    await expect(page).toHaveURL(/goodbye/);
+    await expect(page.getByText('This meeting has ended')).toBeVisible();
+    await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+  });
+
+  async function openScheduledMeetingRoom({
+    page,
+    request,
+    isMobile,
+    browserName,
+    colorScheme,
+    minutesLeft,
+  }: {
+    page: Page;
+    request: APIRequestContext;
+    isMobile: boolean;
+    browserName: string;
+    colorScheme: (typeof colorSchemes)[number];
+    minutesLeft: number;
+  }) {
+    if (!isMobile) {
+      await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+    }
+    await serveStaticFilesFromCache(page);
+    const startsAt = Math.floor(Date.now() / 1000) * 1000 - 10 * minuteInMilliseconds;
+    const durationMinutes = 60;
+    const endsAt = startsAt + durationMinutes * minuteInMilliseconds;
+    const clientNow = endsAt - minutesLeft * minuteInMilliseconds;
+    const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
+      data: { schedule: { startsAt, durationMinutes } },
+    });
+    expect(createSessionResponse.ok()).toBe(true);
+    const { result } = await createSessionResponse.json();
+    await page.route(/\/v2\/getServerSettings/, async (route) => {
+      const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
+      const payload = { result: { data: { serverTime: clientNow } } };
+      await route.fulfill({ json: isBatchRequest ? [payload] : payload });
+    });
+    await page.clock.setFixedTime(clientNow);
+    await openMeetingRoomWithSettings({
+      page,
+      roomName: result.data.sessionKey,
+      username: 'User One',
+      videoOff: true,
+      browserName,
+    });
+    await page.clock.setSystemTime(clientNow);
+    await waitUntilReady(page, browserName);
+    await page.waitForSelector('.publisher', { state: 'visible' });
+    await expect(page.getByTestId('progress-spinner')).toBeHidden();
+    await expect(page.getByTestId('publisher-container').getByText('User One')).toBeVisible({
+      timeout: TIMEOUTS.DEFAULT * 3,
+    });
+    await page.clock.setFixedTime(clientNow);
+    await page.emulateMedia({ colorScheme });
+    await page.waitForFunction(
+      (isDark) => document.documentElement.classList.contains('dark') === isDark,
+      colorScheme === 'dark'
+    );
+    await page.mouse.move(0, 0);
+    await expect(page.getByRole('tooltip')).toBeHidden();
+    return { endsAt };
+  }
+  function getMeetingRoomScreenshotOptions(page: Page) {
+    return {
+      mask: [
+        page.locator('[data-testid="app-version"]'),
+        page.locator('[data-testid="time-room-name"]'),
+      ],
+      maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+      timeout: TIMEOUTS.DEFAULT,
+    };
   }
 });
 
