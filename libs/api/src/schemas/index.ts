@@ -29,3 +29,4 @@ export * from './JoinSessionPayload.schema';
 export * from './TRPCRuntimeConfigOptions.schema';
 export * from './SessionSigning.schema';
 export * from './MeetingSchedule.schema';
+export * from './GetServerSettingsPayload.schema';
