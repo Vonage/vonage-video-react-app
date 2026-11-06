@@ -26,6 +26,18 @@ describe('CreateRoomWizard', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('does not say the link is copied when the clipboard write fails', async () => {
+    expect.assertions(2);
+    const writeText = vi.fn().mockRejectedValue(new Error('denied'));
+    Object.assign(navigator, { clipboard: { writeText } });
+    renderWizard({ onClose: vi.fn() });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy link' }));
+
+    expect(writeText).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: 'Link copied' })).not.toBeInTheDocument();
+  });
+
   it('opens the waiting room of the meeting on Join now', async () => {
     expect.assertions(1);
 
