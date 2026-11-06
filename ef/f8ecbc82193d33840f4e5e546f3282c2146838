@@ -1,0 +1,25 @@
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  s_e53425d7b0686b::t_98ae8b753a3cd8 2
+  h_737cf808c1c597 9,33,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eff8ecbc82193d33840f4e5e546f3282c2146838",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_e53425d7b0686b": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_f737ed45-7b5a-4ef1-b176-c24980889783",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
