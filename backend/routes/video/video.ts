@@ -140,23 +140,19 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   });
 });
 
-videoHandler.onSettled$(async ({ videoAction, error, result, input }) => {
-  if (error) return;
-  if (videoAction !== VideoAction.startArchive) return;
+videoHandler.onSettled$('startArchive', async ({ error, result, input }) => {
+  if (error || !result) return;
 
-  const { withTranscription, withSummary } = input as {
-    withTranscription?: boolean;
-    withSummary?: boolean;
-  };
+  const { archiveOptions } = input;
+  const hasTranscription = archiveOptions?.hasTranscription === true;
 
-  if (!withTranscription) return;
+  if (!hasTranscription) return;
 
-  const archive = result as { sessionId: string };
-  const resolvedWithSummary = withSummary !== false;
+  const hasSummary = archiveOptions?.transcriptionProperties?.hasSummary !== false;
 
   await sessionService.setTranscriptionWithSummary({
-    sessionId: archive.sessionId,
-    withSummary: resolvedWithSummary,
+    sessionId: result.sessionId,
+    withSummary: hasSummary,
   });
 });
 
