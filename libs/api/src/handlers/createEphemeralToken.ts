@@ -3,7 +3,6 @@ import { assertResult } from '@api-lib/executions';
 import type { CreateEphemeralTokenPayload } from '@api-lib/schemas/CreateEphemeralTokenPayload.schema';
 import { TokenRole, type IVideoClient } from '@api-lib/types';
 import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
-import isScheduleError from '@api-lib/schedule/isScheduleError';
 import { isNil, isNotNil } from '@common/assertions';
 import { getScheduleWindow } from '@common/helpers';
 import type { ClientTokenOptions } from '@vonage/video';
@@ -48,8 +47,6 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
 
     return token;
   } catch (error) {
-    if (isScheduleError(error)) throw error;
-
     throw makeInternalErrorHandler('Failed to create ephemeral token')(error);
   }
 }
