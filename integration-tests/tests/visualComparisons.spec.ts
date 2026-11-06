@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { TIMEOUTS, VIEWPORT, SCREENSHOT } from './utils';
 
@@ -104,6 +104,7 @@ test.describe('Waiting page schedule UI test', () => {
         if (!isMobile) {
           await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
         }
+        await serveStaticFilesFromCache(page);
 
         const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
           data: { roomName, schedule },
@@ -134,3 +135,29 @@ test.describe('Waiting page schedule UI test', () => {
     }
   }
 });
+
+const staticFileCache = new Map<
+  string,
+  { status: number; headers: Record<string, string>; body: Buffer }
+>();
+
+// The backend rate limit counts static files, so each worker fetches them once.
+async function serveStaticFilesFromCache(page: Page) {
+  const isStaticFile = (url: URL) =>
+    ['assets/', 'images/'].some((folder) => url.href.startsWith(`${baseURL}${folder}`));
+
+  await page.route(isStaticFile, async (route) => {
+    const url = route.request().url();
+    const cachedStaticFile = staticFileCache.get(url);
+    if (cachedStaticFile) return route.fulfill(cachedStaticFile);
+
+    const response = await route.fetch();
+    const staticFile = {
+      status: response.status(),
+      headers: response.headers(),
+      body: await response.body(),
+    };
+    staticFileCache.set(url, staticFile);
+    await route.fulfill(staticFile);
+  });
+}
