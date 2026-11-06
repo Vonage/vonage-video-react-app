@@ -1,0 +1,373 @@
+.cursorrules
+  h_c939f8fae0de97 1
+.github/copilot-instructions.md
+  h_c939f8fae0de97 1
+.github/instructions/test-files.instructions.md
+  h_c939f8fae0de97 7-8,10-12
+.github/workflows/check-base-branch.yml
+  h_c939f8fae0de97 12,20,22-23,25-27
+.github/workflows/deploy-to-vcr-prod.yml
+  h_c939f8fae0de97 1-146
+.kiro/steering/comments.md
+  h_c939f8fae0de97 3-4,6,8-9
+.windsurfrules
+  h_c939f8fae0de97 1
+AGENTS.md
+  h_c939f8fae0de97 1-1935
+CLAUDE.md
+  h_c939f8fae0de97 1
+GEMINI.md
+  h_c939f8fae0de97 1
+README.md
+  h_c939f8fae0de97 55-58
+app-config.json
+  h_c939f8fae0de97 4,42
+apps/local-oidc/package.json
+  h_c939f8fae0de97 6
+backend/.env.example
+  h_c939f8fae0de97 37-41,108
+backend/helpers/config.ts
+  h_c939f8fae0de97 49
+backend/package.json
+  h_c939f8fae0de97 3,8
+backend/routes/video/constants/enableCaptions.ts
+  h_c939f8fae0de97 2,16
+backend/routes/video/helpers/getCaptionsTranslationOptions.test.ts
+  h_c939f8fae0de97 1-31
+backend/routes/video/helpers/getCaptionsTranslationOptions.ts
+  h_c939f8fae0de97 1-33
+backend/routes/wellKnown.ts
+  h_c939f8fae0de97 34-35
+backend/services/loggerService.ts
+  h_c939f8fae0de97 56
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  h_c939f8fae0de97 32,51
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_c939f8fae0de97 85-97
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_c939f8fae0de97 34-43
+backend/testSetup/setEnvVars.js
+  h_c939f8fae0de97 15
+backend/testSetup/setEnvVars.test.ts
+  h_c939f8fae0de97 64-66
+backend/tests/assetlinks.test.ts
+  h_c939f8fae0de97 56
+customWordList.mjs
+  h_c939f8fae0de97 36
+docs/ARCHITECTURE.md
+  h_c939f8fae0de97 61-64
+docs/CONFIGURATION.md
+  h_c939f8fae0de97 64-72,210,213
+docs/CONTRIBUTING.md
+  h_c939f8fae0de97 16-35
+docs/TESTING.md
+  h_c939f8fae0de97 50
+env.sh
+  h_c939f8fae0de97 36,39
+frontend/.env.example
+  h_c939f8fae0de97 31,34
+frontend/package.json
+  h_c939f8fae0de97 3
+frontend/src/App.tsx
+  h_c939f8fae0de97 26,57-59
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  h_c939f8fae0de97 7,62,243-247
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  h_c939f8fae0de97 10,123-124,131,134-147,151
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  h_c939f8fae0de97 24,211-234
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  h_c939f8fae0de97 1-277
+frontend/src/Context/MiniMode/MiniModeContext.tsx
+  h_c939f8fae0de97 1-144
+frontend/src/Context/MiniMode/UnavailableMiniModeProvider.tsx
+  h_c939f8fae0de97 1-27
+frontend/src/Context/MiniMode/helpers/resolveMiniModeParticipant.ts
+  h_c939f8fae0de97 1-55
+frontend/src/Context/MiniMode/index.ts
+  h_c939f8fae0de97 1-4
+frontend/src/Context/MiniMode/isMiniModeSupported.spec.ts
+  h_c939f8fae0de97 1-33
+frontend/src/Context/MiniMode/isMiniModeSupported.ts
+  h_c939f8fae0de97 1-12
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  h_c939f8fae0de97 13,57-59,66,69-80,82
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  h_c939f8fae0de97 23,204-216,219-225
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  h_c939f8fae0de97 17,43,360,370,380-383,392,587-605
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  h_c939f8fae0de97 21,161-167,400-401,410
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.spec.tsx
+  h_c939f8fae0de97 33-47,49,57-92
+frontend/src/Context/PublisherProvider/usePublisherQuality/usePublisherQuality.tsx
+  h_c939f8fae0de97 39-40,42-53
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_c939f8fae0de97 9,17,19,28,42-43,63,70,74-77,80-90,126,154-156,167-168,316-353,376-402,413-446,458-475,669-695
+frontend/src/Context/SessionProvider/session.tsx
+  h_c939f8fae0de97 13-14,40,43,59,85,107,133,153,191,203-205,283-285,515-528,538,561,563,567-569,602-619,683,727
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/index.ts
+  h_c939f8fae0de97 1
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.spec.ts
+  h_c939f8fae0de97 1-72
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.ts
+  h_c939f8fae0de97 1-37
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  h_c939f8fae0de97 12,66-74,145,371-411,443
+frontend/src/Context/screenShare/screenShare$.tsx
+  h_c939f8fae0de97 15,17-20,106-118,175-198
+frontend/src/VeraRoom/stages/MeetingRoomStage/MeetingRoomStage.spec.tsx
+  h_c939f8fae0de97 10-24,67-71
+frontend/src/VeraRoom/stages/MeetingRoomStage/MeetingRoomStage.tsx
+  h_c939f8fae0de97 5,15-17
+frontend/src/VeraRoom/vite.veraroom.config.ts
+  h_c939f8fae0de97 8,35-39
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_c939f8fae0de97 13-14,26-30
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.spec.tsx
+  h_c939f8fae0de97 1-33
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.tsx
+  h_c939f8fae0de97 1-72
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/index.tsx
+  h_c939f8fae0de97 1
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.spec.tsx
+  h_c939f8fae0de97 4-5,23-45
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  h_c939f8fae0de97 7,9-16,22,26,33
+frontend/src/components/AdvancedSettingsDialog/helpers/isCaptionsTabAvailable.ts
+  h_c939f8fae0de97 1-7
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  h_c939f8fae0de97 14,47
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettingsTab.schema.ts
+  h_c939f8fae0de97 8,17
+frontend/src/components/AdvancedSettingsDialog/schemas/captionsTranslationLanguage.schema.ts
+  h_c939f8fae0de97 1-64
+frontend/src/components/AdvancedSettingsDialog/schemas/index.ts
+  h_c939f8fae0de97 5
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  h_c939f8fae0de97 1,52
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  h_c939f8fae0de97 112
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  h_c939f8fae0de97 11,60-67
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  h_c939f8fae0de97 2,4-5,26-27,69-92
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  h_c939f8fae0de97 6,15-16,42,45-46,54
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.spec.tsx
+  h_c939f8fae0de97 10-12,14,32-33,57-59,63,67-68,72-74,78,82-83
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.tsx
+  h_c939f8fae0de97 5,9-10,18,24,27,30,75
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.spec.ts
+  h_c939f8fae0de97 1-47
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.ts
+  h_c939f8fae0de97 1-30
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  h_c939f8fae0de97 33,49
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.spec.tsx
+  h_c939f8fae0de97 1-2,20-23,135-177
+frontend/src/components/MeetingRoom/ChatInput/ChatInput.tsx
+  h_c939f8fae0de97 22,28-29,31-34,41
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  h_c939f8fae0de97 1,108,226
+frontend/src/components/MeetingRoom/EmojiGrid/EmojiGrid.tsx
+  h_c939f8fae0de97 6,56,58,62,80,84-87,89,93
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  h_c939f8fae0de97 2,72
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  h_c939f8fae0de97 17,30
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.spec.tsx
+  h_c939f8fae0de97 2,14-26
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.tsx
+  h_c939f8fae0de97 19,25,33,40
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindow.spec.tsx
+  h_c939f8fae0de97 1-106
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindow.tsx
+  h_c939f8fae0de97 1-126
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowButton.tsx
+  h_c939f8fae0de97 1-44
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.spec.tsx
+  h_c939f8fae0de97 1-31
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.tsx
+  h_c939f8fae0de97 1-43
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.spec.tsx
+  h_c939f8fae0de97 1-91
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.tsx
+  h_c939f8fae0de97 1-40
+frontend/src/components/MeetingRoom/MiniCallWindow/index.tsx
+  h_c939f8fae0de97 1-3
+frontend/src/components/MeetingRoom/MiniCallWindow/useHostedVideoElement.ts
+  h_c939f8fae0de97 1-36
+frontend/src/components/MeetingRoom/MiniCallWindow/useIconSvg.ts
+  h_c939f8fae0de97 1-135
+frontend/src/components/MeetingRoom/MiniModeButton/MiniModeButton.spec.tsx
+  h_c939f8fae0de97 1-66
+frontend/src/components/MeetingRoom/MiniModeButton/MiniModeButton.tsx
+  h_c939f8fae0de97 1-50
+frontend/src/components/MeetingRoom/MiniModeButton/index.tsx
+  h_c939f8fae0de97 1-3
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.spec.tsx
+  h_c939f8fae0de97 2,56-58,69-73,78-99
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.tsx
+  h_c939f8fae0de97 10,47-54
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  h_c939f8fae0de97 1,72-79,86-87
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  h_c939f8fae0de97 11,57-68,113,117-124,126-130,132-135,137-147,151,156-159,161-165,207,226,239
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_c939f8fae0de97 11,180-188,200-207
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_c939f8fae0de97 5-6,13,29-30,87-89,93-96,100-153,155-191,282
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  h_c939f8fae0de97 100,105
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  h_c939f8fae0de97 179,184
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  h_c939f8fae0de97 17-18,81,109-111
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.tsx
+  h_c939f8fae0de97 1,59-66,144
+frontend/src/components/Publisher/Publisher.tsx
+  h_c939f8fae0de97 13,35-36,41-44,46-51,53-54,60
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  h_c939f8fae0de97 2,98
+frontend/src/components/Subscriber/Subscriber.spec.tsx
+  h_c939f8fae0de97 2-4,181-189
+frontend/src/components/Subscriber/Subscriber.tsx
+  h_c939f8fae0de97 18,27-38,59,61,76,90,109
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  h_c939f8fae0de97 73
+frontend/src/env.ts
+  h_c939f8fae0de97 42,46,89,93
+frontend/src/hooks/tests/useChat.spec.tsx
+  h_c939f8fae0de97 4,12,83-84,95-97,102,111-129
+frontend/src/hooks/tests/useElementDimensions.spec.tsx
+  h_c939f8fae0de97 1,28-43
+frontend/src/hooks/tests/useEmoji.spec.tsx
+  h_c939f8fae0de97 36
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_c939f8fae0de97 9,135-202
+frontend/src/hooks/useChat.tsx
+  h_c939f8fae0de97 6-7,10,16,32,36,48,53-69,71
+frontend/src/hooks/useElementDimensions.tsx
+  h_c939f8fae0de97 34-35
+frontend/src/hooks/useEmoji.tsx
+  h_c939f8fae0de97 1,13,32,42-51,65,120-127,136-137,140
+frontend/src/hooks/useLeaveMeeting.ts
+  h_c939f8fae0de97 1-23
+frontend/src/hooks/useMeetingRoom.ts
+  h_c939f8fae0de97 1,15-16,74,102-103,118-119,123-132,135,153,179-182,186-193,317-349
+frontend/src/locales/de.json
+  h_c939f8fae0de97 23,106-108,185,280-289,297,312,346
+frontend/src/locales/en.json
+  h_c939f8fae0de97 23,106-108,185,280-289,297,312,346
+frontend/src/locales/es-MX.json
+  h_c939f8fae0de97 23,106-108,185,280-289,297,312,346
+frontend/src/locales/es.json
+  h_c939f8fae0de97 23,106-108,185,280-289,297,312,346
+frontend/src/locales/it.json
+  h_c939f8fae0de97 23,106-108,185,280-289,297,312,346
+frontend/src/locales/ja.json
+  h_c939f8fae0de97 23,114-116,195,290-299,307,322,356
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  h_c939f8fae0de97 561,577
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_c939f8fae0de97 1,70-74,144
+frontend/src/test/providers/makeMiniModeProviderWrapper.tsx
+  h_c939f8fae0de97 1-46
+frontend/src/test/providers/makeTestProvider.ts
+  h_c939f8fae0de97 10,18,32,43,60,79,193-196
+frontend/src/test/providers/makersIndex.ts
+  h_c939f8fae0de97 35-39
+frontend/src/types/session.ts
+  h_c939f8fae0de97 45
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.spec.ts
+  h_c939f8fae0de97 2,12-65,131-136,192-197
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.ts
+  h_c939f8fae0de97 21-24,38-39,53,58,75-85,109,111-114,116-136
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_c939f8fae0de97 2,35-36,38-39,42,62-63,66,76-77,79-80,85-86,114-117,120-128,247-307,310-364,366-377,391-405,413-450,457,461,464-499,509,516-522,524-534,536-544
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_c939f8fae0de97 46,48,63,84,141-144,164-165,231-232,236-242,283,488,491-492,494,496-497,499-505,511,518-527,530-538,545,554-561,563-585,591,593-599,611,622
+frontend/src/utils/generateRoomName/generateRoomName.spec.ts
+  h_c939f8fae0de97 1,12-20
+frontend/src/utils/helpers/getSubscribersInDisplayOrder/getSubscribersInDisplayOrder.ts
+  h_c939f8fae0de97 112-114
+frontend/src/utils/movingAverageAudioLevelTracker.ts
+  h_c939f8fae0de97 13-16,27,29-33,37-38
+frontend/vite.config.ts
+  h_c939f8fae0de97 32,36,198-205,253-270
+integration-tests/baseUrl.ts
+  h_c939f8fae0de97 1-15
+integration-tests/fixtures/testWithLogging.ts
+  h_c939f8fae0de97 10
+integration-tests/package.json
+  h_c939f8fae0de97 3
+integration-tests/playwright.config.ts
+  h_c939f8fae0de97 5,11,69-70,137-145,147-153
+integration-tests/tests/activeSpeaker.spec.ts
+  h_c939f8fae0de97 4-28,74-130
+integration-tests/tests/miniMode.spec.ts
+  h_c939f8fae0de97 1-53
+integration-tests/tests/multiparty.spec.ts
+  h_c939f8fae0de97 1,272-408
+integration-tests/tests/recording.spec.ts
+  h_c939f8fae0de97 1,3,6-9,32,51-52,130-430
+integration-tests/tests/videoFeatures.spec.ts
+  h_c939f8fae0de97 1-439
+libs/api/src/schemas/CaptionOptions.schema.ts
+  h_c939f8fae0de97 3,10-11
+libs/api/src/schemas/CaptionsTranslationLevel.schema.ts
+  h_c939f8fae0de97 1-19
+libs/api/src/schemas/index.ts
+  h_c939f8fae0de97 24
+libs/common/manifest.json
+  h_c939f8fae0de97 4
+libs/common/web/documentPictureInPicture/copyStylesToDocument.spec.ts
+  h_c939f8fae0de97 1-69
+libs/common/web/documentPictureInPicture/copyStylesToDocument.ts
+  h_c939f8fae0de97 1-34
+libs/common/web/documentPictureInPicture/documentPictureInPicture.spec.ts
+  h_c939f8fae0de97 1-69
+libs/common/web/documentPictureInPicture/index.ts
+  h_c939f8fae0de97 1-9
+libs/common/web/documentPictureInPicture/isDocumentPictureInPictureSupported.ts
+  h_c939f8fae0de97 1-25
+libs/common/web/documentPictureInPicture/registerEnterPictureInPictureAction.spec.ts
+  h_c939f8fae0de97 1-51
+libs/common/web/documentPictureInPicture/registerEnterPictureInPictureAction.ts
+  h_c939f8fae0de97 1-33
+libs/common/web/documentPictureInPicture/syncStylesToWindow.spec.ts
+  h_c939f8fae0de97 1-62
+libs/common/web/documentPictureInPicture/syncStylesToWindow.ts
+  h_c939f8fae0de97 1-72
+libs/common/web/documentPictureInPicture/useDocumentPictureInPicture.ts
+  h_c939f8fae0de97 1-89
+libs/common/web/documentPictureInPicture/waitForStylesheets.spec.ts
+  h_c939f8fae0de97 1-26
+libs/common/web/documentPictureInPicture/waitForStylesheets.ts
+  h_c939f8fae0de97 1-21
+libs/common/web/index.ts
+  h_c939f8fae0de97 5
+package.json
+  h_c939f8fae0de97 3
+scripts/generateEnv.ts
+  h_c939f8fae0de97 140-144
+specs/app-config.schema.json
+  h_c939f8fae0de97 171,205-209,231-232
+vcr-gha.yml
+  h_c939f8fae0de97 139-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f0e54d43d712dfe37f89bb6a7578625f2b77d04e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
