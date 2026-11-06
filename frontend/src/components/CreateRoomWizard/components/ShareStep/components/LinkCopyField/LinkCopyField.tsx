@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { twMerge } from 'tailwind-merge';
+import tryCatch from '@common/execution/tryCatch';
 import VividIcon from '@ui/components/VividIcon';
 
 export type LinkCopyFieldProps = ComponentProps<'div'> & {
@@ -16,8 +17,9 @@ const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactE
     ? t('createRoomWizard.share.linkCopied')
     : t('createRoomWizard.share.copyLink');
 
-  const copyLink = () => {
-    void navigator.clipboard.writeText(url);
+  const copyLink = async () => {
+    const { didFail } = await tryCatch(() => navigator.clipboard.writeText(url));
+    if (didFail) return;
     setIsCopied(true);
   };
 
