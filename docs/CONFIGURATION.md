@@ -48,6 +48,12 @@ OT_API_KEY='your-api-key'
 OT_API_SECRET='your-api-secret'
 ```
 
+#### Session keys
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LEGACY_SESSION_KEYS_ENABLED` | `'true'` | While `SESSION_KEY_SECRET` is set, accepts sessionKeys signed with `VONAGE_APP_ID` (`OT_API_KEY` for OpenTok), the key used when `SESSION_KEY_SECRET` is empty, and re-signs them with `SESSION_KEY_SECRET` in the same video session. This applies to signed-in users, or to everyone when `AUTH_ENABLED` is not `'true'`. Anonymous callers always need a key signed with `SESSION_KEY_SECRET`. Set to `'false'` to reject these keys for everyone |
+
 #### Allowed web origins (CORS)
 
 `CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only: with `AUTH_ENABLED='true'` and an `https` `OIDC_WEB_REDIRECT_URI`, the server refuses to start with `*`.

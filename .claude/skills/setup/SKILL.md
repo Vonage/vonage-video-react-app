@@ -1,6 +1,6 @@
 ---
 name: setup
-description: First-time setup and "why won't it start" help for the Vonage Video React reference app (VERA web). Use when someone sets up the repo, installs dependencies with pnpm, runs the app for the first time, or hits errors like "Dependencies cannot be installed with yarn/npm", "pnpm … is too old", "Permission denied", "Missing config values for Vonage", a ZodError when the backend starts (authSessionCookieName, oidcScopes, authCookieSecret, corsAllowedOrigins), "yarn: command not found", wrong Node version, git hook failures, the video-reference-apps-common hash check, or ports 3345/3346/5173 already in use. Also use when the Android or iOS VERA app needs a backend.
+description: First-time setup and "why won't it start" help for the Vonage Video React reference app (VERA web). Use when someone sets up the repo, installs dependencies with pnpm, runs the app for the first time, or hits errors like "Dependencies cannot be installed with yarn/npm", "pnpm … is too old", "Permission denied", "Missing config values for Vonage", a ZodError when the backend starts (authSessionCookieName, oidcScopes, authCookieSecret, sessionKeySecret, corsAllowedOrigins), "yarn: command not found", wrong Node version, git hook failures, the video-reference-apps-common hash check, or ports 3345/3346/5173 already in use. Also use when the Android or iOS VERA app needs a backend.
 inclusion: manual
 ---
 
@@ -63,7 +63,7 @@ Paste the key itself, inside single quotes, not the path to the file.
 **Sign-in (auth) is turned on in the example file** (`AUTH_ENABLED='true'`). Left as it is, the backend stops at start-up with a `ZodError` about `authSessionCookieName`, `oidcScopes` and others. Pick one:
 
 1. **Easiest:** set `AUTH_ENABLED='false'`.
-2. **Keep sign-in on:** set `AUTH_COOKIE_SECRET` to a new secret from `pnpm generate:secret`, and remove the `#` from every line in the "Project-level auth settings" block at the bottom of `backend/.env`. Sign-in then uses a local test login server (`apps/local-oidc`) that `pnpm dev` starts for you and that accepts every login.
+2. **Keep sign-in on:** set `AUTH_COOKIE_SECRET` to a new secret from `pnpm generate:secret`, make sure `SESSION_KEY_SECRET` is set (with sign-in on, the backend refuses to start without it), and remove the `#` from every line in the "Project-level auth settings" block at the bottom of `backend/.env`. Sign-in then uses a local test login server (`apps/local-oidc`) that `pnpm dev` starts for you and that accepts every login.
 
 Also:
 
@@ -111,6 +111,7 @@ To change features, theme or backend URL: `/configure` (Claude Code) or `#vera-c
 | `pnpm … is too old` or `Permission denied` | `npm i -g pnpm@12.11.2`, then `pnpm install`. |
 | `ZodError` about `authSessionCookieName`, `oidcScopes`, … | Step 4: turn auth off, or uncomment the auth block. |
 | `authCookieSecret: must be 32 bytes` | Put a new `pnpm generate:secret` value in `AUTH_COOKIE_SECRET`. |
+| `SESSION_KEY_SECRET is required when AUTH_ENABLED is true` | Put a new `pnpm generate:secret` value in `SESSION_KEY_SECRET`. |
 | `Missing config values for Vonage` | Fill `VONAGE_APP_ID` and `VONAGE_PRIVATE_KEY`. |
 | Page can't reach `localhost:3346` | Auth is on but the login server isn't running. Use plain `pnpm dev`, or turn auth off. |
 | `EADDRINUSE` on 3345 or 3346, or Vite uses 5174 | An old run is still going. Stop it (`lsof -iTCP:3345 -sTCP:LISTEN`). |

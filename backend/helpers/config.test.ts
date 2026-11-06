@@ -107,6 +107,15 @@ describe('loadConfig', () => {
     expect(config.authEnabled).toBe(false);
   });
 
+  test('should accept an empty SESSION_KEY_SECRET when AUTH_ENABLED is not true', () => {
+    process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
+    process.env.OT_API_KEY = 'test-key';
+    process.env.OT_API_SECRET = 'test-secret';
+    process.env.SESSION_KEY_SECRET = '';
+
+    expect(loadConfig().sessionKeySecret).toBe('');
+  });
+
   describe('when AUTH_ENABLED is true', () => {
     beforeEach(() => {
       process.env.VIDEO_SERVICE_PROVIDER = 'opentok';
@@ -131,6 +140,15 @@ describe('loadConfig', () => {
       process.env.OIDC_SCOPES = 'openid profile email offline_access';
       process.env.AUTH_HEADER_NAME = 'authorization';
       process.env.AUTH_SCHEME = 'Bearer';
+      process.env.SESSION_KEY_SECRET = 'test-session-key-secret';
+    });
+
+    test('should throw when SESSION_KEY_SECRET is empty', () => {
+      process.env.SESSION_KEY_SECRET = '';
+
+      expect(() => loadConfig()).toThrow(
+        /SESSION_KEY_SECRET is required when AUTH_ENABLED is true/
+      );
     });
 
     test.each([
@@ -187,6 +205,7 @@ describe('loadConfig', () => {
       const config = loadConfig();
 
       expect(config.authEnabled).toBe(true);
+      expect(config.sessionKeySecret).toBe('test-session-key-secret');
       if (config.authEnabled) {
         expect(config.authSessionCookieName).toBe('custom_session');
         expect(config.authProviderTimeoutMs).toBe(9000);

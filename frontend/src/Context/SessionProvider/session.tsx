@@ -582,13 +582,13 @@ const SessionProvider = ({
         sessionKey: args.sessionKey,
       });
 
-      setSessionKey(args.sessionKey);
+      setSessionKey(session.sessionKey);
       if (!skipBrowserUrlUpdate) {
-        window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+        window.history.replaceState(null, '', `/room/${session.sessionKey}`);
       }
 
       return connect({
-        sessionKey: args.sessionKey,
+        sessionKey: session.sessionKey,
         token: session.token,
       });
     },

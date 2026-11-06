@@ -52,7 +52,11 @@ describe('useMeetingRoom', () => {
     mockLocation.search = '';
     env.BYPASS_WAITING_ROOM = false;
     mockCreateSessionMutate.mockResolvedValue({ sessionKey: validSessionKey });
-    mockJoinSessionMutate.mockResolvedValue({ token: 'mock-token', sessionId: mockSessionId });
+    mockJoinSessionMutate.mockResolvedValue({
+      token: 'mock-token',
+      sessionId: mockSessionId,
+      sessionKey: validSessionKey,
+    });
   });
 
   it('returns all expected fields', async () => {

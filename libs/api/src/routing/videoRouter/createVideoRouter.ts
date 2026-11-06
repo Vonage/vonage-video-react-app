@@ -31,7 +31,7 @@ function createVideoRouter<
 >(routerConfig: VideoRouterConfig<Context, TMeta>) {
   assertVideoRouterConfig(routerConfig);
 
-  const { auth, videoParams, routerOptions, handlersConfig } = routerConfig;
+  const { auth, videoParams, sessionSigning, routerOptions, handlersConfig } = routerConfig;
 
   const handlersDefaults: HandlersDefaults = Object.fromEntries(
     Object.entries(handlersConfig ?? {}).map(([action, config]) => [action, config?.addDefaults])
@@ -413,6 +413,7 @@ function createVideoRouter<
     return new VideoClient({
       auth,
       videoParams,
+      sessionSigning,
       handlersDefaults,
     });
   }
