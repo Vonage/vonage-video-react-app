@@ -90,13 +90,12 @@ const PostCallTranscriptionButton = ({
     if (action === 'start') {
       if (!transcriptionArchiveId && connected) {
         markTranscriptionStartRequestedBySelf();
-        const withSummary = includeSummary;
         setTimeout(async () => {
           try {
             await videoClient.startArchive({
               sessionKey: sessionKey!,
               withTranscription: true,
-              withSummary,
+              withSummary: includeSummary,
             });
           } catch (err) {
             resetTranscriptionStartRequestedBySelf();
