@@ -5,3 +5,4 @@ export { default as Card } from './Card';
 export { default as Field } from './Field';
 export { default as SelectField } from './SelectField';
 export { default as VividIcon } from './VividIcon';
+export { default as ChoiceChip } from './ChoiceChip';

@@ -5,9 +5,11 @@ import advancedSettings$ from '@Context/AdvancedSettings';
 import { VividIcon } from '@ui';
 import type { AdvancedSettingsTab } from '../../schemas';
 import isCaptionsTabAvailable from '../../helpers/isCaptionsTabAvailable';
+import useIsMeetingTabAvailable from '../../hooks/useIsMeetingTabAvailable';
 
 const tabs: AdvancedSettingsTab[] = [
   'general',
+  'meeting',
   'video',
   'screenSharing',
   'audio',
@@ -19,7 +21,12 @@ const { setSelectedTab } = advancedSettings$.actions;
 const AdvancedSettingsSidebar = (): ReactElement => {
   const { t } = useTranslation();
   const selectedTab = advancedSettings$.use.select((state) => state.selectedTab);
-  const visibleTabs = tabs.filter((tab) => tab !== 'captions' || isCaptionsTabAvailable());
+  const isMeetingTabAvailable = useIsMeetingTabAvailable();
+  const visibleTabs = tabs.filter((tab) => {
+    if (tab === 'captions') return isCaptionsTabAvailable();
+    if (tab === 'meeting') return isMeetingTabAvailable;
+    return true;
+  });
 
   return (
     <div className="flex w-full flex-row gap-1 overflow-x-auto border-b border-vera-border bg-vera-background p-1 md:h-full md:w-55 md:flex-col md:gap-0.5 md:overflow-x-visible md:border-b-0 md:border-r">
@@ -27,6 +34,7 @@ const AdvancedSettingsSidebar = (): ReactElement => {
         const isSelected = selectedTab === tab;
         const tabIcon = (() => {
           if (tab === 'general') return 'gear-solid';
+          if (tab === 'meeting') return 'clock-solid';
           if (tab === 'video') return 'video-solid';
           if (tab === 'screenSharing') return 'screen-share-solid';
           if (tab === 'audio') return 'microphone-solid';

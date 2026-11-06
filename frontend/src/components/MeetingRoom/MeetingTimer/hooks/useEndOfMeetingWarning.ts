@@ -4,10 +4,11 @@ import { notifications$ } from '@core/stores';
 
 const endOfMeetingWarningMilliseconds = 10_000;
 
-const useEndOfMeetingWarning = () => {
+const useEndOfMeetingWarning = ({ isEnabled }: { isEnabled: boolean }) => {
   const { t } = useTranslation();
-
   useEffect(() => {
+    if (!isEnabled) return;
+
     const notificationId = notifications$.actions.push({
       type: 'warning',
       message: t('meetingTimer.endingSoon'),
@@ -17,7 +18,7 @@ const useEndOfMeetingWarning = () => {
     return function dismissEndOfMeetingWarning() {
       notifications$.actions.dismiss(notificationId);
     };
-  }, [t]);
+  }, [isEnabled, t]);
 };
 
 export default useEndOfMeetingWarning;
