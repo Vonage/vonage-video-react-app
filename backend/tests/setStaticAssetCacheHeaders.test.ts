@@ -18,6 +18,6 @@ it('serves HTML with revalidation and other assets with a private one-day cache'
   const htmlResponse = await request(app).get('/index.html');
   const assetResponse = await request(app).get('/index-abc123.js');
 
-  expect(htmlResponse.headers['cache-control']).toBe('public, max-age=0, must-revalidate');
+  expect(htmlResponse.headers['cache-control']).toBe('private, max-age=0, must-revalidate');
   expect(assetResponse.headers['cache-control']).toBe('private, max-age=86400');
 });

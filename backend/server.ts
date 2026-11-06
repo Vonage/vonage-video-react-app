@@ -81,6 +81,7 @@ app.use(
 );
 
 app.get('/*', (_req: Request, res: Response) => {
+  setStaticAssetCacheHeaders(res, 'index.html');
   res.sendFile(path.join(veraPath, 'index.html'));
 });
 
