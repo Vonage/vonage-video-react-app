@@ -3,9 +3,9 @@ import loadConfig from './helpers/config';
 
 import express, { Express, Request, Response } from 'express';
 import path from 'path';
-import bodyParser from 'body-parser';
 import { Server } from 'http';
 import router from './routes';
+import { setStaticAssetCacheHeaders } from './helpers';
 import videoRouter, { makeVideoClient$ } from './routes/video';
 import hasVerifiedSessionKey from './routes/video/helpers/hasVerifiedSessionKey';
 import { fileURLToPath } from 'url';
@@ -51,7 +51,6 @@ app.use(rateLimitMiddleware);
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(corsMiddleware());
-app.use(bodyParser.json());
 
 // Trust only the immediate reverse proxy.
 // Avoid `true` because clients can spoof X-Forwarded-For and bypass IP rate limits.
@@ -110,9 +109,14 @@ app.use(
 
 app.use(router);
 
-app.use(express.static(veraPath));
+app.use(
+  express.static(veraPath, {
+    setHeaders: setStaticAssetCacheHeaders,
+  })
+);
 
 app.get('/*', (_req: Request, res: Response) => {
+  setStaticAssetCacheHeaders(res, 'index.html');
   res.sendFile(path.join(veraPath, 'index.html'));
 });
 
