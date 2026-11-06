@@ -125,7 +125,7 @@ All extensions of one meeting add up to at most 120 minutes. This cap is fixed a
 
 Concurrent extensions are resolved in memory by default, per server process. To run several instances behind a load balancer, pass an `extensionStore` whose `commitExtension({ sessionId, extendedMinutes })` atomically keeps and returns the larger of the stored and the given value.
 
-In the Vera backend, when `AUTH_ENABLED` is `true`, only a signed-in user can call `extendSession`; anyone else gets a 401. `renewSessionKey` stays open to every holder of the meeting's sessionKey, guests included. With `AUTH_ENABLED='false'` everyone can extend.
+In the Vera backend, when `AUTH_ENABLED` is `true`, only a signed-in user can call `extendSession`; anyone else gets a 401. `renewSessionKey` stays open to every holder of the meeting's sessionKey, anonymous callers included. With `AUTH_ENABLED='false'` everyone can extend.
 
 ### Frontend (`app-config.json` → `env.sh`)
 

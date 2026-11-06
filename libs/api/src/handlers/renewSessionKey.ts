@@ -1,7 +1,6 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import joinExtendedSession from '@api-lib/extension/joinExtendedSession';
 import verifyExtensionGrant from '@api-lib/extension/verifyExtensionGrant';
-import isScheduleError from '@api-lib/schedule/isScheduleError';
 import type { IVideoClient, RenewSessionKeyPayload } from '@api-lib/types';
 import { SessionKeyClaim } from '@common/constants';
 
@@ -27,8 +26,6 @@ function renewSessionKey(this: IVideoClient, payload: RenewSessionKeyPayload) {
 
     return joinExtendedSession({ videoClient: this, sessionKey, extendedMinutes });
   } catch (error) {
-    if (isScheduleError(error)) throw error;
-
     throw makeInternalErrorHandler('Failed to renew session key')(error);
   }
 }

@@ -7,7 +7,6 @@ import { assertResult } from '@api-lib/executions';
 import joinExtendedSession from '@api-lib/extension/joinExtendedSession';
 import signExtensionGrant from '@api-lib/extension/signExtensionGrant';
 import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
-import isScheduleError from '@api-lib/schedule/isScheduleError';
 import type { ExtendSessionPayload, IVideoClient } from '@api-lib/types';
 import { isNil } from '@common/assertions';
 import { MAX_TOTAL_EXTENSION_MINUTES, SessionKeyClaim } from '@common/constants';
@@ -65,8 +64,6 @@ async function extendSession(this: IVideoClient, payload: ExtendSessionPayload) 
 
     return { ...extendedSession, grant };
   } catch (error) {
-    if (isScheduleError(error)) throw error;
-
     throw makeInternalErrorHandler('Failed to extend session')(error);
   }
 }
