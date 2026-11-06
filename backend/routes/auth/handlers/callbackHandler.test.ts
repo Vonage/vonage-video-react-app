@@ -143,21 +143,6 @@ describe('callbackHandler', () => {
     );
   });
 
-  it('writes a readable signed-in hint with the lifetime of the session cookie', async () => {
-    const res = await completeCallback({
-      tokenResponse: {
-        ...BASE_TOKEN_RESPONSE,
-        refresh_token: 'refresh-1',
-        refresh_expires_in: 86400,
-      },
-    });
-
-    const hintCookie = readSetCookie({ headers: res.headers, name: SIGNED_IN_HINT_COOKIE_NAME });
-    expect(hintCookie).toMatch(/^test_session-signed-in=1;.*Max-Age=86400; Path=\//);
-    expect(hintCookie).not.toMatch(/HttpOnly/);
-    expect(hintCookie).toMatch(/SameSite=Lax/);
-  });
-
   it('writes a browser-session cookie when the refresh token lifetime is not reported', async () => {
     const res = await completeCallback({
       tokenResponse: { ...BASE_TOKEN_RESPONSE, refresh_token: 'refresh-1' },

@@ -29,9 +29,6 @@ The browser never receives a usable token. The tokens live inside cookies encryp
 | `AUTH_TRANSACTION_COOKIE_NAME` (`vera-sign-in`) | `state`, PKCE verifier, `returnTo` | the callback path | `AUTH_TRANSACTION_MAX_AGE_SECONDS` (600) |
 | `AUTH_SESSION_COOKIE_NAME` (`vera-session`) | access token, its expiry, refresh token | `/` | see below |
 | `AUTH_ID_TOKEN_COOKIE_NAME` (`vera-id-token`) | ID token, for logout | `/auth/signout` | same as the session cookie |
-| `AUTH_SESSION_COOKIE_NAME` + `-signed-in` (`vera-session-signed-in`) | `1`, readable by the page | `/` | same as the session cookie |
-
-The `-signed-in` cookie is the only one without `HttpOnly`. It is written and cleared with the session cookie and only tells the UI that someone is signed in, for example to offer extending a meeting. It grants nothing: the server never reads it and keeps checking the session cookie.
 
 Session cookie lifetime: without a refresh token, the access token's `expires_in`; with one, the refresh lifetime the provider reports (`refresh_expires_in` / `refresh_token_expires_in`); otherwise a browser-session cookie.
 
