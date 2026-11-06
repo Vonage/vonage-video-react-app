@@ -71,7 +71,11 @@ describe('MeetingTimer', () => {
 
 function makeServerClockAhead() {
   return makeVideoClientMock({
-    getServerSettings: () => Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+    getServerSettings: () =>
+      Promise.resolve({
+        serverTime: Date.now() + serverAheadMilliseconds,
+        extension: { options: [20, 40, 60] },
+      }),
   });
 }
 

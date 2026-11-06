@@ -6,7 +6,7 @@ import useSessionKeyParam from './useSessionKeyParam';
 import useDecodedSessionKey from './useDecodedSessionKey';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
-import { getScheduleWindow, readScheduleClaim } from '@common/helpers';
+import { getScheduleWindow, readExtendedClaim, readScheduleClaim } from '@common/helpers';
 import { SessionKeyClaim } from '@common/constants';
 import { isNil } from '@common/assertions';
 
@@ -27,6 +27,7 @@ const useWaitingRoom = () => {
     return getScheduleWindow({
       sessionId: decodedSessionKey.sessionId,
       [SessionKeyClaim.schedule]: scheduleClaim,
+      [SessionKeyClaim.extended]: readExtendedClaim(decodedSessionKey),
     });
   })();
 

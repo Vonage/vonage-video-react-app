@@ -15,6 +15,16 @@ describe('getScheduleWindow', () => {
     });
   });
 
+  it('adds the extended minutes to the end', () => {
+    const scheduleWindow = getScheduleWindow({
+      sessionId: 'session-id',
+      [SessionKeyClaim.schedule]: { at: 1_800_000_000, min: 60 },
+      [SessionKeyClaim.extended]: 40,
+    });
+
+    expect(scheduleWindow?.endsAt).toBe(1_800_000_000_000 + 100 * 60 * 1000);
+  });
+
   it('returns null for a key without a schedule', () => {
     expect(getScheduleWindow({ sessionId: 'session-id', roomName: 'room' })).toBeNull();
   });

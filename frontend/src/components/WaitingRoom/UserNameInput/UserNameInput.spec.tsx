@@ -25,7 +25,10 @@ describe('UsernameInput', () => {
 
     const videoClient = makeVideoClientMock({
       getServerSettings: () =>
-        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+        Promise.resolve({
+          serverTime: Date.now() + serverAheadMilliseconds,
+          extension: { options: [20, 40, 60] },
+        }),
     });
 
     render(
