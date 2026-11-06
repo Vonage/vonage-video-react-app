@@ -144,11 +144,10 @@ videoHandler.onSettled$('startArchive', async ({ error, result, input }) => {
   if (error || !result) return;
 
   const { archiveOptions } = input;
-  const hasTranscription = archiveOptions?.hasTranscription === true;
 
-  if (!hasTranscription) return;
+  if (archiveOptions?.hasTranscription !== true) return;
 
-  const hasSummary = archiveOptions?.transcriptionProperties?.hasSummary !== false;
+  const hasSummary = archiveOptions.transcriptionProperties?.hasSummary ?? true;
 
   await sessionService.setTranscriptionWithSummary({
     sessionId: result.sessionId,
