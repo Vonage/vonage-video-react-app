@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
+import jwt from 'jsonwebtoken';
 import userEvent from '@testing-library/user-event';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import usePermissions from '@hooks/usePermissions';
@@ -21,6 +22,14 @@ import { env } from '../../env';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
+const endedMeetingSessionKey = jwt.sign(
+  {
+    sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+    roomName: 'ended-meeting',
+    s: { at: Math.floor(Date.now() / 1000) - 2 * 60 * 60, min: 60 },
+  },
+  'test'
+);
 const mockedLocation = vi.fn();
 
 vi.mock('react-router-dom', async () => {
@@ -133,6 +142,11 @@ describe('WaitingRoom', () => {
     vi.mocked(waitUntilPlaying).mockResolvedValue();
 
     vi.spyOn(globalThis.location, 'reload');
+  });
+
+  afterEach(() => {
+    mockedParams.roomIdentifier = 'test-room-name';
+    document.cookie = 'vera-session-signed-in=; max-age=0';
   });
 
   it('should render', async () => {
@@ -249,6 +263,33 @@ describe('WaitingRoom', () => {
 
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
+
+  it.each([
+    { scenario: 'nobody is signed in', cookie: '', isShown: false },
+    { scenario: 'signed in', cookie: 'vera-session-signed-in=1', isShown: true },
+  ])(
+    'shows the landing page link after the meeting ended: $isShown when $scenario',
+    async ({ cookie, isShown }) => {
+      env.partialUpdate({ AUTH_ENABLED: true });
+      document.cookie = cookie;
+      mockedParams.roomIdentifier = endedMeetingSessionKey;
+
+      await render(<WaitingRoom />, {
+        previewPublisherContext: {
+          __interceptor: (context: PreviewPublisherContextType) => {
+            context.publisher = mockPublisher;
+            context.isVideoLoading = false;
+            context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+          },
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
+      });
+      expect(!!screen.queryByRole('button', { name: 'View Landing Page' })).toBe(isShown);
+    }
+  );
 
   it('should render VideoContainer when video loading finishes', async () => {
     env.partialUpdate({
