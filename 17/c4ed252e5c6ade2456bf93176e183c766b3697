@@ -1,0 +1,40 @@
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 364
+frontend/src/locales/es.json
+  h_6029769cf9ac60 354
+frontend/src/hooks/useLeaveMeeting.ts
+  h_6029769cf9ac60 5-8,11,13,18,23
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_6029769cf9ac60 21,69
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  h_6029769cf9ac60 139
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 4
+frontend/src/locales/de.json
+  h_6029769cf9ac60 354
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  h_6029769cf9ac60 1-46
+frontend/src/locales/en.json
+  h_6029769cf9ac60 354
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  h_6029769cf9ac60 1-119
+frontend/src/locales/it.json
+  h_6029769cf9ac60 354
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 18-23
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 183-204
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 354
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "17c4ed252e5c6ade2456bf93176e183c766b3697",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

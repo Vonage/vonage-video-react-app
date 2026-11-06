@@ -1,0 +1,16 @@
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 4,10-11
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  h_6029769cf9ac60 5,18,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e4797c693f44b6bbdfb139aff1625b52758548dd",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

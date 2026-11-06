@@ -1,0 +1,42 @@
+backend/.env.example
+  h_6029769cf9ac60 30-34
+backend/helpers/config.ts
+  h_6029769cf9ac60 27,73,94
+backend/helpers/getOrCreateSessionKeyFromRoomName.ts
+  h_6029769cf9ac60 6-8,21-45
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 34
+backend/routes/auth/handlers/signInHandler.test.ts
+  h_6029769cf9ac60 28,39
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 31
+backend/routes/video/helpers/resignSessionKey.ts
+  h_6029769cf9ac60 1-16
+backend/routes/video/helpers/verifySessionKeySignature.ts
+  h_6029769cf9ac60 1-32
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 9-12,20-23,28-29,41-52,191-286
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 10-12,34-57
+backend/types/config.ts
+  h_6029769cf9ac60 43
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 51-56
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 768-784
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 645,647,651
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  h_6029769cf9ac60 55-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d96973b556f23dc1c0e16d462830a6f9188d2b81",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+.claude/skills/setup/SKILL.md
+  h_6029769cf9ac60 3,66,114
+backend/.env.example
+  h_6029769cf9ac60 28
+backend/helpers/assertSessionKeySecretMatchesAuth.ts
+  h_6029769cf9ac60 1-23
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 110-118,143-155
+backend/helpers/config.ts
+  h_6029769cf9ac60 10,36
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 145,156,171
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e3922bc4712e4a61919d1369070db7c19b5940a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,74 @@
+frontend/src/mockups/meetingFlow/components/Notice/Notice.tsx
+  h_6029769cf9ac60 5,18,28
+frontend/src/mockups/meetingFlow/extensionSettings/components/MeetingRoomWithMeetingTimer/MeetingRoomWithMeetingTimer.tsx
+  h_6029769cf9ac60 1-26
+frontend/src/mockups/meetingFlow/extensionSettings/components/MeetingRoomWithMeetingTimer/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/components/MeetingTimerPill/MeetingTimerPill.tsx
+  h_6029769cf9ac60 1-27
+frontend/src/mockups/meetingFlow/extensionSettings/components/MeetingTimerPill/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsDialogMockup/SettingsDialogMockup.tsx
+  h_6029769cf9ac60 1-22
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsDialogMockup/components/SettingsDialogMockupSidebar.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsDialogMockup/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsPrimaryButton/SettingsPrimaryButton.tsx
+  h_6029769cf9ac60 1-21
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsPrimaryButton/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/context/extensionViewerContext.ts
+  h_6029769cf9ac60 1-14
+frontend/src/mockups/meetingFlow/extensionSettings/endingSoon/EndingSoonAtCap.tsx
+  h_6029769cf9ac60 1-25
+frontend/src/mockups/meetingFlow/extensionSettings/endingSoon/EndingSoonQuickChoices.tsx
+  h_6029769cf9ac60 1-39
+frontend/src/mockups/meetingFlow/extensionSettings/endingSoon/EndingSoonSingleAction.tsx
+  h_6029769cf9ac60 1-40
+frontend/src/mockups/meetingFlow/extensionSettings/endingSoon/components/EndingSoonDialog.tsx
+  h_6029769cf9ac60 1-44
+frontend/src/mockups/meetingFlow/extensionSettings/helpers/formatDurationMinutes.ts
+  h_6029769cf9ac60 1-15
+frontend/src/mockups/meetingFlow/extensionSettings/hooks/useMeetingTabCopy.ts
+  h_6029769cf9ac60 1-88
+frontend/src/mockups/meetingFlow/extensionSettings/hooks/useMeetingTabNotice.ts
+  h_6029769cf9ac60 1-46
+frontend/src/mockups/meetingFlow/extensionSettings/stories/EndingSoonPopup.stories.tsx
+  h_6029769cf9ac60 1-106
+frontend/src/mockups/meetingFlow/extensionSettings/stories/SettingsMeetingTab.stories.tsx
+  h_6029769cf9ac60 1-176
+frontend/src/mockups/meetingFlow/extensionSettings/stories/WithMeetingTabState.tsx
+  h_6029769cf9ac60 1-32
+frontend/src/mockups/meetingFlow/extensionSettings/stories/sampleMeetingTabStates.ts
+  h_6029769cf9ac60 1-53
+frontend/src/mockups/meetingFlow/extensionSettings/types/ExtensionHistoryEntry.ts
+  h_6029769cf9ac60 1-5
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabRadioCards/MeetingTabRadioCards.tsx
+  h_6029769cf9ac60 1-93
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabRadioCards/components/ExtensionHistoryList.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabRows/MeetingTabRows.tsx
+  h_6029769cf9ac60 1-82
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabRows/components/SettingsInfoRow.tsx
+  h_6029769cf9ac60 1-30
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabTimeline/MeetingTabTimeline.tsx
+  h_6029769cf9ac60 1-78
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabTimeline/components/ExtensionTimeline.tsx
+  h_6029769cf9ac60 1-68
+frontend/src/mockups/meetingFlow/extensionSettings/variants/MeetingTabTimeline/components/ExtensionTimelineLegend.tsx
+  h_6029769cf9ac60 1-38
+frontend/src/mockups/meetingFlow/locales/en.json
+  h_6029769cf9ac60 151-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "88df804f06536286ef68118ce3cfdcb8ff437ac6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
