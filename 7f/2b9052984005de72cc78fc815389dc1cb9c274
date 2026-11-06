@@ -1,0 +1,16 @@
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  h_6029769cf9ac60 230-277
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 160-161,168,181,187-191,307,323-324,326,335-336,341,344-352
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7f2b9052984005de72cc78fc815389dc1cb9c274",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

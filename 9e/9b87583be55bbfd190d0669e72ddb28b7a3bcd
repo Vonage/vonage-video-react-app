@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 233-237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e9b87583be55bbfd190d0669e72ddb28b7a3bcd",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
