@@ -140,12 +140,8 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   });
 });
 
-videoHandler.use$('startArchive', async ({ input, next }) => {
-  const { sessionKey, withTranscription, withSummary } = input as {
-    sessionKey: string;
-    withTranscription?: boolean;
-    withSummary?: boolean;
-  };
+videoHandler.use$('startArchive', async ({ input, assertInput, next }) => {
+  const { sessionKey, withTranscription, withSummary } = assertInput(input);
 
   if (!withTranscription) return next();
 
