@@ -16,6 +16,8 @@ export type * from './SessionId';
 export type * from './SameKeys';
 export type * from './IsOptionalKey';
 export type * from './SessionKeyPayload';
+export type * from './ScheduleClaim';
+export type * from './ScheduleWindow';
 export type * from './VideoSessionDetails';
 export type * from './VideoSessionDetailsWithToken';
 export type * from './SessionKey';

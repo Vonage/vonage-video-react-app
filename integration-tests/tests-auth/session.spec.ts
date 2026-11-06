@@ -67,6 +67,7 @@ test('a tampered session cookie sends the user through sign-in without showing t
     request.url().startsWith(`${APP_URL}/auth/signin`)
   );
   await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByRole('button', { name: 'Create meeting' }).click();
   await signInRequest;
 
   await expect(page).toHaveURL(`${APP_URL}/`);
