@@ -12,6 +12,7 @@ const bridgeAttributesMap = {
 
   /**
    * If provided joins directly to the session with the provided session identifier, otherwise a new session may be created
+   * Set it once: changing an existing value does not move the user to another room.
    */
   'session-identifier': new BridgeAttributeMeta({
     key: 'session-identifier',
