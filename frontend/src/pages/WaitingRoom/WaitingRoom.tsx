@@ -14,6 +14,7 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import isSignedIn from '@utils/isSignedIn';
 
 /**
  * WaitingRoom Component
@@ -93,7 +94,7 @@ const WaitingRoom: FC = () => {
                   sessionKey={sessionKey}
                   scheduleWindow={scheduleWindow}
                 >
-                  <GoToLandingPageButton />
+                  {isSignedIn() && <GoToLandingPageButton />}
                 </UsernameInput>
               )}
 
