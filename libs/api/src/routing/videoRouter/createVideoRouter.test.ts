@@ -149,6 +149,31 @@ describe('createVideoHandler', () => {
     });
   });
 
+  it('returns the server time from getServerSettings without a sessionKey', async () => {
+    const requestedAt = Date.now();
+
+    const response = await request(createTestApp())
+      .post('/video/getServerSettings')
+      .send({})
+      .expect(200);
+
+    const { serverTime } = extractResponseData<{ serverTime: number }>(response.body);
+
+    expect(serverTime).toBeGreaterThanOrEqual(requestedAt);
+    expect(serverTime).toBeLessThanOrEqual(Date.now());
+  });
+
+  it('accepts a sessionKey in the getServerSettings input', async () => {
+    const response = await request(createTestApp())
+      .post('/video/getServerSettings')
+      .send({ sessionKey: mockSessionKey })
+      .expect(200);
+
+    const { serverTime } = extractResponseData<{ serverTime: number }>(response.body);
+
+    expect(serverTime).toEqual(expect.any(Number));
+  });
+
   describe('decodeSessionId', () => {
     it('should decode a valid sessionId via VideoClient method (not a TRPC route)', async () => {
       const app = createTestApp();

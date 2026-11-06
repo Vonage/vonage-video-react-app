@@ -32,6 +32,8 @@ test('a signed-in user can create a room through the authenticated API', async (
   await page.goto(`${APP_URL}/`);
 
   await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByRole('button', { name: 'Create meeting' }).click();
+  await page.getByRole('button', { name: 'Join now' }).click();
 
   await expect(page).toHaveURL(new RegExp(`${APP_URL}/waiting-room/.+`));
 });

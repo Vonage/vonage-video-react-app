@@ -9,3 +9,5 @@ export type {
   ArchiveWithTranscription,
 } from './useArchives';
 export { isPendingStatus } from './useArchives';
+export { default as useServerSettings } from './useServerSettings';
+export type { ServerSettingsResult, UseServerSettingsProps } from './useServerSettings';

@@ -1,4 +1,5 @@
 import { makeInternalErrorHandler } from '@api-lib/errors';
+import isScheduleError from '@api-lib/schedule/isScheduleError';
 import { type IVideoClient, type JoinSessionPayload } from '@api-lib/types';
 
 function joinSession(this: IVideoClient, payload: JoinSessionPayload) {
@@ -16,6 +17,8 @@ function joinSession(this: IVideoClient, payload: JoinSessionPayload) {
       token,
     };
   } catch (error) {
+    if (isScheduleError(error)) throw error;
+
     throw makeInternalErrorHandler('Failed to join session')(error);
   }
 }

@@ -18,6 +18,7 @@ export type {
   VideoPayload,
   VideoRouterConfig,
   SessionSigning,
+  GetServerSettingsPayload,
 } from '../schemas';
 
 export type * from './IVideoRouter';
