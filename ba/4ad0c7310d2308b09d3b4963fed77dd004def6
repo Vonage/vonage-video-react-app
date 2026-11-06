@@ -1,0 +1,20 @@
+backend/middleware/guestRateLimitMiddleware.ts
+  h_6029769cf9ac60 1-21
+backend/middleware/index.ts
+  h_6029769cf9ac60 4
+backend/server.ts
+  h_6029769cf9ac60 16,39,65-66,100-102
+backend/tests/guestReports.auth.test.ts
+  h_6029769cf9ac60 1-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ba4ad0c7310d2308b09d3b4963fed77dd004def6",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

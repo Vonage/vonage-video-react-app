@@ -1,0 +1,19 @@
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_be1243695e72e8::t_46b0627071ed95 116,148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c4fdf56c0acc492ca7c8906109980c350e7f1637",
+  "prompts": {},
+  "sessions": {
+    "s_be1243695e72e8": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_13b3e2e9-3ef6-426a-a698-4000ceeaef23",
+        "model": "auto"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

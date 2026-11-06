@@ -1,0 +1,48 @@
+integration-tests/tests/landing.spec.ts
+  h_6029769cf9ac60 11,56,85,87,93,95,101,103,109,111,117,119
+frontend/src/components/RoomNameInput/RoomNameInput.spec.tsx
+  h_6029769cf9ac60 2,6-8,10,13-16,18,20,23,25,29,31-33
+frontend/src/components/JoinContainerSeparator/JoinContainerSeparator.tsx
+  h_6029769cf9ac60 16
+frontend/src/locales/es.json
+  h_6029769cf9ac60 327-329
+frontend/src/locales/it.json
+  h_6029769cf9ac60 327-329
+frontend/src/components/JoinWaitRoomButton/helpers/parseRoomIdInput.ts
+  h_6029769cf9ac60 1-29
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.spec.tsx
+  h_6029769cf9ac60 21
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.tsx
+  h_6029769cf9ac60 5-6,9,19,25,32,34-35,40
+frontend/src/components/JoinWaitRoomButton/helpers/parseRoomIdInput.spec.ts
+  h_6029769cf9ac60 1-21
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_6029769cf9ac60 31-37,41-44,46-47
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.tsx
+  h_6029769cf9ac60 12,18-19,24
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 337-339
+frontend/src/components/RoomNameInput/RoomNameInput.tsx
+  h_6029769cf9ac60 6-7,15,17-18,24-25,31-33,42,45
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 327-329
+frontend/src/locales/de.json
+  h_6029769cf9ac60 327-329
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  h_6029769cf9ac60 1,19,22,25-29,35-36,39,42
+frontend/src/locales/en.json
+  h_6029769cf9ac60 327-329
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 39-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "47cb4684e6eb862130a3456f3651b27432f0a14f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

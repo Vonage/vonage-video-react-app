@@ -1,0 +1,38 @@
+docs/WAITING_ROOM.md
+  h_6029769cf9ac60 7-14
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 43,60,79,101-102,124-126,137-138,158-165,173,178,186,188-189
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 20,60,71-73,79,123-126,130-136,167,169,196,200-201,205,209-211,213-214
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/AutoJoinText.tsx
+  h_6029769cf9ac60 4,6-7,11,13-14,17-24,28
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useAutoJoin.ts
+  h_6029769cf9ac60 6,9,14,20
+frontend/src/locales/de.json
+  h_6029769cf9ac60 399-401
+frontend/src/locales/en.json
+  h_6029769cf9ac60 399-401
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 399-401
+frontend/src/locales/es.json
+  h_6029769cf9ac60 399-401
+frontend/src/locales/it.json
+  h_6029769cf9ac60 399-401
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 409-411
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 143-196
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e13dc448573b855bb98c852ad7aed93d4f0c25e8",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

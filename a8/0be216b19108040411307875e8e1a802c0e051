@@ -1,0 +1,30 @@
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.spec.tsx
+  h_6029769cf9ac60 21
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  h_6029769cf9ac60 40
+frontend/src/locales/de.json
+  h_6029769cf9ac60 167,337
+frontend/src/locales/en.json
+  h_6029769cf9ac60 167,337
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 167,337
+frontend/src/locales/es.json
+  h_6029769cf9ac60 167,337
+frontend/src/locales/it.json
+  h_6029769cf9ac60 167,337
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 177,347
+integration-tests/tests/landing.spec.ts
+  h_6029769cf9ac60 11,70,98-99,106-107,114-115,122-123,130-131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a80be216b19108040411307875e8e1a802c0e051",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

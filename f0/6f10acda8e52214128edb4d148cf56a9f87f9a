@@ -1,0 +1,66 @@
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 12,16-25
+backend/tests/extendSession.test.ts
+  h_6029769cf9ac60 1-68
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 107,111,116,122-124,128-129
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 32
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 3,25,27-31,35
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 68,86,119,149
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 222,236
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 21-22,30,47
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 87-88,139
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  h_6029769cf9ac60 1-36
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 13-18
+frontend/src/locales/de.json
+  h_6029769cf9ac60 424
+frontend/src/locales/en.json
+  h_6029769cf9ac60 424
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 424
+frontend/src/locales/es.json
+  h_6029769cf9ac60 424
+frontend/src/locales/it.json
+  h_6029769cf9ac60 424
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 434
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  h_6029769cf9ac60 12-14
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 214,317
+libs/api/src/handlers/extendSession.ts
+  h_6029769cf9ac60 13,33,43,45
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  h_6029769cf9ac60 176,179,183,185
+libs/api/src/schemas/ExtensionConfig.schema.ts
+  h_6029769cf9ac60 2,4-10,12-14
+libs/api/src/schemas/VideoClientConfig.schema.ts
+  h_6029769cf9ac60 44
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/constants/index.ts
+  h_6029769cf9ac60 5
+libs/common/src/constants/maxTotalExtensionMinutes.ts
+  h_6029769cf9ac60 1-3
+libs/core/src/hooks/useServerSettings/useServerSettings.test.ts
+  h_6029769cf9ac60 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f06f10acda8e52214128edb4d148cf56a9f87f9a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

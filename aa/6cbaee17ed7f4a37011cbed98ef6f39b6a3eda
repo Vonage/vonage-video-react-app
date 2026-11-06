@@ -1,0 +1,36 @@
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 21,142-145
+backend/middleware/guestRateLimitMiddleware.ts
+  h_6029769cf9ac60 1-21
+backend/middleware/index.ts
+  h_6029769cf9ac60 4
+backend/routes/video/helpers/assertAnonymousSessionCreationLimit.ts
+  h_6029769cf9ac60 1-33
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 8,24,100-162
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 9,14-16,31-40,43,48
+backend/routes/video/types/VideoRouteContext.ts
+  h_6029769cf9ac60 5
+backend/routes/video/video.ts
+  h_6029769cf9ac60 16-17,26
+backend/server.ts
+  h_6029769cf9ac60 16,39,62-63,95-97
+backend/tests/guestReports.auth.test.ts
+  h_6029769cf9ac60 1-89
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 228-243
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 16,92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aa6cbaee17ed7f4a37011cbed98ef6f39b6a3eda",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+frontend/src/components/CreateRoomWizard/components/ShareStep/ShareStep.tsx
+  h_6029769cf9ac60 1,3-4,9,20,49-79
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/ShareImageButton/ShareImageButton.spec.tsx
+  h_6029769cf9ac60 1-41
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/ShareImageButton/ShareImageButton.tsx
+  h_6029769cf9ac60 1-35
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/ShareImageButton/helpers/shareMeetingImage.ts
+  h_6029769cf9ac60 1-83
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/ShareImageButton/index.ts
+  h_6029769cf9ac60 1-4
+frontend/src/locales/de.json
+  h_6029769cf9ac60 209,213-216
+frontend/src/locales/en.json
+  h_6029769cf9ac60 209,213-216
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 209,213-216
+frontend/src/locales/es.json
+  h_6029769cf9ac60 209,213-216
+frontend/src/locales/it.json
+  h_6029769cf9ac60 209,213-216
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 219,223-226
+libs/ui/src/components/QrCode/QrCode.spec.tsx
+  h_6029769cf9ac60 1-19
+libs/ui/src/components/QrCode/QrCode.tsx
+  h_6029769cf9ac60 1-38
+libs/ui/src/components/QrCode/index.ts
+  h_6029769cf9ac60 1
+libs/ui/src/components/index.ts
+  h_6029769cf9ac60 9
+package.json
+  h_6029769cf9ac60 208
+pnpm-lock.yaml
+  h_6029769cf9ac60 152-154,7764-7766,16665-16666
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "37f69256a6f9a1253081804b149d0e5b2835b460",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

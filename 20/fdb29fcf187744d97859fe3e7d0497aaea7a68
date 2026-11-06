@@ -1,0 +1,24 @@
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  s_257dfffc738ac1::t_544e628b037a6d 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "20fdb29fcf187744d97859fe3e7d0497aaea7a68",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_257dfffc738ac1": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_8e3785ab-c03b-41ed-9341-bf351a7df2c6",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 20-34
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 18,35,38,707-761,764-774
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 44,46-48,56,105,196,361-411,608-610,721,771
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 1-126
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/ExtendOptionRow.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/extendOptionRowVariants.ts
+  h_6029769cf9ac60 1-20
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/helpers/getExtensionOptions.ts
+  h_6029769cf9ac60 1-23
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendMeeting.ts
+  h_6029769cf9ac60 1-51
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendPopoverOpenState.ts
+  h_6029769cf9ac60 1-34
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 1-36
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 2,6,13,42,46,72-110,113-126,139,142-146
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1,4,6,15,24,26,30-35,37-65
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 5,9
+frontend/src/locales/de.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/en.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/es.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/it.json
+  h_6029769cf9ac60 346-355
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 356-365
+frontend/src/types/session.ts
+  h_6029769cf9ac60 43
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 42,65,431-434,629-644
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "41ee5895991416be53f5fe02f28c7debd11cb8d5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

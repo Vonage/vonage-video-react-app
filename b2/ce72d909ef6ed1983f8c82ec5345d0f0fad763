@@ -1,0 +1,18 @@
+backend/helpers/config.test.ts
+  h_6029769cf9ac60 208
+backend/helpers/getOrCreateSessionKeyFromRoomName.test.ts
+  h_6029769cf9ac60 48,51-53,58,60-76
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 120-130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b2ce72d909ef6ed1983f8c82ec5345d0f0fad763",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

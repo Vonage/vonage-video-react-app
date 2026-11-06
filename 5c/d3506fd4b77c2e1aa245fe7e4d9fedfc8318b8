@@ -1,0 +1,50 @@
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  h_6029769cf9ac60 70-71,115-116
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 1-144
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 2,16-21,25-27,31-32,40,45-46,50,60-69,88-93,96,108,119-120,123-131,156,158-171,173
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/JoinBlockerText.tsx
+  h_6029769cf9ac60 1-49
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  h_6029769cf9ac60 1-51
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/scheduleCountdownPanelVariants.ts
+  h_6029769cf9ac60 1-24
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  h_6029769cf9ac60 1-64
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 1-44
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 9-11,16,21-32,108
+frontend/src/locales/de.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/en.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/es.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/it.json
+  h_6029769cf9ac60 367-383
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 377-393
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_6029769cf9ac60 9,44-45,93-97
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 53-123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5cd3506fd4b77c2e1aa245fe7e4d9fedfc8318b8",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

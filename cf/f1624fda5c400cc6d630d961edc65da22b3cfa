@@ -1,0 +1,22 @@
+backend/routes/video/helpers/assertAnonymousSessionCreationLimit.ts
+  h_6029769cf9ac60 1-33
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 23,99-129
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 9,31-40
+backend/routes/video/types/VideoRouteContext.ts
+  h_6029769cf9ac60 5
+backend/routes/video/video.ts
+  h_6029769cf9ac60 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cff1624fda5c400cc6d630d961edc65da22b3cfa",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
