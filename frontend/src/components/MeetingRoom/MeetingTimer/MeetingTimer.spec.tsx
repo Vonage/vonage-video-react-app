@@ -52,6 +52,21 @@ describe('MeetingTimer', () => {
       expect.objectContaining({ type: 'warning', message: 'The meeting is about to finish' })
     );
   });
+
+  it('dismisses the about-to-finish message when the meeting room closes', () => {
+    vi.setSystemTime(endsAt - 60_000);
+    const { unmount } = render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
+      runtimeContext: { videoClient: makeServerClockAhead() },
+    });
+    const hasEndingSoonNotification = () =>
+      [...notifications$.getState().notifications.values()].some(
+        ({ message }) => message === 'The meeting is about to finish'
+      );
+
+    expect(hasEndingSoonNotification()).toBe(true);
+    unmount();
+    expect(hasEndingSoonNotification()).toBe(false);
+  });
 });
 
 function makeServerClockAhead() {
