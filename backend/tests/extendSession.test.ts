@@ -1,6 +1,7 @@
 import type { Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { tryCatch } from '@common/execution';
+import { SessionKeyClaim } from '@common/constants';
 import mockVonageVideoSdk from './helpers/mockVonageVideoSdk';
 import type { RequestWithTokenAuth } from '../middleware/authMiddleware/authMiddleware';
 
@@ -10,9 +11,19 @@ vi.doMock('../helpers/config', () => ({
   default: () => ({ authEnabled: config.authEnabled }),
 }));
 
-await mockVonageVideoSdk();
+let createdSessionCount = 0;
+await mockVonageVideoSdk({
+  videoOverrides: {
+    createSession: () => {
+      createdSessionCount += 1;
+      const sessionInfo = `2~vonageAppId~0.0.0.0~2024-01-${createdSessionCount}`;
+      return Promise.resolve({ sessionId: `1_${Buffer.from(sessionInfo).toString('base64')}` });
+    },
+  },
+});
 
 const { videoHandler } = await import('../routes/video');
+const sessionService = (await import('../sessionStorageService')).default();
 
 const signedInUser = { active: true, sub: 'user-1', client_id: 'test-client-id' };
 
@@ -65,5 +76,49 @@ describe('extendSession access', () => {
 
     expect(error).toMatchObject({ cause: { statusCode: 401 } });
     expect(renewedSession.sessionKey).not.toEqual(sessionKey);
+  });
+});
+
+describe('joining with an older sessionKey of an extended meeting', () => {
+  it('gives a late joiner the extended sessionKey and end', async () => {
+    const sessionKey = await createRunningSessionKey();
+    await makeCaller({ user: signedInUser }).extendSession({ sessionKey, minutes: 20 });
+
+    const joinedSession = await makeCaller({}).joinSession({ sessionKey });
+
+    expect(joinedSession.sessionKey).not.toEqual(sessionKey);
+    expect(joinedSession[SessionKeyClaim.extended]).toBe(20);
+  });
+
+  it('lets the original link join after the original end while the extension runs', async () => {
+    const sessionKey = await createRunningSessionKey();
+    await makeCaller({ user: signedInUser }).extendSession({ sessionKey, minutes: 20 });
+
+    vi.useFakeTimers({ toFake: ['Date'], now: Date.now() + 65 * 60 * 1000 });
+    const { result: joinedSession, error } = await tryCatch(() =>
+      makeCaller({}).joinSession({ sessionKey })
+    );
+    vi.useRealTimers();
+
+    expect(error).toBeNull();
+    expect(joinedSession?.[SessionKeyClaim.extended]).toBe(20);
+  });
+
+  it('never swaps in a stored key that belongs to another session', async () => {
+    const sessionKey = await createRunningSessionKey();
+    const otherSessionKey = await createRunningSessionKey();
+    const { sessionKey: otherExtendedSessionKey } = await makeCaller({
+      user: signedInUser,
+    }).extendSession({ sessionKey: otherSessionKey, minutes: 20 });
+    const { sessionId } = videoHandler.makeVideoClient$().decodeSessionKey({ sessionKey });
+    await sessionService.setSession({
+      roomName: 'extend-room',
+      sessionId,
+      sessionKey: otherExtendedSessionKey,
+    });
+
+    const joinedSession = await makeCaller({}).joinSession({ sessionKey });
+
+    expect(joinedSession.sessionKey).toEqual(sessionKey);
   });
 });

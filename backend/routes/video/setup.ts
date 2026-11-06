@@ -11,7 +11,9 @@ import anonymousSessionCreationLimiter from '../../middleware/anonymousSessionCr
 import verifySessionKeySignature from './helpers/verifySessionKeySignature';
 import resignSessionKey from './helpers/resignSessionKey';
 import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
-import { isRecord } from '@common/assertions';
+import { isNil, isRecord } from '@common/assertions';
+import { SessionKeyClaim } from '@common/constants';
+import { tryCatch } from '@common/execution';
 
 const sessionService = getSessionStorageService();
 
@@ -47,6 +49,30 @@ videoHandler.use$(function resignAllowedLegacySessionKey(opts) {
   });
 
   return next({ input: { ...input, sessionKey } });
+});
+
+videoHandler.use$(async function useLatestSessionKeyForSession(opts) {
+  const { ctx, input, next } = opts;
+  if (!isRecord(input) || typeof input.sessionKey !== 'string') return next();
+
+  const { sessionKey } = input;
+  const { result: session } = tryCatch(() => ctx.videoClient.decodeSessionKey({ sessionKey }));
+  if (isNil(session)) return next();
+
+  const storedSessionKey = await sessionService.getSessionKeyBySessionId({
+    sessionId: session.sessionId,
+  });
+  if (isNil(storedSessionKey) || storedSessionKey === sessionKey) return next();
+
+  const { result: storedSession } = tryCatch(() =>
+    ctx.videoClient.decodeSessionKey({ sessionKey: storedSessionKey })
+  );
+  const isNewerKeyForSameSession =
+    storedSession?.sessionId === session.sessionId &&
+    (storedSession[SessionKeyClaim.extended] ?? 0) > (session[SessionKeyClaim.extended] ?? 0);
+  if (!isNewerKeyForSameSession) return next();
+
+  return next({ input: { ...input, sessionKey: storedSessionKey } });
 });
 
 videoHandler.use$(
