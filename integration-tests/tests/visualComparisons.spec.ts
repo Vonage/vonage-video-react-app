@@ -217,6 +217,7 @@ test.describe('Meeting room timer UI test', () => {
     if (!isMobile) {
       await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
     }
+    await serveStaticFilesFromCache(page);
     const startsAt = Math.floor(Date.now() / 1000) * 1000 - 10 * minuteInMilliseconds;
     const durationMinutes = 60;
     const endsAt = startsAt + durationMinutes * minuteInMilliseconds;
