@@ -1,0 +1,50 @@
+frontend/src/mockups/meetingFlow/components/Notice/Notice.tsx
+  h_6029769cf9ac60 5
+frontend/src/mockups/meetingFlow/extensionSettings/components/DurationChoices/DurationChoices.tsx
+  h_6029769cf9ac60 2-3,5-8,11,13-14,17-23,25-26,28,32
+frontend/src/mockups/meetingFlow/extensionSettings/components/DurationChoices/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsDialogMockup/SettingsDialogMockup.tsx
+  h_6029769cf9ac60 6-9,11,13-16,22
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsDialogMockup/components/SettingsDialogMockupSidebar.tsx
+  h_6029769cf9ac60 6-17,21,23-25,27-29,33-54
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsSecondaryButton/SettingsSecondaryButton.tsx
+  h_6029769cf9ac60 1-2,5,7-10,12-16,18-19,23
+frontend/src/mockups/meetingFlow/extensionSettings/components/SettingsSecondaryButton/index.ts
+  h_6029769cf9ac60 1
+frontend/src/mockups/meetingFlow/extensionSettings/context/extensionViewerContext.ts
+  h_6029769cf9ac60 4
+frontend/src/mockups/meetingFlow/extensionSettings/hooks/useMeetingTabCopy.ts
+  h_6029769cf9ac60 10,24,29,33,35-36,39,41-43,45-51
+frontend/src/mockups/meetingFlow/extensionSettings/meetingEnding/MeetingEndingPopup.tsx
+  h_6029769cf9ac60 1-2,4-12,15-16,18-24,27-36,40
+frontend/src/mockups/meetingFlow/extensionSettings/meetingEnding/components/MeetingEndingDurationStep.tsx
+  h_6029769cf9ac60 1,4-13,16,18-21,23,26-43,47
+frontend/src/mockups/meetingFlow/extensionSettings/meetingEnding/components/MeetingEndingNoticeStep.tsx
+  h_6029769cf9ac60 1-3,6,10-12,15,17,19,22-24,26-40,44
+frontend/src/mockups/meetingFlow/extensionSettings/meetingTab/MeetingTab.tsx
+  h_6029769cf9ac60 3-14,17,19,22-41,46,48-49,54-58
+frontend/src/mockups/meetingFlow/extensionSettings/meetingTab/components/MeetingProgress.tsx
+  h_6029769cf9ac60 2,5,7-8,11-30,32,36
+frontend/src/mockups/meetingFlow/extensionSettings/meetingTab/components/MeetingTabDurationChooser.tsx
+  h_6029769cf9ac60 1,3-10,13,15-18,20,23,25,27-35,40
+frontend/src/mockups/meetingFlow/extensionSettings/stories/MeetingEndingPopup.stories.tsx
+  h_6029769cf9ac60 8,12,37,39-40,44,50,52-53,57,63,65-66,68,70,76,78-79,83,91-92
+frontend/src/mockups/meetingFlow/extensionSettings/stories/SettingsMeetingTab.stories.tsx
+  h_6029769cf9ac60 2-3,7,20,22-23,26-28,33,35-36,38,43,45-46,48-52,57,59-60,62,67,69-70,72,77,79-80,82-87
+frontend/src/mockups/meetingFlow/extensionSettings/stories/sampleMeetingTabStates.ts
+  h_6029769cf9ac60 4,9-13,17,21,23-25,31
+frontend/src/mockups/meetingFlow/locales/en.json
+  h_6029769cf9ac60 154-163,169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dd5d3824ff13ffa9ee0ebd536e0b1ce7f585214e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

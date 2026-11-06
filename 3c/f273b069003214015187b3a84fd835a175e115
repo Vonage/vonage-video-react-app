@@ -1,0 +1,16 @@
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  h_6029769cf9ac60 1-36
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 12-17,27-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3cf273b069003214015187b3a84fd835a175e115",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

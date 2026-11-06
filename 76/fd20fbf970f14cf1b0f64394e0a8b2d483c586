@@ -1,0 +1,16 @@
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.spec.ts
+  h_6029769cf9ac60 1-66
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 8-9,22,24-29,38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "76fd20fbf970f14cf1b0f64394e0a8b2d483c586",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

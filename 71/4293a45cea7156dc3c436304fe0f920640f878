@@ -1,0 +1,16 @@
+backend/middleware/authMiddleware/authMiddleware.ts
+  h_6029769cf9ac60 21
+backend/routes/video/video.ts
+  h_6029769cf9ac60 16-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "714293a45cea7156dc3c436304fe0f920640f878",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

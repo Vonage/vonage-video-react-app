@@ -1,0 +1,24 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 708-709,737-742,745,755
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 46,397-400,402
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 52
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 136
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 38-40,47,58
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 171,217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "34601c2f9574584df35a3a624081f65a4f14700c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

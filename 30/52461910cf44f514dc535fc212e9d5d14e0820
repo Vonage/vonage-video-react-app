@@ -1,0 +1,20 @@
+backend/routes/video/video.ts
+  s_2bf7341d619a9d::t_c9558d5442bff7 143,146-147,149,151,154-155
+  s_2bf7341d619a9d::t_b054c1455c09a9 144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3052461910cf44f514dc535fc212e9d5d14e0820",
+  "prompts": {},
+  "sessions": {
+    "s_2bf7341d619a9d": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_cfbdda84-453b-4ebc-b79b-28a8ce20ccde",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

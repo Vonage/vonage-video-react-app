@@ -1,0 +1,46 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 7-10,12,16-17
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 22-23,25,31,33,35,38-39,41
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 5,11,20,22,28,33,35-37
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 10,15,23
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 8,15
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  h_6029769cf9ac60 1-7,10,12-32,35
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 5
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 15,53,68-70
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 2,13,201-202,204-205,213,215-216,218-224,231-235
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 34,103,269
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 2,23
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 4
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  h_6029769cf9ac60 4,6-11,15,18
+frontend/src/utils/formatMinutesAndSeconds/index.ts
+  h_6029769cf9ac60 1-3
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 146-153,155-158,174
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1cdb1a141c3d457f365ab37fbf68f531634df2c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

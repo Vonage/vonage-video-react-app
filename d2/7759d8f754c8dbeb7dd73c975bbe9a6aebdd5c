@@ -1,0 +1,40 @@
+README.md
+  h_6029769cf9ac60 192
+docs/WAITING_ROOM.md
+  h_6029769cf9ac60 1-14
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 43,60,79,101-191
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 20-21,60,71-73,79,94,115-131,161,163,190,194-195,199,203-209
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/AutoJoinText.tsx
+  h_6029769cf9ac60 1-25
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useAutoJoin.ts
+  h_6029769cf9ac60 1-28
+frontend/src/locales/de.json
+  h_6029769cf9ac60 427-429
+frontend/src/locales/en.json
+  h_6029769cf9ac60 427-429
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 427-429
+frontend/src/locales/es.json
+  h_6029769cf9ac60 427-429
+frontend/src/locales/it.json
+  h_6029769cf9ac60 427-429
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 437-439
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 144-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d27759d8f754c8dbeb7dd73c975bbe9a6aebdd5c",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 68,86,119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aa779fb6ed67ddddf9de153f7d43c81d24972402",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

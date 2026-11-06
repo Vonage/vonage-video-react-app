@@ -1,0 +1,32 @@
+backend/middleware/anonymousSessionCreationLimiter.ts
+  h_6029769cf9ac60 1,5-22,24
+backend/routes/video/helpers/isAnonymousCaller.ts
+  h_6029769cf9ac60 1-8
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 84-101,181-183,187-211
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 7,9-10,27,38,56-59,61-65,67-69,77,88
+backend/routes/video/types/VideoRouteContext.ts
+  h_6029769cf9ac60 1-2,5-6
+backend/routes/video/video.ts
+  h_6029769cf9ac60 24-26
+libs/api/src/routing/index.ts
+  h_6029769cf9ac60 3
+libs/api/src/routing/runExpressMiddleware/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/routing/runExpressMiddleware/runExpressMiddleware.test.ts
+  h_6029769cf9ac60 1-59
+libs/api/src/routing/runExpressMiddleware/runExpressMiddleware.ts
+  h_6029769cf9ac60 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "24181864dfada39eda54c3fc8193c19cf3587cd9",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

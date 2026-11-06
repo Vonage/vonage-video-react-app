@@ -1,0 +1,28 @@
+backend/server.ts
+  s_99faf6d57e6e27::t_f18710738f3be2 84
+backend/tests/setStaticAssetCacheHeaders.test.ts
+  s_99faf6d57e6e27::t_1086434134fbe5 21
+backend/helpers/setStaticAssetCacheHeaders.ts
+  s_99faf6d57e6e27::t_4c40d5f55b92ed 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "004b207cbf7c7f39cf628d42034b674b8650b567",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_99faf6d57e6e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a36fd462-58a3-4d43-bd92-4b727fbc08ea",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

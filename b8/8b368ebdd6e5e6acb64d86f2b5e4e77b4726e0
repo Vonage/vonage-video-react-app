@@ -1,0 +1,30 @@
+backend/.env.example
+  h_6029769cf9ac60 33
+backend/middleware/anonymousRateLimitMiddleware.ts
+  h_6029769cf9ac60 7,21
+backend/middleware/index.ts
+  h_6029769cf9ac60 4
+backend/server.ts
+  h_6029769cf9ac60 13,39,62-66
+backend/tests/anonymousReports.auth.test.ts
+  h_6029769cf9ac60 51,63,71
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 55
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/hooks/useNetworkTest.spec.tsx
+  h_6029769cf9ac60 121
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 27
+integration-tests/tests-auth/anonymousMeetingLink.spec.ts
+  h_6029769cf9ac60 6,13,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b88b368ebdd6e5e6acb64d86f2b5e4e77b4726e0",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 5,73,75,77-85
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 73-94
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 28-31
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 8,10-16,18,21-22,24,30
+frontend/src/locales/de.json
+  h_6029769cf9ac60 355
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "de3586466f66349c3d665c295777864014760949",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

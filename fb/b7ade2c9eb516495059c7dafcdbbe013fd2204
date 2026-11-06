@@ -1,0 +1,38 @@
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 2-3,6,10-19
+backend/tests/extendSession.test.ts
+  h_6029769cf9ac60 1-66
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 101,105,110,116-118,122-123
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 62
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 236
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 30
+libs/api/src/handlers/extendSession.ts
+  h_6029769cf9ac60 13,33,43,45
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  h_6029769cf9ac60 170,173,177,179
+libs/api/src/schemas/ExtensionConfig.schema.ts
+  h_6029769cf9ac60 2,4-10,12-14
+libs/api/src/schemas/VideoClientConfig.schema.ts
+  h_6029769cf9ac60 44
+libs/common/src/constants/index.ts
+  h_6029769cf9ac60 5
+libs/common/src/constants/maxTotalExtensionMinutes.ts
+  h_6029769cf9ac60 1-3
+libs/core/src/hooks/useServerSettings/useServerSettings.test.ts
+  h_6029769cf9ac60 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fbb7ade2c9eb516495059c7dafcdbbe013fd2204",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

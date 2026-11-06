@@ -1,0 +1,14 @@
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 1,3-9,144-251
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c1ad2c5335680fdbce070f44548c4fe05be4dcb1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

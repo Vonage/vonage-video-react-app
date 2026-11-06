@@ -1,0 +1,34 @@
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 111
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 6
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 14,122-124,141-143
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 10,112-114
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 3,19-22
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 6,8,54-62
+frontend/src/components/Banner/Banner.spec.tsx
+  h_6029769cf9ac60 18,27-38,42
+frontend/src/components/Banner/Banner.tsx
+  h_6029769cf9ac60 8,30
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  h_6029769cf9ac60 1-2,11-15,26-37
+frontend/src/pages/GoodBye/GoodBye.tsx
+  h_6029769cf9ac60 10,43
+frontend/src/utils/isSignedIn.ts
+  h_6029769cf9ac60 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a6acde9fd6b7e861d0202fcabd96a9f769b20512",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

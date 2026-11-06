@@ -1,0 +1,84 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 7-10,12,16-32
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 18,35,38,707-767,770-780
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 44,46-48,56,105,196,361-412,609-611,722,772
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 1-136
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/ExtendOptionRow.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/extendOptionRowVariants.ts
+  h_6029769cf9ac60 1-20
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/helpers/getExtensionOptions.ts
+  h_6029769cf9ac60 1-4,7,9-20,23
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendMeeting.ts
+  h_6029769cf9ac60 1-55
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendPopoverOpenState.ts
+  h_6029769cf9ac60 1-34
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 1-36
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 2,6,13,24-25,27,33-35,37-38,40-41,43-44,46-48,50,52-55,58-59,61,64-80,83,86-91,93-95,97-100,102-103,105-125,130-143,156,159-163
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1,4,6-7,13-14,23-25,27-38,41-67
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 8,10,12,15,17,23
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 8,15
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  h_6029769cf9ac60 1-35
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 3
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 5
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 15,53,68-70
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 2,13,201-202,204-205,213,215-216,218-224,229,231-239,242
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 34,103,269
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 2,21
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  h_6029769cf9ac60 4
+frontend/src/locales/de.json
+  h_6029769cf9ac60 385-394
+frontend/src/locales/en.json
+  h_6029769cf9ac60 385-394
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 385-394
+frontend/src/locales/es.json
+  h_6029769cf9ac60 385-394
+frontend/src/locales/it.json
+  h_6029769cf9ac60 385-394
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 395-404
+frontend/src/types/session.ts
+  h_6029769cf9ac60 43
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 42,65,431-434,629-644
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  h_6029769cf9ac60 4,6-12,15
+frontend/src/utils/formatMinutesAndSeconds/index.ts
+  h_6029769cf9ac60 1-3
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 186-197,199,204,210,212-220,223,228,234,236-240,242-261,265-283,313-320,349
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7c234472533ee1509dd4071e7405bc01cc4d4f3f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
