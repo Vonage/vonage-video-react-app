@@ -6,6 +6,7 @@ import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { Box } from '@mui/material';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
@@ -29,9 +30,10 @@ import { PageLayoutEmbed } from '@ui';
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
+  const { sessionKey } = useSessionKeyParam();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
-  const missingRoomIdentifier = !sessionIdentifier;
+  const missingRoomIdentifier = !sessionKey;
   const canRedirect = missingRoomIdentifier && !!sessionIdentifier;
   const isConfigError = missingRoomIdentifier && !sessionIdentifier;
 

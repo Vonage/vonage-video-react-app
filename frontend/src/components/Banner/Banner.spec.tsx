@@ -15,6 +15,7 @@ function renderBanner() {
 describe('Banner', () => {
   afterEach(() => {
     env.AUTH_ENABLED = false;
+    document.cookie = 'vera-session-signed-in=; max-age=0';
   });
 
   it('renders the banner logo', () => {
@@ -23,17 +24,21 @@ describe('Banner', () => {
     expect(screen.getByTestId('banner-logo')).toBeInTheDocument();
   });
 
-  it('hides the log out action when auth is disabled', () => {
+  it.each([
+    { scenario: 'auth is disabled', isAuthEnabled: false, cookie: '', isShown: false },
+    { scenario: 'nobody is signed in', isAuthEnabled: true, cookie: '', isShown: false },
+    {
+      scenario: 'signed in',
+      isAuthEnabled: true,
+      cookie: 'vera-session-signed-in=1',
+      isShown: true,
+    },
+  ])('shows the log out action: $isShown when $scenario', ({ isAuthEnabled, cookie, isShown }) => {
+    env.AUTH_ENABLED = isAuthEnabled;
+    document.cookie = cookie;
+
     renderBanner();
 
-    expect(screen.queryByTestId('banner-logout')).not.toBeInTheDocument();
-  });
-
-  it('shows the log out action when auth is enabled', () => {
-    env.AUTH_ENABLED = true;
-
-    renderBanner();
-
-    expect(screen.getByTestId('banner-logout')).toBeInTheDocument();
+    expect(!!screen.queryByTestId('banner-logout')).toBe(isShown);
   });
 });

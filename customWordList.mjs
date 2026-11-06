@@ -33,6 +33,7 @@ const customWordList = [
   'QVGA',
   'webcredentials',
   'PKCE',
+  'enterpictureinpicture',
 ];
 
 export default customWordList;
