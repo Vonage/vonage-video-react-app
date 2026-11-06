@@ -112,19 +112,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(404);
         });
 
-        it('stores the summary preference when starting a transcription through /v2/startArchive', async () => {
-          const { sessionId } = decodeSessionKey({ sessionKey: validSessionKey });
-          await sessionService.setSession({ roomName, sessionKey: validSessionKey, sessionId });
-
-          const res = await request(server)
-            .post('/v2/startArchive')
-            .set('Content-Type', 'application/json')
-            .send({ sessionKey: validSessionKey, withTranscription: true, withSummary: false });
-
-          expect(res.statusCode).toEqual(200);
-          expect(await sessionService.getTranscriptionWithSummary({ sessionId })).toBe(false);
-        });
-
         it('returns a 502 when stopping an invalid archive in a room', async () => {
           const archiveId = 'b8-c9-d10';
           const res = await request(server)
@@ -507,22 +494,26 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             );
           });
 
-          it('/hooks/archive stopped with name=transcription preserves withSummary=false preference', async () => {
+          it('/hooks/archive stopped with name=transcription preserves withSummary=false chosen in /v2/startArchive', async () => {
+            const { sessionId } = decodeSessionKey({ sessionKey: validSessionKey });
+            await sessionService.setSession({ roomName, sessionKey: validSessionKey, sessionId });
+
+            await request(server)
+              .post('/v2/startArchive')
+              .set('Content-Type', 'application/json')
+              .send({ sessionKey: validSessionKey, withTranscription: true, withSummary: false })
+              .expect(200);
+
             singletonVideoInstance.startArchive.mockClear();
 
             await sessionService.setArchiveIds({
-              sessionId: validSessionId,
+              sessionId,
               archiveIds: ['transcription-archive-id'],
             });
 
             await sessionService.setServerRotationPending({
-              sessionId: validSessionId,
+              sessionId,
               pending: 1,
-            });
-
-            await sessionService.setTranscriptionWithSummary({
-              sessionId: validSessionId,
-              withSummary: false,
             });
 
             const response = await request(server)
@@ -530,6 +521,7 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               .set('Content-Type', 'application/json')
               .send(
                 createArchiveHookPayload({
+                  sessionId,
                   status: 'stopped',
                   id: 'transcription-archive-id',
                   name: 'transcription',
