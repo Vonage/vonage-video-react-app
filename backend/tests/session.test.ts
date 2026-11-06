@@ -7,6 +7,7 @@ import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 import getSessionStorageService from '../sessionStorageService';
+import { decodeSessionKey } from '@common/helpers';
 import mockVonageVideoSdk, {
   DEFAULT_CAPTIONS_ID as validCaptionsId,
   DEFAULT_VALID_SESSION_ID as validSessionId,
@@ -109,6 +110,19 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
             .post(`/session/${invalidRoomName}/startArchive`)
             .set('Content-Type', 'application/json');
           expect(res.statusCode).toEqual(404);
+        });
+
+        it('stores the summary preference when starting a transcription through /v2/startArchive', async () => {
+          const { sessionId } = decodeSessionKey({ sessionKey: validSessionKey });
+          await sessionService.setSession({ roomName, sessionKey: validSessionKey, sessionId });
+
+          const res = await request(server)
+            .post('/v2/startArchive')
+            .set('Content-Type', 'application/json')
+            .send({ sessionKey: validSessionKey, withTranscription: true, withSummary: false });
+
+          expect(res.statusCode).toEqual(200);
+          expect(await sessionService.getTranscriptionWithSummary({ sessionId })).toBe(false);
         });
 
         it('returns a 502 when stopping an invalid archive in a room', async () => {
