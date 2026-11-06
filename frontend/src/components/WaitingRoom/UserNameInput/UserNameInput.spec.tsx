@@ -118,7 +118,7 @@ describe('UsernameInput', () => {
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
   });
 
-  it('shows no title when the session key carries no room name', () => {
+  it('shows no title and joins with the sessionKey when the key carries no room name', () => {
     render(
       <UsernameInput
         username="Ana"
@@ -130,6 +130,10 @@ describe('UsernameInput', () => {
     );
 
     expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
+
+    expect(screen.getByTestId('room-unnamed-session-key')).toBeInTheDocument();
   });
 });
 
