@@ -1,12 +1,16 @@
 import { VideoClient } from '../routes/video';
 import getSessionStorageService from '../sessionStorageService';
 import blockCallsForArgs from './blockCallsForArgs';
-import { isValidRoomName } from '@common/assertions';
+import { isNil, isValidRoomName } from '@common/assertions';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
 import verifySessionKeySignature from '../routes/video/helpers/verifySessionKeySignature';
 import resignSessionKey from '../routes/video/helpers/resignSessionKey';
 import isLegacySessionKeyAllowed from '../routes/video/helpers/isLegacySessionKeyAllowed';
 import type { RequestWithTokenAuth } from '../middleware/authMiddleware/authMiddleware';
+import { getScheduleWindow } from '@common/helpers';
+import { tryCatch } from '@common/execution';
+import type { SessionKeyPayload } from '@common/types';
+import { assertScheduleOpen, MeetingEndedError } from '@api-lib/schedule';
 
 const sessionService = getSessionStorageService();
 
@@ -31,8 +35,13 @@ const getOrCreateSessionKeyFromRoomName = async ({
       const shouldResignStoredSessionKey =
         isStoredSessionKeyLegacy && isLegacySessionKeyAllowed({ user });
 
+      const isStoredSessionKeyEnded =
+        storedSessionKeySignature.signature === 'current' &&
+        isScheduleEnded(videoClient.decodeSessionKey({ sessionKey: storedSessionKey }));
       const isStoredSessionKeyUnusable =
-        storedSessionKeySignature.signature === 'unverifiable' || isStoredSessionKeyLegacy;
+        storedSessionKeySignature.signature === 'unverifiable' ||
+        isStoredSessionKeyLegacy ||
+        isStoredSessionKeyEnded;
 
       if (shouldResignStoredSessionKey) {
         const sessionKey = resignSessionKey({
@@ -65,5 +74,13 @@ const getOrCreateSessionKeyFromRoomName = async ({
     return session.sessionKey;
   })(roomName);
 };
+
+function isScheduleEnded(sessionKeyPayload: SessionKeyPayload): boolean {
+  const scheduleWindow = getScheduleWindow(sessionKeyPayload);
+  if (isNil(scheduleWindow)) return false;
+
+  const { error } = tryCatch(() => assertScheduleOpen(scheduleWindow));
+  return error instanceof MeetingEndedError;
+}
 
 export default getOrCreateSessionKeyFromRoomName;
