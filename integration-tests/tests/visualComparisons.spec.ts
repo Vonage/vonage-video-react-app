@@ -157,7 +157,12 @@ test.describe('Meeting room timer UI test', () => {
     await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
   });
   for (const colorScheme of colorSchemes) {
-    test(`about to finish ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
+    test(`meeting ending popup ${colorScheme}`, async ({
+      page,
+      request,
+      isMobile,
+      browserName,
+    }) => {
       const { endsAt } = await openScheduledMeetingRoom({
         page,
         request,
@@ -166,23 +171,24 @@ test.describe('Meeting room timer UI test', () => {
         colorScheme,
         minutesLeft: 6,
       });
+
       await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
-      await expect(page.getByText('The meeting is about to finish')).toBeVisible();
-      await expect(page.getByRole('timer')).toHaveText('4 min left');
-      await expect(page.getByRole('dialog', { name: 'Extend meeting' })).toBeVisible();
-      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
-      await page.getByRole('button', { name: 'Dismiss notification' }).click();
+      const meetingEndingDialog = page.getByRole('dialog', { name: 'Meeting ending' });
+      await expect(meetingEndingDialog).toBeVisible();
       await expect(page.getByText('The meeting is about to finish')).toBeHidden();
+      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+
+      await meetingEndingDialog.getByRole('button', { name: 'Extend' }).click();
+      const durationDialog = page.getByRole('dialog', { name: 'How long do you want to extend?' });
+      await expect(durationDialog.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+      await durationDialog.getByRole('button', { name: '20 min' }).click();
+      await expect(durationDialog.getByRole('button', { name: 'Confirm' })).toBeEnabled();
       await page.mouse.move(0, 0);
-      await expect(page.getByRole('tooltip')).toBeHidden();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
     });
-    test(`extend ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
-      test.skip(
-        colorScheme === 'dark' && browserName === 'firefox',
-        'Firefox ignores the emulated dark color scheme'
-      );
-      await openScheduledMeetingRoom({
+
+    test(`meeting tab ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
+      const { endsAt } = await openScheduledMeetingRoom({
         page,
         request,
         isMobile,
@@ -190,54 +196,53 @@ test.describe('Meeting room timer UI test', () => {
         colorScheme,
         minutesLeft: 42,
       });
-      const extendPopover = page.getByRole('dialog', { name: 'Extend meeting' });
-      await expect(page.getByRole('timer')).toHaveText('42 min left');
 
-      await openExtendPopover(page);
-      await expect(extendPopover.getByRole('radio', { name: /\+20 min/ })).toBeChecked();
+      await openMeetingTab(page);
+      await expect(page.getByText('42 min left')).toBeVisible();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
 
-      await extendMeeting({ page, minutes: 60 });
-      await expect(page.getByRole('timer')).toHaveText('1 h 42 min left');
-      await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
-      await dismissExtendedMessage(page);
-
-      await openExtendPopover(page);
-      await extendMeeting({ page, minutes: 20 });
-      await dismissExtendedMessage(page);
-      await openExtendPopover(page);
-      await expect(extendPopover.getByRole('radio', { name: /\+60 min/ })).toBeDisabled();
-      await expect(extendPopover.getByText('Extended by 80 of 120 min')).toBeVisible();
+      await extendFromMeetingTab({ page, minutes: 60 });
+      await extendFromMeetingTab({ page, minutes: 60 });
+      await expect(page.getByText('162 min left')).toBeVisible();
+      await expect(page.getByText('This meeting cannot be extended further.')).toBeVisible();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
 
-      await extendMeeting({ page, minutes: 40 });
-      await dismissExtendedMessage(page);
-      await openExtendPopover(page);
-      await expect(extendPopover.getByRole('note')).toHaveText(
-        'This meeting reached its 120 min extension limit'
-      );
+      await page
+        .getByTestId('advanced-settings-dialog')
+        .getByRole('button', { name: 'Close' })
+        .click();
+      await page.clock.setFixedTime(endsAt + 116 * minuteInMilliseconds);
+      const meetingEndingDialog = page.getByRole('dialog', { name: 'Meeting ending' });
+      await expect(meetingEndingDialog).toContainText('This meeting cannot be extended further.');
+      await expect(meetingEndingDialog.getByRole('button')).toHaveText(['Got it']);
+      await page.mouse.move(0, 0);
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
     });
   }
-  async function openExtendPopover(page: Page) {
-    await page.getByRole('button', { name: / left$/ }).click();
-    await expect(page.getByRole('dialog', { name: 'Extend meeting' })).toBeVisible();
+
+  async function openMeetingTab(page: Page) {
+    const visibleSettingsButton = page.locator('[data-testid="advanced-settings-button"]:visible');
+    const isButtonInToolbar = (await visibleSettingsButton.count()) > 0;
+    if (!isButtonInToolbar) {
+      await page.getByTestId('hidden-toolbar-items').click();
+    }
+    await visibleSettingsButton.first().click();
+    await page.getByTestId('advanced-settings-tab-meeting').click();
+    await expect(page.getByRole('heading', { name: 'Ongoing meeting' })).toBeVisible();
     await page.mouse.move(0, 0);
   }
-  async function extendMeeting({ page, minutes }: { page: Page; minutes: number }) {
-    const extendPopover = page.getByRole('dialog', { name: 'Extend meeting' });
-    await extendPopover.getByRole('radio', { name: new RegExp(`\\+${minutes} min`) }).check();
-    await extendPopover.getByRole('button', { name: 'Extend', exact: true }).click();
-    await expect(
-      page.getByText(`Meeting extended by ${minutes} min.`, { exact: false })
-    ).toBeVisible();
-    await expect(extendPopover).toBeHidden();
+
+  async function extendFromMeetingTab({ page, minutes }: { page: Page; minutes: number }) {
+    const settingsDialog = page.getByTestId('advanced-settings-dialog');
+    await settingsDialog.getByRole('button', { name: 'Extend', exact: true }).click();
+    await settingsDialog.getByRole('button', { name: `${minutes} min`, exact: true }).click();
+    await settingsDialog.getByRole('button', { name: 'Confirm' }).click();
+    const extendedMessage = page.getByText(`Meeting extended by ${minutes} min.`, { exact: false });
+    await expect(extendedMessage).toBeVisible();
+    await expect(extendedMessage).toBeHidden({ timeout: TIMEOUTS.DEFAULT * 2 });
     await page.mouse.move(0, 0);
   }
-  async function dismissExtendedMessage(page: Page) {
-    await page.getByRole('button', { name: 'Dismiss notification' }).click();
-    await expect(page.getByText('Meeting extended by', { exact: false })).toBeHidden();
-  }
+
   test('ended', async ({ page, request, isMobile, browserName }) => {
     const { endsAt } = await openScheduledMeetingRoom({
       page,
@@ -249,9 +254,9 @@ test.describe('Meeting room timer UI test', () => {
     });
 
     await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
-    await expect(page.getByText('The meeting is about to finish')).toBeVisible();
-    await page.getByRole('button', { name: 'Dismiss notification' }).click();
-    await expect(page.getByText('The meeting is about to finish')).toBeHidden();
+    const meetingEndingDialog = page.getByRole('dialog', { name: 'Meeting ending' });
+    await meetingEndingDialog.getByRole('button', { name: 'Got it' }).click();
+    await expect(meetingEndingDialog).toBeHidden();
 
     await page.clock.setFixedTime(endsAt);
 
@@ -330,7 +335,7 @@ test.describe('Meeting room timer UI test', () => {
       mask: [
         page.locator('[data-testid="app-version"]'),
         page.locator('[data-testid="time-room-name"]'),
-        page.getByText(/Ends at|It now ends at/),
+        page.getByText(/^\d{1,2}:\d{2}\s?(AM|PM)$/),
       ],
       maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
       timeout: TIMEOUTS.DEFAULT,
