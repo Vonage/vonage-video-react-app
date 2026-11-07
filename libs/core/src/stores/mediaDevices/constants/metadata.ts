@@ -25,11 +25,6 @@ const metadata = () => {
      * A promise that resolves when the media devices store is ready and full loaded with the available media devices.
      */
     isStoreReady: CancelablePromise.resolve(),
-
-    /**
-     * Tracks whether the next media devices query is the bootstrap query executed while the store readiness promise is still being created.
-     */
-    isFirstMediaDevicesInfoQuery: true,
   };
 
   markDevicesApiMetadata(meta);
