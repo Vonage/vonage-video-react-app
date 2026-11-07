@@ -2,7 +2,7 @@ import axios from 'axios';
 import { describe, expect, it, beforeAll, afterAll, vi } from 'vitest';
 import FormData from 'form-data';
 import JiraFeedbackService from '../jiraFeedbackService';
-import { FeedbackData, FeedbackOrigin } from '../../types/feedback';
+import type { FeedbackData, FeedbackOrigin } from '../../types/feedback';
 
 vi.mock('axios');
 
@@ -137,6 +137,20 @@ describe('JiraFeedbackService', () => {
         },
       }
     );
+  });
+
+  it('should throw before creating the ticket when the attachment exceeds the maximum allowed size', async () => {
+    const feedbackData: FeedbackData = {
+      ...sharedData,
+      attachment: 'A'.repeat(2_000_001),
+    };
+
+    mockPost.mockClear();
+
+    await expect(jiraFeedbackService.reportIssue(feedbackData)).rejects.toThrow(
+      'Attachment exceeds the maximum allowed size.'
+    );
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   it('should throw when the Jira issue key returned is invalid', async () => {
