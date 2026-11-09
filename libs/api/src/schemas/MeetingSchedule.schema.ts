@@ -1,11 +1,12 @@
 import z from 'zod';
+import MAX_DATE_MILLISECONDS from '@api-lib/constants/maxDateMilliseconds';
 
 export const MeetingScheduleSchema = z.object({
   startsAt: z
     .number()
     .int()
     .positive()
-    .max(8_640_000_000_000_000)
+    .max(MAX_DATE_MILLISECONDS)
     .describe('Start time in Unix epoch milliseconds'),
   durationMinutes: z.number().int().positive().max(1440),
 });
