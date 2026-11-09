@@ -1,0 +1,16 @@
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 314,327,331-345
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  h_6029769cf9ac60 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e92db9b770520cb10ae7ae4f672b1a48848c13e",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
