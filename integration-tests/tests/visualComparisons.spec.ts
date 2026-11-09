@@ -214,7 +214,7 @@ test.describe('Create meeting dialog UI test', () => {
             await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
           }
 
-          await page.clock.setFixedTime(new Date('2024-02-02T10:20:00Z'));
+          await page.clock.setFixedTime(new Date('2057-02-02T10:20:00Z'));
           await page.goto(baseURL, { waitUntil: 'networkidle' });
           // Playwright 1.46 Firefox drops colorScheme emulation when it navigates to the app origin.
           await page.emulateMedia({ colorScheme });
