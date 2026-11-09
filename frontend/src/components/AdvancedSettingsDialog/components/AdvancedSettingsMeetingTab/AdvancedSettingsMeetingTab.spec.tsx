@@ -81,7 +81,7 @@ function render({ extendedMinutes }: { extendedMinutes: number }) {
 function makeSessionKey({ extendedMinutes }: { extendedMinutes: number }): string {
   const payload = {
     sessionId,
-    [SessionKeyClaim.schedule]: { at: startsAt / 1000, min: 60 },
+    [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 60 },
     [SessionKeyClaim.extended]: extendedMinutes,
   };
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');

@@ -159,7 +159,7 @@ describe('MeetingTimer', () => {
 function makeSessionKey({ extendedMinutes }: { extendedMinutes: number }): string {
   const payload = {
     sessionId,
-    [SessionKeyClaim.schedule]: { at: scheduleWindow.startsAt / 1000, min: 120 },
+    [SessionKeyClaim.schedule]: { startsAtMs: scheduleWindow.startsAt, durationMins: 120 },
     [SessionKeyClaim.extended]: extendedMinutes,
   };
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');

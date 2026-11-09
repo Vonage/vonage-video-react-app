@@ -84,7 +84,7 @@ function render(ui: ReactElement) {
 function makeScheduledSessionKey(): string {
   const payload = {
     sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
-    [SessionKeyClaim.schedule]: { at: Math.floor(Date.now() / 1000), min: 60 },
+    [SessionKeyClaim.schedule]: { startsAtMs: Date.now(), durationMins: 60 },
   };
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
   return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;

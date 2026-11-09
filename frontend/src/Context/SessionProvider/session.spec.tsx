@@ -814,7 +814,7 @@ function makeExtendedSessionKey({ extendedMinutes }: { extendedMinutes: number }
   const payload = {
     sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
     roomName: 'TestComponentRoom',
-    [SessionKeyClaim.schedule]: { at: Math.floor(Date.now() / 1000) - 55 * 60, min: 60 },
+    [SessionKeyClaim.schedule]: { startsAtMs: Date.now() - 55 * 60 * 1000, durationMins: 60 },
     [SessionKeyClaim.extended]: extendedMinutes,
   };
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
