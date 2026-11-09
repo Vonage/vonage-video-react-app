@@ -10,12 +10,12 @@ const readScheduleClaim = (payload: Record<string, unknown>): ScheduleClaim | nu
 
   if (!isRecord(claim)) return null;
 
-  const { at, min } = claim;
-  const isScheduleClaim = isNumber(at) && isNumber(min) && min > 0;
+  const { startsAtMs, durationMins } = claim;
+  const isScheduleClaim = isNumber(startsAtMs) && isNumber(durationMins) && durationMins > 0;
 
   if (!isScheduleClaim) return null;
 
-  return { at, min };
+  return { startsAtMs, durationMins };
 };
 
 export default readScheduleClaim;

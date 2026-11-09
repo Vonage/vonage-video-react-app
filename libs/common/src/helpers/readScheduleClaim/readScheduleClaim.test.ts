@@ -5,9 +5,14 @@ import readScheduleClaim from './readScheduleClaim';
 describe('readScheduleClaim', () => {
   it('returns the schedule claim only when it is well formed', () => {
     expect(
-      readScheduleClaim({ sessionId: 'session-id', [SessionKeyClaim.schedule]: { at: 1, min: 60 } })
-    ).toEqual({ at: 1, min: 60 });
+      readScheduleClaim({
+        sessionId: 'session-id',
+        [SessionKeyClaim.schedule]: { startsAtMs: 1, durationMins: 60 },
+      })
+    ).toEqual({ startsAtMs: 1, durationMins: 60 });
     expect(readScheduleClaim({ sessionId: 'session-id' })).toBeNull();
-    expect(readScheduleClaim({ [SessionKeyClaim.schedule]: { at: '1', min: 60 } })).toBeNull();
+    expect(
+      readScheduleClaim({ [SessionKeyClaim.schedule]: { startsAtMs: '1', durationMins: 60 } })
+    ).toBeNull();
   });
 });
