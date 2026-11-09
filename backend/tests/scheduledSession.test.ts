@@ -41,3 +41,24 @@ describe('createSession with a room name and a schedule', () => {
     });
   });
 });
+
+describe('createSession with a schedule that has already ended', () => {
+  it('refuses it with a 400', async () => {
+    const app = express();
+    app.use(express.json());
+    app.use('/v2', videoRouter);
+    app.use(errorHandler);
+    const startsAt = Date.now() - 2 * 60 * 60 * 1000;
+
+    const response = await request(app)
+      .post('/v2/createSession')
+      .send({ schedule: { startsAt, durationMinutes: 60 } });
+
+    expect(response.statusCode).toEqual(400);
+    expect(response.body.error.issues).toEqual([
+      expect.objectContaining({
+        message: 'The schedule has already ended, choose an end time in the future',
+      }),
+    ]);
+  });
+});
