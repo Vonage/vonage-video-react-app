@@ -11,6 +11,7 @@ import readEncryptedSetCookie from '../../../tests/helpers/readEncryptedSetCooki
 const SESSION_COOKIE_NAME = 'test_session';
 const ID_TOKEN_COOKIE_NAME = 'test_id_token';
 const TRANSACTION_COOKIE_NAME = 'test_transaction';
+const SIGNED_IN_HINT_COOKIE_NAME = 'test_session-signed-in';
 
 const loadConfigMock = vi.fn<[], Config>();
 const axiosPostMock = vi.fn<[], Promise<{ status: number; data: unknown }>>();
@@ -31,6 +32,7 @@ const ENABLED_CONFIG: Config = {
   apiKey: 'test-api-key',
   apiSecret: 'test-api-secret',
   sessionKeySecret: 'test-session-key-secret',
+  legacySessionKeysEnabled: true,
   loggerVerbose: false,
   corsAllowedOrigins: ['*'],
   authEnabled: true,
@@ -117,6 +119,9 @@ describe('callbackHandler', () => {
     expect(readSetCookie({ headers: res.headers, name: ID_TOKEN_COOKIE_NAME })).toContain(
       'Path=/auth/signout'
     );
+    expect(readSetCookie({ headers: res.headers, name: SIGNED_IN_HINT_COOKIE_NAME })).toMatch(
+      /^test_session-signed-in=1; Path=\/; SameSite=Lax$/
+    );
     expect(readSetCookie({ headers: res.headers, name: TRANSACTION_COOKIE_NAME })).toMatch(
       /Expires=Thu, 01 Jan 1970/
     );
@@ -133,6 +138,9 @@ describe('callbackHandler', () => {
     const res = await completeCallback({ tokenResponse });
 
     expect(readSetCookie({ headers: res.headers, name: SESSION_COOKIE_NAME })).toMatch(expected);
+    expect(readSetCookie({ headers: res.headers, name: SIGNED_IN_HINT_COOKIE_NAME })).toMatch(
+      expected
+    );
   });
 
   it('writes a browser-session cookie when the refresh token lifetime is not reported', async () => {

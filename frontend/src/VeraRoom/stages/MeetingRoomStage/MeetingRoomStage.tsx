@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import SessionProvider from '@Context/SessionProvider/session';
 import { PublisherProvider } from '@Context/PublisherProvider';
 import MeetingRoom from '@pages/MeetingRoom';
+import { UnavailableMiniModeProvider } from '@Context/MiniMode';
 
 /**
  * MeetingRoomStage
@@ -11,7 +12,9 @@ import MeetingRoom from '@pages/MeetingRoom';
 const MeetingRoomStage: FC = () => (
   <SessionProvider skipBrowserUrlUpdate>
     <PublisherProvider>
-      <MeetingRoom className="h-full w-full" fullSize />
+      <UnavailableMiniModeProvider>
+        <MeetingRoom className="h-full w-full" fullSize />
+      </UnavailableMiniModeProvider>
     </PublisherProvider>
   </SessionProvider>
 );

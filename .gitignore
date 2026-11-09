@@ -80,3 +80,5 @@ graph.json
 /.codegraphcontext/
 
 /.agents/tasks
+/.worktrees
+/.playwright-mcp/

@@ -176,6 +176,7 @@ if (isNil(data)) return;
 - **Rule:** Abbreviated or shortened names are banned across the codebase, except `req` and `res` when working with Express `Request` and `Response`.
 - **Rule:** Use fully descriptive names, even if they are longer. Minification handles bundle size.
 - **Rule:** Booleans and boolean-returning helpers must read as a predicate — prefix them with `is*`, `has*` or `shouldShow*` (for example `isUserEligible`, `hasSpeakerDevices`, `useShouldShowSomeComponent`).
+- **Rule:** Pass callbacks as named function expressions so the name says what they do: `use$(function requireSignedInUser(options) { ... })`, not `use$((options) => { ... })`. Trivial inline transforms such as `.map((item) => item.id)` may stay arrows.
 - **Rule:** All user-facing text must be internationalised, including strings inside hooks and error messages.
 - **Rule:** Every new key must be added to **every** locale in `frontend/src/locales/` **and translated into that language**. Copying the English string into `de.json`, `es.json`, `es-MX.json` or `it.json` is a violation, not a placeholder. Product names that are not translated in the target language (for example "WebRTC", "Vonage Media Processor") may stay as-is.
 - **Rule:** Do not rely on CI to catch this. `localeParity.spec.ts` only checks that the same keys exist in each locale — it cannot tell that a value is still English, so a fully untranslated set of strings passes the suite.
@@ -270,6 +271,27 @@ const myFunction = async () => {
 
     return data;
 };
+```
+
+- **Rule:** Wrap every step that can fail (parsing, decoding, I/O, SDK and network calls) in `assertResult` with the error handler whose status code matches the failure (`makeBadRequestErrorHandler`, `makeUnauthorizedErrorHandler`, `makeForbiddenErrorHandler`, `makeNotFoundErrorHandler`, `makeThirdPartyErrorHandler`, `makeVideoApiErrorHandler`, `makeInternalErrorHandler`) and a safe, descriptive, non-sensitive message. You can also use the helper to create custom errors of a specific type.
+
+```ts
+// example #1
+const session = assertResult(
+    () => readCookiePayload({ req, name: authSessionCookieName, secret: authCookieSecret, schema: SessionCookieSchema }),
+    makeBadRequestErrorHandler('Failed to read session cookie from request')
+);
+// example #2
+throw makeBadRequestErrorHandler('Payload is not valid')(null);
+```
+
+- **Rule:** You can safely pass ApplicationError as src for other ApplicationError or handlers, the data won't be overwritten.
+```ts
+// Bad
+next(isApplicationError(error) ? error : makeInternalErrorHandler('Unexpected error in authMiddleware')(error));
+
+// Good
+makeInternalErrorHandler('Unexpected error in authMiddleware')(error); // if the error is an ApplicationError all its original configuration will be preserved, no message or status code will be overwritten.
 ```
 
 ## Type modeling & correctness

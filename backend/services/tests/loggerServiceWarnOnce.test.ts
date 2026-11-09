@@ -29,7 +29,7 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
   ...overrides,
 });
 
-describe('loggerService (KIBANA_BASE_URL not configured)', () => {
+describe('loggerService (LOG_INGEST_URL not configured)', () => {
   let warnSpy: MockInstance;
 
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('loggerService (KIBANA_BASE_URL not configured)', () => {
 
       expect(warnSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('KIBANA_BASE_URL not configured')
+        expect.stringContaining('LOG_INGEST_URL not configured')
       );
     });
 

@@ -97,11 +97,12 @@ type RenderOptions = {
 
 function render(ui: ReactElement, { userContext, sessionContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.runtime],
+    [providers.user, providers.session, providers.runtime, providers.miniMode],
     {
       userContext,
       sessionContext,
       runtimeContext: undefined,
+      miniModeContext: undefined,
     }
   );
 

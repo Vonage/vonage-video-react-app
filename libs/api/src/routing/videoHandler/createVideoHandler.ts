@@ -29,12 +29,19 @@ function createVideoHandler<
 >({
   auth,
   videoParams,
+  sessionSigning,
   routerOptions,
   handlersConfig,
   ...routerConfig
 }: VideoRouterConfig<Context, TMeta> &
   Omit<Parameters<typeof createExpressMiddleware>[0], 'router'>) {
-  const router$ = createVideoRouter({ auth, videoParams, routerOptions, handlersConfig });
+  const router$ = createVideoRouter({
+    auth,
+    videoParams,
+    sessionSigning,
+    routerOptions,
+    handlersConfig,
+  });
   const {
     transform$,
     override$,

@@ -10,6 +10,10 @@ export type MovingAvgAudioLevelTrackerFunction = (audioLevel: number) => {
   logMovingAvg: number;
 };
 
+const DECAY_PER_FRAME = 0.7;
+// The SDK samples once per animation frame; decay is scaled to 60 fps so sparse samples decay at the same rate per second.
+const REFERENCE_FRAME_DURATION_MS = 1000 / 60;
+
 /**
  * Util factory to create moving average audio level tracker.
  * return a function that can be called with each audio level update and returns the moving average and log
@@ -20,11 +24,18 @@ export type MovingAvgAudioLevelTrackerFunction = (audioLevel: number) => {
 
 const createMovingAvgAudioLevelTracker = (): MovingAvgAudioLevelTrackerFunction => {
   let movingAvg = 0;
+  let lastUpdateTime: number | null = null;
   return (audioLevel: number) => {
+    const now = performance.now();
+    const elapsedFrames =
+      lastUpdateTime === null ? 1 : (now - lastUpdateTime) / REFERENCE_FRAME_DURATION_MS;
+    lastUpdateTime = now;
+
     if (audioLevel === null || movingAvg <= audioLevel) {
       movingAvg = audioLevel;
     } else {
-      movingAvg = 0.7 * movingAvg + 0.3 * audioLevel;
+      const previousAverageWeight = DECAY_PER_FRAME ** elapsedFrames;
+      movingAvg = previousAverageWeight * movingAvg + (1 - previousAverageWeight) * audioLevel;
     }
     // 1.5 scaling to map the -30 - 0 dBm range to [0,1]
     const logLevel = Math.log(movingAvg) / Math.LN10 / 1.5 + 1;

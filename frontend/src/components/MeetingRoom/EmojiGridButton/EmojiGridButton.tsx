@@ -1,5 +1,5 @@
 import Tooltip from '@mui/material/Tooltip';
-import { Dispatch, ReactElement, SetStateAction, useRef } from 'react';
+import { Dispatch, ReactElement, SetStateAction, memo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../ToolbarButton';
 import EmojiGrid from '../EmojiGrid/EmojiGrid';
@@ -69,4 +69,4 @@ const EmojiGridButton = ({
   );
 };
 
-export default EmojiGridButton;
+export default memo(EmojiGridButton);

@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grid from '@mui/material/Grid';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
+import classNames from 'classnames';
 import {
   Dispatch,
   ReactElement,
@@ -53,13 +53,13 @@ const EmojiGrid = ({
     setIsAnchorReady(true);
   }, [anchorRef]);
 
-  const maxWidth = useMemo(() => {
+  const widthClassName = useMemo(() => {
     if (isSmallViewport) {
-      return 'calc(100dvw - 30px)';
+      return 'w-[calc(100dvw-30px)] max-w-[calc(100dvw-30px)]';
     }
 
     // Each button is 66px, 8px left and right padding = 280px
-    return '280px';
+    return 'w-[280px] max-w-[280px]';
   }, [isSmallViewport]);
 
   const handleClickAway = () => {
@@ -77,36 +77,20 @@ const EmojiGrid = ({
             transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              textAlign: 'left',
-              fontWeight: 'normal',
-            }}
-          >
+          <Box className="flex text-left font-normal">
             <ClickAwayListener onClickAway={handleClickAway}>
               <Paper
                 data-testid="emoji-grid"
-                className="bg-vera-dark-grey-opacity! text-vera-on-dark-grey"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: { xs: 1 },
-                  borderRadius: 2,
-                  zIndex: 1,
-                  transform: 'translateY(-5%)',
-                  width: maxWidth,
-                  maxWidth,
-                  mx: 2,
-                  position: 'relative',
-                }}
+                className={classNames(
+                  'relative z-1 mx-4 flex -translate-y-[5%] items-center justify-center rounded-vera-medium! bg-vera-dark-grey-opacity! p-2 text-vera-on-dark-grey',
+                  widthClassName
+                )}
               >
-                <Grid container spacing={0} sx={{ width: '100%' }}>
+                <div className="flex w-full flex-wrap">
                   {Object.values(emojiMap).map((emoji) => (
                     <SendEmojiButton key={emoji} emoji={emoji} />
                   ))}
-                </Grid>
+                </div>
               </Paper>
             </ClickAwayListener>
           </Box>

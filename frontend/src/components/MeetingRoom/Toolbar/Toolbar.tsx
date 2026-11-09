@@ -2,14 +2,15 @@ import {
   type Dispatch,
   type ReactElement,
   type SetStateAction,
-  useCallback,
+  memo,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import useSessionContext from '@hooks/useSessionContext';
 import { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useToolbarButtons from '@hooks/useToolbarButtons';
-import useBackgroundPublisherContext from '@hooks/useBackgroundPublisherContext';
+import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import Box from '@mui/material/Box';
 import classNames from 'classnames';
 import ScreenSharingButton from '../../ScreenSharingButton';
@@ -25,6 +26,8 @@ import AdvancedSettingsButton from '../AdvancedSettingsButton';
 import ToolbarOverflowButton from '../ToolbarOverflowButton';
 import EmojiGridButton from '../EmojiGridButton';
 import DeviceControlButton from '../DeviceControlButton';
+import MiniModeButton from '../MiniModeButton';
+import { useMiniMode } from '../../../Context/MiniMode';
 import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
 import getToolbarButtonVisibility from './helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from './helpers/isDisplayableToolbarButton';
@@ -81,77 +84,111 @@ const Toolbar = ({
   participantCount,
   captionsState,
 }: ToolbarProps): ReactElement => {
-  const { disconnect, subscriberWrappers } = useSessionContext();
-  const { destroyBackgroundPublisher } = useBackgroundPublisherContext();
+  const { subscriberWrappers } = useSessionContext();
+  const leaveMeeting = useLeaveMeeting();
+  const { isAvailable: isMiniModeAvailable, exit: exitMiniMode } = useMiniMode();
   const isViewingScreenShare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
   const isScreenSharePresent = isViewingScreenShare || isSharingScreen;
   const isPinningPresent = subscriberWrappers.some((subWrapper) => subWrapper.isPinned);
-  const handleLeave = useCallback(() => {
-    if (!disconnect) {
-      return;
-    }
-    disconnect();
-    destroyBackgroundPublisher();
-  }, [destroyBackgroundPublisher, disconnect]);
+  const handleLeave = () => {
+    exitMiniMode();
+    leaveMeeting();
+  };
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const buttonVisibility = getToolbarButtonVisibility();
 
-  const centerToolbarButtons: ReactElement[] = [
-    buttonVisibility.screenShare && (
-      <ScreenSharingButton
-        toggleScreenShare={toggleShareScreen}
-        isSharingScreen={isSharingScreen}
-        isViewingScreenShare={isViewingScreenShare}
-        key="ScreenSharingButton"
-      />
-    ),
-    <LayoutButton
-      isScreenSharePresent={isScreenSharePresent}
-      key="LayoutButton"
-      isPinningPresent={isPinningPresent}
-    />,
-    buttonVisibility.emojis && (
-      <EmojiGridButton
-        isEmojiGridOpen={openEmojiGridDesktop}
-        setIsEmojiGridOpen={setOpenEmojiGridDesktop}
-        isParentOpen
-        key="EmojiGridButton"
-      />
-    ),
-    buttonVisibility.captions && (
-      <CaptionsButton key="CaptionsButton" captionsState={captionsState} />
-    ),
-    buttonVisibility.archiving && <ArchivingButton key="ArchivingButton" />,
-    buttonVisibility.postCallTranscription && (
-      <PostCallTranscriptionButton key="PostCallTranscriptionButton" />
-    ),
-    buttonVisibility.advancedSettings && <AdvancedSettingsButton key="AdvancedSettingsButton" />,
-  ].filter(isDisplayableToolbarButton);
+  const centerToolbarButtons: ReactElement[] = useMemo(
+    () =>
+      [
+        buttonVisibility.screenShare && (
+          <ScreenSharingButton
+            toggleScreenShare={toggleShareScreen}
+            isSharingScreen={isSharingScreen}
+            isViewingScreenShare={isViewingScreenShare}
+            key="ScreenSharingButton"
+          />
+        ),
+        <LayoutButton
+          isScreenSharePresent={isScreenSharePresent}
+          key="LayoutButton"
+          isPinningPresent={isPinningPresent}
+        />,
+        isMiniModeAvailable && <MiniModeButton isOverflowButton={false} key="MiniModeButton" />,
+        buttonVisibility.emojis && (
+          <EmojiGridButton
+            isEmojiGridOpen={openEmojiGridDesktop}
+            setIsEmojiGridOpen={setOpenEmojiGridDesktop}
+            isParentOpen
+            key="EmojiGridButton"
+          />
+        ),
+        buttonVisibility.captions && (
+          <CaptionsButton key="CaptionsButton" captionsState={captionsState} />
+        ),
+        buttonVisibility.archiving && <ArchivingButton key="ArchivingButton" />,
+        buttonVisibility.postCallTranscription && (
+          <PostCallTranscriptionButton key="PostCallTranscriptionButton" />
+        ),
+        buttonVisibility.advancedSettings && (
+          <AdvancedSettingsButton key="AdvancedSettingsButton" />
+        ),
+      ].filter(isDisplayableToolbarButton),
+    [
+      buttonVisibility.screenShare,
+      buttonVisibility.emojis,
+      buttonVisibility.captions,
+      buttonVisibility.archiving,
+      buttonVisibility.postCallTranscription,
+      buttonVisibility.advancedSettings,
+      toggleShareScreen,
+      isSharingScreen,
+      isViewingScreenShare,
+      isScreenSharePresent,
+      isPinningPresent,
+      isMiniModeAvailable,
+      openEmojiGridDesktop,
+      setOpenEmojiGridDesktop,
+      captionsState,
+    ]
+  );
 
-  const rightPanelToolbarButtons: ReactElement[] = [
-    buttonVisibility.reportIssue && (
-      <ReportIssueButton
-        isOpen={rightPanelActiveTab === 'issues'}
-        handleClick={toggleReportIssue}
-        key="ReportIssueButton"
-      />
-    ),
-    buttonVisibility.participantList && (
-      <ParticipantListButton
-        isOpen={rightPanelActiveTab === 'participant-list'}
-        handleClick={toggleParticipantList}
-        participantCount={participantCount}
-        key="ParticipantListButton"
-      />
-    ),
-    buttonVisibility.chat && (
-      <ChatButton
-        isOpen={rightPanelActiveTab === 'chat'}
-        handleClick={toggleChat}
-        key="ChatButton"
-      />
-    ),
-  ].filter(isDisplayableToolbarButton);
+  const rightPanelToolbarButtons: ReactElement[] = useMemo(
+    () =>
+      [
+        buttonVisibility.reportIssue && (
+          <ReportIssueButton
+            isOpen={rightPanelActiveTab === 'issues'}
+            handleClick={toggleReportIssue}
+            key="ReportIssueButton"
+          />
+        ),
+        buttonVisibility.participantList && (
+          <ParticipantListButton
+            isOpen={rightPanelActiveTab === 'participant-list'}
+            handleClick={toggleParticipantList}
+            participantCount={participantCount}
+            key="ParticipantListButton"
+          />
+        ),
+        buttonVisibility.chat && (
+          <ChatButton
+            isOpen={rightPanelActiveTab === 'chat'}
+            handleClick={toggleChat}
+            key="ChatButton"
+          />
+        ),
+      ].filter(isDisplayableToolbarButton),
+    [
+      buttonVisibility.reportIssue,
+      buttonVisibility.participantList,
+      buttonVisibility.chat,
+      rightPanelActiveTab,
+      toggleReportIssue,
+      toggleParticipantList,
+      participantCount,
+      toggleChat,
+    ]
+  );
 
   // An array of buttons available for the toolbar. As the toolbar resizes, buttons may be hidden and moved to the
   // ToolbarOverflowMenu to ensure a responsive layout without compromising usability.
@@ -242,4 +279,4 @@ const Toolbar = ({
   );
 };
 
-export default Toolbar;
+export default memo(Toolbar);
