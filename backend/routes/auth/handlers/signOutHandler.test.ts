@@ -31,6 +31,7 @@ const CONFIG: Config = {
   sessionKeySecret: 'test-session-key-secret',
   legacySessionKeysEnabled: true,
   loggerVerbose: false,
+  attachmentMaxBase64Length: 2_000_000,
   corsAllowedOrigins: ['*'],
   authEnabled: true,
   oidcClientId: 'test-client-id',

@@ -9,6 +9,7 @@ export type FeedbackConfig = {
   epicLink?: string;
   epicUrl?: string;
   severityId?: string;
+  attachmentMaxBase64Length: number;
 };
 
 export type LoggerConfig = {
