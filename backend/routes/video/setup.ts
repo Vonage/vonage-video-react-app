@@ -120,27 +120,7 @@ videoHandler.override$('enableCaptions', async (opts) => {
       return { captionsId };
     })();
 
-    await sessionService.incrementCaptionsUserCount({
-      sessionKey,
-    });
-
     return captionsId;
-  } catch (error: unknown) {
-    throw makeInternalErrorHandler('Failed to enable captions')(error);
-  }
-});
-
-videoHandler.override$('disableCaptions', async (opts) => {
-  try {
-    const { assertInput, videoClient } = opts;
-    const { captionsId, sessionKey } = assertInput(opts.input);
-
-    const count = await sessionService.decrementCaptionsUserCount({ sessionKey });
-    const hasOtherUsers = count > 0;
-
-    if (hasOtherUsers) return;
-
-    await videoClient.disableCaptions({ sessionKey, captionsId });
   } catch (error: unknown) {
     throw makeInternalErrorHandler('Failed to enable captions')(error);
   }

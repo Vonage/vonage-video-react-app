@@ -52,36 +52,6 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
-  describe('incrementCaptionsUserCount / decrementCaptionsUserCount', () => {
-    it('should increment and decrement the count correctly', async () => {
-      await storage.setSession({ roomName: room, sessionKey, sessionId });
-      expect(await storage.incrementCaptionsUserCount({ sessionKey })).toBe(1);
-      expect(await storage.incrementCaptionsUserCount({ sessionKey })).toBe(2);
-      expect(await storage.decrementCaptionsUserCount({ sessionKey })).toBe(1);
-      expect(await storage.decrementCaptionsUserCount({ sessionKey })).toBe(0);
-    });
-
-    it('should not decrement below zero', async () => {
-      await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.incrementCaptionsUserCount({ sessionKey });
-      await storage.decrementCaptionsUserCount({ sessionKey });
-      const count = await storage.decrementCaptionsUserCount({ sessionKey });
-      expect(count).toBe(0);
-    });
-
-    it('should throw when incrementing on a non-existent session', async () => {
-      await expect(storage.incrementCaptionsUserCount({ sessionKey })).rejects.toThrow(
-        `Session for key: ${sessionKey} does not exist. Cannot add captions user.`
-      );
-    });
-
-    it('should throw when decrementing on a non-existent session', async () => {
-      await expect(storage.decrementCaptionsUserCount({ sessionKey })).rejects.toThrow(
-        `Session for key: ${sessionKey} does not exist. Cannot remove captions user.`
-      );
-    });
-  });
-
   describe('setSession idempotency', () => {
     it('preserves archiveIds and captionsId when setSession is called again for the same room', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });
