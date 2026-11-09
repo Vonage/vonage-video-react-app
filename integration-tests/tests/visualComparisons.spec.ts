@@ -54,7 +54,7 @@ test('Unsupported browser page UI test', async ({ page, isMobile }) => {
 test.describe('Waiting page schedule UI test', () => {
   test.use({ timezoneId: 'UTC', locale: 'en-US' });
 
-  const fixedNow = Date.UTC(2024, 1, 2, 10, 0, 0);
+  const fixedNow = Date.UTC(2057, 1, 2, 10, 0, 0);
   const minuteInMilliseconds = 60_000;
   const hourInMilliseconds = 60 * minuteInMilliseconds;
   const dayInMilliseconds = 24 * hourInMilliseconds;

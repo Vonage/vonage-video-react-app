@@ -26,7 +26,7 @@ const endedMeetingSessionKey = jwt.sign(
   {
     sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
     roomName: 'ended-meeting',
-    s: { at: Math.floor(Date.now() / 1000) - 2 * 60 * 60, min: 60 },
+    schedule: { startsAtMs: Date.now() - 2 * 60 * 60 * 1000, durationMins: 60 },
   },
   'test'
 );
