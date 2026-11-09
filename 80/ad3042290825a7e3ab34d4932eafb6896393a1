@@ -1,0 +1,16 @@
+integration-tests/tests/emoji.spec.ts
+  h_6029769cf9ac60 82
+integration-tests/tests/multiparty.spec.ts
+  h_6029769cf9ac60 402
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "80ad3042290825a7e3ab34d4932eafb6896393a1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
