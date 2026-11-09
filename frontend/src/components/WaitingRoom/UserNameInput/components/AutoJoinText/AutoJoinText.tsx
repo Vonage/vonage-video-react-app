@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import formatMeetingDate from '../../helpers/formatMeetingDate';
 
 export type AutoJoinTextProps = ComponentProps<'p'> & {
-  startsAt: number;
+  startsAtMs: number;
 };
 
-const AutoJoinText = ({ startsAt, className, ...props }: AutoJoinTextProps): ReactElement => {
+const AutoJoinText = ({ startsAtMs, className, ...props }: AutoJoinTextProps): ReactElement => {
   const { t, i18n } = useTranslation();
 
   return (
@@ -16,7 +16,7 @@ const AutoJoinText = ({ startsAt, className, ...props }: AutoJoinTextProps): Rea
       {...props}
     >
       {t('waitingRoom.schedule.autoJoinAt', {
-        time: formatMeetingDate({ timestamp: startsAt, locale: i18n.language, format: 'time' }),
+        time: formatMeetingDate({ timestamp: startsAtMs, locale: i18n.language, format: 'time' }),
       })}
     </p>
   );

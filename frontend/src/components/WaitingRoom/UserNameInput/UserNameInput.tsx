@@ -221,7 +221,7 @@ const UsernameInput = ({
       )}
 
       {isWaitingToJoin && (
-        <AutoJoinText id={joinBlockerTextId} startsAt={scheduleStatus.startsAt} />
+        <AutoJoinText id={joinBlockerTextId} startsAtMs={scheduleStatus.startsAtMs} />
       )}
 
       {isWaiting && !isWaitingToJoin && (
