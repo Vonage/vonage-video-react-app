@@ -1,0 +1,18 @@
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.test.ts
+  h_6029769cf9ac60 8-12,14-16
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.ts
+  h_6029769cf9ac60 13-14,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a58daf72073630e4f889f1ff72ebde32755468e4",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
