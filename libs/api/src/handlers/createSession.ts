@@ -21,8 +21,8 @@ async function createSession(
     const scheduleClaims = schedule
       ? {
           [SessionKeyClaim.schedule]: {
-            at: Math.floor(schedule.startsAt / 1000),
-            min: schedule.durationMinutes,
+            startsAtMs: schedule.startsAt,
+            durationMins: schedule.durationMinutes,
           },
         }
       : {};

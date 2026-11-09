@@ -7,8 +7,8 @@ const getScheduleWindow = (payload: SessionKeyPayload): ScheduleWindow | null =>
 
   if (isNil(schedule)) return null;
 
-  const startsAt = schedule.at * 1000;
-  const endsAt = startsAt + schedule.min * 60 * 1000;
+  const startsAt = schedule.startsAtMs;
+  const endsAt = startsAt + schedule.durationMins * 60 * 1000;
 
   return { startsAt, endsAt };
 };

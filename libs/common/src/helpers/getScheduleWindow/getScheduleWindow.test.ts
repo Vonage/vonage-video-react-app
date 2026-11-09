@@ -6,7 +6,7 @@ describe('getScheduleWindow', () => {
   it('derives the start and end in milliseconds from the schedule claim', () => {
     const scheduleWindow = getScheduleWindow({
       sessionId: 'session-id',
-      [SessionKeyClaim.schedule]: { at: 1_800_000_000, min: 60 },
+      [SessionKeyClaim.schedule]: { startsAtMs: 1_800_000_000_000, durationMins: 60 },
     });
 
     expect(scheduleWindow).toEqual({
