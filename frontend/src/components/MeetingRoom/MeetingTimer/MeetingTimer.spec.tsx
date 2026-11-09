@@ -7,7 +7,7 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import MeetingTimer from './MeetingTimer';
 
 const endsAt = new Date(2026, 10, 4, 11, 0).getTime();
-const scheduleWindow = { startsAt: endsAt - 2 * 60 * 60_000, endsAt };
+const scheduleWindow = { startsAtMs: endsAt - 2 * 60 * 60_000, endsAtMs: endsAt };
 const serverAheadMilliseconds = 60_000;
 
 describe('MeetingTimer', () => {

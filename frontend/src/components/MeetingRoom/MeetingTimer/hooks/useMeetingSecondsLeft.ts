@@ -11,7 +11,7 @@ const useMeetingSecondsLeft = ({ scheduleWindow }: { scheduleWindow: ScheduleWin
     isTicking: true,
   });
 
-  return Math.max(0, Math.ceil((scheduleWindow.endsAt - now) / 1000));
+  return Math.max(0, Math.ceil((scheduleWindow.endsAtMs - now) / 1000));
 };
 
 export default useMeetingSecondsLeft;
