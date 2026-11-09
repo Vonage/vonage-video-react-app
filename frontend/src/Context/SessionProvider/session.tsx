@@ -12,7 +12,11 @@ import {
 } from 'react';
 import { Connection, Publisher, Stream, Subscriber } from '@vonage/client-sdk-video';
 import { useTranslation } from 'react-i18next';
-import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
+import {
+  RECORDING_ARCHIVE_NAME,
+  SessionKeyClaim,
+  TRANSCRIPTION_ARCHIVE_NAME,
+} from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
@@ -43,7 +47,7 @@ import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
 import { notifications$, runtime$ } from '@core/stores';
-import { decodeSessionKey, getScheduleWindow, readExtendedClaim } from '@common/helpers';
+import { decodeSessionKey, readExtendedClaim } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 import { isNil, isNotNil, isString } from '@common/assertions';
 import tryCatch from '@common/execution/tryCatch';
@@ -371,7 +375,7 @@ const SessionProvider = ({
     const extendedSession = decodeSessionKey({ sessionKey: credential.sessionKey });
     const currentSession = decodeSessionKey({ sessionKey: client.sessionKey });
     const addedMinutes = readExtendedClaim(extendedSession) - readExtendedClaim(currentSession);
-    const scheduleWindow = getScheduleWindow(extendedSession);
+    const scheduleWindow = extendedSession[SessionKeyClaim.schedule];
     const isLaterEnd = addedMinutes > 0 && isNotNil(scheduleWindow);
     if (!isLaterEnd) return;
 
@@ -385,7 +389,7 @@ const SessionProvider = ({
       type: 'success',
       message: t('meetingExtension.extended', {
         minutes: addedMinutes,
-        time: getFormattedTime(i18n.language, scheduleWindow.endsAt),
+        time: getFormattedTime(i18n.language, scheduleWindow.endsAtMs),
       }),
       expirationMs: env.NOTIFICATION_DURATION_MS,
     });

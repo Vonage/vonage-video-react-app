@@ -15,7 +15,7 @@ export type MeetingProgressProps = {
 const MeetingProgress = ({ scheduleWindow }: MeetingProgressProps): ReactElement => {
   const { t, i18n } = useTranslation();
   const secondsLeft = useMeetingSecondsLeft({ scheduleWindow });
-  const totalMilliseconds = scheduleWindow.endsAt - scheduleWindow.startsAt;
+  const totalMilliseconds = scheduleWindow.endsAtMs - scheduleWindow.startsAtMs;
   const elapsedPercent = Math.min(
     100,
     Math.max(0, 100 - ((secondsLeft * 1000) / totalMilliseconds) * 100)
@@ -40,8 +40,8 @@ const MeetingProgress = ({ scheduleWindow }: MeetingProgressProps): ReactElement
         />
       </div>
       <div className="flex justify-between font-vera-plain text-vera-caption tabular-nums text-vera-text-tertiary">
-        <span>{getFormattedTime(i18n.language, scheduleWindow.startsAt)}</span>
-        <span>{getFormattedTime(i18n.language, scheduleWindow.endsAt)}</span>
+        <span>{getFormattedTime(i18n.language, scheduleWindow.startsAtMs)}</span>
+        <span>{getFormattedTime(i18n.language, scheduleWindow.endsAtMs)}</span>
       </div>
       <p className="font-vera-plain text-vera-body-base-semibold text-vera-text-secondary">
         {timeLeftText}

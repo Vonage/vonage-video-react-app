@@ -26,7 +26,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
     if (selectedTab === 'meeting' && isNotNil(scheduleWindow)) {
       return (
-        <AdvancedSettingsMeetingTab key={scheduleWindow.endsAt} scheduleWindow={scheduleWindow} />
+        <AdvancedSettingsMeetingTab key={scheduleWindow.endsAtMs} scheduleWindow={scheduleWindow} />
       );
     }
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;

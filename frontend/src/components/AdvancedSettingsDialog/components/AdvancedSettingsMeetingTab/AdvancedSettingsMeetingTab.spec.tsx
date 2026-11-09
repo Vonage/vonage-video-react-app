@@ -8,14 +8,14 @@ import { env } from '../../../../env';
 import AdvancedSettingsMeetingTab from './AdvancedSettingsMeetingTab';
 
 const startsAt = new Date(2026, 10, 4, 15, 0).getTime();
-const scheduleWindow = { startsAt, endsAt: startsAt + 60 * 60_000 };
+const scheduleWindow = { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 };
 const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
 const signedInHintCookie = 'vera-session-signed-in';
 
 describe('AdvancedSettingsMeetingTab', () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
-    vi.setSystemTime(scheduleWindow.endsAt - 4 * 60_000);
+    vi.setSystemTime(scheduleWindow.endsAtMs - 4 * 60_000);
     env.partialUpdate({ AUTH_ENABLED: true });
   });
 
@@ -81,7 +81,7 @@ function render({ extendedMinutes }: { extendedMinutes: number }) {
 function makeSessionKey({ extendedMinutes }: { extendedMinutes: number }): string {
   const payload = {
     sessionId,
-    [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 60 },
+    [SessionKeyClaim.schedule]: scheduleWindow,
     [SessionKeyClaim.extended]: extendedMinutes,
   };
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
