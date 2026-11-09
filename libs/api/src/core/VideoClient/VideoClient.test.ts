@@ -428,6 +428,21 @@ describe('VideoClient', () => {
         })
       ).rejects.toThrow();
     });
+
+    it('refuses a scheduled key after its end without starting an archive', async () => {
+      const { videoClient, mocks } = createVideoClient();
+      const sessionKey = signScheduledSessionKey({
+        startsAt: Date.now() - 2 * 60 * 60 * 1000,
+        durationMinutes: 60,
+      });
+
+      const { error } = await tryCatch(() =>
+        videoClient.startArchive({ sessionKey, archiveOptions: {} })
+      );
+
+      expect(error).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
+      expect(mocks.video.startArchive).not.toHaveBeenCalled();
+    });
   });
 
   describe('stopArchive', () => {
