@@ -18,15 +18,15 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
     return {
       countdownText: null,
       headlineText: t('waitingRoom.schedule.ended', {
-        time: formatMeetingDate({ timestamp: scheduleStatus.endsAt, locale, format: 'time' }),
+        time: formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' }),
       }),
       detailText: null,
     };
   }
 
   const timeRangeText = t('waitingRoom.schedule.timeRange', {
-    start: formatMeetingDate({ timestamp: scheduleStatus.startsAt, locale, format: 'time' }),
-    end: formatMeetingDate({ timestamp: scheduleStatus.endsAt, locale, format: 'time' }),
+    start: formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'time' }),
+    end: formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' }),
   });
 
   if (scheduleStatus.kind === 'started') {
@@ -43,12 +43,16 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
     if (scheduleStatus.kind === 'daysAway') {
       return t('waitingRoom.schedule.daysAway', {
         count: scheduleStatus.daysLeft,
-        date: formatMeetingDate({ timestamp: scheduleStatus.startsAt, locale, format: 'dateTime' }),
+        date: formatMeetingDate({
+          timestamp: scheduleStatus.startsAtMs,
+          locale,
+          format: 'dateTime',
+        }),
       });
     }
     if (scheduleStatus.kind === 'withinDay') {
       return t('waitingRoom.schedule.withinDay', {
-        time: formatMeetingDate({ timestamp: scheduleStatus.startsAt, locale, format: 'time' }),
+        time: formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'time' }),
         countdown: countdownText,
       });
     }

@@ -20,12 +20,12 @@ const JoinBlockerText = ({
   const text = (() => {
     if (waitingStatus.kind === 'daysAway') {
       return t('waitingRoom.schedule.joinOpensOn', {
-        date: formatMeetingDate({ timestamp: waitingStatus.startsAt, locale, format: 'date' }),
+        date: formatMeetingDate({ timestamp: waitingStatus.startsAtMs, locale, format: 'date' }),
       });
     }
     if (waitingStatus.kind === 'withinDay') {
       return t('waitingRoom.schedule.joinOpensAt', {
-        time: formatMeetingDate({ timestamp: waitingStatus.startsAt, locale, format: 'time' }),
+        time: formatMeetingDate({ timestamp: waitingStatus.startsAtMs, locale, format: 'time' }),
       });
     }
     return t('waitingRoom.schedule.joinOpensIn', {

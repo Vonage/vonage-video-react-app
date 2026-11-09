@@ -6,9 +6,7 @@ import useSessionKeyParam from './useSessionKeyParam';
 import useDecodedSessionKey from './useDecodedSessionKey';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
-import { getScheduleWindow, readScheduleClaim } from '@common/helpers';
-import { SessionKeyClaim } from '@common/constants';
-import { isNil } from '@common/assertions';
+import { readScheduleClaim } from '@common/helpers';
 
 const useWaitingRoom = () => {
   const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
@@ -20,15 +18,7 @@ const useWaitingRoom = () => {
 
   const { roomName } = decodedSessionKey;
 
-  const scheduleWindow = (() => {
-    const scheduleClaim = readScheduleClaim(decodedSessionKey);
-    if (isNil(scheduleClaim)) return null;
-
-    return getScheduleWindow({
-      sessionId: decodedSessionKey.sessionId,
-      [SessionKeyClaim.schedule]: scheduleClaim,
-    });
-  })();
+  const scheduleWindow = readScheduleClaim(decodedSessionKey);
 
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();
