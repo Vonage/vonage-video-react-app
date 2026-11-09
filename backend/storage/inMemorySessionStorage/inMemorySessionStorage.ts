@@ -4,7 +4,6 @@ import { SessionStorage } from '../sessionStorage';
 interface SessionData {
   sessionKey: string;
   captionsId: string | null;
-  captionsUserCount: number;
   archiveIds: string[];
   serverRotationPending: number;
   transcriptionWithSummary: boolean;
@@ -12,7 +11,6 @@ interface SessionData {
 
 class InMemorySessionStorage implements SessionStorage {
   private sessions: { [sessionId: string]: SessionData } = {};
-  private sessionIdBySessionKey: { [sessionKey: string]: string } = {};
   private sessionKeyByRoomName: { [roomName: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
@@ -38,21 +36,13 @@ class InMemorySessionStorage implements SessionStorage {
       : {
           sessionKey,
           captionsId: null,
-          captionsUserCount: 0,
           archiveIds: [],
           serverRotationPending: 0,
           transcriptionWithSummary: true,
         };
-    this.sessionIdBySessionKey[sessionKey] = sessionId;
     if (roomName) {
       this.sessionKeyByRoomName[roomName] = sessionKey;
     }
-  }
-
-  private getSessionByKey(sessionKey: string): SessionData | undefined {
-    const sessionId = this.sessionIdBySessionKey[sessionKey];
-    if (!sessionId) return undefined;
-    return this.sessions[sessionId];
   }
 
   private getSessionBySessionId(sessionId: string): SessionData | undefined {
@@ -75,30 +65,6 @@ class InMemorySessionStorage implements SessionStorage {
 
   async getCaptionsId({ sessionId }: { sessionId: string }): Promise<string | null> {
     return this.getSessionBySessionId(sessionId)?.captionsId || null;
-  }
-
-  async incrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
-    const session = this.getSessionByKey(sessionKey);
-    if (!session) {
-      throw new Error(`Session for key: ${sessionKey} does not exist. Cannot add captions user.`);
-    }
-    session.captionsUserCount += 1;
-
-    return session.captionsUserCount;
-  }
-
-  async decrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
-    const session = this.getSessionByKey(sessionKey);
-    if (!session) {
-      throw new Error(
-        `Session for key: ${sessionKey} does not exist. Cannot remove captions user.`
-      );
-    }
-
-    if (session.captionsUserCount > 0) {
-      session.captionsUserCount -= 1;
-    }
-    return session.captionsUserCount;
   }
 
   async setArchiveIds({
