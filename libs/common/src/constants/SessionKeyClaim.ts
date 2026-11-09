@@ -1,5 +1,5 @@
 export const SessionKeyClaim = {
-  schedule: 's',
+  schedule: 'schedule',
 } as const;
 
 export default SessionKeyClaim;

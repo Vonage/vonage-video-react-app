@@ -1,9 +1,9 @@
 /**
- * Wire format of the schedule claim: `at` is the start in Unix seconds, `min` the duration in minutes.
+ * Wire format of the schedule claim: the start in Unix epoch milliseconds and the duration in minutes.
  */
 export type ScheduleClaim = {
-  at: number;
-  min: number;
+  startsAtMs: number;
+  durationMins: number;
 };
 
 export default ScheduleClaim;
