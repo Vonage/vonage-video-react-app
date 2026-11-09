@@ -1,4 +1,4 @@
-import { useEffect, useState, useEffectEvent } from 'react';
+import { useEffect, useMemo, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
@@ -13,6 +13,7 @@ import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
 import { screenShare$ } from '@Context';
 import frontendLogger from '../logger';
+import attempt from '@common/execution/attempt';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -98,6 +99,8 @@ const useMeetingRoom = () => {
     /**
      * [TODO]: Reconcile sessionKey if necessary. This is needed for legacy support where the url contains only a room name.
      */
+    let cancelled = false;
+
     const resolveAndJoin = async () => {
       const resolvedSessionKey = await (async () => {
         if (sessionKeyStatus === 'valid') return sessionKey;
@@ -112,18 +115,24 @@ const useMeetingRoom = () => {
         return session.sessionKey;
       })();
 
+      if (cancelled) return;
+
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
-    resolveAndJoin().catch((error: unknown) => {
+    void attempt(resolveAndJoin, (error) => {
       frontendLogger.reportError(error, {
         eventSource: 'useMeetingRoom.resolveAndJoin.error',
         sessionKey,
       });
+
+      if (cancelled) return;
+
       setJoinError(error instanceof Error ? error : new Error('Unknown join error'));
     });
 
     return () => {
+      cancelled = true;
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,11 +183,14 @@ const useMeetingRoom = () => {
 
   const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
   const isTranscribing = !!transcriptionArchiveId;
-  const captionsState = {
-    isUserCaptionsEnabled,
-    setIsUserCaptionsEnabled,
-    setCaptionsErrorResponse,
-  };
+  const captionsState = useMemo(
+    () => ({
+      isUserCaptionsEnabled,
+      setIsUserCaptionsEnabled,
+      setCaptionsErrorResponse,
+    }),
+    [isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse]
+  );
 
   return {
     t,

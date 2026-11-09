@@ -142,7 +142,7 @@ Set in [`env.defaults.sh`](../env.defaults.sh), which the generated `env.sh` sou
 `yarn dev` also starts `apps/local-oidc` on `localhost:3346`, a minimal dev-only provider that approves every login without a form. [`backend/.env.example`](../backend/.env.example) is pre-filled for it.
 
 1. Copy `backend/.env.example` to `backend/.env`.
-2. Set `AUTH_ENABLED='true'` and fill `AUTH_COOKIE_SECRET` with `yarn generate:secret`.
+2. Set `AUTH_ENABLED='true'` and fill `AUTH_COOKIE_SECRET` and `SESSION_KEY_SECRET` with `yarn generate:secret`, one secret each. With sign-in on, the server refuses to start without `SESSION_KEY_SECRET`, because sessionKeys would otherwise be signed with the public `VONAGE_APP_ID`.
 3. Set the same `OIDC_WEB_REDIRECT_URI` in `frontend/.env` ([`frontend/.env.example`](../frontend/.env.example)). The Vite dev server proxies that path, `/auth/signin` and `/auth/signout` to the backend, so you land back on the dev server after signing in.
 4. Run `yarn dev`. Opening the app sends you through local-oidc and back.
 
@@ -153,7 +153,7 @@ To use a real provider instead, replace the `OIDC_*` values with its endpoints a
 ### 4.2 Tests
 
 - **Backend unit tests** use their own fixed test secret and mocked provider calls.
-- **Auth E2E:** `yarn test:integration auth` runs the built app with auth on against local-oidc. It covers sign-in, Bearer access, cookie flags, refresh, tampered cookies and logout, and runs as its own CI job. The values come from the environment: in CI, the `auth-e2e` job in `run-tests.yml` sets them, with `AUTH_COOKIE_SECRET` from the GitHub secret of the same name; locally, export the same values or put them in `integration-tests/auth/backend.env` (gitignored), with an `AUTH_COOKIE_SECRET` from `yarn generate:secret`.
+- **Auth E2E:** `yarn test:integration auth` runs the built app with auth on against local-oidc. It covers sign-in, Bearer access, cookie flags, refresh, tampered cookies and logout, and runs as its own CI job. The values come from the environment: in CI, the `auth-e2e` job in `run-tests.yml` sets them, with `AUTH_COOKIE_SECRET` and `SESSION_KEY_SECRET` from the GitHub secrets of the same names; locally, export the same values or put them in `integration-tests/auth/backend.env` (gitignored), with an `AUTH_COOKIE_SECRET` and a `SESSION_KEY_SECRET` from `yarn generate:secret`.
 
 ### 4.3 VCR deployment
 
@@ -168,6 +168,7 @@ To use a real provider instead, replace the `OIDC_*` values with its endpoints a
 |---|---|---|
 | Server exits at startup with a config error | A required value is missing or invalid while `AUTH_ENABLED='true'` | Set the variable named in the error |
 | `authCookieSecret` startup error | `AUTH_COOKIE_SECRET` isn't 32 bytes, base64 | Regenerate it with `yarn generate:secret` |
+| `SESSION_KEY_SECRET is required when AUTH_ENABLED is true` | `SESSION_KEY_SECRET` is empty while sign-in is on | Set it to a secret from `yarn generate:secret` |
 | VCR: `environment secret references not found` | The `AUTH_COOKIE_SECRET` VCR secret doesn't exist | `vcr secret create --name AUTH_COOKIE_SECRET --value "$(yarn -s generate:secret)"` |
 | Provider shows `redirect_uri` mismatch | The redirect URI isn't registered with the provider | Register it (at Vonage: ask the IAM team) |
 | `invalid_client` | Wrong `OIDC_CLIENT_ID` | Confirm the client ID with your provider admin |

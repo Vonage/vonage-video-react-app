@@ -7,6 +7,7 @@ import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import useGoodByePage from '../../hooks/useGoodByePage';
+import isSignedIn from '../../utils/isSignedIn';
 
 /**
  * GoodBye Component
@@ -39,7 +40,7 @@ const GoodBye = (): ReactElement => {
             <div className="mb-6 w-full">
               <ReenterRoomButton />
             </div>
-            <GoToLandingPageButton />
+            {isSignedIn() && <GoToLandingPageButton />}
           </Card>
           {!isSelfDeclinedRecording && (
             <Card className="w-full max-w-125">

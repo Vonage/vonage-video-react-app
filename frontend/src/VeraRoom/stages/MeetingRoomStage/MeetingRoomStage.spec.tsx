@@ -7,11 +7,21 @@ import { setupWindowNavigatorMock } from '@web-test/fixtures';
 
 vi.mock('@vonage/client-sdk-video');
 
-vi.mock('@pages/MeetingRoom', () => ({
-  default: (props: Record<string, unknown>) => (
-    <div data-testid="meeting-room" data-classname={props.className as string} />
-  ),
-}));
+vi.mock('@pages/MeetingRoom', async () => {
+  const { useMiniMode } = await import('@Context/MiniMode');
+  return {
+    default: function MeetingRoomMock(props: Record<string, unknown>) {
+      const { isAvailable } = useMiniMode();
+      return (
+        <div
+          data-testid="meeting-room"
+          data-classname={props.className as string}
+          data-mini-mode-available={String(isAvailable)}
+        />
+      );
+    },
+  };
+});
 
 type RenderOptions = {
   sessionContext?: ProviderOptions['SessionContext'];
@@ -52,6 +62,11 @@ describe('MeetingRoomStage', () => {
   it('renders without crashing', () => {
     render(<MeetingRoomStage />);
     expect(screen.getByTestId('meeting-room')).toBeInTheDocument();
+  });
+
+  it('turns Mini Mode off for the embedded meeting room', () => {
+    render(<MeetingRoomStage />);
+    expect(screen.getByTestId('meeting-room')).toHaveAttribute('data-mini-mode-available', 'false');
   });
 
   it('passes h-full w-full className to MeetingRoom', () => {

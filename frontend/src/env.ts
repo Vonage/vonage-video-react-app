@@ -39,9 +39,11 @@ const EnvironmentVariablesSchema = z.object({
   ALLOW_POST_CALL_TRANSCRIPTION: boolean({ default: true }),
   ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
   ALLOW_CAPTIONS: boolean({ default: true }),
+  ALLOW_CAPTION_TRANSLATION: boolean({ default: false }),
   ALLOW_CHAT: boolean({ default: true }),
   MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_EMOJIS: boolean({ default: true }),
+  ALLOW_MINI_MODE: boolean({ default: true }),
   ALLOW_SCREEN_SHARE: boolean({ default: true }),
   DEFAULT_LAYOUT_MODE: z.preprocess(
     (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
@@ -85,9 +87,11 @@ export class Env implements IEnvironmentVariables {
   public ALLOW_ARCHIVING!: boolean;
   public ALLOW_POST_CALL_TRANSCRIPTION!: boolean;
   public ALLOW_CAPTIONS!: boolean;
+  public ALLOW_CAPTION_TRANSLATION!: boolean;
   public ALLOW_CHAT!: boolean;
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_EMOJIS!: boolean;
+  public ALLOW_MINI_MODE!: boolean;
   public ALLOW_SCREEN_SHARE!: boolean;
   public DEFAULT_LAYOUT_MODE!: LayoutMode;
   public SHOW_PARTICIPANT_LIST!: boolean;

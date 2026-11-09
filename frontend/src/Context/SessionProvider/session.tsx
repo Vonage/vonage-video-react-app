@@ -10,7 +10,8 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { Connection, Publisher, Stream, Subscriber } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
 import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
@@ -19,7 +20,6 @@ import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
-  LocalCaptionReceived,
   SignalEvent,
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
@@ -37,9 +37,10 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
+import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { runtime$ } from '@core/stores';
+import { notifications$, runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -81,7 +82,7 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
-  ownCaptions: string | null;
+  ownCaptionsSubscriber: Subscriber | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -129,7 +130,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
-  ownCaptions: null,
+  ownCaptionsSubscriber: null,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -149,7 +150,7 @@ export type SessionContextInitialValue = Partial<
     | 'subscriberWrappers'
     | 'lastStreamUpdate'
     | 'subscriptionError'
-    | 'ownCaptions'
+    | 'ownCaptionsSubscriber'
     | 'archiveId'
     | 'activeSpeakerId'
     | 'recordingAlreadyNotified'
@@ -187,6 +188,7 @@ const SessionProvider = ({
   skipBrowserUrlUpdate = false,
 }: SessionProviderProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
+  const { t } = useTranslation();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -198,7 +200,9 @@ const SessionProvider = ({
   const [subscriptionError, setSubscriptionError] = useState<Error | null>(
     initialValue?.subscriptionError ?? null
   );
-  const [ownCaptions, setOwnCaptions] = useState<string | null>(initialValue?.ownCaptions ?? null);
+  const [ownCaptionsSubscriber, setOwnCaptionsSubscriber] = useState<Subscriber | null>(
+    initialValue?.ownCaptionsSubscriber ?? null
+  );
 
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
@@ -447,10 +451,6 @@ const SessionProvider = ({
     );
   };
 
-  const handleLocalCaptionReceived = (event: LocalCaptionReceived) => {
-    setOwnCaptions(event.caption);
-  };
-
   const handleSubscriberDestroyed = async (streamId: string) => {
     await wait(500);
 
@@ -512,6 +512,8 @@ const SessionProvider = ({
     [reconnecting]
   );
 
+  const { resubscribeFailureNotifier } = useResubscribeFailureNotifier();
+
   /**
    * Disconnects from the current session and cleans up session-related resources.
    */
@@ -556,8 +558,9 @@ const SessionProvider = ({
         handleSubscriberVideoElementCreated
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
-      vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
+      vonageVideoClient.current.on('ownCaptionsSubscriberChanged', setOwnCaptionsSubscriber);
       vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
+      vonageVideoClient.current.on('resubscribeFailed', resubscribeFailureNotifier);
 
       await vonageVideoClient.current.connect();
       setConnected(true);
@@ -579,13 +582,13 @@ const SessionProvider = ({
         sessionKey: args.sessionKey,
       });
 
-      setSessionKey(args.sessionKey);
+      setSessionKey(session.sessionKey);
       if (!skipBrowserUrlUpdate) {
-        window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+        window.history.replaceState(null, '', `/room/${session.sessionKey}`);
       }
 
       return connect({
-        sessionKey: args.sessionKey,
+        sessionKey: session.sessionKey,
         token: session.token,
         // Added at runtime by the backend joinSession onSettled$ hook when rtcstats is configured,
         // so it is not part of the statically inferred result type.
@@ -599,11 +602,24 @@ const SessionProvider = ({
    * Force mutes a participant.
    * @param {Stream} stream - The stream that is going to be muted.
    */
-  const forceMute = useCallback(async (stream: Stream) => {
-    if (vonageVideoClient.current) {
-      await vonageVideoClient.current.forceMuteStream(stream);
-    }
-  }, []);
+  const forceMute = useCallback(
+    async (stream: Stream) => {
+      if (!vonageVideoClient.current) return;
+
+      try {
+        await vonageVideoClient.current.forceMuteStream(stream);
+      } catch (error) {
+        frontendLogger.reportError(error, { eventSource: 'session.forceMute.error' });
+        notifications$.actions.push({
+          type: 'warning',
+          message: t('participants.mute.forceMuteFailed'),
+          expirationMs: env.NOTIFICATION_DURATION_MS,
+        });
+        throw error;
+      }
+    },
+    [t]
+  );
 
   /**
    * Publishes a stream to the session.
@@ -667,7 +683,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,
@@ -711,7 +727,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,

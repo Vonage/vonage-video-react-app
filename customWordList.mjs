@@ -35,6 +35,7 @@ const customWordList = [
   'PKCE',
   'rtcstats',
   'RTCSTATS',
+  'enterpictureinpicture',
 ];
 
 export default customWordList;

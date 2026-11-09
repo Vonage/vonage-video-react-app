@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import Box, { BoxProps } from '@mui/material/Box';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import AdvancedSettingsDialog from '@components/AdvancedSettings/Dialog';
@@ -66,6 +66,11 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     handleRecordingNotified,
   } = useMeetingRoom();
   const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
+
+  const participantCount = useMemo(
+    () => subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1,
+    [subscriberWrappers]
+  );
 
   return (
     <Box
@@ -136,9 +141,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
         toggleBackgroundEffects={toggleBackgroundEffects}
         toggleChat={toggleChat}
         toggleReportIssue={toggleReportIssue}
-        participantCount={
-          subscriberWrappers.filter(({ isScreenshare }) => !isScreenshare).length + 1
-        }
+        participantCount={participantCount}
         captionsState={captionsState}
       />
       {isAdvancedSettingsOpen && <AdvancedSettingsDialog />}

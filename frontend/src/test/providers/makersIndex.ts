@@ -32,3 +32,8 @@ export {
   default as makeScreenShareProviderWrapper,
   type ScreenShareProviderWrapperOptions,
 } from './makeScreenShareProviderWrapper';
+
+export {
+  default as makeMiniModeProviderWrapper,
+  type MiniModeProviderWrapperOptions,
+} from './makeMiniModeProviderWrapper';

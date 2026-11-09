@@ -17,7 +17,6 @@ import {
   SignalEvent,
   SignalType,
   SubscriberAudioLevelUpdatedEvent,
-  LocalCaptionReceived,
   StreamPropertyChangedEvent,
 } from '../../types/session';
 import createMovingAvgAudioLevelTracker from '../movingAverageAudioLevelTracker';
@@ -45,8 +44,9 @@ type VonageVideoClientEvents = {
   subscriberVideoElementCreated: [SubscriberWrapper];
   subscriberDestroyed: [string];
   subscriberAudioLevelUpdated: [SubscriberAudioLevelUpdatedEvent];
-  localCaptionReceived: [LocalCaptionReceived];
+  ownCaptionsSubscriberChanged: [Subscriber | null];
   subscriptionError: [unknown];
+  resubscribeFailed: [{ streamId: string; error: unknown }];
 };
 
 /**
@@ -139,7 +139,10 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     this.streams.delete(streamId);
   }
 
-  private subscribeToStream = async (stream: Stream) => {
+  private subscribeToStream = async (
+    stream: Stream,
+    { isResubscribeAttempt = false }: { isResubscribeAttempt?: boolean } = {}
+  ) => {
     if (this.disconnected) {
       return;
     }
@@ -159,6 +162,8 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     };
     try {
       const subscribe = () =>
+        // subscribe.promise() resolves only after streamCreated/error has already fired
+        // (opentok.js:68371), so listeners here must attach before that, off the sync return.
         new Promise<Subscriber>((resolve, reject) => {
           const subscriber = this.clientSession.subscribe(
             stream,
@@ -224,14 +229,18 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
         errorName: isErrorLike(syncError) ? syncError.name : undefined,
       });
 
-      if (isRecoverableError) {
-        // Don't emit subscriptionError for recoverable errors
-        // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+      if (!isRecoverableError) {
+        this.handleSubscriptionError(syncError);
         return;
       }
 
-      // Only emit subscriptionError for critical errors
-      this.handleSubscriptionError(syncError);
+      // Don't emit subscriptionError for recoverable errors, which would disconnect the user
+      // The stream was likely destroyed before subscription completed (e.g., user refreshed)
+      if (!isResubscribeAttempt) {
+        return;
+      }
+
+      this.emit('resubscribeFailed', { streamId, error: syncError });
     }
   };
 
@@ -272,7 +281,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       subscriberCount: this.getSubscriberCount(streamId),
     });
 
-    await this.subscribeToStream(stream);
+    await this.subscribeToStream(stream, { isResubscribeAttempt: true });
   };
 
   /**
@@ -515,6 +524,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
       if (this.hiddenSubscriber) {
         this.clientSession.unsubscribe(this.hiddenSubscriber);
         this.hiddenSubscriber = null;
+        this.emit('ownCaptionsSubscriberChanged', null);
       }
     } catch (error) {
       frontendLogger.reportError(error, {
@@ -540,7 +550,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
    * Forces a specific stream to be muted.
    * @param {Stream} stream - The stream to be muted.
    */
-  forceMuteStream = async (stream: Stream) => {
+  forceMuteStream = async (stream: Stream): Promise<void> => {
     await this.clientSession.forceMuteStream(stream);
   };
 
@@ -573,9 +583,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
           { audioVolume: 0 }
         );
 
-        this.hiddenSubscriber.on('captionReceived', (captionEvent) => {
-          this.emit('localCaptionReceived', captionEvent);
-        });
+        this.emit('ownCaptionsSubscriberChanged', this.hiddenSubscriber);
       } catch (error) {
         frontendLogger.reportError(error, {
           eventSource: 'vonageVideoClient.publish.hiddenSubscriber',
@@ -608,6 +616,7 @@ class VonageVideoClient extends EventEmitter<VonageVideoClientEvents> {
     if (this.hiddenSubscriber) {
       this.clientSession.unsubscribe(this.hiddenSubscriber);
       this.hiddenSubscriber = null;
+      this.emit('ownCaptionsSubscriberChanged', null);
     }
 
     this.clientSession.unpublish(publisher);

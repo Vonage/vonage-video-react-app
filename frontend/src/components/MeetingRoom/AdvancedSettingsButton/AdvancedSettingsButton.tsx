@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, memo } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
@@ -49,4 +49,4 @@ const AdvancedSettingsButton = ({
   );
 };
 
-export default AdvancedSettingsButton;
+export default memo(AdvancedSettingsButton);

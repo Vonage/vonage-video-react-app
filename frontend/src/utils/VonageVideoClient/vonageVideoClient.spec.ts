@@ -248,6 +248,67 @@ describe('VonageVideoClient', () => {
     });
   });
 
+  describe('resubscribeToStreamId', () => {
+    const streamId = 'stream-id';
+
+    const remoteParticipantName = 'Remote Participant';
+
+    async function connectAndRegisterStream() {
+      await vonageVideoClient?.connect();
+      mockSession.emit('streamCreated', {
+        stream: { streamId, videoType: 'camera', name: remoteParticipantName } as unknown as Stream,
+      });
+      await wait(0);
+    }
+
+    it('reports a critical subscription error exactly once', async () => {
+      await connectAndRegisterStream();
+
+      mockSubscribe.mockReturnValue(undefined);
+
+      const subscriptionErrorPromise = new Promise<unknown>((resolve) => {
+        vonageVideoClient?.on('subscriptionError', resolve);
+      });
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const error = await subscriptionErrorPromise;
+      await wait(0);
+      expect((error as Error).message).toBe('Vonage subscriber was not created.');
+      expect(mockProvider.reportError).toHaveBeenCalledTimes(1);
+    });
+
+    it('emits a recoverable resubscribe failure without disconnecting or reporting the user', async () => {
+      expect.assertions(3);
+      await connectAndRegisterStream();
+
+      const recoverableError = { name: 'OT_STREAM_NOT_FOUND', message: 'stream not found' };
+
+      mockSubscribe.mockImplementation((_stream, _targetElement, _options, callback) => {
+        callback!(recoverableError);
+        return mockSubscriber;
+      });
+
+      const subscriptionErrorListener = vi.fn();
+      vonageVideoClient?.on('subscriptionError', subscriptionErrorListener);
+
+      const resubscribeFailedPromise = new Promise<{ streamId: string; error: unknown }>(
+        (resolve) => {
+          vonageVideoClient?.on('resubscribeFailed', resolve);
+        }
+      );
+
+      await vonageVideoClient?.resubscribeToStreamId(streamId);
+
+      const resubscribeFailedEvent = await resubscribeFailedPromise;
+      await wait(0);
+
+      expect(subscriptionErrorListener).not.toHaveBeenCalled();
+      expect(resubscribeFailedEvent).toEqual({ streamId, error: recoverableError });
+      expect(mockProvider.reportError).not.toHaveBeenCalled();
+    });
+  });
+
   it('disconnect should disconnect from the session and cleanup', async () => {
     await vonageVideoClient?.connect();
     await vonageVideoClient?.disconnect();
@@ -346,6 +407,21 @@ describe('VonageVideoClient', () => {
     expect(mockSession.forceMuteStream).toHaveBeenCalledWith(mockStream);
   });
 
+  it('forceMuteStream should rethrow without reporting when the session call fails', async () => {
+    expect.assertions(2);
+    const mockStream: Stream = {
+      streamId: 'stream-id',
+    } as unknown as Stream;
+    const error = new Error('Force mute failed');
+    vi.mocked(mockSession.forceMuteStream).mockRejectedValueOnce(error);
+
+    await vonageVideoClient?.connect();
+
+    await expect(vonageVideoClient?.forceMuteStream(mockStream)).rejects.toThrow(error);
+
+    expect(mockProvider.reportError).not.toHaveBeenCalled();
+  });
+
   describe('publish', () => {
     const mockPublisher: Publisher = {
       id: 'publisher-id',
@@ -368,14 +444,6 @@ describe('VonageVideoClient', () => {
       expect(mockSubscribePromise).toHaveBeenCalledWith(mockStream, expect.anything(), {
         audioVolume: 0,
       });
-
-      const localCaptionReceivedPromise = new Promise((resolve) => {
-        vonageVideoClient?.on('localCaptionReceived', resolve);
-      });
-
-      mockSubscriber.emit('captionReceived', { caption: 'hello' });
-
-      await expect(localCaptionReceivedPromise).resolves.toEqual({ caption: 'hello' });
     });
 
     it('resolves publish and reports the error when the hidden subscriber fails to attach', async () => {
@@ -431,6 +499,23 @@ describe('VonageVideoClient', () => {
       await expect(vonageVideoClient?.publish(mockPublisher)).rejects.toThrow(
         'OTError: Unknown publish error'
       );
+    });
+
+    it('exposes the own captions subscriber while publishing', async () => {
+      const ownCaptionsSubscriberChanges: (Subscriber | null)[] = [];
+      const publisherWithStream = {
+        id: 'publisher-id',
+        stream: { streamId: 'own-stream' },
+      } as unknown as Publisher;
+
+      await vonageVideoClient?.connect();
+      vonageVideoClient?.on('ownCaptionsSubscriberChanged', (subscriber) => {
+        ownCaptionsSubscriberChanges.push(subscriber);
+      });
+      await vonageVideoClient?.publish(publisherWithStream);
+      vonageVideoClient?.unpublish(publisherWithStream);
+
+      expect(ownCaptionsSubscriberChanges).toEqual([mockSubscriber, null]);
     });
   });
 

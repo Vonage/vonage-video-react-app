@@ -48,6 +48,12 @@ OT_API_KEY='your-api-key'
 OT_API_SECRET='your-api-secret'
 ```
 
+#### Session keys
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LEGACY_SESSION_KEYS_ENABLED` | `'true'` | While `SESSION_KEY_SECRET` is set, accepts sessionKeys signed with `VONAGE_APP_ID` (`OT_API_KEY` for OpenTok), the key used when `SESSION_KEY_SECRET` is empty, and re-signs them with `SESSION_KEY_SECRET` in the same video session. This applies to signed-in users, or to everyone when `AUTH_ENABLED` is not `'true'`. Anonymous callers always need a key signed with `SESSION_KEY_SECRET`. Set to `'false'` to reject these keys for everyone |
+
 #### Allowed web origins (CORS)
 
 `CORS_ALLOWED_ORIGINS` (required) lists the web origins allowed to call the backend from a browser with credentials, set per environment. Entries are comma-separated exact origins (`https://app.example.com`), optionally with one `*` in the first host label (`https://app-*.example.com`). `*` alone allows any origin and is meant for local development only: with `AUTH_ENABLED='true'` and an `https` `OIDC_WEB_REDIRECT_URI`, the server refuses to start with `*`.
@@ -60,6 +66,15 @@ OT_API_SECRET='your-api-secret'
 | VCR per-PR deploy | The PR instance URL, set by the workflow |
 
 Include the origin the app is served from when it differs from the backend's, and every site that embeds `<vera-room>`. Native mobile apps don't send an `Origin` header and aren't affected. With auth on, requests from an origin outside this list are also rejected with `403`.
+
+#### Live Captions Translation (optional, private beta)
+
+[Live Captions Translation](https://developer.vonage.com/en/opentok/guides/live-caption-translation) must be enabled for your Vonage project. Both variables are unset by default, so the Start Captions request is unchanged.
+
+| Variable | Accepted values | Description |
+|----------|-----------------|-------------|
+| `CAPTIONS_TRANSLATION_LEVEL` | `FINALS_ONLY` \| `CONFIDENT_PARTIALS` \| `WINDOWED_PARTIALS` \| `ALL_PARTIALS` | How often captions are translated. Higher levels translate more partial captions and cost more. |
+| `CAPTIONS_TARGET_LANGUAGE_CODE` | BCP-47 code, e.g. `es-ES` | Session-level translation language for every participant. A language picked in the Captions settings tab overrides it, and choosing "Original" there reverts to this language instead of the spoken one. |
 
 #### Vonage Cloud Runtime (VCR)
 
@@ -209,8 +224,10 @@ These are runtime/environment values and are **not** generated from `app-config.
 | Variable | Type | Default | Accepted values | Description |
 |----------|------|---------|-----------------|-------------|
 | `ALLOW_CAPTIONS` | `boolean` | `true` | `true` \| `false` | Enable live captions |
+| `ALLOW_CAPTION_TRANSLATION` | `boolean` | `false` | `true` \| `false` | Show the Captions settings tab to translate received captions (requires `ALLOW_CAPTIONS`) |
 | `ALLOW_CHAT` | `boolean` | `true` | `true` \| `false` | Enable the in-call group chat |
 | `ALLOW_EMOJIS` | `boolean` | `true` | `true` \| `false` | Enable emoji reactions |
+| `ALLOW_MINI_MODE` | `boolean` | `true` | `true` \| `false` | Enable Meet-style Mini Mode (Document Picture-in-Picture, desktop Chromium 116+ and Firefox 151+). Opening it automatically on tab switch needs HTTPS, so it does not happen on `http://localhost` |
 | `ALLOW_SCREEN_SHARE` | `boolean` | `true` | `true` \| `false` | Enable screen sharing |
 
 ---
