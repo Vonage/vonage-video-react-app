@@ -11,7 +11,7 @@ const videoRouter = (await import('../routes/video')).default;
 
 describe('createSession with a room name and a schedule', () => {
   it('signs both into a new key instead of reusing the room key', async () => {
-    expect.assertions(3);
+    expect.assertions(4);
     const app = express();
     app.use(express.json());
     app.use('/v2', videoRouter);
@@ -23,6 +23,14 @@ describe('createSession with a room name and a schedule', () => {
     const scheduledResponse = await request(app)
       .post('/v2/createSession')
       .send({ roomName, schedule: { startsAt, durationMinutes: 120 } });
+
+    const roomKeyAfterScheduledResponse = await request(app)
+      .post('/v2/createSession')
+      .send({ roomName });
+
+    expect(roomKeyAfterScheduledResponse.body.result.data.sessionKey).toEqual(
+      roomKeyResponse.body.result.data.sessionKey
+    );
 
     const sessionKey = scheduledResponse.body.result.data.sessionKey as string;
     const scheduledSession = decodeSessionKey({ sessionKey });

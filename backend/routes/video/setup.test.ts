@@ -249,9 +249,9 @@ describe('video route access policy', () => {
         expect(res.statusCode).toEqual(200);
         expect(sessionKey).not.toEqual(legacySessionKey);
         expect(jwt.verify(sessionKey, CURRENT_SIGNING_SECRET)).toMatchObject(legacyClaims);
-        expect(await sessionService.getSessionKeyByRoomName({ roomName: 'legacy-room' })).toEqual(
-          sessionKey
-        );
+        expect(
+          await sessionService.getSessionKeyBySessionId({ sessionId: DEFAULT_VALID_SESSION_ID })
+        ).toEqual(sessionKey);
       });
 
       it('re-signs the key stored for a room name and replaces it', async () => {
