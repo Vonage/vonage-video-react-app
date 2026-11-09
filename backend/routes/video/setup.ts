@@ -11,7 +11,7 @@ import anonymousSessionCreationLimiter from '../../middleware/anonymousSessionCr
 import verifySessionKeySignature from './helpers/verifySessionKeySignature';
 import resignSessionKey from './helpers/resignSessionKey';
 import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
-import { isRecord } from '@common/assertions';
+import { isNotNil, isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
@@ -69,7 +69,8 @@ videoHandler.override$('createSession', async (opts) => {
     const { assertInput, videoClient, ctx } = opts;
 
     const input = assertInput(opts.input);
-    const { roomName } = input ?? {};
+    const { roomName, schedule } = input ?? {};
+    const isScheduledMeeting = isNotNil(schedule);
     const hasAccess = !isAnonymousCaller(ctx);
 
     if (!hasAccess) {
@@ -78,7 +79,7 @@ videoHandler.override$('createSession', async (opts) => {
       );
     }
 
-    if (!roomName) return videoClient.createSession(input);
+    if (!roomName || isScheduledMeeting) return videoClient.createSession(input);
 
     const sessionKey = await assertResult(
       () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.req.user }),
