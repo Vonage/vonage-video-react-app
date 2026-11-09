@@ -159,7 +159,7 @@ test.describe('Waiting page schedule UI test', () => {
 test.describe('Waiting page auto-join UI test', () => {
   test.use({ timezoneId: 'UTC', locale: 'en-US' });
 
-  const fixedNow = Date.UTC(2024, 1, 2, 10, 0, 0);
+  const fixedNow = Date.UTC(2057, 1, 2, 10, 0, 0);
   const schedule = { startsAt: fixedNow + 3 * 60_000, durationMinutes: 30 };
 
   for (const state of ['before start idle', 'waiting']) {
