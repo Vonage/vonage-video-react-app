@@ -38,8 +38,8 @@ const useScheduleStatus = ({
   if (isStartUnconfirmed) {
     return {
       kind: 'withinFiveMinutes',
-      startsAt: scheduleStatus.startsAt,
-      endsAt: scheduleStatus.endsAt,
+      startsAtMs: scheduleStatus.startsAtMs,
+      endsAtMs: scheduleStatus.endsAtMs,
       secondsLeft: 0,
     };
   }

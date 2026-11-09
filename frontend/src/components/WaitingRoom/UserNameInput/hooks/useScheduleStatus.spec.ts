@@ -5,7 +5,7 @@ import { makeTestProvider, providers, type ProviderOptions } from '@test/provide
 import useScheduleStatus from './useScheduleStatus';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
-const scheduleWindow = { startsAt, endsAt: startsAt + 60 * 60_000 };
+const scheduleWindow = { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 };
 const serverBehindMilliseconds = 2 * 60_000;
 
 describe('useScheduleStatus', () => {

@@ -7,12 +7,12 @@ describe('readScheduleClaim', () => {
     expect(
       readScheduleClaim({
         sessionId: 'session-id',
-        [SessionKeyClaim.schedule]: { startsAtMs: 1, durationMins: 60 },
+        [SessionKeyClaim.schedule]: { startsAtMs: 1, endsAtMs: 3_600_001 },
       })
-    ).toEqual({ startsAtMs: 1, durationMins: 60 });
+    ).toEqual({ startsAtMs: 1, endsAtMs: 3_600_001 });
     expect(readScheduleClaim({ sessionId: 'session-id' })).toBeNull();
     expect(
-      readScheduleClaim({ [SessionKeyClaim.schedule]: { startsAtMs: '1', durationMins: 60 } })
+      readScheduleClaim({ [SessionKeyClaim.schedule]: { startsAtMs: '1', endsAtMs: 3_600_001 } })
     ).toBeNull();
   });
 });

@@ -15,32 +15,32 @@ function getScheduleStatus({
 }): ScheduleStatus {
   if (isNil(scheduleWindow)) return { kind: 'unscheduled' };
 
-  const { startsAt, endsAt } = scheduleWindow;
-  const millisecondsUntilStart = startsAt - now;
+  const { startsAtMs, endsAtMs } = scheduleWindow;
+  const millisecondsUntilStart = startsAtMs - now;
 
-  if (now >= endsAt) return { kind: 'ended', endsAt };
-  if (millisecondsUntilStart <= 0) return { kind: 'started', startsAt, endsAt };
+  if (now >= endsAtMs) return { kind: 'ended', endsAtMs };
+  if (millisecondsUntilStart <= 0) return { kind: 'started', startsAtMs, endsAtMs };
 
   if (millisecondsUntilStart <= 5 * minuteInMilliseconds) {
     const secondsLeft = Math.ceil(millisecondsUntilStart / 1000);
-    return { kind: 'withinFiveMinutes', startsAt, endsAt, secondsLeft };
+    return { kind: 'withinFiveMinutes', startsAtMs, endsAtMs, secondsLeft };
   }
 
   const minutesLeft = Math.ceil(millisecondsUntilStart / minuteInMilliseconds);
 
   if (millisecondsUntilStart <= hourInMilliseconds) {
-    return { kind: 'withinHour', startsAt, endsAt, minutesLeft };
+    return { kind: 'withinHour', startsAtMs, endsAtMs, minutesLeft };
   }
 
   if (millisecondsUntilStart <= dayInMilliseconds) {
-    return { kind: 'withinDay', startsAt, endsAt, minutesLeft };
+    return { kind: 'withinDay', startsAtMs, endsAtMs, minutesLeft };
   }
 
   return {
     kind: 'daysAway',
-    startsAt,
-    endsAt,
-    daysLeft: getCalendarDaysBetween({ from: now, to: startsAt }),
+    startsAtMs,
+    endsAtMs,
+    daysLeft: getCalendarDaysBetween({ from: now, to: startsAtMs }),
   };
 }
 

@@ -1,19 +1,15 @@
-type UpcomingScheduleTimes = {
-  startsAt: number;
-  endsAt: number;
-};
+import type { ScheduleWindow } from '@common/types';
 
 export type ScheduleStatus =
   | { kind: 'unscheduled' }
-  | (UpcomingScheduleTimes & { kind: 'daysAway'; daysLeft: number })
-  | (UpcomingScheduleTimes & { kind: 'withinDay'; minutesLeft: number })
-  | (UpcomingScheduleTimes & { kind: 'withinHour'; minutesLeft: number })
-  | (UpcomingScheduleTimes & { kind: 'withinFiveMinutes'; secondsLeft: number })
-  | (UpcomingScheduleTimes & { kind: 'started' })
-  | { kind: 'ended'; endsAt: number };
+  | (ScheduleWindow & { kind: 'daysAway'; daysLeft: number })
+  | (ScheduleWindow & { kind: 'withinDay'; minutesLeft: number })
+  | (ScheduleWindow & { kind: 'withinHour'; minutesLeft: number })
+  | (ScheduleWindow & { kind: 'withinFiveMinutes'; secondsLeft: number })
+  | (ScheduleWindow & { kind: 'started' })
+  | { kind: 'ended'; endsAtMs: number };
 
 export type ScheduledStatus = Exclude<ScheduleStatus, { kind: 'unscheduled' }>;
-
 export type WaitingStatus = Exclude<ScheduledStatus, { kind: 'started' | 'ended' }>;
 
 export default ScheduleStatus;

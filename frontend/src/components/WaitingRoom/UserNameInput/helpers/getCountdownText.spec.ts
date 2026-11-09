@@ -6,7 +6,7 @@ import getCountdownText from './getCountdownText';
 const t = ((key: string, options: Record<string, number>) =>
   `${key} ${JSON.stringify(options)}`) as unknown as TFunction;
 
-const times = { startsAt: 0, endsAt: 0 };
+const times = { startsAtMs: 0, endsAtMs: 0 };
 
 describe('getCountdownText', () => {
   it.each<[string, WaitingStatus, string]>([

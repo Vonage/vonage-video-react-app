@@ -4,7 +4,7 @@ import getScheduleStatus from './getScheduleStatus';
 const minute = 60_000;
 const startsAt = new Date(2026, 10, 4, 12, 0).getTime();
 const endsAt = startsAt + 60 * minute;
-const scheduleWindow = { startsAt, endsAt };
+const scheduleWindow = { startsAtMs: startsAt, endsAtMs: endsAt };
 
 describe('getScheduleStatus', () => {
   it.each([
