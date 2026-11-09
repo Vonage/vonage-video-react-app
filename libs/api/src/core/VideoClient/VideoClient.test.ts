@@ -418,6 +418,7 @@ describe('VideoClient', () => {
 
       expect(jwt.verify(extendedSession.sessionKey, mockApiKey)).toMatchObject({
         sessionId: mockSessionId,
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 120 * 60 * 1000 },
         [SessionKeyClaim.extended]: 60,
       });
       expect(extendedSession[SessionKeyClaim.extended]).toBe(60);
@@ -460,6 +461,7 @@ describe('VideoClient', () => {
       const renewedSession = videoClient.renewSessionKey({ sessionKey, grant });
 
       expect(jwt.verify(renewedSession.sessionKey, mockApiKey)).toMatchObject({
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 80 * 60 * 1000 },
         [SessionKeyClaim.extended]: 20,
       });
       expect(mocks.video.generateClientToken).toHaveBeenCalledWith(
@@ -870,7 +872,7 @@ describe('VideoClient', () => {
         sessionId: mockSessionId,
         [SessionKeyClaim.schedule]: {
           startsAtMs: startsAt,
-          endsAtMs: startsAt + durationMinutes * 60 * 1000,
+          endsAtMs: startsAt + (durationMinutes + (extendedMinutes ?? 0)) * 60 * 1000,
         },
         ...(extendedMinutes ? { [SessionKeyClaim.extended]: extendedMinutes } : {}),
       },

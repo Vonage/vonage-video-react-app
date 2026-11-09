@@ -10,7 +10,6 @@ import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
 import type { ExtendSessionPayload, IVideoClient } from '@api-lib/types';
 import { isNil } from '@common/assertions';
 import { MAX_TOTAL_EXTENSION_MINUTES, SessionKeyClaim } from '@common/constants';
-import { getScheduleWindow } from '@common/helpers';
 
 /**
  * Extends a running scheduled session by one of the configured options and returns the extended sessionKey,
@@ -21,13 +20,13 @@ async function extendSession(this: IVideoClient, payload: ExtendSessionPayload) 
   try {
     const { sessionKey, minutes } = payload;
     const session = this.decodeSessionKey({ sessionKey });
-    const scheduleWindow = getScheduleWindow(session);
+    const schedule = session[SessionKeyClaim.schedule];
 
-    if (isNil(scheduleWindow)) {
+    if (isNil(schedule)) {
       throw makeBadRequestErrorHandler('Only scheduled sessions can be extended')(null);
     }
 
-    assertScheduleOpen(scheduleWindow);
+    assertScheduleOpen(schedule);
 
     const { options } = this._extension;
 
