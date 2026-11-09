@@ -124,7 +124,7 @@ describe('VideoClient', () => {
       });
 
       const startsAt = Date.now() + 60 * 60 * 1000;
-      const scheduleClaim = { startsAtMs: startsAt, durationMins: 60 };
+      const scheduleClaim = { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60 * 1000 };
 
       const createdSession = await videoClient.createSession({
         schedule: { startsAt, durationMinutes: 60 },
@@ -726,7 +726,10 @@ describe('VideoClient', () => {
     return jwt.sign(
       {
         sessionId: mockSessionId,
-        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: durationMinutes },
+        [SessionKeyClaim.schedule]: {
+          startsAtMs: startsAt,
+          endsAtMs: startsAt + durationMinutes * 60 * 1000,
+        },
       },
       mockApiKey,
       { algorithm: 'HS256' }

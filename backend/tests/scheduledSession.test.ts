@@ -37,7 +37,7 @@ describe('createSession with a room name and a schedule', () => {
     expect(sessionKey).not.toEqual(roomKeyResponse.body.result.data.sessionKey);
     expect(scheduledSession.roomName).toEqual(roomName);
     expect(scheduledSession).toMatchObject({
-      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 120 },
+      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 120 * 60 * 1000 },
     });
   });
 });

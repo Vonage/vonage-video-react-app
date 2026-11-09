@@ -2,8 +2,8 @@ import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/e
 import type { IVideoClient, StartArchivePayload } from '@api-lib/types';
 import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
 import { isNotNil } from '@common/assertions';
+import { SessionKeyClaim } from '@common/constants';
 import { assertResult } from '@common/execution';
-import { getScheduleWindow } from '@common/helpers';
 import type { SingleArchiveResponse } from '@vonage/video';
 
 async function startArchive(
@@ -13,9 +13,9 @@ async function startArchive(
   try {
     const { sessionKey, archiveOptions } = payload;
     const session = this.decodeSessionKey({ sessionKey });
-    const scheduleWindow = getScheduleWindow(session);
+    const schedule = session[SessionKeyClaim.schedule];
 
-    if (isNotNil(scheduleWindow)) assertScheduleOpen(scheduleWindow);
+    if (isNotNil(schedule)) assertScheduleOpen(schedule);
 
     const archive = await assertResult(
       () => this.video.startArchive(session.sessionId, archiveOptions),
