@@ -210,7 +210,10 @@ describe('Toolbar', () => {
 
     unscheduled.unmount();
     renderWithSessionKey(
-      makeSessionKey({ sessionId, [SessionKeyClaim.schedule]: { at: startsAt / 1000, min: 60 } })
+      makeSessionKey({
+        sessionId,
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 60 },
+      })
     );
     await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
     await act(() => vi.advanceTimersByTimeAsync(1_000));
