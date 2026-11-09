@@ -1,0 +1,16 @@
+backend/tests/scheduledSession.test.ts
+  h_6029769cf9ac60 44-64
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  h_6029769cf9ac60 4-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4d37899c31504766a80619d544dd4e5ef66084cd",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 252-254
+backend/routes/video/video.ts
+  h_6029769cf9ac60 118,129,131
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_6029769cf9ac60 85-96
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_6029769cf9ac60 13-15,18,22,30,34-35,44-46,51-53,57
+backend/storage/sessionStorage.ts
+  h_6029769cf9ac60 4
+backend/storage/vcrSessionStorage.ts
+  h_6029769cf9ac60 51,55-59
+backend/tests/scheduledSession.test.ts
+  h_6029769cf9ac60 14,27-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c3bc5ee45e737913d050399112874d5bcbb0be56",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
