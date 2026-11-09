@@ -4,7 +4,7 @@ import type { CreateEphemeralTokenPayload } from '@api-lib/schemas/CreateEphemer
 import { TokenRole, type IVideoClient } from '@api-lib/types';
 import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
 import { isNil, isNotNil } from '@common/assertions';
-import { getScheduleWindow } from '@common/helpers';
+import { SessionKeyClaim } from '@common/constants';
 import type { ClientTokenOptions } from '@vonage/video';
 
 /**
@@ -18,9 +18,9 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
   try {
     const { sessionKey, clientTokenOptions } = payload;
     const session = this.decodeSessionKey({ sessionKey });
-    const scheduleWindow = getScheduleWindow(session);
+    const schedule = session[SessionKeyClaim.schedule];
 
-    if (isNotNil(scheduleWindow)) assertScheduleOpen(scheduleWindow);
+    if (isNotNil(schedule)) assertScheduleOpen(schedule);
 
     const tokenOptions: ClientTokenOptions = {
       role: TokenRole.MODERATOR,
@@ -33,9 +33,9 @@ function createEphemeralToken(this: IVideoClient, payload: CreateEphemeralTokenP
     };
 
     const expireTime = (() => {
-      if (isNil(scheduleWindow)) return tokenOptions.expireTime;
+      if (isNil(schedule)) return tokenOptions.expireTime;
 
-      const scheduleEndInSeconds = Math.floor(scheduleWindow.endsAt / 1000);
+      const scheduleEndInSeconds = Math.floor(schedule.endsAtMs / 1000);
 
       return Math.min(tokenOptions.expireTime ?? scheduleEndInSeconds, scheduleEndInSeconds);
     })();

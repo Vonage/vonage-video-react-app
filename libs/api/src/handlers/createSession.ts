@@ -22,7 +22,7 @@ async function createSession(
       ? {
           [SessionKeyClaim.schedule]: {
             startsAtMs: schedule.startsAt,
-            durationMins: schedule.durationMinutes,
+            endsAtMs: schedule.startsAt + schedule.durationMinutes * 60_000,
           },
         }
       : {};
