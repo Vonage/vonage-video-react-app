@@ -5,7 +5,6 @@ import express, { Express, Request, Response } from 'express';
 import path from 'path';
 import { Server } from 'http';
 import router from './routes';
-import { setStaticAssetCacheHeaders } from './helpers';
 import videoRouter, { makeVideoClient$ } from './routes/video';
 import hasVerifiedSessionKey from './routes/video/helpers/hasVerifiedSessionKey';
 import { fileURLToPath } from 'url';
@@ -109,14 +108,9 @@ app.use(
 
 app.use(router);
 
-app.use(
-  express.static(veraPath, {
-    setHeaders: setStaticAssetCacheHeaders,
-  })
-);
+app.use(express.static(veraPath));
 
 app.get('/*', (_req: Request, res: Response) => {
-  setStaticAssetCacheHeaders(res);
   res.sendFile(path.join(veraPath, 'index.html'));
 });
 
