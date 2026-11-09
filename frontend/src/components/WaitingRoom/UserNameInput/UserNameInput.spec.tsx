@@ -123,7 +123,7 @@ describe('UsernameInput', () => {
         setUsername={vi.fn()}
         roomName={undefined}
         sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
       />,
       { runtimeContext: { videoClient } }
     );
@@ -159,7 +159,7 @@ describe('UsernameInput', () => {
         setUsername={vi.fn()}
         roomName={undefined}
         sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
       />,
       { runtimeContext: { videoClient } }
     );
@@ -188,7 +188,7 @@ describe('UsernameInput', () => {
         setUsername={vi.fn()}
         roomName={undefined}
         sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAt, endsAt: startsAt + 60 * 60_000 }}
+        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
       />
     );
 
