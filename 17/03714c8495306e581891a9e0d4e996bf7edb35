@@ -1,0 +1,16 @@
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 67-68
+backend/tests/extendSession.test.ts
+  h_6029769cf9ac60 1,5,19,21-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1703714c8495306e581891a9e0d4e996bf7edb35",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

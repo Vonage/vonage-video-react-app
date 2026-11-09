@@ -1,0 +1,28 @@
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 18,112,302-304,362-364
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 6
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 14,146-160
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 10,112-114
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 20-22
+backend/routes/auth/helpers/getSignedInHintCookieName.ts
+  h_6029769cf9ac60 1-11
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 8,55-62
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 32-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b3f00a8ad62a7572a2004f31b9ab0a487cf8a542",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
