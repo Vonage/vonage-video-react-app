@@ -32,7 +32,7 @@ const useLeaveAtMeetingEnd = () => {
     if (isNil(scheduleWindow)) return;
 
     const intervalId = setInterval(() => {
-      const hasEnded = Date.now() + clockOffset >= scheduleWindow.endsAt;
+      const hasEnded = Date.now() + clockOffset >= scheduleWindow.endsAtMs;
       if (!hasEnded) return;
 
       clearInterval(intervalId);

@@ -212,7 +212,7 @@ describe('Toolbar', () => {
     renderWithSessionKey(
       makeSessionKey({
         sessionId,
-        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 60 },
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 },
       })
     );
     await act(() => new Promise((resolve) => setTimeout(resolve, 0)));

@@ -21,7 +21,7 @@ const useShouldShowMeetingTimer = ({
   const getIsEndingSoon = () => {
     if (isNil(scheduleWindow) || isNil(serverSettings)) return false;
     const serverNow = Date.now() + serverSettings.clockOffset;
-    return serverNow >= scheduleWindow.endsAt - endingSoonMilliseconds;
+    return serverNow >= scheduleWindow.endsAtMs - endingSoonMilliseconds;
   };
 
   return useSyncExternalStore(subscribeToClock, getIsEndingSoon);

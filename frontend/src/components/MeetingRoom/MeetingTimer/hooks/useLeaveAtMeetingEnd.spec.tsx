@@ -41,7 +41,7 @@ describe('useLeaveAtMeetingEnd', () => {
 
     const sessionKey = makeSessionKey({
       sessionId,
-      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, durationMins: 60 },
+      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: endsAt },
     });
     const { sessionContext, backgroundPublisherContext, queryClient } = render({ sessionKey });
 
