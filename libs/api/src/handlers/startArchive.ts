@@ -1,6 +1,9 @@
 import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
 import type { IVideoClient, StartArchivePayload } from '@api-lib/types';
+import assertScheduleOpen from '@api-lib/schedule/assertScheduleOpen';
+import { isNotNil } from '@common/assertions';
 import { assertResult } from '@common/execution';
+import { getScheduleWindow } from '@common/helpers';
 import type { SingleArchiveResponse } from '@vonage/video';
 
 async function startArchive(
@@ -9,10 +12,13 @@ async function startArchive(
 ): Promise<SingleArchiveResponse> {
   try {
     const { sessionKey, archiveOptions } = payload;
-    const { sessionId } = this.decodeSessionKey({ sessionKey });
+    const session = this.decodeSessionKey({ sessionKey });
+    const scheduleWindow = getScheduleWindow(session);
+
+    if (isNotNil(scheduleWindow)) assertScheduleOpen(scheduleWindow);
 
     const archive = await assertResult(
-      () => this.video.startArchive(sessionId, archiveOptions),
+      () => this.video.startArchive(session.sessionId, archiveOptions),
       makeThirdPartyErrorHandler('Failed to start archive')
     );
 
