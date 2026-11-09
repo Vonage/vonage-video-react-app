@@ -79,7 +79,7 @@ test.describe('emoji', () => {
     await expect(emojiButtons).toHaveCount(EXPECTED_EMOJI_COUNT);
 
     // Close the grid by clicking the button again
-    await clickEmojiGridButton({ page, isMobile });
+    await page.getByTestId('emoji-grid-button').click();
     await expect(emojiGrid).not.toBeVisible();
   });
 
