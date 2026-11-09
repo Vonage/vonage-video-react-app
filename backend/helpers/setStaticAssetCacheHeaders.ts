@@ -1,11 +1,7 @@
 import type { Response } from 'express';
 
-function setStaticAssetCacheHeaders(res: Response, filePath: string) {
-  const isHtmlFile = filePath.endsWith('.html');
-  res.set(
-    'Cache-Control',
-    isHtmlFile ? 'private, max-age=0, must-revalidate' : 'private, max-age=86400'
-  );
+function setStaticAssetCacheHeaders(res: Response) {
+  res.set('Cache-Control', 'private, max-age=0, must-revalidate');
 }
 
 export default setStaticAssetCacheHeaders;
