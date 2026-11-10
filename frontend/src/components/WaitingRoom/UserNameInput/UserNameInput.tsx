@@ -16,7 +16,6 @@ import { twMerge } from 'tailwind-merge';
 import { isNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
-import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
 import useScheduleStatus from './hooks/useScheduleStatus';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
@@ -115,25 +114,37 @@ const UsernameInput = ({
       className={twMerge('flex flex-col gap-4 text-left lg:max-w-125', className)}
       {...cardProps}
     >
-      <div className="flex w-full flex-col gap-3">
+      <div className="flex w-full flex-col gap-1">
+        <p className="font-vera-plain text-vera-caption-semibold uppercase text-vera-text-tertiary">
+          {t('waitingRoom.title')}
+        </p>
+
         {!isNil(roomName) && (
           <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary break-words">
             {roomName}
           </h2>
         )}
-
-        {isPending && <ScheduleCountdownPanelSkeleton />}
-
-        {isScheduled && !isPending && <ScheduleCountdownPanel scheduleStatus={scheduleStatus} />}
       </div>
 
       <Separator width="100%" />
 
-      <Box className="w-full">
+      {isScheduled && !isPending && (
+        <>
+          <ScheduleCountdownPanel scheduleStatus={scheduleStatus} />
+          <Separator width="100%" />
+        </>
+      )}
+
+      <Box className="flex w-full flex-col gap-2">
+        <label
+          htmlFor="user-name"
+          className="font-vera-plain text-vera-caption-semibold text-vera-text-tertiary"
+        >
+          {t('waitingRoom.user.input.title')}
+        </label>
         <TextField
           fullWidth
           size="small"
-          label={t('waitingRoom.user.input.label')}
           onChange={onChangeParticipantName}
           onClick={handleInputFocus}
           required
@@ -153,10 +164,6 @@ const UsernameInput = ({
             input: {
               className:
                 '[&.Mui-disabled_.MuiOutlinedInput-notchedOutline]:border-vera-text-disabled!',
-            },
-            inputLabel: {
-              required: false,
-              className: '[&.Mui-disabled]:text-vera-text-disabled!',
             },
           }}
           inputRef={inputRef}
