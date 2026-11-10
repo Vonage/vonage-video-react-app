@@ -42,6 +42,7 @@ const useServerSettings = <Selected = ServerSettingsResult>({
 
       return { ...settings, clockOffset };
     },
+    refetchOnWindowFocus: 'always',
     ...queryOptions,
   });
 };
