@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { Field } from '@ui/components';
+import { env } from '../../../../env';
 
 const { setIncludeTranscriptionSummary } = advancedSettings$.actions;
 
@@ -17,20 +18,22 @@ const AdvancedSettingsGeneralTab = (): ReactElement => {
         {t('advancedSettings.tabs.general')}
       </h2>
 
-      <Field>
-        <Field.Label htmlFor="advanced-settings-general-include-transcription-summary">
-          {t('advancedSettings.general.includeTranscriptionSummary.label')}
-        </Field.Label>
-        <Field.Input
-          variant="switch"
-          id="advanced-settings-general-include-transcription-summary"
-          checked={includeTranscriptionSummary}
-          onChange={(event) => setIncludeTranscriptionSummary(event.currentTarget.checked)}
-        />
-        <Field.Description>
-          {t('advancedSettings.general.includeTranscriptionSummary.description')}
-        </Field.Description>
-      </Field>
+      {env.ALLOW_POST_CALL_TRANSCRIPTION && (
+        <Field>
+          <Field.Label htmlFor="advanced-settings-general-include-transcription-summary">
+            {t('advancedSettings.general.includeTranscriptionSummary.label')}
+          </Field.Label>
+          <Field.Input
+            variant="switch"
+            id="advanced-settings-general-include-transcription-summary"
+            checked={includeTranscriptionSummary}
+            onChange={(event) => setIncludeTranscriptionSummary(event.currentTarget.checked)}
+          />
+          <Field.Description>
+            {t('advancedSettings.general.includeTranscriptionSummary.description')}
+          </Field.Description>
+        </Field>
+      )}
 
       <div>
         <button
