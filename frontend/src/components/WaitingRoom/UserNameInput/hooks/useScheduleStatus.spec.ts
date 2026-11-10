@@ -1,7 +1,7 @@
 import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
-import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@core-test/providers';
 import useScheduleStatus from './useScheduleStatus';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
@@ -42,7 +42,7 @@ describe('useScheduleStatus', () => {
 
     expect(result.current.kind).toBe('started');
 
-    await act(() => vi.advanceTimersByTimeAsync(10_000));
+    await act(() => vi.advanceTimersByTimeAsync(10_001));
 
     expect(result.current.kind).toBe('withinFiveMinutes');
   });
@@ -53,8 +53,9 @@ type RenderOptions = {
 };
 
 function renderHook<Result>(render: () => Result, { runtimeContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime], {
+  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
     runtimeContext,
+    serverSettingsContext: undefined,
   });
 
   return {

@@ -1,9 +1,9 @@
-import { useServerSettings } from '@core/hooks';
-import { isNil, isNotNil } from '@common/assertions';
+import { shallowCompare } from 'react-global-state-hooks';
+import { isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
+import { serverSettings$ } from '@core/stores';
 import getScheduleStatus from '../helpers/getScheduleStatus';
 import type { ScheduleStatus } from '../types/ScheduleStatus';
-import useServerNow from './useServerNow';
 
 const serverTimeRetryMilliseconds = 10_000;
 
@@ -16,7 +16,7 @@ const useScheduleStatus = ({
 }): ScheduleStatus => {
   const hasSchedule = isNotNil(scheduleWindow);
 
-  const { data: serverSettings, isError: isServerTimeUnavailable } = useServerSettings({
+  serverSettings$.useServerSettings({
     sessionKey,
     queryOptions: {
       enabled: hasSchedule,
@@ -26,25 +26,26 @@ const useScheduleStatus = ({
     },
   });
 
-  const now = useServerNow({
-    clockOffset: serverSettings?.clockOffset ?? 0,
-    isTicking: hasSchedule,
-  });
+  const startsAtMs = scheduleWindow?.startsAtMs;
+  const endsAtMs = scheduleWindow?.endsAtMs;
 
-  const scheduleStatus = getScheduleStatus({ scheduleWindow, now });
-  const isStartUnconfirmed =
-    scheduleStatus.kind === 'started' && isNil(serverSettings) && !isServerTimeUnavailable;
+  return serverSettings$.use.select(
+    (state): ScheduleStatus => {
+      const scheduleStatus = getScheduleStatus({ scheduleWindow, now: state.now });
 
-  if (isStartUnconfirmed) {
-    return {
-      kind: 'withinFiveMinutes',
-      startsAtMs: scheduleStatus.startsAtMs,
-      endsAtMs: scheduleStatus.endsAtMs,
-      secondsLeft: 0,
-    };
-  }
+      const isStartUnconfirmed = scheduleStatus.kind === 'started' && state.status === 'pending';
 
-  return scheduleStatus;
+      if (!isStartUnconfirmed) return scheduleStatus;
+
+      return {
+        kind: 'withinFiveMinutes',
+        startsAtMs: scheduleStatus.startsAtMs,
+        endsAtMs: scheduleStatus.endsAtMs,
+        secondsLeft: 0,
+      };
+    },
+    { dependencies: [startsAtMs, endsAtMs], isEqual: shallowCompare }
+  );
 };
 
 export default useScheduleStatus;
