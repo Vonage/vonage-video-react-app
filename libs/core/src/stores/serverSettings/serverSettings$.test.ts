@@ -33,6 +33,19 @@ describe('serverSettings$', () => {
     expect(renderStatus).toHaveBeenCalledTimes(1);
   });
 
+  it('stops the server clock when the provider unmounts', () => {
+    expect.assertions(2);
+    const { wrapper } = makeTestProvider([providers.serverSettings]);
+
+    const { unmount } = renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
+
+    expect(vi.getTimerCount()).toBe(1);
+
+    unmount();
+
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('sends the sessionKey and moves the observed server time to the answer without waiting for a tick', async () => {
     expect.assertions(2);
 
