@@ -57,7 +57,7 @@ const PopupDialog = ({
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">{actionText.title}</DialogTitle>
-      <DialogContent className="flex flex-col gap-4">
+      <DialogContent>
         <DialogContentText id="alert-dialog-description">{actionText.contents}</DialogContentText>
         {extraContent}
       </DialogContent>

@@ -118,7 +118,7 @@ const PostCallTranscriptionButton = ({
   };
 
   const startDialogExtraContent = !isTranscribing ? (
-    <Field>
+    <Field className="pt-4">
       <Field.Label htmlFor="post-call-transcription-include-summary">
         {t('transcribing.start.dialog.includeSummary')}
       </Field.Label>
