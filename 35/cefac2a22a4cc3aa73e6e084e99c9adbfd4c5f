@@ -1,0 +1,30 @@
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  h_6029769cf9ac60 9
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.spec.ts
+  h_6029769cf9ac60 7
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.ts
+  h_6029769cf9ac60 18-19,21-22,26,32,36,41-43
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.spec.ts
+  h_6029769cf9ac60 8
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 41-42
+frontend/src/components/WaitingRoom/UserNameInput/types/ScheduleStatus.ts
+  h_6029769cf9ac60 1,5-10
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.test.ts
+  h_6029769cf9ac60 10,12,15
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.ts
+  h_6029769cf9ac60 3,8,13-14,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35cefac2a22a4cc3aa73e6e084e99c9adbfd4c5f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

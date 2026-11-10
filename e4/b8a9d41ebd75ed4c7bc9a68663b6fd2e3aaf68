@@ -1,0 +1,16 @@
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  h_6029769cf9ac60 29
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e4b8a9d41ebd75ed4c7bc9a68663b6fd2e3aaf68",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
