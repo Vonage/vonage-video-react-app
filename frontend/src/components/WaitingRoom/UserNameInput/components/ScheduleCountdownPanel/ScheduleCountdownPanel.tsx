@@ -15,32 +15,36 @@ const ScheduleCountdownPanel = ({
   ...props
 }: ScheduleCountdownPanelProps): ReactElement => {
   const { t } = useTranslation();
-  const { countdownText, headlineText, detailText } = useScheduleCopy(scheduleStatus);
+  const { countdownText, headlineText, dayText, startTimeText, endTimeText } =
+    useScheduleCopy(scheduleStatus);
 
   const isStarted = scheduleStatus.kind === 'started';
   const isImminent = scheduleStatus.kind === 'withinFiveMinutes';
-  const { panel, countdown, headline } = scheduleCountdownPanelVariants({ isStarted, isImminent });
+  const { panel, column, divider, label, countdown, headline, startTime, endTime } =
+    scheduleCountdownPanelVariants({ isStarted, isImminent });
 
   return (
     <div data-testid="schedule-countdown-panel" className={panel({ className })} {...props}>
-      {!isNil(countdownText) && (
-        <>
-          <span className="font-vera-plain text-vera-caption-semibold uppercase text-vera-text-tertiary">
-            {t('waitingRoom.schedule.startsIn')}
-          </span>
-          <span role="timer" className={countdown()}>
-            {countdownText}
-          </span>
-        </>
-      )}
+      <div className={column()}>
+        {!isNil(countdownText) && (
+          <>
+            <span className={label()}>{t('waitingRoom.schedule.startsIn')}</span>
+            <span role="timer" className={countdown()}>
+              {countdownText}
+            </span>
+          </>
+        )}
 
-      {!isNil(headlineText) && <span className={headline()}>{headlineText}</span>}
+        {!isNil(headlineText) && <span className={headline()}>{headlineText}</span>}
+      </div>
 
-      {!isNil(detailText) && (
-        <span className="font-vera-plain text-vera-caption text-vera-text-tertiary">
-          {detailText}
-        </span>
-      )}
+      <span aria-hidden="true" className={divider()} />
+
+      <div className={column()}>
+        <span className={label()}>{dayText}</span>
+        <span className={startTime()}>{startTimeText}</span>
+        <span className={endTime()}>{endTimeText}</span>
+      </div>
     </div>
   );
 };

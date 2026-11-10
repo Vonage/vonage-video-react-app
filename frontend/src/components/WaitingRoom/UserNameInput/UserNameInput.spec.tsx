@@ -43,7 +43,7 @@ describe('UsernameInput', () => {
 
     expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
+    expect(screen.getByRole('textbox', { name: 'Enter your name' })).toBeEnabled();
 
     for (let elapsedSeconds = 0; elapsedSeconds < 60; elapsedSeconds += 1) {
       await act(() => vi.advanceTimersByTimeAsync(1_000));
@@ -125,7 +125,7 @@ describe('UsernameInput', () => {
 
     expect(await screen.findByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Join meeting' })).not.toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Enter your name' })).toBeDisabled();
   });
 
   it('shows no title and joins with the sessionKey when the key carries no room name', () => {

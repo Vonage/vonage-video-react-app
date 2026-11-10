@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
 import formatMeetingDate from '../helpers/formatMeetingDate';
 import getCountdownText from '../helpers/getCountdownText';
+import isToday from '../helpers/isToday';
 import type { ScheduledStatus } from '../types/ScheduleStatus';
 
 export type ScheduleCopy = {
   countdownText: string | null;
   headlineText: string | null;
-  detailText: string | null;
+  dayText: string;
+  startTimeText: string;
+  endTimeText: string;
 };
 
 const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
@@ -14,52 +17,44 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
 
   const locale = i18n.language;
 
+  const dayText = isToday(scheduleStatus.startsAtMs)
+    ? t('waitingRoom.schedule.today')
+    : formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'date' });
+  const startTimeText = formatMeetingDate({
+    timestamp: scheduleStatus.startsAtMs,
+    locale,
+    format: 'time',
+  });
+  const endTime = formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' });
+  const endTimeText = t('waitingRoom.schedule.endTime', { time: endTime });
+
   if (scheduleStatus.kind === 'ended') {
     return {
       countdownText: null,
-      headlineText: t('waitingRoom.schedule.ended', {
-        time: formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' }),
-      }),
-      detailText: null,
+      headlineText: t('waitingRoom.schedule.ended', { time: endTime }),
+      dayText,
+      startTimeText,
+      endTimeText,
     };
   }
-
-  const timeRangeText = t('waitingRoom.schedule.timeRange', {
-    start: formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'time' }),
-    end: formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' }),
-  });
 
   if (scheduleStatus.kind === 'started') {
     return {
       countdownText: null,
       headlineText: t('waitingRoom.schedule.started'),
-      detailText: timeRangeText,
+      dayText,
+      startTimeText,
+      endTimeText,
     };
   }
 
-  const countdownText = getCountdownText({ waitingStatus: scheduleStatus, t });
-
-  const detailText = (() => {
-    if (scheduleStatus.kind === 'daysAway') {
-      return t('waitingRoom.schedule.daysAway', {
-        count: scheduleStatus.daysLeft,
-        date: formatMeetingDate({
-          timestamp: scheduleStatus.startsAtMs,
-          locale,
-          format: 'dateTime',
-        }),
-      });
-    }
-    if (scheduleStatus.kind === 'withinDay') {
-      return t('waitingRoom.schedule.withinDay', {
-        time: formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'time' }),
-        countdown: countdownText,
-      });
-    }
-    return timeRangeText;
-  })();
-
-  return { countdownText, headlineText: null, detailText };
+  return {
+    countdownText: getCountdownText({ waitingStatus: scheduleStatus, t }),
+    headlineText: null,
+    dayText,
+    startTimeText,
+    endTimeText,
+  };
 };
 
 export default useScheduleCopy;
