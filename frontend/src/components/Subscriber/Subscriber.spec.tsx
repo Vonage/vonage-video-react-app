@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render as renderBase, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { makeTestProvider, providers } from '@test/providers';
 import userEvent from '@testing-library/user-event';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
@@ -176,3 +178,12 @@ describe('Subscriber', () => {
     expect(screen.queryByTestId('pin-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([providers.miniMode]);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
+}

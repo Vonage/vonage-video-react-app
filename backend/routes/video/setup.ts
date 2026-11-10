@@ -1,26 +1,91 @@
 import getSessionStorageService from '../../sessionStorageService';
-import { makeInternalErrorHandler } from '@api-lib/errors';
+import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
 import { videoHandler } from './video';
 import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
+import { VideoAction } from '@api-lib';
+import { assertResult } from '@api-lib/executions';
+import { runExpressMiddleware } from '@api-lib/routing';
+import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
+import isAnonymousCaller from './helpers/isAnonymousCaller';
+import anonymousSessionCreationLimiter from '../../middleware/anonymousSessionCreationLimiter';
+import verifySessionKeySignature from './helpers/verifySessionKeySignature';
+import resignSessionKey from './helpers/resignSessionKey';
+import isLegacySessionKeyAllowed from './helpers/isLegacySessionKeyAllowed';
+import { isNotNil, isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
-// #region Legacy endpoints for android and old links with roomName.
+/** Only the sessionKey is checked: other IDs in the input (archiveId, captionsId) are not matched to its meeting. */
+videoHandler.use$(function requireSignedInUserOrVerifiedSessionKey(opts) {
+  const { videoAction, ctx, input, next } = opts;
 
-/**
- * [TODO] This is a temporary solution to support legacy vera functionality without depending on the old routers
- * This override checks if a session already exists for the given roomName and reuses it.
- */
+  if (videoAction === VideoAction.createSession) return next();
+  if (!isAnonymousCaller(ctx)) return next();
+  if (hasVerifiedSessionKey({ input, videoClient: ctx.videoClient })) return next();
+
+  throw makeUnauthorizedErrorHandler(
+    `${videoAction} requires a signed-in user or a valid sessionKey`
+  )(null);
+});
+
+videoHandler.use$(function resignAllowedLegacySessionKey(opts) {
+  const { ctx, input, next } = opts;
+
+  if (!isLegacySessionKeyAllowed({ user: ctx.req.user })) return next();
+  if (!isRecord(input) || typeof input.sessionKey !== 'string') return next();
+
+  const sessionKeySignature = verifySessionKeySignature({
+    sessionKey: input.sessionKey,
+    videoClient: ctx.videoClient,
+  });
+
+  if (sessionKeySignature.signature !== 'legacy') return next();
+
+  const sessionKey = resignSessionKey({
+    claims: sessionKeySignature.claims,
+    videoClient: ctx.videoClient,
+  });
+
+  return next({ input: { ...input, sessionKey } });
+});
+
+videoHandler.use$(
+  VideoAction.createSessionAndJoin,
+  async function limitAnonymousSessionCreation({ ctx, next }) {
+    if (!isAnonymousCaller(ctx)) return next();
+
+    await runExpressMiddleware({
+      middleware: anonymousSessionCreationLimiter,
+      req: ctx.req,
+      res: ctx.res,
+    });
+
+    return next();
+  }
+);
+
 videoHandler.override$('createSession', async (opts) => {
   try {
-    const { assertInput, videoClient } = opts;
+    const { assertInput, videoClient, ctx } = opts;
 
     const input = assertInput(opts.input);
-    const { roomName } = input ?? {};
+    const { roomName, schedule } = input ?? {};
+    const isScheduledMeeting = isNotNil(schedule);
+    const hasAccess = !isAnonymousCaller(ctx);
 
-    if (!roomName) return videoClient.createSession(input);
+    if (!hasAccess) {
+      throw makeUnauthorizedErrorHandler('Creating or joining a room requires a signed-in user')(
+        null
+      );
+    }
 
-    const sessionKey = await getOrCreateSessionKeyFromRoomName({ videoClient, roomName });
+    if (!roomName || isScheduledMeeting) return videoClient.createSession(input);
+
+    const sessionKey = await assertResult(
+      () => getOrCreateSessionKeyFromRoomName({ videoClient, roomName, user: ctx.req.user }),
+      makeInternalErrorHandler('Failed to get or create the session for the room name')
+    );
+
     const sessionDetails = videoClient.decodeSessionKey({ sessionKey });
 
     return { ...sessionDetails, roomName };
@@ -81,5 +146,3 @@ videoHandler.override$('disableCaptions', async (opts) => {
     throw makeInternalErrorHandler('Failed to enable captions')(error);
   }
 });
-
-// #endregion Legacy endpoints for android and old links with roomName.

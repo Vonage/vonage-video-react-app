@@ -33,6 +33,7 @@ const appEnvKeys = [
   'ALLOW_CHAT',
   'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
   'ALLOW_EMOJIS',
+  'ALLOW_MINI_MODE',
   'ALLOW_SCREEN_SHARE',
   'SHOW_PARTICIPANT_LIST',
   'BYPASS_WAITING_ROOM',
@@ -194,7 +195,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+      include: [
+        '@emotion/react',
+        '@emotion/styled',
+        '@mui/material/Tooltip',
+        '@vonage/client-sdk-video',
+        'react-i18next',
+        '@tanstack/react-query',
+      ],
     },
     plugins: [
       tailwindcss(),
@@ -242,6 +250,24 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       minify: 'terser',
       cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: (moduleId: string) => {
+            // Keeps vendor-vonage from importing vendor and inheriting its hash.
+            if (moduleId === '\0commonjsHelpers.js') return 'vendor-helpers';
+            if (!moduleId.includes('/node_modules/')) return undefined;
+            if (
+              /\/node_modules\/(@vonage\/client-sdk-video|@vonage\/video-client-network-test|opentok-layout-js)\//.test(
+                moduleId
+              )
+            ) {
+              return 'vendor-vonage';
+            }
+            if (/\/node_modules\/axios\//.test(moduleId)) return 'vendor-axios';
+            return 'vendor';
+          },
+        },
+      },
       terserOptions: {
         format: {
           comments: false,

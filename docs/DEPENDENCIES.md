@@ -39,7 +39,6 @@
 - [@tanstack/react-query](https://www.npmjs.com/package/@tanstack/react-query) Hooks for fetching, caching and updating asynchronous data in React
 
 # Backend Dependencies
-- [@types/body-parser](https://www.npmjs.com/package/@types/body-parser) TypeScript definitions for body-parser
 - [@types/cors](https://www.npmjs.com/package/@types/cors) TypeScript definitions for cors
 - [@types/express](https://www.npmjs.com/package/@types/express) TypeScript definitions for express
 - [@types/node](https://www.npmjs.com/package/@types/node) TypeScript definitions for node
@@ -50,7 +49,6 @@
 - [@vonage/vcr-sdk](https://www.npmjs.com/package/@vonage/vcr-sdk) This is the Node.JS SDK for [Vonage Cloud Runtime](https://developer.vonage.com/cloud-runtime). To use it you will need a Vonage account. Sign up for free at [vonage.com](https://dashboard.nexmo.com/sign-up?utm_source=DEV_REL&utm_medium=github&utm_campaig
 - [@vonage/video](https://www.npmjs.com/package/@vonage/video) Package to interact with the Vonage Video API (Not OpenTok Compatible)
 - [axios](https://www.npmjs.com/package/axios) Promise based HTTP client for the browser and node.js
-- [body-parser](https://www.npmjs.com/package/body-parser) Node.js body parsing middleware
 - [cors](https://www.npmjs.com/package/cors) Node.js CORS middleware
 - [dotenv](https://www.npmjs.com/package/dotenv) Loads environment variables from .env file
 - [express](https://www.npmjs.com/package/express) Fast, unopinionated, minimalist web framework

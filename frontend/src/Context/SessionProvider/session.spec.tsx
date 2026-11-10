@@ -701,6 +701,23 @@ describe('SessionProvider', () => {
       expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     });
   });
+
+  it('joinRoom replaces the URL with the sessionKey the backend returns', async () => {
+    const resignedSessionKey = validSessionKey.replace('fakesig', 'resignedsig');
+    mockJoinSessionMutate.mockResolvedValue({
+      token: 'token',
+      sessionId: 'sessionId',
+      sessionKey: resignedSessionKey,
+    });
+
+    await renderAndWaitForConnection();
+
+    expect(window.location.pathname).toBe(`/room/${resignedSessionKey}`);
+    expect(VonageVideoClient).toHaveBeenCalledWith({
+      sessionKey: resignedSessionKey,
+      token: 'token',
+    });
+  });
 });
 
 type RenderOptions = {

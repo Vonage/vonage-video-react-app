@@ -49,13 +49,15 @@ class VcrSessionStorage implements SessionStorage {
     sessionKey,
     sessionId,
   }: {
-    roomName: string;
+    roomName?: string;
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    const roomKey = makeKey(StorageResource.SessionKeyByRoomName, roomName);
-    await this.dbState.set(roomKey, sessionKey);
-    await this.setKeyExpiry(roomKey);
+    if (roomName) {
+      const roomKey = makeKey(StorageResource.SessionKeyByRoomName, roomName);
+      await this.dbState.set(roomKey, sessionKey);
+      await this.setKeyExpiry(roomKey);
+    }
 
     const sessionIdKey = makeKey(StorageResource.SessionKeyBySessionId, sessionId);
     await this.dbState.set(sessionIdKey, sessionKey);

@@ -13,12 +13,18 @@ import { assertResult } from '@api-lib/executions';
 import { restartArchivingAfterServerRotation } from './helpers';
 import getSessionStorageService from '../../sessionStorageService';
 import { CaptionsStatus } from './types';
+import type { VideoRouteContext } from './types/VideoRouteContext';
+import type { RequestWithTokenAuth } from '../../middleware/authMiddleware/authMiddleware';
 
 const videoRouter = Router();
 
 const sessionService = getSessionStorageService();
 
-export const videoHandler = createVideoHandler({
+export const videoHandler = createVideoHandler<VideoRouteContext, object>({
+  createContext: ({ req, res }) => ({
+    req: req as RequestWithTokenAuth,
+    res,
+  }),
   auth: {
     authType: 'jwt',
     applicationId: process.env.VONAGE_APP_ID!,
@@ -27,6 +33,9 @@ export const videoHandler = createVideoHandler({
   videoParams: {
     videoHost: process.env.VONAGE_VIDEO_HOST,
   },
+  sessionSigning: process.env.SESSION_KEY_SECRET
+    ? { secret: process.env.SESSION_KEY_SECRET }
+    : undefined,
 
   /**
    * Adds the default values for the different video methods.
@@ -106,7 +115,7 @@ videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
 });
 
 /**
- * Middleware for storing the sessionKey per SessionId and roomName.
+ * Middleware for storing the sessionKey per SessionId.
  */
 videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   const isCreatingOrJoiningSession =
@@ -117,9 +126,9 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 
   if (!isCreatingOrJoiningSession) return;
 
-  const { sessionId, sessionKey, roomName } = result as VideoSessionDetails;
+  const { sessionId, sessionKey } = result as VideoSessionDetails;
 
-  await sessionService.setSession({ sessionId, sessionKey, roomName: roomName! });
+  await sessionService.setSession({ sessionId, sessionKey });
 });
 
 /**

@@ -11,16 +11,16 @@ interface SessionData {
 }
 
 class InMemorySessionStorage implements SessionStorage {
-  private sessions: { [key: string]: SessionData } = {};
-  private roomNameBySessionKey: { [sessionKey: string]: string } = {};
-  private sessionKeyBySessionId: { [sessionId: string]: string } = {};
+  private sessions: { [sessionId: string]: SessionData } = {};
+  private sessionIdBySessionKey: { [sessionKey: string]: string } = {};
+  private sessionKeyByRoomName: { [roomName: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
-    return this.sessions[roomName]?.sessionKey || null;
+    return this.sessionKeyByRoomName[roomName] ?? null;
   }
 
   async getSessionKeyBySessionId({ sessionId }: { sessionId: string }): Promise<string | null> {
-    return this.sessionKeyBySessionId[sessionId] ?? null;
+    return this.sessions[sessionId]?.sessionKey ?? null;
   }
 
   async setSession({
@@ -28,12 +28,12 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey,
     sessionId,
   }: {
-    roomName: string;
+    roomName?: string;
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    const existingSession = this.sessions[roomName];
-    this.sessions[roomName] = existingSession
+    const existingSession = this.sessions[sessionId];
+    this.sessions[sessionId] = existingSession
       ? { ...existingSession, sessionKey }
       : {
           sessionKey,
@@ -43,22 +43,20 @@ class InMemorySessionStorage implements SessionStorage {
           serverRotationPending: 0,
           transcriptionWithSummary: true,
         };
-    this.roomNameBySessionKey[sessionKey] = roomName;
-    if (sessionId) {
-      this.sessionKeyBySessionId[sessionId] = sessionKey;
+    this.sessionIdBySessionKey[sessionKey] = sessionId;
+    if (roomName) {
+      this.sessionKeyByRoomName[roomName] = sessionKey;
     }
   }
 
   private getSessionByKey(sessionKey: string): SessionData | undefined {
-    const roomName = this.roomNameBySessionKey[sessionKey];
-    if (!roomName) return undefined;
-    return this.sessions[roomName];
+    const sessionId = this.sessionIdBySessionKey[sessionKey];
+    if (!sessionId) return undefined;
+    return this.sessions[sessionId];
   }
 
   private getSessionBySessionId(sessionId: string): SessionData | undefined {
-    const sessionKey = this.sessionKeyBySessionId[sessionId];
-    if (!sessionKey) return undefined;
-    return this.getSessionByKey(sessionKey);
+    return this.sessions[sessionId];
   }
 
   async setCaptionsId({

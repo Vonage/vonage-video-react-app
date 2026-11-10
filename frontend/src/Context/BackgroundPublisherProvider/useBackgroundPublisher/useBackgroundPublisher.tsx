@@ -33,7 +33,7 @@ export type BackgroundPublisherContextType = {
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
-  initBackgroundLocalPublisher: () => void;
+  initBackgroundLocalPublisher: (sharedVideoTrack?: MediaStreamTrack) => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
   deleteCustomImage: (id: string) => void;
@@ -86,6 +86,7 @@ const useBackgroundPublisher = (
   const { setAccessStatus, accessStatus } = usePermissions();
 
   const backgroundPublisherRef = useRef<Publisher | null>(null);
+  const sharedVideoTrackRef = useRef<MediaStreamTrack | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
 
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
@@ -107,6 +108,11 @@ const useBackgroundPublisher = (
   const [backgroundSelected, setBackgroundSelected] = useState<string>(
     initialValue?.backgroundSelected ?? ''
   );
+
+  const destroySharedVideoTrack = () => {
+    sharedVideoTrackRef.current?.stop();
+    sharedVideoTrackRef.current = null;
+  };
 
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
@@ -172,48 +178,63 @@ const useBackgroundPublisher = (
     });
 
     backgroundPublisherRef.current = null;
+
+    // SDK does not stop a track it did not create
+    destroySharedVideoTrack();
   }, []);
 
-  const initBackgroundLocalPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) return;
+  const initBackgroundLocalPublisher = useCallback(
+    (sharedVideoTrack?: MediaStreamTrack) => {
+      if (backgroundPublisherRef.current) {
+        sharedVideoTrack?.stop();
+        return;
+      }
 
-    let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
-      videoFilter = initialBackgroundRef.current;
-    }
+      destroySharedVideoTrack();
+      sharedVideoTrackRef.current = sharedVideoTrack ?? null;
 
-    const publisherOptions: PublisherProperties = {
-      insertDefaultUI: false,
-      videoFilter,
-      resolution: env.DEFAULT_RESOLUTION,
-      videoSource: mediaDevices$.getState().videoinput,
-      publishAudio: false,
-      publishVideo: isVideoEnabled,
-    };
+      let videoFilter: VideoFilter | undefined;
+      if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
+        videoFilter = initialBackgroundRef.current;
+      }
 
-    let publisher: Publisher | null = null;
-    let hasInitFailed = false;
+      const publisherOptions: PublisherProperties = {
+        insertDefaultUI: false,
+        videoFilter,
+        resolution: env.DEFAULT_RESOLUTION,
+        videoSource: sharedVideoTrack ?? mediaDevices$.getState().videoinput,
+        publishAudio: false,
+        publishVideo: isVideoEnabled,
+      };
 
-    publisher = initPublisher(undefined, publisherOptions, (error) => {
-      if (!error) return;
-      hasInitFailed = true;
-      frontendLogger.reportError(error, {
-        eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+      let publisher: Publisher | null = null;
+      let hasInitFailed = false;
+
+      publisher = initPublisher(undefined, publisherOptions, (error) => {
+        if (!error) return;
+        hasInitFailed = true;
+        frontendLogger.reportError(error, {
+          eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+        });
+
+        destroySharedVideoTrack();
+
+        if (backgroundPublisherRef.current !== publisher) return;
+        backgroundPublisherRef.current = null;
+        attempt(() => publisher?.destroy());
       });
 
-      if (backgroundPublisherRef.current !== publisher) return;
-      backgroundPublisherRef.current = null;
-      attempt(() => publisher?.destroy());
-    });
+      if (hasInitFailed) {
+        attempt(() => publisher?.destroy());
+        destroySharedVideoTrack();
+        return;
+      }
 
-    if (hasInitFailed) {
-      attempt(() => publisher?.destroy());
-      return;
-    }
-
-    backgroundPublisherRef.current = publisher;
-    addPublisherListeners(publisher);
-  }, [addPublisherListeners, isVideoEnabled]);
+      backgroundPublisherRef.current = publisher;
+      addPublisherListeners(publisher);
+    },
+    [addPublisherListeners, isVideoEnabled]
+  );
 
   /**
    * Turns the camera on and off

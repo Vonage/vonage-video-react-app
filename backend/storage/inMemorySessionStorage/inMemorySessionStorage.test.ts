@@ -82,6 +82,18 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
+  describe('setSession without a room name', () => {
+    it('keeps a separate captionsId for each session', async () => {
+      await storage.setSession({ sessionKey: 'key-a', sessionId: 'session-a' });
+      await storage.setSession({ sessionKey: 'key-b', sessionId: 'session-b' });
+      await storage.setCaptionsId({ sessionId: 'session-a', captionsId: 'captions-a' });
+      await storage.setCaptionsId({ sessionId: 'session-b', captionsId: 'captions-b' });
+
+      expect(await storage.getCaptionsId({ sessionId: 'session-a' })).toBe('captions-a');
+      expect(await storage.getCaptionsId({ sessionId: 'session-b' })).toBe('captions-b');
+    });
+  });
+
   describe('setSession idempotency', () => {
     it('preserves archiveIds and captionsId when setSession is called again for the same room', async () => {
       await storage.setSession({ roomName: room, sessionKey, sessionId });

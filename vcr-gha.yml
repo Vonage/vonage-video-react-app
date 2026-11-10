@@ -136,8 +136,8 @@ instance:
       value: '/oauth2/v1/token'
     - name: AUTH_INTROSPECTION_TIMEOUT_MS
       value: '5000'
-    - name: KIBANA_BASE_URL
-      secret: KIBANA_BASE_URL
+    - name: LOG_INGEST_URL
+      secret: LOG_INGEST_URL
 debug:
   # Command `vcr debug` uses to start the app.
   entrypoint: [node, bundle.cjs]

@@ -144,4 +144,9 @@ describe('WaitingRoomStage', () => {
     render(<WaitingRoomStage />, { sessionIdentifier: 'bridge-room' });
     expect(screen.getByTestId('video-container')).toBeInTheDocument();
   });
+
+  it('redirects to /waiting-room/:roomIdentifier at the fallback route when bridge has a sessionIdentifier', () => {
+    render(<WaitingRoomStage />, { initialRoute: '/waiting-room', sessionIdentifier: 'my-room' });
+    expect(screen.getByTestId('video-container')).toBeInTheDocument();
+  });
 });

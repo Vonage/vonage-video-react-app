@@ -1,5 +1,5 @@
 import Tooltip from '@mui/material/Tooltip';
-import { ReactElement, useState } from 'react';
+import { ReactElement, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
@@ -95,4 +95,4 @@ const ScreenSharingButton = ({
   );
 };
 
-export default ScreenSharingButton;
+export default memo(ScreenSharingButton);

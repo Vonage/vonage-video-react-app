@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 import closeServer from './helpers/closeServer';
 import type { Mock } from 'vitest';
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
 import { Server } from 'http';
 import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
@@ -13,8 +14,14 @@ import mockVonageVideoSdk, {
   DEFAULT_VALID_SESSION_ID as validSessionId,
 } from './helpers/mockVonageVideoSdk';
 
-const validSessionKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzZXNzaW9uSWQiOiIxX01YNWtNVEkxWWpGbU1DMWtZMkl5TFRRM05EY3RZamxrWVMxa09ESTVOMkk0WkdFME9UZC1makUzTnpVM09UWXhOVGd3TWpkLWFqaElOU3RYZEV4VU5sYzBZbE5vZGs5UVNYVllVRmRDZm41LSIsInJvb21OYW1lIjoiYXdlc29tZS1yb29tLW5hbWUiLCJpYXQiOjE3NzU5NjMzMjh9.QcNVXp6gatPTV82IJa8VgDG6rOLBkFjU3r7j_BcxM-c';
+const validSessionKey = jwt.sign(
+  {
+    sessionId:
+      '1_MX5kMTI1YjFmMC1kY2IyLTQ3NDctYjlkYS1kODI5N2I4ZGE0OTd-fjE3NzU3OTYxNTgwMjd-ajhINStXdExUNlc0YlNodk9QSXVYUFdCfn5-',
+    roomName: 'awesome-room-name',
+  },
+  process.env.SESSION_KEY_SECRET!
+);
 
 vi.doMock('../helpers/config', mockOpentokConfig);
 

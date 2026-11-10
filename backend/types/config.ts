@@ -40,4 +40,5 @@ export type Config = (VonageConfig | OpentokConfig) &
   AuthConfig &
   CorsConfig & {
     sessionKeySecret: string;
+    legacySessionKeysEnabled: boolean;
   };
