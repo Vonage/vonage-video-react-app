@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import formatMeetingDate from '../../helpers/formatMeetingDate';
+import { getFormattedTime } from '@utils/dateTime';
 
 export type AutoJoinTextProps = ComponentProps<'p'> & {
   startsAtMs: number;
@@ -16,7 +16,7 @@ const AutoJoinText = ({ startsAtMs, className, ...props }: AutoJoinTextProps): R
       {...props}
     >
       {t('waitingRoom.schedule.autoJoinAt', {
-        time: formatMeetingDate({ timestamp: startsAtMs, locale: i18n.language, format: 'time' }),
+        time: getFormattedTime(i18n.language, startsAtMs),
       })}
     </p>
   );
