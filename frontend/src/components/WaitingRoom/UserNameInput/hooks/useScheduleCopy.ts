@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { serverSettings$ } from '@core/stores';
-import formatMeetingDate from '../helpers/formatMeetingDate';
+import { getFormattedDate, getFormattedTime } from '@utils/dateTime';
 import getCountdownText from '../helpers/getCountdownText';
 import isToday from '../helpers/isToday';
 import type { ScheduledStatus } from '../types/ScheduleStatus';
@@ -27,13 +27,9 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
 
   const dayText = isStartToday
     ? t('waitingRoom.schedule.today')
-    : formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'date' });
-  const startTimeText = formatMeetingDate({
-    timestamp: scheduleStatus.startsAtMs,
-    locale,
-    format: 'time',
-  });
-  const endTime = formatMeetingDate({ timestamp: scheduleStatus.endsAtMs, locale, format: 'time' });
+    : getFormattedDate(locale, scheduleStatus.startsAtMs);
+  const startTimeText = getFormattedTime(locale, scheduleStatus.startsAtMs);
+  const endTime = getFormattedTime(locale, scheduleStatus.endsAtMs);
   const endTimeText = t('waitingRoom.schedule.endTime', { time: endTime });
 
   if (scheduleStatus.kind === 'ended') {
