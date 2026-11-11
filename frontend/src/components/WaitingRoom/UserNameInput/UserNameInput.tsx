@@ -16,6 +16,7 @@ import { twMerge } from 'tailwind-merge';
 import { isNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
+import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
 import useScheduleStatus from './hooks/useScheduleStatus';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
@@ -127,6 +128,13 @@ const UsernameInput = ({
       </div>
 
       <Separator width="100%" />
+
+      {isPending && (
+        <>
+          <ScheduleCountdownPanelSkeleton />
+          <Separator width="100%" />
+        </>
+      )}
 
       {isScheduled && !isPending && (
         <>

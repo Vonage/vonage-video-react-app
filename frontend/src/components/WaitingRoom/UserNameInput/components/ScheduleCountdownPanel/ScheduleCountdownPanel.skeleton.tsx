@@ -6,7 +6,10 @@ const ScheduleCountdownPanelSkeleton = ({
   className,
   ...props
 }: ComponentProps<'div'>): ReactElement => {
-  const { panel } = scheduleCountdownPanelVariants({ isStarted: false, isImminent: false });
+  const { panel, column, divider } = scheduleCountdownPanelVariants({
+    isStarted: false,
+    isImminent: false,
+  });
 
   return (
     <div
@@ -14,18 +17,33 @@ const ScheduleCountdownPanelSkeleton = ({
       className={panel({ className })}
       {...props}
     >
-      <Skeleton
-        variant="text"
-        className="bg-vera-skeleton-like! font-vera-plain text-vera-caption-semibold w-1/4"
-      />
-      <Skeleton
-        variant="text"
-        className="bg-vera-skeleton-like! font-vera-plain text-vera-heading-3 w-1/2"
-      />
-      <Skeleton
-        variant="text"
-        className="bg-vera-skeleton-like! font-vera-plain text-vera-caption w-2/3"
-      />
+      <div className={column()}>
+        <Skeleton
+          variant="text"
+          className="bg-vera-skeleton-like! font-vera-plain text-vera-caption-semibold w-1/2"
+        />
+        <Skeleton
+          variant="text"
+          className="bg-vera-skeleton-like! font-vera-plain text-vera-heading-3 w-3/4"
+        />
+      </div>
+
+      <span aria-hidden="true" className={divider()} />
+
+      <div className={column()}>
+        <Skeleton
+          variant="text"
+          className="bg-vera-skeleton-like! font-vera-plain text-vera-caption-semibold w-1/3"
+        />
+        <Skeleton
+          variant="text"
+          className="bg-vera-skeleton-like! font-vera-plain text-vera-body-extended-semibold w-1/2"
+        />
+        <Skeleton
+          variant="text"
+          className="bg-vera-skeleton-like! font-vera-plain text-vera-caption w-2/3"
+        />
+      </div>
     </div>
   );
 };
