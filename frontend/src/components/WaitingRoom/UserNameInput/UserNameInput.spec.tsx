@@ -80,6 +80,7 @@ describe('UsernameInput', () => {
     );
 
     expect(screen.queryByText('The meeting has started')).not.toBeInTheDocument();
+    expect(screen.getByTestId('schedule-countdown-panel-skeleton')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
   });
 
@@ -102,8 +103,12 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId('room-design-review')).toBeInTheDocument();
   });
 
-  it('replaces Join with its children once the meeting has ended', () => {
+  it('replaces Join with its children once the meeting has ended', async () => {
     vi.setSystemTime(startsAt + 2 * 60 * 60_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+    });
 
     render(
       <UsernameInput
@@ -114,10 +119,11 @@ describe('UsernameInput', () => {
         scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
       >
         <button type="button">Back to landing</button>
-      </UsernameInput>
+      </UsernameInput>,
+      { runtimeContext: { videoClient } }
     );
 
-    expect(screen.getByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Join meeting' })).not.toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeDisabled();
   });
