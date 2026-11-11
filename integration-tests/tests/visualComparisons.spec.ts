@@ -121,15 +121,14 @@ test.describe('Waiting page schedule UI test', () => {
         await page.clock.setFixedTime(fixedNow);
         await page.goto(`${baseURL}waiting-room/${result.data.sessionKey}`);
         await page.waitForLoadState('networkidle');
-        await page
-          .waitForSelector('.video__element', { state: 'attached', timeout: TIMEOUTS.DEFAULT })
-          .catch(() => {});
+        await expect(page.locator('.video__element')).toBeAttached();
+        await expect(page.getByText('Prepare to join')).toBeVisible();
+        await expect(page.getByTestId('schedule-countdown-panel')).toHaveCount(schedule ? 1 : 0);
         await page.emulateMedia({ colorScheme });
         await page.waitForFunction(
           (isDark) => document.documentElement.classList.contains('dark') === isDark,
           colorScheme === 'dark'
         );
-        await page.waitForTimeout(500);
         await expect(page).toHaveScreenshot({
           mask: [page.locator('.video__element'), page.locator('[data-testid="app-version"]')],
           maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
