@@ -215,7 +215,7 @@ function createVideoRouter<
 
     getServerSettings: makeMutation({
       key: VideoAction.getServerSettings,
-      config: undefined,
+      config: handlersConfig?.getServerSettings,
       callback: (videoClient, input) => {
         return videoClient.getServerSettings(input);
       },

@@ -4,9 +4,9 @@ import type HandlerConfig from './HandlerConfig';
 type AllowedKeys = Exclude<
   VideoAction,
   /**
-   * Actions that are not accessible through the api, inherit their configuration from other handlers, or take no configuration
+   * This are non methods which are not accessible through the api or which configuration is inherited from other handlers
    */
-  'createEphemeralToken' | 'ensureCaptionsEnabled' | 'getServerSettings'
+  'createEphemeralToken' | 'ensureCaptionsEnabled'
 >;
 
 export type HandlersConfig = {
