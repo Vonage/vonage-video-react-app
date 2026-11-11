@@ -7,9 +7,10 @@ export type ScheduleStatus =
   | (ScheduleWindow & { kind: 'withinHour'; minutesLeft: number })
   | (ScheduleWindow & { kind: 'withinFiveMinutes'; secondsLeft: number })
   | (ScheduleWindow & { kind: 'started' })
-  | { kind: 'ended'; endsAtMs: number };
+  | { kind: 'ended'; endsAtMs: number }
+  | (ScheduleWindow & { kind: 'pending' });
 
 export type ScheduledStatus = Exclude<ScheduleStatus, { kind: 'unscheduled' }>;
-export type WaitingStatus = Exclude<ScheduledStatus, { kind: 'started' | 'ended' }>;
+export type WaitingStatus = Exclude<ScheduledStatus, { kind: 'started' | 'ended' | 'pending' }>;
 
 export default ScheduleStatus;

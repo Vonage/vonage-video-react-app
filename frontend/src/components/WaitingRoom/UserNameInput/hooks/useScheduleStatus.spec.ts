@@ -46,6 +46,24 @@ describe('useScheduleStatus', () => {
 
     expect(result.current.kind).toBe('withinFiveMinutes');
   });
+
+  it('stays pending and never ended while the server has not answered', async () => {
+    expect.assertions(1);
+
+    vi.setSystemTime(scheduleWindow.endsAtMs + 60_000);
+
+    const getServerSettings = vi.fn(() => new Promise<never>(() => {}));
+    const videoClient = makeVideoClientMock({ getServerSettings });
+
+    const { result } = renderHook(
+      () => useScheduleStatus({ sessionKey: 'scheduled-session-key', scheduleWindow }),
+      { runtimeContext: { videoClient } }
+    );
+
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+
+    expect(result.current.kind).toBe('pending');
+  });
 });
 
 type RenderOptions = {

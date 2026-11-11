@@ -1,5 +1,5 @@
 import { shallowCompare } from 'react-global-state-hooks';
-import { isNotNil } from '@common/assertions';
+import { isNil, isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import { serverSettings$ } from '@core/stores';
 import getScheduleStatus from '../helpers/getScheduleStatus';
@@ -31,18 +31,10 @@ const useScheduleStatus = ({
 
   return serverSettings$.use.select(
     (state): ScheduleStatus => {
-      const scheduleStatus = getScheduleStatus({ scheduleWindow, now: state.now });
+      if (isNil(scheduleWindow)) return { kind: 'unscheduled' };
+      if (state.status === 'pending') return { ...scheduleWindow, kind: 'pending' };
 
-      const isStartUnconfirmed = scheduleStatus.kind === 'started' && state.status === 'pending';
-
-      if (!isStartUnconfirmed) return scheduleStatus;
-
-      return {
-        kind: 'withinFiveMinutes',
-        startsAtMs: scheduleStatus.startsAtMs,
-        endsAtMs: scheduleStatus.endsAtMs,
-        secondsLeft: 0,
-      };
+      return getScheduleStatus({ scheduleWindow, now: state.now });
     },
     { dependencies: [startsAtMs, endsAtMs], isEqual: shallowCompare }
   );
