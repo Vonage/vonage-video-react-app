@@ -95,22 +95,33 @@ test.describe('Waiting page schedule UI test', () => {
     .filter(({ state }) => state === 'unscheduled' || state === 'days away')
     .map((scheduleState) => ({ ...scheduleState, nameCase: 'without name', roomName: undefined }));
 
-  for (const { state, schedule, nameCase, roomName } of [
-    ...namedScheduleStates,
-    ...unnamedScheduleStates,
-  ]) {
+  const scheduleCases = [...namedScheduleStates, ...unnamedScheduleStates];
+  const sessionKeys = new Map<string, string>();
+
+  test.beforeAll(async ({ playwright }) => {
+    const request = await playwright.request.newContext();
+    for (const { state, schedule, nameCase, roomName } of scheduleCases) {
+      const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
+        data: { roomName, schedule },
+      });
+      expect(createSessionResponse.ok()).toBe(true);
+      const {
+        result: {
+          data: { sessionKey },
+        },
+      } = (await createSessionResponse.json()) as { result: { data: { sessionKey: string } } };
+      sessionKeys.set(`${state} ${nameCase}`, sessionKey);
+    }
+    await request.dispose();
+  });
+
+  for (const { state, schedule, nameCase } of scheduleCases) {
     for (const colorScheme of colorSchemes) {
-      test(`${state} ${nameCase} ${colorScheme}`, async ({ page, request, isMobile }) => {
+      test(`${state} ${nameCase} ${colorScheme}`, async ({ page, isMobile }) => {
         if (!isMobile) {
           await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
         }
         await serveStaticFilesFromCache(page);
-
-        const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
-          data: { roomName, schedule },
-        });
-        expect(createSessionResponse.ok()).toBe(true);
-        const { result } = await createSessionResponse.json();
 
         await page.route(/\/v2\/getServerSettings/, async (route) => {
           const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
@@ -119,7 +130,7 @@ test.describe('Waiting page schedule UI test', () => {
         });
 
         await page.clock.setFixedTime(fixedNow);
-        await page.goto(`${baseURL}waiting-room/${result.data.sessionKey}`);
+        await page.goto(`${baseURL}waiting-room/${sessionKeys.get(`${state} ${nameCase}`)}`);
         await page.waitForLoadState('networkidle');
         await expect(page.locator('.video__element')).toBeAttached();
         await expect(page.getByText('Prepare to join')).toBeVisible();
@@ -144,14 +155,16 @@ const staticFileCache = new Map<
   { status: number; headers: Record<string, string>; body: Buffer }
 >();
 
-// The backend rate limit counts static files, so each worker fetches them once.
+// The backend rate limit counts the page and its static files, so each worker fetches them once.
 async function serveStaticFilesFromCache(page: Page) {
   const isStaticFile = (url: URL) =>
-    ['assets/', 'images/'].some((folder) => url.href.startsWith(`${baseURL}${folder}`));
+    ['assets/', 'images/', 'waiting-room/'].some((folder) =>
+      url.href.startsWith(`${baseURL}${folder}`)
+    );
 
   await page.route(isStaticFile, async (route) => {
-    const url = route.request().url();
-    const cachedStaticFile = staticFileCache.get(url);
+    const cacheKey = route.request().isNavigationRequest() ? 'index.html' : route.request().url();
+    const cachedStaticFile = staticFileCache.get(cacheKey);
     if (cachedStaticFile) return route.fulfill(cachedStaticFile);
 
     const response = await route.fetch();
@@ -160,7 +173,7 @@ async function serveStaticFilesFromCache(page: Page) {
       headers: response.headers(),
       body: await response.body(),
     };
-    staticFileCache.set(url, staticFile);
+    staticFileCache.set(cacheKey, staticFile);
     await route.fulfill(staticFile);
   });
 }
