@@ -3,8 +3,11 @@ import type { ServerSettingsAPI } from '../types';
 
 const internalActions = actions<ServerSettingsAPI>()({
   tick() {
-    return ({ setState }) => {
-      setState((state) => ({ ...state, now: Date.now() + (state.clockOffset ?? 0) }));
+    return ({ getState, setState }) => {
+      const state = getState();
+      if (state.status === 'pending') return;
+
+      setState({ ...state, now: Date.now() + (state.clockOffset ?? 0) });
     };
   },
 

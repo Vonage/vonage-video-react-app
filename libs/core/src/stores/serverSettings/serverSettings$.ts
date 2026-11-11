@@ -11,7 +11,7 @@ const tickIntervalMilliseconds = 1000;
  * Holds the server settings and the ticking server time.
  */
 const serverSettings$ = createContext(
-  (): ServerSettingsState => ({ status: 'pending', now: Date.now(), clockOffset: null }),
+  (): ServerSettingsState => ({ status: 'pending', now: null, clockOffset: null }),
   {
     name: 'serverSettings',
     callbacks: {

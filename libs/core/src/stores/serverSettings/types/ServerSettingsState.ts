@@ -1,8 +1,13 @@
 export type ServerSettingsState =
   | {
-      status: 'pending' | 'unavailable';
+      status: 'pending';
+      now: null;
+      clockOffset: null;
+    }
+  | {
+      status: 'unavailable';
       /**
-       * Server time in milliseconds.
+       * Device time in milliseconds.
        */
       now: number;
       clockOffset: null;

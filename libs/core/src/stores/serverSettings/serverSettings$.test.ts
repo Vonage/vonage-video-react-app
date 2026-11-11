@@ -16,10 +16,27 @@ describe('serverSettings$', () => {
     vi.useRealTimers();
   });
 
-  it('ticks the server time without re-rendering a consumer that selects only the status', () => {
+  it('keeps the server time empty until the server answers', () => {
     expect.assertions(2);
 
     const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings]);
+
+    renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
+
+    act(() => {
+      vi.advanceTimersByTime(5_000);
+    });
+
+    expect(serverSettingsContext.current.getState().status).toBe('pending');
+    expect(serverSettingsContext.current.getState().now).toBeNull();
+  });
+
+  it('ticks the server time without re-rendering a consumer that selects only the status', () => {
+    expect.assertions(2);
+
+    const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings], {
+      serverSettingsContext: { value: { status: 'known', now: Date.now(), clockOffset: 0 } },
+    });
     const renderStatus = vi.fn(() => serverSettings$.useServerTimeStatus());
 
     renderHook(renderStatus, { wrapper });
@@ -65,7 +82,7 @@ describe('serverSettings$', () => {
       { wrapper }
     );
 
-    const nextServerNow = new Promise<number>((resolve) => {
+    const nextServerNow = new Promise<number | null>((resolve) => {
       result.current.subscribe(resolve, { skipFirst: true });
     });
 
