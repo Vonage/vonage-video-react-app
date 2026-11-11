@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import composeProviders from '@web/helpers/composeProviders';
+import { serverSettings$ } from '@core/stores';
 import UsernameInput from './UserNameInput';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
@@ -43,7 +45,9 @@ describe('UsernameInput', () => {
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
     expect(screen.getByRole('textbox', { name: 'Name' })).toBeEnabled();
 
-    await act(() => vi.advanceTimersByTimeAsync(60_000));
+    for (let elapsedSeconds = 0; elapsedSeconds < 60; elapsedSeconds += 1) {
+      await act(() => vi.advanceTimersByTimeAsync(1_000));
+    }
 
     expect(screen.getByText('Join opens in 5 sec')).toBeInTheDocument();
 
@@ -142,10 +146,11 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { runtimeContext }: RenderOptions = {}) {
-  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.runtime],
-    { userContext: undefined, runtimeContext }
-  );
+  const { wrapper, ...context } = makeTestProvider([providers.user, providers.runtime], {
+    userContext: undefined,
+    runtimeContext,
+  });
+  const ProvidersWrapper = composeProviders(wrapper, serverSettings$.Provider);
 
   return {
     ...context,

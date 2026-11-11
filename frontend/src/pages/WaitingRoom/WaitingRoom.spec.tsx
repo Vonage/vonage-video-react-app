@@ -14,6 +14,7 @@ import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvi
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
+import { serverSettings$ } from '@core/stores';
 import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
@@ -411,7 +412,8 @@ async function render(
     SuspenseBoundary,
     MainWrapper,
     backgroundEffectsDialog$.Provider,
-    precallNetworkTestDialog$.Provider
+    precallNetworkTestDialog$.Provider,
+    serverSettings$.Provider
   );
 
   const renderResult = await renderAsyncComponent(ui, { wrapper });
