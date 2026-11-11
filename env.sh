@@ -9,7 +9,7 @@ export SHOW_VIDEO_STATS=false
 
 # Localization
 export I18N_FALLBACK_LANGUAGE='en'
-export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de|ja'
+export I18N_SUPPORTED_LANGUAGES='en|en-US|es|es-MX|it|de|ja|fr'
 
 # Video
 export ALLOW_BACKGROUND_EFFECTS=true

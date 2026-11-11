@@ -245,7 +245,7 @@ describe('LanguageSelector', () => {
 
     it('throws when the selected language is not supported', () => {
       env.setSupportedLanguages('en|es');
-      mockI18n.language = 'fr';
+      mockI18n.language = 'pt';
 
       expect(() => render(<LanguageSelector />)).toThrow();
     });
