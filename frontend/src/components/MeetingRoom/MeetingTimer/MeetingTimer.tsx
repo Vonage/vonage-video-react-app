@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/components/VividIcon';
+import { isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
 import useEndOfMeetingWarning from './hooks/useEndOfMeetingWarning';
@@ -29,9 +30,10 @@ const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps):
         customSize={isCompact ? -6 : -5}
         style={{ color: 'var(--vera-on-warning)' }}
       />
-      {t('meetingTimer.timeLeft', {
-        timeLeft: formatMinutesAndSeconds({ totalSeconds: secondsLeft, t }),
-      })}
+      {isNotNil(secondsLeft) &&
+        t('meetingTimer.timeLeft', {
+          timeLeft: formatMinutesAndSeconds({ totalSeconds: secondsLeft, t }),
+        })}
     </div>
   );
 };

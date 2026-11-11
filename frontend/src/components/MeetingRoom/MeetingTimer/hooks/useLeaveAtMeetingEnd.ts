@@ -30,7 +30,9 @@ const useLeaveAtMeetingEnd = () => {
   useEffect(() => {
     if (isNil(endsAtMs)) return;
 
-    const hasEnded$ = serverSettingsApi.createObservable((state) => state.now >= endsAtMs);
+    const hasEnded$ = serverSettingsApi.createObservable(
+      (state) => isNotNil(state.now) && state.now >= endsAtMs
+    );
 
     hasEnded$.subscribe((hasEnded) => {
       if (!hasEnded) return;

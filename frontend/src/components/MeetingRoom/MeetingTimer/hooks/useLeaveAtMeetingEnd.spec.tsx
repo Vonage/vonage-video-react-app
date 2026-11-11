@@ -74,6 +74,26 @@ describe('useLeaveAtMeetingEnd', () => {
     });
   });
 
+  it('does not leave by the device clock while the server time is pending', async () => {
+    expect.assertions(2);
+
+    vi.setSystemTime(endsAt + 60_000);
+
+    const sessionKey = makeSessionKey({
+      sessionId,
+      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: endsAt },
+    });
+    const { sessionContext } = render({
+      sessionKey,
+      getServerSettings: () => new Promise<never>(() => {}),
+    });
+
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+
+    expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it('never leaves an unscheduled meeting', async () => {
     expect.assertions(2);
 
@@ -94,7 +114,13 @@ function makeSessionKey(payload: Record<string, unknown>): string {
   return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
 }
 
-function render({ sessionKey }: { sessionKey: string }) {
+function render({
+  sessionKey,
+  getServerSettings = () => Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+}: {
+  sessionKey: string;
+  getServerSettings?: () => Promise<{ serverTime: number }>;
+}) {
   const queryClient = new QueryClient();
   const { wrapper, sessionContext, backgroundPublisherContext } = makeTestProvider(
     [
@@ -108,10 +134,7 @@ function render({ sessionKey }: { sessionKey: string }) {
     {
       runtimeContext: {
         queryClient,
-        videoClient: makeVideoClientMock({
-          getServerSettings: () =>
-            Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
-        }),
+        videoClient: makeVideoClientMock({ getServerSettings }),
       },
       userContext: undefined,
       sessionContext: {

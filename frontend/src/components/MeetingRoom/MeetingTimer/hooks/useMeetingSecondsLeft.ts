@@ -1,15 +1,24 @@
+import { isNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import { serverSettings$ } from '@core/stores';
 import useSessionContext from '@hooks/useSessionContext';
 
-const useMeetingSecondsLeft = ({ scheduleWindow }: { scheduleWindow: ScheduleWindow }): number => {
+const useMeetingSecondsLeft = ({
+  scheduleWindow,
+}: {
+  scheduleWindow: ScheduleWindow;
+}): number | null => {
   const { sessionKey } = useSessionContext();
   serverSettings$.useServerSettings({ sessionKey });
 
   const { endsAtMs } = scheduleWindow;
 
   return serverSettings$.use.select(
-    (state) => Math.max(0, Math.ceil((endsAtMs - state.now) / 1000)),
+    (state) => {
+      if (isNil(state.now)) return null;
+
+      return Math.max(0, Math.ceil((endsAtMs - state.now) / 1000));
+    },
     { dependencies: [endsAtMs] }
   );
 };
