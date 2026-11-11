@@ -15,6 +15,7 @@ import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
 import { serverSettings$ } from '@core/stores';
+import { SessionKeyClaim } from '@common/constants';
 import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
@@ -27,7 +28,7 @@ const endedMeetingSessionKey = jwt.sign(
   {
     sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
     roomName: 'ended-meeting',
-    schedule: {
+    [SessionKeyClaim.schedule]: {
       startsAtMs: Date.now() - 2 * 60 * 60 * 1000,
       endsAtMs: Date.now() - 60 * 60 * 1000,
     },
