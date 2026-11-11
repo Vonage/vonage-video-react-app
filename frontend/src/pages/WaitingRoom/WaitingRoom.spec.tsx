@@ -20,6 +20,7 @@ import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../env';
 
 const mockedNavigate = vi.fn();
@@ -35,6 +36,11 @@ const endedMeetingSessionKey = jwt.sign(
   },
   'test'
 );
+const answeringServerRuntimeContext = {
+  videoClient: makeVideoClientMock({
+    getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+  }),
+};
 const mockedLocation = vi.fn();
 
 vi.mock('react-router-dom', async () => {
@@ -275,6 +281,7 @@ describe('WaitingRoom', () => {
     mockedParams.roomIdentifier = endedMeetingSessionKey;
 
     await render(<WaitingRoom />, {
+      runtimeContext: answeringServerRuntimeContext,
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -296,6 +303,7 @@ describe('WaitingRoom', () => {
     mockedParams.roomIdentifier = endedMeetingSessionKey;
 
     await render(<WaitingRoom />, {
+      runtimeContext: answeringServerRuntimeContext,
       previewPublisherContext: {
         __interceptor: (context: PreviewPublisherContextType) => {
           context.publisher = mockPublisher;
@@ -393,6 +401,7 @@ type RenderOptions = {
   publisherContext?: ProviderOptions['PublisherContext'];
   backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+  runtimeContext?: ProviderOptions['RuntimeContext'];
 };
 
 async function render(
@@ -403,6 +412,7 @@ async function render(
     publisherContext,
     backgroundPublisherContext,
     previewPublisherContext,
+    runtimeContext,
   }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...contexts } = makeTestProvider(
@@ -420,7 +430,7 @@ async function render(
       publisherContext,
       backgroundPublisherContext,
       previewPublisherContext,
-      runtimeContext: undefined,
+      runtimeContext,
     }
   );
 
