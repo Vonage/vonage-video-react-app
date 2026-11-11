@@ -2,7 +2,8 @@ import type { ReactElement } from 'react';
 import { act, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
-import { notifications$ } from '@core/stores';
+import { notifications$, serverSettings$ } from '@core/stores';
+import composeProviders from '@web/helpers/composeProviders';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import MeetingTimer from './MeetingTimer';
 
@@ -84,6 +85,6 @@ function render(ui: ReactElement, { runtimeContext }: RenderOptions) {
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper }),
+    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
   };
 }

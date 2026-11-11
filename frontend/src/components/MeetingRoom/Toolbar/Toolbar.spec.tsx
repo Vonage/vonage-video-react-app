@@ -9,6 +9,8 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import composeProviders from '@web/helpers/composeProviders';
+import { serverSettings$ } from '@core/stores';
 import { SessionKeyClaim } from '@common/constants';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../../env';
@@ -242,7 +244,9 @@ describe('Toolbar', () => {
       }
     );
 
-    return renderBase(<Toolbar {...defaultProps} />, { wrapper });
+    return renderBase(<Toolbar {...defaultProps} />, {
+      wrapper: composeProviders(wrapper, serverSettings$.Provider),
+    });
   }
 });
 
@@ -262,6 +266,6 @@ function render(
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper }),
+    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
   };
 }

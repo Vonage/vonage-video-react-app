@@ -1,13 +1,11 @@
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useServerSettings } from '@core/hooks';
 import { isNil, isNotNil } from '@common/assertions';
+import { serverSettings$ } from '@core/stores';
 import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import useSessionContext from '@hooks/useSessionContext';
 import { useMiniMode } from '@Context/MiniMode';
 import useMeetingScheduleWindow from './useMeetingScheduleWindow';
-
-const checkIntervalMilliseconds = 1000;
 
 const useLeaveAtMeetingEnd = () => {
   const { t } = useTranslation();
@@ -15,13 +13,14 @@ const useLeaveAtMeetingEnd = () => {
   const scheduleWindow = useMeetingScheduleWindow();
   const leaveMeeting = useLeaveMeeting();
   const { exit: exitMiniMode } = useMiniMode();
+  const serverSettingsApi = serverSettings$.use.api();
 
-  const { data: serverSettings } = useServerSettings({
+  serverSettings$.useServerSettings({
     sessionKey,
     queryOptions: { enabled: isNotNil(scheduleWindow) },
   });
 
-  const clockOffset = serverSettings?.clockOffset ?? 0;
+  const endsAtMs = scheduleWindow?.endsAtMs;
 
   const leaveAtEnd = useEffectEvent(() => {
     exitMiniMode();
@@ -29,18 +28,19 @@ const useLeaveAtMeetingEnd = () => {
   });
 
   useEffect(() => {
-    if (isNil(scheduleWindow)) return;
+    if (isNil(endsAtMs)) return;
 
-    const intervalId = setInterval(() => {
-      const hasEnded = Date.now() + clockOffset >= scheduleWindow.endsAtMs;
+    const hasEnded$ = serverSettingsApi.createObservable((state) => state.now >= endsAtMs);
+
+    hasEnded$.subscribe((hasEnded) => {
       if (!hasEnded) return;
 
-      clearInterval(intervalId);
+      hasEnded$.dispose();
       leaveAtEnd();
-    }, checkIntervalMilliseconds);
+    });
 
-    return () => clearInterval(intervalId);
-  }, [scheduleWindow, clockOffset]);
+    return hasEnded$.dispose;
+  }, [serverSettingsApi, endsAtMs]);
 };
 
 export default useLeaveAtMeetingEnd;
