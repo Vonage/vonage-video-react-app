@@ -192,7 +192,7 @@
     "opentok-jwt": "0.1.5",
     "opentok-layout-js": "5.5.1",
     "opentok-solutions-logging": "1.1.5",
-    "react": "19.2.4",
+    "react": "19.3.0",
     "react-dom": "19.2.4",
     "react-global-state-hooks": "^16.0.5",
     "react-i18next": "15.7.4",
