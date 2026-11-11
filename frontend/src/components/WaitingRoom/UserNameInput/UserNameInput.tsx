@@ -16,6 +16,7 @@ import { twMerge } from 'tailwind-merge';
 import { isNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
+import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
 import useScheduleStatus from './hooks/useScheduleStatus';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
@@ -63,8 +64,9 @@ const UsernameInput = ({
 
   const isScheduled = scheduleStatus.kind !== 'unscheduled';
   const isEnded = scheduleStatus.kind === 'ended';
+  const isPending = scheduleStatus.kind === 'pending';
   const isJoinEnabled = scheduleStatus.kind === 'unscheduled' || scheduleStatus.kind === 'started';
-  const isWaiting = scheduleStatus.kind !== 'ended' && !isJoinEnabled;
+  const isWaiting = scheduleStatus.kind !== 'ended' && !isPending && !isJoinEnabled;
 
   const onChangeParticipantName = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputUserName = e.target.value;
@@ -120,7 +122,9 @@ const UsernameInput = ({
           </h2>
         )}
 
-        {isScheduled && <ScheduleCountdownPanel scheduleStatus={scheduleStatus} />}
+        {isPending && <ScheduleCountdownPanelSkeleton />}
+
+        {isScheduled && !isPending && <ScheduleCountdownPanel scheduleStatus={scheduleStatus} />}
       </div>
 
       <Separator width="100%" />
