@@ -3,11 +3,20 @@ import { Card, CardProps } from '@ui';
 import { Skeleton } from '@mui/material';
 import Separator from '@components/Separator';
 import { twMerge } from 'tailwind-merge';
+import { isNil } from '@common/assertions';
+import { decodeJwt, readScheduleClaim } from '@common/helpers';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 
 type UsernameInputSkeletonProps = Omit<CardProps<'form'>, 'sx'>;
 
 const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...props }) => {
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+
+  const hasSchedule =
+    sessionKeyStatus === 'valid' &&
+    !isNil(readScheduleClaim(decodeJwt<Record<string, unknown>>(sessionKey)));
+
   return (
     <Card
       component="form"
@@ -28,9 +37,12 @@ const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...p
 
         <Separator width="100%" />
 
-        <ScheduleCountdownPanelSkeleton />
-
-        <Separator width="100%" />
+        {hasSchedule && (
+          <>
+            <ScheduleCountdownPanelSkeleton />
+            <Separator width="100%" />
+          </>
+        )}
 
         <div className="flex w-full flex-col gap-2">
           <Skeleton
