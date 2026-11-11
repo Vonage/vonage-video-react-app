@@ -35,7 +35,7 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
   if (scheduleStatus.kind === 'ended') {
     return {
       countdownText: null,
-      headlineText: t('waitingRoom.schedule.ended', { time: endTime }),
+      headlineText: t('waitingRoom.schedule.ended'),
       dayText,
       startTimeText,
       endTimeText,
