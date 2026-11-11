@@ -20,6 +20,7 @@ const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI
 const startsAt = new Date(2026, 10, 4, 10, 0).getTime();
 const endsAt = startsAt + 60 * 60_000;
 const serverAheadMilliseconds = 60_000;
+const storeTickMilliseconds = 1_000;
 
 describe('useLeaveAtMeetingEnd', () => {
   beforeEach(() => {
@@ -59,7 +60,9 @@ describe('useLeaveAtMeetingEnd', () => {
     expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
 
-    await act(() => vi.advanceTimersByTimeAsync(2_000));
+    const millisecondsUntilTickAfterMeetingEnd =
+      endsAt - serverAheadMilliseconds - Date.now() + storeTickMilliseconds;
+    await act(() => vi.advanceTimersByTimeAsync(millisecondsUntilTickAfterMeetingEnd));
 
     expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
     expect(backgroundPublisherContext.current.destroyBackgroundPublisher).toHaveBeenCalledOnce();
