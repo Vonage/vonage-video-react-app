@@ -211,7 +211,7 @@ const UsernameInput = ({
           color="primary"
           type="submit"
           fullWidth
-          disabled={isWaitingWithInvalidName}
+          disabled={isWaitingWithInvalidName || isPending}
           aria-pressed={isWaiting ? isWaitingToJoin : undefined}
           aria-describedby={isWaiting ? joinBlockerTextId : undefined}
           className="disabled:bg-vera-disabled! disabled:text-vera-text-disabled! disabled:border-vera-disabled!"

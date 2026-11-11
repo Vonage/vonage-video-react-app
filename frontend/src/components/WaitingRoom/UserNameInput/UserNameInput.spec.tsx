@@ -175,8 +175,12 @@ describe('UsernameInput', () => {
     expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
   });
 
-  it('disables Join at start and shows the reason while the name is invalid', () => {
+  it('disables Join at start and shows the reason while the name is invalid', async () => {
     vi.setSystemTime(startsAt - 60 * 60_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+    });
 
     render(
       <UsernameInput
@@ -185,10 +189,11 @@ describe('UsernameInput', () => {
         roomName={undefined}
         sessionKey="scheduled-session-key"
         scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
-      />
+      />,
+      { runtimeContext: { videoClient } }
     );
 
-    expect(screen.getByRole('button', { name: 'Join at start' })).toBeDisabled();
+    expect(await screen.findByRole('button', { name: 'Join at start' })).toBeDisabled();
     expect(
       screen.getByText('Name cannot be empty or contain special characters.')
     ).toBeInTheDocument();
