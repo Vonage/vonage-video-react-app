@@ -368,7 +368,7 @@
   "waitingRoom.unsupportedFeature.tooltip": "お客様のブラウザーはこの機能をサポートしていません",
   "waitingRoom.devices.noDevicesFound": "デバイスが見つかりません",
   "waitingRoom.title": "参加の準備",
-  "waitingRoom.user.input.title": "お客様のお名前を入力",
+  "waitingRoom.user.input.label": "お客様のお名前",
   "waitingRoom.precallNetworkTest.title": "通話前ネットワークテスト",
   "waitingRoom.precallNetworkTest.subtitle": "参加する前に、お客様のデバイスアクセス、ネットワーク接続、通話品質をテストしてください",
   "waitingRoom.precallNetworkTest.stopTest": "テストを停止",

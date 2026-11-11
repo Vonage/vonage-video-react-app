@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { serverSettings$ } from '@core/stores';
 import formatMeetingDate from '../helpers/formatMeetingDate';
 import getCountdownText from '../helpers/getCountdownText';
 import isToday from '../helpers/isToday';
@@ -17,7 +18,14 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
 
   const locale = i18n.language;
 
-  const dayText = isToday(scheduleStatus.startsAtMs)
+  const isStartToday = serverSettings$.use.select(
+    (state) =>
+      state.status !== 'pending' &&
+      isToday({ timestamp: scheduleStatus.startsAtMs, now: state.now }),
+    { dependencies: [scheduleStatus.startsAtMs] }
+  );
+
+  const dayText = isStartToday
     ? t('waitingRoom.schedule.today')
     : formatMeetingDate({ timestamp: scheduleStatus.startsAtMs, locale, format: 'date' });
   const startTimeText = formatMeetingDate({

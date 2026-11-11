@@ -358,7 +358,7 @@
   "waitingRoom.unsupportedFeature.tooltip": "Il tuo browser non supporta questa funzionalità",
   "waitingRoom.devices.noDevicesFound": "Nessun dispositivo trovato",
   "waitingRoom.title": "Preparati per unirti",
-  "waitingRoom.user.input.title": "Inserisci il tuo nome",
+  "waitingRoom.user.input.label": "Il tuo nome",
   "waitingRoom.precallNetworkTest.title": "Test di rete pre-chiamata",
   "waitingRoom.precallNetworkTest.subtitle": "Verifica l'accesso ai dispositivi, la connettività di rete e la qualità della chiamata prima di unirti",
   "waitingRoom.precallNetworkTest.stopTest": "Interrompi test",

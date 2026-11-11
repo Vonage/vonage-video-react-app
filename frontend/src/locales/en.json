@@ -358,7 +358,7 @@
   "waitingRoom.unsupportedFeature.tooltip": "Your browser does not support this feature",
   "waitingRoom.devices.noDevicesFound": "No devices found",
   "waitingRoom.title": "Prepare to join",
-  "waitingRoom.user.input.title": "Enter your name",
+  "waitingRoom.user.input.label": "Your name",
   "waitingRoom.precallNetworkTest.title": "Pre-call network test",
   "waitingRoom.precallNetworkTest.subtitle": "Test your device access, network connectivity and call quality before joining",
   "waitingRoom.precallNetworkTest.stopTest": "Stop test",
