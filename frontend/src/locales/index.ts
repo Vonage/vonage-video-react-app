@@ -4,6 +4,7 @@ import ES from './es.json';
 import IT from './it.json';
 import ES_MX from './es-MX.json';
 import JA from './ja.json';
+import FR from './fr.json';
 
 export default {
   en: {
@@ -35,5 +36,8 @@ export default {
   },
   ja: {
     translation: JA,
+  },
+  fr: {
+    translation: FR,
   },
 };
