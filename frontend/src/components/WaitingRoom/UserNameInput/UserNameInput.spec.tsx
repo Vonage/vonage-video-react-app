@@ -103,7 +103,7 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId('room-design-review')).toBeInTheDocument();
   });
 
-  it('replaces Join with its children once the meeting has ended', async () => {
+  it('hides Join and keeps its children once the meeting has ended', async () => {
     vi.setSystemTime(startsAt + 2 * 60 * 60_000);
 
     const videoClient = makeVideoClientMock({
@@ -123,7 +123,8 @@ describe('UsernameInput', () => {
       { runtimeContext: { videoClient } }
     );
 
-    expect(await screen.findByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
+    expect(await screen.findByText('This meeting has ended')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back to landing' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Join meeting' })).not.toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Your name' })).toBeDisabled();
   });

@@ -38,7 +38,7 @@ const joinBlockerTextId = 'join-blocker-text';
  * @param {UserNameInputProps} props - The props for the component.
  *  @property {string} username - The user's name
  *  @property {Dispatch<SetStateAction<string>>} setUsername - Function to update the user's username.
- *  @property {ReactNode} children - Rendered in place of the Join button once a scheduled meeting has ended.
+ *  @property {ReactNode} children - Rendered below the name field.
  * @returns {ReactElement} The UsernameInput component.
  */
 const UsernameInput = ({
@@ -179,7 +179,7 @@ const UsernameInput = ({
         />
       </Box>
 
-      {isEnded && children}
+      {children}
 
       {!isEnded && (
         <Button
