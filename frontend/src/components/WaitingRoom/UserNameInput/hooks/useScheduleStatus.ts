@@ -32,7 +32,7 @@ const useScheduleStatus = ({
   return serverSettings$.use.select(
     (state): ScheduleStatus => {
       if (isNil(scheduleWindow)) return { kind: 'unscheduled' };
-      if (state.status === 'pending') return { ...scheduleWindow, kind: 'pending' };
+      if (state.status !== 'known') return { ...scheduleWindow, kind: 'pending' };
 
       return getScheduleStatus({ scheduleWindow, now: state.now });
     },

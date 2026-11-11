@@ -19,7 +19,7 @@ describe('useScheduleStatus', () => {
     vi.useRealTimers();
   });
 
-  it('falls back to the device clock while the server time is unavailable and switches once it arrives', async () => {
+  it('stays pending while the server is unavailable and switches once it answers', async () => {
     expect.assertions(2);
 
     vi.setSystemTime(startsAt + 60_000);
@@ -40,7 +40,7 @@ describe('useScheduleStatus', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(0));
 
-    expect(result.current.kind).toBe('started');
+    expect(result.current.kind).toBe('pending');
 
     await act(() => vi.advanceTimersByTimeAsync(10_001));
 
