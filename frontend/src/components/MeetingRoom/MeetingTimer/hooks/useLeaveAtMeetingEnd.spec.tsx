@@ -7,6 +7,7 @@ import { SessionKeyClaim } from '@common/constants';
 import { makeTestProvider, providers } from '@test/providers';
 import composeProviders from '@web/helpers/composeProviders';
 import { serverSettings$ } from '@core/stores';
+import { coreQueryKeys } from '@core/constants';
 import useLeaveAtMeetingEnd from './useLeaveAtMeetingEnd';
 
 const mockNavigate = vi.fn();
@@ -50,7 +51,9 @@ describe('useLeaveAtMeetingEnd', () => {
 
     await act(async () => {
       await vi.waitFor(() => {
-        const serverSettings = queryClient.getQueryData(['serverSettings', sessionKey]);
+        const serverSettings = queryClient.getQueryData(
+          coreQueryKeys.serverSettings({ sessionKey })
+        );
         if (!serverSettings) throw new Error('The server time has not arrived');
       });
       await new Promise((resolve) => setTimeout(resolve, 0));
