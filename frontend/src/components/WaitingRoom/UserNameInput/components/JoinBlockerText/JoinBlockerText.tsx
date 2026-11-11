@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import formatMeetingDate from '../../helpers/formatMeetingDate';
+import { getFormattedDate, getFormattedTime } from '@utils/dateTime';
 import getCountdownText from '../../helpers/getCountdownText';
 import type { WaitingStatus } from '../../types/ScheduleStatus';
 
@@ -20,12 +20,12 @@ const JoinBlockerText = ({
   const text = (() => {
     if (waitingStatus.kind === 'daysAway') {
       return t('waitingRoom.schedule.joinOpensOn', {
-        date: formatMeetingDate({ timestamp: waitingStatus.startsAtMs, locale, format: 'date' }),
+        date: getFormattedDate(locale, waitingStatus.startsAtMs),
       });
     }
     if (waitingStatus.kind === 'withinDay') {
       return t('waitingRoom.schedule.joinOpensAt', {
-        time: formatMeetingDate({ timestamp: waitingStatus.startsAtMs, locale, format: 'time' }),
+        time: getFormattedTime(locale, waitingStatus.startsAtMs),
       });
     }
     return t('waitingRoom.schedule.joinOpensIn', {
