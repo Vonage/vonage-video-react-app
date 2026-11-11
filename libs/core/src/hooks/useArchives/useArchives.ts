@@ -1,6 +1,7 @@
 import { runtime$ } from '@core/stores';
 import type { VideoClient } from '@core/services';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import { SingleArchiveResponse } from '@vonage/video';
 
 const pollingIntervalMs = 5000;
@@ -56,7 +57,7 @@ const useArchives = <Selected = SearchArchivesResult>({
   const videoClient = runtime$.useVideoClient();
 
   return runtime$.useQuery({
-    queryKey: ['archives', sessionKey, count, offset],
+    queryKey: coreQueryKeys.archives({ sessionKey, count, offset }),
 
     refetchInterval: (query) => {
       const archives = query.state.data?.items;
