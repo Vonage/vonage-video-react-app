@@ -15,6 +15,7 @@ import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/Video
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
 import isSignedIn from '@utils/isSignedIn';
+import useScheduleStatus from '@components/WaitingRoom/UserNameInput/hooks/useScheduleStatus';
 
 /**
  * WaitingRoom Component
@@ -49,6 +50,10 @@ const WaitingRoom: FC = () => {
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
+
+  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
+
+  const shouldShowLandingPageLink = scheduleStatus.kind === 'ended' && isSignedIn();
 
   return (
     <backgroundEffectsDialog$.Provider>
@@ -94,7 +99,7 @@ const WaitingRoom: FC = () => {
                   sessionKey={sessionKey}
                   scheduleWindow={scheduleWindow}
                 >
-                  {isSignedIn() && <GoToLandingPageButton />}
+                  {shouldShowLandingPageLink && <GoToLandingPageButton />}
                 </UsernameInput>
               )}
 
