@@ -386,7 +386,7 @@
   "waitingRoom.schedule.today": "Hoy",
   "waitingRoom.schedule.endTime": "hasta las {{time}}",
   "waitingRoom.schedule.started": "La reunión ya comenzó",
-  "waitingRoom.schedule.ended": "Esta reunión terminó a las {{time}}",
+  "waitingRoom.schedule.ended": "Esta reunión ha terminado",
   "waitingRoom.schedule.joinOpensOn": "Podrás unirte el {{date}}",
   "waitingRoom.schedule.joinOpensAt": "Podrás unirte a las {{time}}",
   "waitingRoom.schedule.joinOpensIn": "Podrás unirte en {{countdown}}",

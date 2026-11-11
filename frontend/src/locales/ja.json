@@ -396,7 +396,7 @@
   "waitingRoom.schedule.today": "今日",
   "waitingRoom.schedule.endTime": "{{time}}まで",
   "waitingRoom.schedule.started": "会議が始まりました",
-  "waitingRoom.schedule.ended": "この会議は{{time}}に終了しました",
+  "waitingRoom.schedule.ended": "この会議は終了しました",
   "waitingRoom.schedule.joinOpensOn": "{{date}}から参加できます",
   "waitingRoom.schedule.joinOpensAt": "{{time}}から参加できます",
   "waitingRoom.schedule.joinOpensIn": "あと{{countdown}}で参加できます",
