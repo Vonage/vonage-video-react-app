@@ -5,6 +5,8 @@ import { makeVideoClientMock } from '@core-test/fixtures';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { SessionKeyClaim } from '@common/constants';
 import { makeTestProvider, providers } from '@test/providers';
+import composeProviders from '@web/helpers/composeProviders';
+import { serverSettings$ } from '@core/stores';
 import useLeaveAtMeetingEnd from './useLeaveAtMeetingEnd';
 
 const mockNavigate = vi.fn();
@@ -47,7 +49,7 @@ describe('useLeaveAtMeetingEnd', () => {
 
     await act(async () => {
       await vi.waitFor(() => {
-        const serverSettings = queryClient.getQueryData(['serverSettings']);
+        const serverSettings = queryClient.getQueryData(['serverSettings', sessionKey]);
         if (!serverSettings) throw new Error('The server time has not arrived');
       });
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -57,7 +59,7 @@ describe('useLeaveAtMeetingEnd', () => {
     expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
 
-    await act(() => vi.advanceTimersByTimeAsync(1_000));
+    await act(() => vi.advanceTimersByTimeAsync(2_000));
 
     expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
     expect(backgroundPublisherContext.current.destroyBackgroundPublisher).toHaveBeenCalledOnce();
@@ -122,7 +124,9 @@ function render({ sessionKey }: { sessionKey: string }) {
     }
   );
 
-  renderHook(() => useLeaveAtMeetingEnd(), { wrapper });
+  renderHook(() => useLeaveAtMeetingEnd(), {
+    wrapper: composeProviders(wrapper, serverSettings$.Provider),
+  });
 
   return { sessionContext, backgroundPublisherContext, queryClient };
 }
