@@ -148,11 +148,12 @@ const UsernameInput = ({
           htmlFor="user-name"
           className="font-vera-plain text-vera-caption-semibold text-vera-text-tertiary"
         >
-          {t('waitingRoom.user.input.title')}
+          {t('waitingRoom.user.input.label')}
         </label>
         <TextField
           fullWidth
           size="small"
+          placeholder={t('waitingRoom.user.input.label')}
           onChange={onChangeParticipantName}
           onClick={handleInputFocus}
           required

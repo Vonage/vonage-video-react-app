@@ -358,7 +358,7 @@
   "waitingRoom.unsupportedFeature.tooltip": "Ihr Browser unterstützt diese Funktion nicht",
   "waitingRoom.devices.noDevicesFound": "Keine Geräte gefunden",
   "waitingRoom.title": "Vorbereitung zum Beitreten",
-  "waitingRoom.user.input.title": "Geben Sie Ihren Namen ein",
+  "waitingRoom.user.input.label": "Ihr Name",
   "waitingRoom.precallNetworkTest.title": "Vor-Anruf-Netzwerktest",
   "waitingRoom.precallNetworkTest.subtitle": "Testen Sie Ihren Gerätezugriff, Netzwerkkonnektivität und Anrufqualität, bevor Sie beitreten",
   "waitingRoom.precallNetworkTest.stopTest": "Test stoppen",
