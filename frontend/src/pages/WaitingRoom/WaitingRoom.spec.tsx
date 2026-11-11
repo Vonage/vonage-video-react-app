@@ -269,32 +269,47 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
-  it.each([
-    { scenario: 'nobody is signed in', cookie: '', isShown: false },
-    { scenario: 'signed in', cookie: 'vera-session-signed-in=1', isShown: true },
-  ])(
-    'shows the landing page link after the meeting ended: $isShown when $scenario',
-    async ({ cookie, isShown }) => {
-      env.partialUpdate({ AUTH_ENABLED: true });
-      document.cookie = cookie;
-      mockedParams.roomIdentifier = endedMeetingSessionKey;
+  it('hides the landing page link after the meeting ended when nobody is signed in', async () => {
+    env.partialUpdate({ AUTH_ENABLED: true });
+    document.cookie = '';
+    mockedParams.roomIdentifier = endedMeetingSessionKey;
 
-      await render(<WaitingRoom />, {
-        previewPublisherContext: {
-          __interceptor: (context: PreviewPublisherContextType) => {
-            context.publisher = mockPublisher;
-            context.isVideoLoading = false;
-            context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
-          },
+    await render(<WaitingRoom />, {
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
         },
-      });
+      },
+    });
 
-      await waitFor(() => {
-        expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
-      });
-      expect(!!screen.queryByRole('button', { name: 'View Landing Page' })).toBe(isShown);
-    }
-  );
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
+    });
+    expect(screen.queryByRole('button', { name: 'View Landing Page' })).not.toBeInTheDocument();
+  });
+
+  it('shows the landing page link after the meeting ended when signed in', async () => {
+    env.partialUpdate({ AUTH_ENABLED: true });
+    document.cookie = 'vera-session-signed-in=1';
+    mockedParams.roomIdentifier = endedMeetingSessionKey;
+
+    await render(<WaitingRoom />, {
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
+    });
+    expect(screen.getByRole('button', { name: 'View Landing Page' })).toBeInTheDocument();
+  });
 
   it('should render VideoContainer when video loading finishes', async () => {
     env.partialUpdate({
