@@ -118,13 +118,17 @@ test.describe('Waiting page schedule UI test', () => {
           await route.fulfill({ json: isBatchRequest ? [payload] : payload });
         });
 
-        await page.emulateMedia({ colorScheme });
         await page.clock.setFixedTime(fixedNow);
         await page.goto(`${baseURL}waiting-room/${result.data.sessionKey}`);
         await page.waitForLoadState('networkidle');
         await page
           .waitForSelector('.video__element', { state: 'attached', timeout: TIMEOUTS.DEFAULT })
           .catch(() => {});
+        await page.emulateMedia({ colorScheme });
+        await page.waitForFunction(
+          (isDark) => document.documentElement.classList.contains('dark') === isDark,
+          colorScheme === 'dark'
+        );
         await page.waitForTimeout(500);
         await expect(page).toHaveScreenshot({
           mask: [page.locator('.video__element'), page.locator('[data-testid="app-version"]')],
