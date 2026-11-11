@@ -1,19 +1,27 @@
 import composeProviders, { type ProviderComponent } from '@web/helpers/composeProviders';
-import { makeRuntimeProviderWrapper, type RuntimeProviderWrapperOptions } from './makersIndex';
+import {
+  makeRuntimeProviderWrapper,
+  makeServerSettingsProviderWrapper,
+  type RuntimeProviderWrapperOptions,
+  type ServerSettingsProviderWrapperOptions,
+} from './makersIndex';
 
 /**
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 export enum providers {
   runtime = 'runtime',
+  serverSettings = 'serverSettings',
 }
 
 type ProviderOptionsByKey = {
   [providers.runtime]: RuntimeProviderWrapperOptions;
+  [providers.serverSettings]: ServerSettingsProviderWrapperOptions;
 };
 
 type ProviderContextsByKey = {
   [providers.runtime]: NonNullable<ReturnType<typeof makeRuntimeProviderWrapper>['context']>;
+  [providers.serverSettings]: ReturnType<typeof makeServerSettingsProviderWrapper>['context'];
 };
 
 /**
@@ -21,6 +29,7 @@ type ProviderContextsByKey = {
  */
 const PROVIDER_DEPENDENCIES = {
   [providers.runtime]: [],
+  [providers.serverSettings]: [],
 } as const;
 
 /**
@@ -107,6 +116,11 @@ function makeTestProvider<
       case providers.runtime:
         return makeRuntimeProviderWrapper(
           (options as ProviderOptionsFor<[providers.runtime]> | undefined)?.runtimeContext
+        );
+      case providers.serverSettings:
+        return makeServerSettingsProviderWrapper(
+          (options as ProviderOptionsFor<[providers.serverSettings]> | undefined)
+            ?.serverSettingsContext
         );
       default:
         throw new Error(`Unknown provider: ${key}`);

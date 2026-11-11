@@ -1,5 +1,6 @@
 import { runtime$ } from '@core/stores';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import {
   BitrateValue,
   bytesValue,
@@ -61,7 +62,10 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
   );
 
   return runtime$.useQuery({
-    queryKey: ['publisherStats', publisher?.id, publisherStatisticsEnabled],
+    queryKey: coreQueryKeys.publisherStats({
+      publisherId: publisher?.id,
+      isPublisherStatisticsEnabled: publisherStatisticsEnabled,
+    }),
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!publisher) return null;

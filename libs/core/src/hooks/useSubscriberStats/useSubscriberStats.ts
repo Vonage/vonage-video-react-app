@@ -1,5 +1,6 @@
 import { runtime$ } from '@core/stores';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import {
   BitrateValue,
   ResolutionValue,
@@ -54,7 +55,7 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
   subscriber,
 }: useSubscriberStatsProps<Selected>) => {
   return runtime$.useQuery({
-    queryKey: ['subscriberStats', subscriber?.id],
+    queryKey: coreQueryKeys.subscriberStats({ subscriberId: subscriber?.id }),
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!subscriber) {
