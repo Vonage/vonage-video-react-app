@@ -1,18 +1,9 @@
 import { render as renderBase, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { useNavigate, MemoryRouter } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { makeTestProvider, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
 import RoomJoinContainer from './index';
-
-vi.mock('react-router-dom', async () => {
-  const mod = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
-  return {
-    ...mod,
-    useNavigate: vi.fn(),
-  };
-});
-const mockNavigate = vi.fn();
 
 vi.mock('../../utils/generateRoomName', () => ({
   __esModule: true,
@@ -35,7 +26,6 @@ vi.mock('../JoinExistingRoom', () => ({
 
 describe('RoomJoinContainer', () => {
   beforeEach(() => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
     mockCreateSessionMutate.mockResolvedValue({ sessionKey: 'mock-session-key' });
   });
 
@@ -50,7 +40,8 @@ describe('RoomJoinContainer', () => {
     expect(screen.getByTestId('join-existing-room')).toBeInTheDocument();
   });
 
-  it('navigates to the waiting room when NewRoomButton is clicked', async () => {
+  it('opens the wizard when NewRoomButton is clicked and creates the room from it', async () => {
+    expect.assertions(3);
     render(
       <MemoryRouter>
         <RoomJoinContainer />
@@ -58,9 +49,13 @@ describe('RoomJoinContainer', () => {
     );
 
     screen.getByTestId('new-room-button').click();
-    await vi.waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/waiting-room/mock-session-key');
-    });
+
+    expect(await screen.findByRole('dialog')).toHaveTextContent('Step 1 of 2');
+    expect(mockCreateSessionMutate).not.toHaveBeenCalled();
+
+    screen.getByRole('button', { name: 'Create meeting' }).click();
+
+    expect(await screen.findByText(/\/waiting-room\/mock-session-key$/)).toBeInTheDocument();
   });
 });
 

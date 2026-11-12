@@ -107,12 +107,19 @@ const useToolbarButtons = ({
     // The cleanup function may not be pointing to the correct object/ref by the time it executes.
     // We keep its reference so the cleanup function runs correctly.
     const observedToolbar = toolbarRef.current;
+    const observedOverflowAndExit = overflowAndExitRef.current;
 
     observer.current.observe(toolbarRef.current);
+    if (observedOverflowAndExit) {
+      observer.current.observe(observedOverflowAndExit);
+    }
 
     return () => {
       if (observedToolbar) {
         observer.current?.unobserve(observedToolbar);
+      }
+      if (observedOverflowAndExit) {
+        observer.current?.unobserve(observedOverflowAndExit);
       }
     };
   }, [

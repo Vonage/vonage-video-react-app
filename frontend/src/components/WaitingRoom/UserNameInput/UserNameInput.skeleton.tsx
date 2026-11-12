@@ -3,10 +3,20 @@ import { Card, CardProps } from '@ui';
 import { Skeleton } from '@mui/material';
 import Separator from '@components/Separator';
 import { twMerge } from 'tailwind-merge';
+import { isNil } from '@common/assertions';
+import { decodeJwt, readScheduleClaim } from '@common/helpers';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 
 type UsernameInputSkeletonProps = Omit<CardProps<'form'>, 'sx'>;
 
 const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...props }) => {
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+
+  const hasSchedule =
+    sessionKeyStatus === 'valid' &&
+    !isNil(readScheduleClaim(decodeJwt<Record<string, unknown>>(sessionKey)));
+
   return (
     <Card
       component="form"
@@ -14,21 +24,38 @@ const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...p
       {...props}
     >
       <div className="w-full flex flex-col gap-4">
-        {/* title */}
-        <Skeleton variant="text" className="h-7! sm:h-10! w-2/3" />
-
-        {/* name input */}
-        <Skeleton variant="text" id="user-name" className="h-7! sm:h-10!" />
+        <div className="flex w-full flex-col gap-1">
+          <Skeleton
+            variant="text"
+            className="bg-vera-skeleton-like! font-vera-plain text-vera-caption-semibold w-1/3"
+          />
+          <Skeleton
+            variant="text"
+            className="bg-vera-skeleton-like! font-vera-plain text-vera-heading-2 w-2/3"
+          />
+        </div>
 
         <Separator width="100%" />
 
-        {/* subtitle */}
-        <Skeleton className="h-7! sm:h-10!" />
+        {hasSchedule && (
+          <>
+            <ScheduleCountdownPanelSkeleton />
+            <Separator width="100%" />
+          </>
+        )}
 
-        {/* room name */}
-        <Skeleton variant="text" className="h-7! sm:h-10! w-5/6" />
+        <div className="flex w-full flex-col gap-2">
+          <Skeleton
+            variant="text"
+            className="bg-vera-skeleton-like! font-vera-plain text-vera-caption-semibold w-1/4"
+          />
+          <Skeleton
+            variant="rounded"
+            className="bg-vera-skeleton-like! h-10! rounded-vera-medium!"
+          />
+        </div>
 
-        <Skeleton variant="rounded" className="h-7! sm:h-8! rounded-lg!" />
+        <Skeleton variant="rounded" className="bg-vera-skeleton-like! h-10! rounded-vera-medium!" />
       </div>
     </Card>
   );
