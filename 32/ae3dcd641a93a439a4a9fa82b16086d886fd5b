@@ -1,0 +1,23 @@
+.github/workflows/run-tests.yml
+  s_20776229283099::t_73f1ded312c22a 128,163
+backend/.env.example
+  s_20776229283099::t_8c67d199d93bd1 42
+backend/middleware/rateLimitMiddleware.ts
+  s_20776229283099::t_ae26fc19f36908 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "32ae3dcd641a93a439a4a9fa82b16086d886fd5b",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
