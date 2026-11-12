@@ -14,4 +14,7 @@ export interface SessionStorage {
 
   setServerRotationPending(args: { sessionId: string; pending: number }): Promise<void>;
   getServerRotationPending(args: { sessionId: string }): Promise<number>;
+
+  setTranscriptionWithSummary(args: { sessionId: string; withSummary: boolean }): Promise<void>;
+  getTranscriptionWithSummary(args: { sessionId: string }): Promise<boolean>;
 }
