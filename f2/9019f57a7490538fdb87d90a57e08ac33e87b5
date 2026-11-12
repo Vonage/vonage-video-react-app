@@ -1,0 +1,18 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 38
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 3,25,27-31,35
+integration-tests/tests/visualComparisons.spec.ts
+  h_6029769cf9ac60 311
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f29019f57a7490538fdb87d90a57e08ac33e87b5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
