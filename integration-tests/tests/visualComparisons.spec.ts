@@ -156,6 +156,7 @@ async function openCreateMeetingDialog({
   await page.getByRole('button', { name: 'Create a new room' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Create a meeting' });
+  await dialog.getByRole('button', { name: 'Create meeting' }).click();
   await expect(dialog.getByText(new RegExp(`${baseURL}waiting-room/.+`))).toBeVisible();
   await page.waitForTimeout(500); // Let page settle for screenshot
 
@@ -168,3 +169,74 @@ function getCreateMeetingDialogMasks({ page, dialog }: { page: Page; dialog: Loc
     dialog.getByText(new RegExp(`${baseURL}waiting-room/.+`)),
   ];
 }
+
+test.describe('Create meeting dialog UI test', () => {
+  test.use({ timezoneId: 'UTC', locale: 'en-US' });
+
+  const dialogStates: { state: string; prepare: (wizard: Locator) => Promise<void> }[] = [
+    { state: 'details unscheduled', prepare: async () => {} },
+    {
+      state: 'details scheduled',
+      prepare: async (wizard) => {
+        await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
+        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+      },
+    },
+    {
+      state: 'details start in the past',
+      prepare: async (wizard) => {
+        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+        await wizard.getByLabel('Start time').fill('09:00');
+        await wizard.getByLabel('Start time').blur();
+      },
+    },
+    {
+      state: 'share scheduled',
+      prepare: async (wizard) => {
+        await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
+        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+        await wizard.getByRole('button', { name: '2 hours' }).click();
+        await wizard.getByRole('button', { name: 'Create meeting' }).click();
+        await wizard.getByRole('button', { name: 'Copy link' }).waitFor();
+      },
+    },
+  ];
+
+  const colorSchemes = ['light', 'dark'] as const;
+
+  for (const colorScheme of colorSchemes) {
+    test.describe(colorScheme, () => {
+      test.use({ colorScheme });
+
+      for (const { state, prepare } of dialogStates) {
+        test(state, async ({ page, isMobile }) => {
+          if (!isMobile) {
+            await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+          }
+
+          await page.clock.setFixedTime(new Date('2057-02-02T10:20:00Z'));
+          await page.goto(baseURL, { waitUntil: 'networkidle' });
+          // Playwright 1.46 Firefox drops colorScheme emulation when it navigates to the app origin.
+          await page.emulateMedia({ colorScheme });
+          await page.waitForFunction(
+            (isDark) => document.documentElement.classList.contains('dark') === isDark,
+            colorScheme === 'dark'
+          );
+          await page.getByRole('button', { name: 'Create a new room' }).click();
+          const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+          await prepare(wizard);
+          await page.waitForTimeout(500);
+
+          await expect(page).toHaveScreenshot({
+            mask: [
+              page.locator('[data-testid="app-version"]'),
+              wizard.getByText(new RegExp(`${baseURL}waiting-room/`)),
+            ],
+            maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+            timeout: TIMEOUTS.DEFAULT,
+          });
+        });
+      }
+    });
+  }
+});

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
+import CreateMeetingButton from '../CreateMeetingButton';
 
 export type CreateRoomWizardFooterActionsProps = {
   onClose: () => void;
@@ -14,7 +15,10 @@ const CreateRoomWizardFooterActions = ({
 }: CreateRoomWizardFooterActionsProps): ReactElement => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
   const sessionKey = createRoomWizard$.use.select((state) => state.sessionKey);
+
+  if (activeStep === 'details') return <CreateMeetingButton />;
 
   const joinNow = () => {
     void navigate(`/waiting-room/${sessionKey}`);

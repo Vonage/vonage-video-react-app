@@ -6,6 +6,7 @@ import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import { getStepPanels } from '../CreateRoomWizardStep';
 import CreateRoomWizardFooterActions from '../CreateRoomWizardFooterActions';
+import WizardStepProgress from '../WizardStepProgress';
 
 export type CreateRoomWizardDialogProps = PropsWithChildren<{
   onClose: () => void;
@@ -58,6 +59,7 @@ const CreateRoomWizardDialog = ({
             <VividIcon name="close-line" customSize={-5} />
           </button>
         </div>
+        <WizardStepProgress className="px-6 pt-4" />
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">{activePanel}</div>
         <div className="flex flex-wrap items-center justify-end gap-3 border-t border-vera-border px-6 py-4">
           <CreateRoomWizardFooterActions onClose={onClose} />
