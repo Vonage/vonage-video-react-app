@@ -402,6 +402,8 @@
   "waitingRoom.schedule.joinOpensIn": "あと{{countdown}}で参加できます",
   "waitingRoom.schedule.tabTitle.countdown": "{{countdown}} · {{name}}",
   "waitingRoom.schedule.tabTitle.started": "● 開始済み · {{name}}",
+  "waitingRoom.schedule.tabTitle.countdownUnnamed": "{{countdown}}",
+  "waitingRoom.schedule.tabTitle.startedUnnamed": "● 開始済み",
   "zoom.reset": "ズームをリセット",
   "zoom.start": "ズームを開始",
   "zoom.out": "ズームアウト",

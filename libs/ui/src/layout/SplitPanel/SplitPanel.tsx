@@ -1,8 +1,6 @@
-import { Children, type ComponentProps, type ReactElement } from 'react';
+import { Children, type ComponentProps, type ReactElement, type PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 import findSlotByDisplayName from '../../helpers/findSlotByDisplayName';
-import SplitPanelLeft from './SplitPanelLeft';
-import SplitPanelRight from './SplitPanelRight';
 
 const SplitPanel = ({ children, className, ...props }: ComponentProps<'div'>): ReactElement => {
   const slots = Children.toArray(children);
@@ -20,6 +18,16 @@ const SplitPanel = ({ children, className, ...props }: ComponentProps<'div'>): R
     </div>
   );
 };
+
+function SplitPanelLeft({ children }: PropsWithChildren) {
+  return children;
+}
+function SplitPanelRight({ children }: PropsWithChildren) {
+  return children;
+}
+
+SplitPanelLeft.displayName = 'SplitPanel.Left';
+SplitPanelRight.displayName = 'SplitPanel.Right';
 
 SplitPanel.Left = SplitPanelLeft;
 SplitPanel.Right = SplitPanelRight;
