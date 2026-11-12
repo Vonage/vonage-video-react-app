@@ -15,6 +15,7 @@ import type {
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
 import { notifications$ } from '@core/stores';
+import { TRPCClientError } from '@trpc/client';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
 
@@ -717,6 +718,30 @@ describe('SessionProvider', () => {
       sessionKey: resignedSessionKey,
       token: 'token',
     });
+  });
+
+  it('joinRoom retries joinSession while the server says the meeting has not started yet', async () => {
+    vi.useFakeTimers();
+    const meetingNotStartedError = TRPCClientError.from({
+      error: {
+        code: -32003,
+        message: 'The meeting has not started yet',
+        data: { httpStatus: 403 },
+        name: 'MeetingNotStartedError',
+      },
+    });
+    mockJoinSessionMutate.mockRejectedValueOnce(meetingNotStartedError).mockResolvedValue({
+      token: 'token',
+      sessionId: 'sessionId',
+      sessionKey: validSessionKey,
+    });
+
+    render(<TestComponent />);
+    await act(() => vi.advanceTimersByTimeAsync(500));
+
+    expect(mockJoinSessionMutate).toHaveBeenCalledTimes(2);
+    expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
   });
 });
 

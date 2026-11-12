@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, Mock, beforeAll, afterAll } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { ReactElement, ReactNode } from 'react';
 import { Publisher } from '@vonage/client-sdk-video';
 import EventEmitter from 'events';
+import jwt from 'jsonwebtoken';
 import userEvent from '@testing-library/user-event';
 import { defaultAudioDevice } from '@utils/mockData/device';
 import usePermissions from '@hooks/usePermissions';
@@ -13,14 +14,33 @@ import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvi
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
+import { serverSettings$ } from '@core/stores';
+import { SessionKeyClaim } from '@common/constants';
 import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
 import renderAsyncComponent from '@web-test/renderAsyncComponent';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../env';
 
 const mockedNavigate = vi.fn();
 const mockedParams = { roomIdentifier: 'test-room-name' };
+const endedMeetingSessionKey = jwt.sign(
+  {
+    sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+    roomName: 'ended-meeting',
+    [SessionKeyClaim.schedule]: {
+      startsAtMs: Date.now() - 2 * 60 * 60 * 1000,
+      endsAtMs: Date.now() - 60 * 60 * 1000,
+    },
+  },
+  'test'
+);
+const answeringServerRuntimeContext = {
+  videoClient: makeVideoClientMock({
+    getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+  }),
+};
 const mockedLocation = vi.fn();
 
 vi.mock('react-router-dom', async () => {
@@ -133,6 +153,11 @@ describe('WaitingRoom', () => {
     vi.mocked(waitUntilPlaying).mockResolvedValue();
 
     vi.spyOn(globalThis.location, 'reload');
+  });
+
+  afterEach(() => {
+    mockedParams.roomIdentifier = 'test-room-name';
+    document.cookie = 'vera-session-signed-in=; max-age=0';
   });
 
   it('should render', async () => {
@@ -250,6 +275,50 @@ describe('WaitingRoom', () => {
     expect(mockedDestroyPublisher).toHaveBeenCalled();
   });
 
+  it('hides the landing page link after the meeting ended when nobody is signed in', async () => {
+    env.partialUpdate({ AUTH_ENABLED: true });
+    document.cookie = '';
+    mockedParams.roomIdentifier = endedMeetingSessionKey;
+
+    await render(<WaitingRoom />, {
+      runtimeContext: answeringServerRuntimeContext,
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
+    });
+    expect(screen.queryByRole('button', { name: 'View Landing Page' })).not.toBeInTheDocument();
+  });
+
+  it('shows the landing page link after the meeting ended when signed in', async () => {
+    env.partialUpdate({ AUTH_ENABLED: true });
+    document.cookie = 'vera-session-signed-in=1';
+    mockedParams.roomIdentifier = endedMeetingSessionKey;
+
+    await render(<WaitingRoom />, {
+      runtimeContext: answeringServerRuntimeContext,
+      previewPublisherContext: {
+        __interceptor: (context: PreviewPublisherContextType) => {
+          context.publisher = mockPublisher;
+          context.isVideoLoading = false;
+          context.accessStatus = DEVICE_ACCESS_STATUS.ACCEPTED;
+        },
+      },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
+    });
+    expect(screen.getByRole('button', { name: 'View Landing Page' })).toBeInTheDocument();
+  });
+
   it('should render VideoContainer when video loading finishes', async () => {
     env.partialUpdate({
       WAITING_ROOM_ALLOW_DEVICE_SELECTION: true,
@@ -332,6 +401,7 @@ type RenderOptions = {
   publisherContext?: ProviderOptions['PublisherContext'];
   backgroundPublisherContext?: ProviderOptions['BackgroundPublisherContext'];
   previewPublisherContext?: ProviderOptions['PreviewPublisherContext'];
+  runtimeContext?: ProviderOptions['RuntimeContext'];
 };
 
 async function render(
@@ -342,6 +412,7 @@ async function render(
     publisherContext,
     backgroundPublisherContext,
     previewPublisherContext,
+    runtimeContext,
   }: RenderOptions = {}
 ) {
   const { wrapper: MainWrapper, ...contexts } = makeTestProvider(
@@ -359,7 +430,7 @@ async function render(
       publisherContext,
       backgroundPublisherContext,
       previewPublisherContext,
-      runtimeContext: undefined,
+      runtimeContext,
     }
   );
 
@@ -367,7 +438,8 @@ async function render(
     SuspenseBoundary,
     MainWrapper,
     backgroundEffectsDialog$.Provider,
-    precallNetworkTestDialog$.Provider
+    precallNetworkTestDialog$.Provider,
+    serverSettings$.Provider
   );
 
   const renderResult = await renderAsyncComponent(ui, { wrapper });
