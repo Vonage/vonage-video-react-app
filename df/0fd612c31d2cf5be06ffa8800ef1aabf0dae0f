@@ -1,0 +1,18 @@
+libs/core/src/stores/serverSettings/hooks/useServerSettings.ts
+  h_6029769cf9ac60 5,22
+libs/core/src/stores/serverSettings/serverSettings$.ts
+  h_6029769cf9ac60 1-2,4-23
+libs/core/src/stores/serverSettings/types/ServerSettingsAPI.ts
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "df0fd612c31d2cf5be06ffa8800ef1aabf0dae0f",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
