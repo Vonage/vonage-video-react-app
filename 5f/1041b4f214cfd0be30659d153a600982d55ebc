@@ -1,0 +1,14 @@
+libs/core/src/stores/serverSettings/serverSettings$.test.ts
+  h_6029769cf9ac60 36-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5f1041b4f214cfd0be30659d153a600982d55ebc",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
