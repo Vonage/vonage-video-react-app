@@ -1,0 +1,43 @@
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.spec.ts
+  s_20776229283099::t_fa759fdc2cd314 1-51
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  s_20776229283099::t_6501b7e6245199 18-23,26-31
+frontend/src/locales/de.json
+  s_20776229283099::t_4d0e68860ef37e 395-396
+frontend/src/locales/en.json
+  s_20776229283099::t_01f2fba5fd36c9 395-396
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_85f1746ee4a2c7 395-396
+frontend/src/locales/es.json
+  s_20776229283099::t_2c01340f221d8a 395-396
+frontend/src/locales/it.json
+  s_20776229283099::t_ed6ef290fbe6d4 395-396
+frontend/src/locales/ja.json
+  s_20776229283099::t_44f23e8da8236d 405-406
+libs/ui/src/layout/SplitPanel/SplitPanel.tsx
+  s_d7e2e0668feaa5::t_877a2902654704 1,22-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dc169339044278c8bfe6aaede3cb66f32e0f904e",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_d7e2e0668feaa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d07a-9f3b-7a02-b07a-8f5d1da418ff",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
