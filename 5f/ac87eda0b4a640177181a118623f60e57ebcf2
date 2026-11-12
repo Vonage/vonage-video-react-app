@@ -1,0 +1,16 @@
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/JoinBlockerText.tsx
+  h_6029769cf9ac60 4,23,28
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  h_6029769cf9ac60 3,30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5fac87eda0b4a640177181a118623f60e57ebcf2",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
