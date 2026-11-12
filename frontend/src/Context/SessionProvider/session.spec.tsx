@@ -745,7 +745,6 @@ describe('SessionProvider', () => {
     expect(mockJoinSessionMutate).toHaveBeenCalledTimes(2);
     expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
-
   });
 
   it('swaps to the renewed sessionKey and token when another participant extends, keeping the longest extension and ignoring malformed signals', async () => {

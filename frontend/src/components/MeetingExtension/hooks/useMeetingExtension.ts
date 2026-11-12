@@ -1,4 +1,4 @@
-import { useServerSettings } from '@core/hooks';
+import { serverSettings$ } from '@core/stores';
 import { isNil } from '@common/assertions';
 import { MAX_TOTAL_EXTENSION_MINUTES } from '@common/constants';
 import { readExtendedClaim } from '@common/helpers';
@@ -18,7 +18,7 @@ export type MeetingExtension = {
  */
 const useMeetingExtension = (): MeetingExtension | null => {
   const { sessionDetails, sessionKey } = useSessionContext();
-  const { data: serverSettings } = useServerSettings({ sessionKey });
+  const { data: serverSettings } = serverSettings$.useServerSettings({ sessionKey });
 
   if (isNil(serverSettings)) return null;
 

@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { isNotNil } from '@common/assertions';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/components/VividIcon';
 import type { ScheduleWindow } from '@common/types';
@@ -33,9 +34,10 @@ const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps):
           customSize={isCompact ? -6 : -5}
           style={{ color: 'var(--vera-on-warning)' }}
         />
-        {t('meetingTimer.timeLeft', {
-          timeLeft: formatMinutesAndSeconds({ totalSeconds: secondsLeft, t }),
-        })}
+        {isNotNil(secondsLeft) &&
+          t('meetingTimer.timeLeft', {
+            timeLeft: formatMinutesAndSeconds({ totalSeconds: secondsLeft, t }),
+          })}
       </div>
       {isAllowedToExtend && <MeetingEndingDialog />}
     </>

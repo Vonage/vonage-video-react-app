@@ -1,4 +1,6 @@
 import type { ReactElement } from 'react';
+import { serverSettings$ } from '@core/stores';
+import composeProviders from '@web/helpers/composeProviders';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
@@ -73,7 +75,7 @@ function render({ extendedMinutes }: { extendedMinutes: number }) {
   });
   const ui: ReactElement = <AdvancedSettingsMeetingTab scheduleWindow={scheduleWindow} />;
 
-  renderBase(ui, { wrapper });
+  renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) });
 
   return { videoClient, sessionKey };
 }
