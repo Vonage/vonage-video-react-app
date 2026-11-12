@@ -47,7 +47,8 @@ describe('serverSettings$', () => {
       {
         runtimeContext: {
           videoClient: makeVideoClientMock({
-            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+            getServerSettings: () =>
+              Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
           }),
         },
         serverSettingsContext: { sessionKey: null },
@@ -103,7 +104,10 @@ describe('serverSettings$', () => {
       expect.assertions(2);
 
       const getServerSettings = vi.fn(() =>
-        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds })
+        Promise.resolve({
+          serverTime: Date.now() + serverAheadMilliseconds,
+          extension: { options: [20, 40, 60] },
+        })
       );
       const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
         runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },

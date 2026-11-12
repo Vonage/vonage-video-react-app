@@ -37,7 +37,8 @@ const endedMeetingSessionKey = jwt.sign(
 );
 const answeringServerRuntimeContext = {
   videoClient: makeVideoClientMock({
-    getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+    getServerSettings: () =>
+      Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
   }),
 };
 const mockedLocation = vi.fn();
