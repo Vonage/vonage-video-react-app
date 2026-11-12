@@ -9,19 +9,19 @@ import RoomNameInput from '../RoomNameInput';
  * @returns {ReactElement} - The JoinExistingRoom component.
  */
 const JoinExistingRoom = (): ReactElement => {
-  const [roomName, setRoomName] = useState('');
+  const [roomId, setRoomId] = useState('');
   const [hasError, setHasError] = useState(false);
 
   return (
     <div className="flex w-full flex-col gap-6" data-testid="JoinExistingRoom">
       <RoomNameInput
-        setRoomName={setRoomName}
-        roomName={roomName}
+        setRoomId={setRoomId}
+        roomId={roomId}
         hasError={hasError}
         setHasError={setHasError}
       />
 
-      <JoinWaitRoomButton roomName={roomName} isDisabled={false} setHasError={setHasError} />
+      <JoinWaitRoomButton roomId={roomId} isDisabled={false} setHasError={setHasError} />
     </div>
   );
 };
