@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import Card from '@ui/components/Card';
 import useUserContext from '@hooks/useUserContext';
 import { UserType } from '@Context/user';
@@ -143,7 +142,7 @@ const UsernameInput = ({
         </>
       )}
 
-      <Box className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-2">
         <label
           htmlFor="user-name"
           className="font-vera-plain text-vera-caption-semibold text-vera-text-tertiary"
@@ -177,7 +176,7 @@ const UsernameInput = ({
           }}
           inputRef={inputRef}
         />
-      </Box>
+      </div>
 
       {children}
 

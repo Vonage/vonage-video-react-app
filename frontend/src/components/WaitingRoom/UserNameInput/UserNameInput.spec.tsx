@@ -1,3 +1,5 @@
+import { scheduleCountdownPanelTestIds } from './components/ScheduleCountdownPanel/ScheduleCountdownPanel';
+import { scheduleCountdownPanelSkeletonTestIds } from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import type { ReactElement } from 'react';
 import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -10,6 +12,10 @@ import UsernameInput from './UserNameInput';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
 const serverAheadMilliseconds = 60_000;
+
+const roomStubTestIds = {
+  root: (roomIdentifier: string | undefined) => `room-${roomIdentifier}`,
+};
 
 describe('UsernameInput', () => {
   beforeEach(() => {
@@ -58,7 +64,7 @@ describe('UsernameInput', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
-    expect(screen.getByTestId('room-scheduled-session-key')).toBeInTheDocument();
+    expect(screen.getByTestId(roomStubTestIds.root('scheduled-session-key'))).toBeInTheDocument();
   });
 
   it('keeps Join disabled past the start by the local clock until the server time is known', () => {
@@ -80,7 +86,7 @@ describe('UsernameInput', () => {
     );
 
     expect(screen.queryByText('The meeting has started')).not.toBeInTheDocument();
-    expect(screen.getByTestId('schedule-countdown-panel-skeleton')).toBeInTheDocument();
+    expect(screen.getByTestId(scheduleCountdownPanelSkeletonTestIds.root)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
   });
 
@@ -96,11 +102,11 @@ describe('UsernameInput', () => {
     );
 
     expect(screen.getByRole('heading', { name: 'design-review' })).toBeInTheDocument();
-    expect(screen.queryByTestId('schedule-countdown-panel')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(scheduleCountdownPanelTestIds.root)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
-    expect(screen.getByTestId('room-design-review')).toBeInTheDocument();
+    expect(screen.getByTestId(roomStubTestIds.root('design-review'))).toBeInTheDocument();
   });
 
   it('hides Join and keeps its children once the meeting has ended', async () => {
@@ -144,7 +150,7 @@ describe('UsernameInput', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
-    expect(screen.getByTestId('room-unnamed-session-key')).toBeInTheDocument();
+    expect(screen.getByTestId(roomStubTestIds.root('unnamed-session-key'))).toBeInTheDocument();
   });
 });
 
@@ -176,5 +182,5 @@ function render(ui: ReactElement, { runtimeContext }: RenderOptions = {}) {
 
 function RoomStub() {
   const { roomIdentifier } = useParams();
-  return <div data-testid={`room-${roomIdentifier}`} />;
+  return <div data-testid={roomStubTestIds.root(roomIdentifier)} />;
 }

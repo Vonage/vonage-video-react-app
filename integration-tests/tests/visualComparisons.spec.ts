@@ -134,7 +134,7 @@ test.describe('Waiting page schedule UI test', () => {
         await page.waitForLoadState('networkidle');
         await expect(page.locator('.video__element')).toBeAttached();
         await expect(page.getByText('Prepare to join')).toBeVisible();
-        await expect(page.getByTestId('schedule-countdown-panel')).toHaveCount(schedule ? 1 : 0);
+        await expect(page.getByText(/^to \d/)).toHaveCount(schedule ? 1 : 0);
         await page.emulateMedia({ colorScheme });
         await page.waitForFunction(
           (isDark) => document.documentElement.classList.contains('dark') === isDark,
