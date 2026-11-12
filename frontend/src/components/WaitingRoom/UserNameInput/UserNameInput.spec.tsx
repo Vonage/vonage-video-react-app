@@ -147,11 +147,13 @@ describe('UsernameInput', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(4_000));
 
-    expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(roomStubTestIds.root('scheduled-session-key'))
+    ).not.toBeInTheDocument();
 
     await act(() => vi.advanceTimersByTimeAsync(1_000));
 
-    expect(screen.getByTestId('room-scheduled-session-key')).toBeInTheDocument();
+    expect(screen.getByTestId(roomStubTestIds.root('scheduled-session-key'))).toBeInTheDocument();
   });
 
   it('cancels auto-join when the waiting button is pressed again', async () => {
@@ -187,7 +189,9 @@ describe('UsernameInput', () => {
     await act(() => vi.advanceTimersByTimeAsync(5_000));
 
     expect(screen.getByRole('button', { name: 'Join meeting' })).toBeEnabled();
-    expect(screen.queryByTestId('room-scheduled-session-key')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(roomStubTestIds.root('scheduled-session-key'))
+    ).not.toBeInTheDocument();
   });
 
   it('disables Join at start and shows the reason while the name is invalid', async () => {
