@@ -1,6 +1,5 @@
 import type { Publisher } from '@vonage/client-sdk-video';
 import { assertResult, attempt } from '@common/execution';
-import tryCatch from '@common/execution/tryCatch';
 import { makeApplicationErrorMapper } from '@core/errors';
 import handleApplyAdvancedSettingsError from './handleApplyAdvancedSettingsError';
 import { ADVANCED_SETTINGS_BITRATE_MODE } from '@components/AdvancedSettingsDialog/schemas';
@@ -12,7 +11,6 @@ import type {
 } from '@components/AdvancedSettingsDialog/schemas';
 import { t } from 'i18next';
 import { Resolution } from '@common/types';
-import { decodeSessionId } from '@common/helpers';
 
 export const applyFrameRate = async (
   publisher: Publisher | null,
@@ -88,18 +86,11 @@ const applyAdvancedSettingsToPublisher = async (
 ): Promise<void> => {
   const { frameRate, resolution, bitrateMode, customVideoBitrate, contentHint } = args;
 
-  const { result: partnerId } = tryCatch((): string | null => {
-    const sessionId = publisher?.session?.sessionId;
-    if (!sessionId) return null;
-    return decodeSessionId({ sessionId }).applicationId;
-  }, null);
-
   await attempt(
     () => applyFrameRate(publisher, frameRate),
     handleApplyAdvancedSettingsError({
       message: 'Failed to apply frame rate',
       eventSource: 'applyAdvancedSettingsToPublisher.applyFrameRate',
-      partnerId,
     })
   );
 
@@ -108,7 +99,6 @@ const applyAdvancedSettingsToPublisher = async (
     handleApplyAdvancedSettingsError({
       message: 'Failed to apply resolution',
       eventSource: 'applyAdvancedSettingsToPublisher.applyResolution',
-      partnerId,
     })
   );
 
@@ -117,7 +107,6 @@ const applyAdvancedSettingsToPublisher = async (
     handleApplyAdvancedSettingsError({
       message: 'Failed to apply bitrate',
       eventSource: 'applyAdvancedSettingsToPublisher.applyBitrate',
-      partnerId,
     })
   );
 
@@ -126,7 +115,6 @@ const applyAdvancedSettingsToPublisher = async (
     handleApplyAdvancedSettingsError({
       message: 'Failed to apply content hint',
       eventSource: 'applyAdvancedSettingsToPublisher.applyContentHint',
-      partnerId,
     })
   );
 };

@@ -1,0 +1,146 @@
+name: Deploy to VCR (Production)
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+permissions:
+  contents: read
+
+env:
+  DOMAIN: ${{ secrets.PROD_DOMAIN }}
+  INSTANCE_NAME: prod
+  OIDC_ISSUER_URL: ${{ secrets.PROD_OIDC_ISSUER_URL }}
+  OIDC_CLIENT_ID: ${{ secrets.PROD_OIDC_CLIENT_ID }}
+
+jobs:
+  build-and-test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: vcr-deploy-prod
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
+
+      - name: Setup node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Verify Node & pnpm versions
+        run: |
+          node -v
+          pnpm -v
+
+      - name: Building artefact
+        run: |
+          MANIFEST="${{ github.workspace }}/vcr-gha.yml"
+
+          if ! [[ "$OIDC_ISSUER_URL" =~ ^https://[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::PROD_OIDC_ISSUER_URL must be set to the Okta org root (https://<host>, no path); refusing to deploy."
+            exit 1
+          fi
+          if ! [[ "$OIDC_CLIENT_ID" =~ ^[A-Za-z0-9]+$ ]]; then
+            echo "::error::PROD_OIDC_CLIENT_ID must be set to the Okta client ID; refusing to deploy."
+            exit 1
+          fi
+
+          APP_HOST="$(bash .github/scripts/readAppHost.sh)"
+
+          # VCR needs a list; PROD_DOMAIN may be a bare host or a list, so build it from the host.
+          sed -i "s/^  domains: <DOMAIN>$/  domains: [${APP_HOST}]/" "$MANIFEST"
+          if ! grep -qxF "  domains: [${APP_HOST}]" "$MANIFEST"; then
+            echo "::error::Could not set domains to [${APP_HOST}]; refusing to deploy."
+            exit 1
+          fi
+          sed -i "s/<APP_HOST>/${APP_HOST}/g" "$MANIFEST"
+
+          sed -i "/^instance:/,/^[^ #]/ s/^  name: .*/  name: ${INSTANCE_NAME}/" "$MANIFEST"
+          if ! grep -qx "  name: ${INSTANCE_NAME}" "$MANIFEST"; then
+            echo "::error::Could not set the instance name to ${INSTANCE_NAME}; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i -E "s/^([[:space:]]+secret: )(VONAGE_APP_ID|VONAGE_PRIVATE_KEY|SESSION_KEY_SECRET|AUTH_COOKIE_SECRET)$/\1PROD_\2/" "$MANIFEST"
+          for SECRET_NAME in VONAGE_APP_ID VONAGE_PRIVATE_KEY SESSION_KEY_SECRET AUTH_COOKIE_SECRET; do
+            if ! grep -qE "^[[:space:]]+secret: PROD_${SECRET_NAME}$" "$MANIFEST"; then
+              echo "::error::Could not point ${SECRET_NAME} at PROD_${SECRET_NAME}; refusing to deploy."
+              exit 1
+            fi
+          done
+
+          sed -i "/name: AUTH_ENABLED/{n;s/value: .*/value: 'true'/;}" "$MANIFEST"
+          if ! grep -A1 'name: AUTH_ENABLED' "$MANIFEST" | grep -qF "value: 'true'"; then
+            echo "::error::Could not set AUTH_ENABLED to true; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i "/name: OIDC_CLIENT_ID/{n;s/value: .*/value: '${OIDC_CLIENT_ID}'/;}" "$MANIFEST"
+          if ! grep -A1 'name: OIDC_CLIENT_ID' "$MANIFEST" | grep -qF "value: '${OIDC_CLIENT_ID}'"; then
+            echo "::error::Could not set OIDC_CLIENT_ID to the PROD client; refusing to deploy."
+            exit 1
+          fi
+
+          sed -i "s#https://launchpadtest.vonage.com/#${OIDC_ISSUER_URL}/#g" "$MANIFEST"
+          if grep -qF 'launchpadtest.vonage.com' "$MANIFEST"; then
+            echo "::error::DEV Okta endpoints left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
+          for ENDPOINT_PATH in authorize token introspect revoke logout; do
+            if ! grep -qF "value: '${OIDC_ISSUER_URL}/oauth2/v1/${ENDPOINT_PATH}'" "$MANIFEST"; then
+              echo "::error::Missing PROD Okta ${ENDPOINT_PATH} endpoint; refusing to deploy."
+              exit 1
+            fi
+          done
+
+          if grep -v '^[[:space:]]*#' "$MANIFEST" | grep -qE '<[A-Z_]+>'; then
+            echo "::error::Unfilled placeholders left in vcr-gha.yml; refusing to deploy."
+            exit 1
+          fi
+
+          # The frontend build reads AUTH_ENABLED for the logout button
+          export AUTH_ENABLED=true
+
+          ./vcrBuild.sh
+
+      - name: Install VCR CLI
+        uses: ./.github/actions/install-vcr-cli
+
+      - name: Deploy vcr
+        id: deploy
+        uses: ./.github/actions/deploy-vcr
+        with:
+          app-id: ${{ secrets.PROD_APP_ID }}
+          api-key: ${{ secrets.PROD_VCR_API_KEY }}
+          api-secret: ${{ secrets.PROD_VCR_API_SECRET }}
+          filename: vcr-gha.yml
+          instance-name: ${{ env.INSTANCE_NAME }}
+
+      - name: Slack notification on success
+        uses: ./.github/actions/slack-notify
+        with:
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: '28a745'
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n is merged and deployed to VCR (${{ env.INSTANCE_NAME }}) \nURL: ${{ steps.deploy.outputs.instance-url }} \n*<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :large_green_circle: :large_green_circle: :large_green_circle: :large_green_circle:"
+        if: success()
+        continue-on-error: true
+
+      - name: Slack notification on failure
+        uses: ./.github/actions/slack-notify
+        with:
+          slack-bot-token: ${{ secrets.SLACK_NOTIFICATION }}
+          color: FF0000
+          message: "Vera pull request *<https://github.com/Vonage/vonage-video-react-app/pull/${{ github.event.number }}|${{ github.event.pull_request.title }}>* \n with commit hash: ${{ github.sha }} \n is merged but FAILED to deploy to VCR (${{ env.INSTANCE_NAME }}) \n *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Click here to go to build logs>* \n :red_circle: :red_circle: :red_circle: :red_circle:"
+        if: failure()
+        continue-on-error: true

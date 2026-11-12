@@ -168,7 +168,7 @@
     },
     "meetingRoomSettings": {
       "type": "object",
-      "description": "In-meeting feature toggles and defaults. allowFeedback and allowPictureInPicture are iOS only.",
+      "description": "In-meeting feature toggles and defaults. allowFeedback is iOS only. allowPictureInPicture maps to Mini Mode on web (Document PiP) and native PiP on iOS.",
       "required": [
         "allowSettings",
         "allowArchiving",
@@ -192,10 +192,20 @@
           "description": "When true, users can start and stop recording (archiving) of the meeting.",
           "x-envVar": "ALLOW_ARCHIVING"
         },
+        "allowPostCallTranscription": {
+          "type": "boolean",
+          "description": "When true, users can start and stop post-call transcription of the meeting.",
+          "x-envVar": "ALLOW_POST_CALL_TRANSCRIPTION"
+        },
         "allowCaptions": {
           "type": "boolean",
           "description": "When true, live captions can be enabled during the meeting.",
           "x-envVar": "ALLOW_CAPTIONS"
+        },
+        "allowCaptionTranslation": {
+          "type": "boolean",
+          "description": "When true and captions are allowed, users can choose a translation language for the captions they receive.",
+          "x-envVar": "ALLOW_CAPTION_TRANSLATION"
         },
         "allowChat": {
           "type": "boolean",
@@ -218,7 +228,8 @@
         },
         "allowPictureInPicture": {
           "type": "boolean",
-          "description": "When true, the meeting can continue in a picture-in-picture window (iOS only)."
+          "description": "When true, the meeting can continue in a picture-in-picture / Mini Mode window (Document PiP on web, native PiP on iOS).",
+          "x-envVar": "ALLOW_MINI_MODE"
         },
         "allowScreenShare": {
           "type": "boolean",

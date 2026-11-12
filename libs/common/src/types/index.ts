@@ -2,7 +2,9 @@ export type * from './Prettify';
 export { SPY_MARK, type Mockable } from './Mockable';
 export {
   ClientLogEventSchema,
+  ClientLogSessionSchema,
   type ClientLogEvent,
+  type ClientLogSession,
   type SerializedError,
 } from '../schemas/ClientLogEvent';
 export type * from './DecodedSessionId';
@@ -14,6 +16,7 @@ export type * from './SessionId';
 export type * from './SameKeys';
 export type * from './IsOptionalKey';
 export type * from './SessionKeyPayload';
+export type * from './ScheduleWindow';
 export type * from './VideoSessionDetails';
 export type * from './VideoSessionDetailsWithToken';
 export type * from './SessionKey';

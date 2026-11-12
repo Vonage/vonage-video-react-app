@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
+import { env } from '../../env';
 import { render as renderBase, screen } from '@testing-library/react';
 import GoodBye from './index';
 import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
@@ -7,6 +8,11 @@ import { StrictMode, ReactElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 describe('GoodBye', () => {
+  afterEach(() => {
+    env.reset();
+    document.cookie = 'vera-session-signed-in=; max-age=0';
+  });
+
   it('should render correctly with default props', () => {
     render(<GoodBye />);
 
@@ -14,8 +20,20 @@ describe('GoodBye', () => {
     expect(screen.getByText('Thank you for joining!')).toBeVisible();
     expect(screen.getByText('Rejoining the room')).toBeVisible();
     expect(screen.getByRole('button', { name: 'View Landing Page' })).toBeVisible();
-    expect(screen.getByText('Download recordings')).toBeVisible();
-    expect(screen.getByText("The meeting hasn't been recorded")).toBeVisible();
+    expect(screen.getByText('Download session content')).toBeVisible();
+    expect(screen.getByText('This session has no content to download')).toBeVisible();
+  });
+
+  it.each([
+    { scenario: 'nobody is signed in', cookie: '', isShown: false },
+    { scenario: 'signed in', cookie: 'vera-session-signed-in=1', isShown: true },
+  ])('shows the landing page link: $isShown when $scenario', ({ cookie, isShown }) => {
+    env.partialUpdate({ AUTH_ENABLED: true });
+    document.cookie = cookie;
+
+    render(<GoodBye />);
+
+    expect(!!screen.queryByRole('button', { name: 'View Landing Page' })).toBe(isShown);
   });
 });
 

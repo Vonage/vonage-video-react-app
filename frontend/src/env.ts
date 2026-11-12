@@ -36,11 +36,14 @@ const EnvironmentVariablesSchema = z.object({
   WAITING_ROOM_ALLOW_ADVANCED_SETTINGS: boolean({ default: false }),
   WAITING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_ARCHIVING: boolean({ default: true }),
+  ALLOW_POST_CALL_TRANSCRIPTION: boolean({ default: true }),
   ARCHIVES_REFRESH_INTERVAL_MS: integer({ default: 5000 }),
   ALLOW_CAPTIONS: boolean({ default: true }),
+  ALLOW_CAPTION_TRANSLATION: boolean({ default: false }),
   ALLOW_CHAT: boolean({ default: true }),
   MEETING_ROOM_ALLOW_DEVICE_SELECTION: boolean({ default: true }),
   ALLOW_EMOJIS: boolean({ default: true }),
+  ALLOW_MINI_MODE: boolean({ default: true }),
   ALLOW_SCREEN_SHARE: boolean({ default: true }),
   DEFAULT_LAYOUT_MODE: z.preprocess(
     (v) => (v === undefined || v === null || v === '' ? 'active-speaker' : v),
@@ -49,6 +52,7 @@ const EnvironmentVariablesSchema = z.object({
   SHOW_PARTICIPANT_LIST: boolean({ default: true }),
   SHOW_VIDEO_STATS: boolean({ default: false }),
   BYPASS_WAITING_ROOM: boolean({ default: false }),
+  AUTH_ENABLED: boolean({ default: false }),
   API_URL: z.preprocess((v) => (v === undefined || v === null || v === '' ? '' : v), z.string()),
   TUNNEL_DOMAIN: stringField({ optional: true }),
   MODE: z.preprocess(
@@ -80,15 +84,19 @@ export class Env implements IEnvironmentVariables {
   public WAITING_ROOM_ALLOW_ADVANCED_SETTINGS!: boolean;
   public WAITING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_ARCHIVING!: boolean;
+  public ALLOW_POST_CALL_TRANSCRIPTION!: boolean;
   public ALLOW_CAPTIONS!: boolean;
+  public ALLOW_CAPTION_TRANSLATION!: boolean;
   public ALLOW_CHAT!: boolean;
   public MEETING_ROOM_ALLOW_DEVICE_SELECTION!: boolean;
   public ALLOW_EMOJIS!: boolean;
+  public ALLOW_MINI_MODE!: boolean;
   public ALLOW_SCREEN_SHARE!: boolean;
   public DEFAULT_LAYOUT_MODE!: LayoutMode;
   public SHOW_PARTICIPANT_LIST!: boolean;
   public SHOW_VIDEO_STATS!: boolean;
   public BYPASS_WAITING_ROOM!: boolean;
+  public AUTH_ENABLED!: boolean;
   public API_URL!: string;
   public TUNNEL_DOMAIN!: string | null;
   public MODE!: Mode;

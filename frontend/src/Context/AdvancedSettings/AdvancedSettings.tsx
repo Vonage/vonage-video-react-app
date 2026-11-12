@@ -4,6 +4,7 @@ import type {
   AdvancedSettings,
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
+  AdvancedSettingsCaptionsTranslationLanguage,
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
   AdvancedSettingsContentHint,
@@ -46,6 +47,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
+  includeTranscriptionSummary: true,
   selfViewMirroringEnabled: true,
   videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
   cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic,
@@ -58,6 +60,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   screenShareBitrateMode: null,
   screenShareCustomVideoBitrate: 500_000,
   screenShareSurface: AdvancedSettingsScreenShareSurface.monitor,
+  captionsTranslationLanguage: null,
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -178,6 +181,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
         partialUpdate({ autoGainControlEnabled: value });
       };
     },
+    setIncludeTranscriptionSummary(value: boolean) {
+      return () => {
+        partialUpdate({ includeTranscriptionSummary: value });
+      };
+    },
     setSelfViewMirroringEnabled(value: boolean) {
       return () => {
         partialUpdate({ selfViewMirroringEnabled: value });
@@ -236,6 +244,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setScreenShareSurface(value: AdvancedSettingsScreenShareSurface) {
       return () => {
         partialUpdate({ screenShareSurface: value });
+      };
+    },
+    setCaptionsTranslationLanguage(value: AdvancedSettingsCaptionsTranslationLanguage | null) {
+      return () => {
+        partialUpdate({ captionsTranslationLanguage: value });
       };
     },
   },

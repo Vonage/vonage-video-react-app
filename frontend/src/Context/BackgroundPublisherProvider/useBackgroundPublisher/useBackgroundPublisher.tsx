@@ -17,10 +17,11 @@ import getInitialBackgroundFilter from '../../../utils/backgroundFilter/getIniti
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import useSyncPublisherDevices from '@Context/PublisherProvider/usePublisher/hooks/useSyncPublisherDevices';
-import { getStorageItem, STORAGE_KEYS } from '@utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import attempt from '@common/execution/attempt/attempt';
 import { useMountEffect } from '@web/hooks';
 import { env } from '../../../env';
+import { frontendLogger } from '../../../logger';
 
 export type BackgroundPublisherContextType = {
   isPublishing: boolean;
@@ -32,7 +33,7 @@ export type BackgroundPublisherContextType = {
   changeBackground: (backgroundSelected: string) => Promise<void>;
   backgroundFilter: VideoFilter | undefined;
   accessStatus: string | null;
-  initBackgroundLocalPublisher: () => void;
+  initBackgroundLocalPublisher: (sharedVideoTrack?: MediaStreamTrack) => void;
   customImages: StoredImage[];
   addCustomImage: (dataUrl: string) => void;
   deleteCustomImage: (id: string) => void;
@@ -85,6 +86,7 @@ const useBackgroundPublisher = (
   const { setAccessStatus, accessStatus } = usePermissions();
 
   const backgroundPublisherRef = useRef<Publisher | null>(null);
+  const sharedVideoTrackRef = useRef<MediaStreamTrack | null>(null);
   const [isPublishing, setIsPublishing] = useState<boolean>(initialValue?.isPublishing ?? false);
 
   const initialBackgroundRef = useRef<VideoFilter | undefined>(
@@ -96,7 +98,7 @@ const useBackgroundPublisher = (
   );
 
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [customImages, setCustomImages] = useState<StoredImage[]>(
@@ -106,6 +108,11 @@ const useBackgroundPublisher = (
   const [backgroundSelected, setBackgroundSelected] = useState<string>(
     initialValue?.backgroundSelected ?? ''
   );
+
+  const destroySharedVideoTrack = () => {
+    sharedVideoTrackRef.current?.stop();
+    sharedVideoTrackRef.current = null;
+  };
 
   const handleBackgroundDestroyed = () => {
     backgroundPublisherRef.current = null;
@@ -171,35 +178,63 @@ const useBackgroundPublisher = (
     });
 
     backgroundPublisherRef.current = null;
+
+    // SDK does not stop a track it did not create
+    destroySharedVideoTrack();
   }, []);
 
-  const initBackgroundLocalPublisher = useCallback(() => {
-    if (backgroundPublisherRef.current) return;
-
-    let videoFilter: VideoFilter | undefined;
-    if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
-      videoFilter = initialBackgroundRef.current;
-    }
-
-    const publisherOptions: PublisherProperties = {
-      insertDefaultUI: false,
-      videoFilter,
-      resolution: env.DEFAULT_RESOLUTION,
-      videoSource: mediaDevices$.getState().videoinput,
-      publishAudio: false,
-      publishVideo: isVideoEnabled,
-    };
-
-    backgroundPublisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        backgroundPublisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
+  const initBackgroundLocalPublisher = useCallback(
+    (sharedVideoTrack?: MediaStreamTrack) => {
+      if (backgroundPublisherRef.current) {
+        sharedVideoTrack?.stop();
+        return;
       }
-    });
-    addPublisherListeners(backgroundPublisherRef.current);
-  }, [addPublisherListeners, isVideoEnabled]);
+
+      destroySharedVideoTrack();
+      sharedVideoTrackRef.current = sharedVideoTrack ?? null;
+
+      let videoFilter: VideoFilter | undefined;
+      if (initialBackgroundRef.current && hasMediaProcessorSupport('video')) {
+        videoFilter = initialBackgroundRef.current;
+      }
+
+      const publisherOptions: PublisherProperties = {
+        insertDefaultUI: false,
+        videoFilter,
+        resolution: env.DEFAULT_RESOLUTION,
+        videoSource: sharedVideoTrack ?? mediaDevices$.getState().videoinput,
+        publishAudio: false,
+        publishVideo: isVideoEnabled,
+      };
+
+      let publisher: Publisher | null = null;
+      let hasInitFailed = false;
+
+      publisher = initPublisher(undefined, publisherOptions, (error) => {
+        if (!error) return;
+        hasInitFailed = true;
+        frontendLogger.reportError(error, {
+          eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+        });
+
+        destroySharedVideoTrack();
+
+        if (backgroundPublisherRef.current !== publisher) return;
+        backgroundPublisherRef.current = null;
+        attempt(() => publisher?.destroy());
+      });
+
+      if (hasInitFailed) {
+        attempt(() => publisher?.destroy());
+        destroySharedVideoTrack();
+        return;
+      }
+
+      backgroundPublisherRef.current = publisher;
+      addPublisherListeners(publisher);
+    },
+    [addPublisherListeners, isVideoEnabled]
+  );
 
   /**
    * Turns the camera on and off

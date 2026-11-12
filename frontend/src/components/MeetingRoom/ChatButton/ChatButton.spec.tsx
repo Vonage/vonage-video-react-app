@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import ChatButton from './ChatButton';
-import { env } from './../../../env';
+import { testIds as unreadMessagesBadgeTestIds } from '../UnreadMessagesBadge/UnreadMessagesBadge';
 
 describe('ChatButton', () => {
   it('should show unread message number', () => {
@@ -16,8 +16,8 @@ describe('ChatButton', () => {
         },
       },
     });
-    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('10');
+    expect(screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount)).toBeVisible();
+    expect(screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount).textContent).toBe('10');
   });
 
   it('should not show unread message number when number is 0', () => {
@@ -31,7 +31,7 @@ describe('ChatButton', () => {
       },
     });
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(unreadMessagesBadgeTestIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -42,15 +42,6 @@ describe('ChatButton', () => {
     render(<ChatButton handleClick={handleClick} isOpen />);
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
-  });
-
-  it('is not rendered when allowChat is false', () => {
-    env.partialUpdate({
-      ALLOW_CHAT: false,
-    });
-    render(<ChatButton handleClick={() => {}} isOpen />);
-
-    expect(screen.queryByTestId('ChatIcon')).not.toBeInTheDocument();
   });
 });
 

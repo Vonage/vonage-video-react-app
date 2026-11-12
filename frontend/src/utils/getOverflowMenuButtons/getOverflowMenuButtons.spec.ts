@@ -1,10 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ReactElement } from 'react';
 import getOverflowMenuButtons from './getOverflowMenuButtons';
-
-vi.mock('../constants', () => ({
-  RIGHT_PANEL_BUTTON_COUNT: 2,
-}));
 
 const fakeToolbarButtons = [
   'Button1',
@@ -12,7 +8,7 @@ const fakeToolbarButtons = [
   'Button3',
   'Button4',
   'Button5',
-] as unknown as Array<ReactElement | false>;
+] as unknown as ReactElement[];
 
 describe('getOverflowMenuButtons', () => {
   it('returns the last `2` buttons for the overflow menu when `3` are shown in the toolbar', () => {

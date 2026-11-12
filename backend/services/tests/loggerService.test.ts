@@ -1,8 +1,9 @@
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
+import type { MockedFunction } from 'vitest';
 import type { ClientLogEvent } from '@common/types';
 
-jest.unstable_mockModule('../../helpers/config', () => ({
-  default: jest.fn().mockImplementation(() => ({
+vi.doMock('../../helpers/config', () => ({
+  default: vi.fn().mockImplementation(() => ({
     apiKey: 'test-api-key',
     apiSecret: 'test-api-secret',
     applicationId: 'test-application-id',
@@ -12,8 +13,8 @@ jest.unstable_mockModule('../../helpers/config', () => ({
     loggerVerbose: false,
   })),
 }));
-jest.unstable_mockModule('axios', () => ({
-  default: { post: jest.fn(() => Promise.resolve({ status: 200 })) },
+vi.doMock('axios', () => ({
+  default: { post: vi.fn(() => Promise.resolve({ status: 200 })) },
 }));
 
 const { default: axiosMock } = await import('axios');
@@ -22,6 +23,7 @@ const { forwardToGollum, forward, logOnConnect } = await import('../loggerServic
 const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientLogEvent => ({
   action: 'EnterMeeting',
   variation: 'Success',
+  session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
   sessionId: 's1',
   connectionId: 'c1',
   partnerId: 'apiKey',
@@ -34,10 +36,10 @@ const createValidClientLogEvent = (overrides?: Partial<ClientLogEvent>): ClientL
 });
 
 describe('loggerService', () => {
-  const mockPost = axiosMock.post as jest.MockedFunction<typeof axiosMock.post>;
+  const mockPost = axiosMock.post as MockedFunction<typeof axiosMock.post>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockPost.mockResolvedValue({ status: 200 });
   });
 
@@ -45,6 +47,7 @@ describe('loggerService', () => {
     it('should POST to gollumUrl with mapped payload and serverReceivedTime', async () => {
       const event = createValidClientLogEvent({
         action: 'vonageVideoClient.connect.success',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: '100' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: '100',
@@ -58,13 +61,14 @@ describe('loggerService', () => {
         expect.objectContaining({
           action: 'vonageVideoClient.connect.success',
           variation: 'Success',
+          session: { sessionId: 's1', connectionId: 'c1', partnerId: '100' },
           sessionId: 's1',
           connectionId: 'c1',
+          partnerId: '100',
           clientSystemTime: event.clientSystemTime,
           source: event.source,
           guid: event.guid,
           userAgent: event.userAgent,
-          partnerId: '100',
           serverReceivedTime: expect.any(Number),
         }),
         expect.objectContaining({
@@ -125,6 +129,7 @@ describe('loggerService', () => {
     it('forwards to Gollum and for EnterMeeting also sends via OTKAnalytics', async () => {
       const payload = createValidClientLogEvent({
         action: 'EnterMeeting',
+        session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
         sessionId: 's1',
         connectionId: 'c1',
         partnerId: 'apiKey',
@@ -136,6 +141,7 @@ describe('loggerService', () => {
         'https://example.com',
         expect.objectContaining({
           action: 'EnterMeeting',
+          session: { sessionId: 's1', connectionId: 'c1', partnerId: 'apiKey' },
           sessionId: 's1',
           connectionId: 'c1',
           partnerId: 'apiKey',

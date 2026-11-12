@@ -4,5 +4,6 @@ export * from './errors';
 export * from './executions';
 export * from './handlers';
 export * from './routing';
+export * from './schedule';
 export * from './schemas';
 export * from './types';

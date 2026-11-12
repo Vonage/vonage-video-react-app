@@ -7,7 +7,8 @@ import useUserContext from '../../../hooks/useUserContext';
 import { DEVICE_ACCESS_STATUS } from '../../../utils/constants';
 import { UserType } from '../../user';
 import { AccessDeniedEvent } from '../../PublisherProvider/usePublisher/usePublisher';
-import { setStorageItem, getStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import { setStorageItem, STORAGE_KEYS } from '../../../utils/storage';
+import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import applyBackgroundFilter from '../../../utils/backgroundFilter/applyBackgroundFilter/applyBackgroundFilter';
 import handlePublisherAccessDenied from '../../../utils/publisher/handlePublisherAccessDenied';
 import useStableCallback from '@web/hooks/useStableCallback';
@@ -19,6 +20,7 @@ import { useMountEffect } from '@web/hooks';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import useApplyAdvancedSettings from '@Context/PublisherProvider/useApplyAdvancedSettings';
 import { env } from '../../../env';
+import { frontendLogger } from '../../../logger';
 
 type PublisherVideoElementCreatedEvent = Event<'videoElementCreated', Publisher> & {
   element: HTMLVideoElement | HTMLObjectElement;
@@ -97,13 +99,11 @@ const usePreviewPublisher = (
     () => initialValue?.backgroundFilter ?? user.defaultSettings.backgroundFilter
   );
   const [isVideoEnabled, setIsVideoEnabled] = useState<boolean>(
-    () =>
-      initialValue?.isVideoEnabled ?? getStorageItem(STORAGE_KEYS.VIDEO_SOURCE_ENABLED) !== 'false'
+    () => initialValue?.isVideoEnabled ?? isDeviceEnabledOnJoin('video')
   );
 
   const [isAudioEnabled, setIsAudioEnabled] = useState<boolean>(
-    () =>
-      initialValue?.isAudioEnabled ?? getStorageItem(STORAGE_KEYS.AUDIO_SOURCE_ENABLED) !== 'false'
+    () => initialValue?.isAudioEnabled ?? isDeviceEnabledOnJoin('audio')
   );
 
   const handlePreviewDestroyed = () => {
@@ -201,16 +201,28 @@ const usePreviewPublisher = (
       videoSource: videoSourceId,
     };
 
-    publisherRef.current = initPublisher(undefined, publisherOptions, (err: unknown) => {
-      if (err instanceof Error) {
-        publisherRef.current = null;
-        if (err.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
-          console.error('initPublisher error: ', err);
-        }
-      }
+    let publisher: Publisher | null = null;
+    let hasInitFailed = false;
+
+    publisher = initPublisher(undefined, publisherOptions, (error) => {
+      if (!error) return;
+      hasInitFailed = true;
+      frontendLogger.reportError(error, {
+        eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
+      });
+
+      if (publisherRef.current !== publisher) return;
+      publisherRef.current = null;
+      attempt(() => publisher?.destroy());
     });
 
-    addPublisherListeners(publisherRef.current);
+    if (hasInitFailed) {
+      attempt(() => publisher?.destroy());
+      return;
+    }
+
+    publisherRef.current = publisher;
+    addPublisherListeners(publisher);
   });
 
   /**

@@ -28,12 +28,6 @@
       }
     },
     {
-      "plugin": "@nx/jest",
-      "options": {
-        "targetName": "test"
-      }
-    },
-    {
       "plugin": "@nx/vite",
       "options": {
         "buildTargetName": "build",
@@ -45,16 +39,6 @@
         "typecheckTargetName": "ts-check",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
-      }
-    },
-    {
-      "plugin": "@nx/node",
-      "options": {
-        "serveTargetName": "serve",
-        "buildTargetName": "build",
-        "testTargetName": "test",
-        "lintTargetName": "lint",
-        "typecheckTargetName": "ts-check"
       }
     },
     {
@@ -85,12 +69,6 @@
       },
       "library": {
         "unitTestRunner": "vitest"
-      }
-    },
-    "@nx/node": {
-      "application": {
-        "framework": "express",
-        "unitTestRunner": "jest"
       }
     }
   },

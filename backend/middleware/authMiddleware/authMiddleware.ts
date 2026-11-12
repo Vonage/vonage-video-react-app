@@ -1,39 +1,53 @@
-import axios from 'axios';
 import type { NextFunction, Request, Response } from 'express';
-import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
-import { assertResult } from '@api-lib/executions';
+import { isNil, isRecord } from '@common/assertions';
+import { tryCatch } from '@common/execution';
+import { makeInternalErrorHandler } from '@api-lib/errors';
 import { isApplicationError } from '@common/errors/assertions';
-import { getCookieValue } from '@node/helpers';
 import loadConfig from '../../helpers/config';
-import getSessionStorageService from '../../sessionStorageService';
-import type { SessionStorage } from '../../storage/sessionStorage';
-import { SESSION_COOKIE_NAME } from '../../routes/auth/constants';
-import TokenIntrospectionResponseSchema from './schemas/TokenIntrospectionResponse.schema';
+import { SIGN_IN_PATH } from '../../routes/auth/constants';
+import SessionCookieSchema, {
+  type SessionCookie,
+} from '../../routes/auth/schemas/SessionCookie.schema';
+import readCookiePayload from '../../routes/auth/helpers/readCookiePayload';
+import writeSessionCookies from '../../routes/auth/helpers/writeSessionCookies';
+import clearSessionCookies from '../../routes/auth/helpers/clearSessionCookies';
+import resolveResponseFormat from '../../helpers/resolveResponseFormat';
+import type { EnabledAuthConfig } from './schemas/AuthConfig.schema';
+import type { ActiveTokenIntrospectionResponse } from './schemas/TokenIntrospectionResponse.schema';
+import { makeSignInRequiredErrorHandler } from './errors/SignInRequiredError';
+import readBearerToken from './helpers/readBearerToken';
+import assertAllowedOrigin from './helpers/assertAllowedOrigin';
+import introspectAccessToken from './helpers/introspectAccessToken';
+import verifyActiveToken from './helpers/verifyActiveToken';
+import authenticateCookieSession from './helpers/authenticateCookieSession';
 
-type ActiveTokenIntrospectionResponse = {
-  active: true;
-  sub: string;
-  client_id?: string;
-  email?: string;
-};
-
-type RequestWithTokenAuth = Request & {
+export type RequestWithTokenAuth = Request & {
   user?: ActiveTokenIntrospectionResponse;
 };
 
 /**
- * Builds an Express middleware that validates the caller's OIDC access token against
- * the configured provider's introspection endpoint. Opt-in via AUTH_ENABLED — a no-op
- * otherwise, preserving current behavior for deployments not yet on OIDC auth.
+ * Builds an Express middleware that authenticates every request through the configured OIDC
+ * provider. Opt-in via AUTH_ENABLED — a no-op otherwise.
  *
- * Reads config.ts once, at construction time (not per request), so a misconfigured
- * deployment fails to start instead of 500ing on every request.
+ * - Bearer header (mobile): introspected on every request; never refreshed, never sets cookies.
+ * - Encrypted session cookie (web): refreshed ahead of expiry when a refresh token exists.
+ *
+ * Unauthenticated HTML page requests (GET, resolved via resolveResponseFormat) without a Bearer
+ * header are redirected to the sign-in flow; other unauthenticated requests are rejected with 401. Identity-provider
+ * failures are never redirected, so an outage cannot cause a sign-in loop.
+ *
+ * Reads config once, at construction time, so a misconfigured deployment fails to start.
  *
  * @param options.excludedPaths - exact request paths (req.path) that skip auth entirely
  * (e.g. health checks, provider webhooks, .well-known files) — callers that structurally
  * cannot carry a user's token.
+ * @param options.mode - 'required' rejects an unauthenticated request. 'optional' authenticates
+ * when a credential is present and otherwise continues with no user, leaving the decision to
+ * downstream authorization. Origin checks block in both modes.
  */
-function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
+function authMiddleware(
+  options: { excludedPaths?: Iterable<string>; mode?: 'required' | 'optional' } = {}
+) {
   const authConfig = loadConfig();
 
   if (!authConfig.authEnabled) {
@@ -42,122 +56,150 @@ function authMiddleware(options: { excludedPaths?: Iterable<string> } = {}) {
     };
   }
 
+  const isOptional = options.mode === 'optional';
   const excludedPaths = new Set(options.excludedPaths ?? []);
-  const {
-    oidcIssuerUrl,
-    oidcClientId,
-    authHeaderName,
-    authScheme,
-    introspectPath,
-    introspectionTimeoutMs,
-  } = authConfig;
-  const sessionService = getSessionStorageService();
 
   return async function handleRequest(
     req: Request,
-    _res: Response,
+    res: Response,
     next: NextFunction
   ): Promise<void> {
-    if (excludedPaths.has(req.path)) {
-      next();
-      return;
-    }
+    if (excludedPaths.has(req.path)) return next();
 
-    try {
-      const accessToken = await extractAccessToken(req, {
-        authHeaderName,
-        authScheme,
-        sessionService,
-      });
+    const bearerToken = readBearerToken({
+      req,
+      authHeaderName: authConfig.authHeaderName,
+      authScheme: authConfig.authScheme,
+    });
 
-      if (!accessToken) {
-        throw makeUnauthorizedErrorHandler('Missing access token')(
-          new Error(`No access token in the "${authHeaderName}" header`)
-        );
-      }
+    const { didFail: isOriginRejected, error: originError } = tryCatch(() =>
+      assertAllowedOrigin({ req, allowedOrigins: authConfig.corsAllowedOrigins })
+    );
 
-      const introspectionResponse = await assertResult(
-        () =>
-          axios.post(
-            `${oidcIssuerUrl}${introspectPath}`,
-            new URLSearchParams({
-              token: accessToken,
-              client_id: oidcClientId,
-              token_type_hint: 'access_token',
-            }),
-            {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              timeout: introspectionTimeoutMs,
-            }
-          ),
-        makeUnauthorizedErrorHandler('Token introspection request to the identity provider failed')
-      );
+    if (isOriginRejected) return next(wrapUnexpectedError(originError));
 
-      const introspectionData = assertResult(
-        () => TokenIntrospectionResponseSchema.parse(introspectionResponse.data),
-        makeUnauthorizedErrorHandler('Token introspection response is missing or invalid')
-      );
+    const { didFail: hasAuthenticationFailed, error } = await tryCatch(() =>
+      authenticateRequest({ req, res, bearerToken, authConfig, isOptional })
+    );
 
-      // Beyond "active", confirm the token was actually issued to this application. This
-      // tenant has no Custom Authorization Server, so `client_id` (not `aud`) is the reliable
-      // signal — without this check, a valid token from a different app in the same org would
-      // pass.
-      const isTokenValidForThisApp =
-        introspectionData.active === true && introspectionData.client_id === oidcClientId;
+    if (!hasAuthenticationFailed) return next();
 
-      if (!isTokenValidForThisApp) {
-        const rejectionReason = introspectionData.active
-          ? 'Token issued for a different client_id'
-          : 'Token inactive or expired';
+    const hasNoValidCredential = isMissingOrRejectedCredentialError(error);
+    const hasNoValidCookieSession = hasNoValidCredential && !bearerToken;
 
-        throw makeUnauthorizedErrorHandler(rejectionReason)(new Error(rejectionReason));
-      }
+    if (hasNoValidCookieSession) clearSessionCookies({ res, authConfig });
+    if (isOptional && hasNoValidCredential) return next();
+    if (hasNoValidCookieSession && isPageRequest(req)) return redirectToSignIn({ req, res });
 
-      (req as RequestWithTokenAuth).user = introspectionData;
-      next();
-    } catch (error) {
-      if (isApplicationError(error)) {
-        next(error);
-        return;
-      }
-
-      next(makeInternalErrorHandler('Unexpected error in authMiddleware')(error));
-    }
+    next(toApplicationError(error));
   };
 }
 
 export default authMiddleware;
 
-/**
- * Mobile sends the token directly as a Bearer header. Web never sees the real token — the
- * browser only carries an opaque session-id cookie, which this resolves to the access token
- * the `/api/auth/callback/okta` route stored server-side via `SessionStorage`.
- */
-async function extractAccessToken(
-  req: Request,
-  {
-    authHeaderName,
-    authScheme,
-    sessionService,
-  }: {
-    authHeaderName: string;
-    authScheme: string;
-    sessionService: SessionStorage;
-  }
-): Promise<string | undefined> {
-  const headerValue = req.headers[authHeaderName.toLowerCase()];
-  const authorizationHeader = Array.isArray(headerValue) ? headerValue[0] : headerValue;
-  const schemePrefix = `${authScheme.toLowerCase()} `;
-
-  if (authorizationHeader?.toLowerCase().startsWith(schemePrefix)) {
-    return authorizationHeader.slice(schemePrefix.length).trim();
+async function authenticateRequest({
+  req,
+  res,
+  bearerToken,
+  authConfig,
+  isOptional,
+}: {
+  req: Request;
+  res: Response;
+  bearerToken: string | undefined;
+  authConfig: EnabledAuthConfig;
+  isOptional: boolean;
+}): Promise<void> {
+  if (bearerToken) {
+    (req as RequestWithTokenAuth).user = await authenticateBearerToken({ bearerToken, authConfig });
+    return;
   }
 
-  const sessionId = getCookieValue({ cookieHeader: req.headers.cookie, name: SESSION_COOKIE_NAME });
+  const session = readSessionCookie({ req, authConfig });
 
-  if (!sessionId) return undefined;
+  if (isNil(session) && isOptional) return;
 
-  const accessToken = await sessionService.getAccessToken({ sessionId });
+  if (isNil(session)) {
+    throw makeSignInRequiredErrorHandler(
+      `Missing access token in the "${authConfig.authHeaderName}" header or the session cookie`
+    )(null);
+  }
 
-  return accessToken ?? undefined;
+  (req as RequestWithTokenAuth).user = await authenticateAndRefreshCookieSession({
+    session,
+    res,
+    authConfig,
+  });
+}
+
+async function authenticateBearerToken({
+  bearerToken,
+  authConfig,
+}: {
+  bearerToken: string;
+  authConfig: EnabledAuthConfig;
+}): Promise<ActiveTokenIntrospectionResponse> {
+  const introspectionData = await introspectAccessToken({ accessToken: bearerToken, authConfig });
+
+  return verifyActiveToken({ introspectionData, clientId: authConfig.oidcClientId });
+}
+
+function readSessionCookie({
+  req,
+  authConfig,
+}: {
+  req: Request;
+  authConfig: EnabledAuthConfig;
+}): SessionCookie | undefined {
+  return readCookiePayload({
+    req,
+    name: authConfig.authSessionCookieName,
+    secret: authConfig.authCookieSecret,
+    schema: SessionCookieSchema,
+  });
+}
+
+async function authenticateAndRefreshCookieSession({
+  session,
+  res,
+  authConfig,
+}: {
+  session: SessionCookie;
+  res: Response;
+  authConfig: EnabledAuthConfig;
+}): Promise<ActiveTokenIntrospectionResponse> {
+  const sessionOutcome = await authenticateCookieSession({ session, authConfig });
+
+  if (sessionOutcome.status === 'refreshed') {
+    writeSessionCookies({
+      res,
+      tokenResponse: sessionOutcome.tokenResponse,
+      previousRefreshToken: session.refreshToken,
+      authConfig,
+    });
+  }
+
+  return sessionOutcome.user;
+}
+
+function isMissingOrRejectedCredentialError(error: unknown): boolean {
+  return isRecord(error) && error.isSignInRequired === true;
+}
+
+function isPageRequest(req: Request): boolean {
+  return req.method === 'GET' && resolveResponseFormat(req) === 'html';
+}
+
+function redirectToSignIn({ req, res }: { req: Request; res: Response }): void {
+  res.redirect(`${SIGN_IN_PATH}?returnTo=${encodeURIComponent(req.originalUrl)}`);
+}
+
+function toApplicationError(error: unknown) {
+  if (isApplicationError(error)) return error;
+
+  return wrapUnexpectedError(error);
+}
+
+function wrapUnexpectedError(error: unknown) {
+  return makeInternalErrorHandler('Unexpected error in authMiddleware')(error);
 }

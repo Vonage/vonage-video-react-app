@@ -9,6 +9,7 @@ import screenShare$ from './screenShare$';
 import advancedSettings$ from '@Context/AdvancedSettings';
 import { AdvancedSettingsScreenShareSurface } from '@components/AdvancedSettingsDialog/schemas';
 import { Resolution } from '@common/types';
+import { notifications$ } from '@core/stores';
 
 vi.mock('@vonage/client-sdk-video', () => ({
   initPublisher: vi.fn(),
@@ -62,19 +63,15 @@ describe('screenShare$', () => {
       await actions.toggleShareScreen();
     });
 
-    expect(initPublisher).toHaveBeenCalledWith(
-      undefined,
-      {
-        videoSource: 'screen',
-        insertDefaultUI: false,
-        videoContentHint: 'detail',
-        preferredVideoCodecs: 'automatic',
-        scalableScreenshare: false,
-        name: 'TestUser',
-        constraints: { video: { displaySurface: 'monitor' } },
-      },
-      expect.any(Function)
-    );
+    expect(initPublisher).toHaveBeenCalledWith(undefined, {
+      videoSource: 'screen',
+      insertDefaultUI: false,
+      videoContentHint: 'detail',
+      preferredVideoCodecs: 'automatic',
+      scalableScreenshare: false,
+      name: 'TestUser',
+      constraints: { video: { displaySurface: 'monitor' } },
+    });
     expect(mockPublisher.on).toHaveBeenCalledWith('streamCreated', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('streamDestroyed', expect.any(Function));
     expect(mockPublisher.on).toHaveBeenCalledWith('mediaStopped', expect.any(Function));
@@ -145,8 +142,7 @@ describe('screenShare$', () => {
       expect.objectContaining({
         frameRate: 7,
         resolution: '1280x720',
-      }),
-      expect.any(Function)
+      })
     );
     expect(mockPublisher.setVideoBitratePreset).toHaveBeenCalledWith('bw_saver');
   });
@@ -372,8 +368,47 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: undefined,
-      }),
-      expect.any(Function)
+      })
+    );
+  });
+
+  it('resets screen share state and does not throw when publish rejects', async () => {
+    mockPublish.mockRejectedValue(new Error('Publishing failed'));
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { result } = render({
+      userContext: {
+        __interceptor: (context: UserContextType | null) => {
+          context!.user.defaultSettings.name = 'TestUser';
+        },
+      },
+      sessionContext: {
+        __interceptor: (context) => {
+          if (context) {
+            context.vonageVideoClient = mockVonageVideoClient as unknown as VonageVideoClient;
+            context.publish = mockPublish;
+            context.unpublish = mockUnpublish;
+          }
+        },
+      },
+    });
+
+    await act(async () => {
+      const [, actions] = result.current;
+      await expect(actions.toggleShareScreen()).resolves.toBeUndefined();
+    });
+
+    const [state] = result.current;
+    expect(state.isSharingScreen).toBe(false);
+    expect(state.publisher).toBeNull();
+    expect(mockPublisher.destroy).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledTimes(3);
+    expect(pushSpy).toHaveBeenCalledTimes(1);
+    expect(pushSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'warning',
+        message: expect.stringContaining('Publishing failed'),
+      })
     );
   });
 
@@ -405,8 +440,7 @@ describe('screenShare$', () => {
       undefined,
       expect.objectContaining({
         constraints: { video: { displaySurface: 'browser' } },
-      }),
-      expect.any(Function)
+      })
     );
   });
 });

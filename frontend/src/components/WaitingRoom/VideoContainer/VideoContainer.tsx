@@ -65,6 +65,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
         'box-border w-dvw sm:w-146 md:w-full'
       )}
     >
+      {/* Keep the preview in layout while the Video Effects dialog overlays it. */}
       <div
         ref={containerRef}
         className={classNames(
@@ -78,10 +79,7 @@ const VideoContainer = ({ username }: VideoContainerProps): ReactElement => {
           'md:child:w-146.25',
           `child:md:h-video-container`,
           'md:child:rounded-vera-large',
-          'bg-vera-secondary',
-          {
-            hidden: isBackgroundEffectsOpen,
-          }
+          'bg-vera-secondary'
         )}
         data-video-container
       ></div>

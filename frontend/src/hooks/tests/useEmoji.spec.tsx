@@ -33,6 +33,7 @@ describe('useEmoji', () => {
       expect(mockSignal).toBeCalledWith({
         type: 'emoji',
         data: '{"emoji":"❤️","time":12000000}',
+        retryAfterReconnect: false,
       });
     });
 

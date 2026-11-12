@@ -1,28 +1,37 @@
 import type { Request, Response } from 'express';
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Mock } from 'vitest';
 
-const helmetHandlerMock = jest.fn();
+const helmetHandlerMock = vi.fn();
 
-const helmetMock = jest.fn(() => helmetHandlerMock) as jest.Mock & {
+const helmetMock = vi.fn(() => helmetHandlerMock) as Mock & {
   contentSecurityPolicy: {
-    getDefaultDirectives: jest.Mock;
+    getDefaultDirectives: Mock;
   };
 };
 
 helmetMock.contentSecurityPolicy = {
-  getDefaultDirectives: jest.fn(() => ({
+  getDefaultDirectives: vi.fn(() => ({
     'default-src': ["'self'"],
   })),
 };
 
-jest.unstable_mockModule('helmet', () => ({
+vi.doMock('helmet', () => ({
   default: helmetMock,
+}));
+
+vi.doMock('../../helpers/config', () => ({
+  default: () => ({
+    authEnabled: true,
+    oidcEndSessionEndpoint: 'https://idp.example.com/logout',
+    oidcPostLogoutRedirectUri: 'https://vera.example.com/',
+  }),
 }));
 
 describe('helmetMiddleware', () => {
   beforeEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
     process.env.NODE_ENV = 'production';
   });
 
@@ -34,6 +43,20 @@ describe('helmetMiddleware', () => {
     helmetMiddleware(req, res, next);
 
     expect(helmetHandlerMock).toHaveBeenCalledWith(req, res, next);
+  });
+
+  it('should allow sign-out form redirects to the provider and the post-logout host', async () => {
+    await import('./helmetMiddleware');
+
+    expect(helmetMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        contentSecurityPolicy: {
+          directives: expect.objectContaining({
+            'form-action': ["'self'", 'https://idp.example.com', 'https://vera.example.com'],
+          }),
+        },
+      })
+    );
   });
 
   it('should disable contentSecurityPolicy in development', async () => {
@@ -60,11 +83,11 @@ function createRequestParameters() {
   const req = {} as Request;
 
   const res = {
-    setHeader: jest.fn(),
-    removeHeader: jest.fn(),
+    setHeader: vi.fn(),
+    removeHeader: vi.fn(),
   } as unknown as Response;
 
-  const next = jest.fn();
+  const next = vi.fn();
 
   return { req, res, next };
 }

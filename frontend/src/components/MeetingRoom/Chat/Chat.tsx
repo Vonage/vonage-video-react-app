@@ -30,19 +30,12 @@ const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
     isOpen && (
       <>
         <RightPanelTitle title={t('chat.title')} handleClose={handleClose} />
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            overflowY: 'auto',
-            height: 'calc(100dvh - 240px)',
-          }}
-        >
+        <Box className="flex h-[calc(100dvh-240px)] flex-col-reverse overflow-y-auto">
           <List>
             {messages.map((msg) => {
               return (
                 <ChatMessage
-                  key={msg.timestamp}
+                  key={msg.id}
                   name={msg.participantName}
                   message={msg.message}
                   initials={getInitials(msg.participantName)}
@@ -53,15 +46,7 @@ const Chat = ({ handleClose, isOpen }: ChatProps): ReactElement | false => {
             })}
           </List>
         </Box>
-        <Box
-          sx={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: 'flex',
-          }}
-        >
+        <Box className="absolute inset-x-0 bottom-0 flex">
           <ChatInput />
         </Box>
       </>

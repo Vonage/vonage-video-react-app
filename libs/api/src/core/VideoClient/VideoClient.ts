@@ -15,6 +15,7 @@ import {
   joinSession,
   decodeSessionKey,
   createSessionAndJoin,
+  getServerSettings,
 } from '@api-lib/handlers';
 import {
   type HandlersDefaults,
@@ -93,10 +94,9 @@ class VideoClient implements IVideoClient {
       }
 
       const defaultsSrc = this._handlersDefaults?.[videoAction as keyof HandlersDefaults];
-      const defaults = (isFunction(defaultsSrc) ? defaultsSrc(payload) : defaultsSrc) as Record<
-        string,
-        unknown
-      >;
+      const defaults = (
+        isFunction(defaultsSrc) ? defaultsSrc(payload as unknown) : defaultsSrc
+      ) as Record<string, unknown>;
 
       return callback({
         ...defaults,
@@ -175,6 +175,11 @@ class VideoClient implements IVideoClient {
    * Joins an existing session
    */
   public joinSession = this.createVideoHandler(VideoAction.joinSession, joinSession);
+
+  public getServerSettings = this.createVideoHandler(
+    VideoAction.getServerSettings,
+    getServerSettings
+  );
 }
 
 export default VideoClient;
