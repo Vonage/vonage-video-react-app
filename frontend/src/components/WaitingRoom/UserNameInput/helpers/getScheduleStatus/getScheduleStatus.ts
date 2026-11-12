@@ -18,7 +18,7 @@ function getScheduleStatus({
   const { startsAtMs, endsAtMs } = scheduleWindow;
   const millisecondsUntilStart = startsAtMs - now;
 
-  if (now >= endsAtMs) return { kind: 'ended', endsAtMs };
+  if (now >= endsAtMs) return { kind: 'ended', startsAtMs, endsAtMs };
   if (millisecondsUntilStart <= 0) return { kind: 'started', startsAtMs, endsAtMs };
 
   if (millisecondsUntilStart <= 5 * minuteInMilliseconds) {

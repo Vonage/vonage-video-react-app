@@ -6,6 +6,7 @@ import Footer from '@components/Footer/Footer';
 import ControlPanel from '@components/WaitingRoom/ControlPanel';
 import VideoContainer from '@components/WaitingRoom/VideoContainer';
 import UsernameInput from '@components/WaitingRoom/UserNameInput';
+import GoToLandingPageButton from '@components/GoodBye/GoToLandingPageButton';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
@@ -13,6 +14,8 @@ import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/VideoContainer.skeleton';
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import isSignedIn from '@utils/isSignedIn';
+import useScheduleStatus from '@components/WaitingRoom/UserNameInput/hooks/useScheduleStatus';
 
 /**
  * WaitingRoom Component
@@ -40,11 +43,17 @@ const WaitingRoom: FC = () => {
     accessStatus,
     isRoomReady,
     roomName,
+    sessionKey,
+    scheduleWindow,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
+
+  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
+
+  const shouldShowLandingPageLink = scheduleStatus.kind === 'ended' && isSignedIn();
 
   return (
     <backgroundEffectsDialog$.Provider>
@@ -87,7 +96,11 @@ const WaitingRoom: FC = () => {
                   username={username}
                   setUsername={setUsername}
                   roomName={roomName}
-                />
+                  sessionKey={sessionKey}
+                  scheduleWindow={scheduleWindow}
+                >
+                  {shouldShowLandingPageLink && <GoToLandingPageButton />}
+                </UsernameInput>
               )}
 
               {!isRoomReady && <UsernameInputSkeleton />}
