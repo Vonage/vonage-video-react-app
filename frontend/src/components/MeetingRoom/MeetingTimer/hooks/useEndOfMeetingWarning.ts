@@ -27,7 +27,7 @@ const useEndOfMeetingWarning = () => {
 
       let notificationId: NotificationId | undefined;
       const unsubscribe = serverSettings.subscribe(
-        serverSettings$.selectors.secondsUntilEnd,
+        serverSettings.actions.getSecondsUntilEnd,
         warnIfEndingSoon,
         { skipFirst: true }
       );
@@ -43,7 +43,7 @@ const useEndOfMeetingWarning = () => {
         notificationId = showWarning();
       }
 
-      warnIfEndingSoon(serverSettings$.selectors.secondsUntilEnd(serverSettings.getState()));
+      warnIfEndingSoon(serverSettings.actions.getSecondsUntilEnd());
 
       return function dismissEndOfMeetingWarning() {
         unsubscribe();

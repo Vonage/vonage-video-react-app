@@ -4,6 +4,7 @@ import { serverSettings$ } from '@core/stores';
 
 const useShouldShowReenterRoom = (): boolean => {
   const { sessionKey } = useSessionKeyParam();
+  const { getSecondsUntilEnd } = serverSettings$.use.actions();
   const hasSessionKey = Boolean(sessionKey);
 
   return serverSettings$.use.select(
@@ -11,7 +12,7 @@ const useShouldShowReenterRoom = (): boolean => {
       if (!hasSessionKey) return false;
       if (isNil(state.scheduleWindow)) return true;
 
-      const secondsUntilEnd = serverSettings$.selectors.secondsUntilEnd(state);
+      const secondsUntilEnd = getSecondsUntilEnd();
       if (isNil(secondsUntilEnd)) return false;
 
       const hasMeetingEnded = secondsUntilEnd === 0;

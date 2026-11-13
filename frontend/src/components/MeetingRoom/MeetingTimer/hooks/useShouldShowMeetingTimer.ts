@@ -4,8 +4,10 @@ import { serverSettings$ } from '@core/stores';
 const endingSoonSeconds = 5 * 60;
 
 const useShouldShowMeetingTimer = (): boolean => {
-  return serverSettings$.use.select(function shouldShowMeetingTimer(state) {
-    const secondsUntilEnd = serverSettings$.selectors.secondsUntilEnd(state);
+  const { getSecondsUntilEnd } = serverSettings$.use.actions();
+
+  return serverSettings$.use.select(function shouldShowMeetingTimer() {
+    const secondsUntilEnd = getSecondsUntilEnd();
     if (isNil(secondsUntilEnd)) return false;
 
     return secondsUntilEnd <= endingSoonSeconds;

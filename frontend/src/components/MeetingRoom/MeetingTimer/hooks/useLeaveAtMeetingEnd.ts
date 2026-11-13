@@ -24,7 +24,7 @@ const useLeaveAtMeetingEnd = () => {
       if (isNil(endsAtMs)) return;
 
       const unsubscribe = serverSettings.subscribe(
-        serverSettings$.selectors.secondsUntilEnd,
+        serverSettings.actions.getSecondsUntilEnd,
         leaveIfEnded,
         { skipFirst: true }
       );
@@ -37,7 +37,7 @@ const useLeaveAtMeetingEnd = () => {
         leaveAtEnd();
       }
 
-      leaveIfEnded(serverSettings$.selectors.secondsUntilEnd(serverSettings.getState()));
+      leaveIfEnded(serverSettings.actions.getSecondsUntilEnd());
 
       return unsubscribe;
     },

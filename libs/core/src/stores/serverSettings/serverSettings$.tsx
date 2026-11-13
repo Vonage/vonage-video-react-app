@@ -5,7 +5,7 @@ import useServerSettings from './hooks/useServerSettings';
 import useServerSettingsInitializer from './hooks/useServerSettingsInitializer';
 import type { ServerSettingsState } from './types';
 import getScheduleStatus from './selectors/getScheduleStatus';
-import getSecondsUntilEnd from './selectors/getSecondsUntilEnd';
+import getSecondsUntilEnd from './actions/getSecondsUntilEnd';
 
 export type ServerSettingsAPI = InferAPI<typeof serverSettings$>;
 
@@ -23,6 +23,7 @@ const serverSettings$ = createContext(
   }),
   {
     name: 'serverSettings',
+    actions: { getSecondsUntilEnd },
     callbacks: {
       onMounted: function startServerClock(storeTools) {
         const { tick } = internalActions(storeTools);
@@ -101,8 +102,10 @@ const extensions = {
   useScheduleStatus: serverSettings$.use.createSelectorHook(getScheduleStatus, {
     isEqual: shallowCompare,
   }),
-  useSecondsUntilEnd: serverSettings$.use.createSelectorHook(getSecondsUntilEnd),
-  selectors: { secondsUntilEnd: getSecondsUntilEnd },
+  useSecondsUntilEnd() {
+    const { getSecondsUntilEnd } = serverSettings$.use.actions();
+    return serverSettings$.use.select(getSecondsUntilEnd);
+  },
 };
 
 export default { ...serverSettings$, ...extensions };

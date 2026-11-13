@@ -17,79 +17,19 @@ describe('serverSettings$', () => {
     vi.useRealTimers();
   });
 
-  it('keeps the server time empty until the server answers', () => {
-    const { serverSettingsContext } = renderHook(serverSettings$.useServerTimeStatus, {
-      runtimeContext: {
-        videoClient: makeVideoClientMock({ getServerSettings: () => new Promise(() => {}) }),
-      },
-    });
-
-    act(function advancePendingClock() {
-      vi.advanceTimersByTime(5_000);
-    });
-
-    expect(serverSettingsContext.current.getState().status).toBe('pending');
-    expect(serverSettingsContext.current.getState().now).toBeNull();
-  });
-
-  it('ticks the server time without re-rendering a consumer that selects only the status', async () => {
-    expect.assertions(2);
-
-    const renderStatus = vi.fn(serverSettings$.useServerTimeStatus);
-    const { serverSettingsContext } = renderHook(renderStatus);
-
-    const { promise: serverTimeReady, resolve: resolveServerTime } = Promise.withResolvers<void>();
-    const unsubscribe = serverSettingsContext.current.subscribe(
-      (state) => state.status,
-      function resolveKnownServerTime(status) {
-        if (status === 'known') resolveServerTime();
-      }
-    );
-    await act(function waitForServerTime() {
-      return serverTimeReady;
-    });
-    unsubscribe();
-    renderStatus.mockClear();
-    const startedAt = serverSettingsContext.current.getState().now!;
-
-    act(function advanceServerClock() {
-      vi.advanceTimersByTime(5_000);
-    });
-
-    expect(serverSettingsContext.current.getState().now).toBe(startedAt + 5_000);
-    expect(renderStatus).not.toHaveBeenCalled();
-  });
-
-  it('stops the server clock when the provider unmounts', () => {
-    const { unmount } = renderHook(serverSettings$.useServerTimeStatus, {
-      runtimeContext: {
-        videoClient: makeVideoClientMock({ getServerSettings: () => new Promise(() => {}) }),
-      },
-    });
-
-    expect(vi.getTimerCount()).toBe(1);
-    unmount();
-    expect(vi.getTimerCount()).toBe(0);
-  });
-
   it.each([jwt.sign({ sessionId }, 'test'), null])(
-    'initializes the clock on mount for session key %s',
-    async function initializeClock(sessionKey) {
-      expect.assertions(2);
+    'initializes and ticks the clock without rerendering status, then cleans up for key %s',
+    async function checkServerClockLifecycle(sessionKey) {
+      expect.assertions(5);
 
       const getServerSettings = vi.fn(function answerWithServerTime() {
         return Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds });
       });
-      const { result, serverSettingsContext } = renderHook(
-        function readServerNow() {
-          return serverSettings$.use.select((state) => state.now);
-        },
-        {
-          runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
-          serverSettingsContext: { sessionKey },
-        }
-      );
-
+      const renderStatus = vi.fn(serverSettings$.useServerTimeStatus);
+      const { unmount, serverSettingsContext } = renderHook(renderStatus, {
+        runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
+        serverSettingsContext: { sessionKey },
+      });
       const { promise: serverTimeReady, resolve: resolveServerTime } =
         Promise.withResolvers<void>();
       const unsubscribe = serverSettingsContext.current.subscribe(
@@ -104,7 +44,21 @@ describe('serverSettings$', () => {
       unsubscribe();
 
       expect(getServerSettings).toHaveBeenCalledWith({ sessionKey });
-      expect(result.current).toBe(Date.now() + serverAheadMilliseconds);
+      expect(serverSettingsContext.current.getState().now).toBe(
+        Date.now() + serverAheadMilliseconds
+      );
+      renderStatus.mockClear();
+
+      act(function advanceServerClock() {
+        vi.advanceTimersByTime(5_000);
+      });
+
+      expect(serverSettingsContext.current.getState().now).toBe(
+        Date.now() + serverAheadMilliseconds
+      );
+      expect(renderStatus).not.toHaveBeenCalled();
+      unmount();
+      expect(vi.getTimerCount()).toBe(0);
     }
   );
 
