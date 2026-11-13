@@ -4,7 +4,6 @@ import VividIcon from '@ui/components/VividIcon';
 import { isNotNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
-import useEndOfMeetingWarning from './hooks/useEndOfMeetingWarning';
 import useMeetingSecondsLeft from './hooks/useMeetingSecondsLeft';
 import meetingTimerVariants from './meetingTimerVariants';
 
@@ -16,8 +15,6 @@ export type MeetingTimerProps = {
 const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps): ReactElement => {
   const { t } = useTranslation();
   const secondsLeft = useMeetingSecondsLeft({ scheduleWindow });
-
-  useEndOfMeetingWarning();
 
   return (
     <div

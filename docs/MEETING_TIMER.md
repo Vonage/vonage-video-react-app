@@ -13,7 +13,7 @@ Before the last five minutes there is no timer. Meetings without a schedule have
 
 ## The end-of-meeting warning
 
-When the timer appears, a message tells everyone that the meeting is about to finish. The message shows once. Nobody
+When the timer appears, a message tells everyone that the meeting is about to finish. The room owns the warning, so remounting the timer or changing the language does not repeat it. Nobody
 can join the meeting after its scheduled end.
 
 ## The end of the meeting
@@ -21,3 +21,10 @@ can join the meeting after its scheduled end.
 At the scheduled end, by the server's clock, every browser in the meeting leaves it the same way the leave button does
 and opens the goodbye page with **This meeting has ended**. The meeting tokens expire at the same time. Meetings without
 a schedule are not affected.
+
+The goodbye page reads the schedule from its URL session key and hides re-entry once the meeting has ended, including
+when the page is reopened later. Session content remains available there.
+
+Departure depends on each browser executing the client code. Token expiry prevents later connections; it does not
+terminate an established connection. Server-enforced termination through the VCR scheduler is tracked separately in
+[VIDSOL-1723](https://jira.vonage.com/browse/VIDSOL-1723).

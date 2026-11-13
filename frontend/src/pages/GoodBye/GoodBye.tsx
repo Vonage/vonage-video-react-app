@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageLayout, Card } from '@ui';
+import { serverSettings$ } from '@core/stores';
 import { Banner, Footer } from '@components';
 import ArchiveList from '@components/GoodBye/ArchiveList';
 import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
@@ -24,38 +25,40 @@ const GoodBye = (): ReactElement => {
   const { header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
-    <PageLayout>
-      <PageLayout.Banner>
-        <Banner />
-      </PageLayout.Banner>
-      <PageLayout.Left>
-        <GoodByeMessage header={header} message={caption} />
-      </PageLayout.Left>
-      <PageLayout.Right>
-        <div className="flex w-full flex-col items-center gap-8">
-          <Card className="w-full max-w-125">
-            <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
-              {t('goodBye.title')}
-            </p>
-            <div className="mb-6 w-full">
-              <ReenterRoomButton />
-            </div>
-            {isSignedIn() && <GoToLandingPageButton />}
-          </Card>
-          {!isSelfDeclinedRecording && (
+    <serverSettings$.Provider>
+      <PageLayout>
+        <PageLayout.Banner>
+          <Banner />
+        </PageLayout.Banner>
+        <PageLayout.Left>
+          <GoodByeMessage header={header} message={caption} />
+        </PageLayout.Left>
+        <PageLayout.Right>
+          <div className="flex w-full flex-col items-center gap-8">
             <Card className="w-full max-w-125">
-              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
-                {t('archiveList.label')}
+              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
+                {t('goodBye.title')}
               </p>
-              <ArchiveList />
+              <div className="mb-6 w-full">
+                <ReenterRoomButton />
+              </div>
+              {isSignedIn() && <GoToLandingPageButton />}
             </Card>
-          )}
-        </div>
-      </PageLayout.Right>
-      <PageLayout.Footer>
-        <Footer />
-      </PageLayout.Footer>
-    </PageLayout>
+            {!isSelfDeclinedRecording && (
+              <Card className="w-full max-w-125">
+                <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
+                  {t('archiveList.label')}
+                </p>
+                <ArchiveList />
+              </Card>
+            )}
+          </div>
+        </PageLayout.Right>
+        <PageLayout.Footer>
+          <Footer />
+        </PageLayout.Footer>
+      </PageLayout>
+    </serverSettings$.Provider>
   );
 };
 

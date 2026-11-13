@@ -15,7 +15,7 @@ function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; 
     return t('waitingRoom.schedule.countdown.hoursAndMinutes', { hours, minutes });
   }
   if (waitingStatus.kind === 'withinHour') {
-    return t('waitingRoom.schedule.countdown.minutes', { minutes: waitingStatus.minutesLeft });
+    return t('duration.format.minutes', { minutes: waitingStatus.minutesLeft });
   }
   return formatMinutesAndSeconds({ totalSeconds: waitingStatus.secondsLeft, t });
 }

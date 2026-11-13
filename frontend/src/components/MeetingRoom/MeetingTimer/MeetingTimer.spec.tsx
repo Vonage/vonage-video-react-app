@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import { act, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
-import { notifications$, serverSettings$ } from '@core/stores';
+import { serverSettings$ } from '@core/stores';
 import composeProviders from '@web/helpers/composeProviders';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import MeetingTimer from './MeetingTimer';
@@ -34,39 +34,6 @@ describe('MeetingTimer', () => {
     await act(() => vi.advanceTimersByTimeAsync(4 * 60_000 + 7_000));
 
     expect(screen.getByRole('timer')).toHaveTextContent('45 sec left');
-  });
-
-  it('shows the about-to-finish message once', async () => {
-    expect.assertions(2);
-
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-    });
-
-    await act(() => vi.advanceTimersByTimeAsync(3 * 60_000));
-
-    expect(pushSpy).toHaveBeenCalledTimes(1);
-    expect(pushSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'warning', message: 'The meeting is about to finish' })
-    );
-  });
-
-  it('dismisses the about-to-finish message when the meeting room closes', () => {
-    vi.setSystemTime(endsAt - 60_000);
-    const { unmount } = render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-    });
-    const hasEndingSoonNotification = () =>
-      [...notifications$.getState().notifications.values()].some(
-        ({ message }) => message === 'The meeting is about to finish'
-      );
-
-    expect(hasEndingSoonNotification()).toBe(true);
-    unmount();
-    expect(hasEndingSoonNotification()).toBe(false);
   });
 });
 

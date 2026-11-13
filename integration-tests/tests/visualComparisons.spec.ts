@@ -210,6 +210,8 @@ test.describe('Meeting room timer UI test', () => {
 
     await expect(page).toHaveURL(/goodbye/);
     await expect(page.getByText('This meeting has ended')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Go back to meeting' })).toBeHidden();
+    await expect(page.getByText('Download session content')).toBeVisible();
     await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
   });
 
