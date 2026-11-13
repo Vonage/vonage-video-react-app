@@ -3,6 +3,7 @@ import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import useGoodByePage from '@hooks/useGoodByePage';
 import { Card, PageLayoutEmbed } from '@ui';
+import { serverSettings$ } from '@core/stores';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,7 +32,9 @@ const GoodByeStage: FC = () => {
             <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
-            <ReenterRoomButton />
+            <serverSettings$.Provider>
+              <ReenterRoomButton />
+            </serverSettings$.Provider>
           </Card>
 
           <Card className="min-w-full lg:min-w-125">

@@ -25,40 +25,40 @@ const GoodBye = (): ReactElement => {
   const { header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
-    <serverSettings$.Provider>
-      <PageLayout>
-        <PageLayout.Banner>
-          <Banner />
-        </PageLayout.Banner>
-        <PageLayout.Left>
-          <GoodByeMessage header={header} message={caption} />
-        </PageLayout.Left>
-        <PageLayout.Right>
-          <div className="flex w-full flex-col items-center gap-8">
-            <Card className="w-full max-w-125">
-              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
-                {t('goodBye.title')}
-              </p>
-              <div className="mb-6 w-full">
+    <PageLayout>
+      <PageLayout.Banner>
+        <Banner />
+      </PageLayout.Banner>
+      <PageLayout.Left>
+        <GoodByeMessage header={header} message={caption} />
+      </PageLayout.Left>
+      <PageLayout.Right>
+        <div className="flex w-full flex-col items-center gap-8">
+          <Card className="w-full max-w-125">
+            <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
+              {t('goodBye.title')}
+            </p>
+            <div className="mb-6 w-full">
+              <serverSettings$.Provider>
                 <ReenterRoomButton />
-              </div>
-              {isSignedIn() && <GoToLandingPageButton />}
+              </serverSettings$.Provider>
+            </div>
+            {isSignedIn() && <GoToLandingPageButton />}
+          </Card>
+          {!isSelfDeclinedRecording && (
+            <Card className="w-full max-w-125">
+              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
+                {t('archiveList.label')}
+              </p>
+              <ArchiveList />
             </Card>
-            {!isSelfDeclinedRecording && (
-              <Card className="w-full max-w-125">
-                <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
-                  {t('archiveList.label')}
-                </p>
-                <ArchiveList />
-              </Card>
-            )}
-          </div>
-        </PageLayout.Right>
-        <PageLayout.Footer>
-          <Footer />
-        </PageLayout.Footer>
-      </PageLayout>
-    </serverSettings$.Provider>
+          )}
+        </div>
+      </PageLayout.Right>
+      <PageLayout.Footer>
+        <Footer />
+      </PageLayout.Footer>
+    </PageLayout>
   );
 };
 
