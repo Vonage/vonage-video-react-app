@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
-import { render as renderBase, screen } from '@testing-library/react';
+import { act, render as renderBase, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { ReactElement } from 'react';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
@@ -9,6 +9,8 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { SessionKeyClaim } from '@common/constants';
+import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
 import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
@@ -195,16 +197,81 @@ describe('Toolbar', () => {
       expect.objectContaining({ numberOfToolbarButtons: 6 })
     );
   });
+
+  it('shows the meeting timer only in the last five minutes of a scheduled sessionKey', async () => {
+    vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+    const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+    const startsAt = new Date(2026, 10, 4, 10, 0).getTime();
+    vi.setSystemTime(startsAt + 55 * 60_000 - 2_000);
+
+    const unscheduled = renderWithSessionKey(makeSessionKey({ sessionId }));
+
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+
+    unscheduled.unmount();
+    renderWithSessionKey(
+      makeSessionKey({
+        sessionId,
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 },
+      })
+    );
+    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.getByRole('timer')).toHaveTextContent('5 min left');
+
+    vi.useRealTimers();
+  });
+
+  function renderWithSessionKey(sessionKey: string) {
+    const { wrapper } = makeTestProvider(
+      [
+        providers.runtime,
+        providers.user,
+        providers.session,
+        providers.miniMode,
+        providers.serverSettings,
+      ],
+      {
+        serverSettingsContext: { sessionKey: null },
+        runtimeContext: {
+          videoClient: makeVideoClientMock({
+            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+          }),
+        },
+        userContext: undefined,
+        sessionContext: { initialValue: { sessionKey } },
+        miniModeContext: undefined,
+      }
+    );
+
+    return renderBase(<Toolbar {...defaultProps} />, {
+      wrapper,
+    });
+  }
 });
+
+function makeSessionKey(payload: Record<string, unknown>): string {
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
+  return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
+}
 
 function render(
   ui: ReactElement,
   { miniModeContext }: { miniModeContext?: ProviderOptions['MiniModeContext'] } = {}
 ) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.miniMode], {
-    runtimeContext: undefined,
-    miniModeContext,
-  });
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.runtime, providers.miniMode, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      runtimeContext: undefined,
+      miniModeContext,
+    }
+  );
 
   return {
     ...context,

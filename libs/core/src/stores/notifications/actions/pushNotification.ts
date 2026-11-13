@@ -22,6 +22,8 @@ function pushNotification(
       notifications.set(entry.id, entry);
       return { ...state, notifications };
     });
+
+    return entry.id;
   };
 }
 

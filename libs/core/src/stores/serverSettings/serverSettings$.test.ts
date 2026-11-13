@@ -19,7 +19,15 @@ describe('serverSettings$', () => {
   it('keeps the server time empty until the server answers', () => {
     expect.assertions(2);
 
-    const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings]);
+    const { wrapper, serverSettingsContext } = makeTestProvider(
+      [providers.runtime, providers.serverSettings],
+      {
+        runtimeContext: {
+          videoClient: makeVideoClientMock({ getServerSettings: () => new Promise(() => {}) }),
+        },
+        serverSettingsContext: { sessionKey: null },
+      }
+    );
 
     renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
 
@@ -31,15 +39,36 @@ describe('serverSettings$', () => {
     expect(serverSettingsContext.current.getState().now).toBeNull();
   });
 
-  it('ticks the server time without re-rendering a consumer that selects only the status', () => {
+  it('ticks the server time without re-rendering a consumer that selects only the status', async () => {
     expect.assertions(2);
 
-    const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings], {
-      serverSettingsContext: { value: { status: 'known', now: Date.now(), clockOffset: 0 } },
-    });
+    const { wrapper, serverSettingsContext } = makeTestProvider(
+      [providers.runtime, providers.serverSettings],
+      {
+        runtimeContext: {
+          videoClient: makeVideoClientMock({
+            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+          }),
+        },
+        serverSettingsContext: { sessionKey: null },
+      }
+    );
     const renderStatus = vi.fn(() => serverSettings$.useServerTimeStatus());
 
-    renderHook(renderStatus, { wrapper });
+    const { result } = renderHook(
+      () => {
+        renderStatus();
+        return serverSettings$.use.observable((state) => state.now);
+      },
+      { wrapper }
+    );
+    await act(
+      () =>
+        new Promise<void>((resolve) => {
+          result.current.subscribe(() => resolve(), { skipFirst: true });
+        })
+    );
+    renderStatus.mockClear();
     const startedAt = serverSettingsContext.current.getState().now;
 
     act(() => {
@@ -47,12 +76,17 @@ describe('serverSettings$', () => {
     });
 
     expect(serverSettingsContext.current.getState().now).toBe(startedAt + 5_000);
-    expect(renderStatus).toHaveBeenCalledTimes(1);
+    expect(renderStatus).not.toHaveBeenCalled();
   });
 
   it('stops the server clock when the provider unmounts', () => {
     expect.assertions(2);
-    const { wrapper } = makeTestProvider([providers.serverSettings]);
+    const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
+      runtimeContext: {
+        videoClient: makeVideoClientMock({ getServerSettings: () => new Promise(() => {}) }),
+      },
+      serverSettingsContext: { sessionKey: null },
+    });
 
     const { unmount } = renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
 
@@ -63,32 +97,34 @@ describe('serverSettings$', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
-  it('sends the sessionKey and moves the observed server time to the answer without waiting for a tick', async () => {
-    expect.assertions(2);
+  it.each([sessionKey, null])(
+    'initializes the clock on mount for session key %s',
+    async (sessionKey) => {
+      expect.assertions(2);
 
-    const getServerSettings = vi.fn(() =>
-      Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds })
-    );
-    const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
-      runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
-    });
+      const getServerSettings = vi.fn(() =>
+        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds })
+      );
+      const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
+        runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
+        serverSettingsContext: { sessionKey },
+      });
 
-    const { result } = renderHook(
-      () => {
-        serverSettings$.useServerSettings({ sessionKey });
+      const { result } = renderHook(
+        () => {
+          return serverSettings$.use.observable((state) => state.now);
+        },
+        { wrapper }
+      );
 
-        return serverSettings$.use.observable((state) => state.now);
-      },
-      { wrapper }
-    );
+      const nextServerNow = new Promise<number | null>((resolve) => {
+        result.current.subscribe(resolve, { skipFirst: true });
+      });
 
-    const nextServerNow = new Promise<number | null>((resolve) => {
-      result.current.subscribe(resolve, { skipFirst: true });
-    });
+      const serverNow = await act(() => nextServerNow);
 
-    const serverNow = await act(() => nextServerNow);
-
-    expect(getServerSettings).toHaveBeenCalledWith({ sessionKey });
-    expect(serverNow).toBe(Date.now() + serverAheadMilliseconds);
-  });
+      expect(getServerSettings).toHaveBeenCalledWith({ sessionKey });
+      expect(serverNow).toBe(Date.now() + serverAheadMilliseconds);
+    }
+  );
 });
