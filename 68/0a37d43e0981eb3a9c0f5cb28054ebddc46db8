@@ -1,0 +1,26 @@
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  s_20776229283099::t_9b085b6e9cd0ef 32-39
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_20776229283099::t_9b085b6e9cd0ef 29-30,42-54
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_20776229283099::t_9b085b6e9cd0ef 15
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_20776229283099::t_9b085b6e9cd0ef 25
+  s_20776229283099::t_67db49cf323194 68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "680a37d43e0981eb3a9c0f5cb28054ebddc46db8",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
