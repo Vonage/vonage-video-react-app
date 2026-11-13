@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
-import { decodeSessionKey, readScheduleClaim } from '@common/helpers';
+import { decodeSessionKey } from '@common/helpers';
 import { isNil } from '@common/assertions';
 import { serverSettings$ } from '@core/stores';
 
@@ -9,7 +9,7 @@ const useShouldShowReenterRoom = (): boolean => {
   const scheduleWindow = useMemo(() => {
     if (sessionKeyStatus !== 'valid') return null;
 
-    return readScheduleClaim(decodeSessionKey({ sessionKey }));
+    return decodeSessionKey({ sessionKey }).schedule ?? null;
   }, [sessionKey, sessionKeyStatus]);
   const endsAtMs = scheduleWindow?.endsAtMs;
   return serverSettings$.use.select(
