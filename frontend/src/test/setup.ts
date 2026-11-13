@@ -46,6 +46,20 @@ const VERA_CSS_VARS: Record<string, string> = {
 };
 
 beforeAll(() => {
+  Object.defineProperties(HTMLDialogElement.prototype, {
+    showModal: {
+      configurable: true,
+      value(this: HTMLDialogElement) {
+        this.setAttribute('open', '');
+      },
+    },
+    close: {
+      configurable: true,
+      value(this: HTMLDialogElement) {
+        this.removeAttribute('open');
+      },
+    },
+  });
   // Apply Vera design token CSS variables to the jsdom root so computed styles
   // can resolve var(--vera-*) references used by components after theme migration.
   for (const [name, value] of Object.entries(VERA_CSS_VARS)) {

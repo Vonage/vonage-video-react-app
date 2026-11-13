@@ -1,12 +1,5 @@
 import type { ReactElement } from 'react';
-import {
-  act,
-  fireEvent,
-  render as renderBase,
-  screen,
-  waitForElementToBeRemoved,
-  within,
-} from '@testing-library/react';
+import { act, fireEvent, render as renderBase, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { notifications$ } from '@core/stores';
@@ -70,7 +63,6 @@ describe('MeetingTimer', () => {
       expect(pushSpy).not.toHaveBeenCalled();
 
       fireEvent.click(within(dialog).getByRole('button', { name: 'Got it' }));
-      await waitForElementToBeRemoved(dialog);
 
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });

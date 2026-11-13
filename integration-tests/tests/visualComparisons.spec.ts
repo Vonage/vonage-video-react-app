@@ -186,9 +186,18 @@ test.describe('Meeting room timer UI test', () => {
         minutesLeft: 6,
       });
 
+      const returnFocusButton = page.getByRole('button', { name: 'exit' });
+      await returnFocusButton.focus();
       await page.clock.setFixedTime(endsAt - 4 * minuteInMilliseconds);
       const meetingEndingDialog = page.getByRole('dialog', { name: 'Meeting ending' });
       await expect(meetingEndingDialog).toBeVisible();
+      await expect(meetingEndingDialog.getByRole('button', { name: 'Got it' })).toBeFocused();
+      await returnFocusButton.focus();
+      await expect(meetingEndingDialog.getByRole('button', { name: 'Got it' })).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(meetingEndingDialog.getByRole('button', { name: 'Extend' })).toBeFocused();
+      await page.keyboard.press('Shift+Tab');
+      await expect(meetingEndingDialog.getByRole('button', { name: 'Got it' })).toBeFocused();
       await expect(page.getByText('The meeting is about to finish')).toBeHidden();
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
 
@@ -199,6 +208,13 @@ test.describe('Meeting room timer UI test', () => {
       await expect(durationDialog.getByRole('button', { name: 'Confirm' })).toBeEnabled();
       await page.mouse.move(0, 0);
       await expect(page).toHaveScreenshot(getMeetingRoomScreenshotOptions(page));
+      if (colorScheme === 'light') {
+        await page.keyboard.press('Escape');
+      } else {
+        await page.mouse.click(1, 1);
+      }
+      await expect(durationDialog).toBeHidden();
+      await expect(returnFocusButton).toBeFocused();
     });
 
     test(`meeting tab ${colorScheme}`, async ({ page, request, isMobile, browserName }) => {
