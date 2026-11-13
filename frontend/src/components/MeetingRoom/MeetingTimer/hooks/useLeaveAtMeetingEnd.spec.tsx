@@ -154,10 +154,7 @@ function render({
   );
 
   renderHook(() => useLeaveAtMeetingEnd(), {
-    wrapper: composeProviders(
-      wrapper,
-      serverSettings$.Provider.makeProviderWrapper({ sessionKey }).wrapper
-    ),
+    wrapper: composeProviders(wrapper, serverSettings$.Provider),
   });
 
   return { sessionContext, backgroundPublisherContext, queryClient };

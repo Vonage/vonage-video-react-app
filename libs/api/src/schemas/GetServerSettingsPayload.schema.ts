@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { SessionKeySchema } from '@node/schemas';
 
 export const GetServerSettingsPayloadSchema = z.object({
-  sessionKey: SessionKeySchema.nullish(),
+  sessionKey: SessionKeySchema.optional(),
 });
 
 export type GetServerSettingsPayload = z.infer<typeof GetServerSettingsPayloadSchema>;

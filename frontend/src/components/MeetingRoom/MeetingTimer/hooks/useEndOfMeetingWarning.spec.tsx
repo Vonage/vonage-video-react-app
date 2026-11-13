@@ -41,14 +41,10 @@ describe('useEndOfMeetingWarning', () => {
     const dismiss = vi.spyOn(notifications$.actions, 'dismiss');
     const { unmount, rerender } = renderHook(
       () => {
+        serverSettings$.useServerSettings({ sessionKey });
         useEndOfMeetingWarning();
       },
-      {
-        wrapper: composeProviders(
-          wrapper,
-          serverSettings$.Provider.makeProviderWrapper({ sessionKey }).wrapper
-        ),
-      }
+      { wrapper: composeProviders(wrapper, serverSettings$.Provider) }
     );
 
     await act(() => vi.advanceTimersByTimeAsync(1_000));

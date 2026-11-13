@@ -4,9 +4,7 @@ export type ServerSettingsProviderWrapperOptions = Parameters<
   typeof serverSettings$.Provider.makeProviderWrapper
 >[0];
 
-function makeServerSettingsProviderWrapper(
-  options: ServerSettingsProviderWrapperOptions = { sessionKey: null }
-) {
+function makeServerSettingsProviderWrapper(options: ServerSettingsProviderWrapperOptions = {}) {
   return serverSettings$.Provider.makeProviderWrapper(options);
 }
 

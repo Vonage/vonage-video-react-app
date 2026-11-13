@@ -10,7 +10,6 @@ import { PublisherProvider } from './Context/PublisherProvider';
 import { RedirectToWaitingRoom, ErrorBoundary, EnvGuard } from './components';
 import UnsupportedBrowserPage from './pages/UnsupportedBrowserPage';
 import RoomProvider from './Context/RoomProvider';
-import ServerSettingsProvider from './Context/ServerSettingsProvider';
 import AppContextProvider from './AppContextProvider';
 import RedirectToUnsupportedBrowserPage from '@components/RedirectToUnsupportedBrowserPage';
 import SuspenseBoundary from '@web/components/SuspenseBoundary/SuspenseBoundary';
@@ -68,14 +67,7 @@ const InnerApp = () => {
             />
           </Route>
 
-          <Route
-            path="/goodbye/:roomIdentifier?"
-            element={
-              <ServerSettingsProvider>
-                <GoodBye />
-              </ServerSettingsProvider>
-            }
-          />
+          <Route path="/goodbye/:roomIdentifier?" element={<GoodBye />} />
           <Route path="*" element={<LandingPage />} />
           <Route path="/unsupported-browser" element={<UnsupportedBrowserPage />} />
         </Routes>

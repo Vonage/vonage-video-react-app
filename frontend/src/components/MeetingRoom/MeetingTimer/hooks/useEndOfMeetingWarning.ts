@@ -2,7 +2,6 @@ import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isNil } from '@common/assertions';
 import { notifications$, serverSettings$ } from '@core/stores';
-import type { NotificationId } from '@core/stores/notifications/types';
 import useMeetingScheduleWindow from './useMeetingScheduleWindow';
 
 const endOfMeetingWarningMilliseconds = 10_000;
@@ -24,7 +23,7 @@ const useEndOfMeetingWarning = () => {
   useEffect(() => {
     if (isNil(endsAtMs)) return;
 
-    let notificationId: NotificationId | undefined;
+    let notificationId: ReturnType<typeof showWarning> | undefined;
     const isEndingSoon$ = serverSettingsApi.createObservable(
       (state) =>
         state.status === 'known' &&

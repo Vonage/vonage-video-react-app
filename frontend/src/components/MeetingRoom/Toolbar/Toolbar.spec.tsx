@@ -245,10 +245,7 @@ describe('Toolbar', () => {
     );
 
     return renderBase(<Toolbar {...defaultProps} />, {
-      wrapper: composeProviders(
-        wrapper,
-        serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-      ),
+      wrapper: composeProviders(wrapper, serverSettings$.Provider),
     });
   }
 });
@@ -269,11 +266,6 @@ function render(
 
   return {
     ...context,
-    ...renderBase(ui, {
-      wrapper: composeProviders(
-        wrapper,
-        serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-      ),
-    }),
+    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
   };
 }

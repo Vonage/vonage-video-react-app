@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import ServerSettingsProvider from './ServerSettingsProvider';
+import { serverSettings$ } from '@core/stores';
 import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
 
 /**
@@ -8,9 +8,9 @@ import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
  * @returns {ReactElement} The context.
  */
 const RoomProvider: React.FC<PropsWithChildren> = ({ children }) => (
-  <ServerSettingsProvider>
+  <serverSettings$.Provider>
     <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
-  </ServerSettingsProvider>
+  </serverSettings$.Provider>
 );
 
 export default RoomProvider;

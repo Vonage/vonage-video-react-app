@@ -51,7 +51,7 @@ const WaitingRoom: FC = () => {
     handleClose,
   } = useWaitingRoom();
 
-  const scheduleStatus = useScheduleStatus({ scheduleWindow });
+  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
 
   const shouldShowLandingPageLink = scheduleStatus.kind === 'ended' && isSignedIn();
 

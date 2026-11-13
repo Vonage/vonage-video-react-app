@@ -57,7 +57,7 @@ const UsernameInput = ({
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const scheduleStatus = useScheduleStatus({ scheduleWindow });
+  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
 
   useScheduleTabTitle({ scheduleStatus, meetingName: roomName });
 

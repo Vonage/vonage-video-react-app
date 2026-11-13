@@ -236,10 +236,5 @@ function render(
     runtimeContext: undefined,
   });
 
-  return renderBase(component, {
-    wrapper: composeProviders(
-      wrapper,
-      serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-    ),
-  });
+  return renderBase(component, { wrapper: composeProviders(wrapper, serverSettings$.Provider) });
 }

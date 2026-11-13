@@ -33,9 +33,10 @@ describe('useScheduleStatus', () => {
 
     const videoClient = makeVideoClientMock({ getServerSettings });
 
-    const { result } = renderHook(() => useScheduleStatus({ scheduleWindow }), {
-      runtimeContext: { videoClient },
-    });
+    const { result } = renderHook(
+      () => useScheduleStatus({ sessionKey: 'scheduled-session-key', scheduleWindow }),
+      { runtimeContext: { videoClient } }
+    );
 
     await act(() => vi.advanceTimersByTimeAsync(0));
 
@@ -54,9 +55,10 @@ describe('useScheduleStatus', () => {
     const getServerSettings = vi.fn(() => new Promise<never>(() => {}));
     const videoClient = makeVideoClientMock({ getServerSettings });
 
-    const { result } = renderHook(() => useScheduleStatus({ scheduleWindow }), {
-      runtimeContext: { videoClient },
-    });
+    const { result } = renderHook(
+      () => useScheduleStatus({ sessionKey: 'scheduled-session-key', scheduleWindow }),
+      { runtimeContext: { videoClient } }
+    );
 
     await act(() => vi.advanceTimersByTimeAsync(5_000));
 

@@ -163,10 +163,7 @@ function render(ui: ReactElement, { runtimeContext }: RenderOptions = {}) {
     userContext: undefined,
     runtimeContext,
   });
-  const ProvidersWrapper = composeProviders(
-    wrapper,
-    serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-  );
+  const ProvidersWrapper = composeProviders(wrapper, serverSettings$.Provider);
 
   return {
     ...context,

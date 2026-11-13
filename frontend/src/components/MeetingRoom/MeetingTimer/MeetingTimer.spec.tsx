@@ -52,11 +52,6 @@ function render(ui: ReactElement, { runtimeContext }: RenderOptions) {
 
   return {
     ...context,
-    ...renderBase(ui, {
-      wrapper: composeProviders(
-        wrapper,
-        serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-      ),
-    }),
+    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
   };
 }

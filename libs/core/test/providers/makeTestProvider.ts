@@ -29,7 +29,7 @@ type ProviderContextsByKey = {
  */
 const PROVIDER_DEPENDENCIES = {
   [providers.runtime]: [],
-  [providers.serverSettings]: [providers.runtime],
+  [providers.serverSettings]: [],
 } as const;
 
 /**
