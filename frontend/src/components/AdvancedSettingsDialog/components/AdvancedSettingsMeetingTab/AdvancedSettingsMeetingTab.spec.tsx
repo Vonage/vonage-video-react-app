@@ -75,7 +75,12 @@ function render({ extendedMinutes }: { extendedMinutes: number }) {
   });
   const ui: ReactElement = <AdvancedSettingsMeetingTab scheduleWindow={scheduleWindow} />;
 
-  renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) });
+  renderBase(ui, {
+    wrapper: composeProviders(
+      wrapper,
+      serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
+    ),
+  });
 
   return { videoClient, sessionKey };
 }
