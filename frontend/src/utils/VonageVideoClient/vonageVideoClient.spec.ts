@@ -13,6 +13,7 @@ import VonageVideoClient from './vonageVideoClient';
 import { Credential, SignalEvent, SignalType } from '../../types/session';
 import wait from '@common/execution/wait';
 import frontendLogger from '../../logger';
+import rtcStatsTrace from '../rtcStatsTrace';
 
 vi.mock('@vonage/client-sdk-video');
 vi.mock('@common/helpers', () => ({
@@ -21,6 +22,9 @@ vi.mock('@common/helpers', () => ({
     applicationId: 'api-key',
     sessionKey: 'fake.session.key',
   }),
+}));
+vi.mock('../rtcStatsTrace', () => ({
+  default: { connect: vi.fn(), close: vi.fn() },
 }));
 const mockProvider = { log: vi.fn(), reportError: vi.fn() };
 
@@ -309,6 +313,21 @@ describe('VonageVideoClient', () => {
     await vonageVideoClient?.connect();
     await vonageVideoClient?.disconnect();
     expect(mockDisconnect).toHaveBeenCalled();
+  });
+
+  it('opens the rtcstats trace on connect and closes it on disconnect', async () => {
+    vonageVideoClient = new VonageVideoClient({
+      ...fakeCredentials,
+      rtcStatsUrl: 'ws://rtcstats.example/?rtcstats-token=token',
+    });
+
+    await vonageVideoClient.connect();
+    await vonageVideoClient.disconnect();
+
+    expect(rtcStatsTrace?.connect).toHaveBeenCalledWith(
+      'ws://rtcstats.example/?rtcstats-token=token'
+    );
+    expect(rtcStatsTrace?.close).toHaveBeenCalled();
   });
 
   it('connectionId should return undefined (not throw) after the session has been disconnected', async () => {
