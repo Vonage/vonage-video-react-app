@@ -155,6 +155,61 @@ test.describe('Waiting page schedule UI test', () => {
     }
   }
 });
+
+test.describe('Waiting page auto-join UI test', () => {
+  test.use({ timezoneId: 'UTC', locale: 'en-US' });
+
+  const fixedNow = Date.UTC(2057, 1, 2, 10, 0, 0);
+  const schedule = { startsAt: fixedNow + 3 * 60_000, durationMinutes: 30 };
+
+  for (const state of ['before start idle', 'waiting']) {
+    test(state, async ({ page, request, isMobile }) => {
+      if (!isMobile) {
+        await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+      }
+      await serveStaticFilesFromCache(page);
+
+      const createSessionResponse = await request.post(`${baseURL}v2/createSession`, {
+        data: { roomName: 'weekly-sync', schedule },
+      });
+      expect(createSessionResponse.ok()).toBe(true);
+      const { result } = await createSessionResponse.json();
+
+      await page.route(/\/v2\/getServerSettings/, async (route) => {
+        const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
+        const payload = { result: { data: { serverTime: fixedNow } } };
+        await route.fulfill({ json: isBatchRequest ? [payload] : payload });
+      });
+
+      await page.clock.setFixedTime(fixedNow);
+      await page.goto(`${baseURL}waiting-room/${result.data.sessionKey}`);
+      await page.waitForLoadState('networkidle');
+      await page.getByRole('textbox', { name: 'Name' }).fill('Ana');
+
+      if (state === 'waiting') {
+        await page.getByRole('button', { name: 'Join at start' }).click();
+      }
+
+      const lineUnderJoin = page.getByText(
+        state === 'waiting' ? "You'll join automatically at 10:03 AM" : 'Join opens in 3 min'
+      );
+      await lineUnderJoin.scrollIntoViewIfNeeded();
+      await expect(lineUnderJoin).toBeVisible();
+      await page.mouse.move(0, 0);
+      await expect(page.getByRole('tooltip')).toBeHidden();
+
+      await page
+        .waitForSelector('.video__element', { state: 'attached', timeout: TIMEOUTS.DEFAULT })
+        .catch(() => {});
+      await page.waitForTimeout(500);
+      await expect(page).toHaveScreenshot({
+        mask: [page.locator('.video__element'), page.locator('[data-testid="app-version"]')],
+        maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+        timeout: TIMEOUTS.DEFAULT,
+      });
+    });
+  }
+});
 test.describe('Meeting room timer UI test', () => {
   const minuteInMilliseconds = 60_000;
   const colorSchemes = ['light', 'dark'] as const;
