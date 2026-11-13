@@ -22,7 +22,7 @@ describe('GoodBye', () => {
 
     expect(screen.getByText('You have left the meeting')).toBeVisible();
     expect(screen.getByText('Thank you for joining!')).toBeVisible();
-    expect(screen.getByText('Rejoining the room')).toBeVisible();
+    expect(screen.queryByText('Rejoining the room')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'View Landing Page' })).toBeVisible();
     expect(screen.getByText('Download session content')).toBeVisible();
     expect(screen.getByText('This session has no content to download')).toBeVisible();
@@ -34,7 +34,6 @@ describe('GoodBye', () => {
   ])(
     'derives re-entry from the bookmarked URL with $minutesUntilEnd minutes left',
     async ({ minutesUntilEnd, shouldShowReenter }) => {
-      expect.assertions(2);
       const payload = {
         sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
         [SessionKeyClaim.schedule]: {
@@ -66,11 +65,8 @@ describe('GoodBye', () => {
         }
       });
       expect(await screen.findByText('Download session content')).toBeVisible();
-      if (shouldShowReenter) {
-        expect(await screen.findByRole('button', { name: 'Go back to meeting' })).toBeVisible();
-        return;
-      }
-      expect(screen.queryByRole('button', { name: 'Go back to meeting' })).not.toBeInTheDocument();
+      const reenterButton = screen.queryByRole('button', { name: 'Go back to meeting' });
+      expect(Boolean(reenterButton)).toBe(shouldShowReenter);
     }
   );
 

@@ -12,7 +12,7 @@ describe('GoodByeStage', () => {
 
     expect(screen.getByText('You have left the meeting')).toBeVisible();
     expect(screen.getByText('Thank you for joining!')).toBeVisible();
-    expect(screen.getByText('Rejoining the room')).toBeVisible();
+    expect(screen.queryByText('Rejoining the room')).not.toBeInTheDocument();
     expect(screen.getByText('Download session content')).toBeVisible();
     expect(screen.getByText('This session has no content to download')).toBeVisible();
   });
