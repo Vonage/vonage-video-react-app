@@ -31,7 +31,15 @@ function createVideoRouter<
 >(routerConfig: VideoRouterConfig<Context, TMeta>) {
   assertVideoRouterConfig(routerConfig);
 
-  const { auth, videoParams, sessionSigning, routerOptions, handlersConfig } = routerConfig;
+  const {
+    auth,
+    videoParams,
+    sessionSigning,
+    routerOptions,
+    handlersConfig,
+    extension,
+    extensionStore,
+  } = routerConfig;
 
   const handlersDefaults: HandlersDefaults = Object.fromEntries(
     Object.entries(handlersConfig ?? {}).map(([action, config]) => [action, config?.addDefaults])
@@ -218,6 +226,20 @@ function createVideoRouter<
       config: handlersConfig?.getServerSettings,
       callback: (videoClient, input) => {
         return videoClient.getServerSettings(input);
+      },
+    }),
+    extendSession: makeMutation({
+      key: VideoAction.extendSession,
+      config: handlersConfig?.extendSession,
+      callback: (videoClient, input) => {
+        return videoClient.extendSession(input);
+      },
+    }),
+    renewSessionKey: makeMutation({
+      key: VideoAction.renewSessionKey,
+      config: handlersConfig?.renewSessionKey,
+      callback: (videoClient, input) => {
+        return videoClient.renewSessionKey(input);
       },
     }),
     createSessionAndJoin: makeMutation({
@@ -422,6 +444,8 @@ function createVideoRouter<
       videoParams,
       sessionSigning,
       handlersDefaults,
+      extension,
+      extensionStore,
     });
   }
 

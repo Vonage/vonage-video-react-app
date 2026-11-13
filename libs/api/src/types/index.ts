@@ -19,7 +19,11 @@ export type {
   VideoRouterConfig,
   SessionSigning,
   GetServerSettingsPayload,
+  ExtensionConfig,
+  ExtendSessionPayload,
+  RenewSessionKeyPayload,
 } from '../schemas';
+export type * from './ExtensionStore';
 
 export type * from './IVideoRouter';
 

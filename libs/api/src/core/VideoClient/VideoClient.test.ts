@@ -6,6 +6,8 @@ import VideoClient from '.';
 import { TokenRole, type VideoClientConfig } from '@api-lib/types';
 import { SessionKeyClaim } from '@common/constants';
 import { tryCatch } from '@common/execution';
+import { createInMemoryExtensionStore } from '@api-lib/extension';
+import extensionGrantAudience from '@api-lib/extension/extensionGrantAudience';
 
 vi.mock('@vonage/video');
 vi.mock('@vonage/auth');
@@ -361,6 +363,144 @@ describe('VideoClient', () => {
     });
   });
 
+  describe('extendSession', () => {
+    it.each([
+      {
+        refusal: 'a key without a schedule',
+        sessionKey: mockSessionKey,
+        minutes: 20,
+        statusCode: 400,
+      },
+      {
+        refusal: 'minutes that are not an option',
+        sessionKey: signScheduledSessionKey({ startsAt: Date.now(), durationMinutes: 60 }),
+        minutes: 30,
+        statusCode: 400,
+      },
+      {
+        refusal: 'an extension past the total cap',
+        sessionKey: signScheduledSessionKey({
+          startsAt: Date.now(),
+          durationMinutes: 60,
+          extendedMinutes: 100,
+        }),
+        minutes: 40,
+        statusCode: 403,
+      },
+    ])('refuses $refusal without issuing a token', async ({ sessionKey, minutes, statusCode }) => {
+      expect.assertions(2);
+
+      const { videoClient, mocks } = createVideoClient({
+        extensionStore: createInMemoryExtensionStore(),
+      });
+
+      const { error } = await tryCatch(() => videoClient.extendSession({ sessionKey, minutes }));
+
+      expect(error).toMatchObject({ statusCode });
+      expect(mocks.video.generateClientToken).not.toHaveBeenCalled();
+    });
+
+    it('returns a key and a token that end at start + duration + total extension', async () => {
+      expect.assertions(3);
+
+      const { videoClient, mocks } = createVideoClient({
+        extensionStore: createInMemoryExtensionStore(),
+      });
+      const startsAt = Date.now() - 10 * 60 * 1000;
+      const sessionKey = signScheduledSessionKey({
+        startsAt,
+        durationMinutes: 60,
+        extendedMinutes: 20,
+      });
+      const expectedEndInSeconds = Math.floor(startsAt / 1000) + (60 + 20 + 40) * 60;
+
+      const extendedSession = await videoClient.extendSession({ sessionKey, minutes: 40 });
+
+      expect(jwt.verify(extendedSession.sessionKey, mockApiKey)).toMatchObject({
+        sessionId: mockSessionId,
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 120 * 60 * 1000 },
+        [SessionKeyClaim.extended]: 60,
+      });
+      expect(extendedSession[SessionKeyClaim.extended]).toBe(60);
+      expect(mocks.video.generateClientToken).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.objectContaining({ expireTime: expectedEndInSeconds })
+      );
+    });
+
+    it('keeps the longest of two extensions from the same key instead of adding them up', async () => {
+      expect.assertions(2);
+
+      const { videoClient } = createVideoClient({
+        extensionStore: createInMemoryExtensionStore(),
+      });
+      const sessionKey = signScheduledSessionKey({ startsAt: Date.now(), durationMinutes: 60 });
+
+      const [longerExtension, shorterExtension] = await Promise.all([
+        videoClient.extendSession({ sessionKey, minutes: 40 }),
+        videoClient.extendSession({ sessionKey, minutes: 20 }),
+      ]);
+
+      expect(longerExtension[SessionKeyClaim.extended]).toBe(40);
+      expect(shorterExtension[SessionKeyClaim.extended]).toBe(40);
+    });
+  });
+
+  describe('renewSessionKey', () => {
+    it('renews the original key with the extension carried by the grant', async () => {
+      expect.assertions(2);
+
+      const { videoClient, mocks } = createVideoClient({
+        extensionStore: createInMemoryExtensionStore(),
+      });
+      const startsAt = Date.now() - 10 * 60 * 1000;
+      const sessionKey = signScheduledSessionKey({ startsAt, durationMinutes: 60 });
+      const { grant } = await videoClient.extendSession({ sessionKey, minutes: 20 });
+      mocks.video.generateClientToken.mockClear();
+
+      const renewedSession = videoClient.renewSessionKey({ sessionKey, grant });
+
+      expect(jwt.verify(renewedSession.sessionKey, mockApiKey)).toMatchObject({
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 80 * 60 * 1000 },
+        [SessionKeyClaim.extended]: 20,
+      });
+      expect(mocks.video.generateClientToken).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.objectContaining({ expireTime: Math.floor(startsAt / 1000) + 80 * 60 })
+      );
+    });
+
+    it('rejects an expired or foreign grant, and a grant used as a sessionKey', async () => {
+      expect.assertions(3);
+
+      const { videoClient } = createVideoClient({
+        extensionStore: createInMemoryExtensionStore(),
+      });
+      const sessionKey = signScheduledSessionKey({ startsAt: Date.now(), durationMinutes: 60 });
+      const { grant } = await videoClient.extendSession({ sessionKey, minutes: 20 });
+      const foreignGrant = jwt.sign({ [SessionKeyClaim.extended]: 20 }, mockApiKey, {
+        audience: extensionGrantAudience,
+        subject: 'another-session-id',
+        expiresIn: 600,
+      });
+
+      const foreignRenewal = tryCatch(() =>
+        videoClient.renewSessionKey({ sessionKey, grant: foreignGrant })
+      );
+
+      expect(foreignRenewal.error).toMatchObject({ statusCode: 403 });
+      expect(() => videoClient.joinSession({ sessionKey: grant })).toThrow();
+
+      vi.useFakeTimers({ now: Date.now() + 11 * 60 * 1000 });
+
+      const expiredRenewal = tryCatch(() => videoClient.renewSessionKey({ sessionKey, grant }));
+
+      vi.useRealTimers();
+
+      expect(expiredRenewal.error).toMatchObject({ statusCode: 403 });
+    });
+  });
+
   describe('startArchive', () => {
     it('should start archive successfully', async () => {
       const { videoClient, mocks } = createVideoClient();
@@ -678,6 +818,7 @@ describe('VideoClient', () => {
     sessionSigning?: VideoClientConfig['sessionSigning'];
     handlersDefaults?: VideoClientConfig['handlersDefaults'];
     authInstance?: Partial<Auth>;
+    extensionStore?: VideoClientConfig['extensionStore'];
   }) {
     const mockVideoInstance = {
       createSession: vi.fn(),
@@ -705,6 +846,7 @@ describe('VideoClient', () => {
       videoParams: options?.videoParams || {},
       ...(options?.sessionSigning ? { sessionSigning: options.sessionSigning } : {}),
       ...(options?.handlersDefaults ? { handlersDefaults: options.handlersDefaults } : {}),
+      ...(options?.extensionStore ? { extensionStore: options.extensionStore } : {}),
     });
 
     return {
@@ -719,17 +861,20 @@ describe('VideoClient', () => {
   function signScheduledSessionKey({
     startsAt,
     durationMinutes,
+    extendedMinutes,
   }: {
     startsAt: number;
     durationMinutes: number;
+    extendedMinutes?: number;
   }) {
     return jwt.sign(
       {
         sessionId: mockSessionId,
         [SessionKeyClaim.schedule]: {
           startsAtMs: startsAt,
-          endsAtMs: startsAt + durationMinutes * 60 * 1000,
+          endsAtMs: startsAt + (durationMinutes + (extendedMinutes ?? 0)) * 60 * 1000,
         },
+        ...(extendedMinutes ? { [SessionKeyClaim.extended]: extendedMinutes } : {}),
       },
       mockApiKey,
       { algorithm: 'HS256' }
