@@ -4,6 +4,8 @@ import {
   makePreviewPublisherProviderWrapper,
   makePublisherProviderWrapper,
   makeRuntimeProviderWrapper,
+  makeServerSettingsProviderWrapper,
+  type ServerSettingsProviderWrapperOptions,
   makeSessionProviderWrapper,
   makeUserProviderWrapper,
   makeScreenShareProviderWrapper,
@@ -23,6 +25,7 @@ import {
  */
 export enum providers {
   runtime = 'runtime',
+  serverSettings = 'serverSettings',
   user = 'user',
   session = 'session',
   publisher = 'publisher',
@@ -33,6 +36,7 @@ export enum providers {
 }
 
 type ProviderOptionsByKey = {
+  [providers.serverSettings]: ServerSettingsProviderWrapperOptions;
   [providers.runtime]: RuntimeProviderWrapperOptions;
   [providers.user]: UserProviderWrapperOptions;
   [providers.session]: SessionProviderWrapperOptions;
@@ -44,6 +48,7 @@ type ProviderOptionsByKey = {
 };
 
 type ProviderContextsByKey = {
+  [providers.serverSettings]: ReturnType<typeof makeServerSettingsProviderWrapper>['context'];
   [providers.runtime]: NonNullable<ReturnType<typeof makeRuntimeProviderWrapper>['context']>;
   [providers.user]: NonNullable<ReturnType<typeof makeUserProviderWrapper>['context']>;
   [providers.session]: NonNullable<ReturnType<typeof makeSessionProviderWrapper>['context']>;
@@ -64,16 +69,12 @@ type ProviderContextsByKey = {
  * Keep updated accordingly to the providers you have and their dependencies.
  */
 const PROVIDER_DEPENDENCIES = {
+  [providers.serverSettings]: [providers.runtime],
   [providers.runtime]: [],
   [providers.user]: [],
   [providers.session]: [providers.runtime, providers.user],
   [providers.publisher]: [providers.runtime, providers.user, providers.session],
-  [providers.backgroundPublisher]: [
-    providers.runtime,
-    providers.user,
-    providers.session,
-    providers.publisher,
-  ],
+  [providers.backgroundPublisher]: [providers.runtime, providers.user, providers.session],
   [providers.previewPublisher]: [providers.user],
   [providers.screenShare]: [providers.user, providers.session],
   [providers.miniMode]: [],
@@ -160,6 +161,11 @@ function makeTestProvider<
    */
   const providerWrappers = sortedKeys.map((key) => {
     switch (key) {
+      case providers.serverSettings:
+        return makeServerSettingsProviderWrapper(
+          (options as ProviderOptionsFor<[providers.serverSettings]> | undefined)
+            ?.serverSettingsContext
+        );
       case providers.runtime:
         return makeRuntimeProviderWrapper(
           (options as ProviderOptionsFor<[providers.runtime]> | undefined)?.runtimeContext

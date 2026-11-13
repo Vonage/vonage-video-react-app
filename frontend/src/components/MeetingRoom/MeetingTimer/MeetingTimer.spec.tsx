@@ -1,0 +1,58 @@
+import type { ReactElement } from 'react';
+import jwt from 'jsonwebtoken';
+import { act, render as renderBase, screen } from '@testing-library/react';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { makeVideoClientMock } from '@core-test/fixtures';
+import { makeTestProvider, providers } from '@test/providers';
+import MeetingTimer from './MeetingTimer';
+
+const endsAt = new Date(2026, 10, 4, 11, 0).getTime();
+const scheduleWindow = { startsAtMs: endsAt - 2 * 60 * 60_000, endsAtMs: endsAt };
+const serverAheadMilliseconds = 60_000;
+
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+it('counts down the time left by server time with labelled minutes and seconds', async () => {
+  expect.assertions(2);
+
+  vi.setSystemTime(endsAt - serverAheadMilliseconds - (4 * 60_000 + 52_000));
+
+  render(<MeetingTimer />);
+
+  expect(await screen.findByText('4 min 52 sec left')).toBeInTheDocument();
+
+  await act(() => vi.advanceTimersByTimeAsync(4 * 60_000 + 7_000));
+
+  expect(screen.getByRole('timer')).toHaveTextContent('45 sec left');
+});
+
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
+    serverSettingsContext: {
+      sessionKey: jwt.sign(
+        {
+          sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+          schedule: scheduleWindow,
+        },
+        'test'
+      ),
+    },
+    runtimeContext: {
+      videoClient: makeVideoClientMock({
+        getServerSettings: () =>
+          Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+      }),
+    },
+  });
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
+}

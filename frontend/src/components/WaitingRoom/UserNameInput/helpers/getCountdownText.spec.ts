@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
-import type { WaitingStatus } from '../types/ScheduleStatus';
+import type { WaitingStatus } from '@core/stores/serverSettings';
 import getCountdownText from './getCountdownText';
 
 const t = ((key: string, options: Record<string, number>) =>
@@ -18,17 +18,17 @@ describe('getCountdownText', () => {
     [
       'drops zero seconds from whole minutes',
       { ...times, kind: 'withinFiveMinutes', secondsLeft: 240 },
-      'waitingRoom.schedule.countdown.minutes {"minutes":4}',
+      'duration.format.minutes {"minutes":4}',
     ],
     [
       'keeps both non-zero segments',
       { ...times, kind: 'withinFiveMinutes', secondsLeft: 68 },
-      'waitingRoom.schedule.countdown.minutesAndSeconds {"minutes":1,"seconds":8}',
+      'duration.format.minutesAndSeconds {"minutes":1,"seconds":8}',
     ],
     [
       'shows only seconds under a minute',
       { ...times, kind: 'withinFiveMinutes', secondsLeft: 45 },
-      'waitingRoom.schedule.countdown.seconds {"seconds":45}',
+      'duration.format.seconds {"seconds":45}',
     ],
   ])('%s', (_label, waitingStatus, expected) => {
     expect(getCountdownText({ waitingStatus, t })).toBe(expected);

@@ -1,6 +1,9 @@
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import { serverSettings$ } from '@core/stores';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageLayout, Card } from '@ui';
+import useShouldShowReenterRoom from '@components/GoodBye/useShouldShowReenterRoom';
 import { Banner, Footer } from '@components';
 import ArchiveList from '@components/GoodBye/ArchiveList';
 import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
@@ -21,7 +24,10 @@ import isSignedIn from '../../utils/isSignedIn';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
+  const shouldShowReenterRoom = useShouldShowReenterRoom();
   const { header, caption, isSelfDeclinedRecording } = useGoodByePage();
+  const shouldShowLandingPage = isSignedIn();
+  const shouldShowGoodbyeActions = shouldShowReenterRoom || shouldShowLandingPage;
 
   return (
     <PageLayout>
@@ -33,15 +39,19 @@ const GoodBye = (): ReactElement => {
       </PageLayout.Left>
       <PageLayout.Right>
         <div className="flex w-full flex-col items-center gap-8">
-          <Card className="w-full max-w-125">
-            <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
-              {t('goodBye.title')}
-            </p>
-            <div className="mb-6 w-full">
-              <ReenterRoomButton />
-            </div>
-            {isSignedIn() && <GoToLandingPageButton />}
-          </Card>
+          {shouldShowGoodbyeActions && (
+            <Card className="w-full max-w-125">
+              {shouldShowReenterRoom && (
+                <div className="mb-6 w-full">
+                  <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
+                    {t('goodBye.title')}
+                  </p>
+                  <ReenterRoomButton />
+                </div>
+              )}
+              {shouldShowLandingPage && <GoToLandingPageButton />}
+            </Card>
+          )}
           {!isSelfDeclinedRecording && (
             <Card className="w-full max-w-125">
               <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">
@@ -59,4 +69,11 @@ const GoodBye = (): ReactElement => {
   );
 };
 
-export default GoodBye;
+export default function GoodByePage() {
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+  return (
+    <serverSettings$.Provider sessionKey={sessionKeyStatus === 'valid' ? sessionKey : null}>
+      <GoodBye />
+    </serverSettings$.Provider>
+  );
+}

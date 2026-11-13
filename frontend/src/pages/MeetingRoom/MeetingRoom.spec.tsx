@@ -559,8 +559,10 @@ function render(
       providers.runtime,
       providers.screenShare,
       providers.miniMode,
+      providers.serverSettings,
     ],
     {
+      serverSettingsContext: { sessionKey: null },
       userContext: {
         ...userContext,
         value: {

@@ -1,19 +1,14 @@
 import { isNil } from '@common/assertions';
-import type { ScheduleWindow } from '@common/types';
+import type { ServerSettingsState } from '../../types/ServerSettingsState';
 import type { ScheduleStatus } from '../../types/ScheduleStatus';
 
 const minuteInMilliseconds = 60_000;
 const hourInMilliseconds = 60 * minuteInMilliseconds;
 const dayInMilliseconds = 24 * hourInMilliseconds;
 
-function getScheduleStatus({
-  scheduleWindow,
-  now,
-}: {
-  scheduleWindow: ScheduleWindow | null;
-  now: number;
-}): ScheduleStatus {
+function getScheduleStatus({ scheduleWindow, now, status }: ServerSettingsState): ScheduleStatus {
   if (isNil(scheduleWindow)) return { kind: 'unscheduled' };
+  if (status !== 'known') return { ...scheduleWindow, kind: 'pending' };
 
   const { startsAtMs, endsAtMs } = scheduleWindow;
   const millisecondsUntilStart = startsAtMs - now;
