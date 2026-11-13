@@ -237,7 +237,7 @@ describe('Toolbar', () => {
         providers.serverSettings,
       ],
       {
-        serverSettingsContext: { sessionKey: null },
+        serverSettingsContext: { sessionKey },
         runtimeContext: {
           videoClient: makeVideoClientMock({
             getServerSettings: () =>

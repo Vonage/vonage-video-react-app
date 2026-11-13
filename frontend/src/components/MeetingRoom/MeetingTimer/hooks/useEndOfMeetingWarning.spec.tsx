@@ -29,17 +29,20 @@ describe('useEndOfMeetingWarning', () => {
         [SessionKeyClaim.schedule]: { startsAtMs: endsAtMs - 60 * 60_000, endsAtMs },
       };
       const sessionKey = `eyJhbGciOiJIUzI1NiJ9.${btoa(JSON.stringify(payload)).replace(/=+$/, '')}.signature`;
-      const { wrapper } = makeTestProvider([providers.runtime, providers.user, providers.session, providers.serverSettings], {
-        serverSettingsContext: { sessionKey },
-        runtimeContext: {
-          videoClient: makeVideoClientMock({
-            getServerSettings: () =>
-              Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
-          }),
-        },
-        userContext: undefined,
-        sessionContext: { initialValue: { sessionKey } },
-      });
+      const { wrapper } = makeTestProvider(
+        [providers.runtime, providers.user, providers.session, providers.serverSettings],
+        {
+          serverSettingsContext: { sessionKey },
+          runtimeContext: {
+            videoClient: makeVideoClientMock({
+              getServerSettings: () =>
+                Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
+            }),
+          },
+          userContext: undefined,
+          sessionContext: { initialValue: { sessionKey } },
+        }
+      );
       const push = vi.spyOn(notifications$.actions, 'push');
       const dismiss = vi.spyOn(notifications$.actions, 'dismiss');
       const { unmount, rerender } = renderHook(

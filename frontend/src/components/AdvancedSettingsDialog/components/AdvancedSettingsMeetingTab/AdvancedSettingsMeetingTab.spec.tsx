@@ -1,6 +1,4 @@
 import type { ReactElement } from 'react';
-import { serverSettings$ } from '@core/stores';
-import composeProviders from '@web/helpers/composeProviders';
 import { fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
@@ -68,18 +66,19 @@ function render({ extendedMinutes }: { extendedMinutes: number }) {
       Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
     extendSession: () => new Promise(() => {}),
   });
-  const { wrapper } = makeTestProvider([providers.runtime, providers.user, providers.session], {
-    runtimeContext: { videoClient },
-    userContext: undefined,
-    sessionContext: { initialValue: { sessionKey } },
-  });
+  const { wrapper } = makeTestProvider(
+    [providers.runtime, providers.user, providers.session, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey },
+      runtimeContext: { videoClient },
+      userContext: undefined,
+      sessionContext: { initialValue: { sessionKey } },
+    }
+  );
   const ui: ReactElement = <AdvancedSettingsMeetingTab scheduleWindow={scheduleWindow} />;
 
   renderBase(ui, {
-    wrapper: composeProviders(
-      wrapper,
-      serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
-    ),
+    wrapper,
   });
 
   return { videoClient, sessionKey };
