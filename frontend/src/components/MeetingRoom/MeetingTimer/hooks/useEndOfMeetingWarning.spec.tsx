@@ -1,10 +1,9 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
-import { notifications$, serverSettings$ } from '@core/stores';
+import { notifications$ } from '@core/stores';
 import { SessionKeyClaim } from '@common/constants';
 import { makeTestProvider, providers } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
 import i18n from '../../../../i18n';
 import useEndOfMeetingWarning from './useEndOfMeetingWarning';
 
@@ -28,23 +27,26 @@ describe('useEndOfMeetingWarning', () => {
       [SessionKeyClaim.schedule]: { startsAtMs: endsAtMs - 60 * 60_000, endsAtMs },
     };
     const sessionKey = `eyJhbGciOiJIUzI1NiJ9.${btoa(JSON.stringify(payload)).replace(/=+$/, '')}.signature`;
-    const { wrapper } = makeTestProvider([providers.runtime, providers.user, providers.session], {
-      runtimeContext: {
-        videoClient: makeVideoClientMock({
-          getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
-        }),
-      },
-      userContext: undefined,
-      sessionContext: { initialValue: { sessionKey } },
-    });
+    const { wrapper } = makeTestProvider(
+      [providers.runtime, providers.user, providers.session, providers.serverSettings],
+      {
+        serverSettingsContext: { sessionKey },
+        runtimeContext: {
+          videoClient: makeVideoClientMock({
+            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+          }),
+        },
+        userContext: undefined,
+        sessionContext: { initialValue: { sessionKey } },
+      }
+    );
     const push = vi.spyOn(notifications$.actions, 'push');
     const dismiss = vi.spyOn(notifications$.actions, 'dismiss');
     const { unmount, rerender } = renderHook(
       () => {
-        serverSettings$.useServerSettings({ sessionKey });
         useEndOfMeetingWarning();
       },
-      { wrapper: composeProviders(wrapper, serverSettings$.Provider) }
+      { wrapper }
     );
 
     await act(() => vi.advanceTimersByTimeAsync(1_000));

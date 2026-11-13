@@ -31,7 +31,7 @@ const useServerSettings = ({ sessionKey, queryOptions }: UseServerSettingsProps)
     staleTime: Infinity,
     queryFn: async (): Promise<ServerSettingsResult> => {
       const requestedAt = Date.now();
-      const settings = await videoClient.getServerSettings({ sessionKey: sessionKey ?? undefined });
+      const settings = await videoClient.getServerSettings({ sessionKey });
       const receivedAt = Date.now();
 
       const clockOffset = settings.serverTime - (requestedAt + receivedAt) / 2;
@@ -52,9 +52,10 @@ const useServerSettings = ({ sessionKey, queryOptions }: UseServerSettingsProps)
         return;
       }
 
+      storeApi.setState({ status: 'pending', now: null, clockOffset: null });
       if (hasFailedWithoutData) markUnavailable();
     },
-    [data, hasFailedWithoutData, applyClockOffset, markUnavailable]
+    [sessionKey, data, hasFailedWithoutData, storeApi, applyClockOffset, markUnavailable]
   );
 
   return query;

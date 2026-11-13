@@ -10,8 +10,6 @@ import usePublisherContext from '@hooks/usePublisherContext';
 import { PublisherContextType } from '@Context/PublisherProvider';
 import mediaDevices$ from '@core/stores/mediaDevices';
 import { makeTestProvider, providers } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import SmallViewportHeader from './SmallViewportHeader';
 
 const { mockIsMobile } = vi.hoisted(() => ({
@@ -225,16 +223,20 @@ function render(
     };
   }
 ) {
-  const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
-    userContext: undefined,
-    sessionContext: {
-      initialValue: {
-        sessionKey: mockSessionKey,
-        ...sessionContext?.initialValue,
+  const { wrapper } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      userContext: undefined,
+      sessionContext: {
+        initialValue: {
+          sessionKey: mockSessionKey,
+          ...sessionContext?.initialValue,
+        },
       },
-    },
-    runtimeContext: undefined,
-  });
+      runtimeContext: undefined,
+    }
+  );
 
-  return renderBase(component, { wrapper: composeProviders(wrapper, serverSettings$.Provider) });
+  return renderBase(component, { wrapper });
 }

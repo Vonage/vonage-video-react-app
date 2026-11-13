@@ -9,8 +9,6 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import { SessionKeyClaim } from '@common/constants';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../../env';
@@ -231,8 +229,15 @@ describe('Toolbar', () => {
 
   function renderWithSessionKey(sessionKey: string) {
     const { wrapper } = makeTestProvider(
-      [providers.runtime, providers.user, providers.session, providers.miniMode],
+      [
+        providers.runtime,
+        providers.user,
+        providers.session,
+        providers.miniMode,
+        providers.serverSettings,
+      ],
       {
+        serverSettingsContext: { sessionKey: null },
         runtimeContext: {
           videoClient: makeVideoClientMock({
             getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
@@ -245,7 +250,7 @@ describe('Toolbar', () => {
     );
 
     return renderBase(<Toolbar {...defaultProps} />, {
-      wrapper: composeProviders(wrapper, serverSettings$.Provider),
+      wrapper,
     });
   }
 });
@@ -259,13 +264,17 @@ function render(
   ui: ReactElement,
   { miniModeContext }: { miniModeContext?: ProviderOptions['MiniModeContext'] } = {}
 ) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.miniMode], {
-    runtimeContext: undefined,
-    miniModeContext,
-  });
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.runtime, providers.miniMode, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      runtimeContext: undefined,
+      miniModeContext,
+    }
+  );
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
+    ...renderBase(ui, { wrapper }),
   };
 }

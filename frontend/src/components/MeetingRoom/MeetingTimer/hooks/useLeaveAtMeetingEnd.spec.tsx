@@ -5,8 +5,6 @@ import { makeVideoClientMock } from '@core-test/fixtures';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
 import { SessionKeyClaim } from '@common/constants';
 import { makeTestProvider, providers } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import { coreQueryKeys } from '@core/constants';
 import useLeaveAtMeetingEnd from './useLeaveAtMeetingEnd';
 
@@ -130,8 +128,10 @@ function render({
       providers.publisher,
       providers.backgroundPublisher,
       providers.miniMode,
+      providers.serverSettings,
     ],
     {
+      serverSettingsContext: { sessionKey },
       runtimeContext: {
         queryClient,
         videoClient: makeVideoClientMock({ getServerSettings }),
@@ -154,7 +154,7 @@ function render({
   );
 
   renderHook(() => useLeaveAtMeetingEnd(), {
-    wrapper: composeProviders(wrapper, serverSettings$.Provider),
+    wrapper,
   });
 
   return { sessionContext, backgroundPublisherContext, queryClient };

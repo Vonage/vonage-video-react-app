@@ -3,8 +3,6 @@ import { describe, it, expect } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { makeTestProvider, providers } from '@test/providers';
-import { serverSettings$ } from '@core/stores';
-import composeProviders from '@web/helpers/composeProviders';
 import ReenterRoomButton from './index';
 
 describe('ReenterRoomButton', () => {
@@ -18,7 +16,7 @@ describe('ReenterRoomButton', () => {
           <Route path="/waiting-room/test-room" element={<p>Waiting room</p>} />
         </Routes>
       </MemoryRouter>,
-      { wrapper: composeProviders(wrapper, serverSettings$.Provider) }
+      { wrapper }
     );
     await userEvent.click(screen.getByRole('button', { name: 'Go back to meeting' }));
     expect(screen.getByText('Waiting room')).toBeInTheDocument();

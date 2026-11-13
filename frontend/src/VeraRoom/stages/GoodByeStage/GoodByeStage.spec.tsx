@@ -29,11 +29,12 @@ function render(
   { userContext, sessionContext, runtimeContext }: RenderOptions = {}
 ) {
   const { wrapper: ContextWrapper, ...context } = makeTestProvider(
-    [providers.user, providers.session, providers.runtime],
+    [providers.user, providers.session, providers.runtime, providers.serverSettings],
     {
       userContext,
       sessionContext,
       runtimeContext,
+      serverSettingsContext: { sessionKey: null },
     }
   );
 

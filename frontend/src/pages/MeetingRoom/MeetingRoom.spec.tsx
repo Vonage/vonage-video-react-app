@@ -14,8 +14,6 @@ import useToolbarButtons, {
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
 import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import { render as renderBase } from '@testing-library/react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import MeetingRoom from './MeetingRoom';
@@ -561,8 +559,10 @@ function render(
       providers.runtime,
       providers.screenShare,
       providers.miniMode,
+      providers.serverSettings,
     ],
     {
+      serverSettingsContext: { sessionKey: null },
       userContext: {
         ...userContext,
         value: {
@@ -582,6 +582,6 @@ function render(
 
   return {
     ...context,
-    ...renderBase(ui, { wrapper: composeProviders(wrapper, serverSettings$.Provider) }),
+    ...renderBase(ui, { wrapper }),
   };
 }

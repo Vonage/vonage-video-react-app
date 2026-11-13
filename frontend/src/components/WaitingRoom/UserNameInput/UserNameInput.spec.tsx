@@ -6,8 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import UsernameInput from './UserNameInput';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
@@ -159,11 +157,14 @@ type RenderOptions = {
 };
 
 function render(ui: ReactElement, { runtimeContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.runtime], {
-    userContext: undefined,
-    runtimeContext,
-  });
-  const ProvidersWrapper = composeProviders(wrapper, serverSettings$.Provider);
+  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.runtime, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      userContext: undefined,
+      runtimeContext,
+    }
+  );
 
   return {
     ...context,
