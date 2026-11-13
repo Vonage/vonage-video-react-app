@@ -222,7 +222,7 @@ describe('Toolbar', () => {
 
     await act(() => vi.advanceTimersByTimeAsync(1_000));
 
-    expect(screen.getByRole('timer')).toHaveTextContent('5 min left');
+    expect(screen.getByRole('timer', { hidden: true })).toHaveTextContent('5 min left');
 
     vi.useRealTimers();
   });
@@ -237,7 +237,7 @@ describe('Toolbar', () => {
         providers.serverSettings,
       ],
       {
-        serverSettingsContext: { sessionKey: null },
+        serverSettingsContext: { sessionKey },
         runtimeContext: {
           videoClient: makeVideoClientMock({
             getServerSettings: () =>

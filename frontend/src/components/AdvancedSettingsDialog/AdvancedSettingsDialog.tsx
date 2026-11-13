@@ -12,14 +12,23 @@ import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab'
 import { AdvancedSettingsScreenSharingTab } from './components/AdvancedSettingsScreenSharingTab';
 import { AdvancedSettingsCaptionsTab } from './components/AdvancedSettingsCaptionsTab';
 import isCaptionsTabAvailable from './helpers/isCaptionsTabAvailable';
+import { isNotNil } from '@common/assertions';
+import { useMeetingScheduleWindow } from '@components/MeetingRoom/MeetingTimer';
+import { AdvancedSettingsMeetingTab } from './components/AdvancedSettingsMeetingTab';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
   const isOpen = advancedSettings$.use.select(({ isOpen }) => isOpen);
   const selectedTab = advancedSettings$.use.select(({ selectedTab }) => selectedTab);
+  const scheduleWindow = useMeetingScheduleWindow();
 
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
+    if (selectedTab === 'meeting' && isNotNil(scheduleWindow)) {
+      return (
+        <AdvancedSettingsMeetingTab key={scheduleWindow.endsAtMs} scheduleWindow={scheduleWindow} />
+      );
+    }
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
     if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;

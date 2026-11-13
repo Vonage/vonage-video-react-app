@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const ADVANCED_SETTINGS_TAB = {
   general: 'general',
+  meeting: 'meeting',
   video: 'video',
   screenSharing: 'screenSharing',
   audio: 'audio',
@@ -11,6 +12,7 @@ export const ADVANCED_SETTINGS_TAB = {
 
 export const advancedSettingsTabSchema = z.enum([
   ADVANCED_SETTINGS_TAB.general,
+  ADVANCED_SETTINGS_TAB.meeting,
   ADVANCED_SETTINGS_TAB.video,
   ADVANCED_SETTINGS_TAB.screenSharing,
   ADVANCED_SETTINGS_TAB.audio,

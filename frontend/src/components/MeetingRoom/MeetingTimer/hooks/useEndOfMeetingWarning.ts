@@ -8,7 +8,7 @@ import useMeetingScheduleWindow from './useMeetingScheduleWindow';
 const endOfMeetingWarningMilliseconds = 10_000;
 const endingSoonMilliseconds = 5 * 60_000;
 
-const useEndOfMeetingWarning = () => {
+const useEndOfMeetingWarning = ({ isEnabled }: { isEnabled: boolean }) => {
   const { t } = useTranslation();
   const scheduleWindow = useMeetingScheduleWindow();
   const serverSettingsApi = serverSettings$.use.api();
@@ -22,7 +22,7 @@ const useEndOfMeetingWarning = () => {
   );
 
   useEffect(() => {
-    if (isNil(endsAtMs)) return;
+    if (!isEnabled || isNil(endsAtMs)) return;
 
     let notificationId: NotificationId | undefined;
     const isEndingSoon$ = serverSettingsApi.createObservable(
@@ -45,7 +45,7 @@ const useEndOfMeetingWarning = () => {
 
       notifications$.actions.dismiss(notificationId);
     };
-  }, [serverSettingsApi, endsAtMs]);
+  }, [serverSettingsApi, endsAtMs, isEnabled]);
 };
 
 export default useEndOfMeetingWarning;

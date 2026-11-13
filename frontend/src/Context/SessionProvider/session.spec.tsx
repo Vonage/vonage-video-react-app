@@ -16,6 +16,7 @@ import { makeTestProvider, ProviderOptions, providers } from '@test/providers';
 import type { VideoClient } from '@core/services';
 import { notifications$ } from '@core/stores';
 import { TRPCClientError } from '@trpc/client';
+import { SessionKeyClaim } from '@common/constants';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
 
@@ -32,8 +33,10 @@ vi.mock('@utils/constants', () => ({
 vi.mock('@api/fetchCredentials');
 
 const mockJoinSessionMutate = vi.fn();
+const mockRenewSessionKeyMutate = vi.fn();
 const mockVideoClient = {
   joinSession: (...args: unknown[]) => mockJoinSessionMutate(...args) as unknown,
+  renewSessionKey: (...args: unknown[]) => mockRenewSessionKeyMutate(...args) as unknown,
 } as unknown as VideoClient;
 
 // A valid fake JWT containing sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE'
@@ -743,7 +746,82 @@ describe('SessionProvider', () => {
     expect(vonageVideoClient.connect).toHaveBeenCalledTimes(1);
     vi.useRealTimers();
   });
+
+  it('swaps to the renewed sessionKey and token when another participant extends, keeping the longest extension and ignoring malformed signals', async () => {
+    expect.assertions(6);
+
+    const sessionKeyExtendedBy40 = makeExtendedSessionKey({ extendedMinutes: 40 });
+    const sessionKeyExtendedBy20 = makeExtendedSessionKey({ extendedMinutes: 20 });
+    let heldSessionKey = validSessionKey;
+    const renewCredential = vi.fn(({ sessionKey }: { sessionKey: string }) => {
+      heldSessionKey = sessionKey;
+    });
+    Object.defineProperties(vonageVideoClient, {
+      connectionId: { value: 'own-connection' },
+      sessionKey: { get: () => heldSessionKey },
+      renewCredential: { value: renewCredential },
+    });
+    mockRenewSessionKeyMutate.mockImplementation(({ grant }: { grant: string }) =>
+      Promise.resolve(
+        grant === 'grant-40'
+          ? { sessionKey: sessionKeyExtendedBy40, token: 'token-40' }
+          : { sessionKey: sessionKeyExtendedBy20, token: 'token-20' }
+      )
+    );
+    const pushSpy = vi.spyOn(notifications$.actions, 'push');
+
+    const { getByTestId } = render(<TestComponent />);
+    await waitFor(() => {
+      if (getByTestId('connected').textContent !== 'true') throw new Error('not connected');
+    });
+
+    await act(async () => {
+      [
+        JSON.stringify({ grant: 'grant-40' }),
+        'not json',
+        JSON.stringify({ grant: 40 }),
+        JSON.stringify({ grant: 'grant-20' }),
+      ].forEach((data) => {
+        vonageVideoClient.emit('signal:meeting-extended', {
+          type: 'signal:meeting-extended',
+          data,
+          from: { connectionId: 'other-connection' },
+        } as unknown as SignalEvent);
+      });
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      if (pushSpy.mock.calls.length < 1) throw new Error('not extended yet');
+    });
+    expect(mockRenewSessionKeyMutate).toHaveBeenCalledTimes(2);
+    expect(mockRenewSessionKeyMutate).toHaveBeenCalledWith({
+      sessionKey: validSessionKey,
+      grant: 'grant-20',
+    });
+    expect(renewCredential).toHaveBeenCalledTimes(1);
+    expect(renewCredential).toHaveBeenCalledWith({
+      sessionKey: sessionKeyExtendedBy40,
+      token: 'token-40',
+    });
+    expect(window.location.pathname).toBe(`/room/${sessionKeyExtendedBy40}`);
+    expect(pushSpy).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }));
+  });
 });
+
+function makeExtendedSessionKey({ extendedMinutes }: { extendedMinutes: number }): string {
+  const payload = {
+    sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+    roomName: 'TestComponentRoom',
+    [SessionKeyClaim.schedule]: {
+      startsAtMs: Date.now() - 55 * 60 * 1000,
+      endsAtMs: Date.now() + (5 + extendedMinutes) * 60 * 1000,
+    },
+    [SessionKeyClaim.extended]: extendedMinutes,
+  };
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
+  return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
+}
 
 type RenderOptions = {
   userContext?: ProviderOptions['UserContext'];
