@@ -1,3 +1,4 @@
+import { createElement, useRef } from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeTestProvider, providers } from '@core-test/providers';
@@ -16,79 +17,118 @@ describe('serverSettings$', () => {
     vi.useRealTimers();
   });
 
-  it('keeps the server time empty until the server answers', () => {
-    expect.assertions(2);
-
-    const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings]);
-
-    renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
-
-    act(() => {
-      vi.advanceTimersByTime(5_000);
-    });
-
-    expect(serverSettingsContext.current.getState().status).toBe('pending');
-    expect(serverSettingsContext.current.getState().now).toBeNull();
-  });
-
-  it('ticks the server time without re-rendering a consumer that selects only the status', () => {
-    expect.assertions(2);
-
-    const { wrapper, serverSettingsContext } = makeTestProvider([providers.serverSettings], {
-      serverSettingsContext: { value: { status: 'known', now: Date.now(), clockOffset: 0 } },
-    });
-    const renderStatus = vi.fn(() => serverSettings$.useServerTimeStatus());
-
-    renderHook(renderStatus, { wrapper });
-    const startedAt = serverSettingsContext.current.getState().now;
-
-    act(() => {
-      vi.advanceTimersByTime(5_000);
-    });
-
-    expect(serverSettingsContext.current.getState().now).toBe(startedAt + 5_000);
-    expect(renderStatus).toHaveBeenCalledTimes(1);
-  });
-
-  it('stops the server clock when the provider unmounts', () => {
-    expect.assertions(2);
-    const { wrapper } = makeTestProvider([providers.serverSettings]);
-
-    const { unmount } = renderHook(() => serverSettings$.useServerTimeStatus(), { wrapper });
-
-    expect(vi.getTimerCount()).toBe(1);
-
-    unmount();
-
-    expect(vi.getTimerCount()).toBe(0);
-  });
-
-  it('sends the sessionKey and moves the observed server time to the answer without waiting for a tick', async () => {
-    expect.assertions(2);
-
+  it('initializes once for multiple consumers, ticks selectively, and stops on unmount', async () => {
+    expect.assertions(6);
     const getServerSettings = vi.fn(() =>
       Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds })
     );
-    const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
-      runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
-    });
-
-    const { result } = renderHook(
+    const { wrapper, serverSettingsContext } = makeTestProvider(
+      [providers.runtime, providers.serverSettings],
+      {
+        runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
+        serverSettingsContext: { sessionKey },
+      }
+    );
+    const renderStatus = vi.fn(() => serverSettings$.useServerTimeStatus());
+    const { result, unmount } = renderHook(
       () => {
-        serverSettings$.useServerSettings({ sessionKey });
-
-        return serverSettings$.use.observable((state) => state.now);
+        renderStatus();
+        return { status: serverSettings$.useServerTimeStatus(), api: serverSettings$.use.api() };
       },
       { wrapper }
     );
 
-    const nextServerNow = new Promise<number | null>((resolve) => {
-      result.current.subscribe(resolve, { skipFirst: true });
+    await waitForKnownTime(result.current.api);
+    expect(result.current.status).toBe('known');
+    expect(getServerSettings.mock.calls).toEqual([[{ sessionKey }]]);
+    expect(serverSettingsContext.current.getState().now).toBe(Date.now() + serverAheadMilliseconds);
+    renderStatus.mockClear();
+
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+    expect(serverSettingsContext.current.getState().now).toBe(Date.now() + serverAheadMilliseconds);
+    expect(renderStatus).not.toHaveBeenCalled();
+
+    const clock = serverSettingsContext.current;
+    const stoppedAt = clock.getState().now;
+    unmount();
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+    expect(clock.getState().now).toBe(stoppedAt);
+  });
+
+  it('requests settings with an explicit null session key', async () => {
+    expect.assertions(2);
+    const getServerSettings = vi.fn(() => Promise.resolve({ serverTime: Date.now() }));
+    const { wrapper } = makeTestProvider([providers.runtime, providers.serverSettings], {
+      runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
+      serverSettingsContext: { sessionKey: null },
     });
+    const { result } = renderHook(
+      () => ({ status: serverSettings$.useServerTimeStatus(), api: serverSettings$.use.api() }),
+      { wrapper }
+    );
 
-    const serverNow = await act(() => nextServerNow);
+    await waitForKnownTime(result.current.api);
+    expect(result.current.status).toBe('known');
+    expect(getServerSettings.mock.calls).toEqual([[{ sessionKey: null }]]);
+  });
 
-    expect(getServerSettings).toHaveBeenCalledWith({ sessionKey });
-    expect(serverNow).toBe(Date.now() + serverAheadMilliseconds);
+  it('clears the previous clock while a new session request is pending without remounting consumers', async () => {
+    expect.assertions(7);
+    let resolveSettings!: (settings: { serverTime: number }) => void;
+    const nextSettings = new Promise<{ serverTime: number }>((resolve) => {
+      resolveSettings = resolve;
+    });
+    const getServerSettings = vi
+      .fn()
+      .mockResolvedValueOnce({ serverTime: Date.now() + serverAheadMilliseconds })
+      .mockReturnValueOnce(nextSettings);
+    const { wrapper: RuntimeWrapper } = makeTestProvider([providers.runtime], {
+      runtimeContext: { videoClient: makeVideoClientMock({ getServerSettings }) },
+    });
+    let activeSessionKey: string | null = sessionKey;
+    const { result, rerender } = renderHook(
+      () => ({
+        state: serverSettings$.use.select((state) => state),
+        api: serverSettings$.use.api(),
+        identity: useRef(null),
+      }),
+      {
+        wrapper: ({ children }) =>
+          createElement(
+            RuntimeWrapper,
+            null,
+            createElement(serverSettings$.Provider, { sessionKey: activeSessionKey }, children)
+          ),
+      }
+    );
+
+    await waitForKnownTime(result.current.api);
+    expect(result.current.state.status).toBe('known');
+    const identity = result.current.identity;
+    activeSessionKey = 'another-session-key';
+    rerender();
+    expect(result.current.state.status).toBe('pending');
+    expect(result.current.state.now).toBeNull();
+    expect(result.current.identity).toBe(identity);
+    expect(getServerSettings).toHaveBeenLastCalledWith({ sessionKey: activeSessionKey });
+
+    await act(() => {
+      resolveSettings({ serverTime: Date.now() });
+      return nextSettings;
+    });
+    await waitForKnownTime(result.current.api);
+    expect(result.current.state.status).toBe('known');
+    expect(result.current.state.clockOffset).toBe(0);
   });
 });
+
+async function waitForKnownTime(api: ReturnType<typeof serverSettings$.use.api>) {
+  const status = api.createObservable((state) => state.status);
+  const ready = new Promise<void>((resolve) => {
+    status.subscribe((value) => {
+      if (value === 'known') resolve();
+    });
+  });
+  await act(() => ready);
+  status.dispose();
+}

@@ -1,3 +1,4 @@
+import ServerSettingsProvider from '@Context/ServerSettingsProvider';
 import { afterEach, describe, expect, it } from 'vitest';
 import { env } from '../../env';
 import { render as renderBase, screen, waitFor } from '@testing-library/react';
@@ -18,7 +19,11 @@ describe('GoodBye', () => {
   });
 
   it('should render correctly with default props', () => {
-    render(<GoodBye />);
+    render(
+      <ServerSettingsProvider>
+        <GoodBye />
+      </ServerSettingsProvider>
+    );
 
     expect(screen.getByText('You have left the meeting')).toBeVisible();
     expect(screen.getByText('Thank you for joining!')).toBeVisible();
@@ -47,7 +52,14 @@ describe('GoodBye', () => {
       render(
         <MemoryRouter initialEntries={[`/goodbye/${sessionKey}`]}>
           <Routes>
-            <Route path="/goodbye/:roomIdentifier" element={<GoodBye />} />
+            <Route
+              path="/goodbye/:roomIdentifier"
+              element={
+                <ServerSettingsProvider>
+                  <GoodBye />
+                </ServerSettingsProvider>
+              }
+            />
           </Routes>
         </MemoryRouter>,
         {
@@ -81,7 +93,11 @@ describe('GoodBye', () => {
     env.partialUpdate({ AUTH_ENABLED: true });
     document.cookie = cookie;
 
-    render(<GoodBye />);
+    render(
+      <ServerSettingsProvider>
+        <GoodBye />
+      </ServerSettingsProvider>
+    );
 
     expect(!!screen.queryByRole('button', { name: 'View Landing Page' })).toBe(isShown);
   });

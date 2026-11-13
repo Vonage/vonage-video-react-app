@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageLayout, Card } from '@ui';
-import { serverSettings$ } from '@core/stores';
+import useShouldShowReenterRoom from '@components/GoodBye/useShouldShowReenterRoom';
 import { Banner, Footer } from '@components';
 import ArchiveList from '@components/GoodBye/ArchiveList';
 import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
@@ -22,6 +22,7 @@ import isSignedIn from '../../utils/isSignedIn';
  */
 const GoodBye = (): ReactElement => {
   const { t } = useTranslation();
+  const shouldShowReenterRoom = useShouldShowReenterRoom();
   const { header, caption, isSelfDeclinedRecording } = useGoodByePage();
 
   return (
@@ -38,11 +39,7 @@ const GoodBye = (): ReactElement => {
             <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
               {t('goodBye.title')}
             </p>
-            <div className="mb-6 w-full">
-              <serverSettings$.Provider>
-                <ReenterRoomButton />
-              </serverSettings$.Provider>
-            </div>
+            <div className="mb-6 w-full">{shouldShowReenterRoom && <ReenterRoomButton />}</div>
             {isSignedIn() && <GoToLandingPageButton />}
           </Card>
           {!isSelfDeclinedRecording && (

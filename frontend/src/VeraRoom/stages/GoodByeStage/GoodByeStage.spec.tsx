@@ -1,3 +1,4 @@
+import ServerSettingsProvider from '@Context/ServerSettingsProvider';
 import { describe, expect, it } from 'vitest';
 import { render as renderBase, screen } from '@testing-library/react';
 import GoodByeStage from './GoodByeStage';
@@ -8,7 +9,11 @@ import { MemoryRouter } from 'react-router-dom';
 
 describe('GoodByeStage', () => {
   it('should render correctly with default props', () => {
-    render(<GoodByeStage />);
+    render(
+      <ServerSettingsProvider>
+        <GoodByeStage />
+      </ServerSettingsProvider>
+    );
 
     expect(screen.getByText('You have left the meeting')).toBeVisible();
     expect(screen.getByText('Thank you for joining!')).toBeVisible();

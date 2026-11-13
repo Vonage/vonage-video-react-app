@@ -61,15 +61,41 @@ const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
         {...props}
       >
         <MemoryRouter initialEntries={[initialEntry]}>
-          <RoomProvider>
-            <Routes>
-              <Route path="/waiting-room/:roomIdentifier" element={<WaitingRoomStage />} />
-              {/* Fallback route when no session-identifier attribute is set */}
-              <Route path="/waiting-room" element={<WaitingRoomStage />} />
-              <Route path="/room/:roomIdentifier" element={<MeetingRoomStage />} />
-              <Route path="/goodbye/:roomIdentifier?" element={<GoodByeStage />} />
-            </Routes>
-          </RoomProvider>
+          <Routes>
+            <Route
+              path="/waiting-room/:roomIdentifier"
+              element={
+                <RoomProvider>
+                  <WaitingRoomStage />
+                </RoomProvider>
+              }
+            />
+            {/* Fallback route when no session-identifier attribute is set */}
+            <Route
+              path="/waiting-room"
+              element={
+                <RoomProvider>
+                  <WaitingRoomStage />
+                </RoomProvider>
+              }
+            />
+            <Route
+              path="/room/:roomIdentifier"
+              element={
+                <RoomProvider>
+                  <MeetingRoomStage />
+                </RoomProvider>
+              }
+            />
+            <Route
+              path="/goodbye/:roomIdentifier?"
+              element={
+                <RoomProvider>
+                  <GoodByeStage />
+                </RoomProvider>
+              }
+            />
+          </Routes>
         </MemoryRouter>
       </div>
     </AppContextProvider>

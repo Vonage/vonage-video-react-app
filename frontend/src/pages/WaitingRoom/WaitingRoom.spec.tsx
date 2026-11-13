@@ -439,7 +439,7 @@ async function render(
     MainWrapper,
     backgroundEffectsDialog$.Provider,
     precallNetworkTestDialog$.Provider,
-    serverSettings$.Provider
+    serverSettings$.Provider.makeProviderWrapper({ sessionKey: null }).wrapper
   );
 
   const renderResult = await renderAsyncComponent(ui, { wrapper });

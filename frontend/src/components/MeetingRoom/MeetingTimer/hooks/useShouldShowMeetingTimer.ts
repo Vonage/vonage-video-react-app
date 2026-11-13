@@ -1,7 +1,6 @@
-import { isNil, isNotNil } from '@common/assertions';
+import { isNil } from '@common/assertions';
 import type { ScheduleWindow } from '@common/types';
 import { serverSettings$ } from '@core/stores';
-import useSessionContext from '@hooks/useSessionContext';
 
 const endingSoonMilliseconds = 5 * 60_000;
 
@@ -10,12 +9,6 @@ const useShouldShowMeetingTimer = ({
 }: {
   scheduleWindow: ScheduleWindow | null;
 }): boolean => {
-  const { sessionKey } = useSessionContext();
-  serverSettings$.useServerSettings({
-    sessionKey,
-    queryOptions: { enabled: isNotNil(scheduleWindow) },
-  });
-
   const endsAtMs = scheduleWindow?.endsAtMs;
 
   return serverSettings$.use.select(
