@@ -1,24 +1,51 @@
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { notifications$ } from '@core/stores';
+import { isNil } from '@common/assertions';
+import { notifications$, serverSettings$ } from '@core/stores';
+import type { NotificationId } from '@core/stores/notifications/types';
+import useMeetingScheduleWindow from './useMeetingScheduleWindow';
 
 const endOfMeetingWarningMilliseconds = 10_000;
+const endingSoonMilliseconds = 5 * 60_000;
 
 const useEndOfMeetingWarning = ({ isEnabled }: { isEnabled: boolean }) => {
   const { t } = useTranslation();
-  useEffect(() => {
-    if (!isEnabled) return;
-
-    const notificationId = notifications$.actions.push({
+  const scheduleWindow = useMeetingScheduleWindow();
+  const serverSettingsApi = serverSettings$.use.api();
+  const endsAtMs = scheduleWindow?.endsAtMs;
+  const showWarning = useEffectEvent(() =>
+    notifications$.actions.push({
       type: 'warning',
       message: t('meetingTimer.endingSoon'),
       expirationMs: endOfMeetingWarningMilliseconds,
+    })
+  );
+
+  useEffect(() => {
+    if (!isEnabled || isNil(endsAtMs)) return;
+
+    let notificationId: NotificationId | undefined;
+    const isEndingSoon$ = serverSettingsApi.createObservable(
+      (state) =>
+        state.status === 'known' &&
+        state.now >= endsAtMs - endingSoonMilliseconds &&
+        state.now < endsAtMs
+    );
+
+    isEndingSoon$.subscribe((isEndingSoon) => {
+      if (!isEndingSoon) return;
+
+      isEndingSoon$.dispose();
+      notificationId = showWarning();
     });
 
-    return function dismissEndOfMeetingWarning() {
+    return () => {
+      isEndingSoon$.dispose();
+      if (isNil(notificationId)) return;
+
       notifications$.actions.dismiss(notificationId);
     };
-  }, [isEnabled, t]);
+  }, [serverSettingsApi, endsAtMs, isEnabled]);
 };
 
 export default useEndOfMeetingWarning;

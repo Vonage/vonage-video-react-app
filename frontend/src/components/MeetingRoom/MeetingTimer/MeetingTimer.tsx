@@ -6,7 +6,6 @@ import type { ScheduleWindow } from '@common/types';
 import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
 import isSignedIn from '@utils/isSignedIn';
 import MeetingEndingDialog from '../MeetingEndingDialog';
-import useEndOfMeetingWarning from './hooks/useEndOfMeetingWarning';
 import useMeetingSecondsLeft from './hooks/useMeetingSecondsLeft';
 import meetingTimerVariants from './meetingTimerVariants';
 
@@ -19,8 +18,6 @@ const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps):
   const { t } = useTranslation();
   const secondsLeft = useMeetingSecondsLeft({ scheduleWindow });
   const isAllowedToExtend = isSignedIn();
-
-  useEndOfMeetingWarning({ isEnabled: !isAllowedToExtend });
 
   return (
     <>

@@ -18,6 +18,7 @@ import TranscriptionIndicator from '../../components/MeetingRoom/TranscriptionIn
 import RecordingPopUpIndicator from '@components/MeetingRoom/RecordingPopupIndicator';
 import { RECORDING_POPUP_TIMEOUT_MS } from '@utils/constants';
 import { isMobile } from '@web/platform';
+import isSignedIn from '@utils/isSignedIn';
 import { useLeaveAtMeetingEnd, useEndOfMeetingWarning } from '@components/MeetingRoom/MeetingTimer';
 
 /**
@@ -67,7 +68,7 @@ function MeetingRoom({ fullSize = false, className, ...boxProps }: MeetingRoomPr
     handleRecordingNotified,
   } = useMeetingRoom();
   useLeaveAtMeetingEnd();
-  useEndOfMeetingWarning();
+  useEndOfMeetingWarning({ isEnabled: !isSignedIn() });
   const isAdvancedSettingsOpen = advancedSettings$.use.select((state) => state.isOpen);
 
   const participantCount = useMemo(

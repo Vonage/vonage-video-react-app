@@ -49,40 +49,6 @@ describe('MeetingTimer', () => {
     expect(screen.getByRole('timer')).toHaveTextContent('45 sec left');
   });
 
-  it('shows anonymous users the about-to-finish message once, without the meeting ending dialog', async () => {
-    expect.assertions(3);
-
-    vi.setSystemTime(endsAt - serverAheadMilliseconds - 5 * 60_000);
-    const pushSpy = vi.spyOn(notifications$.actions, 'push');
-
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-    });
-
-    await act(() => vi.advanceTimersByTimeAsync(3 * 60_000));
-
-    expect(pushSpy).toHaveBeenCalledTimes(1);
-    expect(pushSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'warning', message: 'The meeting is about to finish' })
-    );
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it('dismisses the about-to-finish message when the meeting room closes', () => {
-    vi.setSystemTime(endsAt - 60_000);
-    const { unmount } = render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
-      runtimeContext: { videoClient: makeServerClockAhead() },
-    });
-    const hasEndingSoonNotification = () =>
-      [...notifications$.getState().notifications.values()].some(
-        ({ message }) => message === 'The meeting is about to finish'
-      );
-
-    expect(hasEndingSoonNotification()).toBe(true);
-    unmount();
-    expect(hasEndingSoonNotification()).toBe(false);
-  });
-
   describe('signed in', () => {
     beforeEach(() => {
       document.cookie = `${signedInHintCookie}=1`;
