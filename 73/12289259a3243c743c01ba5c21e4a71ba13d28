@@ -1,0 +1,25 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/AdvancedSettingsMeetingTab.spec.tsx
+  s_20776229283099::t_e3e82bdcc418bf 2-3,78
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/components/MeetingProgress.tsx
+  s_20776229283099::t_8c08da4ce2c6bc 2,20-27,35,41
+frontend/src/components/MeetingExtension/hooks/useMeetingExtension.ts
+  s_20776229283099::t_2336481136c230 1,21
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  s_20776229283099::t_9be16c6ca993bc 2,37-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7312289259a3243c743c01ba5c21e4a71ba13d28",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

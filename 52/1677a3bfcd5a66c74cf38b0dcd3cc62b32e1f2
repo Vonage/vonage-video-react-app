@@ -1,0 +1,358 @@
+.github/workflows/run-tests.yml
+  s_20776229283099::t_73f1ded312c22a 128,163
+backend/.env.example
+  s_20776229283099::t_8c67d199d93bd1 42
+backend/middleware/rateLimitMiddleware.ts
+  s_20776229283099::t_ae26fc19f36908 14
+libs/ui/src/components/Skeleton/Skeleton.tsx
+  s_20776229283099::t_d050806da22e31 1-27
+AGENTS.md
+  s_20776229283099::t_3b832fce7809e9 93-94,1287,1362
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.spec.tsx
+  s_20776229283099::t_934d06907d200d 1-2,4,7,15-44,53,57-59
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
+  s_20776229283099::t_d12f15e2a43905 1,3,16-24,34-35,48-49,52
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_20776229283099::t_c574dffd67366f 1-2,16-19,70,92,108,112,157,189
+  s_d7e2e0668feaa5::t_95a023acdbbbea 119-120
+  h_6029769cf9ac60 3-8,11-15,20-28,29-30,31,32,33-35,36-37,38,39,40-47,48,49-52,53,54,56,60-61,62-69,62-66,67-69,71-85,86,87-91,93-107,109-111,113-114,116-117,123-128,129,130-131,134-135,137-138,140,141,142,143-153,154-156,158-165,158,159-165,171-188,190
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_20776229283099::t_3b46a1bd99a85f 145,179
+  h_6029769cf9ac60 2,16-17,19-21,25-27,31-32,45-46,50,60,61,62,63-65,67,69,113-114,122-126,127-129,162,168-175,183-196,198
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton.tsx
+  s_20776229283099::t_f7948f80d5d00c 2-7,14-16,19-22,24-25,28,30-32
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  s_20776229283099::t_85fbd1ed1ed403 6-11,30-31,34-43,49-59,61-72
+  h_6029769cf9ac60 1-5,12-16,17-22,25-27,28-29,48,60,68,70,73-76
+integration-tests/tests/visualComparisons.spec.ts
+  s_20776229283099::t_cd52e17a6e06cc 143
+  h_6029769cf9ac60 1,3-9,59-62,63,64-93,94-96,97,98-103,125,127-129,130,131-137,131,132-137,138,140,149-157,158-160,161-168,169,170-173,173,174,175-184,176-180,182,185,186,187-193,192-193,194-253,195-198,200-204,206,212,233-235,250,254,255-273,276-278,279-296,297,298-308,309-316,317-318,319-334,335-339,340-348,349,350-355,356-361,363-364,368-369,372-379,381-383
+libs/ui/src/components/Skeleton/index.ts
+  s_20776229283099::t_fad19d3a521f41 1
+libs/ui/src/layout/SplitPanel/SplitPanel.tsx
+  s_20776229283099::t_0a3b9c2c70d8d6 2-3,4-21,32-35
+  s_d7e2e0668feaa5::t_877a2902654704 1,22-31
+libs/ui/src/layout/SplitPanel/index.ts
+  s_20776229283099::t_8d59d2c2ca4aed 1
+libs/ui/src/layout/SplitPanel/SplitPanel.spec.tsx
+  s_72216d36ca7672::t_47e19947eb1cf1 1-19
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.spec.ts
+  s_20776229283099::t_fa759fdc2cd314 1-51
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  s_20776229283099::t_6501b7e6245199 18-23,26-31
+  h_6029769cf9ac60 1-6,1-3,4,5-6,7-11,12,13-16,17,24-25,32-48
+frontend/src/locales/de.json
+  s_20776229283099::t_4d0e68860ef37e 411-412
+  h_6029769cf9ac60 354,355,356,357-366,394-396,397,398,404,406-410
+frontend/src/locales/en.json
+  s_20776229283099::t_01f2fba5fd36c9 411-412
+  h_6029769cf9ac60 354,355,356,357-366,394-396,397,398,404,406-410
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_85f1746ee4a2c7 411-412
+  h_6029769cf9ac60 354,355,356,357-366,394-396,397,398,404,406-410
+frontend/src/locales/es.json
+  s_20776229283099::t_2c01340f221d8a 411-412
+  h_6029769cf9ac60 354,355,356,357-366,394-396,397,398,404,406-410
+frontend/src/locales/it.json
+  s_20776229283099::t_ed6ef290fbe6d4 411-412
+  h_6029769cf9ac60 354,355,356,357-366,394-396,397,398,404,406-410
+frontend/src/locales/ja.json
+  s_20776229283099::t_44f23e8da8236d 421-422
+  h_6029769cf9ac60 364,365,366,367-376,404-406,407,408,414,416-420
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  s_d7e2e0668feaa5::t_b897db636469ec 41-42
+  h_6029769cf9ac60 1,6,28-31,33-35,36-38,159-163,291,294,322
+libs/core/src/stores/serverSettings/serverSettings$.test.ts
+  s_d7e2e0668feaa5::t_10b949caaf0f81 70-73
+libs/api/src/schemas/index.ts
+  h_6029769cf9ac60 31,32,33-36
+libs/api/src/schedule/assertScheduleOpen.ts
+  h_6029769cf9ac60 1-4,5,6-7,8,9,10,11-13,14-15,16-21
+libs/common/src/types/index.ts
+  h_6029769cf9ac60 19
+libs/common/src/types/ScheduleWindow.ts
+  h_6029769cf9ac60 1-4,5-6,7-9
+libs/api/src/schedule/errors/MeetingNotStartedError.ts
+  h_6029769cf9ac60 1-22
+libs/common/src/constants/SessionKeyClaim.ts
+  h_6029769cf9ac60 1,2,3,4-6
+libs/api/src/index.ts
+  h_6029769cf9ac60 7,8
+libs/common/src/types/VideoSessionDetails.ts
+  h_6029769cf9ac60 3,6-9
+libs/common/src/types/SessionKeyPayload.ts
+  h_6029769cf9ac60 1,2,3,4,7,8,10,13
+libs/api/src/handlers/createSession.ts
+  h_6029769cf9ac60 4,15,21-23,24,25,26-29,33,42
+libs/common/src/constants/index.ts
+  h_6029769cf9ac60 4,5
+libs/api/src/schemas/CreateSessionAndJoinPayload.schema.ts
+  h_6029769cf9ac60 6-8
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  h_6029769cf9ac60 1,2,3,4-17,18-21
+libs/api/src/handlers/createSessionAndJoin.ts
+  h_6029769cf9ac60 10-13
+libs/api/src/handlers/createEphemeralToken.ts
+  h_6029769cf9ac60 5,6,7,14-15,20,21,22,23,35,36,37,38,39-42,44
+libs/api/src/schedule/index.ts
+  h_6029769cf9ac60 1-9
+libs/api/src/schedule/errors/MeetingEndedError.ts
+  h_6029769cf9ac60 1-20
+libs/api/src/schemas/CreateSessionPayload.schema.ts
+  h_6029769cf9ac60 3,9
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 7-8,9-10,119-128,129,130-146,156-174,306-315,316,317-328,329,330-332,333-347,348-363,366-420,421,422-463,464,465-503,571-585,821,849,860-863,864,865-867,868,869-872,873-874,875,876,877,878-882
+backend/routes/video/setup.ts
+  h_6029769cf9ac60 2,15-16,54-77,93-94,95-100,106,107,116
+backend/tests/scheduledSession.test.ts
+  h_6029769cf9ac60 1-13,14,15-26,27-34,35-39,40,41-43,44-64
+backend/routes/video/setup.test.ts
+  h_6029769cf9ac60 252-254
+backend/routes/video/video.ts
+  h_6029769cf9ac60 118,123-129,133,135
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  h_6029769cf9ac60 85-96
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  h_6029769cf9ac60 14-16,19,23,31,35-36,46-48,53-55,59
+backend/storage/sessionStorage.ts
+  h_6029769cf9ac60 4
+backend/storage/vcrSessionStorage.ts
+  h_6029769cf9ac60 52,56-60
+backend/helpers/getOrCreateSessionKeyFromRoomName.ts
+  h_6029769cf9ac60 4,35
+libs/api/src/handlers/startArchive.ts
+  h_6029769cf9ac60 3-4,5,15,16,17,18,21
+libs/api/src/constants/maxDateMilliseconds.ts
+  h_6029769cf9ac60 1-6
+integration-tests/tests/emoji.spec.ts
+  h_6029769cf9ac60 82
+integration-tests/tests/multiparty.spec.ts
+  h_6029769cf9ac60 402
+libs/api/src/core/VideoClient/VideoClient.ts
+  h_6029769cf9ac60 18,19-20,27-28,30-31,61-64,87-89,191,192-195,196,197-198,199
+libs/api/src/handlers/getServerSettings.ts
+  h_6029769cf9ac60 1,2,3,4,5-7
+libs/api/src/handlers/index.ts
+  h_6029769cf9ac60 13,14-15
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  h_6029769cf9ac60 152-165,166-176,177-186,187,188-189,190,191-193,194,195,196,197-198
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_6029769cf9ac60 224-225,227-228,229-230,231-244,243-244,447-448
+libs/api/src/types/VideoAction.ts
+  h_6029769cf9ac60 15,16-17
+libs/api/src/types/index.ts
+  h_6029769cf9ac60 21,22-24,26
+libs/api/src/constants/schemasByAction.ts
+  h_6029769cf9ac60 12,13-14,16,29,30-31
+libs/api/src/schemas/GetServerSettingsPayload.schema.ts
+  h_6029769cf9ac60 1-10
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.test.ts
+  h_6029769cf9ac60 1-7,8-9,10,11,12,13,14,15,16,17-18
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  h_6029769cf9ac60 1-8,9,10-20,22-25,27-30,32-36
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.spec.ts
+  h_6029769cf9ac60 1-6,7,8-28
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.ts
+  h_6029769cf9ac60 1-8,9-17,18-19,20,22,23-25,26,27-31,32,33-35,36,37-40,41-43,44-56
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.spec.ts
+  h_6029769cf9ac60 1-3,5-7,8,9-21,23-42,44,46-48,67-73,75,77-85
+frontend/src/components/WaitingRoom/UserNameInput/types/ScheduleStatus.ts
+  h_6029769cf9ac60 1,2-4,5-9,12,15-16
+libs/common/src/helpers/readScheduleClaim/readScheduleClaim.ts
+  h_6029769cf9ac60 1-2,3,4-7,8,9-12,13-14,15-17,18,19-21
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 11,12
+frontend/src/components/WaitingRoom/UserNameInput/helpers/formatCountdown.ts
+  h_6029769cf9ac60 1-8
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  h_6029769cf9ac60 1,2,3,4,5-9,10-15,16-17,19,20,21-23
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  h_6029769cf9ac60 2-3,5-6,7,8-9,9,10,11,12-13,14,15-18,20,21-26,27,28,31,36,41-43
+libs/common/src/helpers/readScheduleClaim/index.ts
+  h_6029769cf9ac60 1
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  h_6029769cf9ac60 72-73,117-118
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/JoinBlockerText.tsx
+  h_6029769cf9ac60 1-3,5-11,12-22,24-27,29-46
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  h_6029769cf9ac60 1,4,6-10,14-15,16-20,35-37,42-44,45-48,52-54,62-64
+frontend/src/hooks/useWaitingRoom.ts
+  h_6029769cf9ac60 9,14,19-20,21,22,99
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  h_6029769cf9ac60 9,17,46-47,99-101,103
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 1,2,3-4,7,8-11,12,13,14,15-24,25-26,27,28,29-33,34,35,36,37,38,39-40,40,41-42,43,44,45-50,46,50,51-57,52,57-58,58-72,58,75-76,76,78-79,78-83,85-92,96-101,97-98,100-101,103-117,108,112,117,119-134,120,136-143,142-145,144-145,146-159,160-161,162-164,165,166,167-171,172,173-174,175-179,180-182,184-185
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  h_6029769cf9ac60 1,2-6,2-7,8,9,11,12-13,14,15-18,19-22,24-26
+libs/core/src/stores/notifications/actions/pushNotification.ts
+  h_6029769cf9ac60 25-26
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  h_6029769cf9ac60 2,14,15,202,203-204,205,206-207,208-214,215-216,217,218,219,220-221,222,223-226,227,228-229,230-232,233-235,236-237,238-240,241,242,243-244,245-249,250,254,257-261
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  h_6029769cf9ac60 1,2,3-7,11-23,25-47,48,49,50-53,57-60,61-65,69-76,97-116,124,125-135,136,137,142-160,164,165,166
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingScheduleWindow.ts
+  h_6029769cf9ac60 1-2,3,4-6,7-12,13,14-17
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  h_6029769cf9ac60 16-17,34,102,103,269,270-271
+frontend/src/hooks/useToolbarButtons.tsx
+  h_6029769cf9ac60 110,113-115,121-123
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  h_6029769cf9ac60 14,15,52,53,68-70
+README.md
+  h_6029769cf9ac60 190
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  h_6029769cf9ac60 1-2,3,4
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 1-6,7-10,11,12,13-15,16-17,18-23,18,25-26,29-38
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  h_6029769cf9ac60 2,4,5,11,13,24-26
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  h_6029769cf9ac60 1-4,6,7-16
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  h_6029769cf9ac60 1,2-3,4,5,6,7,8-11,8-12,13,15-22,16-22,23,24,25,26,28,29-32,34-36,38,39-40,41-48,50-53,55-67,68-71
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  h_6029769cf9ac60 1-2,4,5-6,8-12,13,15,16-18,20,25,32
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  h_6029769cf9ac60 3-6,8,15
+frontend/src/utils/formatMinutesAndSeconds/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/hooks/useLeaveMeeting.ts
+  h_6029769cf9ac60 5-8,11,13,18,23
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  h_6029769cf9ac60 69
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  h_6029769cf9ac60 139
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  h_6029769cf9ac60 1-2,3,5-9,10-15,17,19-22,24-30,36,38-39,41,43,46-48
+libs/api/src/schemas/VideoRouterConfig.schema.ts
+  h_6029769cf9ac60 9-10,30-31
+libs/api/src/extension/verifyExtensionGrant.ts
+  h_6029769cf9ac60 1-7,8-29
+docs/CONFIGURATION.md
+  h_6029769cf9ac60 105-106,107,108-110,111,112-115,116,117-121,122-124,125-127,128,129
+libs/api/src/types/ExtensionStore.ts
+  h_6029769cf9ac60 1-9
+libs/api/src/extension/index.ts
+  h_6029769cf9ac60 1-2
+libs/api/src/schemas/RenewSessionKeyPayload.schema.ts
+  h_6029769cf9ac60 1-10
+libs/api/src/schemas/VideoClientConfig.schema.ts
+  h_6029769cf9ac60 5-6,9,16-17,42-43,44,45-52
+libs/api/src/extension/defaultExtensionStore.ts
+  h_6029769cf9ac60 1-8
+libs/api/src/extension/createInMemoryExtensionStore.ts
+  h_6029769cf9ac60 1-29
+libs/common/src/helpers/readExtendedClaim/index.ts
+  h_6029769cf9ac60 1
+libs/api/src/extension/signExtensionGrant.ts
+  h_6029769cf9ac60 1-29
+libs/common/src/helpers/readExtendedClaim/readExtendedClaim.ts
+  h_6029769cf9ac60 1-16
+libs/api/src/extension/extensionGrantAudience.ts
+  h_6029769cf9ac60 1-3
+libs/api/src/routing/videoHandler/createVideoHandler.ts
+  h_6029769cf9ac60 35-36,40-42,44-48
+libs/common/src/helpers/readExtendedClaim/readExtendedClaim.test.ts
+  h_6029769cf9ac60 1-11
+libs/api/src/extension/signExtendedSessionKey.ts
+  h_6029769cf9ac60 1-2,3,4-6,7,8-11,12,13-16,17,18-22,23-27,28-35
+libs/api/src/handlers/extendSession.ts
+  h_6029769cf9ac60 1-9,10-11,12,13-22,23,24,25,26-28,29,30,31,32-40,41,42,43,44-65,66-70
+libs/api/src/schemas/ExtensionStore.schema.ts
+  h_6029769cf9ac60 1-10
+libs/api/src/handlers/renewSessionKey.ts
+  h_6029769cf9ac60 1-3,4-28,29-33
+libs/api/src/extension/defaultExtensionConfig.ts
+  h_6029769cf9ac60 1-3,4-7
+libs/api/src/schemas/ExtensionConfig.schema.ts
+  h_6029769cf9ac60 1,2,3,4-10,11,12-14,15-16,17-23
+libs/api/src/extension/joinExtendedSession.ts
+  h_6029769cf9ac60 1-3,4,5-6,7-15,16-28,29-31,32,33-35,36-37,38,39-42
+libs/api/src/schemas/ExtendSessionPayload.schema.ts
+  h_6029769cf9ac60 1-10
+backend/tests/extendSession.test.ts
+  h_6029769cf9ac60 1,2-3,4,5,6,7-13,14-23,24-25,26,27-29,30,31,32-33,34-80,81-124
+libs/common/src/constants/maxTotalExtensionMinutes.ts
+  h_6029769cf9ac60 1-3
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  h_6029769cf9ac60 111
+backend/routes/auth/constants.ts
+  h_6029769cf9ac60 6
+backend/routes/auth/handlers/callbackHandler.test.ts
+  h_6029769cf9ac60 14
+backend/routes/auth/handlers/signOutHandler.test.ts
+  h_6029769cf9ac60 10,112-114
+backend/routes/auth/helpers/clearSessionCookies.ts
+  h_6029769cf9ac60 20-22
+backend/routes/auth/helpers/writeSessionCookies.ts
+  h_6029769cf9ac60 8,55-62
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/index.ts
+  h_6029769cf9ac60 1-3
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendPopoverOpenState.ts
+  h_6029769cf9ac60 1-34
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/ExtendOptionRow.tsx
+  h_6029769cf9ac60 1-54
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/ExtendPopover.tsx
+  h_6029769cf9ac60 1-136
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 19,36,39,708,751-810,813-823
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/index.ts
+  h_6029769cf9ac60 1
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useExtendMeeting.ts
+  h_6029769cf9ac60 1-55
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/hooks/useMeetingExtension.ts
+  h_6029769cf9ac60 1-36
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/components/ExtendOptionRow/extendOptionRowVariants.ts
+  h_6029769cf9ac60 1-20
+frontend/src/types/session.ts
+  h_6029769cf9ac60 43
+frontend/src/components/MeetingRoom/MeetingTimer/ExtendPopover/helpers/getExtensionOptions.ts
+  h_6029769cf9ac60 1-23
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  h_6029769cf9ac60 42,65,431-434,629-644
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 46,48-50,58,107,198,363-414,611-613,734,784
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "521677a3bfcd5a66c74cf38b0dcd3cc62b32e1f2",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_72216d36ca7672": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d06e-c060-7a70-917e-add9c9818d59",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_d7e2e0668feaa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d07a-9f3b-7a02-b07a-8f5d1da418ff",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

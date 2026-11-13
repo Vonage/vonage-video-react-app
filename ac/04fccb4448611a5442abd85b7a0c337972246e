@@ -1,0 +1,27 @@
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_028075590eb23a::t_30a84a88c8b6af 58-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac04fccb4448611a5442abd85b7a0c337972246e",
+  "prompts": {},
+  "sessions": {
+    "s_028075590eb23a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d496-2ae0-7a02-9c23-d6453af50e75",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
