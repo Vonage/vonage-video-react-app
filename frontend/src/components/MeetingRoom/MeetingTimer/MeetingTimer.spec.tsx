@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import jwt from 'jsonwebtoken';
 import { act, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
@@ -23,7 +24,7 @@ describe('MeetingTimer', () => {
 
     vi.setSystemTime(endsAt - serverAheadMilliseconds - (4 * 60_000 + 52_000));
 
-    render(<MeetingTimer scheduleWindow={scheduleWindow} />, {
+    render(<MeetingTimer />, {
       runtimeContext: { videoClient: makeServerClockAhead() },
     });
 
@@ -47,7 +48,15 @@ type RenderOptions = {
 
 function render(ui: ReactElement, { runtimeContext }: RenderOptions) {
   const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
-    serverSettingsContext: { sessionKey: null },
+    serverSettingsContext: {
+      sessionKey: jwt.sign(
+        {
+          sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+          schedule: scheduleWindow,
+        },
+        'test'
+      ),
+    },
     runtimeContext,
   });
 

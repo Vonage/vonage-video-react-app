@@ -74,12 +74,7 @@ const PROVIDER_DEPENDENCIES = {
   [providers.user]: [],
   [providers.session]: [providers.runtime, providers.user],
   [providers.publisher]: [providers.runtime, providers.user, providers.session],
-  [providers.backgroundPublisher]: [
-    providers.runtime,
-    providers.user,
-    providers.session,
-    providers.publisher,
-  ],
+  [providers.backgroundPublisher]: [providers.runtime, providers.user, providers.session],
   [providers.previewPublisher]: [providers.user],
   [providers.screenShare]: [providers.user, providers.session],
   [providers.miniMode]: [],

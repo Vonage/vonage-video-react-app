@@ -1,22 +1,23 @@
-import { useMemo } from 'react';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
-import { decodeSessionKey } from '@common/helpers';
 import { isNil } from '@common/assertions';
 import { serverSettings$ } from '@core/stores';
 
 const useShouldShowReenterRoom = (): boolean => {
-  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
-  const scheduleWindow = useMemo(() => {
-    if (sessionKeyStatus !== 'valid') return null;
+  const { sessionKey } = useSessionKeyParam();
+  const hasSessionKey = Boolean(sessionKey);
 
-    return decodeSessionKey({ sessionKey }).schedule ?? null;
-  }, [sessionKey, sessionKeyStatus]);
-  const endsAtMs = scheduleWindow?.endsAtMs;
   return serverSettings$.use.select(
-    (state) =>
-      Boolean(sessionKey) &&
-      (isNil(endsAtMs) || (state.status === 'known' && state.now < endsAtMs)),
-    { dependencies: [sessionKey, endsAtMs] }
+    function shouldShowReenterRoom(state) {
+      if (!hasSessionKey) return false;
+      if (isNil(state.scheduleWindow)) return true;
+
+      const secondsUntilEnd = serverSettings$.selectors.secondsUntilEnd(state);
+      if (isNil(secondsUntilEnd)) return false;
+
+      const hasMeetingEnded = secondsUntilEnd === 0;
+      return !hasMeetingEnded;
+    },
+    { dependencies: [hasSessionKey] }
   );
 };
 

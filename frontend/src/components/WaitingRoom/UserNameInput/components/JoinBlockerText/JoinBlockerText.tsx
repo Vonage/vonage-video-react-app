@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import { getFormattedDate, getFormattedTime } from '@utils/dateTime';
 import getCountdownText from '../../helpers/getCountdownText';
-import type { WaitingStatus } from '../../types/ScheduleStatus';
+import type { WaitingStatus } from '@core/stores/serverSettings';
 
 export type JoinBlockerTextProps = ComponentProps<'p'> & {
   waitingStatus: WaitingStatus;

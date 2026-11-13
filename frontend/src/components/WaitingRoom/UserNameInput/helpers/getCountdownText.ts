@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
-import type { WaitingStatus } from '../types/ScheduleStatus';
+import type { WaitingStatus } from '@core/stores/serverSettings';
 
 function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; t: TFunction }) {
   if (waitingStatus.kind === 'daysAway') {

@@ -2,7 +2,8 @@ import { act, renderHook as renderHookBase } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { makeTestProvider, providers, type ProviderOptions } from '@core-test/providers';
-import useScheduleStatus from './useScheduleStatus';
+import jwt from 'jsonwebtoken';
+import serverSettings$ from '../serverSettings$';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
 const scheduleWindow = { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 };
@@ -33,7 +34,7 @@ describe('useScheduleStatus', () => {
 
     const videoClient = makeVideoClientMock({ getServerSettings });
 
-    const { result } = renderHook(() => useScheduleStatus({ scheduleWindow }), {
+    const { result } = renderHook(() => serverSettings$.useScheduleStatus(), {
       runtimeContext: { videoClient },
     });
 
@@ -54,7 +55,7 @@ describe('useScheduleStatus', () => {
     const getServerSettings = vi.fn(() => new Promise<never>(() => {}));
     const videoClient = makeVideoClientMock({ getServerSettings });
 
-    const { result } = renderHook(() => useScheduleStatus({ scheduleWindow }), {
+    const { result } = renderHook(() => serverSettings$.useScheduleStatus(), {
       runtimeContext: { videoClient },
     });
 
@@ -71,7 +72,15 @@ type RenderOptions = {
 function renderHook<Result>(render: () => Result, { runtimeContext }: RenderOptions = {}) {
   const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
     runtimeContext,
-    serverSettingsContext: undefined,
+    serverSettingsContext: {
+      sessionKey: jwt.sign(
+        {
+          sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+          schedule: scheduleWindow,
+        },
+        'test'
+      ),
+    },
   });
 
   return {

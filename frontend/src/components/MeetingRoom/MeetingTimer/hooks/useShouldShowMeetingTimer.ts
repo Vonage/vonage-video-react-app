@@ -1,25 +1,15 @@
 import { isNil } from '@common/assertions';
-import type { ScheduleWindow } from '@common/types';
 import { serverSettings$ } from '@core/stores';
 
-const endingSoonMilliseconds = 5 * 60_000;
+const endingSoonSeconds = 5 * 60;
 
-const useShouldShowMeetingTimer = ({
-  scheduleWindow,
-}: {
-  scheduleWindow: ScheduleWindow | null;
-}): boolean => {
-  const endsAtMs = scheduleWindow?.endsAtMs;
+const useShouldShowMeetingTimer = (): boolean => {
+  return serverSettings$.use.select(function shouldShowMeetingTimer(state) {
+    const secondsUntilEnd = serverSettings$.selectors.secondsUntilEnd(state);
+    if (isNil(secondsUntilEnd)) return false;
 
-  return serverSettings$.use.select(
-    (state) => {
-      const isServerTimeKnown = state.status === 'known';
-      if (isNil(endsAtMs) || !isServerTimeKnown) return false;
-
-      return state.now >= endsAtMs - endingSoonMilliseconds;
-    },
-    { dependencies: [endsAtMs] }
-  );
+    return secondsUntilEnd <= endingSoonSeconds;
+  });
 };
 
 export default useShouldShowMeetingTimer;

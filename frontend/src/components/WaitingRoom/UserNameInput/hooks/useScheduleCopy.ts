@@ -3,7 +3,7 @@ import { serverSettings$ } from '@core/stores';
 import { getFormattedDate, getFormattedTime } from '@utils/dateTime';
 import getCountdownText from '../helpers/getCountdownText';
 import isToday from '../helpers/isToday';
-import type { ScheduledStatus } from '../types/ScheduleStatus';
+import type { ScheduledStatus } from '@core/stores/serverSettings';
 
 export type ScheduleCopy = {
   countdownText: string | null;
@@ -19,9 +19,11 @@ const useScheduleCopy = (scheduleStatus: ScheduledStatus): ScheduleCopy => {
   const locale = i18n.language;
 
   const isStartToday = serverSettings$.use.select(
-    (state) =>
-      state.status !== 'pending' &&
-      isToday({ timestamp: scheduleStatus.startsAtMs, now: state.now }),
+    function isScheduleStartToday(state) {
+      if (state.status === 'pending') return false;
+
+      return isToday({ timestamp: scheduleStatus.startsAtMs, now: state.now });
+    },
     { dependencies: [scheduleStatus.startsAtMs] }
   );
 

@@ -425,7 +425,9 @@ async function render(
       providers.serverSettings,
     ],
     {
-      serverSettingsContext: { sessionKey: null },
+      serverSettingsContext: {
+        sessionKey: mockedParams.roomIdentifier?.includes('.') ? mockedParams.roomIdentifier : null,
+      },
       userContext,
       sessionContext,
       publisherContext,

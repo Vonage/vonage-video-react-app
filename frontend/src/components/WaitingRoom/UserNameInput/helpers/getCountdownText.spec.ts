@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
-import type { WaitingStatus } from '../types/ScheduleStatus';
+import type { WaitingStatus } from '@core/stores/serverSettings';
 import getCountdownText from './getCountdownText';
 
 const t = ((key: string, options: Record<string, number>) =>

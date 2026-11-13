@@ -17,8 +17,6 @@ const useWaitingRoom = () => {
 
   const { roomName } = decodedSessionKey;
 
-  const scheduleWindow = decodedSessionKey.schedule ?? null;
-
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();
 
@@ -95,7 +93,6 @@ const useWaitingRoom = () => {
     isRoomReady,
     roomName,
     sessionKey,
-    scheduleWindow,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,

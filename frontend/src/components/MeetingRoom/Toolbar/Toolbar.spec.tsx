@@ -199,6 +199,7 @@ describe('Toolbar', () => {
   });
 
   it('shows the meeting timer only in the last five minutes of a scheduled sessionKey', async () => {
+    expect.assertions(3);
     vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
     const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
     const startsAt = new Date(2026, 10, 4, 10, 0).getTime();
@@ -209,13 +210,23 @@ describe('Toolbar', () => {
     expect(screen.queryByRole('timer')).not.toBeInTheDocument();
 
     unscheduled.unmount();
-    renderWithSessionKey(
+    const { serverSettingsContext } = renderWithSessionKey(
       makeSessionKey({
         sessionId,
         [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 },
       })
     );
-    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+    const { promise: serverTimeReady, resolve: resolveServerTime } = Promise.withResolvers<void>();
+    const unsubscribe = serverSettingsContext.current.subscribe(
+      (state) => state.status,
+      function resolveKnownServerTime(status) {
+        if (status === 'known') resolveServerTime();
+      }
+    );
+    await act(function waitForServerTime() {
+      return serverTimeReady;
+    });
+    unsubscribe();
     await act(() => vi.advanceTimersByTimeAsync(1_000));
 
     expect(screen.queryByRole('timer')).not.toBeInTheDocument();
@@ -228,7 +239,7 @@ describe('Toolbar', () => {
   });
 
   function renderWithSessionKey(sessionKey: string) {
-    const { wrapper } = makeTestProvider(
+    const { wrapper, serverSettingsContext } = makeTestProvider(
       [
         providers.runtime,
         providers.user,
@@ -237,7 +248,7 @@ describe('Toolbar', () => {
         providers.serverSettings,
       ],
       {
-        serverSettingsContext: { sessionKey: null },
+        serverSettingsContext: { sessionKey },
         runtimeContext: {
           videoClient: makeVideoClientMock({
             getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
@@ -249,9 +260,7 @@ describe('Toolbar', () => {
       }
     );
 
-    return renderBase(<Toolbar {...defaultProps} />, {
-      wrapper,
-    });
+    return { serverSettingsContext, ...renderBase(<Toolbar {...defaultProps} />, { wrapper }) };
   }
 });
 

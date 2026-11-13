@@ -32,8 +32,6 @@ describe('useLeaveAtMeetingEnd', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.unstubAllGlobals();
-    vi.clearAllMocks();
   });
 
   it('leaves the meeting at its end by server time and not before', async () => {
@@ -45,17 +43,21 @@ describe('useLeaveAtMeetingEnd', () => {
       sessionId,
       [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: endsAt },
     });
-    const { sessionContext, backgroundPublisherContext, queryClient } = render({ sessionKey });
-
-    await act(async () => {
-      await vi.waitFor(() => {
-        const serverSettings = queryClient.getQueryData(
-          coreQueryKeys.serverSettings({ sessionKey })
-        );
-        if (!serverSettings) throw new Error('The server time has not arrived');
-      });
-      await new Promise((resolve) => setTimeout(resolve, 0));
+    const { sessionContext, backgroundPublisherContext, serverSettingsContext } = render({
+      sessionKey,
     });
+
+    const { promise: serverTimeReady, resolve: resolveServerTime } = Promise.withResolvers<void>();
+    const unsubscribe = serverSettingsContext.current.subscribe(
+      (state) => state.status,
+      function resolveKnownServerTime(status) {
+        if (status === 'known') resolveServerTime();
+      }
+    );
+    await act(function waitForServerTime() {
+      return serverTimeReady;
+    });
+    unsubscribe();
     await act(() => vi.advanceTimersByTimeAsync(2_000));
 
     expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
@@ -70,6 +72,23 @@ describe('useLeaveAtMeetingEnd', () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/goodbye/${sessionKey}`, {
       state: { header: 'This meeting has ended' },
     });
+  });
+
+  it('leaves once when mounting after the end with cached server time', async () => {
+    expect.assertions(2);
+
+    vi.setSystemTime(endsAt + 60_000);
+    const sessionKey = makeSessionKey({
+      sessionId,
+      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: endsAt },
+    });
+    const { sessionContext } = render({ sessionKey, isServerTimeCached: true });
+
+    expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
+    await act(function advancePastMeetingEnd() {
+      return vi.advanceTimersByTimeAsync(5_000);
+    });
+    expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
   });
 
   it('does not leave by the device clock while the server time is pending', async () => {
@@ -99,7 +118,6 @@ describe('useLeaveAtMeetingEnd', () => {
 
     const { sessionContext } = render({ sessionKey: makeSessionKey({ sessionId }) });
 
-    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
     await act(() => vi.advanceTimersByTimeAsync(3 * 60 * 60_000));
 
     expect(sessionContext.current.disconnect).not.toHaveBeenCalled();
@@ -114,18 +132,26 @@ function makeSessionKey(payload: Record<string, unknown>): string {
 
 function render({
   sessionKey,
+  isServerTimeCached = false,
   getServerSettings = () => Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
 }: {
   sessionKey: string;
+  isServerTimeCached?: boolean;
   getServerSettings?: () => Promise<{ serverTime: number }>;
 }) {
   const queryClient = new QueryClient();
-  const { wrapper, sessionContext, backgroundPublisherContext } = makeTestProvider(
+  if (isServerTimeCached) {
+    queryClient.setQueryData(coreQueryKeys.serverSettings({ sessionKey }), {
+      serverTime: Date.now(),
+      clockOffset: 0,
+    });
+  }
+
+  const { wrapper, ...context } = makeTestProvider(
     [
       providers.runtime,
       providers.user,
       providers.session,
-      providers.publisher,
       providers.backgroundPublisher,
       providers.miniMode,
       providers.serverSettings,
@@ -143,7 +169,6 @@ function render({
           context.disconnect = vi.fn();
         },
       },
-      publisherContext: undefined,
       backgroundPublisherContext: {
         __onCreated: (context) => {
           context.destroyBackgroundPublisher = vi.fn();
@@ -157,5 +182,5 @@ function render({
     wrapper,
   });
 
-  return { sessionContext, backgroundPublisherContext, queryClient };
+  return context;
 }

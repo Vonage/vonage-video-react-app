@@ -1,9 +1,11 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook as renderHookBase, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { notifications$ } from '@core/stores';
+import { QueryClient } from '@tanstack/react-query';
+import { coreQueryKeys } from '@core/constants';
 import { SessionKeyClaim } from '@common/constants';
-import { makeTestProvider, providers } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
 import i18n from '../../../../i18n';
 import useEndOfMeetingWarning from './useEndOfMeetingWarning';
 
@@ -27,27 +29,9 @@ describe('useEndOfMeetingWarning', () => {
       [SessionKeyClaim.schedule]: { startsAtMs: endsAtMs - 60 * 60_000, endsAtMs },
     };
     const sessionKey = `eyJhbGciOiJIUzI1NiJ9.${btoa(JSON.stringify(payload)).replace(/=+$/, '')}.signature`;
-    const { wrapper } = makeTestProvider(
-      [providers.runtime, providers.user, providers.session, providers.serverSettings],
-      {
-        serverSettingsContext: { sessionKey },
-        runtimeContext: {
-          videoClient: makeVideoClientMock({
-            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
-          }),
-        },
-        userContext: undefined,
-        sessionContext: { initialValue: { sessionKey } },
-      }
-    );
     const push = vi.spyOn(notifications$.actions, 'push');
     const dismiss = vi.spyOn(notifications$.actions, 'dismiss');
-    const { unmount, rerender } = renderHook(
-      () => {
-        useEndOfMeetingWarning();
-      },
-      { wrapper }
-    );
+    const { unmount, rerender } = renderHook(useEndOfMeetingWarning, { sessionKey });
 
     await act(() => vi.advanceTimersByTimeAsync(1_000));
     expect(push).not.toHaveBeenCalled();
@@ -59,4 +43,54 @@ describe('useEndOfMeetingWarning', () => {
     unmount();
     expect(dismiss).toHaveBeenCalledWith(push.mock.results[0].value);
   });
+
+  it('warns immediately inside the warning window and stays silent after the end', () => {
+    expect.assertions(3);
+
+    vi.setSystemTime(endsAtMs - 60_000);
+    const sessionKey = `eyJhbGciOiJIUzI1NiJ9.${btoa(
+      JSON.stringify({
+        sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+        [SessionKeyClaim.schedule]: { startsAtMs: endsAtMs - 60 * 60_000, endsAtMs },
+      })
+    ).replace(/=+$/, '')}.signature`;
+    const queryClient = new QueryClient();
+    queryClient.setQueryData(coreQueryKeys.serverSettings({ sessionKey }), {
+      serverTime: Date.now(),
+      clockOffset: 0,
+    });
+    const push = vi.spyOn(notifications$.actions, 'push');
+    const dismiss = vi.spyOn(notifications$.actions, 'dismiss');
+    const { unmount } = renderHook(useEndOfMeetingWarning, {
+      sessionKey,
+      runtimeContext: { queryClient },
+    });
+
+    expect(push).toHaveBeenCalledOnce();
+    unmount();
+    expect(dismiss).toHaveBeenCalledWith(push.mock.results[0].value);
+
+    vi.setSystemTime(endsAtMs);
+    renderHook(useEndOfMeetingWarning, { sessionKey, runtimeContext: { queryClient } });
+    expect(push).toHaveBeenCalledOnce();
+  });
 });
+
+type RenderOptions = {
+  sessionKey: string;
+  runtimeContext?: ProviderOptions['RuntimeContext'];
+};
+
+function renderHook(callback: () => void, { sessionKey, runtimeContext }: RenderOptions) {
+  const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
+    serverSettingsContext: { sessionKey },
+    runtimeContext: {
+      videoClient: makeVideoClientMock({
+        getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+      }),
+      ...runtimeContext,
+    },
+  });
+
+  return { ...context, ...renderHookBase(callback, { wrapper }) };
+}

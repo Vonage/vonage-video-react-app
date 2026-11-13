@@ -2,19 +2,17 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import VividIcon from '@ui/components/VividIcon';
 import { isNotNil } from '@common/assertions';
-import type { ScheduleWindow } from '@common/types';
 import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
-import useMeetingSecondsLeft from './hooks/useMeetingSecondsLeft';
+import { serverSettings$ } from '@core/stores';
 import meetingTimerVariants from './meetingTimerVariants';
 
 export type MeetingTimerProps = {
-  scheduleWindow: ScheduleWindow;
   isCompact?: boolean;
 };
 
-const MeetingTimer = ({ scheduleWindow, isCompact = false }: MeetingTimerProps): ReactElement => {
+const MeetingTimer = ({ isCompact = false }: MeetingTimerProps): ReactElement => {
   const { t } = useTranslation();
-  const secondsLeft = useMeetingSecondsLeft({ scheduleWindow });
+  const secondsLeft = serverSettings$.useSecondsUntilEnd();
 
   return (
     <div

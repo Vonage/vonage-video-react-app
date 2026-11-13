@@ -2,7 +2,7 @@ import type { ComponentProps, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isNil } from '@common/assertions';
 import useScheduleCopy from '../../hooks/useScheduleCopy';
-import type { ScheduledStatus } from '../../types/ScheduleStatus';
+import type { ScheduledStatus } from '@core/stores/serverSettings';
 import SplitPanel from '@ui/layout/SplitPanel';
 import classNames from 'classnames';
 

@@ -1,41 +1,48 @@
 import { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isNil, isNotNil } from '@common/assertions';
+import { isNil } from '@common/assertions';
 import { serverSettings$ } from '@core/stores';
 import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import { useMiniMode } from '@Context/MiniMode';
-import useMeetingScheduleWindow from './useMeetingScheduleWindow';
 
 const useLeaveAtMeetingEnd = () => {
   const { t } = useTranslation();
-  const scheduleWindow = useMeetingScheduleWindow();
+  const scheduleWindow = serverSettings$.useScheduleWindow();
   const leaveMeeting = useLeaveMeeting();
   const { exit: exitMiniMode } = useMiniMode();
-  const serverSettingsApi = serverSettings$.use.api();
+  const serverSettings = serverSettings$.use.api();
 
   const endsAtMs = scheduleWindow?.endsAtMs;
 
-  const leaveAtEnd = useEffectEvent(() => {
+  const leaveAtEnd = useEffectEvent(function leaveEndedMeeting() {
     exitMiniMode();
     leaveMeeting({ header: t('meetingTimer.meetingEnded') });
   });
 
-  useEffect(() => {
-    if (isNil(endsAtMs)) return;
+  useEffect(
+    function subscribeToMeetingEnd() {
+      if (isNil(endsAtMs)) return;
 
-    const hasEnded$ = serverSettingsApi.createObservable(
-      (state) => isNotNil(state.now) && state.now >= endsAtMs
-    );
+      const unsubscribe = serverSettings.subscribe(
+        serverSettings$.selectors.secondsUntilEnd,
+        leaveIfEnded,
+        { skipFirst: true }
+      );
 
-    hasEnded$.subscribe((hasEnded) => {
-      if (!hasEnded) return;
+      function leaveIfEnded(secondsUntilEnd: number | null) {
+        const hasMeetingEnded = secondsUntilEnd === 0;
+        if (!hasMeetingEnded) return;
 
-      hasEnded$.dispose();
-      leaveAtEnd();
-    });
+        unsubscribe();
+        leaveAtEnd();
+      }
 
-    return hasEnded$.dispose;
-  }, [serverSettingsApi, endsAtMs]);
+      leaveIfEnded(serverSettings$.selectors.secondsUntilEnd(serverSettings.getState()));
+
+      return unsubscribe;
+    },
+    [serverSettings, endsAtMs]
+  );
 };
 
 export default useLeaveAtMeetingEnd;

@@ -17,11 +17,15 @@ describe('getScheduleStatus', () => {
     ['one millisecond before the end', endsAt - 1, { kind: 'started' }],
     ['at the end', endsAt, { kind: 'ended' }],
   ])('%s', (_label, now, expected) => {
-    expect(getScheduleStatus({ scheduleWindow, now })).toMatchObject(expected);
+    expect(
+      getScheduleStatus({ scheduleWindow, now, status: 'known', clockOffset: 0 })
+    ).toMatchObject(expected);
   });
 
   it('is unscheduled without a schedule window', () => {
-    expect(getScheduleStatus({ scheduleWindow: null, now: startsAt })).toEqual({
+    expect(
+      getScheduleStatus({ scheduleWindow: null, now: startsAt, status: 'known', clockOffset: 0 })
+    ).toEqual({
       kind: 'unscheduled',
     });
   });
