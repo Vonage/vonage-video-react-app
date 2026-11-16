@@ -1,0 +1,18 @@
+tmp-review/BadName.ts
+  h_737cf808c1c597 1
+tmp-review/goodName.spec.ts
+  h_737cf808c1c597 1
+tmp-review/use$.ts
+  h_737cf808c1c597 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aae0d492607be7ff943e8a57e0059924d4245b4e",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
