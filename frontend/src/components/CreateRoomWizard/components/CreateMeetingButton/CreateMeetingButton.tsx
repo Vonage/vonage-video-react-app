@@ -1,12 +1,14 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Button from '@mui/material/Button';
 import { runtime$ } from '@core/stores';
 import generateRoomName from '../../../../utils/generateRoomName';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import getCreateSessionPayload from '../../helpers/getCreateSessionPayload';
 import useIsMeetingStartValid from '../../hooks/useIsMeetingStartValid';
 import useMeetingDraft from '../../hooks/useMeetingDraft';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 const CreateMeetingButton = (): ReactElement => {
   const { t } = useTranslation();
@@ -15,6 +17,7 @@ const CreateMeetingButton = (): ReactElement => {
   const isStartValid = useIsMeetingStartValid();
   const { showShareStep } = createRoomWizard$.use.actions();
   const [isCreating, setIsCreating] = useState(false);
+  const isCreateMeetingDisabled = !isStartValid || isCreating;
 
   const createMeeting = async () => {
     const payload = getCreateSessionPayload({ draft, fallbackRoomName: generateRoomName() });
@@ -28,14 +31,15 @@ const CreateMeetingButton = (): ReactElement => {
   };
 
   return (
-    <Button
-      variant="contained"
-      className="disabled:bg-vera-disabled! disabled:text-vera-text-disabled!"
-      disabled={!isStartValid || isCreating}
+    <button
+      type="button"
+      data-testid={testIds.button}
+      className="h-10 cursor-pointer rounded-vera-medium bg-vera-primary px-4 font-vera-plain text-vera-body-base-semibold text-vera-on-primary hover:brightness-90 disabled:cursor-default disabled:bg-vera-disabled disabled:text-vera-text-disabled"
+      disabled={isCreateMeetingDisabled}
       onClick={() => void createMeeting()}
     >
       {t('createRoomWizard.createMeeting')}
-    </Button>
+    </button>
   );
 };
 

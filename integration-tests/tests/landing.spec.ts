@@ -1,4 +1,12 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as scheduleFieldsTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/scheduleFieldsTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as detailsStepTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as meetingNameFieldTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/meetingNameFieldTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as createMeetingButtonTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as roomNameInputTestIds } from '../../frontend/src/components/RoomNameInput/testIds';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
@@ -51,7 +59,7 @@ test('should create a meeting, copy its link, then join and publish via Create r
 
   const wizard = page.getByTestId(wizardDialogTestIds.dialog);
   await expect(wizard).toContainText('the link never expires');
-  await wizard.getByRole('button', { name: 'Create meeting' }).click();
+  await wizard.getByTestId(createMeetingButtonTestIds.button).click();
   const meetingLink = await wizard.getByTestId(linkCopyTestIds.link).textContent();
 
   await wizard.getByTestId(linkCopyTestIds.copyButton).click();
@@ -78,23 +86,23 @@ test('should create a meeting, copy its link, then join and publish via Create r
 test('should create a named meeting scheduled for two hours and open its waiting room', async ({
   page,
 }) => {
-  await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByTestId(newRoomButtonTestIds.button).click();
 
-  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
-  await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
-  await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
-  await expect(wizard.getByRole('button', { name: '1 hour' })).toHaveAttribute(
+  const wizard = page.getByTestId(wizardDialogTestIds.dialog);
+  await wizard.getByTestId(meetingNameFieldTestIds.input).fill('weekly-sync');
+  await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+  await expect(wizard.getByTestId(scheduleFieldsTestIds.duration(60))).toHaveAttribute(
     'aria-pressed',
     'true'
   );
-  await wizard.getByRole('button', { name: '2 hours' }).click();
-  await wizard.getByRole('button', { name: 'Create meeting' }).click();
+  await wizard.getByTestId(scheduleFieldsTestIds.duration(120)).click();
+  await wizard.getByTestId(createMeetingButtonTestIds.button).click();
 
-  await expect(wizard.getByText('weekly-sync')).toBeVisible();
-  await expect(wizard.getByText(/ · 2 hours$/)).toBeVisible();
-  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+  await expect(wizard).toContainText('weekly-sync');
+  await expect(wizard).toContainText(' · 2 hours');
+  const meetingLink = await wizard.getByTestId(linkCopyTestIds.link).textContent();
 
-  await wizard.getByRole('button', { name: 'Join now' }).click();
+  await wizard.getByTestId(wizardFooterTestIds.joinButton).click();
 
   await expect(page).toHaveURL(meetingLink ?? '');
 });

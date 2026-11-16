@@ -4,6 +4,9 @@ import { isValidRoomName } from '@common/assertions';
 import classNames from 'classnames';
 import Field from '@ui/components/Field';
 import createRoomWizard$ from '../../../context/createRoomWizardContext';
+import { testIds } from './meetingNameFieldTestIds';
+
+export { testIds } from './meetingNameFieldTestIds';
 
 /**
  * Optional meeting name. It becomes the room name, so it follows the same rules as a room name typed on the landing page.
@@ -28,6 +31,7 @@ const MeetingNameField = (): ReactElement => {
         {t('createRoomWizard.details.name.label')}
       </Field.Label>
       <Field.Input
+        data-testid={testIds.input}
         id="create-room-wizard-meeting-name"
         aria-invalid={hasError}
         aria-describedby="create-room-wizard-meeting-name-description"

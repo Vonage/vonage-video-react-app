@@ -6,6 +6,9 @@ import createRoomWizard$ from '../../../context/createRoomWizardContext';
 import meetingDurationOptions from '../../../constants/meetingDurationOptions';
 import meetingDurationLabelKeys from '../../../constants/meetingDurationLabelKeys';
 import useIsMeetingStartValid from '../../../hooks/useIsMeetingStartValid';
+import { testIds } from './scheduleFieldsTestIds';
+
+export { testIds } from './scheduleFieldsTestIds';
 
 const ScheduleFields = (): ReactElement => {
   const { t } = useTranslation();
@@ -39,6 +42,7 @@ const ScheduleFields = (): ReactElement => {
             </Field.Label>
             <Field.Input
               type="time"
+              data-testid={testIds.startTime}
               id="create-room-wizard-start-time"
               value={startTime}
               aria-invalid={!isStartValid}
@@ -62,6 +66,7 @@ const ScheduleFields = (): ReactElement => {
           {meetingDurationOptions.map((minutes) => (
             <ChoiceChip
               key={minutes}
+              data-testid={testIds.duration(minutes)}
               isSelected={minutes === durationMinutes}
               onClick={() => setDurationMinutes(minutes)}
             >

@@ -1,4 +1,12 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as scheduleFieldsTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/scheduleFieldsTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as detailsStepTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as meetingNameFieldTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/meetingNameFieldTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as createMeetingButtonTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as roomNameInputTestIds } from '../../frontend/src/components/RoomNameInput/testIds';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
@@ -430,7 +438,7 @@ async function openCreateMeetingDialog({
   await page.getByTestId(newRoomButtonTestIds.button).click();
 
   const dialog = page.getByTestId(wizardDialogTestIds.dialog);
-  await dialog.getByRole('button', { name: 'Create meeting' }).click();
+  await dialog.getByTestId(createMeetingButtonTestIds.button).click();
   await expect(dialog.getByTestId(linkCopyTestIds.link)).toBeVisible();
 
   await page.addStyleTag({
@@ -448,26 +456,26 @@ test.describe('Create meeting dialog UI test', () => {
     {
       state: 'details scheduled',
       prepare: async (wizard) => {
-        await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
-        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
+        await wizard.getByTestId(meetingNameFieldTestIds.input).fill('weekly-sync');
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
       },
     },
     {
       state: 'details start in the past',
       prepare: async (wizard) => {
-        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
-        await wizard.getByLabel('Start time').fill('09:00');
-        await wizard.getByLabel('Start time').blur();
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+        await wizard.getByTestId(scheduleFieldsTestIds.startTime).fill('09:00');
+        await wizard.getByTestId(scheduleFieldsTestIds.startTime).blur();
       },
     },
     {
       state: 'share scheduled',
       prepare: async (wizard) => {
-        await wizard.getByLabel('Meeting name (optional)').fill('weekly-sync');
-        await wizard.getByRole('checkbox', { name: 'Set a date and time' }).check();
-        await wizard.getByRole('button', { name: '2 hours' }).click();
-        await wizard.getByRole('button', { name: 'Create meeting' }).click();
-        await wizard.getByRole('button', { name: 'Copy link' }).waitFor();
+        await wizard.getByTestId(meetingNameFieldTestIds.input).fill('weekly-sync');
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+        await wizard.getByTestId(scheduleFieldsTestIds.duration(120)).click();
+        await wizard.getByTestId(createMeetingButtonTestIds.button).click();
+        await wizard.getByTestId(linkCopyTestIds.copyButton).waitFor();
       },
     },
   ];
@@ -492,16 +500,15 @@ test.describe('Create meeting dialog UI test', () => {
             (isDark) => document.documentElement.classList.contains('dark') === isDark,
             colorScheme === 'dark'
           );
-          await page.getByRole('button', { name: 'Create a new room' }).click();
-          const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
+          await page.getByTestId(newRoomButtonTestIds.button).click();
+          const wizard = page.getByTestId(wizardDialogTestIds.dialog);
           await prepare(wizard);
-          await page.waitForTimeout(500);
+          await page.addStyleTag({
+            content: `[data-testid="${linkCopyTestIds.link}"] { visibility: hidden; }`,
+          });
 
           await expect(page).toHaveScreenshot({
-            mask: [
-              page.locator('[data-testid="app-version"]'),
-              wizard.getByText(new RegExp(`${baseURL}waiting-room/`)),
-            ],
+            mask: [page.getByTestId(footerLinksTestIds.version)],
             maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
             timeout: TIMEOUTS.DEFAULT,
           });

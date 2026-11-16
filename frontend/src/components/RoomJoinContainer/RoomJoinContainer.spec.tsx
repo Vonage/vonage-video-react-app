@@ -1,3 +1,6 @@
+import { testIds as linkCopyTestIds } from '../CreateRoomWizard/components/ShareStep/components/LinkCopyField/testIds';
+import { testIds as wizardDialogTestIds } from '../CreateRoomWizard/components/CreateRoomWizardDialog/testIds';
+import { testIds as createMeetingButtonTestIds } from '../CreateRoomWizard/components/CreateMeetingButton/testIds';
 import { testIds as newRoomButtonTestIds } from '../NewRoomButton/NewRoomButton';
 import { render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -51,12 +54,14 @@ describe('RoomJoinContainer', () => {
 
     screen.getByTestId(newRoomButtonTestIds.button).click();
 
-    expect(await screen.findByRole('dialog')).toHaveTextContent('Step 1 of 2');
+    expect(await screen.findByTestId(wizardDialogTestIds.dialog)).toHaveTextContent('Step 1 of 2');
     expect(mockCreateSessionMutate).not.toHaveBeenCalled();
 
-    screen.getByRole('button', { name: 'Create meeting' }).click();
+    screen.getByTestId(createMeetingButtonTestIds.button).click();
 
-    expect(await screen.findByText(/\/waiting-room\/mock-session-key$/)).toBeInTheDocument();
+    expect(await screen.findByTestId(linkCopyTestIds.link)).toHaveTextContent(
+      '/waiting-room/mock-session-key'
+    );
   });
 });
 

@@ -20,7 +20,7 @@ const CreateRoomWizardFooterActions = ({
   const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
   const sessionKey = createRoomWizard$.use.select((state) => state.sessionKey);
 
-  if (activeStep === 'details') return <CreateMeetingButton />;
+  const isDetailsStep = activeStep === 'details';
 
   const joinNow = () => {
     void navigate(`/waiting-room/${sessionKey}`);
@@ -28,23 +28,32 @@ const CreateRoomWizardFooterActions = ({
 
   return (
     <>
-      <button
-        type="button"
-        data-testid={testIds.doneButton}
-        onClick={onClose}
-        className="h-10 cursor-pointer rounded-vera-medium border border-vera-primary px-4 font-vera-plain text-vera-body-base-semibold text-vera-primary hover:bg-vera-primary/10"
-      >
-        {t('createRoomWizard.done')}
-      </button>
-      <button
-        type="button"
-        data-testid={testIds.joinButton}
-        onClick={joinNow}
-        className="flex h-10 cursor-pointer items-center gap-2 rounded-vera-medium bg-vera-primary px-4 font-vera-plain text-vera-body-base-semibold text-vera-on-primary hover:brightness-90"
-      >
-        <VividIcon name="enter-line" customSize={-5} style={{ color: 'var(--vera-on-primary)' }} />
-        {t('createRoomWizard.joinNow')}
-      </button>
+      {isDetailsStep && <CreateMeetingButton />}
+      {!isDetailsStep && (
+        <>
+          <button
+            type="button"
+            data-testid={testIds.doneButton}
+            onClick={onClose}
+            className="h-10 cursor-pointer rounded-vera-medium border border-vera-primary px-4 font-vera-plain text-vera-body-base-semibold text-vera-primary hover:bg-vera-primary/10"
+          >
+            {t('createRoomWizard.done')}
+          </button>
+          <button
+            type="button"
+            data-testid={testIds.joinButton}
+            onClick={joinNow}
+            className="flex h-10 cursor-pointer items-center gap-2 rounded-vera-medium bg-vera-primary px-4 font-vera-plain text-vera-body-base-semibold text-vera-on-primary hover:brightness-90"
+          >
+            <VividIcon
+              name="enter-line"
+              customSize={-5}
+              style={{ color: 'var(--vera-on-primary)' }}
+            />
+            {t('createRoomWizard.joinNow')}
+          </button>
+        </>
+      )}
     </>
   );
 };

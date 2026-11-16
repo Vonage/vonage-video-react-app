@@ -1,3 +1,8 @@
+import { testIds as wizardDialogTestIds } from './components/CreateRoomWizardDialog/testIds';
+import { testIds as scheduleFieldsTestIds } from './components/DetailsStep/components/scheduleFieldsTestIds';
+import { testIds as detailsStepTestIds } from './components/DetailsStep/testIds';
+import { testIds as meetingNameFieldTestIds } from './components/DetailsStep/components/meetingNameFieldTestIds';
+import { testIds as createMeetingButtonTestIds } from './components/CreateMeetingButton/testIds';
 import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
@@ -34,7 +39,7 @@ describe('CreateRoomWizard', () => {
     renderWizard({ onClose });
 
     expect(screen.getByRole('note')).toHaveTextContent('the link never expires');
-    await user.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await user.click(screen.getByTestId(createMeetingButtonTestIds.button));
     expect(createSession).toHaveBeenCalledWith({ roomName: 'mocked-room' });
     vi.useFakeTimers();
 
@@ -68,10 +73,12 @@ describe('CreateRoomWizard', () => {
   it('does not say the link is copied when the clipboard write fails', async () => {
     expect.assertions(2);
     userEvent.setup();
-    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockRejectedValue(new Error('denied'));
+    const writeText = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockRejectedValue(new Error('denied'));
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await userEvent.click(screen.getByTestId(createMeetingButtonTestIds.button));
     await userEvent.click(await screen.findByTestId(linkCopyTestIds.copyButton));
 
     expect(writeText).toHaveBeenCalledTimes(1);
@@ -84,18 +91,21 @@ describe('CreateRoomWizard', () => {
     vi.setSystemTime(new Date(2030, 0, 15, 9, 20));
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.type(screen.getByLabelText('Meeting name (optional)'), 'Weekly-Sync');
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Set a date and time' }));
-    expect(screen.getByRole('button', { name: '1 hour' })).toHaveAttribute('aria-pressed', 'true');
-    await userEvent.click(screen.getByRole('button', { name: '2 hours' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await userEvent.type(screen.getByTestId(meetingNameFieldTestIds.input), 'Weekly-Sync');
+    await userEvent.click(screen.getByTestId(detailsStepTestIds.scheduleSwitch));
+    expect(screen.getByTestId(scheduleFieldsTestIds.duration(60))).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await userEvent.click(screen.getByTestId(scheduleFieldsTestIds.duration(120)));
+    await userEvent.click(screen.getByTestId(createMeetingButtonTestIds.button));
 
     expect(createSession).toHaveBeenCalledWith({
       roomName: 'weekly-sync',
       schedule: { startsAt: new Date(2030, 0, 15, 10, 0).getTime(), durationMinutes: 120 },
     });
-    expect(await screen.findByText('weekly-sync')).toBeInTheDocument();
-    expect(screen.getByText(/2 hours/)).toBeInTheDocument();
+    expect(screen.getByTestId(wizardDialogTestIds.dialog)).toHaveTextContent('weekly-sync');
+    expect(screen.getByTestId(wizardDialogTestIds.dialog)).toHaveTextContent('2 hours');
     vi.useRealTimers();
   });
 
@@ -103,10 +113,10 @@ describe('CreateRoomWizard', () => {
     expect.assertions(1);
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Create meeting' }));
+    await userEvent.click(screen.getByTestId(createMeetingButtonTestIds.button));
     await userEvent.click(await screen.findByTestId(footerTestIds.joinButton));
 
-    expect(screen.getByText('waiting room test-session-key')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('waiting room test-session-key');
   });
 });
 
@@ -140,5 +150,5 @@ function renderWizard({ onClose }: { onClose: () => void }) {
 
 function WaitingRoomProbe() {
   const { sessionKey } = useParams();
-  return <span>waiting room {sessionKey}</span>;
+  return <span role="status">waiting room {sessionKey}</span>;
 }

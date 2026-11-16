@@ -4,6 +4,9 @@ import Field from '@ui/components/Field';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import MeetingNameField from './components/MeetingNameField';
 import ScheduleFields from './components/ScheduleFields';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 const DetailsStep = (): ReactElement => {
   const { t } = useTranslation();
@@ -19,6 +22,7 @@ const DetailsStep = (): ReactElement => {
         </Field.Label>
         <Field.Input
           variant="switch"
+          data-testid={testIds.scheduleSwitch}
           id="create-room-wizard-schedule-switch"
           checked={isScheduled}
           onChange={(changeEvent) => setIsScheduled(changeEvent.currentTarget.checked)}
