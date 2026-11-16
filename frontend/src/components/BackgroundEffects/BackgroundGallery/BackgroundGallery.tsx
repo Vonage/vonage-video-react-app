@@ -99,8 +99,6 @@ const BackgroundGallery = (): ReactElement => {
       })}
 
       {backgrounds.map((bg) => {
-        // The grid only shows a 68px preview, so load the small thumbnail here. The
-        // full-size image is fetched by the SDK on selection (handleBackgroundChange).
         const thumbnailPath = `${BACKGROUND_THUMBNAILS_PATH}/${bg.file}`;
         return (
           <SelectableOption
