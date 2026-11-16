@@ -84,6 +84,17 @@ describe('BackgroundGallery', () => {
     });
   });
 
+  it('previews built-in backgrounds with lazy-loaded thumbnails, not the full-size images', async () => {
+    render(<BackgroundGallery />);
+
+    await waitFor(() => {
+      const planeOption = screen.getByTestId('background-bg7');
+      const previewImage = planeOption.querySelector('img');
+      expect(previewImage?.getAttribute('src')).toBe('/background/thumbnails/plane.jpg');
+      expect(previewImage?.getAttribute('loading')).toBe('lazy');
+    });
+  });
+
   it('renders custom images as selectable options', async () => {
     render(<BackgroundGallery />);
     await waitFor(() => {
