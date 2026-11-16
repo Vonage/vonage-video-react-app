@@ -1,9 +1,13 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as roomNameInputTestIds } from '../../frontend/src/components/RoomNameInput/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as joinWaitRoomButtonTestIds } from '../../frontend/src/components/JoinWaitRoomButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
 import { expect, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
-
-const INVALID_ROOM_NAME_HELPER = 'Cannot be empty, contain spaces or special characters';
 
 test.describe('join via direct room URL', () => {
   for (const entryPath of ['room', 'waiting-room'] as const) {
@@ -43,12 +47,12 @@ test.describe('room name edge cases', () => {
     const roomName = `team_${uniquePart}+b-1`;
 
     await pageOne.goto(baseURL);
-    const roomNameInput = pageOne.getByRole('textbox', { name: /Room name/i });
+    const roomNameInput = pageOne.getByTestId(roomNameInputTestIds.input);
     await roomNameInput.fill(typedRoomName);
-    await expect(roomNameInput).toHaveValue(roomName);
-    await pageOne.getByRole('button', { name: 'Join waiting room' }).click();
+    await expect(roomNameInput).toHaveValue(typedRoomName);
+    await pageOne.getByTestId(joinWaitRoomButtonTestIds.button).click();
 
-    await expect(pageOne).toHaveURL(/\/waiting-room\/[\w-]+\.[\w-]+\.[\w-]+$/);
+    await expect(pageOne).toHaveURL(`${baseURL}waiting-room/${roomName}`);
     await waitUntilReady(pageOne, browserName);
     await expect(pageOne.getByText(roomName, { exact: true })).toBeVisible();
     await pageOne.getByLabel('Name').fill('User One');
@@ -77,13 +81,15 @@ test.describe('room name edge cases', () => {
     test(`should reject "${invalidRoomName}" on the landing page`, async ({ page }) => {
       await page.goto(baseURL);
 
-      const roomNameInput = page.getByRole('textbox', { name: /Room name/i });
+      const roomNameInput = page.getByTestId(roomNameInputTestIds.input);
       await roomNameInput.fill(invalidRoomName);
 
-      await expect(page.getByText(INVALID_ROOM_NAME_HELPER)).toBeVisible();
-      await expect(roomNameInput).toHaveValue('');
+      await page.getByTestId(joinWaitRoomButtonTestIds.button).click();
 
-      await page.getByRole('button', { name: 'Join waiting room' }).click();
+      await expect(page.getByTestId(roomNameInputTestIds.error)).toHaveText(
+        'Enter a valid room ID'
+      );
+      await expect(roomNameInput).toHaveValue(invalidRoomName);
       await expect(page).toHaveURL(baseURL);
     });
   }
@@ -176,8 +182,8 @@ test.describe('unknown route and error page', () => {
     await page.goto(`${baseURL}some/unknown/path`);
 
     await expect(page).toHaveURL(`${baseURL}some/unknown/path`);
-    await expect(page.getByRole('button', { name: 'Create a new room' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: /Room name/i })).toBeVisible();
+    await expect(page.getByTestId(newRoomButtonTestIds.button)).toBeVisible();
+    await expect(page.getByTestId(roomNameInputTestIds.input)).toBeVisible();
     await expect(page.getByTestId('error-page')).toHaveCount(0);
   });
 
