@@ -1,4 +1,6 @@
-export type ServerSettingsState =
+import type { ScheduleWindow } from '@common/types';
+
+export type ServerSettingsState = { scheduleWindow: ScheduleWindow | null } & (
   | {
       status: 'pending';
       now: null;
@@ -22,4 +24,5 @@ export type ServerSettingsState =
        * Milliseconds to add to `Date.now()` to get the server time.
        */
       clockOffset: number;
-    };
+    }
+);

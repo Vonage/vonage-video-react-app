@@ -4,7 +4,7 @@ import Skeleton from '@ui/components/Skeleton';
 import Separator from '@components/Separator';
 import { twMerge } from 'tailwind-merge';
 import { isNil } from '@common/assertions';
-import { decodeJwt, readScheduleClaim } from '@common/helpers';
+import { decodeSessionKey } from '@common/helpers';
 import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 
@@ -15,10 +15,7 @@ const UsernameInputSkeleton: FC<UsernameInputSkeletonProps> = ({ className, ...p
 
   const hasSchedule = useMemo(
     function readHasSchedule() {
-      return (
-        sessionKeyStatus === 'valid' &&
-        !isNil(readScheduleClaim(decodeJwt<Record<string, unknown>>(sessionKey)))
-      );
+      return sessionKeyStatus === 'valid' && !isNil(decodeSessionKey({ sessionKey }).schedule);
     },
     [sessionKey, sessionKeyStatus]
   );

@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next';
-import type { WaitingStatus } from '../types/ScheduleStatus';
+import formatMinutesAndSeconds from '@utils/formatMinutesAndSeconds';
+import type { WaitingStatus } from '@core/stores/serverSettings';
 
 function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; t: TFunction }) {
   if (waitingStatus.kind === 'daysAway') {
@@ -14,17 +15,9 @@ function getCountdownText({ waitingStatus, t }: { waitingStatus: WaitingStatus; 
     return t('waitingRoom.schedule.countdown.hoursAndMinutes', { hours, minutes });
   }
   if (waitingStatus.kind === 'withinHour') {
-    return t('waitingRoom.schedule.countdown.minutes', { minutes: waitingStatus.minutesLeft });
+    return t('duration.format.minutes', { minutes: waitingStatus.minutesLeft });
   }
-  const minutes = Math.floor(waitingStatus.secondsLeft / 60);
-  const seconds = waitingStatus.secondsLeft % 60;
-  if (minutes === 0) {
-    return t('waitingRoom.schedule.countdown.seconds', { seconds });
-  }
-  if (seconds === 0) {
-    return t('waitingRoom.schedule.countdown.minutes', { minutes });
-  }
-  return t('waitingRoom.schedule.countdown.minutesAndSeconds', { minutes, seconds });
+  return formatMinutesAndSeconds({ totalSeconds: waitingStatus.secondsLeft, t });
 }
 
 export default getCountdownText;

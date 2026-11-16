@@ -136,7 +136,7 @@ describe('MiniModeContext', () => {
     expect(pipWindow.closed).toBe(true);
     expect(sessionContext.current.disconnect).toHaveBeenCalledOnce();
     expect(backgroundPublisherContext.current.destroyBackgroundPublisher).toHaveBeenCalledOnce();
-    expect(mockNavigate).toHaveBeenCalledWith(`/goodbye/${validSessionKey}`);
+    expect(mockNavigate).toHaveBeenCalledWith(`/goodbye/${validSessionKey}`, { state: undefined });
   });
 
   it('reports an error and stays closed when the window cannot open', async () => {

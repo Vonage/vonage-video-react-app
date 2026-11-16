@@ -13,18 +13,16 @@ import Separator from '@components/Separator';
 import { CardProps } from '@mui/material';
 import { twMerge } from 'tailwind-merge';
 import { isNil } from '@common/assertions';
-import type { ScheduleWindow } from '@common/types';
 import ScheduleCountdownPanel from './components/ScheduleCountdownPanel';
 import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import JoinBlockerText from './components/JoinBlockerText';
-import useScheduleStatus from './hooks/useScheduleStatus';
+import { serverSettings$ } from '@core/stores';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
 
 export type UserNameInputProps = Omit<CardProps, 'sx'> & {
   username: string;
   roomName: string | undefined;
   sessionKey: string;
-  scheduleWindow: ScheduleWindow | null;
   setUsername: Dispatch<SetStateAction<string>>;
 };
 
@@ -43,7 +41,6 @@ const joinBlockerTextId = 'join-blocker-text';
 const UsernameInput = ({
   roomName,
   sessionKey,
-  scheduleWindow,
   username,
   setUsername,
   className,
@@ -57,7 +54,7 @@ const UsernameInput = ({
   const [isUserNameInvalid, setIsUserNameInvalid] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
+  const scheduleStatus = serverSettings$.useScheduleStatus();
 
   useScheduleTabTitle({ scheduleStatus, meetingName: roomName });
 

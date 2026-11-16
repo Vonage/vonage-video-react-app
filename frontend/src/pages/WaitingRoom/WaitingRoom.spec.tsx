@@ -14,7 +14,6 @@ import { type PreviewPublisherContextType } from '@Context/PreviewPublisherProvi
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import { SessionKeyClaim } from '@common/constants';
 import WaitingRoom from './WaitingRoom';
 import SuspenseBoundary from '@web/components/SuspenseBoundary';
@@ -423,8 +422,12 @@ async function render(
       providers.backgroundPublisher,
       providers.previewPublisher,
       providers.runtime,
+      providers.serverSettings,
     ],
     {
+      serverSettingsContext: {
+        sessionKey: mockedParams.roomIdentifier?.includes('.') ? mockedParams.roomIdentifier : null,
+      },
       userContext,
       sessionContext,
       publisherContext,
@@ -438,8 +441,7 @@ async function render(
     SuspenseBoundary,
     MainWrapper,
     backgroundEffectsDialog$.Provider,
-    precallNetworkTestDialog$.Provider,
-    serverSettings$.Provider
+    precallNetworkTestDialog$.Provider
   );
 
   const renderResult = await renderAsyncComponent(ui, { wrapper });

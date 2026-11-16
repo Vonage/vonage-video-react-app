@@ -15,7 +15,7 @@ import VideoContainerSkeleton from '@components/WaitingRoom/VideoContainer/Video
 import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNameInput.skeleton';
 import useWaitingRoom from '@hooks/useWaitingRoom';
 import isSignedIn from '@utils/isSignedIn';
-import useScheduleStatus from '@components/WaitingRoom/UserNameInput/hooks/useScheduleStatus';
+import { serverSettings$ } from '@core/stores';
 
 /**
  * WaitingRoom Component
@@ -44,14 +44,13 @@ const WaitingRoom: FC = () => {
     isRoomReady,
     roomName,
     sessionKey,
-    scheduleWindow,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
     handleClose,
   } = useWaitingRoom();
 
-  const scheduleStatus = useScheduleStatus({ sessionKey, scheduleWindow });
+  const scheduleStatus = serverSettings$.useScheduleStatus();
 
   const shouldShowLandingPageLink = scheduleStatus.kind === 'ended' && isSignedIn();
 
@@ -97,7 +96,6 @@ const WaitingRoom: FC = () => {
                   setUsername={setUsername}
                   roomName={roomName}
                   sessionKey={sessionKey}
-                  scheduleWindow={scheduleWindow}
                 >
                   {shouldShowLandingPageLink && <GoToLandingPageButton />}
                 </UsernameInput>

@@ -1,17 +1,23 @@
 import { scheduleCountdownPanelTestIds } from './components/ScheduleCountdownPanel/ScheduleCountdownPanel';
 import { scheduleCountdownPanelSkeletonTestIds } from './components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton';
 import type { ReactElement } from 'react';
+import jwt from 'jsonwebtoken';
 import { act, fireEvent, render as renderBase, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import composeProviders from '@web/helpers/composeProviders';
-import { serverSettings$ } from '@core/stores';
 import UsernameInput from './UserNameInput';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
 const serverAheadMilliseconds = 60_000;
+const scheduledSessionKey = jwt.sign(
+  {
+    sessionId: '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE',
+    schedule: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 },
+  },
+  'test'
+);
 
 const roomStubTestIds = {
   root: (roomIdentifier: string | undefined) => `room-${roomIdentifier}`,
@@ -41,10 +47,12 @@ describe('UsernameInput', () => {
         username="Ana"
         setUsername={vi.fn()}
         roomName={undefined}
-        sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
+        sessionKey={scheduledSessionKey}
       />,
-      { runtimeContext: { videoClient } }
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
     );
 
     expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
@@ -64,7 +72,7 @@ describe('UsernameInput', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
-    expect(screen.getByTestId(roomStubTestIds.root('scheduled-session-key'))).toBeInTheDocument();
+    expect(screen.getByTestId(roomStubTestIds.root(scheduledSessionKey))).toBeInTheDocument();
   });
 
   it('keeps Join disabled past the start by the local clock until the server time is known', () => {
@@ -79,10 +87,12 @@ describe('UsernameInput', () => {
         username="Ana"
         setUsername={vi.fn()}
         roomName={undefined}
-        sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
+        sessionKey={scheduledSessionKey}
       />,
-      { runtimeContext: { videoClient } }
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
     );
 
     expect(screen.queryByText('The meeting has started')).not.toBeInTheDocument();
@@ -97,7 +107,6 @@ describe('UsernameInput', () => {
         setUsername={vi.fn()}
         roomName="design-review"
         sessionKey="design-review"
-        scheduleWindow={null}
       />
     );
 
@@ -110,6 +119,8 @@ describe('UsernameInput', () => {
   });
 
   it('hides Join and keeps its children once the meeting has ended', async () => {
+    expect.assertions(4);
+
     vi.setSystemTime(startsAt + 2 * 60 * 60_000);
 
     const videoClient = makeVideoClientMock({
@@ -121,12 +132,14 @@ describe('UsernameInput', () => {
         username="Ana"
         setUsername={vi.fn()}
         roomName={undefined}
-        sessionKey="scheduled-session-key"
-        scheduleWindow={{ startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 }}
+        sessionKey={scheduledSessionKey}
       >
         <button type="button">Back to landing</button>
       </UsernameInput>,
-      { runtimeContext: { videoClient } }
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
     );
 
     expect(await screen.findByText('This meeting has ended')).toBeInTheDocument();
@@ -142,7 +155,6 @@ describe('UsernameInput', () => {
         setUsername={vi.fn()}
         roomName={undefined}
         sessionKey="unnamed-session-key"
-        scheduleWindow={null}
       />
     );
 
@@ -156,14 +168,21 @@ describe('UsernameInput', () => {
 
 type RenderOptions = {
   runtimeContext?: ProviderOptions['RuntimeContext'];
+  serverSettingsContext?: ProviderOptions['ServerSettingsContext'];
 };
 
-function render(ui: ReactElement, { runtimeContext }: RenderOptions = {}) {
-  const { wrapper, ...context } = makeTestProvider([providers.user, providers.runtime], {
-    userContext: undefined,
-    runtimeContext,
-  });
-  const ProvidersWrapper = composeProviders(wrapper, serverSettings$.Provider);
+function render(
+  ui: ReactElement,
+  { runtimeContext, serverSettingsContext = { sessionKey: null } }: RenderOptions = {}
+) {
+  const { wrapper: ProvidersWrapper, ...context } = makeTestProvider(
+    [providers.user, providers.runtime, providers.serverSettings],
+    {
+      serverSettingsContext,
+      userContext: undefined,
+      runtimeContext,
+    }
+  );
 
   return {
     ...context,

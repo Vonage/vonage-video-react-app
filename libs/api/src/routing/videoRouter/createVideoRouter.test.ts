@@ -149,19 +149,23 @@ describe('createVideoHandler', () => {
     });
   });
 
-  it('returns the server time from getServerSettings without a sessionKey', async () => {
-    const requestedAt = Date.now();
+  it.each([{}, { sessionKey: null }])(
+    'returns the server time from getServerSettings without a session key: %j',
+    async (input) => {
+      expect.assertions(2);
+      const requestedAt = Date.now();
 
-    const response = await request(createTestApp())
-      .post('/video/getServerSettings')
-      .send({})
-      .expect(200);
+      const response = await request(createTestApp())
+        .post('/video/getServerSettings')
+        .send(input)
+        .expect(200);
 
-    const { serverTime } = extractResponseData<{ serverTime: number }>(response.body);
+      const { serverTime } = extractResponseData<{ serverTime: number }>(response.body);
 
-    expect(serverTime).toBeGreaterThanOrEqual(requestedAt);
-    expect(serverTime).toBeLessThanOrEqual(Date.now());
-  });
+      expect(serverTime).toBeGreaterThanOrEqual(requestedAt);
+      expect(serverTime).toBeLessThanOrEqual(Date.now());
+    }
+  );
 
   it('accepts a sessionKey in the getServerSettings input', async () => {
     const response = await request(createTestApp())

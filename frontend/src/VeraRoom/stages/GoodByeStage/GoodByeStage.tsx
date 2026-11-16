@@ -3,6 +3,7 @@ import GoodByeMessage from '@components/GoodBye/GoodbyeMessage';
 import ReenterRoomButton from '@components/GoodBye/ReenterRoomButton';
 import useGoodByePage from '@hooks/useGoodByePage';
 import { Card, PageLayoutEmbed } from '@ui';
+import useShouldShowReenterRoom from '@components/GoodBye/useShouldShowReenterRoom';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +19,7 @@ import { useTranslation } from 'react-i18next';
  */
 const GoodByeStage: FC = () => {
   const { t } = useTranslation();
+  const shouldShowReenterRoom = useShouldShowReenterRoom();
   const { header, caption } = useGoodByePage();
 
   return (
@@ -27,12 +29,14 @@ const GoodByeStage: FC = () => {
       </PageLayoutEmbed.Left>
       <PageLayoutEmbed.Right>
         <div className="flex flex-col gap-8">
-          <Card className="lg:min-w-125 items-center">
-            <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
-              {t('goodBye.title')}
-            </p>
-            <ReenterRoomButton />
-          </Card>
+          {shouldShowReenterRoom && (
+            <Card className="lg:min-w-125 items-center">
+              <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-3 w-full text-left">
+                {t('goodBye.title')}
+              </p>
+              <ReenterRoomButton />
+            </Card>
+          )}
 
           <Card className="min-w-full lg:min-w-125">
             <p className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-6">

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isNil } from '@common/assertions';
 import formatCountdown from '../helpers/formatCountdown';
-import type { ScheduleStatus } from '../types/ScheduleStatus';
+import type { ScheduleStatus } from '@core/stores/serverSettings';
 
 const useScheduleTabTitle = ({
   scheduleStatus,
@@ -33,16 +33,19 @@ const useScheduleTabTitle = ({
     return null;
   })();
 
-  useEffect(() => {
-    if (isNil(tabTitle)) return;
+  useEffect(
+    function updateScheduleTabTitle() {
+      if (isNil(tabTitle)) return;
 
-    const previousTitle = document.title;
-    document.title = tabTitle;
+      const previousTitle = document.title;
+      document.title = tabTitle;
 
-    return () => {
-      document.title = previousTitle;
-    };
-  }, [tabTitle]);
+      return function restoreTabTitle() {
+        document.title = previousTitle;
+      };
+    },
+    [tabTitle]
+  );
 };
 
 export default useScheduleTabTitle;
