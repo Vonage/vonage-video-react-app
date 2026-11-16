@@ -1,8 +1,20 @@
 import createContext from 'react-global-state-hooks/createContext';
+import actions from 'react-global-state-hooks/actions';
+import type { InferAPI } from 'react-global-state-hooks';
 import type { CreateRoomWizardStepName } from '../types/CreateRoomWizardStepName';
 import type { MeetingDurationMinutes } from '../types/MeetingDurationMinutes';
 import meetingDurationOptions from '../constants/meetingDurationOptions';
 import getDefaultMeetingStart from '../helpers/getDefaultMeetingStart';
+
+type CreateRoomWizardAPI = InferAPI<typeof createRoomWizard$>;
+
+const internals = actions<CreateRoomWizardAPI>()({
+  update(updatedValues: Partial<ReturnType<CreateRoomWizardAPI['getState']>>) {
+    return ({ setState }) => {
+      setState((state) => ({ ...state, ...updatedValues }));
+    };
+  },
+});
 
 /**
  * The meeting being created and the wizard step on screen. One instance per open wizard.
@@ -19,29 +31,19 @@ const createRoomWizard$ = createContext(
   {
     actions: {
       setName(name: string) {
-        return ({ setState }) => {
-          setState((state) => ({ ...state, name }));
-        };
+        return (store): void => internals(store).update({ name });
       },
       setIsScheduled(isScheduled: boolean) {
-        return ({ setState }) => {
-          setState((state) => ({ ...state, isScheduled }));
-        };
+        return (store): void => internals(store).update({ isScheduled });
       },
       setStart(start: { startDate: string; startTime: string }) {
-        return ({ setState }) => {
-          setState((state) => ({ ...state, ...start }));
-        };
+        return (store): void => internals(store).update(start);
       },
       setDurationMinutes(durationMinutes: MeetingDurationMinutes) {
-        return ({ setState }) => {
-          setState((state) => ({ ...state, durationMinutes }));
-        };
+        return (store): void => internals(store).update({ durationMinutes });
       },
       showShareStep(sessionKey: string) {
-        return ({ setState }) => {
-          setState((state) => ({ ...state, sessionKey, activeStep: 'share' }));
-        };
+        return (store): void => internals(store).update({ sessionKey, activeStep: 'share' });
       },
     },
   }

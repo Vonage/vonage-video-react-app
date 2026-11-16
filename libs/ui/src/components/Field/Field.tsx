@@ -38,12 +38,12 @@ const FieldRoot = ({
     (child) => ![label, input, description].includes(child)
   );
 
-  const isNativeInput =
+  const isStackedLayout =
     React.isValidElement<FieldInputProps>(input) && input.props.variant !== 'switch';
 
   return (
     <div className={twMerge('Field flex flex-col gap-1.5', className)} {...props}>
-      {isNativeInput ? (
+      {isStackedLayout ? (
         <>
           {label}
           {input}

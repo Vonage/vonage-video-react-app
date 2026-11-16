@@ -15,12 +15,6 @@ export type CreateRoomWizardDialogProps = PropsWithChildren<{
   onClose: () => void;
 }>;
 
-const paperClassName = classNames(
-  'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
-  'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
-  'dark:border dark:border-vera-border'
-);
-
 /**
  * Compact dialog chrome of the wizard: full screen on phones, a rounded panel from `sm` up, showing the active step.
  */
@@ -32,6 +26,12 @@ const CreateRoomWizardDialog = ({
   const titleId = useId();
   const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
   const activePanel = getStepPanels(children).find(({ props }) => props.step === activeStep);
+
+  const paperClassName = classNames(
+    'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
+    'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
+    'dark:border dark:border-vera-border'
+  );
 
   return (
     <dialog
