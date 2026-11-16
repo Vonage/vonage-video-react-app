@@ -18,6 +18,9 @@ import ScheduleCountdownPanelSkeleton from './components/ScheduleCountdownPanel/
 import JoinBlockerText from './components/JoinBlockerText';
 import { serverSettings$ } from '@core/stores';
 import useScheduleTabTitle from './hooks/useScheduleTabTitle';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 export type UserNameInputProps = Omit<CardProps, 'sx'> & {
   username: string;
@@ -164,6 +167,7 @@ const UsernameInput = ({
           slotProps={{
             htmlInput: {
               maxLength: 60,
+              'data-testid': testIds.input,
               className: 'disabled:[-webkit-text-fill-color:var(--vera-text-disabled)]',
             },
             input: {
@@ -179,6 +183,7 @@ const UsernameInput = ({
 
       {!isEnded && (
         <Button
+          data-testid={testIds.joinButton}
           onClick={handleJoinClick}
           variant="contained"
           color="primary"

@@ -1,3 +1,5 @@
+import { testIds } from './JoinExistingRoom';
+import { testIds as joinWaitRoomButtonTestIds } from '../JoinWaitRoomButton/JoinWaitRoomButton';
 import { render as renderBase, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { makeTestProvider, providers } from '@test/providers';
@@ -17,8 +19,10 @@ describe('JoinExistingRoom', () => {
     const { wrapper } = makeTestProvider([providers.runtime]);
     renderBase(<JoinExistingRoom />, { wrapper });
 
-    expect(screen.getByTestId('JoinExistingRoom')).toBeInTheDocument();
-    expect(screen.getByText('Join waiting room')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.container)).toBeInTheDocument();
+    expect(screen.getByTestId(joinWaitRoomButtonTestIds.button)).toHaveAccessibleName(
+      'Join waiting room'
+    );
     expect(screen.getByTestId(roomNameInputTestIds.input)).toHaveAccessibleName('Room ID');
   });
 });

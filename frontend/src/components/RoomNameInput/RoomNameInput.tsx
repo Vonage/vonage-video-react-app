@@ -1,11 +1,9 @@
 import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
+import { testIds } from './testIds';
 
-export const testIds = {
-  input: 'room-name-input',
-  error: 'room-name-input-error',
-} as const;
+export { testIds } from './testIds';
 
 export type RoomNameInputProps = {
   setRoomId: Dispatch<SetStateAction<string>>;

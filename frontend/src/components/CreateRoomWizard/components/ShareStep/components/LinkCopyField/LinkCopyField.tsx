@@ -1,15 +1,11 @@
-import { useState, type ComponentProps, type ReactElement } from 'react';
+import { useEffect, useId, useRef, useState, type ComponentProps, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import { twMerge } from 'tailwind-merge';
 import tryCatch from '@common/execution/tryCatch';
 import VividIcon from '@ui/components/VividIcon';
+import { testIds } from './testIds';
 
-export const testIds = {
-  link: 'meeting-link',
-  copyButton: 'meeting-link-copy',
-} as const;
+export { testIds } from './testIds';
 
 export type LinkCopyFieldProps = ComponentProps<'div'> & {
   url: string;
@@ -18,6 +14,13 @@ export type LinkCopyFieldProps = ComponentProps<'div'> & {
 const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactElement => {
   const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
+  const tooltipId = useId();
+  const copyConfirmationTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(function clearCopyConfirmationOnUnmount() {
+    return () => clearTimeout(copyConfirmationTimer.current);
+  }, []);
+
   const copyLabel = isCopied
     ? t('createRoomWizard.share.linkCopied')
     : t('createRoomWizard.share.copyLink');
@@ -25,7 +28,10 @@ const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactE
   const copyLink = async () => {
     const { didFail } = await tryCatch(() => navigator.clipboard.writeText(url));
     if (didFail) return;
+
     setIsCopied(true);
+    clearTimeout(copyConfirmationTimer.current);
+    copyConfirmationTimer.current = setTimeout(() => setIsCopied(false), 3000);
   };
 
   return (
@@ -43,11 +49,13 @@ const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactE
       >
         {url}
       </span>
-      <Tooltip title={copyLabel}>
-        <IconButton
+      <div className="group relative flex shrink-0">
+        <button
+          type="button"
           data-testid={testIds.copyButton}
-          size="small"
           aria-label={copyLabel}
+          aria-describedby={tooltipId}
+          className="flex size-[30px] cursor-pointer items-center justify-center rounded-full hover:bg-vera-text-primary/5"
           onClick={copyLink}
         >
           <VividIcon
@@ -55,8 +63,16 @@ const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactE
             customSize={-5}
             style={{ color: isCopied ? 'var(--vera-success)' : 'var(--vera-text-primary)' }}
           />
-        </IconButton>
-      </Tooltip>
+        </button>
+        <span
+          id={tooltipId}
+          role="tooltip"
+          data-testid={testIds.tooltip}
+          className="invisible absolute right-0 top-full z-10 mt-3 whitespace-nowrap rounded bg-vera-tertiary px-2 py-1 font-vera-plain text-[11px] font-medium text-vera-on-tertiary group-hover:visible group-focus-within:visible"
+        >
+          {copyLabel}
+        </span>
+      </div>
     </div>
   );
 };

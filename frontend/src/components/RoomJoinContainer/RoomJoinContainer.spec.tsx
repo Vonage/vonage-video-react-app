@@ -1,3 +1,4 @@
+import { testIds as newRoomButtonTestIds } from '../NewRoomButton/NewRoomButton';
 import { render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
@@ -48,7 +49,7 @@ describe('RoomJoinContainer', () => {
       </MemoryRouter>
     );
 
-    screen.getByTestId('new-room-button').click();
+    screen.getByTestId(newRoomButtonTestIds.button).click();
 
     expect(await screen.findByRole('dialog')).toHaveTextContent('/waiting-room/mock-session-key');
     expect(mockCreateSessionMutate).toHaveBeenCalledWith({ roomName: 'mocked-room' });

@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import GHRepoButton from '../GHRepoButton';
 import getAppVersion from '@utils/getAppVersion';
 import sdkPackageInfo from '@vonage/client-sdk-video/package.json';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 const formatDisplayVersion = (version: string): string => version.replace(/^vera-/, 'v');
 
@@ -16,13 +19,13 @@ const FooterLinks = (): ReactElement => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-2 py-2" data-testid="footer-links">
+    <div className="flex items-center gap-2 py-2" data-testid={testIds.container}>
       <GHRepoButton />
       <span className="hidden min-[900px]:block text-vera-text-tertiary text-vera-body-base">
         {t('footer.github.title')}
       </span>
       <span
-        data-testid="app-version"
+        data-testid={testIds.version}
         className="hidden min-[900px]:block text-vera-text-tertiary text-vera-body-base"
       >
         {formatDisplayVersion(getAppVersion())} (SDK {sdkPackageInfo.version})

@@ -1,3 +1,21 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as roomNameInputTestIds } from '../../frontend/src/components/RoomNameInput/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as joinWaitRoomButtonTestIds } from '../../frontend/src/components/JoinWaitRoomButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as userNameInputTestIds } from '../../frontend/src/components/WaitingRoom/UserNameInput/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as roomJoinContainerTestIds } from '../../frontend/src/components/RoomJoinContainer/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as languageSelectorTestIds } from '../../frontend/src/components/LanguageSelector/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as wizardDialogTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as wizardFooterTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as linkCopyTestIds } from '../../frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/testIds';
 import { expect } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
@@ -8,17 +26,16 @@ test.beforeEach(async ({ page }) => {
 test('should navigate to waiting room then publish in room via room name textbox', async ({
   page,
 }) => {
-  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
+  await page.getByTestId(roomNameInputTestIds.input).fill('some-room');
 
-  await page.locator('button:text("Join waiting room")').click();
+  await page.getByTestId(joinWaitRoomButtonTestIds.button).click();
 
   await expect(page).toHaveURL(new RegExp(`${baseURL}waiting-room/.+`));
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
-  await page.waitForTimeout(1000);
-  await page.getByLabel('Name').fill('some-user');
-  await page.getByRole('button', { name: 'Join meeting' }).click();
+  await page.getByTestId(userNameInputTestIds.input).fill('some-user');
+  await page.getByTestId(userNameInputTestIds.joinButton).click();
 
   await expect(page).toHaveURL(new RegExp(`${baseURL}room/.+`));
 
@@ -30,26 +47,26 @@ test('should create a meeting, copy its link, then join and publish via Create r
   context,
   browserName,
 }) => {
-  await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByTestId(newRoomButtonTestIds.button).click();
 
-  const wizard = page.getByRole('dialog', { name: 'Create a meeting' });
-  const meetingLink = await wizard.getByText(new RegExp(`${baseURL}waiting-room/.+`)).textContent();
+  const wizard = page.getByTestId(wizardDialogTestIds.dialog);
+  const meetingLink = await wizard.getByTestId(linkCopyTestIds.link).textContent();
 
-  await wizard.getByRole('button', { name: 'Copy link' }).click();
-  await expect(wizard.getByRole('button', { name: 'Link copied' })).toBeVisible();
+  await wizard.getByTestId(linkCopyTestIds.copyButton).click();
+  await expect(wizard.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Link copied');
   if (browserName === 'chromium') {
     await context.grantPermissions(['clipboard-read']);
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(meetingLink);
   }
 
-  await wizard.getByRole('button', { name: 'Join now' }).click();
+  await wizard.getByTestId(wizardFooterTestIds.joinButton).click();
 
   await expect(page).toHaveURL(meetingLink ?? '');
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
-  await page.getByLabel('Name').fill('some-user');
-  await page.getByRole('button', { name: 'Join meeting' }).click();
+  await page.getByTestId(userNameInputTestIds.input).fill('some-user');
+  await page.getByTestId(userNameInputTestIds.joinButton).click();
 
   await expect(page).toHaveURL(/\/room\/.+/);
 
@@ -66,7 +83,7 @@ test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, cont
 });
 
 test('User should be able to navigate to the next page using enter key', async ({ page }) => {
-  await page.getByRole('textbox', { name: /Room ID/i }).fill('some-room');
+  await page.getByTestId(roomNameInputTestIds.input).fill('some-room');
 
   await page.keyboard.press('Enter');
 
@@ -75,9 +92,8 @@ test('User should be able to navigate to the next page using enter key', async (
 
   // This is needed for the DeviceAccessAlert to hide
   await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
-  await page.waitForTimeout(500);
 
-  const nameInput = page.getByLabel('Name');
+  const nameInput = page.getByTestId(userNameInputTestIds.input);
   await nameInput.waitFor({ state: 'visible' });
   await nameInput.fill('some-user');
 
@@ -92,7 +108,7 @@ test('User should be able to navigate to the next page using enter key', async (
 test('should keep landing content equivalent across languages', async ({ page }) => {
   const localizedLandingExpectations = [
     {
-      languageOption: 'English',
+      languageCode: 'en',
       sectionHeading: 'Start a new video meeting',
       joinHeading: 'Join room',
       roomNameLabel: 'Room ID',
@@ -100,7 +116,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
-      languageOption: 'English (US)',
+      languageCode: 'en-US',
       sectionHeading: 'Start a new video meeting',
       joinHeading: 'Join room',
       roomNameLabel: 'Room ID',
@@ -108,7 +124,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       emptyRoomNameErrorText: 'Enter a valid room ID',
     },
     {
-      languageOption: 'Deutsch',
+      languageCode: 'de',
       sectionHeading: 'Neues Videomeeting starten',
       joinHeading: 'Raum beitreten',
       roomNameLabel: 'Raum-ID',
@@ -116,7 +132,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       emptyRoomNameErrorText: 'Geben Sie eine gültige Raum-ID',
     },
     {
-      languageOption: 'Italiano',
+      languageCode: 'it',
       sectionHeading: 'Inizia una nuova',
       joinHeading: 'Unisciti a una stanza',
       roomNameLabel: 'ID della stanza',
@@ -124,7 +140,7 @@ test('should keep landing content equivalent across languages', async ({ page })
       emptyRoomNameErrorText: 'Inserisci un ID della stanza',
     },
     {
-      languageOption: 'Español (México)',
+      languageCode: 'es-MX',
       sectionHeading: 'Iniciar una nueva',
       joinHeading: 'Unirse a una sala',
       roomNameLabel: 'ID de sala',
@@ -134,14 +150,25 @@ test('should keep landing content equivalent across languages', async ({ page })
   ];
 
   for (const expectation of localizedLandingExpectations) {
-    await page.getByRole('combobox').click();
-    await page.getByRole('option', { name: expectation.languageOption, exact: true }).click();
+    await page.getByTestId(languageSelectorTestIds.selector).getByRole('combobox').click();
+    await page.getByTestId(languageSelectorTestIds.option(expectation.languageCode)).click();
 
-    await expect(page.getByRole('heading', { name: expectation.sectionHeading })).toBeVisible();
-    await expect(page.getByRole('heading', { name: expectation.joinHeading })).toBeVisible();
+    await expect(page.getByTestId(roomJoinContainerTestIds.createHeading)).toContainText(
+      expectation.sectionHeading
+    );
+    await expect(page.getByTestId(roomJoinContainerTestIds.joinHeading)).toHaveText(
+      expectation.joinHeading
+    );
 
-    await page.getByRole('button', { name: expectation.joinWaitingRoomButton }).click();
-    await expect(page.getByLabel(expectation.roomNameLabel)).toBeVisible();
-    await expect(page.getByText(expectation.emptyRoomNameErrorText)).toBeVisible();
+    await expect(page.getByTestId(joinWaitRoomButtonTestIds.button)).toHaveAccessibleName(
+      expectation.joinWaitingRoomButton
+    );
+    await page.getByTestId(joinWaitRoomButtonTestIds.button).click();
+    await expect(page.getByTestId(roomNameInputTestIds.input)).toHaveAccessibleName(
+      expectation.roomNameLabel
+    );
+    await expect(page.getByTestId(roomNameInputTestIds.error)).toContainText(
+      expectation.emptyRoomNameErrorText
+    );
   }
 });

@@ -7,6 +7,9 @@ import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
 import CreateRoomWizard from '../CreateRoomWizard';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 /**
  * RoomJoinContainer Component
@@ -29,14 +32,20 @@ const RoomJoinContainer = (): ReactElement => {
 
   return (
     <Card component="form" className="lg:max-w-125">
-      <h6 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4">
+      <h6
+        data-testid={testIds.createHeading}
+        className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4"
+      >
         {t('button.startNewRoom')}
       </h6>
       <NewRoomButton handleNewRoom={handleNewRoom} />
 
       <JoinContainerSeparator />
 
-      <h6 className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4">
+      <h6
+        data-testid={testIds.joinHeading}
+        className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4"
+      >
         {t('button.joinRoom')}
       </h6>
 

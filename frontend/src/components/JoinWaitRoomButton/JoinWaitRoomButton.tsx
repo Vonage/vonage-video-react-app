@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { isNil } from '@common/assertions';
 import parseRoomIdInput from './helpers/parseRoomIdInput';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 export type JoinWaitRoomButtonProps = {
   roomId: string;
@@ -41,7 +44,13 @@ const JoinWaitRoomButton = ({
   };
 
   return (
-    <Button variant="outlined" disabled={isDisabled} onClick={handleJoin} type="submit">
+    <Button
+      data-testid={testIds.button}
+      variant="outlined"
+      disabled={isDisabled}
+      onClick={handleJoin}
+      type="submit"
+    >
       {t('button.joinWaitingRoom')}
     </Button>
   );

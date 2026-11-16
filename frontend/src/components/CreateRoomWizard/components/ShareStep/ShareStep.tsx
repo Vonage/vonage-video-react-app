@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import getRoomShareUrl from '@utils/getRoomShareUrl';
 import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import LinkCopyField from './components/LinkCopyField';
@@ -7,7 +8,7 @@ import LinkCopyField from './components/LinkCopyField';
 const ShareStep = (): ReactElement => {
   const { t } = useTranslation();
   const sessionKey = createRoomWizard$.use.select((state) => state.sessionKey);
-  const meetingLink = `${window.location.origin}/waiting-room/${sessionKey}`;
+  const meetingLink = getRoomShareUrl({ origin: window.location.origin, sessionKey });
 
   return (
     <div className="flex flex-col gap-5">

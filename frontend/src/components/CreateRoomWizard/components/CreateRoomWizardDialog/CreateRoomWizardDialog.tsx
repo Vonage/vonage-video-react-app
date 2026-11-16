@@ -1,19 +1,21 @@
 import { useId, type PropsWithChildren, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import Dialog from '@mui/material/Dialog';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import { getStepPanels } from '../CreateRoomWizardStep';
 import CreateRoomWizardFooterActions from '../CreateRoomWizardFooterActions';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 export type CreateRoomWizardDialogProps = PropsWithChildren<{
   onClose: () => void;
 }>;
 
 const paperClassName = classNames(
-  'm-0! h-dvh! max-h-dvh! w-full! max-w-none! overflow-hidden rounded-none! bg-vera-surface',
-  'sm:m-8! sm:h-auto! sm:max-h-[calc(100dvh-4rem)]! sm:w-[calc(100%-4rem)]! sm:rounded-vera-large! md:max-w-xl!',
+  'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
+  'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
   'dark:border dark:border-vera-border'
 );
 
@@ -30,15 +32,18 @@ const CreateRoomWizardDialog = ({
   const activePanel = getStepPanels(children).find(({ props }) => props.step === activeStep);
 
   return (
-    <Dialog
-      open
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
+    <dialog
+      ref={openDialog}
+      data-testid={testIds.dialog}
+      onCancel={onClose}
+      onClick={(event) => {
+        const isBackdropClick = event.target === event.currentTarget;
+        if (isBackdropClick) onClose();
+      }}
       aria-labelledby={titleId}
-      slotProps={{ paper: { className: paperClassName } }}
+      className={paperClassName}
     >
-      <div className="flex h-full flex-col bg-vera-surface">
+      <div className="flex h-full flex-col bg-vera-surface sm:h-auto sm:max-h-[calc(100dvh-4rem)]">
         <div className="relative border-b border-vera-border bg-vera-surface px-6 pb-4 pt-6">
           <h2
             id={titleId}
@@ -48,6 +53,7 @@ const CreateRoomWizardDialog = ({
           </h2>
           <button
             type="button"
+            data-testid={testIds.closeButton}
             aria-label={t('button.close')}
             onClick={onClose}
             className={classNames(
@@ -63,8 +69,13 @@ const CreateRoomWizardDialog = ({
           <CreateRoomWizardFooterActions onClose={onClose} />
         </div>
       </div>
-    </Dialog>
+    </dialog>
   );
 };
+
+function openDialog(dialog: HTMLDialogElement) {
+  dialog.showModal();
+  return () => dialog.close();
+}
 
 export default CreateRoomWizardDialog;

@@ -1,16 +1,21 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import CreateRoomWizard from './index';
 import { testIds as footerTestIds } from './components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions';
 import { testIds as linkCopyTestIds } from './components/ShareStep/components/LinkCopyField/LinkCopyField';
 
 describe('CreateRoomWizard', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('shows the meeting link, copies it, and closes on Done', async () => {
-    expect.assertions(4);
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.assign(navigator, { clipboard: { writeText } });
+    expect.assertions(6);
+    vi.useFakeTimers();
+    userEvent.setup();
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
     const onClose = vi.fn();
 
     renderWizard({ onClose });
@@ -18,23 +23,39 @@ describe('CreateRoomWizard', () => {
     const meetingLink = `${window.location.origin}/waiting-room/test-session-key`;
     expect(screen.getByTestId(linkCopyTestIds.link)).toHaveTextContent(meetingLink);
 
-    await userEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
+      await vi.advanceTimersByTimeAsync(0);
+    });
 
     expect(writeText).toHaveBeenCalledWith(meetingLink);
     expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Link copied');
 
-    await userEvent.click(screen.getByTestId(footerTestIds.doneButton));
+    await act(() => vi.advanceTimersByTimeAsync(2000));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    await act(() => vi.advanceTimersByTimeAsync(2000));
+    expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Link copied');
+
+    await act(() => vi.advanceTimersByTimeAsync(1000));
+    expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Copy link');
+
+    fireEvent.click(screen.getByTestId(footerTestIds.doneButton));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('does not say the link is copied when the clipboard write fails', async () => {
     expect.assertions(2);
-    const writeText = vi.fn().mockRejectedValue(new Error('denied'));
-    Object.assign(navigator, { clipboard: { writeText } });
+    const user = userEvent.setup();
+    const writeText = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockRejectedValue(new Error('denied'));
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
+    await user.click(screen.getByTestId(linkCopyTestIds.copyButton));
 
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Copy link');
