@@ -1,0 +1,30 @@
+frontend/package.json
+  s_66bdcd8844ef0e::t_4cf853413fd150 3
+package.json
+  s_66bdcd8844ef0e::t_26260d9baf9ffa 3
+integration-tests/package.json
+  s_66bdcd8844ef0e::t_66e946b3b593c8 3
+backend/package.json
+  s_66bdcd8844ef0e::t_dbcc5ec0dd2340 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "64b7f28807be658cfe7b7a7ee794695276308466",
+  "prompts": {},
+  "humans": {
+    "h_5ddc9d372ac6a1": {
+      "author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_66bdcd8844ef0e": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_b2f7b591-c9f1-46ec-9448-203611997646",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

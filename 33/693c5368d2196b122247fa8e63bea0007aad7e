@@ -1,0 +1,23 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/AdvancedSettingsMeetingTab.spec.tsx
+  s_51ade8594b05d7::t_9e50fadb9f9969 69-77,81
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_51ade8594b05d7::t_d2e04f4a3c5d90 146-151
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_51ade8594b05d7::t_c333e4592243a1 32-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "33693c5368d2196b122247fa8e63bea0007aad7e",
+  "prompts": {},
+  "sessions": {
+    "s_51ade8594b05d7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d56d-bef0-72f0-b8d7-b2231b412fd8",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

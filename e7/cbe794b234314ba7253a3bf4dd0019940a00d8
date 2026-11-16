@@ -1,0 +1,19 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_d7e2e0668feaa5::t_af0a46f16cb611 141-143,147,183-185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e7cbe794b234314ba7253a3bf4dd0019940a00d8",
+  "prompts": {},
+  "sessions": {
+    "s_d7e2e0668feaa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d07a-9f3b-7a02-b07a-8f5d1da418ff",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

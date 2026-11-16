@@ -1,0 +1,16 @@
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  h_6029769cf9ac60 218
+libs/api/src/types/HandlersConfig.ts
+  h_6029769cf9ac60 7,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b58b0e30d77e08fcbf5cc5e4d1f1a058182e604",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

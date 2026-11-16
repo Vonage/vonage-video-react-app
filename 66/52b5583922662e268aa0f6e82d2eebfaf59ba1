@@ -1,0 +1,41 @@
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingScheduleWindow.ts
+  s_51ade8594b05d7::t_5629b2b4e80c26 7
+frontend/src/hooks/useWaitingRoom.ts
+  s_51ade8594b05d7::t_368b3b0d55ec31 20
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.ts
+  s_51ade8594b05d7::t_efab96f0a68cce 1-2,10-19
+libs/common/manifest.json
+  s_f158bcbaaf7b82::t_7048b5e3997c95 4
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.test.ts
+  s_51ade8594b05d7::t_1dd8ad3130b1c4 2,4-17
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
+  s_51ade8594b05d7::t_d4935a0679ce16 7,18
+frontend/src/components/GoodBye/useShouldShowReenterRoom.ts
+  s_51ade8594b05d7::t_092d0ba6363f85 3,12
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.spec.tsx
+  s_51ade8594b05d7::t_94c36afb6b1549 17,19,22,34,37,40,47,49-52,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6652b5583922662e268aa0f6e82d2eebfaf59ba1",
+  "prompts": {},
+  "sessions": {
+    "s_51ade8594b05d7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d56d-bef0-72f0-b8d7-b2231b412fd8",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_f158bcbaaf7b82": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d056-4707-7b31-970d-da882d45e0a7",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

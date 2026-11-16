@@ -1,0 +1,35 @@
+frontend/src/components/GoodBye/useShouldShowReenterRoom.ts
+  s_20776229283099::t_1c504f18d0e930 7,15
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_20776229283099::t_3776dc385b1d3c 4,6,13-15,17-19,21-22,24,26,28,30,32,35,46-51
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_637b77e93786ef 1-2,13-16,18-21,23-24,26-34,36-39,41-52,54-56,58-60,71
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_20776229283099::t_4a0c12167b66f4 30,46
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  s_20776229283099::t_af9ae745f1c736 27,40
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  s_20776229283099::t_93fd6ec0b7ad2b 7-10
+libs/core/src/stores/serverSettings/actions/getSecondsUntilEnd.ts
+  s_20776229283099::t_a04bc8fb132454 2,4-7,9-10
+libs/core/src/stores/serverSettings/serverSettings$.test.tsx
+  s_20776229283099::t_87bc4b7f4ef23c 21-23,28-32,47-61
+libs/core/src/stores/serverSettings/serverSettings$.tsx
+  s_20776229283099::t_c58352452e5dcd 8,26,105-108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d716768decec7855d92688ed3b46b7bbece8028a",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+libs/core/src/constants/coreQueryKeys.ts
+  h_6029769cf9ac60 5-20
+libs/core/src/hooks/useArchives/useArchives.ts
+  h_6029769cf9ac60 4,60
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  h_6029769cf9ac60 3,65-68
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  h_6029769cf9ac60 3,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c99319c776adf91c65b93df49d062ef0f79549c8",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

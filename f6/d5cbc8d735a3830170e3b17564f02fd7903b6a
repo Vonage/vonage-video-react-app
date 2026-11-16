@@ -1,0 +1,81 @@
+frontend/src/App.tsx
+  s_f158bcbaaf7b82::t_94a138eeec9fcd 70
+frontend/src/Context/RoomProvider.tsx
+  s_f158bcbaaf7b82::t_e2f2e4c04e0bd4 2,11,13
+frontend/src/VeraRoom/VeraRoom.tsx
+  s_f158bcbaaf7b82::t_bc48f96364c055 64-72
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_f158bcbaaf7b82::t_6ad23370656866 11
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  s_f158bcbaaf7b82::t_0fd18eaf9963c8 6,35-37
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  s_f158bcbaaf7b82::t_ee7d493dd2c670 6-7,21
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  s_f158bcbaaf7b82::t_6a194e2782dfb3 4-7,15,17,20-34,39,42-58
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_f158bcbaaf7b82::t_c787f1639ffc82 55
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_f158bcbaaf7b82::t_7b06eb32e0f7e6 44,47
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_f158bcbaaf7b82::t_f31c2d83e58026 26
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  s_f158bcbaaf7b82::t_fe6f8e883d3203 157
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  s_f158bcbaaf7b82::t_26e11c95a08a8b 6,12,18-22
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useMeetingSecondsLeft.ts
+  s_f158bcbaaf7b82::t_9ee3a2f0b1a3e8 4,11-13
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  s_f158bcbaaf7b82::t_5b6b31e48dfa3a 1,4,13-18
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  s_f158bcbaaf7b82::t_e0106bc6274dff 239
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_f158bcbaaf7b82::t_3b8659f0a6320f 248,269
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_f158bcbaaf7b82::t_8b1b8ea277e28b 166
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_f158bcbaaf7b82::t_48da39027ef47c 60
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.spec.ts
+  s_f158bcbaaf7b82::t_3fc656f1c732dc 36-39,58-61
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  s_f158bcbaaf7b82::t_909caaed1cfecf 2,8-9,11,14,17-28
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_f158bcbaaf7b82::t_08d43cdc4dc2f1 21,50,84
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_f158bcbaaf7b82::t_9383918a4f3662 4,41-45
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_f158bcbaaf7b82::t_0f4204779417e9 585
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  s_f158bcbaaf7b82::t_f8cf0b8e181eaa 442
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  s_f158bcbaaf7b82::t_ef19aa22a8deb1 54
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  s_f158bcbaaf7b82::t_1d15835de964eb 152-158,160,162-164
+libs/api/src/schemas/GetServerSettingsPayload.schema.ts
+  s_f158bcbaaf7b82::t_0846409fcccdd0 5
+libs/core/src/stores/serverSettings/hooks/useServerSettings.ts
+  s_f158bcbaaf7b82::t_72c18107fbead3 1-2,6-7,16,23-28,34,45-59
+libs/core/src/stores/serverSettings/serverSettings$.test.ts
+  s_f158bcbaaf7b82::t_2a5dc8a7383649 19-39,42-43,45-59,62-63,66,68-71,75,77-81,85-86,89,91-92,94
+libs/core/src/stores/serverSettings/serverSettings$.ts
+  s_f158bcbaaf7b82::t_f464d331cce3e0 1-2,4,6,8-31,33-36,39
+libs/core/test/providers/makeServerSettingsProviderWrapper.ts
+  s_f158bcbaaf7b82::t_61355a45f94391 7
+libs/core/test/providers/makeTestProvider.ts
+  s_f158bcbaaf7b82::t_1f1c745ab2e864 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f6d5cbc8d735a3830170e3b17564f02fd7903b6a",
+  "prompts": {},
+  "sessions": {
+    "s_f158bcbaaf7b82": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d056-4707-7b31-970d-da882d45e0a7",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

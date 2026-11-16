@@ -1,0 +1,25 @@
+docs/MEETING_TIMER.md
+  s_20776229283099::t_2b4ded1c168362 43-49
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_5c239a9e2a83a6 24-51,53-67
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_20776229283099::t_a2db9bbab9e6e7 1,3-5,8,12-16,20-38,41-44,47
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_20776229283099::t_4a7e4c3f8a477c 21,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "95184358c5fbf8404076d4afc90f5aa5c7b9b6c7",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

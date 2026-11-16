@@ -1,0 +1,14 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
+  h_6029769cf9ac60 6,18-27,31,33,35-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "28f833deae216b004cbced04330550496f4ebb39",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+backend/routes/session.ts
+  h_6029769cf9ac60 5
+backend/tests/session.auth.test.ts
+  h_6029769cf9ac60 8,94,98
+backend/tests/session.test.ts
+  h_6029769cf9ac60 26
+docs/AUTHENTICATION.md
+  h_6029769cf9ac60 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d52064f7fca4d8cb1c5741216c08ec097c67bf78",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

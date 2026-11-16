@@ -1,0 +1,21 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.spec.tsx
+  s_96182854070f7c::t_03f7804273212d 2-4,9-12,21-22,25-33
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_96182854070f7c::t_4d9f2102083592 128,130-131,136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a99eb84ef1404a95febe368e8cc8dae735f53976",
+  "prompts": {},
+  "sessions": {
+    "s_96182854070f7c": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_2d1cd3d1-6f0a-409c-95e1-a8dd1b9c76c6",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+frontend/src/components/WaitingRoom/UserNameInput/helpers/formatMeetingDate.ts
+  h_6029769cf9ac60 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f564c6aa4601e5e240def344472c39e42ef33c63",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

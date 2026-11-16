@@ -1,0 +1,16 @@
+libs/api/src/constants/maxDateMilliseconds.ts
+  h_6029769cf9ac60 1-6
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  h_6029769cf9ac60 2,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7f7ed5dcb7ec0a2f0f574612c6f54971daccc94b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/AutoJoinText.tsx
+  h_6029769cf9ac60 4,19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "83b320b365817b2a4c0744c6f225732c310943e1",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

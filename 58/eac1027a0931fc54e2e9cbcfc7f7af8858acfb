@@ -1,0 +1,18 @@
+docs/MEETING_TIMER.md
+  h_6029769cf9ac60 16,36
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/AdvancedSettingsMeetingTab.spec.tsx
+  h_6029769cf9ac60 28
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "58eac1027a0931fc54e2e9cbcfc7f7af8858acfb",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

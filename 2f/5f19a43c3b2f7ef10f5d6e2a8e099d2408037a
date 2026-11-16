@@ -1,0 +1,26 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 791-794
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 15-19,48,376,390
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  h_6029769cf9ac60 29
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/AdvancedSettingsMeetingTab.spec.tsx
+  h_6029769cf9ac60 11,18,84
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/components/MeetingProgress.tsx
+  h_6029769cf9ac60 18,43-44
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.spec.tsx
+  h_6029769cf9ac60 87
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  h_6029769cf9ac60 162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2f5f19a43c3b2f7ef10f5d6e2a8e099d2408037a",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

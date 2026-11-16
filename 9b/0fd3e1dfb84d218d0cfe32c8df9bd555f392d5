@@ -1,0 +1,24 @@
+frontend/src/locales/de.json
+  h_6029769cf9ac60 380
+frontend/src/locales/en.json
+  h_6029769cf9ac60 380
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 380
+frontend/src/locales/es.json
+  h_6029769cf9ac60 380
+frontend/src/locales/it.json
+  h_6029769cf9ac60 380
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 390
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9b0fd3e1dfb84d218d0cfe32c8df9bd555f392d5",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

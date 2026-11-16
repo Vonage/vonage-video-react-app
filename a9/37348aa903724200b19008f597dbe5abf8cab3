@@ -1,0 +1,40 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 44,118
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 116-120,130-143
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  h_6029769cf9ac60 18-19,23-24,28-47
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/scheduleCountdownPanelVariants.ts
+  h_6029769cf9ac60 6-9,12-13,17-18
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getScheduleStatus/getScheduleStatus.ts
+  h_6029769cf9ac60 21
+frontend/src/components/WaitingRoom/UserNameInput/helpers/isToday.ts
+  h_6029769cf9ac60 1-5
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  h_6029769cf9ac60 4,10-12,20-30,34-37,45-47,51-57
+frontend/src/components/WaitingRoom/UserNameInput/types/ScheduleStatus.ts
+  h_6029769cf9ac60 10
+frontend/src/locales/de.json
+  h_6029769cf9ac60 360-361,386-387
+frontend/src/locales/en.json
+  h_6029769cf9ac60 360-361,386-387
+frontend/src/locales/es-MX.json
+  h_6029769cf9ac60 360-361,386-387
+frontend/src/locales/es.json
+  h_6029769cf9ac60 360-361,386-387
+frontend/src/locales/it.json
+  h_6029769cf9ac60 360-361,386-387
+frontend/src/locales/ja.json
+  h_6029769cf9ac60 370-371,396-397
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a937348aa903724200b19008f597dbe5abf8cab3",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

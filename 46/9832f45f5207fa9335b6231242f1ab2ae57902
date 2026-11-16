@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/PopupDialog/PopupDialog.tsx
+  s_96182854070f7c::t_3307d09c49898f 60
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_96182854070f7c::t_4436f8f657f905 121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "469832f45f5207fa9335b6231242f1ab2ae57902",
+  "prompts": {},
+  "sessions": {
+    "s_96182854070f7c": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_2d1cd3d1-6f0a-409c-95e1-a8dd1b9c76c6",
+        "model": "auto"
+      },
+      "human_author": "Anna Tsolakou <anna.tsolakou@vonage.com>"
+    }
+  }
+}

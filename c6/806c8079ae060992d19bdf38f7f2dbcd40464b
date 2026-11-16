@@ -1,0 +1,19 @@
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.spec.tsx
+  s_20776229283099::t_adb4efdd8cdc70 87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c6806c8079ae060992d19bdf38f7f2dbcd40464b",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

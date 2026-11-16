@@ -1,0 +1,28 @@
+backend/tests/scheduledSession.test.ts
+  h_6029769cf9ac60 40
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 127,729
+libs/api/src/handlers/createSession.ts
+  h_6029769cf9ac60 24-25
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+libs/common/src/constants/SessionKeyClaim.ts
+  h_6029769cf9ac60 2
+libs/common/src/helpers/getScheduleWindow/getScheduleWindow.test.ts
+  h_6029769cf9ac60 9
+libs/common/src/helpers/getScheduleWindow/getScheduleWindow.ts
+  h_6029769cf9ac60 10-11
+libs/common/src/types/ScheduleClaim.ts
+  h_6029769cf9ac60 2,5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "045eca25edc74e06b171db14305aa83307ae9067",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
