@@ -48,7 +48,6 @@ test('should create a meeting, copy its link, then join and publish via Create r
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
-  await page.waitForTimeout(1000);
   await page.getByLabel('Name').fill('some-user');
   await page.getByRole('button', { name: 'Join meeting' }).click();
 

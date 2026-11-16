@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import CreateRoomWizard from './index';
+import { testIds as footerTestIds } from './components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions';
+import { testIds as linkCopyTestIds } from './components/ShareStep/components/LinkCopyField/LinkCopyField';
 
 describe('CreateRoomWizard', () => {
   it('shows the meeting link, copies it, and closes on Done', async () => {
@@ -14,14 +16,14 @@ describe('CreateRoomWizard', () => {
     renderWizard({ onClose });
 
     const meetingLink = `${window.location.origin}/waiting-room/test-session-key`;
-    expect(screen.getByText(meetingLink)).toBeInTheDocument();
+    expect(screen.getByTestId(linkCopyTestIds.link)).toHaveTextContent(meetingLink);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Copy link' }));
+    await userEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
 
     expect(writeText).toHaveBeenCalledWith(meetingLink);
-    expect(screen.getByRole('button', { name: 'Link copied' })).toBeInTheDocument();
+    expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Link copied');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+    await userEvent.click(screen.getByTestId(footerTestIds.doneButton));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -32,10 +34,10 @@ describe('CreateRoomWizard', () => {
     Object.assign(navigator, { clipboard: { writeText } });
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Copy link' }));
+    await userEvent.click(screen.getByTestId(linkCopyTestIds.copyButton));
 
     expect(writeText).toHaveBeenCalledTimes(1);
-    expect(screen.queryByRole('button', { name: 'Link copied' })).not.toBeInTheDocument();
+    expect(screen.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Copy link');
   });
 
   it('opens the waiting room of the meeting on Join now', async () => {
@@ -43,9 +45,9 @@ describe('CreateRoomWizard', () => {
 
     renderWizard({ onClose: vi.fn() });
 
-    await userEvent.click(screen.getByRole('button', { name: 'Join now' }));
+    await userEvent.click(screen.getByTestId(footerTestIds.joinButton));
 
-    expect(screen.getByText('waiting room test-session-key')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('waiting room test-session-key');
   });
 });
 
@@ -71,5 +73,5 @@ function renderWizard({ onClose }: { onClose: () => void }) {
 
 function WaitingRoomProbe() {
   const { sessionKey } = useParams();
-  return <span>waiting room {sessionKey}</span>;
+  return <span role="status">waiting room {sessionKey}</span>;
 }

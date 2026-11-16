@@ -376,7 +376,6 @@ for (const colorScheme of ['light', 'dark'] as const) {
     await dialog.getByRole('button', { name: 'Copy link' }).click();
     await expect(dialog.getByRole('button', { name: 'Link copied' })).toBeVisible();
     await expect(page.getByRole('tooltip', { name: 'Link copied' })).toBeVisible();
-    await page.waitForTimeout(500); // Let page settle for screenshot
 
     await expect(page).toHaveScreenshot({
       mask: getCreateMeetingDialogMasks({ page, dialog }),
@@ -419,7 +418,6 @@ async function openCreateMeetingDialog({
 
   const dialog = page.getByRole('dialog', { name: 'Create a meeting' });
   await expect(dialog.getByText(new RegExp(`${baseURL}waiting-room/.+`))).toBeVisible();
-  await page.waitForTimeout(500); // Let page settle for screenshot
 
   return dialog;
 }

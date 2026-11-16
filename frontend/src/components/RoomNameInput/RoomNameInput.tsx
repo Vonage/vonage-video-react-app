@@ -2,6 +2,11 @@ import { SetStateAction, Dispatch, ReactElement, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import TextField from '@mui/material/TextField';
 
+export const testIds = {
+  input: 'room-name-input',
+  error: 'room-name-input-error',
+} as const;
+
 export type RoomNameInputProps = {
   setRoomId: Dispatch<SetStateAction<string>>;
   roomId: string;
@@ -43,7 +48,8 @@ const RoomNameInput = ({
       value={roomId}
       onChange={handleChange}
       error={hasError}
-      helperText={hasError ? t('room.input.helper') : ''}
+      helperText={hasError ? <span data-testid={testIds.error}>{t('room.input.helper')}</span> : ''}
+      slotProps={{ htmlInput: { 'data-testid': testIds.input } }}
     />
   );
 };

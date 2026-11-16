@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useNavigate, MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, Mock, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import JoinWaitRoomButton from './JoinWaitRoomButton';
 
 vi.mock('react-router-dom', async () => {
@@ -16,7 +16,7 @@ const mockSetHasError = vi.fn();
 
 describe('JoinWaitRoomButtonComponent', () => {
   beforeEach(() => {
-    (useNavigate as Mock).mockReturnValue(mockNavigate);
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
   });
 
   it('should navigate to the waiting room of the room id', () => {

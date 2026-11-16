@@ -5,6 +5,11 @@ import Button from '@mui/material/Button';
 import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 
+export const testIds = {
+  doneButton: 'create-room-wizard-done',
+  joinButton: 'create-room-wizard-join',
+} as const;
+
 export type CreateRoomWizardFooterActionsProps = {
   onClose: () => void;
 };
@@ -22,10 +27,11 @@ const CreateRoomWizardFooterActions = ({
 
   return (
     <>
-      <Button variant="outlined" onClick={onClose}>
+      <Button data-testid={testIds.doneButton} variant="outlined" onClick={onClose}>
         {t('createRoomWizard.done')}
       </Button>
       <Button
+        data-testid={testIds.joinButton}
         variant="contained"
         onClick={joinNow}
         startIcon={

@@ -6,6 +6,11 @@ import { twMerge } from 'tailwind-merge';
 import tryCatch from '@common/execution/tryCatch';
 import VividIcon from '@ui/components/VividIcon';
 
+export const testIds = {
+  link: 'meeting-link',
+  copyButton: 'meeting-link-copy',
+} as const;
+
 export type LinkCopyFieldProps = ComponentProps<'div'> & {
   url: string;
 };
@@ -32,13 +37,19 @@ const LinkCopyField = ({ url, className, ...props }: LinkCopyFieldProps): ReactE
       {...props}
     >
       <span
+        data-testid={testIds.link}
         title={url}
         className="min-w-0 flex-1 truncate font-vera-plain text-vera-body-base text-vera-text-tertiary"
       >
         {url}
       </span>
       <Tooltip title={copyLabel}>
-        <IconButton size="small" aria-label={copyLabel} onClick={copyLink}>
+        <IconButton
+          data-testid={testIds.copyButton}
+          size="small"
+          aria-label={copyLabel}
+          onClick={copyLink}
+        >
           <VividIcon
             name={isCopied ? 'check-sent-line' : 'copy-line'}
             customSize={-5}

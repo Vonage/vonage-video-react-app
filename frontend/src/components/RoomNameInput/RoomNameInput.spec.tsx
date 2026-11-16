@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import RoomNameInput from './RoomNameInput';
+import RoomNameInput, { testIds } from './RoomNameInput';
 
 describe('RoomNameInputComponent', () => {
   it('keeps the room id as typed and clears the error', () => {
@@ -10,14 +10,14 @@ describe('RoomNameInputComponent', () => {
       <RoomNameInput setRoomId={setRoomId} setHasError={setHasError} roomId="" hasError={false} />
     );
 
-    fireEvent.change(screen.getByRole('textbox', { name: 'Room ID' }), {
+    fireEvent.change(screen.getByTestId(testIds.input), {
       target: { value: 'My-Room' },
     });
 
     expect(setRoomId).toHaveBeenCalledWith('My-Room');
     expect(setHasError).toHaveBeenCalledWith(false);
-    expect(screen.getByPlaceholderText('Enter a room ID')).toBeInTheDocument();
-    expect(screen.queryByText('Enter a valid room ID')).not.toBeInTheDocument();
+    expect(screen.getByTestId(testIds.input)).toHaveAttribute('placeholder', 'Enter a room ID');
+    expect(screen.queryByTestId(testIds.error)).not.toBeInTheDocument();
   });
 
   it('shows the error text when the input has an error', () => {
@@ -25,6 +25,6 @@ describe('RoomNameInputComponent', () => {
       <RoomNameInput setRoomId={vi.fn()} setHasError={vi.fn()} roomId="invalid room" hasError />
     );
 
-    expect(screen.getByText('Enter a valid room ID')).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.error)).toHaveTextContent('Enter a valid room ID');
   });
 });
