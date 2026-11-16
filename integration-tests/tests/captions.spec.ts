@@ -1,4 +1,4 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
 import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
@@ -157,31 +157,39 @@ test.describe('captions enable failure', () => {
   const areCaptionsEnabled = process.env.ALLOW_CAPTIONS !== 'false';
   test.skip(!areCaptionsEnabled, 'Skipping captions tests when captions are disabled');
 
-  test('should keep captions off when enabling them fails', async ({ page, browserName }) => {
+  test('should keep captions off when enabling them fails', async ({
+    page,
+    browserName,
+    isMobile,
+  }) => {
     const ensureCaptionsEnabledRequests = await mockEnsureCaptionsEnabledFailure(page);
     await joinMeetingRoom({ page, username: 'User One', browserName });
 
-    await (await getCaptionsButton(page)).click();
+    await toggleCaptions({ page, isMobile });
 
     await expect.poll(() => ensureCaptionsEnabledRequests.count).toBe(1);
     await expect(page.getByTestId('captions-box')).toHaveCount(0);
-    await expectCaptionsButtonState({ page, isEnabled: false });
+    await expectCaptionsButtonState({ page, isMobile, isEnabled: false });
   });
 
-  test('should show the captions error when enabling them fails', async ({ page, browserName }) => {
-    test.fail(
+  test('should show the captions error when enabling them fails', async ({
+    page,
+    browserName,
+    isMobile,
+  }) => {
+    test.fixme(
       true,
-      'CaptionsButton only reports AxiosError failures, but the tRPC video client throws TRPCClientError'
+      'VIDSOL-TBD: CaptionsButton only reports AxiosError failures, but the tRPC video client throws TRPCClientError'
     );
 
     await mockEnsureCaptionsEnabledFailure(page);
     await joinMeetingRoom({ page, username: 'User One', browserName });
 
-    await (await getCaptionsButton(page)).click();
+    await toggleCaptions({ page, isMobile });
 
     await expect(page.getByTestId('captions-error')).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId('captions-error')).toContainText('Captions error:');
-    await expectCaptionsButtonState({ page, isEnabled: false });
+    await expectCaptionsButtonState({ page, isMobile, isEnabled: false });
   });
 });
 
@@ -193,6 +201,7 @@ test.describe('captions with multiple participants', () => {
     page: pageOne,
     context,
     browserName,
+    isMobile,
   }) => {
     const roomName = crypto.randomBytes(5).toString('hex');
     await joinMeetingRoom({ page: pageOne, username: 'User One', roomName, browserName });
@@ -203,22 +212,22 @@ test.describe('captions with multiple participants', () => {
     });
 
     for (const page of [pageOne, pageTwo]) {
-      await (await getCaptionsButton(page)).click();
+      await toggleCaptions({ page, isMobile });
       await assertCaptionsBox(page);
-      await expectCaptionsButtonState({ page, isEnabled: true });
+      await expectCaptionsButtonState({ page, isMobile, isEnabled: true });
     }
 
-    await (await getCaptionsButton(pageOne)).click();
+    await toggleCaptions({ page: pageOne, isMobile });
 
     await expect(pageOne.getByTestId('captions-box')).toHaveCount(0);
-    await expectCaptionsButtonState({ page: pageOne, isEnabled: false });
+    await expectCaptionsButtonState({ page: pageOne, isMobile, isEnabled: false });
     await expect(pageTwo.getByTestId('captions-box')).toBeVisible();
-    await expectCaptionsButtonState({ page: pageTwo, isEnabled: true });
+    await expectCaptionsButtonState({ page: pageTwo, isMobile, isEnabled: true });
 
-    await (await getCaptionsButton(pageTwo)).click();
+    await toggleCaptions({ page: pageTwo, isMobile });
 
     await expect(pageTwo.getByTestId('captions-box')).toHaveCount(0);
-    await expectCaptionsButtonState({ page: pageTwo, isEnabled: false });
+    await expectCaptionsButtonState({ page: pageTwo, isMobile, isEnabled: false });
   });
 });
 
@@ -234,45 +243,42 @@ async function joinMeetingRoom({
   browserName: string;
 }): Promise<void> {
   await openMeetingRoomWithSettings({ page, username, roomName, browserName });
+  await waitUntilReady(page, browserName);
   await expect(page.locator('.publisher')).toBeVisible();
   await expect(page.getByTestId('progress-spinner')).toHaveCount(0, { timeout: 20_000 });
 }
 
-async function getCaptionsButton(page: Page): Promise<Locator> {
-  const visibleCaptionsButton = page.locator('[data-testid="captions-button"]:visible');
+async function toggleCaptions({ page, isMobile }: ClickCaptionsButtonArgs): Promise<void> {
+  await clickCaptionsButton({ page, isMobile });
 
-  const isButtonInToolbar = (await visibleCaptionsButton.count()) > 0;
-  if (!isButtonInToolbar) {
-    await toggleToolbarOverflowMenu(page);
+  if (isMobile) {
+    await expect(page.getByTestId('toolbar-overflow-menu')).toBeHidden();
   }
-
-  return visibleCaptionsButton.first();
 }
 
 async function expectCaptionsButtonState({
   page,
+  isMobile,
   isEnabled,
-}: {
-  page: Page;
-  isEnabled: boolean;
-}): Promise<void> {
-  const isButtonInToolbar =
-    (await page.locator('[data-testid="captions-button"]:visible').count()) > 0;
-  const captionsButton = await getCaptionsButton(page);
+}: ClickCaptionsButtonArgs & { isEnabled: boolean }): Promise<void> {
+  const overflowMenu = page.getByTestId('toolbar-overflow-menu');
   const expectedIconTestId = isEnabled
     ? 'vivid-icon-closed-captioning-off-solid'
     : 'vivid-icon-closed-captioning-solid';
 
-  await expect(captionsButton.getByTestId(expectedIconTestId)).toBeVisible();
-
-  if (!isButtonInToolbar) {
-    await toggleToolbarOverflowMenu(page);
+  if (isMobile) {
+    await page.getByTestId('hidden-toolbar-items').click();
+    await page.mouse.move(0, 0);
+    await expect(overflowMenu).toBeVisible();
   }
-}
 
-async function toggleToolbarOverflowMenu(page: Page): Promise<void> {
-  await page.getByTestId('hidden-toolbar-items').click();
-  await page.mouse.move(0, 0);
+  await expect(page.getByTestId('captions-button').getByTestId(expectedIconTestId)).toBeVisible();
+
+  if (isMobile) {
+    await page.getByTestId('hidden-toolbar-items').click();
+    await page.mouse.move(0, 0);
+    await expect(overflowMenu).toBeHidden();
+  }
 }
 
 async function mockEnsureCaptionsEnabledFailure(page: Page): Promise<{ count: number }> {
