@@ -2,6 +2,7 @@ import { useId, type PropsWithChildren, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
+import NotificationsContainer from '@ui/components/NotificationsContainer';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import { getStepPanels } from '../CreateRoomWizardStep';
 import CreateRoomWizardFooterActions from '../CreateRoomWizardFooterActions';
@@ -71,6 +72,7 @@ const CreateRoomWizardDialog = ({
           <CreateRoomWizardFooterActions onClose={onClose} />
         </div>
       </div>
+      <NotificationsContainer />
     </dialog>
   );
 };

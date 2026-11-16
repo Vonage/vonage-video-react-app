@@ -1,6 +1,10 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
+import { isNil } from '@common/assertions';
+import tryCatch from '@common/execution/tryCatch';
+import { isTRPCClientError } from '@trpc/client';
+import { handleClientApplicationError } from '@ui/helpers';
 import generateRoomName from '../../../../utils/generateRoomName';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import getCreateSessionPayload from '../../helpers/getCreateSessionPayload';
@@ -23,11 +27,18 @@ const CreateMeetingButton = (): ReactElement => {
     const payload = getCreateSessionPayload({ draft, fallbackRoomName: generateRoomName() });
 
     setIsCreating(true);
-    const { sessionKey } = await videoClient
-      .createSession(payload)
-      .finally(() => setIsCreating(false));
+    const { result: session, error } = await tryCatch(async () =>
+      videoClient.createSession(payload)
+    );
+    setIsCreating(false);
 
-    showShareStep(sessionKey);
+    if (isNil(session)) {
+      const failure = isTRPCClientError(error) ? (error.shape ?? error) : error;
+      handleClientApplicationError(t('createRoomWizard.tryCreatingAgain'), failure);
+      return;
+    }
+
+    showShareStep(session.sessionKey);
   };
 
   return (
