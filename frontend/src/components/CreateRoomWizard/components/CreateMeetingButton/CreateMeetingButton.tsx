@@ -1,8 +1,6 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
-import { isNil } from '@common/assertions';
-import tryCatch from '@common/execution/tryCatch';
 import { isTRPCClientError } from '@trpc/client';
 import { handleClientApplicationError } from '@ui/helpers';
 import generateRoomName from '../../../../utils/generateRoomName';
@@ -24,21 +22,21 @@ const CreateMeetingButton = (): ReactElement => {
   const isCreateMeetingDisabled = !isStartValid || isCreating;
 
   const createMeeting = async () => {
-    const payload = getCreateSessionPayload({ draft, fallbackRoomName: generateRoomName() });
+    if (isCreating) return;
 
     setIsCreating(true);
-    const { result: session, error } = await tryCatch(async () =>
-      videoClient.createSession(payload)
-    );
-    setIsCreating(false);
 
-    if (isNil(session)) {
+    try {
+      const payload = getCreateSessionPayload({ draft, fallbackRoomName: generateRoomName() });
+      const { sessionKey } = await videoClient.createSession(payload);
+
+      showShareStep(sessionKey);
+    } catch (error) {
       const failure = isTRPCClientError(error) ? (error.shape ?? error) : error;
       handleClientApplicationError(t('createRoomWizard.tryCreatingAgain'), failure);
-      return;
+    } finally {
+      setIsCreating(false);
     }
-
-    showShareStep(session.sessionKey);
   };
 
   return (
