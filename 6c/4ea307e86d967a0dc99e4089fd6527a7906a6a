@@ -1,0 +1,19 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_20776229283099::t_797cd44e0e0c3f 20,57,69-71,77,115-118,122-128,181,183,206,210-211,215,219-221,223-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6c4ea307e86d967a0dc99e4089fd6527a7906a6a",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
