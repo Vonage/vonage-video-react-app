@@ -1,0 +1,29 @@
+libs/common/manifest.json
+  s_1f34e281e3a933::t_069a531cf1a507 4
+frontend/src/locales/fr.json
+  s_57ef6ace6466c9::t_ec40fdebe566c7 167,191-200,339-341,351,365-368,396-414
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "bb62320f9e23b90308d643ec15efd2031ded9a12",
+  "prompts": {},
+  "sessions": {
+    "s_1f34e281e3a933": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794926358052014000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_57ef6ace6466c9": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794926332404193000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
