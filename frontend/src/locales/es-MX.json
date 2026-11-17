@@ -197,6 +197,7 @@
   "createRoomWizard.share.notSavedHint": "Este enlace no se guarda en este dispositivo. Cópialo antes de cerrar esta ventana.",
   "createRoomWizard.share.title": "Tu reunión está lista",
   "createRoomWizard.title": "Crear una reunión",
+  "createRoomWizard.tryCreatingAgain": "Vuelve a intentar crear la reunión.",
   "deviceAccessAlert.askDeviceMessage": "Para entrar a la sala de video, tu navegador pedirá acceso a la cámara y el micrófono.",
   "deviceAccessAlert.deniedDeviceMessage": "Parece que tu navegador tiene bloqueado el acceso a tu cámara o micrófono. Restablece los permisos desde la configuración del navegador.",
   "deviceAccessAlert.imageAlt": "Diálogo de acceso",

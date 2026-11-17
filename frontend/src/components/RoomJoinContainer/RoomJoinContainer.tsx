@@ -1,7 +1,9 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
+import { isTRPCClientError } from '@trpc/client';
 import Card from '@ui/components/Card';
+import { handleClientApplicationError } from '@ui/helpers';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
@@ -21,13 +23,24 @@ const RoomJoinContainer = (): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
   const [createdSessionKey, setCreatedSessionKey] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleNewRoom = async () => {
-    const randomRoom = generateRoomName();
+    if (isCreating) return;
 
-    const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
+    setIsCreating(true);
 
-    setCreatedSessionKey(sessionKey);
+    try {
+      const randomRoom = generateRoomName();
+      const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
+
+      setCreatedSessionKey(sessionKey);
+    } catch (error) {
+      const failure = isTRPCClientError(error) ? (error.shape ?? error) : error;
+      handleClientApplicationError(t('createRoomWizard.tryCreatingAgain'), failure);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -38,7 +51,7 @@ const RoomJoinContainer = (): ReactElement => {
       >
         {t('button.startNewRoom')}
       </h6>
-      <NewRoomButton handleNewRoom={handleNewRoom} />
+      <NewRoomButton handleNewRoom={handleNewRoom} isDisabled={isCreating} />
 
       <JoinContainerSeparator />
 

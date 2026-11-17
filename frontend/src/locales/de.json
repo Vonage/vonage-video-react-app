@@ -197,6 +197,7 @@
   "createRoomWizard.share.notSavedHint": "Dieser Link wird nicht auf diesem Gerät gespeichert. Kopieren Sie ihn, bevor Sie dieses Fenster schließen.",
   "createRoomWizard.share.title": "Ihr Meeting ist bereit",
   "createRoomWizard.title": "Meeting erstellen",
+  "createRoomWizard.tryCreatingAgain": "Bitte versuche erneut, das Meeting zu erstellen.",
   "deviceAccessAlert.askDeviceMessage": "Um dem Videoraum beizutreten, verlangt Ihr Browser Zugriff auf Ihre Kamera und Ihr Mikrofon.",
   "deviceAccessAlert.deniedDeviceMessage": "Es scheint, dass Ihr Browser keine Berechtigung für den Zugriff auf Ihre Kamera und/oder Ihr Mikrofon hat. Setzen Sie die Berechtigung über die Benutzeroberfläche des Browsers zurück.",
   "deviceAccessAlert.imageAlt": "Zugriffsdialog",

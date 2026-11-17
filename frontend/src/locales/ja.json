@@ -207,6 +207,7 @@
   "createRoomWizard.share.notSavedHint": "このリンクはこのデバイスに保存されません。このウィンドウを閉じる前にコピーしてください。",
   "createRoomWizard.share.title": "会議の準備ができました",
   "createRoomWizard.title": "会議を作成",
+  "createRoomWizard.tryCreatingAgain": "もう一度ミーティングの作成をお試しください。",
   "deviceAccessAlert.askDeviceMessage": "ビデオルームに参加するには、お使いのブラウザーがカメラとマイクへのアクセスをリクエストします。",
   "deviceAccessAlert.deniedDeviceMessage": "ブラウザーがお客様のカメラまたはマイクへのアクセスをブロックしているようです。ブラウザーの UI を通じてアクセス許可の状態をリセットしてください。",
   "deviceAccessAlert.imageAlt": "アクセスダイアログ",
