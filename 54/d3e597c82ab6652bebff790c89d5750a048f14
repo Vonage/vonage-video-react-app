@@ -1,0 +1,47 @@
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  s_20776229283099::t_f6d0c7bb8ef7ae 1-5,42,76-78,81,94-101,107-108,116,119,153
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  s_20776229283099::t_f6d0c7bb8ef7ae 9-11,20,34-38,42
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds.ts
+  s_20776229283099::t_ad51311f19fcfa 1
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions.tsx
+  s_20776229283099::t_e8105d97492fb3 23,31-56
+frontend/src/components/CreateRoomWizard/components/DetailsStep/DetailsStep.tsx
+  s_20776229283099::t_d0fe1531b8af59 7-9,25
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/MeetingNameField.tsx
+  s_20776229283099::t_c0565adc25d091 7-9,34
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/ScheduleFields.tsx
+  s_20776229283099::t_dda22bd6ac9ec2 9-11,45,69
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/meetingNameFieldTestIds.ts
+  s_20776229283099::t_f211368c54135f 1
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/scheduleFieldsTestIds.ts
+  s_20776229283099::t_fc5da8e97995b4 1-4
+frontend/src/components/CreateRoomWizard/components/DetailsStep/testIds.ts
+  s_20776229283099::t_879675e34b7365 1
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  s_20776229283099::t_d011bff648005c 1-3,57,60,62-64
+integration-tests/tests-auth/session.spec.ts
+  s_20776229283099::t_4145a3a778e876 1-4,73-74
+integration-tests/tests-auth/signIn.spec.ts
+  s_20776229283099::t_226adbab617864 2-3,41
+integration-tests/tests/landing.spec.ts
+  s_20776229283099::t_ecc0de0b4031ae 2-9,62,89,91-94,98-99,101-103,105
+integration-tests/tests/visualComparisons.spec.ts
+  s_20776229283099::t_24dc9788ef40b9 2-9,441,459-460,466-468,474-478,503-504,506-508,511
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "54d3e597c82ab6652bebff790c89d5750a048f14",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
