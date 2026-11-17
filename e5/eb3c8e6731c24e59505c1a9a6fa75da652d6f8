@@ -1,0 +1,21 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_20776229283099::t_de3d6a70b9c42d 136,138-141,152,156,174,176-179,194,209,211-214
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useAutoJoin.ts
+  s_20776229283099::t_aa2eadfe2e7296 3,21-23,25-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e5eb3c8e6731c24e59505c1a9a6fa75da652d6f8",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
