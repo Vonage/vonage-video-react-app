@@ -1,0 +1,33 @@
+frontend/src/components/NewRoomButton/NewRoomButton.tsx
+  s_20776229283099::t_97485ffe1c3fef 12,23,33
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  s_20776229283099::t_97485ffe1c3fef 4,6,26,29,31,33-43,54
+frontend/src/locales/de.json
+  s_20776229283099::t_b5b173c5a8166e 200
+frontend/src/locales/en.json
+  s_20776229283099::t_f35ad6976ffea6 200
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_fb27ddaac24e59 200
+frontend/src/locales/es.json
+  s_20776229283099::t_6ba5e8c8adb409 200
+frontend/src/locales/it.json
+  s_20776229283099::t_7d87bc729bbf14 200
+frontend/src/locales/ja.json
+  s_20776229283099::t_4451f1b978514b 210
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d506311632a973320687c6f2fc0faf8a5f86e909",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
