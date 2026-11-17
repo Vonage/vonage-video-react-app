@@ -13,6 +13,7 @@ import useToolbarButtons from '@hooks/useToolbarButtons';
 import useLeaveMeeting from '@hooks/useLeaveMeeting';
 import Box from '@mui/material/Box';
 import classNames from 'classnames';
+import { isMobile } from '@web/platform';
 import ScreenSharingButton from '../../ScreenSharingButton';
 import TimeRoomNameMeetingRoom from '../TimeRoomName';
 import ExitButton from '../ExitButton';
@@ -29,6 +30,7 @@ import DeviceControlButton from '../DeviceControlButton';
 import MiniModeButton from '../MiniModeButton';
 import { useMiniMode } from '../../../Context/MiniMode';
 import PostCallTranscriptionButton from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
+import MeetingTimer, { useShouldShowMeetingTimer } from '../MeetingTimer';
 import getToolbarButtonVisibility from './helpers/getToolbarButtonVisibility';
 import isDisplayableToolbarButton from './helpers/isDisplayableToolbarButton';
 
@@ -96,6 +98,8 @@ const Toolbar = ({
   };
   const [openEmojiGridDesktop, setOpenEmojiGridDesktop] = useState<boolean>(false);
   const buttonVisibility = getToolbarButtonVisibility();
+  const shouldShowMeetingTimer = useShouldShowMeetingTimer();
+  const shouldShowDesktopMeetingTimer = !isMobile() && shouldShowMeetingTimer;
 
   const centerToolbarButtons: ReactElement[] = useMemo(
     () =>
@@ -261,6 +265,7 @@ const Toolbar = ({
               captionsState={captionsState}
             />
           )}
+          {shouldShowDesktopMeetingTimer && <MeetingTimer />}
           <ExitButton handleLeave={handleLeave} />
         </Box>
       </Box>

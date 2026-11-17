@@ -47,6 +47,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   echoCancellationEnabled: true,
   noiseSuppressionEnabled: true,
   autoGainControlEnabled: true,
+  includeTranscriptionSummary: true,
   selfViewMirroringEnabled: true,
   videoStatsOverlayEnabled: env.SHOW_VIDEO_STATS,
   cameraContentHint: ADVANCED_SETTINGS_CONTENT_HINT.automatic,
@@ -178,6 +179,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setAutoGainControlEnabled(value: boolean) {
       return () => {
         partialUpdate({ autoGainControlEnabled: value });
+      };
+    },
+    setIncludeTranscriptionSummary(value: boolean) {
+      return () => {
+        partialUpdate({ includeTranscriptionSummary: value });
       };
     },
     setSelfViewMirroringEnabled(value: boolean) {

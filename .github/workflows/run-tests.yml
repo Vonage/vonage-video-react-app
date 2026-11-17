@@ -125,6 +125,7 @@ jobs:
       - name: Run integration tests
         env:
           PLAYWRIGHT_SNAPSHOT_PLATFORM: darwin
+          RATE_LIMIT_MAX_REQUESTS: '5000'
         run: |
           echo "VIDEO_SERVICE_PROVIDER: $VIDEO_SERVICE_PROVIDER"
           Xvfb :99 & export DISPLAY=:99
@@ -159,6 +160,7 @@ jobs:
       OIDC_POST_LOGOUT_REDIRECT_URI: 'http://127.0.0.1:3345/'
       AUTH_COOKIE_SECRET: ${{ secrets.AUTH_COOKIE_SECRET }}
       LOCAL_OIDC_ACCESS_TOKEN_TTL_SECONDS: '40'
+      RATE_LIMIT_MAX_REQUESTS: '5000'
 
     steps:
       - name: Checkout

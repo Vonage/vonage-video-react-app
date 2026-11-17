@@ -8,6 +8,7 @@ import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 import getSessionStorageService from '../sessionStorageService';
+import { decodeSessionKey } from '@common/helpers';
 import mockVonageVideoSdk, {
   DEFAULT_CAPTIONS_ID as validCaptionsId,
   DEFAULT_VALID_SESSION_ID as validSessionId,
@@ -496,6 +497,54 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               expect.objectContaining({
                 hasTranscription: true,
                 name: 'transcription',
+              })
+            );
+          });
+
+          it('/hooks/archive stopped with name=transcription preserves withSummary=false chosen in /v2/startArchive', async () => {
+            const { sessionId } = decodeSessionKey({ sessionKey: validSessionKey });
+            await sessionService.setSession({ roomName, sessionKey: validSessionKey, sessionId });
+
+            await request(server)
+              .post('/v2/startArchive')
+              .set('Content-Type', 'application/json')
+              .send({ sessionKey: validSessionKey, withTranscription: true, withSummary: false })
+              .expect(200);
+
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId,
+              archiveIds: ['transcription-archive-id'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId,
+              pending: 1,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(
+                createArchiveHookPayload({
+                  sessionId,
+                  status: 'stopped',
+                  id: 'transcription-archive-id',
+                  name: 'transcription',
+                })
+              );
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                hasTranscription: true,
+                name: 'transcription',
+                transcriptionProperties: expect.objectContaining({
+                  hasSummary: false,
+                }),
               })
             );
           });

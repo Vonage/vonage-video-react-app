@@ -16,6 +16,7 @@ test.describe('Post-Call Transcription Feature', () => {
     const moreVertIcon = pageOne.getByTestId('MoreVertIcon');
     const transcriptionButton = pageOne.getByTestId('post-call-transcription-button');
     const confirmButton = pageOne.getByTestId('popup-dialog-primary-button');
+    const summarySwitch = pageOne.getByRole('checkbox', { name: /include ai summary/i });
     const transcriptionIndicator = pageOne.getByTestId('transcriptionIndicator').first();
     const endCallButton = pageOne.getByTestId('CallEndIcon');
     const transcriptionItem = pageOne.getByTestId('archive-list-item-title-0');
@@ -51,6 +52,7 @@ test.describe('Post-Call Transcription Feature', () => {
       await transcriptionButton.click();
 
       await expect(confirmButton).toBeVisible();
+      await expect(summarySwitch).toBeVisible();
       await confirmButton.click();
     });
 
@@ -82,6 +84,7 @@ test.describe('Post-Call Transcription Feature', () => {
       await transcriptionButton.click();
 
       await expect(confirmButton).toBeVisible();
+      await expect(summarySwitch).toBeHidden();
       await confirmButton.click();
 
       await expect(transcriptionIndicator).toBeHidden();

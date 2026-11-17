@@ -1,5 +1,5 @@
 import { useMemo, useRef, type ComponentProps, type FC } from 'react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Outlet, Routes, Route } from 'react-router-dom';
 import AppContextProvider from '../AppContextProvider';
 import RoomProvider from '@Context/RoomProvider';
 import bridge$ from './stores/bridge';
@@ -61,15 +61,21 @@ const VeraRoom: FC<VeraRoomProps> = ({ className, ...props }) => {
         {...props}
       >
         <MemoryRouter initialEntries={[initialEntry]}>
-          <RoomProvider>
-            <Routes>
+          <Routes>
+            <Route
+              element={
+                <RoomProvider>
+                  <Outlet />
+                </RoomProvider>
+              }
+            >
               <Route path="/waiting-room/:roomIdentifier" element={<WaitingRoomStage />} />
               {/* Fallback route when no session-identifier attribute is set */}
               <Route path="/waiting-room" element={<WaitingRoomStage />} />
               <Route path="/room/:roomIdentifier" element={<MeetingRoomStage />} />
               <Route path="/goodbye/:roomIdentifier?" element={<GoodByeStage />} />
-            </Routes>
-          </RoomProvider>
+            </Route>
+          </Routes>
         </MemoryRouter>
       </div>
     </AppContextProvider>

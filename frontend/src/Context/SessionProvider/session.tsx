@@ -37,6 +37,8 @@ import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
 import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import { isTRPCClientError } from '@trpc/client';
 import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
@@ -578,9 +580,19 @@ const SessionProvider = ({
    */
   const joinRoom = useCallback(
     async (args: { sessionKey: string }) => {
-      const session = await videoClient.joinSession({
-        sessionKey: args.sessionKey,
-      });
+      const session = await idempotentCallbackWithRetry(
+        () =>
+          videoClient.joinSession({
+            sessionKey: args.sessionKey,
+          }),
+        {
+          retries: 2,
+          delayMs: 500,
+          onRetry: (error) => {
+            if (!isMeetingNotStartedError(error)) throw error;
+          },
+        }
+      );
 
       setSessionKey(session.sessionKey);
       if (!skipBrowserUrlUpdate) {
@@ -736,4 +748,9 @@ const SessionProvider = ({
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
+
+function isMeetingNotStartedError(error: unknown): boolean {
+  return isTRPCClientError(error) && error.shape?.name === 'MeetingNotStartedError';
+}
+
 export default SessionProvider;

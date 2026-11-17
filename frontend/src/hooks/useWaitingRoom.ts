@@ -10,10 +10,12 @@ import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 const useWaitingRoom = () => {
   const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
 
-  const { roomName } = useDecodedSessionKey({
+  const decodedSessionKey = useDecodedSessionKey({
     sessionKey,
     sessionKeyStatus,
   });
+
+  const { roomName } = decodedSessionKey;
 
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();

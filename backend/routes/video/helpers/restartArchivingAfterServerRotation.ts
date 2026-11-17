@@ -41,9 +41,12 @@ async function restartArchivingAfterServerRotation({
   }
 
   const withTranscription = archiveName === TRANSCRIPTION_ARCHIVE_NAME;
+  const withSummary = withTranscription
+    ? await sessionService.getTranscriptionWithSummary({ sessionId })
+    : undefined;
 
   const { error } = await tryCatch(() =>
-    videoClient.startArchive({ sessionKey, withTranscription })
+    videoClient.startArchive({ sessionKey, withTranscription, withSummary })
   );
 
   if (error) {
@@ -51,6 +54,7 @@ async function restartArchivingAfterServerRotation({
       sessionId,
       archiveName,
       withTranscription,
+      withSummary,
       error,
     });
   }

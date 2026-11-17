@@ -34,6 +34,7 @@ export default defineConfig({
         '**/index.ts',
         '**/*.test.ts',
         'storage/sessionStorage.ts',
+        'storage/vcrSessionStorage.ts',
         'vitest.config.ts',
       ],
     },

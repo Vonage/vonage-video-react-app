@@ -5,6 +5,7 @@ import { ArchiveOptionsSchema } from '@node/schemas';
 export const StartArchivePayloadSchema = VideoPayloadSchema.extend({
   archiveOptions: ArchiveOptionsSchema.optional(),
   withTranscription: z.boolean().optional(),
+  withSummary: z.boolean().optional(),
 });
 
 export type StartArchivePayload = z.infer<typeof StartArchivePayloadSchema>;

@@ -90,6 +90,8 @@ TypeScript version: `^5.8.3`
 
 ## Testing Guidelines
 
+- **Rule:** Define test IDs in exported constant objects or factories in the owning component module. Components and tests must reuse those definitions; do not duplicate test-ID string literals. Test-only components keep their IDs or factories in the test file.
+
 - **Rule:** Avoid overtesting. Simple helpers should be covered by only a couple of high-value use cases.
 - **Rule:** Prefer tests that validate real functionality and behavior over redundant input permutations.
 - **Rule:** Test authoring rules (mocking, providers, async tests, shared helpers, banned boilerplate) are in [Test Authoring](#test-authoring) and apply to every `*.spec.ts(x)` and `*.test.ts(x)` file.
@@ -1282,7 +1284,7 @@ These are the rules for styling the project and its libraries.
 - **Rule:** Prefer Tailwind CSS over MUI `sx` prop or inline styles.
 - **Rule:** Do not use the MUI `sx` prop for styling unless there is a very strong justification (and it should be considered a violation by default).
 - **Rule:** Avoid runtime-heavy styling systems (Emotion, runtime theme recomputes) when Tailwind can be used instead.
-- **Rule:** Use MUI components as structural primitives, but style them with Tailwind classes.
+- **Rule:** New components must not introduce MUI usage. Prefer native HTML and Tailwind; replace existing MUI usage in touched code only when the migration is small and stays within the task’s scope.
 
 Rationale (kept as background, not rules):
 
@@ -1357,7 +1359,7 @@ export default Button;
 <Button variant="primary" size="md" />
 ```
 
-- **Rule:** Variants are allowed and encouraged to change style "flavor".
+- **Rule:** Variants are allowed and encouraged to change style "flavor" within one component. Share structure across components through composition with named slots, not shared variant definitions.
 - **Rule:** Configuration-based rendering that changes structure/behavior is banned.
 
 ---

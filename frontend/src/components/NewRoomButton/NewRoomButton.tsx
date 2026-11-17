@@ -3,9 +3,13 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import VividIcon from '@ui/components/VividIcon';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 export type NewRoomButtonProps = {
   handleNewRoom: () => void;
+  isDisabled?: boolean;
 };
 
 /**
@@ -16,16 +20,17 @@ export type NewRoomButtonProps = {
  *  @property {() => void} handleNewRoom - method that handles the action when user click the 'create room' button.
  * @returns {ReactElement} The new room button component.
  */
-const NewRoomButton = ({ handleNewRoom }: NewRoomButtonProps): ReactElement => {
+const NewRoomButton = ({ handleNewRoom, isDisabled }: NewRoomButtonProps): ReactElement => {
   const { t } = useTranslation();
   return (
     <Button
-      data-testid="new-room-button"
+      data-testid={testIds.button}
       variant="contained"
       startIcon={
         <VividIcon name="plus-line" customSize={-5} style={{ color: 'var(--vera-on-primary)' }} />
       }
       onClick={handleNewRoom}
+      disabled={isDisabled}
       fullWidth
     >
       <Box>{t('button.createRoom')}</Box>

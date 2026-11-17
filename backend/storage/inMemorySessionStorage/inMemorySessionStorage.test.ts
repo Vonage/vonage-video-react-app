@@ -135,4 +135,21 @@ describe('InMemorySessionStorage', () => {
       ).resolves.toBeUndefined();
     });
   });
+
+  describe('setTranscriptionWithSummary / getTranscriptionWithSummary', () => {
+    it('should default to true and retrieve the preference once set', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(true);
+
+      await storage.setTranscriptionWithSummary({ sessionId, withSummary: false });
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(false);
+    });
+
+    it('should ignore writes and return true for an unknown sessionId', async () => {
+      await expect(
+        storage.setTranscriptionWithSummary({ sessionId, withSummary: false })
+      ).resolves.toBeUndefined();
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(true);
+    });
+  });
 });

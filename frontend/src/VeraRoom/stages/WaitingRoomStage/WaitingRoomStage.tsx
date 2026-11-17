@@ -69,6 +69,7 @@ function WaitingRoomStageContent() {
     accessStatus,
     isRoomReady,
     roomName,
+    sessionKey,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
@@ -112,6 +113,7 @@ function WaitingRoomStageContent() {
                   username={username}
                   setUsername={setUsername}
                   roomName={roomName}
+                  sessionKey={sessionKey}
                 />
               )}
 

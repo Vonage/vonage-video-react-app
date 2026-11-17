@@ -149,6 +149,22 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   });
 });
 
+videoHandler.use$('startArchive', async ({ input, assertInput, next }) => {
+  const { sessionKey, withTranscription, withSummary } = assertInput(input);
+
+  if (!withTranscription) return next();
+
+  const { decodeSessionKey } = await import('@common/helpers');
+  const { sessionId } = decodeSessionKey({ sessionKey });
+
+  await sessionService.setTranscriptionWithSummary({
+    sessionId,
+    withSummary: withSummary !== false,
+  });
+
+  return next();
+});
+
 /**
  * Listen to captions enabled/disabled events
  */
