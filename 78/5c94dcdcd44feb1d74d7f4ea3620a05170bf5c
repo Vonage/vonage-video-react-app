@@ -118,6 +118,8 @@ frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
   s_51ade8594b05d7::t_d4935a0679ce16 7,18
 frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.spec.tsx
   s_51ade8594b05d7::t_94c36afb6b1549 17,19,22,34,37,40,47,49-52,55
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_20776229283099::t_5082ab823808d1 20-21,57,74,89,110-116,206-213
 ---
 {
   "schema_version": "authorship/3.0.0",
