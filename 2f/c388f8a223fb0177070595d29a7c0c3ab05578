@@ -1,0 +1,16 @@
+frontend/src/Context/SessionProvider/session.spec.tsx
+  h_6029769cf9ac60 18,722-745
+frontend/src/Context/SessionProvider/session.tsx
+  h_6029769cf9ac60 40-41,583-595,751-755
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2fc388f8a223fb0177070595d29a7c0c3ab05578",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

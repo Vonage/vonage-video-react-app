@@ -1,0 +1,64 @@
+libs/api/src/schemas/index.ts
+  h_6029769cf9ac60 31
+libs/api/src/schedule/assertScheduleOpen.ts
+  h_6029769cf9ac60 1-21
+libs/common/src/types/index.ts
+  h_6029769cf9ac60 19-20
+libs/common/src/types/ScheduleWindow.ts
+  h_6029769cf9ac60 1-9
+libs/api/src/schedule/errors/MeetingNotStartedError.ts
+  h_6029769cf9ac60 1-22
+libs/common/src/constants/SessionKeyClaim.ts
+  h_6029769cf9ac60 1-5
+libs/api/src/index.ts
+  h_6029769cf9ac60 7
+libs/api/src/handlers/joinSession.ts
+  h_6029769cf9ac60 2,20-21
+libs/api/src/schedule/isScheduleError.ts
+  h_6029769cf9ac60 1-8
+libs/common/src/types/VideoSessionDetails.ts
+  h_6029769cf9ac60 3,6-9
+libs/common/src/helpers/getScheduleWindow/index.ts
+  h_6029769cf9ac60 1
+libs/common/src/helpers/getScheduleWindow/getScheduleWindow.test.ts
+  h_6029769cf9ac60 1-21
+libs/common/src/types/SessionKeyPayload.ts
+  h_6029769cf9ac60 1-4,9-16
+libs/common/src/helpers/getScheduleWindow/getScheduleWindow.ts
+  h_6029769cf9ac60 1-16
+libs/api/src/handlers/createSession.ts
+  h_6029769cf9ac60 4,15,21-29,33,42
+libs/common/src/constants/index.ts
+  h_6029769cf9ac60 4
+libs/api/src/schemas/CreateSessionAndJoinPayload.schema.ts
+  h_6029769cf9ac60 6-8
+libs/common/src/helpers/index.ts
+  h_6029769cf9ac60 11
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  h_6029769cf9ac60 1-15
+libs/api/src/handlers/createSessionAndJoin.ts
+  h_6029769cf9ac60 10-13
+libs/common/src/types/ScheduleClaim.ts
+  h_6029769cf9ac60 1-9
+libs/api/src/handlers/createEphemeralToken.ts
+  h_6029769cf9ac60 5-8,15-16,21-24,36-43,45,51-52
+libs/api/src/schedule/index.ts
+  h_6029769cf9ac60 1-9
+libs/api/src/schedule/errors/MeetingEndedError.ts
+  h_6029769cf9ac60 1-20
+libs/api/src/schemas/CreateSessionPayload.schema.ts
+  h_6029769cf9ac60 3,9
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 7-9,118-145,155-173,305-349,691-707
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "27ae37a6154f4ef12e61e970fc1835fa3d497998",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

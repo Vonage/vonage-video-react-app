@@ -1,0 +1,21 @@
+backend/.env.example
+  s_2bef6bc3ef56ba::t_c598ec8921ae83 69
+.claude/skills/setup/SKILL.md
+  s_2bef6bc3ef56ba::t_04ad959db5e595 63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "55f406db5d3e001af9779b27b109f80f037c7ebc",
+  "prompts": {},
+  "sessions": {
+    "s_2bef6bc3ef56ba": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_658f205d-7262-46a9-be9c-8d281b129bdf",
+        "model": "auto"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}

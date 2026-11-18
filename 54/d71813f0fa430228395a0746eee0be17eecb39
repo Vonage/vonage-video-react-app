@@ -1,0 +1,65 @@
+docs/MEETING_TIMER.md
+  s_20776229283099::t_3b8a37f2db7cd7 16,24-30
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  s_20776229283099::t_ee4a33db8fc505 2,4-7,11-13,15-21,23-24
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  s_20776229283099::t_be79ead2600e51 4-7,17,20-34,39-40
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_20776229283099::t_00f6968253977f 5
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_8248d60cbb2bf1 1-60
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_20776229283099::t_2bd65205c0c526 1,3-5,8,12-16,20-38,41-44,47
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  s_20776229283099::t_a89128f89e7052 5
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  s_20776229283099::t_0e503596b10aea 21,26,31
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  s_20776229283099::t_a13dcd855a1334 18
+frontend/src/locales/de.json
+  s_20776229283099::t_1c123551a80490 390-392
+frontend/src/locales/en.json
+  s_20776229283099::t_defb2c1bb94d97 390-392
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_d6085be7c7798d 390-392
+frontend/src/locales/es.json
+  s_20776229283099::t_7b0e34c3551a17 390-392
+frontend/src/locales/it.json
+  s_20776229283099::t_85396b6e425e4d 390-392
+frontend/src/locales/ja.json
+  s_20776229283099::t_1e762a2e0beb49 400-402
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_20776229283099::t_dd3e482cc27a86 21,70
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  s_20776229283099::t_514560cf885917 7,10,12
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_028075590eb23a::t_6a309e523542c9 3,8-12,31-76,91,99,110-112
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_028075590eb23a::t_24fff40d051439 4,28-37,39-40,42-45,47-61
+integration-tests/tests/visualComparisons.spec.ts
+  s_028075590eb23a::t_1aa9a08ffa3f0b 213-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "54d71813f0fa430228395a0746eee0be17eecb39",
+  "prompts": {},
+  "sessions": {
+    "s_028075590eb23a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d496-2ae0-7a02-9c23-d6453af50e75",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

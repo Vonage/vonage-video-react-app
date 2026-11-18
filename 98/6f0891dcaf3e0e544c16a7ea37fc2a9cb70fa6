@@ -1,0 +1,33 @@
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/LinkCopyField.tsx
+  s_20776229283099::t_0bc4733aea2ade 9-13,40,47
+  s_20776229283099::t_6c0f38c323d448 48-52
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.spec.tsx
+  s_20776229283099::t_0bc4733aea2ade 5,22
+frontend/src/components/RoomNameInput/RoomNameInput.tsx
+  s_20776229283099::t_004e7a248e2fa5 51-52
+  s_20776229283099::t_332dcca67a789b 5-9
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions.tsx
+  s_20776229283099::t_0bc4733aea2ade 8-12,30,34
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  s_20776229283099::t_0bc4733aea2ade 6-7,19,21,24,26,37,40,48,50,76
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  s_20776229283099::t_44083f45f76ece 3,19
+frontend/src/components/RoomNameInput/RoomNameInput.spec.tsx
+  s_20776229283099::t_332dcca67a789b 3,13,19-20,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "986f0891dcaf3e0e544c16a7ea37fc2a9cb70fa6",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

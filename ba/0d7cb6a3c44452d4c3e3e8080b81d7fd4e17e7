@@ -1,0 +1,21 @@
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_028075590eb23a::t_eb16886d411f7f 34-35
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_028075590eb23a::t_30a84a88c8b6af 58-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ba0d7cb6a3c44452d4c3e3e8080b81d7fd4e17e7",
+  "prompts": {},
+  "sessions": {
+    "s_028075590eb23a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d496-2ae0-7a02-9c23-d6453af50e75",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

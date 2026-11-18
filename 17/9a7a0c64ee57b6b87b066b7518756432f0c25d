@@ -1,0 +1,18 @@
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  h_6029769cf9ac60 117,153,182
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  h_6029769cf9ac60 204
+frontend/src/components/WaitingRoom/UserNameInput/components/AutoJoinText/AutoJoinText.tsx
+  h_6029769cf9ac60 7,10,19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "179a7a0c64ee57b6b87b066b7518756432f0c25d",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

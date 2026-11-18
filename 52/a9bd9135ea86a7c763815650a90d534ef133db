@@ -1,0 +1,95 @@
+frontend/src/App.tsx
+  s_20776229283099::t_762b67d47690b4 13,71-78
+frontend/src/Context/RoomProvider.tsx
+  s_20776229283099::t_28e6d299ea69fc 2,11,13
+frontend/src/Context/ServerSettingsProvider.tsx
+  s_20776229283099::t_ded394fd280e27 1-15
+frontend/src/VeraRoom/VeraRoom.tsx
+  s_20776229283099::t_ef750a9cf9bd69 64-98
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_20776229283099::t_7e2ab8e4a7f988 1,12-16
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  s_20776229283099::t_7d698079eb2deb 6,22,36
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  s_20776229283099::t_dd5beacb32b05a 19
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  s_20776229283099::t_fbc7c19eb3a489 4,12,14,17,24-34
+frontend/src/components/GoodBye/useShouldShowReenterRoom.ts
+  s_20776229283099::t_2ea8300d0eee75 1-23
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_20776229283099::t_7c1593ce130279 55-60
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_1d9aaab81e051b 46-51
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_20776229283099::t_142659bd9764f1 5,27
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  s_20776229283099::t_6488ae877b72c9 1
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  s_20776229283099::t_e8f7f92b959ac3 239-244
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_20776229283099::t_e2d7540e0a05b8 248-251,272-277
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_20776229283099::t_a851288bc1e369 166-169
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_20776229283099::t_9abd16808e131d 60
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.spec.ts
+  s_20776229283099::t_ae508caf953299 36-38,57-59
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleStatus.ts
+  s_20776229283099::t_59572182c9bbae 2
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_20776229283099::t_0d94ab3249051a 1,22-26,55-62,96-100
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_20776229283099::t_0cf2d47f19c045 4,25,42
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_20776229283099::t_c650d4d9a20227 585-590
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  s_20776229283099::t_892670247fe485 442
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  s_20776229283099::t_9f75514310e861 54
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  s_20776229283099::t_f8959cde683ff6 152-161,163,165-168
+libs/api/src/schemas/GetServerSettingsPayload.schema.ts
+  s_20776229283099::t_83c649e25a68f3 5
+libs/core/src/stores/serverSettings/ServerSettingsProvider.tsx
+  s_20776229283099::t_df6f756884f04c 1-37
+libs/core/src/stores/serverSettings/hooks/useServerSettings.ts
+  s_20776229283099::t_73be0af5e26f9b 12,24
+libs/core/src/stores/serverSettings/serverSettings$.test.ts
+  s_20776229283099::t_62c23d68975e47 1,20-31,33-39,41-45,47-49,51-52,54-55,58,60,63,66,70-73,75-103,105-121,124-134
+libs/core/src/stores/serverSettings/serverSettings$.ts
+  s_20776229283099::t_f34025893c60c4 1-2,5,7-9,11,14
+libs/core/src/stores/serverSettings/serverSettingsStore.ts
+  s_20776229283099::t_aa4625e72b1de3 1-27
+libs/core/test/providers/makeServerSettingsProviderWrapper.ts
+  s_20776229283099::t_86155d5e63c9f5 7-9
+libs/core/test/providers/makeTestProvider.ts
+  s_20776229283099::t_b9966791aa09d0 32
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  s_16311c9394921c::t_0bd50c492d16c9 157-160
+libs/core/src/stores/serverSettings/ServerSettingsSynchronizer.tsx
+  s_16311c9394921c::t_842c806505f20b 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "52a9bd9135ea86a7c763815650a90d534ef133db",
+  "prompts": {},
+  "sessions": {
+    "s_16311c9394921c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d4bf-d4f5-75b3-adbf-763ae00703fe",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

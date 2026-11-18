@@ -1,0 +1,22 @@
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_6029769cf9ac60 421,464,875
+libs/api/src/extension/joinExtendedSession.ts
+  h_6029769cf9ac60 4,16-28,32,38
+libs/api/src/extension/signExtendedSessionKey.ts
+  h_6029769cf9ac60 3,7,12,17,23-27
+libs/api/src/handlers/extendSession.ts
+  h_6029769cf9ac60 23,25,29
+libs/common/manifest.json
+  h_6029769cf9ac60 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d158cc1b10a51f72246bb99e29d9800ffddb8aea",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

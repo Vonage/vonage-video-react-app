@@ -1,0 +1,16 @@
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  h_6029769cf9ac60 28-39
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/LinkCopyField.tsx
+  h_6029769cf9ac60 6,20-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "26ef2c978cc1e91c58bb634d682cea9216305e71",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

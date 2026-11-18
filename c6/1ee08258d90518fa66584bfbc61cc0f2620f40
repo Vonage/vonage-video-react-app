@@ -1,0 +1,14 @@
+backend/helpers/getOrCreateSessionKeyFromRoomName.ts
+  h_6029769cf9ac60 4,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c61ee08258d90518fa66584bfbc61cc0f2620f40",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

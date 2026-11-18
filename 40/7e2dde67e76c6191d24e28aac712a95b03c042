@@ -1,0 +1,19 @@
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/AdvancedSettingsMeetingTab.spec.tsx
+  s_16311c9394921c::t_7234cd9fe3f108 78-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "407e2dde67e76c6191d24e28aac712a95b03c042",
+  "prompts": {},
+  "sessions": {
+    "s_16311c9394921c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d4bf-d4f5-75b3-adbf-763ae00703fe",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

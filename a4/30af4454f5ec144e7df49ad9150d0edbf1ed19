@@ -1,0 +1,24 @@
+eslint.config.mjs
+  s_dc7211c7bbbf35::t_1646b37db1afa6 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a430af4454f5ec144e7df49ad9150d0edbf1ed19",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_dc7211c7bbbf35": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "528fdd37-ea28-4f43-9357-aea56c96d562",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
