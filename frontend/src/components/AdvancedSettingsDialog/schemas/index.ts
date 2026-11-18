@@ -2,6 +2,7 @@ export * from './advancedSettings.schema';
 export * from './advancedSettingsTab.schema';
 export * from './audioBitrateMode.schema';
 export * from './bitrateMode.schema';
+export * from './captionsInputLanguage.schema';
 export * from './captionsTranslationLanguage.schema';
 export * from './codecMode.schema';
 export * from './contentHint.schema';

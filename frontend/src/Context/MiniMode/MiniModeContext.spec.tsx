@@ -273,5 +273,7 @@ function makeSubscriberWrapper(id: string, name: string, isScreenshare = false):
 function makePublisher(): Publisher {
   return Object.assign(new EventEmitter(), {
     stream: { name: 'Publisher Name', initials: 'PN' },
+    getCaptionsInputLanguage: vi.fn().mockReturnValue(null),
+    setCaptionsInputLanguage: vi.fn().mockResolvedValue(undefined),
   }) as unknown as Publisher;
 }

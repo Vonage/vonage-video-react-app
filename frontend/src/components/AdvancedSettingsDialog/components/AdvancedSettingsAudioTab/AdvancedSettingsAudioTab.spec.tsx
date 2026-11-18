@@ -140,6 +140,8 @@ function render(
     setPreferredResolution: vi.fn().mockResolvedValue(undefined),
     setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
     setVideoBitratePreset: vi.fn().mockResolvedValue(undefined),
+    getCaptionsInputLanguage: vi.fn().mockReturnValue(null),
+    setCaptionsInputLanguage: vi.fn().mockResolvedValue(undefined),
   }) as unknown as Publisher;
 
   const { wrapper, ...context } = makeTestProvider(
