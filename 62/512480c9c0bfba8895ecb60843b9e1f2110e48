@@ -1,0 +1,49 @@
+package.json
+  s_e73cd5f9bc4bdf::t_928c61c200ba29 3
+backend/package.json
+  s_83791cc5289b25::t_5d1ad1ce4a13df 3
+frontend/package.json
+  s_3e64d3d9a6e155::t_a432b9f5378803 3
+integration-tests/package.json
+  s_703b8c4b57a3e5::t_72ab0e53cae39e 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "62512480c9c0bfba8895ecb60843b9e1f2110e48",
+  "prompts": {},
+  "sessions": {
+    "s_3e64d3d9a6e155": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794998242193756000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_703b8c4b57a3e5": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794998243710912000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_83791cc5289b25": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794998243119234000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    },
+    "s_e73cd5f9bc4bdf": {
+      "agent_id": {
+        "tool": "mock_ai",
+        "id": "ai-thread-1794998241595087000",
+        "model": "unknown"
+      },
+      "human_author": "Ivan <210490533+VZaphod@users.noreply.github.com>"
+    }
+  }
+}
