@@ -60,10 +60,7 @@ SESSION_KEY_SECRET='<a secret from pnpm generate:secret>'
 
 Paste the key itself, inside single quotes, not the path to the file.
 
-**Sign-in (auth) is turned on in the example file** (`AUTH_ENABLED='true'`). Left as it is, the backend stops at start-up with a `ZodError` about `authSessionCookieName`, `oidcScopes` and others. Pick one:
-
-1. **Easiest:** set `AUTH_ENABLED='false'`.
-2. **Keep sign-in on:** set `AUTH_COOKIE_SECRET` to a new secret from `pnpm generate:secret`, make sure `SESSION_KEY_SECRET` is set (with sign-in on, the backend refuses to start without it), and remove the `#` from every line in the "Project-level auth settings" block at the bottom of `backend/.env`. Sign-in then uses a local test login server (`apps/local-oidc`) that `pnpm dev` starts for you and that accepts every login.
+**Sign-in (auth) is disabled in the example file** (`AUTH_ENABLED='false'`), so copying it lets the backend start without configuring authentication. To enable sign-in, set `AUTH_ENABLED='true'`, set `AUTH_COOKIE_SECRET` to a new secret from `pnpm generate:secret`, make sure `SESSION_KEY_SECRET` is set (with sign-in on, the backend refuses to start without it), and remove the `#` from every line in the "Project-level auth settings" block at the bottom of `backend/.env`. Sign-in then uses a local test login server (`apps/local-oidc`) that `pnpm dev` starts for you and that accepts every login.
 
 Also:
 
