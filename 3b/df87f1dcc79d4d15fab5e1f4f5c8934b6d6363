@@ -1,0 +1,65 @@
+frontend/src/components/CreateRoomWizard/helpers/getDefaultMeetingStart/getDefaultMeetingStart.ts
+  s_20776229283099::t_51fb74b713ba9b 1-2,15
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/MeetingNameField.tsx
+  s_20776229283099::t_51fb74b713ba9b 1,6,18,21,41
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  s_20776229283099::t_51fb74b713ba9b 3,11-12,22,25,33-39,41-43
+  s_20776229283099::t_ef2e4d0b852521 40
+  s_20776229283099::t_816a33aad802bb 60
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/MeetingScheduleSummary/MeetingScheduleSummary.tsx
+  s_20776229283099::t_51fb74b713ba9b 4,19
+libs/ui/src/components/Field/FieldDescription.tsx
+  s_20776229283099::t_51fb74b713ba9b 3,10
+.vscode/settings.json
+  s_20776229283099::t_51fb74b713ba9b 1-10
+frontend/src/components/CreateRoomWizard/helpers/getCreateSessionPayload/getCreateSessionPayload.spec.ts
+  s_20776229283099::t_ef2e4d0b852521 26-30,32-36
+libs/common/src/helpers/getLocalDateInputValue.ts
+  s_20776229283099::t_51fb74b713ba9b 1-9
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  s_20776229283099::t_51fb74b713ba9b 15-16
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  s_20776229283099::t_ef2e4d0b852521 9,11-15,31,35-37,69,75-76,82-84,87-122,128-129,131,133,141,144-145,152-158,163-174
+  s_20776229283099::t_3a6d6e3a54b059 175-186
+frontend/src/components/CreateRoomWizard/components/DetailsStep/components/ScheduleFields.tsx
+  s_20776229283099::t_51fb74b713ba9b 5,32
+libs/ui/src/components/Field/FieldInput.tsx
+  s_20776229283099::t_06c247ffb1a022 52
+  s_20776229283099::t_51fb74b713ba9b 3,50
+libs/ui/src/components/ChoiceChip/ChoiceChip.tsx
+  s_20776229283099::t_51fb74b713ba9b 10,15
+backend/tests/scheduledSession.test.ts
+  s_20776229283099::t_ef2e4d0b852521 45,47,52,61
+libs/ui/eslint.config.mjs
+  s_20776229283099::t_51fb74b713ba9b 18-19
+frontend/src/components/CreateRoomWizard/hooks/useIsMeetingNameValid.ts
+  s_20776229283099::t_51fb74b713ba9b 1-10
+libs/ui/src/components/Field/mergeFieldClasses.ts
+  s_20776229283099::t_51fb74b713ba9b 1-14
+frontend/src/locales/fr.json
+  s_20776229283099::t_ef2e4d0b852521 191-203,208,213-215
+frontend/eslint.config.mjs
+  s_20776229283099::t_51fb74b713ba9b 20-21
+integration-tests/tests/landing.spec.ts
+  s_20776229283099::t_616f102902cd35 29
+  s_20776229283099::t_ef2e4d0b852521 66,77,107,111
+  s_20776229283099::t_eb422bafe5cfdf 28
+libs/common/manifest.json
+  s_20776229283099::t_97661d734ee400 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3bdf87f1dcc79d4d15fab5e1f4f5c8934b6d6363",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

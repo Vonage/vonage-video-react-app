@@ -1,0 +1,225 @@
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  s_20776229283099::t_ee4a33db8fc505 2,4-5,9-11,13-18,21-22
+  s_20776229283099::t_dd5beacb32b05a 19
+  s_51ade8594b05d7::t_1f4d5dc43666d3 19
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  s_20776229283099::t_be79ead2600e51 22
+  s_20776229283099::t_fbc7c19eb3a489 4,12,14,17,24-34
+  s_51ade8594b05d7::t_9270d52f264ab6 4,12,14,17,24-34
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_8248d60cbb2bf1 6,8-12,25,35,40,48,61
+  s_51ade8594b05d7::t_1939ce3456b441 3
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_20776229283099::t_2bd65205c0c526 1,3-4,14,23,27,34,37,45
+  s_20776229283099::t_142659bd9764f1 5
+  s_51ade8594b05d7::t_49b799ebdacdde 5
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  s_20776229283099::t_a89128f89e7052 4
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  s_20776229283099::t_0e503596b10aea 21,26,31
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  s_20776229283099::t_a13dcd855a1334 18
+frontend/src/locales/de.json
+  s_20776229283099::t_1c123551a80490 390-392
+  s_20776229283099::t_4d0e68860ef37e 402-403
+frontend/src/locales/en.json
+  s_20776229283099::t_defb2c1bb94d97 390-392
+  s_20776229283099::t_01f2fba5fd36c9 402-403
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_d6085be7c7798d 390-392
+  s_20776229283099::t_85f1746ee4a2c7 402-403
+frontend/src/locales/es.json
+  s_20776229283099::t_7b0e34c3551a17 390-392
+  s_20776229283099::t_2c01340f221d8a 402-403
+frontend/src/locales/it.json
+  s_20776229283099::t_85396b6e425e4d 390-392
+  s_20776229283099::t_ed6ef290fbe6d4 402-403
+frontend/src/locales/ja.json
+  s_20776229283099::t_1e762a2e0beb49 400-402
+  s_20776229283099::t_44f23e8da8236d 412-413
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_20776229283099::t_dd3e482cc27a86 21,70
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  s_20776229283099::t_514560cf885917 7,10,12
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_028075590eb23a::t_6a309e523542c9 3,8-12,31-36,37-67,70-72,87,95,106-108
+  s_f158bcbaaf7b82::t_08d43cdc4dc2f1 21,49,80
+integration-tests/tests/visualComparisons.spec.ts
+  s_028075590eb23a::t_1aa9a08ffa3f0b 213-214
+  s_20776229283099::t_cd52e17a6e06cc 143
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  s_20776229283099::t_a6dfa4cb756365 37
+  s_20776229283099::t_7d698079eb2deb 6,22
+  s_f158bcbaaf7b82::t_0fd18eaf9963c8 37
+  s_51ade8594b05d7::t_7fd93976d72a7d 6,22
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_20776229283099::t_b3b542798b02aa 33-41,55,57-58,60,62-68
+  s_20776229283099::t_0cf2d47f19c045 6,27
+  s_51ade8594b05d7::t_00fac06edcabd1 1-2,6,27,72-79
+frontend/src/VeraRoom/VeraRoom.tsx
+  s_20776229283099::t_ef750a9cf9bd69 64-65,66-67,69-70,78
+  s_f158bcbaaf7b82::t_bc48f96364c055 72-76
+  s_51ade8594b05d7::t_7c43dc540e9b43 2,64-71,77-78
+frontend/src/components/GoodBye/useShouldShowReenterRoom.ts
+  s_20776229283099::t_2ea8300d0eee75 1,2-5,9,10,22-25
+  s_20776229283099::t_1bda629857c411 1,2-5,9,10,22-25
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  s_20776229283099::t_6488ae877b72c9 1
+  s_51ade8594b05d7::t_f7fbdf31b32d26 1
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_20776229283099::t_a851288bc1e369 188
+  s_51ade8594b05d7::t_893d301a92c394 181-183,185-188
+  s_20776229283099::t_c574dffd67366f 1-2,22-25,102,117,121,168,207
+libs/core/src/stores/serverSettings/hooks/useScheduleStatus.test.ts
+  s_20776229283099::t_ae508caf953299 38-39,59-60
+  s_51ade8594b05d7::t_39cf8610ce7c3b 38-39,59-60
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  s_20776229283099::t_f8959cde683ff6 152-161,163,165-168
+  s_f158bcbaaf7b82::t_1d15835de964eb 164,171-172,174,176,179
+  s_51ade8594b05d7::t_46f2b19acf0d7b 152-161,163,165-168
+libs/api/src/schemas/GetServerSettingsPayload.schema.ts
+  s_20776229283099::t_83c649e25a68f3 5
+  s_51ade8594b05d7::t_6f771726b0d275 5
+libs/core/src/stores/serverSettings/hooks/useServerSettings.ts
+  s_20776229283099::t_73be0af5e26f9b 12,24
+  s_51ade8594b05d7::t_af6fb0e2d0443c 24
+libs/core/test/providers/makeServerSettingsProviderWrapper.ts
+  s_20776229283099::t_86155d5e63c9f5 7-9
+  s_51ade8594b05d7::t_4ac2913aff8cc5 7-9
+libs/core/test/providers/makeTestProvider.ts
+  s_20776229283099::t_b9966791aa09d0 32
+  s_51ade8594b05d7::t_2d4586c68f08e9 32
+frontend/src/App.tsx
+  s_f158bcbaaf7b82::t_94a138eeec9fcd 70
+frontend/src/Context/RoomProvider.tsx
+  s_f158bcbaaf7b82::t_e2f2e4c04e0bd4 3
+  s_51ade8594b05d7::t_70ad3bc9967444 1-2,11-18
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_f158bcbaaf7b82::t_6ad23370656866 11
+  s_51ade8594b05d7::t_3e57ef057bdaa0 32,37
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  s_f158bcbaaf7b82::t_26e11c95a08a8b 14
+libs/core/src/stores/serverSettings/serverSettings$.tsx
+  s_20776229283099::t_5cc9401d5994b5 41-45,53,57-58,68-76,89-92,111
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_51ade8594b05d7::t_32f8ef62e204cd 36,55,59
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  s_51ade8594b05d7::t_0dd25aa6b6b83e 157,160,182
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  s_51ade8594b05d7::t_b2b693edd33755 226-235,237-239,241
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_51ade8594b05d7::t_eb6344662ec4de 243-249,276-283,287
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_51ade8594b05d7::t_bd96f169b72ec2 562,565,585
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  s_51ade8594b05d7::t_d33e012ea990f7 425,444
+frontend/src/test/providers/makeTestProvider.ts
+  s_51ade8594b05d7::t_a2b1f48a7aec67 7-8,28,39,51,72,164-168
+frontend/src/test/providers/makersIndex.ts
+  s_51ade8594b05d7::t_df595498ff6945 40-44
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.ts
+  s_51ade8594b05d7::t_efab96f0a68cce 1-2,10-19
+libs/common/manifest.json
+  s_f158bcbaaf7b82::t_7048b5e3997c95 4
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.test.ts
+  s_51ade8594b05d7::t_1dd8ad3130b1c4 2,4-17
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
+  s_51ade8594b05d7::t_d4935a0679ce16 7,18
+  s_20776229283099::t_d12f15e2a43905 1,3,16-17,19-21,31-32,45-46,49
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.spec.tsx
+  s_51ade8594b05d7::t_94c36afb6b1549 17,19,22,34,37,40,47,49-52,55
+  s_20776229283099::t_934d06907d200d 1-2,4,7,15-16,18,20-21,23-33,35-36,38-39,41-45,58,62-64
+.github/workflows/run-tests.yml
+  s_20776229283099::t_73f1ded312c22a 128,163
+backend/.env.example
+  s_20776229283099::t_8c67d199d93bd1 42
+backend/middleware/rateLimitMiddleware.ts
+  s_20776229283099::t_ae26fc19f36908 14
+libs/ui/src/components/Skeleton/Skeleton.tsx
+  s_20776229283099::t_d050806da22e31 1-27
+AGENTS.md
+  s_20776229283099::t_3b832fce7809e9 93-94,1287,1362
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_20776229283099::t_3b46a1bd99a85f 142,176
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton.tsx
+  s_20776229283099::t_f7948f80d5d00c 2-7,14-16,19-22,24-25,28,30-32
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  s_20776229283099::t_85fbd1ed1ed403 6-11,30-31,34-43,49-59,61-72
+libs/ui/src/components/Skeleton/index.ts
+  s_20776229283099::t_fad19d3a521f41 1
+libs/ui/src/layout/SplitPanel/SplitPanel.tsx
+  s_20776229283099::t_0a3b9c2c70d8d6 2-3,4-21,32-35
+  s_d7e2e0668feaa5::t_877a2902654704 1,22-31
+libs/ui/src/layout/SplitPanel/index.ts
+  s_20776229283099::t_8d59d2c2ca4aed 1
+libs/ui/src/layout/SplitPanel/SplitPanel.spec.tsx
+  s_72216d36ca7672::t_47e19947eb1cf1 1-19
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.spec.ts
+  s_20776229283099::t_fa759fdc2cd314 1-51
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  s_20776229283099::t_6501b7e6245199 18-23,26-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "37c54e43efcfae9eaace0ce2219b9e281fadad80",
+  "prompts": {},
+  "sessions": {
+    "s_028075590eb23a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d496-2ae0-7a02-9c23-d6453af50e75",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_16311c9394921c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d4bf-d4f5-75b3-adbf-763ae00703fe",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_51ade8594b05d7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d56d-bef0-72f0-b8d7-b2231b412fd8",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_72216d36ca7672": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d06e-c060-7a70-917e-add9c9818d59",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_d7e2e0668feaa5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d07a-9f3b-7a02-b07a-8f5d1da418ff",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_f158bcbaaf7b82": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1d056-4707-7b31-970d-da882d45e0a7",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
