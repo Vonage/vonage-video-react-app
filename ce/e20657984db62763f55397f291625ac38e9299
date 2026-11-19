@@ -1,0 +1,49 @@
+scripts/commonPackage/publishTarball.cjs
+  s_6531631c1725cf::t_36f4a8a9fd9bbe 41-42
+  s_6531631c1725cf::t_af17b873ec00c8 37-38,40,45,47-49,107-118
+  s_6531631c1725cf::t_1ab080cad14858 39,46
+  s_6531631c1725cf::t_68787738687551 6,12,19,24,27,83
+.github/workflows/video-common-publish.yml
+  s_6531631c1725cf::t_1666693700d2d2 16-24,29,31,38-41,78-81
+  s_6531631c1725cf::t_b79bb452f52b9d 33
+  s_6531631c1725cf::t_68787738687551 84-86,112
+  s_6531631c1725cf::t_c5aa118fe0ca8d 30,64,66
+  s_6531631c1725cf::t_7930ca30fa910f 65
+libs/common/package.json
+  s_6531631c1725cf::t_68787738687551 13-17,19
+libs/common/manifest.json
+  s_6531631c1725cf::t_e28d75c768a179 4
+libs/common/vite.config.ts
+  s_6531631c1725cf::t_68787738687551 134
+scripts/preparePackage.ts
+  s_6531631c1725cf::t_68787738687551 23
+package.json
+  s_6531631c1725cf::t_68787738687551 57
+scripts/commonPackage/publishTarball.test.cjs
+  s_6531631c1725cf::t_7930ca30fa910f 1-138
+.github/workflows/video-common-integrity.yml
+  s_6531631c1725cf::t_c5aa118fe0ca8d 34,36
+  s_6531631c1725cf::t_7930ca30fa910f 35
+scripts/commonPackage/publish.ts
+  s_6531631c1725cf::t_c5aa118fe0ca8d 21,40
+  s_6531631c1725cf::t_af17b873ec00c8 34-37,39,41,43-47,55-57
+  s_6531631c1725cf::t_1ab080cad14858 38
+  s_6531631c1725cf::t_68787738687551 11,15,22,89,155,161-163,168,230
+  s_6531631c1725cf::t_d83d90c814caf9 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cee20657984db62763f55397f291625ac38e9299",
+  "prompts": {},
+  "sessions": {
+    "s_6531631c1725cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f3d6-8b6c-7f73-b6d9-4fb2f14b5273",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
