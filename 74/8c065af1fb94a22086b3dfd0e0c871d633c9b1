@@ -1,0 +1,43 @@
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  s_20776229283099::t_955ba8c61b9e04 83,113-117
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  s_20776229283099::t_77373e7a3f8d0a 15-16
+libs/api/src/types/CreateSessionDefaults.ts
+  s_20776229283099::t_77373e7a3f8d0a 1-7
+libs/common/src/helpers/getLocalDateInputValue/index.ts
+  s_20776229283099::t_955ba8c61b9e04 1
+libs/api/src/types/HandlerConfig.ts
+  s_20776229283099::t_77373e7a3f8d0a 3,8-10
+libs/api/src/core/VideoClient/VideoClient.ts
+  s_20776229283099::t_77373e7a3f8d0a 25,83-85,101-107,133-134
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  s_20776229283099::t_187ae1929f6995 133-173
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  s_20776229283099::t_955ba8c61b9e04 3,23,36
+libs/api/src/handlers/createSession.ts
+  s_20776229283099::t_77373e7a3f8d0a 1-5,7,17-18,25-28
+  s_20776229283099::t_cd867eed347180 9,23-24
+  s_20776229283099::t_4d1dd1c3fd5e96 29
+libs/api/src/types/index.ts
+  s_20776229283099::t_77373e7a3f8d0a 31
+libs/common/src/helpers/index.ts
+  s_20776229283099::t_955ba8c61b9e04 11
+libs/common/manifest.json
+  s_20776229283099::t_7b73e0e378ae3a 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "748c065af1fb94a22086b3dfd0e0c871d633c9b1",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
