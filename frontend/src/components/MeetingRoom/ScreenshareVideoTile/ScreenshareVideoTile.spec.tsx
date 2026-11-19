@@ -360,6 +360,12 @@ describe('ScreenshareVideoTile', () => {
       expect(screen.getByTestId('zoom-indicator')).toBeInTheDocument();
     });
 
+    it('checks video-only media processor support (not "both")', () => {
+      render(<ScreenshareVideoTile {...defaultProps} />);
+
+      expect(vi.mocked(hasMediaProcessorSupport)).toHaveBeenCalledWith('video');
+    });
+
     describe('when hasMediaProcessorSupport returns false', () => {
       beforeEach(() => {
         vi.mocked(hasMediaProcessorSupport).mockReturnValue(false);

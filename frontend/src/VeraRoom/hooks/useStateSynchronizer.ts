@@ -1,8 +1,8 @@
-import { createVideoClient } from '@core/services';
 import i18n from '../../i18n';
 import bridge$ from '../stores/bridge';
 import { runtime$ } from '@core/stores';
 import { useMountEffect } from '@web/hooks';
+import createBridgeVideoClient from '../helpers/createBridgeVideoClient';
 
 /**
  * Syncs the html element with the internal react state
@@ -13,6 +13,15 @@ const useStateSynchronizer = () => {
   const { setLanguage } = runtime$.use.actions();
 
   useMountEffect(() => {
+    const replaceVideoClient = () => {
+      const { videoClient, entryPoint, credentials } = bridge.getState();
+
+      runtime.setState((state) => ({
+        ...state,
+        videoClient: videoClient ?? createBridgeVideoClient({ entryPoint, credentials }),
+      }));
+    };
+
     const subscriptions = [
       // language changes from the bridge should update i18n and the runtime store
       bridge.subscribe(
@@ -26,21 +35,10 @@ const useStateSynchronizer = () => {
         }
       ),
 
-      // clientUrl changes from the bridge should update the video client in the runtime store
-      bridge.subscribe(
-        ({ entryPoint }) => entryPoint,
-        (entryPoint) => {
-          runtime.setState((state) => ({
-            ...state,
-            videoClient: createVideoClient({
-              url: entryPoint,
-            }),
-          }));
-        },
-        {
-          skipFirst: true,
-        }
-      ),
+      // a host-provided client, or the attributes it's built from, replace the runtime video client
+      bridge.subscribe(({ videoClient }) => videoClient, replaceVideoClient, { skipFirst: true }),
+      bridge.subscribe(({ entryPoint }) => entryPoint, replaceVideoClient, { skipFirst: true }),
+      bridge.subscribe(({ credentials }) => credentials, replaceVideoClient, { skipFirst: true }),
     ];
 
     return () => {

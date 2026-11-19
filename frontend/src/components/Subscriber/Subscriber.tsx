@@ -1,4 +1,5 @@
 import { MouseEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box } from 'opentok-layout-js';
 import { SubscriberWrapper } from '../../types/session';
 import AudioIndicator from '../MeetingRoom/AudioIndicator';
@@ -14,12 +15,25 @@ import ScreenshareVideoTile from '../MeetingRoom/ScreenshareVideoTile';
 import { ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE } from '@utils/constants';
 import toRemValue from '@common/helpers/toRemValue';
 import attempt from '@common/execution/attempt';
+import { useMiniMode } from '../../Context/MiniMode';
 
 export type SubscriberProps = {
   subscriberWrapper: SubscriberWrapper;
   isHidden: boolean;
   box: Box | undefined;
   isActiveSpeaker: boolean;
+};
+
+const audioIndicatorStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
+  height: '1.5rem',
+  width: '1.5rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: 'auto',
 };
 
 /**
@@ -40,8 +54,11 @@ const Subscriber = ({
   box,
   isActiveSpeaker,
 }: SubscriberProps): ReactElement => {
+  const { t } = useTranslation();
   const { isMaxPinned, pinSubscriber } = useSessionContext();
+  const { hostedElement } = useMiniMode();
   const { isPinned, subscriber } = subscriberWrapper;
+  const isHostedInMiniMode = hostedElement === subscriberWrapper.element;
   const isScreenShare = subscriber?.stream?.videoType === 'screen';
   const subRef = useRef<HTMLDivElement>(null);
   const isTalking = useSubscriberTalking({ subscriber, isActiveSpeaker });
@@ -56,7 +73,7 @@ const Subscriber = ({
   }, [isHidden, subscriberWrapper.subscriber]);
 
   useEffect(() => {
-    if (subscriberWrapper && subRef.current) {
+    if (subscriberWrapper && subRef.current && !isHostedInMiniMode) {
       const { element } = subscriberWrapper;
 
       // eslint-disable-next-line react-hooks/immutability
@@ -70,7 +87,7 @@ const Subscriber = ({
 
       subRef.current.appendChild(element);
     }
-  }, [subscriberWrapper, isScreenShare]);
+  }, [subscriberWrapper, isScreenShare, isHostedInMiniMode]);
 
   const handlePinClick = (clickEvent: MouseEvent<HTMLButtonElement>) => {
     pinSubscriber(subscriberWrapper.id);
@@ -89,21 +106,10 @@ const Subscriber = ({
     }, 0);
   };
 
-  const hasVideo = subscriberWrapper.subscriber?.stream?.hasVideo;
+  const hasVideo = !!subscriberWrapper.subscriber?.stream?.hasVideo && !isHostedInMiniMode;
   const initials = subscriberWrapper.subscriber?.stream?.initials;
   const username = subscriberWrapper.subscriber?.stream?.name ?? '';
   const hasAudio = subscriberWrapper.subscriber.stream?.hasAudio;
-  const audioIndicatorStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    right: toRemValue(ABSOLUTE_DISTANCE_THRESHOLD_REM_VALUE),
-    height: '1.5rem',
-    width: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 'auto',
-  };
 
   return isScreenShare ? (
     <ScreenshareVideoTile
@@ -115,7 +121,12 @@ const Subscriber = ({
       onMouseEnter={() => setIsTileHovered(true)}
       onMouseLeave={() => setIsTileHovered(false)}
     >
-      {box && <ScreenShareNameDisplay name={username} box={box} />}
+      {box && (
+        <ScreenShareNameDisplay
+          name={t('participants.screen', { participantName: username })}
+          box={box}
+        />
+      )}
     </ScreenshareVideoTile>
   ) : (
     <VideoTile

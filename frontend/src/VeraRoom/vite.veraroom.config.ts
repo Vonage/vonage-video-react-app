@@ -5,7 +5,7 @@ import * as path from 'node:path';
 export default defineConfig((env) => {
   const baseConfig = baseConfigFn(env);
 
-  return mergeConfig(baseConfig, {
+  const roomConfig = mergeConfig(baseConfig, {
     base: './',
     define: {
       'process.env.NODE_ENV': '"production"',
@@ -32,4 +32,9 @@ export default defineConfig((env) => {
       },
     },
   });
+
+  // Rollup rejects output.manualChunks for single-file IIFE library builds.
+  delete roomConfig.build.rollupOptions.output.manualChunks;
+
+  return roomConfig;
 });

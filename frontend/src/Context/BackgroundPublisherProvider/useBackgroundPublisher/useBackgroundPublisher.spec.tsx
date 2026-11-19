@@ -7,6 +7,7 @@ import { makeTestProvider, providers, ProviderOptions } from '@test/providers';
 import useBackgroundPublisher from './useBackgroundPublisher';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
 import { setupWindowNavigatorMock } from '@web-test/fixtures';
+import { frontendLogger } from '../../../logger';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -39,8 +40,10 @@ describe('useBackgroundPublisher', () => {
 
     vi.spyOn(permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
 
-    (initPublisher as Mock).mockImplementation(mockedInitPublisher);
-    (hasMediaProcessorSupport as Mock).mockImplementation(mockedHasMediaProcessorSupport);
+    (initPublisher as unknown as Mock).mockImplementation(mockedInitPublisher);
+    (hasMediaProcessorSupport as unknown as Mock).mockImplementation(
+      mockedHasMediaProcessorSupport
+    );
   });
 
   describe('initBackgroundLocalPublisher', () => {
@@ -55,20 +58,97 @@ describe('useBackgroundPublisher', () => {
       expect(mockedInitPublisher).toHaveBeenCalled();
     });
 
-    it('should log access denied errors', () => {
-      const error = new Error(
-        "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
-      );
-      error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
-      (initPublisher as Mock).mockImplementation((_, _args, callback) => {
-        callback(error);
+    it('should use the shared video track as videoSource', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
       });
 
+      expect(mockedInitPublisher).toHaveBeenCalledWith(
+        undefined,
+        expect.objectContaining({ videoSource: sharedVideoTrack }),
+        expect.any(Function)
+      );
+    });
+
+    it('should stop the shared video track when destroyed', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+      act(() => {
+        result.current.destroyBackgroundPublisher();
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
+    it('should stop the shared video track when a publisher already exists', () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
       const { result } = render();
       act(() => {
         result.current.initBackgroundLocalPublisher();
       });
-      expect(console.error).toHaveBeenCalledWith('initPublisher error: ', error);
+
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
+    it('should stop the shared video track when init fails', () => {
+      const error = new Error('Simulated publisher init failure');
+      mockedInitPublisher.mockImplementation((_, _args, callback) => {
+        callback(error);
+        return null;
+      });
+      const sharedVideoTrack = { stop: vi.fn() } as unknown as MediaStreamTrack;
+      const { result } = render();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher(sharedVideoTrack);
+      });
+
+      expect(sharedVideoTrack.stop).toHaveBeenCalled();
+    });
+
+    it('should report initPublisher errors and leave no publisher behind', () => {
+      const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
+      const error = new Error(
+        "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
+      );
+      error.name = 'OT_USER_MEDIA_ACCESS_DENIED';
+      (initPublisher as unknown as Mock).mockImplementation((_, _args, callback) => {
+        callback(error);
+        return mockPublisher;
+      });
+
+      const { result, rerender } = render();
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+      rerender();
+
+      expect(reportErrorSpy).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          eventSource: 'useBackgroundPublisher.initBackgroundLocalPublisher.initPublisher',
+        })
+      );
+      expect(result.current.publisher).toBeNull();
+
+      act(() => {
+        result.current.initBackgroundLocalPublisher();
+      });
+      expect(initPublisher).toHaveBeenCalledTimes(2);
     });
 
     it('should apply background high blur-sm when initialized and changed background', async () => {

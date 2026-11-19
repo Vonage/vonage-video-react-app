@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render as renderBase, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { makeTestProvider, providers } from '@test/providers';
 import userEvent from '@testing-library/user-event';
 import { Subscriber as OTSubscriber } from '@vonage/client-sdk-video';
 import { Box } from 'opentok-layout-js';
@@ -31,6 +33,7 @@ describe('Subscriber', () => {
         stream: {
           streamId: id,
           videoType,
+          name: 'Alice',
         },
       } as unknown as OTSubscriber,
     };
@@ -139,6 +142,24 @@ describe('Subscriber', () => {
     expect(screen.getByTestId('vivid-icon-pin-2-off-solid')).toBeVisible();
   });
 
+  it('should localize the screenshare label from the raw publisher name', () => {
+    const mockedSubscriberId = '789';
+    const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, true);
+    const mockedBox = createMockBox(360, 10, 10, 640);
+
+    render(
+      <Subscriber
+        subscriberWrapper={subscriberWrapper}
+        isHidden={false}
+        box={mockedBox}
+        isActiveSpeaker={false}
+      />
+    );
+
+    expect(screen.getByText("Alice's screen")).toBeVisible();
+    expect(screen.queryByText('Alice')).not.toBeInTheDocument();
+  });
+
   it('should not render pin icon when screenshare subscriber is hovered', () => {
     const mockedSubscriberId = 'OT_7a0a1bfd-2892-4f5e-90e0-33dafdc7c373';
     const subscriberWrapper = createSubscriberWrapper(mockedSubscriberId, true);
@@ -157,3 +178,12 @@ describe('Subscriber', () => {
     expect(screen.queryByTestId('pin-button')).not.toBeInTheDocument();
   });
 });
+
+function render(ui: ReactElement) {
+  const { wrapper, ...context } = makeTestProvider([providers.miniMode]);
+
+  return {
+    ...context,
+    ...renderBase(ui, { wrapper }),
+  };
+}

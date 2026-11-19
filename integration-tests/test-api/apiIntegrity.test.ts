@@ -1,9 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AddressInfo, Server } from 'node:net';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import mockOpentokConfig from '../../backend/helpers/__mocks__/config';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import closeServer from '../../backend/tests/helpers/closeServer';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import createVideoClient from '../../libs/core/src/services/videoClient/createVideoClient';
 
@@ -17,16 +19,16 @@ const validSessionKey = jwt.sign({ sessionId: validSessionId }, 'mock-api-key', 
 
 // ─── Exposed mock functions so individual tests can adjust behavior ──────────
 
-const mockCreateSession = jest
-  .fn<() => Promise<{ sessionId: string }>>()
+const mockCreateSession = vi
+  .fn<[], Promise<{ sessionId: string }>>()
   .mockResolvedValue({ sessionId: validSessionId });
 
-const mockStartArchive = jest
-  .fn<() => Promise<{ id: string; status: string }>>()
+const mockStartArchive = vi
+  .fn<[], Promise<{ id: string; status: string }>>()
   .mockResolvedValue({ id: 'archive-1', status: 'started' });
 
-const mockStopArchive = jest
-  .fn<(archiveId: string) => Promise<{ id: string; status: string }>>()
+const mockStopArchive = vi
+  .fn<[archiveId: string], Promise<{ id: string; status: string }>>()
   .mockImplementation((archiveId: string) => {
     if (archiveId === 'bad-archive-id') {
       return Promise.reject(new Error('archive not found'));
@@ -34,16 +36,16 @@ const mockStopArchive = jest
     return Promise.resolve({ id: archiveId, status: 'stopped' });
   });
 
-const mockSearchArchives = jest
-  .fn<() => Promise<{ items: Array<{ id: string }>; count: number }>>()
+const mockSearchArchives = vi
+  .fn<[], Promise<{ items: Array<{ id: string }>; count: number }>>()
   .mockResolvedValue({ items: [{ id: 'archive-1' }, { id: 'archive-2' }], count: 2 });
 
-const mockEnableCaptions = jest
-  .fn<() => Promise<{ captionsId: string }>>()
+const mockEnableCaptions = vi
+  .fn<[], Promise<{ captionsId: string }>>()
   .mockResolvedValue({ captionsId: 'mock-captions-id' });
 
-const mockDisableCaptions = jest
-  .fn<(captionsId: string) => Promise<void>>()
+const mockDisableCaptions = vi
+  .fn<[captionsId: string], Promise<void>>()
   .mockImplementation((captionsId: string) => {
     if (captionsId === 'wrongCaptionId') {
       return Promise.reject(new Error('Invalid caption ID'));
@@ -51,23 +53,23 @@ const mockDisableCaptions = jest
     return Promise.resolve(undefined);
   });
 
-// ─── Module mocks (must be awaited before any import of the server) ───────────
+// ─── Module mocks (must be registered before any import of the server) ────────
 
-await jest.unstable_mockModule('../../backend/helpers/config', mockOpentokConfig);
+vi.doMock('../../backend/helpers/config', mockOpentokConfig);
 
 const actualAuth = await import('@vonage/auth');
 const actualVideo = await import('@vonage/video');
 
-await jest.unstable_mockModule('@vonage/auth', () => ({
+vi.doMock('@vonage/auth', () => ({
   ...actualAuth,
-  Auth: jest.fn().mockImplementation(() => ({ apiKey: 'mock-api-key' })),
+  Auth: vi.fn().mockImplementation(() => ({ apiKey: 'mock-api-key' })),
 }));
 
-await jest.unstable_mockModule('@vonage/video', () => ({
+vi.doMock('@vonage/video', () => ({
   ...actualVideo,
-  Video: jest.fn().mockImplementation(() => ({
+  Video: vi.fn().mockImplementation(() => ({
     createSession: mockCreateSession,
-    generateClientToken: jest.fn().mockReturnValue('some-token'),
+    generateClientToken: vi.fn().mockReturnValue('some-token'),
     startArchive: mockStartArchive,
     stopArchive: mockStopArchive,
     searchArchives: mockSearchArchives,
@@ -76,23 +78,23 @@ await jest.unstable_mockModule('@vonage/video', () => ({
   })),
 }));
 
-const mockReportIssue = jest
-  .fn<() => Promise<{ message: string; ticketUrl: string }>>()
+const mockReportIssue = vi
+  .fn<[], Promise<{ message: string; ticketUrl: string }>>()
   .mockResolvedValue({
     message: 'Your Jira ticket has been created.',
     ticketUrl: 'https://jira.com/browse/key-123',
   });
 
-await jest.unstable_mockModule('../../backend/services/getFeedbackService.ts', () => ({
-  default: jest.fn(() => ({ reportIssue: mockReportIssue })),
+vi.doMock('../../backend/services/getFeedbackService.ts', () => ({
+  default: vi.fn(() => ({ reportIssue: mockReportIssue })),
 }));
 
-const mockForward = jest.fn<() => Promise<void>>();
+const mockForward = vi.fn<[], Promise<void>>();
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 const actualLoggerService = await import('../../backend/services/loggerService');
 
-await jest.unstable_mockModule('../../backend/services/loggerService.ts', () => ({
+vi.doMock('../../backend/services/loggerService.ts', () => ({
   ...actualLoggerService,
   forward: mockForward,
 }));
@@ -127,9 +129,7 @@ describe('API Integrity', () => {
     videoClient = createVideoClient({ url: `http://127.0.0.1:${port}/v2` });
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   // ─── /v2 createSession ──────────────────────────────────────────────────────
 

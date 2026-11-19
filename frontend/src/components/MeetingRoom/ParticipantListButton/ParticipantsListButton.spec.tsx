@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReactElement } from 'react';
 import { makeTestProvider } from '@test/providers';
 import ParticipantListButton from './ParticipantListButton';
-import { env } from '../../../env';
 
 describe('ParticipantListButton', () => {
   it('should show participant number', () => {
@@ -16,15 +15,6 @@ describe('ParticipantListButton', () => {
     render(<ParticipantListButton handleClick={handleClick} isOpen participantCount={10} />);
     screen.getByRole('button').click();
     expect(handleClick).toHaveBeenCalled();
-  });
-  it('is not rendered when showParticipantList is false', () => {
-    env.partialUpdate({
-      SHOW_PARTICIPANT_LIST: false,
-    });
-
-    render(<ParticipantListButton handleClick={() => {}} isOpen={false} participantCount={10} />);
-
-    expect(screen.queryByTestId('participant-list-button')).not.toBeInTheDocument();
   });
 });
 

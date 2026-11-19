@@ -1,5 +1,4 @@
 import { env } from '../env';
-import isReportIssueEnabled from './isReportIssueEnabled/isReportIssueEnabled';
 
 /**
  * @constant {string} API_URL - The base URL determined by the current environment.
@@ -89,12 +88,6 @@ export const MAX_TILES_GRID_VIEW_MOBILE = 3;
 export const MAX_TILES_SPEAKER_VIEW_MOBILE = 2;
 
 /**
- * @constant {number} RIGHT_PANEL_BUTTON_COUNT - The number of buttons used to control the Right Panel. This value determines the number
- * of buttons shown on the right side of the Toolbar.
- */
-export const RIGHT_PANEL_BUTTON_COUNT = 3 - (isReportIssueEnabled() ? 0 : 1);
-
-/**
  * @constant {number} CAPTION_DISPLAY_DURATION_MS - The duration in milliseconds for which captions are displayed.
  */
 export const CAPTION_DISPLAY_DURATION_MS = 4000;
@@ -125,6 +118,14 @@ export const VIDEO_CONTAINER_BUTTON_SIZE_WR = 40;
  * @constant {string} BACKGROUNDS_PATH - The path to the backgrounds assets directory.
  */
 export const BACKGROUNDS_PATH = '/background';
+
+/**
+ * @constant {string} BACKGROUND_THUMBNAILS_PATH - The path to the preview thumbnails for the
+ * background gallery. These are downscaled (max 400px, full aspect ratio preserved — no
+ * cropping) versions of the full-size images, ~24-52KB each vs 118-324KB. The full-size
+ * images (BACKGROUNDS_PATH) are only fetched when a background is actually applied via the SDK.
+ */
+export const BACKGROUND_THUMBNAILS_PATH = '/background/thumbnails';
 
 /**
  * @constant {number} MAX_SIZE_MB - The maximum file size (in megabytes) allowed for image uploads.

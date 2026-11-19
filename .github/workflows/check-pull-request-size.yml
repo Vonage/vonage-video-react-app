@@ -1,0 +1,28 @@
+name: check-pull-request-size
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [edited, opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-pr-size:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check added lines
+        env:
+          ADDITIONS: ${{ github.event.pull_request.additions }}
+          MAX_ADDITIONS: 1500
+        run: |
+          set -e
+
+          if (( ADDITIONS > MAX_ADDITIONS )); then
+            echo "::error::PR adds $ADDITIONS lines, exceeding the limit of $MAX_ADDITIONS. Split it into smaller PRs."
+            exit 1
+          fi
+
+          echo "PR adds $ADDITIONS lines (limit $MAX_ADDITIONS) - VALID"
+        shell: bash

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, Mock, afterAll } from 'vitest';
-import { render as renderBase, screen } from '@testing-library/react';
+import { act, render as renderBase, screen } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { ReactElement } from 'react';
 import useSpeakingDetector from '@hooks/useSpeakingDetector';
@@ -8,10 +8,21 @@ import useToolbarButtons, {
   UseToolbarButtons,
   UseToolbarButtonsProps,
 } from '@hooks/useToolbarButtons';
-import { RIGHT_PANEL_BUTTON_COUNT } from '@utils/constants';
-import { makeTestProvider, providers } from '@test/providers';
+import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
+import { SessionKeyClaim } from '@common/constants';
+import { makeVideoClientMock } from '@core-test/fixtures';
 import { env } from '../../../env';
 import Toolbar, { ToolbarProps, CaptionsState } from './Toolbar';
+import { testIds as advancedSettingsButtonTestIds } from '../AdvancedSettingsButton/AdvancedSettingsButton';
+import { testIds as archivingButtonTestIds } from '../ArchivingButton/ArchivingButton';
+import { testIds as postCallTranscriptionButtonTestIds } from '../PostCallTranscriptionButton/PostCallTranscriptionButton';
+import { testIds as captionsButtonTestIds } from '../CaptionsButton/CaptionsButton';
+import { testIds as chatButtonTestIds } from '../ChatButton/ChatButton';
+import { testIds as emojiGridButtonTestIds } from '../EmojiGridButton/EmojiGridButton';
+import { testIds as participantListButtonTestIds } from '../ParticipantListButton/ParticipantListButton';
+import { testIds as reportIssueButtonTestIds } from '../ReportIssueButton/ReportIssueButton';
+import { testIds as screenSharingButtonTestIds } from '../../ScreenSharingButton/ScreenSharingButton';
+import { testIds as toolbarOverflowButtonTestIds } from '../ToolbarOverflowButton/ToolbarOverflowButton';
 
 const mockedRoomName = { roomName: 'test-room-name' };
 
@@ -41,10 +52,10 @@ describe('Toolbar', () => {
     mockUseSpeakingDetector.mockReturnValue(false);
     mockIsReportIssueEnabled.mockReturnValue(false);
     mockUseToolbarButtons.mockImplementation(
-      ({ numberOfToolbarButtons }: UseToolbarButtonsProps) => {
+      ({ numberOfToolbarButtons, rightPanelButtonCount }: UseToolbarButtonsProps) => {
         const renderedToolbarButtons: UseToolbarButtons = {
           displayTimeRoomName: true,
-          centerButtonLimit: numberOfToolbarButtons - RIGHT_PANEL_BUTTON_COUNT,
+          centerButtonLimit: numberOfToolbarButtons - rightPanelButtonCount,
           rightButtonLimit: numberOfToolbarButtons,
         };
         return renderedToolbarButtons;
@@ -76,13 +87,13 @@ describe('Toolbar', () => {
 
   it('does not render the Report Issue button if it is configured to be disabled', () => {
     render(<Toolbar {...defaultProps} />);
-    expect(screen.queryByTestId('report-issue-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(reportIssueButtonTestIds.button)).not.toBeInTheDocument();
   });
 
   it('renders the Report Issue button if it is configured to be enabled', () => {
     mockIsReportIssueEnabled.mockReturnValue(true);
     render(<Toolbar {...defaultProps} />);
-    expect(screen.getByTestId('report-issue-button')).toBeInTheDocument();
+    expect(screen.getByTestId(reportIssueButtonTestIds.button)).toBeInTheDocument();
   });
 
   it('on a small viewport, displays the ToolbarOverflowButton button', () => {
@@ -94,12 +105,12 @@ describe('Toolbar', () => {
 
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('hidden-toolbar-items')).toBeVisible();
+    expect(screen.queryByTestId(toolbarOverflowButtonTestIds.button)).toBeVisible();
 
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('screensharing-button')).not.toBeVisible();
-    expect(screen.queryByTestId('archiving-button')).not.toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeVisible();
   });
 
   it('on a normal viewport, displays all of the toolbar buttons', () => {
@@ -115,23 +126,161 @@ describe('Toolbar', () => {
         }}
       />
     );
-    expect(screen.queryByTestId('archiving-button')).toBeVisible();
-    expect(screen.queryByTestId('advanced-settings-button')).toBeVisible();
-    expect(screen.queryByTestId('screensharing-button')).toBeVisible();
-    expect(screen.queryByTestId('emoji-grid-button')).toBeVisible();
-    expect(screen.queryByTestId('captions-button')).toBeVisible();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(advancedSettingsButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).toBeVisible();
+    expect(screen.queryByTestId(captionsButtonTestIds.button)).toBeVisible();
   });
 
   it('does not render advanced settings when the flag is disabled', () => {
     env.partialUpdate({ MEETING_ROOM_ALLOW_ADVANCED_SETTINGS: false });
     render(<Toolbar {...defaultProps} />);
 
-    expect(screen.queryByTestId('advanced-settings-button')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(advancedSettingsButtonTestIds.button)).not.toBeInTheDocument();
   });
+
+  it('splits the buttons between the toolbar and the overflow menu without repeating or losing any', () => {
+    mockUseToolbarButtons.mockReturnValue({
+      displayTimeRoomName: false,
+      centerButtonLimit: 3,
+      rightButtonLimit: 3,
+    });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.getAllByTestId(emojiGridButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(captionsButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(screenSharingButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(archivingButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(postCallTranscriptionButtonTestIds.button)).toHaveLength(1);
+    expect(screen.getAllByTestId(chatButtonTestIds.button)).toHaveLength(1);
+  });
+
+  it('does not render the buttons whose feature flags are disabled', () => {
+    env.partialUpdate({
+      ALLOW_SCREEN_SHARE: false,
+      ALLOW_EMOJIS: false,
+      ALLOW_CAPTIONS: false,
+      ALLOW_ARCHIVING: false,
+      ALLOW_POST_CALL_TRANSCRIPTION: false,
+      SHOW_PARTICIPANT_LIST: false,
+      ALLOW_CHAT: false,
+    });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(screen.queryByTestId(screenSharingButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(emojiGridButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(captionsButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(archivingButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(postCallTranscriptionButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(participantListButtonTestIds.button)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(chatButtonTestIds.button)).not.toBeInTheDocument();
+  });
+
+  it('renders the Mini Mode button only when Mini Mode is available', () => {
+    const unavailable = render(<Toolbar {...defaultProps} />);
+    expect(screen.queryByTestId('mini-mode-button')).not.toBeInTheDocument();
+    unavailable.unmount();
+
+    render(<Toolbar {...defaultProps} />, { miniModeContext: { isAvailable: true } });
+    expect(screen.getByTestId('mini-mode-button')).toBeInTheDocument();
+  });
+
+  it('does not reserve toolbar space for buttons whose feature flags are disabled', () => {
+    env.partialUpdate({ ALLOW_CHAT: false, SHOW_PARTICIPANT_LIST: false });
+
+    render(<Toolbar {...defaultProps} />);
+
+    expect(mockUseToolbarButtons).toHaveBeenLastCalledWith(
+      expect.objectContaining({ numberOfToolbarButtons: 6 })
+    );
+  });
+
+  it('shows the meeting timer only in the last five minutes of a scheduled sessionKey', async () => {
+    expect.assertions(3);
+    vi.useFakeTimers({ toFake: ['Date', 'setInterval', 'clearInterval'] });
+    const sessionId = '1_MX4xMjM0NTY3OH4-VGh1IEZlYiAyNyAwODozMjozNCBQU1QgMjAyMH4wLjI0NDYxMjE';
+    const startsAt = new Date(2026, 10, 4, 10, 0).getTime();
+    vi.setSystemTime(startsAt + 55 * 60_000 - 2_000);
+
+    const unscheduled = renderWithSessionKey(makeSessionKey({ sessionId }));
+
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+
+    unscheduled.unmount();
+    const { serverSettingsContext } = renderWithSessionKey(
+      makeSessionKey({
+        sessionId,
+        [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60_000 },
+      })
+    );
+    const { promise: serverTimeReady, resolve: resolveServerTime } = Promise.withResolvers<void>();
+    const unsubscribe = serverSettingsContext.current.subscribe(
+      (state) => state.status,
+      function resolveKnownServerTime(status) {
+        if (status === 'known') resolveServerTime();
+      }
+    );
+    await act(function waitForServerTime() {
+      return serverTimeReady;
+    });
+    unsubscribe();
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.getByRole('timer')).toHaveTextContent('5 min left');
+
+    vi.useRealTimers();
+  });
+
+  function renderWithSessionKey(sessionKey: string) {
+    const { wrapper, serverSettingsContext } = makeTestProvider(
+      [
+        providers.runtime,
+        providers.user,
+        providers.session,
+        providers.miniMode,
+        providers.serverSettings,
+      ],
+      {
+        serverSettingsContext: { sessionKey },
+        runtimeContext: {
+          videoClient: makeVideoClientMock({
+            getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+          }),
+        },
+        userContext: undefined,
+        sessionContext: { initialValue: { sessionKey } },
+        miniModeContext: undefined,
+      }
+    );
+
+    return { serverSettingsContext, ...renderBase(<Toolbar {...defaultProps} />, { wrapper }) };
+  }
 });
 
-function render(ui: ReactElement) {
-  const { wrapper, ...context } = makeTestProvider([providers.runtime]);
+function makeSessionKey(payload: Record<string, unknown>): string {
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/=+$/, '');
+  return `eyJhbGciOiJIUzI1NiJ9.${encodedPayload}.signature`;
+}
+
+function render(
+  ui: ReactElement,
+  { miniModeContext }: { miniModeContext?: ProviderOptions['MiniModeContext'] } = {}
+) {
+  const { wrapper, ...context } = makeTestProvider(
+    [providers.runtime, providers.miniMode, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      runtimeContext: undefined,
+      miniModeContext,
+    }
+  );
 
   return {
     ...context,

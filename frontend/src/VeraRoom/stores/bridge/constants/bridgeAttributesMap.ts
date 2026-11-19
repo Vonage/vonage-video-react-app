@@ -12,6 +12,7 @@ const bridgeAttributesMap = {
 
   /**
    * If provided joins directly to the session with the provided session identifier, otherwise a new session may be created
+   * Set it once: changing an existing value does not move the user to another room.
    */
   'session-identifier': new BridgeAttributeMeta({
     key: 'session-identifier',
@@ -27,6 +28,16 @@ const bridgeAttributesMap = {
     key: 'language',
     type: 'string',
     default: '',
+  }),
+
+  /**
+   * Fetch `RequestCredentials` for API calls: 'include' (default), 'same-origin' or 'omit'.
+   * Ignored when a `videoClient` is set on the element.
+   */
+  credentials: new BridgeAttributeMeta({
+    key: 'credentials',
+    type: 'string',
+    default: 'include',
   }),
 } as const;
 

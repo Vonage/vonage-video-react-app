@@ -1,4 +1,6 @@
-import { PropsWithChildren } from 'react';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import type { PropsWithChildren } from 'react';
+import { serverSettings$ } from '@core/stores';
 import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
 
 /**
@@ -6,8 +8,13 @@ import { BackgroundPublisherProvider } from './BackgroundPublisherProvider';
  * Wrapper for all of the contexts used by the waiting room and the meeting room.
  * @returns {ReactElement} The context.
  */
-const RoomProvider: React.FC<PropsWithChildren> = ({ children }) => (
-  <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
-);
+const RoomProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
+  return (
+    <serverSettings$.Provider sessionKey={sessionKeyStatus === 'valid' ? sessionKey : null}>
+      <BackgroundPublisherProvider>{children}</BackgroundPublisherProvider>
+    </serverSettings$.Provider>
+  );
+};
 
 export default RoomProvider;

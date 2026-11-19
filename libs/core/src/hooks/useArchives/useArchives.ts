@@ -1,6 +1,7 @@
 import { runtime$ } from '@core/stores';
 import type { VideoClient } from '@core/services';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import { SingleArchiveResponse } from '@vonage/video';
 
 const pollingIntervalMs = 5000;
@@ -12,6 +13,26 @@ type Input = Parameters<VideoClient['searchArchives']>[0];
 export type UseArchivesProps<TData = SearchArchivesResult> = Input & {
   queryOptions?: QueryOptions<SearchArchivesResult, TData>;
 };
+
+/**
+ * The Vonage REST API returns a `transcription` object on the archive when transcription is
+ * enabled, but the `@vonage/video` SDK type does not model it.
+ */
+export type ArchiveTranscription = {
+  status?: string;
+  url?: string;
+  reason?: string;
+  hasSummary?: boolean;
+  primaryLanguageCode?: string;
+};
+
+export type ArchiveWithTranscription = SingleArchiveResponse & {
+  transcription?: ArchiveTranscription;
+};
+
+export function isPendingStatus(status: string): boolean {
+  return ['requested', 'started', 'stopped', 'paused'].includes(status);
+}
 
 /**
  * Hook to search for archives.
@@ -36,7 +57,7 @@ const useArchives = <Selected = SearchArchivesResult>({
   const videoClient = runtime$.useVideoClient();
 
   return runtime$.useQuery({
-    queryKey: ['archives', sessionKey, count, offset],
+    queryKey: coreQueryKeys.archives({ sessionKey, count, offset }),
 
     refetchInterval: (query) => {
       const archives = query.state.data?.items;
@@ -61,7 +82,21 @@ const useArchives = <Selected = SearchArchivesResult>({
 };
 
 function hasPending<T extends SingleArchiveResponse>(archives: T[]): boolean {
-  return archives.some((archive) => !['available', 'failed'].includes(archive.status));
+  return archives.some((archive) => {
+    const isArchivePending = isPendingStatus(archive.status);
+
+    if (archive.hasTranscription && 'transcription' in archive) {
+      const transcription = (archive as ArchiveWithTranscription).transcription;
+      const transcriptionStatus = transcription?.status;
+
+      if (transcriptionStatus) {
+        const isTranscriptionPending = isPendingStatus(transcriptionStatus);
+        return isArchivePending || isTranscriptionPending;
+      }
+    }
+
+    return isArchivePending;
+  });
 }
 
 export default useArchives;

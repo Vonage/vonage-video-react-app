@@ -7,10 +7,7 @@
  * - Example override page fixture https://github.com/microsoft/playwright/issues/7051#issuecomment-859916019
  */
 import { BrowserContext, Page, test as baseTest } from '@playwright/test';
-
-const isDebugMode = process.env.debugMode === 'true';
-
-const baseURL = isDebugMode ? 'http://localhost:5173/' : 'http://127.0.0.1:3345/';
+import baseURL from '../baseUrl';
 
 const addLogger = (page: Page, context: BrowserContext) => {
   // Get page index to help identify which tab logs are coming from

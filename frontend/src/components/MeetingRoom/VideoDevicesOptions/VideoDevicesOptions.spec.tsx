@@ -1,6 +1,6 @@
 import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import VideoDevicesOptions from './VideoDevicesOptions';
+import VideoDevicesOptions, { testIds } from './VideoDevicesOptions';
 import enTranslations from '../../../locales/en.json';
 
 vi.mock('react-i18next', () => ({
@@ -27,7 +27,7 @@ describe('VideoDevicesOptions', () => {
 
   it('renders the background effects menu item', () => {
     render(<VideoDevicesOptions toggleBackgroundEffects={toggleBackgroundEffects} />);
-    expect(screen.getByTestId('background-effects-text')).toHaveTextContent('Video effects');
+    expect(screen.getByTestId(testIds.backgroundEffectsText)).toHaveTextContent('Video effects');
     expect(screen.getByRole('menuitem')).toBeInTheDocument();
   });
 

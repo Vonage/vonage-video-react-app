@@ -2,7 +2,6 @@ import { initTRPC, TRPCBuilder, type AnyMutationProcedure } from '@trpc/server';
 import {
   assertVideoRouterConfig,
   CreateSessionAndJoinPayloadSchema,
-  JoinSessionPayloadSchema,
   type VideoRouterConfig,
 } from '@api-lib/schemas';
 import { VideoClient } from '@api-lib/core';
@@ -32,7 +31,7 @@ function createVideoRouter<
 >(routerConfig: VideoRouterConfig<Context, TMeta>) {
   assertVideoRouterConfig(routerConfig);
 
-  const { auth, videoParams, routerOptions, handlersConfig } = routerConfig;
+  const { auth, videoParams, sessionSigning, routerOptions, handlersConfig } = routerConfig;
 
   const handlersDefaults: HandlersDefaults = Object.fromEntries(
     Object.entries(handlersConfig ?? {}).map(([action, config]) => [action, config?.addDefaults])
@@ -207,33 +206,20 @@ function createVideoRouter<
     joinSession: makeMutation({
       key: VideoAction.joinSession,
       config: {
-        transformInput: (opts) => {
-          // potentially allow extra properties as long as the basic schema is valid
-          const {
-            clientTokenOptions: {
-              // remove sensitive options from the input
-              role: _role,
-              expireTime: _expireTime,
-
-              ...clientTokenOptions
-            } = {},
-            ...rest
-          } = JoinSessionPayloadSchema.loose().parse(opts.input);
-
-          const input = {
-            ...rest,
-            clientTokenOptions,
-          };
-
-          return handlersConfig?.joinSession?.transformInput?.({ ...opts, input }) ?? input;
-        },
-        defaults: handlersConfig?.joinSession?.addDefaults,
+        transformInput: handlersConfig?.joinSession?.transformInput,
       },
       callback: (videoClient, input) => {
         return videoClient.joinSession(input);
       },
     }),
 
+    getServerSettings: makeMutation({
+      key: VideoAction.getServerSettings,
+      config: handlersConfig?.getServerSettings,
+      callback: (videoClient, input) => {
+        return videoClient.getServerSettings(input);
+      },
+    }),
     createSessionAndJoin: makeMutation({
       key: VideoAction.createSessionAndJoin,
       config: {
@@ -434,6 +420,7 @@ function createVideoRouter<
     return new VideoClient({
       auth,
       videoParams,
+      sessionSigning,
       handlersDefaults,
     });
   }

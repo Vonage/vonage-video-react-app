@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import closeServer from './helpers/closeServer';
 import request from 'supertest';
 import { Server } from 'http';
 
@@ -12,9 +13,7 @@ describe('GET /.well-known/apple-app-site-association', () => {
     server = await startServer(0);
   });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  afterAll(() => closeServer(server));
 
   it('returns a 200 status code', async () => {
     const res = await request(server).get('/.well-known/apple-app-site-association');
@@ -38,6 +37,9 @@ describe('GET /.well-known/apple-app-site-association', () => {
 
     expect(json).toEqual(
       expect.objectContaining({
+        webcredentials: expect.objectContaining({
+          apps: expect.arrayContaining(['PR6C39UQ38.com.vonage.VERA']),
+        }),
         applinks: expect.objectContaining({
           details: expect.arrayContaining([
             expect.objectContaining({
@@ -49,6 +51,10 @@ describe('GET /.well-known/apple-app-site-association', () => {
                 expect.objectContaining({
                   '/': '/room/*',
                   comment: 'Matches any room URL',
+                }),
+                expect.objectContaining({
+                  '/': '/api/auth/callback*',
+                  comment: 'Auth callback',
                 }),
               ]),
             }),

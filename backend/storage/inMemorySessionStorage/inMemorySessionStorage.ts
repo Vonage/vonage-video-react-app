@@ -6,15 +6,21 @@ interface SessionData {
   captionsId: string | null;
   captionsUserCount: number;
   archiveIds: string[];
+  serverRotationPending: number;
+  transcriptionWithSummary: boolean;
 }
 
 class InMemorySessionStorage implements SessionStorage {
-  private sessions: { [key: string]: SessionData } = {};
-  private roomNameBySessionKey: { [sessionKey: string]: string } = {};
-  private sessionKeyBySessionId: { [sessionId: string]: string } = {};
+  private sessions: { [sessionId: string]: SessionData } = {};
+  private sessionIdBySessionKey: { [sessionKey: string]: string } = {};
+  private sessionKeyByRoomName: { [roomName: string]: string } = {};
 
   async getSessionKeyByRoomName({ roomName }: { roomName: string }): Promise<string | null> {
-    return this.sessions[roomName]?.sessionKey || null;
+    return this.sessionKeyByRoomName[roomName] ?? null;
+  }
+
+  async getSessionKeyBySessionId({ sessionId }: { sessionId: string }): Promise<string | null> {
+    return this.sessions[sessionId]?.sessionKey ?? null;
   }
 
   async setSession({
@@ -22,32 +28,35 @@ class InMemorySessionStorage implements SessionStorage {
     sessionKey,
     sessionId,
   }: {
-    roomName: string;
+    roomName?: string;
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    this.sessions[roomName] = {
-      sessionKey,
-      captionsId: null,
-      captionsUserCount: 0,
-      archiveIds: [],
-    };
-    this.roomNameBySessionKey[sessionKey] = roomName;
-    if (sessionId) {
-      this.sessionKeyBySessionId[sessionId] = sessionKey;
+    const existingSession = this.sessions[sessionId];
+    this.sessions[sessionId] = existingSession
+      ? { ...existingSession, sessionKey }
+      : {
+          sessionKey,
+          captionsId: null,
+          captionsUserCount: 0,
+          archiveIds: [],
+          serverRotationPending: 0,
+          transcriptionWithSummary: true,
+        };
+    this.sessionIdBySessionKey[sessionKey] = sessionId;
+    if (roomName) {
+      this.sessionKeyByRoomName[roomName] = sessionKey;
     }
   }
 
   private getSessionByKey(sessionKey: string): SessionData | undefined {
-    const roomName = this.roomNameBySessionKey[sessionKey];
-    if (!roomName) return undefined;
-    return this.sessions[roomName];
+    const sessionId = this.sessionIdBySessionKey[sessionKey];
+    if (!sessionId) return undefined;
+    return this.sessions[sessionId];
   }
 
   private getSessionBySessionId(sessionId: string): SessionData | undefined {
-    const sessionKey = this.sessionKeyBySessionId[sessionId];
-    if (!sessionKey) return undefined;
-    return this.getSessionByKey(sessionKey);
+    return this.sessions[sessionId];
   }
 
   async setCaptionsId({
@@ -109,5 +118,38 @@ class InMemorySessionStorage implements SessionStorage {
   async getArchiveIds({ sessionId }: { sessionId: string }): Promise<string[]> {
     return this.getSessionBySessionId(sessionId)?.archiveIds ?? [];
   }
+
+  async setServerRotationPending({
+    sessionId,
+    pending,
+  }: {
+    sessionId: string;
+    pending: number;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.serverRotationPending = pending;
+  }
+
+  async getServerRotationPending({ sessionId }: { sessionId: string }): Promise<number> {
+    return this.getSessionBySessionId(sessionId)?.serverRotationPending ?? 0;
+  }
+
+  async setTranscriptionWithSummary({
+    sessionId,
+    withSummary,
+  }: {
+    sessionId: string;
+    withSummary: boolean;
+  }): Promise<void> {
+    const session = this.getSessionBySessionId(sessionId);
+    if (!session) return;
+    session.transcriptionWithSummary = withSummary;
+  }
+
+  async getTranscriptionWithSummary({ sessionId }: { sessionId: string }): Promise<boolean> {
+    return this.getSessionBySessionId(sessionId)?.transcriptionWithSummary ?? true;
+  }
 }
+
 export default InMemorySessionStorage;

@@ -6,6 +6,11 @@ import Box from '@mui/material/Box';
 import { mediaDevices$ } from '@core/stores';
 import { twMerge } from 'tailwind-merge';
 
+export const testIds = {
+  button: 'soundTest',
+  label: 'soundTestLabel',
+} as const;
+
 export type SoundTestProps = {
   children: ReactElement;
   labelClassName?: string;
@@ -56,12 +61,12 @@ const SoundTest = ({ children, labelClassName }: SoundTestProps): ReactElement =
         component="button"
         type="button"
         onClick={handlePlayAudio}
-        data-testid="soundTest"
+        data-testid={testIds.button}
         className="flex w-full items-center rounded-none border-0 bg-transparent px-4 py-1.5 text-left hover:bg-vera-background"
       >
         {children}
         <span
-          data-testid="soundTestLabel"
+          data-testid={testIds.label}
           className={twMerge('font-vera-plain text-vera-body-base', labelClassName)}
         >
           {!audioIsPlaying ? t('soundTest.start') : t('soundTest.stop')}

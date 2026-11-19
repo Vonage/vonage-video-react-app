@@ -1,0 +1,171 @@
+import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { runtime$ } from '@core/stores';
+import useSessionContext from '@hooks/useSessionContext';
+import advancedSettings$ from '@Context/AdvancedSettings';
+import ToolbarButton from '../ToolbarButton';
+import PopupDialog, { DialogTexts } from '../PopupDialog';
+import Tooltip from '@mui/material/Tooltip';
+import VividIcon from '@ui/components/VividIcon';
+import { Field } from '@ui/components';
+import classNames from 'classnames';
+import { RECORDING_START_DELAY } from '@utils/constants';
+import { TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
+
+export const testIds = {
+  button: 'post-call-transcription-button',
+} as const;
+
+export type PostCallTranscriptionButton = {
+  isOverflowButton?: boolean;
+  handleClick?: () => void;
+};
+
+/**
+ * PostCallTranscriptionButton Component
+ *
+ * Displays a button and handles the post-call transcription functionality. If a meeting is currently being transcribed,
+ * will confirm that a user wishes to stop the post-call transcription. If a meeting is not being transcribed, prompts
+ * the user before starting the transcription.
+ * @param {PostCallTranscriptionButton} props - the props for the component
+ *  @property {boolean} isOverflowButton - (optional) whether the button is in the ToolbarOverflowMenu
+ *  @property {(event?: MouseEvent | TouchEvent) => void} handleClick - (optional) click handler that closes the overflow menu in small viewports.
+ * @returns {ReactElement} - The PostCallTranscriptionButton component.
+ */
+const PostCallTranscriptionButton = ({
+  isOverflowButton = false,
+  handleClick,
+}: PostCallTranscriptionButton): ReactElement => {
+  const videoClient = runtime$.useVideoClient();
+  const { t } = useTranslation();
+  const {
+    transcriptionArchiveId,
+    markTranscriptionStartRequestedBySelf,
+    resetTranscriptionStartRequestedBySelf,
+    sessionKey,
+    connected,
+  } = useSessionContext();
+
+  const includeTranscriptionSummaryDefault = advancedSettings$.use.select(
+    ({ includeTranscriptionSummary }) => includeTranscriptionSummary
+  );
+
+  const isTranscribing = !!transcriptionArchiveId;
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [includeSummary, setIncludeSummary] = useState<boolean>(includeTranscriptionSummaryDefault);
+
+  const title = isTranscribing ? t('transcribing.stop.title') : t('transcribing.start.title');
+  const handleButtonClick = () => {
+    if (!isModalOpen) {
+      setIncludeSummary(includeTranscriptionSummaryDefault);
+    }
+    setIsModalOpen((prev) => !prev);
+  };
+
+  const startTranscribingText: DialogTexts = {
+    title: t('transcribing.start.dialog.title'),
+    contents: t('transcribing.start.dialog.content'),
+    primaryActionText: t('transcribing.start.title'),
+    secondaryActionText: t('button.cancel'),
+  };
+
+  const stopTranscribingText: DialogTexts = {
+    title: t('transcribing.stop.dialog.title'),
+    contents: t('transcribing.stop.dialog.content'),
+    primaryActionText: t('transcribing.stop.title'),
+    secondaryActionText: t('button.cancel'),
+  };
+
+  const actionText = isTranscribing ? stopTranscribingText : startTranscribingText;
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+
+    if (isOverflowButton && handleClick) {
+      handleClick();
+    }
+  };
+
+  const handleDialogClick = (action: 'start' | 'stop') => {
+    if (action === 'start') {
+      if (!transcriptionArchiveId && connected) {
+        markTranscriptionStartRequestedBySelf();
+        setTimeout(async () => {
+          try {
+            await videoClient.startArchive({
+              sessionKey: sessionKey!,
+              withTranscription: true,
+              withSummary: includeSummary,
+            });
+          } catch (err) {
+            resetTranscriptionStartRequestedBySelf();
+            console.log(err);
+          }
+        }, RECORDING_START_DELAY);
+      }
+    } else if (transcriptionArchiveId) {
+      videoClient
+        .stopArchive({ sessionKey: sessionKey!, archiveType: TRANSCRIPTION_ARCHIVE_NAME })
+        .catch((err) => {
+          console.error('Failed to stop transcription:', err);
+        });
+    }
+  };
+
+  const handleActionClick = () => {
+    handleClose();
+    handleDialogClick(isTranscribing ? 'stop' : 'start');
+  };
+
+  const startDialogExtraContent = !isTranscribing ? (
+    <Field className="pt-4">
+      <Field.Label htmlFor="post-call-transcription-include-summary">
+        {t('transcribing.start.dialog.includeSummary')}
+      </Field.Label>
+      <Field.Input
+        variant="switch"
+        id="post-call-transcription-include-summary"
+        checked={includeSummary}
+        onChange={(event) => setIncludeSummary(event.currentTarget.checked)}
+      />
+    </Field>
+  ) : null;
+
+  return (
+    <>
+      <Tooltip title={title} aria-label={t('transcribing.tooltip.ariaLabel')}>
+        <ToolbarButton
+          onClick={handleButtonClick}
+          data-testid={testIds.button}
+          className={classNames(
+            { transcribing: isTranscribing },
+            isTranscribing &&
+              '!bg-[color-mix(in_srgb,var(--vera-on-secondary-light)_33%,transparent)]'
+          )}
+          icon={
+            <VividIcon
+              name={isTranscribing ? 'voicemail-transcript-line' : 'voicemail-transcript-solid'}
+              customSize={-5}
+              style={{
+                color: 'var(--vera-on-secondary-light)',
+              }}
+            />
+          }
+          style={{
+            marginTop: isOverflowButton ? '0px' : '4px',
+          }}
+          isOverflowButton={isOverflowButton}
+        />
+      </Tooltip>
+      <PopupDialog
+        isOpen={isModalOpen}
+        handleClose={handleClose}
+        handleActionClick={handleActionClick}
+        actionText={actionText}
+        extraContent={startDialogExtraContent}
+      />
+    </>
+  );
+};
+
+export default PostCallTranscriptionButton;

@@ -15,17 +15,17 @@ describe('createClientEvent', () => {
       level: 'info',
       action: 'TestAction',
       payload: { key: 'value' },
-      sessionId: 'sid-1',
-      connectionId: 'conn-1',
+      session: { sessionId: 'sid-1', connectionId: 'conn-1', partnerId: 'partner-123' },
       timestamp: 1234567890,
-      partnerId: 'partner-123',
     });
 
     expect(event).toMatchObject({
       action: 'TestAction',
       payload: { key: 'value' },
+      session: { sessionId: 'sid-1', connectionId: 'conn-1', partnerId: 'partner-123' },
       sessionId: 'sid-1',
       connectionId: 'conn-1',
+      partnerId: 'partner-123',
       clientSystemTime: 1234567890,
       level: 'info',
     });
@@ -40,9 +40,7 @@ describe('createClientEvent', () => {
     const event = createClientEvent({
       level: 'info',
       action: 'A',
-      sessionId: 'sid-1',
-      connectionId: 'conn-1',
-      partnerId: 'partner-123',
+      session: { sessionId: 'sid-1', connectionId: 'conn-1' },
     });
     const after = Date.now();
 
@@ -50,70 +48,57 @@ describe('createClientEvent', () => {
     expect(event.clientSystemTime).toBeLessThanOrEqual(after);
   });
 
-  it('sets clientVersion, source, name, componentId from app/env and partnerId from input', () => {
+  it('sets clientVersion, source, name and componentId from app/env', () => {
     const event = createClientEvent({
       level: 'error',
       action: 'Error',
       payload: {},
-      partnerId: 'partner-123',
-      sessionId: 'sid-1',
-      connectionId: 'conn-1',
+      session: { sessionId: 'sid-1', connectionId: 'conn-1', partnerId: 'partner-123' },
     });
 
     expect(event.clientVersion).toBe(MOCK_VERSION);
     expect(event.source).toBeDefined();
     expect(event.name).toBe('vera');
     expect(event.componentId).toBe('vera');
-    expect(event.partnerId).toBe('partner-123');
   });
 
-  it('omits sessionId, connectionId, partnerId when not provided', () => {
+  it('carries userId inside session and mirrors it to referrer', () => {
+    const event = createClientEvent({
+      level: 'info',
+      action: 'TestAction',
+      session: { userId: 'user-123' },
+    });
+
+    expect(event.session).toEqual({ userId: 'user-123' });
+    expect(event.referrer).toBe('user-123');
+  });
+
+  it('leaves session undefined when not provided, so it is dropped on serialization', () => {
     const event = createClientEvent({
       level: 'info',
       action: 'TestAction',
       payload: { key: 'value' },
     });
 
+    expect(event.session).toBeUndefined();
+    expect(JSON.parse(JSON.stringify(event))).not.toHaveProperty('session');
     expect(event).not.toHaveProperty('sessionId');
     expect(event).not.toHaveProperty('connectionId');
     expect(event).not.toHaveProperty('partnerId');
-    expect(event).toMatchObject({ action: 'TestAction', payload: { key: 'value' } });
-  });
-
-  it('includes userId in the event when provided', () => {
-    const event = createClientEvent({
-      level: 'info',
-      action: 'TestAction',
-      userId: 'user-123',
-    });
-
-    expect(event).toHaveProperty('userId', 'user-123');
-  });
-
-  it('omits userId when not provided', () => {
-    const event = createClientEvent({
-      level: 'info',
-      action: 'TestAction',
-    });
-
-    expect(event).not.toHaveProperty('userId');
+    expect(event).not.toHaveProperty('referrer');
   });
 
   it('uses the same guid for all events from the same module (same page load)', () => {
     const event1 = createClientEvent({
       level: 'info',
       action: 'Error',
-      sessionId: 'sid-1',
-      connectionId: 'conn-1',
-      partnerId: 'partner-123',
+      session: { sessionId: 'sid-1', connectionId: 'conn-1' },
     });
     const event2 = createClientEvent({
       level: 'info',
       action: 'Error',
-      sessionId: 'sid-1',
-      connectionId: 'conn-1',
+      session: { sessionId: 'sid-1', connectionId: 'conn-1' },
       timestamp: 1234567890,
-      partnerId: 'partner-123',
     });
 
     expect(event1.guid).toBe(event2.guid);

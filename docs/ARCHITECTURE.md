@@ -58,6 +58,10 @@ The following rules determine where code belongs within the workspace:
 - **Dependency direction flows inward** — projects depend on libraries, but libraries must not depend on projects. Libraries may depend on other libraries (e.g., `libs/core` can use `libs/common`).
 - **Single responsibility** — each library has a clear, non-overlapping purpose. If new code could fit in multiple libraries, prefer the most specific one (e.g., a video-related hook goes in `libs/core`, not `libs/common`).
 
+## Error Reporting
+
+Client-side failures are reported through `frontend/src/logger/FrontendLogger.ts`. `publish`, `signal`, and the `forceMuteStream` moderation call use `async`/`await` with user-visible failure states.
+
 ## Related Documentation
 
 - [Getting Started](./GETTING_STARTED.md) — environment setup and local development

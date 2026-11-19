@@ -1,0 +1,28 @@
+name: check-pull-request-base-branch
+
+on:
+  pull_request:
+    types: [edited, opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-base-branch:
+    if: github.base_ref == 'main'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check base branch
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          set -e
+
+          if [[ "$HEAD_BRANCH" == release-* ]]; then
+            echo "Release branch '$HEAD_BRANCH' targeting 'main' - VALID"
+            exit 0
+          fi
+
+          echo "Only branches starting with 'release-' can target 'main', but found '$HEAD_BRANCH'"
+          exit 1
+        shell: bash

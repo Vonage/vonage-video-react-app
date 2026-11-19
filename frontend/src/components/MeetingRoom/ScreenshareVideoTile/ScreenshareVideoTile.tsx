@@ -8,6 +8,7 @@ import {
   useState,
   MouseEvent,
   useEffect,
+  useRef,
 } from 'react';
 import { hasMediaProcessorSupport } from '@vonage/client-sdk-video';
 import getBoxStyle from '../../../utils/helpers/getBoxStyle';
@@ -45,7 +46,7 @@ const ScreenshareVideoTile = forwardRef(
     }: ScreenshareVideoTileProps,
     ref: ForwardedRef<HTMLDivElement>
   ): ReactElement => {
-    const isZoomSupported = hasMediaProcessorSupport('both');
+    const isZoomSupported = hasMediaProcessorSupport('video');
     // Zoom state management
     const [zoomLevel, setZoomLevel] = useState<number>(1);
     const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({
@@ -53,15 +54,22 @@ const ScreenshareVideoTile = forwardRef(
       y: 0,
     });
     const [isDragging, setIsDragging] = useState<boolean>(false);
-    const [lastMousePosition, setLastMousePosition] = useState<{ x: number; y: number }>({
-      x: 0,
-      y: 0,
-    });
+    const lastMousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+    const pendingMouseMove = useRef<{ x: number; y: number } | null>(null);
+    const rafId = useRef<number | null>(null);
+
+    useEffect(() => {
+      return () => {
+        if (rafId.current !== null) {
+          cancelAnimationFrame(rafId.current);
+          rafId.current = null;
+        }
+      };
+    }, []);
 
     // Auto re-center when zoom returns to 100%
     useEffect(() => {
       if (zoomLevel === 1) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPanOffset({ x: 0, y: 0 });
         setIsDragging(false);
       }
@@ -102,41 +110,59 @@ const ScreenshareVideoTile = forwardRef(
     const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
       if (zoomLevel > 1) {
         setIsDragging(true);
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
+        lastMousePositionRef.current = { x: event.clientX, y: event.clientY };
       }
+    };
+
+    const applyPendingMouseMove = () => {
+      if (!pendingMouseMove.current) return;
+
+      const { x, y } = pendingMouseMove.current;
+      const deltaX = x - lastMousePositionRef.current.x;
+      const deltaY = y - lastMousePositionRef.current.y;
+      lastMousePositionRef.current = { x, y };
+      pendingMouseMove.current = null;
+
+      setPanOffset((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }));
+    };
+
+    const flushPendingMouseMove = () => {
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
+      applyPendingMouseMove();
     };
 
     const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-      if (isDragging && zoomLevel > 1) {
-        const deltaX = event.clientX - lastMousePosition.x;
-        const deltaY = event.clientY - lastMousePosition.y;
+      if (!isDragging || zoomLevel <= 1) return;
 
-        setPanOffset((prev) => ({
-          x: prev.x + deltaX,
-          y: prev.y + deltaY,
-        }));
-
-        setLastMousePosition({ x: event.clientX, y: event.clientY });
-      }
+      pendingMouseMove.current = { x: event.clientX, y: event.clientY };
+      rafId.current ??= requestAnimationFrame(() => {
+        rafId.current = null;
+        applyPendingMouseMove();
+      });
     };
 
     const handleMouseUp = () => {
+      flushPendingMouseMove();
       setIsDragging(false);
     };
 
     // Apply zoom transform style
-    const getTransformStyle = () => {
-      let cursor = 'default';
-      if (zoomLevel > 1) {
-        cursor = isDragging ? 'grabbing' : 'grab';
-      }
+    const cursor = (() => {
+      if (zoomLevel <= 1) return 'default';
+      return isDragging ? 'grabbing' : 'grab';
+    })();
 
-      return {
-        transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
-        transformOrigin: 'center',
-        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-        cursor,
-      };
+    const transformStyle = {
+      transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+      transformOrigin: 'center',
+      transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+      cursor,
     };
 
     const resetZoom = () => {
@@ -178,6 +204,7 @@ const ScreenshareVideoTile = forwardRef(
         className={className}
         onMouseEnter={() => onMouseEnter?.()}
         onMouseLeave={() => {
+          flushPendingMouseMove();
           setIsDragging(false);
           onMouseLeave?.();
         }}
@@ -196,7 +223,7 @@ const ScreenshareVideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            ...getTransformStyle(),
+            ...transformStyle,
           }}
         />
         <CustomBox
@@ -209,7 +236,7 @@ const ScreenshareVideoTile = forwardRef(
             width: '100%',
             height: '100%',
             overflow: 'hidden',
-            ...getTransformStyle(),
+            ...transformStyle,
           }}
         />
         {children}

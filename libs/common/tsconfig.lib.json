@@ -9,17 +9,16 @@
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
   "include": [
-    "testBrowser/**/*.tsx",
-    "testBrowser/**/*.ts",
-    "testNode/**/*.ts",
+    "web-test/**/*.tsx",
+    "web-test/**/*.ts",
+    "node-test/**/*.ts",
     "test/**/*.tsx",
     "test/**/*.ts",
-    "srcNode/**/*.ts",
-    "srcBrowser/**/*.tsx",
-    "srcBrowser/**/*.ts",
+    "node/**/*.ts",
+    "web/**/*.tsx",
+    "web/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.ts",
-    "src/types/FacingMode.ts"
+    "src/**/*.ts"
   ],
   "exclude": ["**/*.spec.*", "**/*.test.*"]
 }

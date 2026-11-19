@@ -46,12 +46,12 @@ describe('idempotentCallbackWithRetry', () => {
     expect(onRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('should use default retry count of 2', async () => {
+  it('should use default retry count of 4', async () => {
     const callback = vi.fn().mockRejectedValue(new Error('fail'));
 
     await expect(idempotentCallbackWithRetry(callback, { delayMs: 1 })).rejects.toThrow('fail');
 
-    expect(callback).toHaveBeenCalledTimes(3);
+    expect(callback).toHaveBeenCalledTimes(5);
   });
 
   it('should handle custom retry count', async () => {

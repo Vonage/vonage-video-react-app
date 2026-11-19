@@ -1,6 +1,10 @@
 import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
 
+export const testIds = {
+  separator: 'dropdown-separator',
+} as const;
+
 /**
  * DropdownSeparator Component
  *
@@ -10,12 +14,8 @@ import Box from '@mui/material/Box';
 const DropdownSeparator = (): ReactElement => {
   return (
     <Box
-      data-testid="dropdown-separator"
-      className="border-vera-border!"
-      sx={{
-        width: '100%',
-        borderBottom: '1px solid',
-      }}
+      data-testid={testIds.separator}
+      className="w-full border-b border-solid border-vera-border!"
     />
   );
 };

@@ -27,10 +27,13 @@ const appEnvKeys = [
   'WAITING_ROOM_ALLOW_ADVANCED_SETTINGS',
   'WAITING_ROOM_ALLOW_DEVICE_SELECTION',
   'ALLOW_ARCHIVING',
+  'ALLOW_POST_CALL_TRANSCRIPTION',
   'ALLOW_CAPTIONS',
+  'ALLOW_CAPTION_TRANSLATION',
   'ALLOW_CHAT',
   'MEETING_ROOM_ALLOW_DEVICE_SELECTION',
   'ALLOW_EMOJIS',
+  'ALLOW_MINI_MODE',
   'ALLOW_SCREEN_SHARE',
   'SHOW_PARTICIPANT_LIST',
   'BYPASS_WAITING_ROOM',
@@ -40,6 +43,7 @@ const appEnvKeys = [
   'TUNNEL_DOMAIN',
   'SHOW_VIDEO_STATS',
   'VONAGE_VIDEO_HOST',
+  'AUTH_ENABLED',
 ] as const;
 
 const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
@@ -77,14 +81,14 @@ const vitestConfig: VitestUserConfigInterface = defineVitestConfig({
       include: [
         `${path.resolve(__dirname, 'src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/common/src')}/**/*.{ts,tsx}`,
-        `${path.resolve(__dirname, '../libs/common/srcBrowser')}/**/*.{ts,tsx}`,
+        `${path.resolve(__dirname, '../libs/common/web')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/core/src')}/**/*.{ts,tsx}`,
         `${path.resolve(__dirname, '../libs/ui/src')}/**/*.{ts,tsx}`,
       ],
       exclude: [
         '**/test/**',
         '**/index.ts',
-        '**/testBrowser/**',
+        '**/web-test/**',
         '**/*.stories.tsx',
         '**/example/main.tsx',
         '**/vite.*.config.ts',
@@ -151,6 +155,10 @@ export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
   const isTest = mode === 'test';
 
+  const callbackPath = env.OIDC_WEB_REDIRECT_URI
+    ? new URL(env.OIDC_WEB_REDIRECT_URI).pathname
+    : null;
+
   const appEnvObject = {
     MODE: mode,
     ...(isTest
@@ -165,9 +173,36 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       allowedHosts: ['*', env.TUNNEL_DOMAIN],
+      proxy: {
+        // The local OIDC redirect URI points at this dev server, so the auth routes are proxied to
+        // the backend and the user lands back on the dev server after signing in.
+        ...(callbackPath
+          ? {
+              [callbackPath]: {
+                target: env.API_URL || 'http://localhost:3345',
+                changeOrigin: true,
+              },
+            }
+          : {}),
+        '/auth/signin': {
+          target: env.API_URL || 'http://localhost:3345',
+          changeOrigin: true,
+        },
+        '/auth/signout': {
+          target: env.API_URL || 'http://localhost:3345',
+          changeOrigin: true,
+        },
+      },
     },
     optimizeDeps: {
-      include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+      include: [
+        '@emotion/react',
+        '@emotion/styled',
+        '@mui/material/Tooltip',
+        '@vonage/client-sdk-video',
+        'react-i18next',
+        '@tanstack/react-query',
+      ],
     },
     plugins: [
       tailwindcss(),
@@ -201,10 +236,10 @@ export default defineConfig(({ mode }) => {
         '@test': '/src/test',
         '@ui': path.resolve(__dirname, '../libs/ui/src'),
         '@common': path.resolve(__dirname, '../libs/common/src'),
-        '@web': path.resolve(__dirname, '../libs/common/srcBrowser'),
+        '@web': path.resolve(__dirname, '../libs/common/web'),
         '@core': path.resolve(__dirname, '../libs/core/src'),
         '@common-test': path.resolve(__dirname, '../libs/common/test'),
-        '@web-test': path.resolve(__dirname, '../libs/common/testBrowser'),
+        '@web-test': path.resolve(__dirname, '../libs/common/web-test'),
         '@core-test': path.resolve(__dirname, '../libs/core/test'),
         '@ui-test': path.resolve(__dirname, '../libs/ui/test'),
       },
@@ -215,6 +250,24 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       minify: 'terser',
       cssMinify: true,
+      rollupOptions: {
+        output: {
+          manualChunks: (moduleId: string) => {
+            // Keeps vendor-vonage from importing vendor and inheriting its hash.
+            if (moduleId === '\0commonjsHelpers.js') return 'vendor-helpers';
+            if (!moduleId.includes('/node_modules/')) return undefined;
+            if (
+              /\/node_modules\/(@vonage\/client-sdk-video|@vonage\/video-client-network-test|opentok-layout-js)\//.test(
+                moduleId
+              )
+            ) {
+              return 'vendor-vonage';
+            }
+            if (/\/node_modules\/axios\//.test(moduleId)) return 'vendor-axios';
+            return 'vendor';
+          },
+        },
+      },
       terserOptions: {
         format: {
           comments: false,

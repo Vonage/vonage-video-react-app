@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll, vi } from 'vitest';
 import FormData from 'form-data';
 import JiraFeedbackService from '../jiraFeedbackService';
 import { FeedbackData, FeedbackOrigin } from '../../types/feedback';
 
-jest.mock('axios');
+vi.mock('axios');
 
 describe('JiraFeedbackService', () => {
   let jiraFeedbackService: JiraFeedbackService;
@@ -15,11 +15,11 @@ describe('JiraFeedbackService', () => {
     origin: 'web' as FeedbackOrigin,
   };
 
-  const mockPost = jest.spyOn(axios, 'post');
+  const mockPost = vi.spyOn(axios, 'post');
   const originalEnv = process.env;
 
   beforeAll(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...originalEnv, VIDEO_SERVICE_PROVIDER: 'opentok', JIRA_SEVERITY_ID: '12345' };
     jiraFeedbackService = new JiraFeedbackService();
   });
@@ -73,12 +73,10 @@ describe('JiraFeedbackService', () => {
 
   it('should create a valid issue and also include the screenshot if provided', async () => {
     const mockBuffer = Buffer.from('mocked buffer');
-    jest.spyOn(Buffer, 'from').mockReturnValue(mockBuffer);
+    vi.spyOn(Buffer, 'from').mockReturnValue(mockBuffer);
     const formDataMock = new FormData();
-    jest.spyOn(formDataMock, 'append');
-    jest
-      .spyOn(formDataMock, 'getHeaders')
-      .mockReturnValue({ 'Content-Type': 'multipart/form-data' });
+    vi.spyOn(formDataMock, 'append');
+    vi.spyOn(formDataMock, 'getHeaders').mockReturnValue({ 'Content-Type': 'multipart/form-data' });
     const feedbackData: FeedbackData = {
       ...sharedData,
       attachment: 'somerandomimagevalues',
@@ -166,7 +164,7 @@ describe('JiraFeedbackService', () => {
       },
     };
     mockPost.mockRejectedValue(axiosError);
-    jest.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
 
     await expect(jiraFeedbackService.reportIssue(feedbackData)).rejects.toThrow(
       'Jira API error: {"customfield_12403":"Severity is required."}'

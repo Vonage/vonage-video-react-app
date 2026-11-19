@@ -4,7 +4,7 @@ import CaptionsStatusSchema from './CaptionsStatus.schema';
 
 const CaptionsHookPayloadSchema = z
   .object({
-    captionId: z.string(),
+    captionsId: z.string(),
     projectId: z.string(),
     sessionId: SessionIdSchema,
 
@@ -19,10 +19,12 @@ const CaptionsHookPayloadSchema = z
     provider: z.string(),
     languageCode: z.string(),
 
-    stream: z.object({
-      streamId: z.string(),
-      streamStatus: CaptionsStatusSchema,
-    }),
+    stream: z
+      .object({
+        streamId: z.string(),
+        streamStatus: CaptionsStatusSchema,
+      })
+      .optional(),
 
     group: z.literal('captions'),
   })

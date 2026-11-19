@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockSessionId = 'mockSessionId';
 const mockToken = 'mockToken';
@@ -8,19 +8,18 @@ const mockRoomName = 'awesomeRoomName';
 const mockCaptionId = 'mockCaptionId';
 const mockApiSecret = 'mockApiSecret';
 
-// eslint-disable-next-line @typescript-eslint/await-thenable
-await jest.unstable_mockModule('opentok', () => ({
-  default: jest.fn().mockImplementation(() => ({
-    createSession: jest.fn(
+vi.doMock('opentok', () => ({
+  default: vi.fn().mockImplementation(() => ({
+    createSession: vi.fn(
       (_options: unknown, callback: (err: unknown, session: { sessionId: string }) => void) => {
         callback(null, { sessionId: mockSessionId });
       }
     ),
-    generateToken: jest.fn<() => { token: string; apiKey: string }>().mockReturnValue({
+    generateToken: vi.fn<[], { token: string; apiKey: string }>().mockReturnValue({
       token: mockToken,
       apiKey: mockApiKey,
     }),
-    startArchive: jest.fn(
+    startArchive: vi.fn(
       (
         _sessionId: string,
         _options: unknown,
@@ -40,12 +39,12 @@ await jest.unstable_mockModule('opentok', () => ({
         });
       }
     ),
-    stopArchive: jest.fn(
+    stopArchive: vi.fn(
       (_archiveId: string, callback: (err: unknown, archive: { archiveId: string }) => void) => {
         callback(null, { archiveId: mockArchiveId });
       }
     ),
-    listArchives: jest.fn(
+    listArchives: vi.fn(
       (_options: unknown, callback: (err: unknown, archives: [{ archiveId: string }]) => void) => {
         callback(null, [{ archiveId: mockArchiveId }]);
       }
@@ -54,10 +53,9 @@ await jest.unstable_mockModule('opentok', () => ({
   mediaMode: 'routed',
 }));
 
-// eslint-disable-next-line @typescript-eslint/await-thenable
-await jest.unstable_mockModule('axios', () => ({
+vi.doMock('axios', () => ({
   default: {
-    post: jest.fn<() => Promise<{ data: { captionsId: string } }>>().mockResolvedValue({
+    post: vi.fn<[], Promise<{ data: { captionsId: string } }>>().mockResolvedValue({
       data: { captionsId: mockCaptionId },
     }),
   },

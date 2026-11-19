@@ -3,8 +3,7 @@ import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { ReactElement, useState } from 'react';
 import { makeTestProvider } from '@test/providers';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import EmojiGridButton from './EmojiGridButton';
-import { env } from '../../../env';
+import EmojiGridButton, { testIds } from './EmojiGridButton';
 
 vi.mock('@mui/material/useMediaQuery', () => ({
   default: vi.fn(),
@@ -32,7 +31,7 @@ describe('EmojiGridButton', () => {
   it('renders', () => {
     render(<TestComponent />);
 
-    expect(screen.getByTestId('emoji-grid-button')).toBeVisible();
+    expect(screen.getByTestId(testIds.button)).toBeVisible();
   });
 
   it('clicking opens the emoji grid', () => {
@@ -40,21 +39,11 @@ describe('EmojiGridButton', () => {
     expect(screen.queryByTestId('emoji-grid')).not.toBeInTheDocument();
 
     act(() => {
-      screen.getByTestId('emoji-grid-button').click();
+      screen.getByTestId(testIds.button).click();
     });
 
     rerender(<TestComponent />);
     expect(screen.getByTestId('emoji-grid')).toBeVisible();
-  });
-
-  it('is not rendered when allowEmojis is false', () => {
-    env.partialUpdate({
-      ALLOW_EMOJIS: false,
-    });
-
-    render(<TestComponent />);
-
-    expect(screen.queryByTestId('emoji-grid-button')).not.toBeInTheDocument();
   });
 });
 

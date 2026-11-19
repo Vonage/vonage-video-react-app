@@ -7,6 +7,7 @@ import VividIcon from '@ui/components/VividIcon';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuDevices from '../MenuDevices';
 import MenuMoreOptions from '../MenuMoreOptions/MenuMoreOptions';
+import { env } from '../../../env';
 
 const textSx: SxProps = {
   flex: '1 1 0',
@@ -96,76 +97,80 @@ const ControlPanel = ({
           padding: '0 4px',
         }}
       >
-        <ButtonBase
-          className="text-vera-text-secondary! hover:bg-vera-background!"
-          sx={buttonSx}
-          aria-controls={openAudioInput ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={openAudioInput ? 'true' : undefined}
-          aria-label={t('devices.audio.microphone.ariaLabel')}
-          onClick={handleAudioInputOpen}
-        >
-          <VividIcon name="microphone-line" customSize={-6} />
-          <Box component="span" sx={textSx}>
-            {isSmallViewport
-              ? t('devices.audio.microphone.short')
-              : t('devices.audio.microphone.full')}
-          </Box>
-          <VividIcon name="chevron-down-line" customSize={-6} />
-        </ButtonBase>
+        {env.WAITING_ROOM_ALLOW_DEVICE_SELECTION && (
+          <>
+            <ButtonBase
+              className="text-vera-text-secondary! hover:bg-vera-background!"
+              sx={buttonSx}
+              aria-controls={openAudioInput ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={openAudioInput ? 'true' : undefined}
+              aria-label={t('devices.audio.microphone.ariaLabel')}
+              onClick={handleAudioInputOpen}
+            >
+              <VividIcon name="microphone-line" customSize={-6} />
+              <Box component="span" sx={textSx}>
+                {isSmallViewport
+                  ? t('devices.audio.microphone.short')
+                  : t('devices.audio.microphone.full')}
+              </Box>
+              <VividIcon name="chevron-down-line" customSize={-6} />
+            </ButtonBase>
 
-        <MenuDevices
-          mediaDeviceKind="audioinput"
-          open={openAudioInput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        />
+            <MenuDevices
+              mediaDeviceKind="audioinput"
+              open={openAudioInput}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+            />
 
-        <ButtonBase
-          onClick={handleVideoInputOpen}
-          className="text-vera-text-secondary! hover:bg-vera-background!"
-          sx={buttonSx}
-          aria-controls={openVideoInput ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={openVideoInput ? 'true' : undefined}
-          aria-label={t('devices.video.camera.ariaLabel')}
-        >
-          <VividIcon name="video-line" customSize={-6} />
-          <Box component="span" sx={textSx}>
-            {t('button.camera')}
-          </Box>
-          <VividIcon name="chevron-down-line" customSize={-6} />
-        </ButtonBase>
+            <ButtonBase
+              onClick={handleVideoInputOpen}
+              className="text-vera-text-secondary! hover:bg-vera-background!"
+              sx={buttonSx}
+              aria-controls={openVideoInput ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={openVideoInput ? 'true' : undefined}
+              aria-label={t('devices.video.camera.ariaLabel')}
+            >
+              <VividIcon name="video-line" customSize={-6} />
+              <Box component="span" sx={textSx}>
+                {t('button.camera')}
+              </Box>
+              <VividIcon name="chevron-down-line" customSize={-6} />
+            </ButtonBase>
 
-        <MenuDevices
-          mediaDeviceKind="videoinput"
-          open={openVideoInput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        />
+            <MenuDevices
+              mediaDeviceKind="videoinput"
+              open={openVideoInput}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+            />
 
-        <ButtonBase
-          onClick={handleAudioOutputOpen}
-          className="text-vera-text-secondary! hover:bg-vera-background!"
-          sx={buttonSx}
-          aria-controls={openAudioOutput ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={openAudioOutput ? 'true' : undefined}
-          aria-label={t('devices.audio.speakers.full')}
-        >
-          <VividIcon name="audio-off-2-line" customSize={-6} />
-          <Box component="span" sx={textSx}>
-            {t('button.speaker')}
-          </Box>
-          <VividIcon name="chevron-down-line" customSize={-6} />
-        </ButtonBase>
+            <ButtonBase
+              onClick={handleAudioOutputOpen}
+              className="text-vera-text-secondary! hover:bg-vera-background!"
+              sx={buttonSx}
+              aria-controls={openAudioOutput ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={openAudioOutput ? 'true' : undefined}
+              aria-label={t('devices.audio.speakers.full')}
+            >
+              <VividIcon name="audio-off-2-line" customSize={-6} />
+              <Box component="span" sx={textSx}>
+                {t('button.speaker')}
+              </Box>
+              <VividIcon name="chevron-down-line" customSize={-6} />
+            </ButtonBase>
 
-        <MenuDevices
-          mediaDeviceKind="audiooutput"
-          open={openAudioOutput}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-        />
+            <MenuDevices
+              mediaDeviceKind="audiooutput"
+              open={openAudioOutput}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+            />
+          </>
+        )}
 
         <ButtonBase
           onClick={handleOpenMoreOptions}

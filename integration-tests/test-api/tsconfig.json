@@ -8,7 +8,7 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@api-lib": ["../../libs/api/src"],
@@ -17,8 +17,8 @@
       "@common/*": ["../../libs/common/src/*"],
       "@common-test": ["../../libs/common/test"],
       "@common-test/*": ["../../libs/common/test/*"],
-      "@node": ["../../libs/common/srcNode"],
-      "@node/*": ["../../libs/common/srcNode/*"]
+      "@node": ["../../libs/common/node"],
+      "@node/*": ["../../libs/common/node/*"]
     }
   },
   "include": ["**/*.ts"]

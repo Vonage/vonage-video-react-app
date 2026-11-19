@@ -1,9 +1,8 @@
-import { useEffect, useState, useEffectEvent } from 'react';
+import { useEffect, useMemo, useState, useEffectEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import usePublisherContext from './usePublisherContext';
 import useSessionContext from './useSessionContext';
-import useScreenShare from './useScreenShare';
 import useBackgroundPublisherContext from './useBackgroundPublisherContext';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
 import type { PublishingErrorType } from '../Context/PublisherProvider/usePublisher/usePublisher';
@@ -12,6 +11,9 @@ import { env } from '../env';
 import useMountEffect from '@web/hooks/useMountEffect';
 import { runtime$ } from '@core/stores';
 import useSessionKeyParam from './useSessionKeyParam';
+import { screenShare$ } from '@Context';
+import frontendLogger from '../logger';
+import attempt from '@common/execution/attempt';
 
 const useMeetingRoom = () => {
   const videoClient = runtime$.useVideoClient();
@@ -57,24 +59,25 @@ const useMeetingRoom = () => {
     closeRightPanel,
     toggleReportIssue,
     archiveId,
+    recordingArchiveId,
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
+    transcriptionArchiveId,
   } = useSessionContext();
 
-  const {
-    isSharingScreen,
-    isEntireScreen,
-    screensharingPublisher,
-    screenshareVideoElement,
-    toggleShareScreen,
-  } = useScreenShare();
+  const { toggleShareScreen } = screenShare$.use.actions();
+  const isSharingScreen = screenShare$.useIsSharingScreen();
+  const isEntireScreen = screenShare$.useIsEntireScreen();
+  const screensharingPublisher = screenShare$.useScreensharingPublisher();
+  const screenshareVideoElement = screenShare$.useScreenshareVideoElement();
 
+  const [joinError, setJoinError] = useState<Error | null>(null);
   const [isUserCaptionsEnabled, setIsUserCaptionsEnabled] = useState<boolean>(false);
   const [captionsErrorResponse, setCaptionsErrorResponse] = useState<string | null>('');
 
   const [latestNotifiedArchiveId, setLatestNotifiedArchiveId] = useState<string | null>(null);
   const handleRecordingNotified = () => {
-    setLatestNotifiedArchiveId(archiveId);
+    setLatestNotifiedArchiveId(recordingArchiveId);
   };
   const shouldPromptRecordingConsent =
     !!archiveId && (archiveIdStartedBySelf === null || archiveId !== archiveIdStartedBySelf);
@@ -96,6 +99,8 @@ const useMeetingRoom = () => {
     /**
      * [TODO]: Reconcile sessionKey if necessary. This is needed for legacy support where the url contains only a room name.
      */
+    let cancelled = false;
+
     const resolveAndJoin = async () => {
       const resolvedSessionKey = await (async () => {
         if (sessionKeyStatus === 'valid') return sessionKey;
@@ -110,12 +115,24 @@ const useMeetingRoom = () => {
         return session.sessionKey;
       })();
 
+      if (cancelled) return;
+
       await joinRoom({ sessionKey: resolvedSessionKey });
     };
 
-    void resolveAndJoin();
+    void attempt(resolveAndJoin, (error) => {
+      frontendLogger.reportError(error, {
+        eventSource: 'useMeetingRoom.resolveAndJoin.error',
+        sessionKey,
+      });
+
+      if (cancelled) return;
+
+      setJoinError(error instanceof Error ? error : new Error('Unknown join error'));
+    });
 
     return () => {
+      cancelled = true;
       disconnect?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,7 +150,7 @@ const useMeetingRoom = () => {
 
   useEffect(() => {
     if (connected && publisher && publish) {
-      void publish();
+      void publish().catch(() => {});
     }
   }, [publisher, publish, connected]);
 
@@ -159,13 +176,21 @@ const useMeetingRoom = () => {
     reconnecting,
     sessionKey,
   });
+  useRedirectOnJoinError({
+    joinError,
+    sessionKey,
+  });
 
-  const isRecording = !!archiveId;
-  const captionsState = {
-    isUserCaptionsEnabled,
-    setIsUserCaptionsEnabled,
-    setCaptionsErrorResponse,
-  };
+  const isRecording = !!recordingArchiveId || (!!archiveId && archiveId !== transcriptionArchiveId);
+  const isTranscribing = !!transcriptionArchiveId;
+  const captionsState = useMemo(
+    () => ({
+      isUserCaptionsEnabled,
+      setIsUserCaptionsEnabled,
+      setCaptionsErrorResponse,
+    }),
+    [isUserCaptionsEnabled, setIsUserCaptionsEnabled, setCaptionsErrorResponse]
+  );
 
   return {
     t,
@@ -185,6 +210,7 @@ const useMeetingRoom = () => {
     quality,
     isVideoEnabled,
     isRecording,
+    isTranscribing,
     isUserCaptionsEnabled,
     captionsErrorResponse,
     setCaptionsErrorResponse,
@@ -192,6 +218,7 @@ const useMeetingRoom = () => {
     recordingAlreadyNotified,
     archiveIdStartedBySelf,
     archiveId,
+    recordingArchiveId,
     shouldPromptRecordingConsent,
     handleRecordingNotified,
     latestNotifiedArchiveId,
@@ -285,6 +312,39 @@ function useRedirectOnSubscriberError({
   useEffect(() => {
     maybeRedirect();
   }, [subscriberError, reconnecting]);
+}
+
+/**
+ * If the user is unable to create or join the session, we redirect them to the goodbye page.
+ * Without this, the meeting-room UI stays mounted with no working connection and no way to leave.
+ * @param {Error | null} joinError - The join error object or null if no error.
+ */
+function useRedirectOnJoinError({
+  joinError,
+  sessionKey,
+}: {
+  joinError: Error | null;
+  sessionKey: string | null;
+}) {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const maybeRedirect = useEffectEvent(() => {
+    if (!joinError) {
+      return;
+    }
+
+    void navigate(`/goodbye/${sessionKey || ''}`, {
+      state: {
+        header: t('subscribingErrors.blocked.title'),
+        caption: t('subscribingErrors.blocked.message'),
+      },
+    });
+  });
+
+  useEffect(() => {
+    maybeRedirect();
+  }, [joinError]);
 }
 
 export default useMeetingRoom;

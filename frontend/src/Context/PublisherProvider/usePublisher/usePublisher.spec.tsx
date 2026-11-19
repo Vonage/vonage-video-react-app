@@ -14,6 +14,7 @@ import composeProviders from '@web/helpers/composeProviders';
 import { StrictMode } from 'react';
 import { setupWindowNavigatorMock, makeMediaDeviceInfos } from '@web-test/fixtures';
 import mediaDevices$ from '@core/stores/mediaDevices';
+import frontendLogger from '../../../logger';
 
 vi.mock('@vonage/client-sdk-video');
 
@@ -39,6 +40,7 @@ describe('usePublisher', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, 'error').mockImplementation(vi.fn());
+    vi.spyOn(frontendLogger, 'reportError');
     setupWindowNavigatorMock({
       mediaDevices: {
         enumerateDevices: Promise.resolve(someDevices),
@@ -355,9 +357,7 @@ describe('usePublisher', () => {
 
     it('should retry publishing 3 times before setting error state', async () => {
       mockedInitPublisher.mockReturnValue(mockPublisher);
-      mockedSessionPublish.mockImplementation((_, callback) => {
-        callback(new Error('Mocked error'));
-      });
+      mockedSessionPublish.mockRejectedValue(new Error('Mocked error'));
       const { result } = renderHook(() => usePublisher());
 
       act(() => {
@@ -367,7 +367,7 @@ describe('usePublisher', () => {
       expect(result.current.publishingError).toBeNull();
 
       await act(async () => {
-        await result.current.publish();
+        await expect(result.current.publish()).rejects.toThrow('Mocked error');
       });
 
       const publishingBlockedError = {
@@ -377,6 +377,10 @@ describe('usePublisher', () => {
       };
       expect(result.current.publishingError).toEqual(publishingBlockedError);
       expect(mockedSessionPublish).toHaveBeenCalledTimes(3);
+      expect(frontendLogger.reportError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Mocked error' }),
+        { eventSource: 'usePublisher.publish' }
+      );
     });
 
     it('should not publish if publisher is not initialized', async () => {
@@ -385,7 +389,7 @@ describe('usePublisher', () => {
       expect(result.current.publisher).toBeNull();
 
       await act(async () => {
-        await result.current.publish();
+        await expect(result.current.publish()).rejects.toThrow('Publisher is not initialized');
       });
 
       expect(mockedSessionPublish).not.toHaveBeenCalled();
@@ -579,6 +583,25 @@ describe('usePublisher', () => {
       await waitFor(() => {
         expect(result.current.publisherVideoElement).toBe(mockVideoElement);
       });
+    });
+
+    it('should destroy the publisher (release the camera) on unmount', async () => {
+      mockedInitPublisher.mockReturnValue(mockPublisher);
+      const { result, unmount } = renderHook(() => usePublisher());
+
+      act(() => {
+        result.current.initializeLocalPublisher({});
+        // @ts-expect-error We simulate the browser granting camera/microphone access.
+        mockPublisher.emit('accessAllowed');
+      });
+
+      await waitFor(() => {
+        expect(result.current.publisher).toBe(mockPublisher);
+      });
+
+      unmount();
+
+      expect(destroySpy).toHaveBeenCalled();
     });
   });
 });

@@ -52,6 +52,40 @@ describe('usePublisherStats', () => {
     });
   });
 
+  describe('encoded resolution', () => {
+    it('prefers the largest encoded layer over the captured dimensions', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher(
+        [
+          makeStatsContainer({
+            video: {
+              layers: [
+                { width: 640, height: 360 },
+                { width: 320, height: 180 },
+              ],
+            },
+          }),
+        ],
+        // The camera still captures 720p while the encoder sends less.
+        { videoWidth: 1280, videoHeight: 720 }
+      );
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          fixedFrameRate: 30,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.resolution.toString()).toBe('640x360');
+    });
+  });
+
   describe('frameRate', () => {
     it('does NOT treat 0 fps as missing because it is a valid value', async () => {
       expect.assertions(1);
@@ -79,6 +113,33 @@ describe('usePublisherStats', () => {
 
       // 0 fps is a real value; the formatted output should not be the fallback '-'
       expect(stats.frameRate.value).toBe(0);
+    });
+
+    it('reads the highest encoding layer', async () => {
+      expect.assertions(1);
+
+      const publisher = makePublisher([
+        makeStatsContainer({
+          video: {
+            // Layer-only stats, as the client observability guide describes them.
+            frameRate: undefined,
+            layers: [{ encodedFrameRate: 5 }, { encodedFrameRate: 24 }],
+          },
+        }),
+      ]);
+
+      const { result } = renderHook(() =>
+        usePublisherStats({
+          publisher,
+          publisherStatisticsEnabled: true,
+          fixedFrameRate: null,
+          queryOptions: { refetchInterval: false },
+        })
+      );
+
+      const stats = await waitForStatsToLoad(result);
+
+      expect(stats.frameRate.value).toBe(24);
     });
   });
 

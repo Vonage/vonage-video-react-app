@@ -1,0 +1,45 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "local-oidc",
+  "projectType": "application",
+  "root": "apps/local-oidc",
+  "sourceRoot": "apps/local-oidc/src",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/local-oidc",
+        "command": "node --import tsx --watch src/main.ts"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/local-oidc",
+        "command": "node --import tsx src/main.ts"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/local-oidc",
+        "command": "eslint 'src/**/*.ts' --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/local-oidc",
+        "command": "eslint 'src/**/*.ts' --fix --report-unused-disable-directives --max-warnings 0"
+      }
+    },
+    "ts-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/local-oidc",
+        "command": "tsc --noEmit -p tsconfig.json --pretty true"
+      }
+    }
+  },
+  "tags": []
+}

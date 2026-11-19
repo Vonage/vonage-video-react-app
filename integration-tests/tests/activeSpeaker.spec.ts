@@ -1,7 +1,31 @@
 import { expect } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { waitUntilReady } from './utils';
+import { Page } from '@playwright/test';
+import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
+
+const ACTIVE_SPEAKER_SWITCH_TIMEOUT = 2500;
+
+const setMicrophone = async (page: Page, isOn: boolean) => {
+  await page
+    .getByTestId(isOn ? 'MicOffToolbar' : 'MicNoneIcon')
+    .first()
+    .click();
+  await expect(page.getByTestId(isOn ? 'MicNoneIcon' : 'MicOffToolbar').first()).toBeVisible();
+};
+
+const getLargestSubscriberTileText = (page: Page) =>
+  page.locator('[data-testid^="subscriber-container-"]').evaluateAll((tiles): string => {
+    const largestTile = tiles.reduce<{ area: number; text: string }>(
+      (largest, tile) => {
+        const { width, height } = tile.getBoundingClientRect();
+        const area = width * height;
+        return area > largest.area ? { area, text: (tile as HTMLElement).innerText } : largest;
+      },
+      { area: 0, text: '' }
+    );
+    return largestTile.text;
+  });
 
 test.describe('active speaker', () => {
   test('should display the active speaker in a larger tile', async ({
@@ -46,5 +70,62 @@ test.describe('active speaker', () => {
     expect(newSizeSub.width).toBeGreaterThan(1.2 * newSizePub.width);
     // Check if the height of the subscriber is at almost double the height of the publisher
     expect(newSizeSub.height).toBeGreaterThan(1.9 * newSizePub.height);
+  });
+
+  test('moves the large tile to whoever starts speaking within 2.5 seconds', async ({
+    page: watcherPage,
+    context,
+    browserName,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'The active speaker layout needs room for a large tile');
+    // Firefox cannot play the speech WAV as fake microphone input, so no speaker switch is detected.
+    test.skip(
+      browserName === 'firefox',
+      'With its fake microphone on CI, Firefox never switches the active speaker'
+    );
+    const roomName = crypto.randomBytes(5).toString('hex');
+    const alicePage = await context.newPage();
+    const bobPage = await context.newPage();
+
+    await openMeetingRoomWithSettings({
+      page: watcherPage,
+      roomName,
+      username: 'Watcher',
+      audioOff: true,
+      browserName,
+    });
+    await openMeetingRoomWithSettings({
+      page: alicePage,
+      roomName,
+      username: 'Alice',
+      browserName,
+    });
+    await openMeetingRoomWithSettings({
+      page: bobPage,
+      roomName,
+      username: 'Bob',
+      audioOff: true,
+      browserName,
+    });
+    await expect(watcherPage.locator('[data-testid^="subscriber-container-"]')).toHaveCount(2, {
+      timeout: 30_000,
+    });
+    await expect.poll(() => getLargestSubscriberTileText(watcherPage)).toContain('Alice');
+
+    for (const [nextSpeaker, nextPage, previousPage] of [
+      ['Bob', bobPage, alicePage],
+      ['Alice', alicePage, bobPage],
+    ] as const) {
+      await setMicrophone(previousPage, false);
+      await setMicrophone(nextPage, true);
+
+      await expect
+        .poll(() => getLargestSubscriberTileText(watcherPage), {
+          timeout: ACTIVE_SPEAKER_SWITCH_TIMEOUT,
+          intervals: [100],
+        })
+        .toContain(nextSpeaker);
+    }
   });
 });

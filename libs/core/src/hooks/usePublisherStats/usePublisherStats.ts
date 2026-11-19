@@ -1,5 +1,6 @@
 import { runtime$ } from '@core/stores';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import {
   BitrateValue,
   bytesValue,
@@ -17,6 +18,7 @@ import {
 import type { Publisher, PublisherStatsArr, VideoLayerStats } from '@vonage/client-sdk-video';
 import useStableRef from '@web/hooks/useStableRef/useStableRef';
 import { isNil } from '@common/assertions';
+import { readHighestLayerResolution, readHighestLayerFrameRate } from './helpers';
 
 const POLL_INTERVAL_MS = 2000;
 
@@ -60,7 +62,10 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
   );
 
   return runtime$.useQuery({
-    queryKey: ['publisherStats', publisher?.id, publisherStatisticsEnabled],
+    queryKey: coreQueryKeys.publisherStats({
+      publisherId: publisher?.id,
+      isPublisherStatisticsEnabled: publisherStatisticsEnabled,
+    }),
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!publisher) return null;
@@ -81,11 +86,20 @@ const usePublisherStats = <Selected = PublisherInspectorStatistics | null>({
       const firstPublisherStatsContainer = publisherStatsContainers[0];
       const stats = firstPublisherStatsContainer?.stats;
 
-      const frameRate = fixedFrameRate ?? null;
+      const frameRate =
+        readHighestLayerFrameRate(stats?.video?.layers) ??
+        stats?.video?.frameRate ??
+        fixedFrameRate ??
+        null;
 
-      const width = publisher.videoWidth();
-      const height = publisher.videoHeight();
-      const resolution = isNil(width) || isNil(height) ? null : { width, height };
+      const capturedWidth = publisher.videoWidth();
+      const capturedHeight = publisher.videoHeight();
+      const capturedResolution =
+        isNil(capturedWidth) || isNil(capturedHeight)
+          ? null
+          : { width: capturedWidth, height: capturedHeight };
+
+      const resolution = readHighestLayerResolution(stats?.video?.layers) ?? capturedResolution;
 
       const connectionEstimatedBandwidthValues = publisherStatsContainers
         .map((container) => container.stats.mediaLink?.transport?.connectionEstimatedBandwidth)
@@ -151,10 +165,12 @@ type PreviousPublisherVideoSample = {
 
 function getPublisherStats(publisher: Publisher): Promise<PublisherStatsArr | null> {
   return new Promise((resolve) => {
-    publisher.getStats((error, stats) => {
-      if (error) return resolve(null);
-      resolve(stats ?? null);
-    });
+    publisher
+      .getStats((error, stats) => {
+        if (error) return resolve(null);
+        resolve(stats ?? null);
+      })
+      .catch(() => resolve(null));
   });
 }
 

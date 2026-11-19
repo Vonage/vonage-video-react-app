@@ -3,6 +3,7 @@ import getSessionStorageService from '../sessionStorageService';
 import { makeVideoClient$ } from './video';
 import { makeInternalErrorHandler } from '@api-lib/errors';
 import { getSessionKeyFromRoomName, getOrCreateSessionKeyFromRoomName } from '../helpers';
+import type { RequestWithTokenAuth } from '../middleware/authMiddleware/authMiddleware';
 
 const sessionRouter = Router();
 const sessionService = getSessionStorageService();
@@ -12,7 +13,11 @@ const videoClient = makeVideoClient$();
 sessionRouter.get('/:room', async (req: Request<{ room: string }>, res: Response) => {
   try {
     const { room: roomName } = req.params;
-    const sessionKey = await getOrCreateSessionKeyFromRoomName({ videoClient, roomName });
+    const sessionKey = await getOrCreateSessionKeyFromRoomName({
+      videoClient,
+      roomName,
+      user: (req as RequestWithTokenAuth).user,
+    });
 
     const { token } = videoClient.joinSession({
       sessionKey,

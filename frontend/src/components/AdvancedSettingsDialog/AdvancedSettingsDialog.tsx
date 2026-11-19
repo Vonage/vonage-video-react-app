@@ -9,6 +9,9 @@ import { AdvancedSettingsGeneralTab } from './components/AdvancedSettingsGeneral
 import { AdvancedSettingsSidebar } from './components/AdvancedSettingsSidebar';
 import { AdvancedSettingsStatisticsTab } from './components/AdvancedSettingsStatisticsTab';
 import { AdvancedSettingsVideoTab } from './components/AdvancedSettingsVideoTab';
+import { AdvancedSettingsScreenSharingTab } from './components/AdvancedSettingsScreenSharingTab';
+import { AdvancedSettingsCaptionsTab } from './components/AdvancedSettingsCaptionsTab';
+import isCaptionsTabAvailable from './helpers/isCaptionsTabAvailable';
 
 const AdvancedSettingsDialog = (): ReactElement => {
   const { t } = useTranslation();
@@ -18,8 +21,13 @@ const AdvancedSettingsDialog = (): ReactElement => {
   const tabContent = (() => {
     if (selectedTab === 'general') return <AdvancedSettingsGeneralTab />;
     if (selectedTab === 'video') return <AdvancedSettingsVideoTab />;
+    if (selectedTab === 'screenSharing') return <AdvancedSettingsScreenSharingTab />;
     if (selectedTab === 'audio') return <AdvancedSettingsAudioTab />;
-    return <AdvancedSettingsStatisticsTab />;
+    if (selectedTab === 'captions' && isCaptionsTabAvailable()) {
+      return <AdvancedSettingsCaptionsTab />;
+    }
+    if (selectedTab === 'statistics') return <AdvancedSettingsStatisticsTab />;
+    return <AdvancedSettingsGeneralTab />;
   })();
 
   return (
@@ -38,7 +46,7 @@ const AdvancedSettingsDialog = (): ReactElement => {
     >
       <div className="flex h-full flex-col bg-vera-surface">
         <div className="relative border-b border-vera-border bg-vera-surface px-6 pb-4 pt-6">
-          <h2 className="font-vera-plain text-vera-heading-2 text-vera-secondary">
+          <h2 className="font-vera-plain text-vera-heading-2 text-vera-text-secondary">
             {t('advancedSettings.title')}
           </h2>
           <button

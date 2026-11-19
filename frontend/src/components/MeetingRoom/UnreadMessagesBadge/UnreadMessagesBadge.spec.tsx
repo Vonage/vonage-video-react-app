@@ -3,8 +3,7 @@ import { render as renderBase, screen, cleanup } from '@testing-library/react';
 import VividIcon from '@ui/components/VividIcon';
 import { ReactElement } from 'react';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import UnreadMessagesBadge from './UnreadMessagesBadge';
-import { env } from '../../../env';
+import UnreadMessagesBadge, { testIds } from './UnreadMessagesBadge';
 import ToolbarButton from '../ToolbarButton';
 const LittleButton = () => (
   <ToolbarButton onClick={() => {}} icon={<VividIcon name="chat-solid" customSize={-6} />} />
@@ -31,8 +30,8 @@ describe('UnreadMessagesBadge', () => {
       }
     );
 
-    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('8');
+    expect(screen.getByTestId(testIds.unreadCount)).toBeVisible();
+    expect(screen.getByTestId(testIds.unreadCount).textContent).toBe('8');
 
     cleanup();
 
@@ -50,8 +49,8 @@ describe('UnreadMessagesBadge', () => {
         },
       }
     );
-    expect(screen.getByTestId('chat-button-unread-count')).toBeVisible();
-    expect(screen.getByTestId('chat-button-unread-count').textContent).toBe('9');
+    expect(screen.getByTestId(testIds.unreadCount)).toBeVisible();
+    expect(screen.getByTestId(testIds.unreadCount).textContent).toBe('9');
   });
 
   it('should not show unread message number when number is 0', () => {
@@ -61,7 +60,7 @@ describe('UnreadMessagesBadge', () => {
       </UnreadMessagesBadge>
     );
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(testIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -74,7 +73,7 @@ describe('UnreadMessagesBadge', () => {
       </UnreadMessagesBadge>
     );
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(testIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -96,7 +95,7 @@ describe('UnreadMessagesBadge', () => {
       }
     );
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(testIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -118,7 +117,7 @@ describe('UnreadMessagesBadge', () => {
       }
     );
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(testIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -131,7 +130,7 @@ describe('UnreadMessagesBadge', () => {
     );
 
     // the badge remains hidden since the overflow toolbar is currently opened
-    const updatedBadge = screen.getByTestId('chat-button-unread-count');
+    const updatedBadge = screen.getByTestId(testIds.unreadCount);
     expect(updatedBadge.offsetHeight).toBe(0);
     expect(updatedBadge.offsetWidth).toBe(0);
   });
@@ -152,7 +151,7 @@ describe('UnreadMessagesBadge', () => {
       }
     );
 
-    const badge = screen.getByTestId('chat-button-unread-count');
+    const badge = screen.getByTestId(testIds.unreadCount);
     // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
     expect(badge.offsetHeight).toBe(0);
     expect(badge.offsetWidth).toBe(0);
@@ -175,35 +174,9 @@ describe('UnreadMessagesBadge', () => {
       }
     );
 
-    const updatedBadge = screen.getByTestId('chat-button-unread-count');
+    const updatedBadge = screen.getByTestId(testIds.unreadCount);
     expect(updatedBadge).toBeVisible();
     expect(updatedBadge.textContent).toBe('1');
-  });
-
-  it('should not show the message badge when allowChat is false', () => {
-    env.partialUpdate({
-      ALLOW_CHAT: false,
-    });
-
-    render(
-      <UnreadMessagesBadge>
-        <LittleButton />
-      </UnreadMessagesBadge>,
-      {
-        sessionContext: {
-          __interceptor: (context) => {
-            if (context) {
-              context.unreadCount = 8;
-            }
-          },
-        },
-      }
-    );
-
-    const badge = screen.getByTestId('chat-button-unread-count');
-    // Check badge is hidden:  MUI hides badge by setting dimensions to 0x0
-    expect(badge.offsetHeight).toBe(0);
-    expect(badge.offsetWidth).toBe(0);
   });
 });
 

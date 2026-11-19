@@ -29,6 +29,16 @@ export {
 } from './makeRuntimeProviderWrapper';
 
 export {
-  default as makeAdvancedSettingsProviderWrapper,
-  type AdvancedSettingsProviderWrapperOptions,
-} from './makeAdvancedSettingsProviderWrapper';
+  default as makeScreenShareProviderWrapper,
+  type ScreenShareProviderWrapperOptions,
+} from './makeScreenShareProviderWrapper';
+
+export {
+  default as makeMiniModeProviderWrapper,
+  type MiniModeProviderWrapperOptions,
+} from './makeMiniModeProviderWrapper';
+
+export {
+  default as makeServerSettingsProviderWrapper,
+  type ServerSettingsProviderWrapperOptions,
+} from '@core-test/providers/makeServerSettingsProviderWrapper';

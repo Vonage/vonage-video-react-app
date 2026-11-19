@@ -1,5 +1,6 @@
 import { runtime$ } from '@core/stores';
 import type { QueryOptions } from '@core/types';
+import { coreQueryKeys } from '@core/constants';
 import {
   BitrateValue,
   ResolutionValue,
@@ -46,7 +47,7 @@ export type SubscriberInspectorStatistics = {
 
 export type useSubscriberStatsProps<TData = SubscriberInspectorStatistics> = {
   queryOptions?: QueryOptions<SubscriberInspectorStatistics | null, TData>;
-  subscriber: Subscriber | null | undefined;
+  subscriber: (Omit<Subscriber, 'id'> & { id: string }) | null | undefined;
 };
 
 const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
@@ -54,7 +55,7 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
   subscriber,
 }: useSubscriberStatsProps<Selected>) => {
   return runtime$.useQuery({
-    queryKey: ['archives', subscriber],
+    queryKey: coreQueryKeys.subscriberStats({ subscriberId: subscriber?.id }),
     refetchInterval: POLL_INTERVAL_MS,
     queryFn: async () => {
       if (!subscriber) {
@@ -154,10 +155,12 @@ const useSubscriberStats = <Selected = SubscriberInspectorStatistics | null>({
 
 function getSubscriberStats(subscriber: Subscriber): Promise<SubscriberStats | null> {
   return new Promise((resolve) => {
-    subscriber.getStats((error, stats) => {
-      if (error) return resolve(null);
-      resolve(stats ?? null);
-    });
+    subscriber
+      .getStats((error, stats) => {
+        if (error) return resolve(null);
+        resolve(stats ?? null);
+      })
+      .catch(() => resolve(null));
   });
 }
 

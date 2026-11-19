@@ -109,8 +109,9 @@ const getSubscribersIdsInDisplayOrder = (
 
 const toId = ({ id }: SubscriberWrapper) => id;
 
-const toSubscriberWrapper = (subscriberWrappers: SubscriberWrapper[]) => (subId: string) => {
-  return subscriberWrappers.find(({ id }) => id === subId) as SubscriberWrapper;
+const toSubscriberWrapper = (subscriberWrappers: SubscriberWrapper[]) => {
+  const wrapperById = new Map(subscriberWrappers.map((wrapper) => [wrapper.id, wrapper]));
+  return (subId: string) => wrapperById.get(subId) as SubscriberWrapper;
 };
 
 /**

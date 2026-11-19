@@ -11,7 +11,7 @@ const rateLimitHandler: RequestHandler = rateLimit({
   // Max requests per IP per windowMs.
   max: isDevelopment
     ? 10000 // relaxed for local/dev testing
-    : 500, // adjust as needed for production
+    : Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 500), // adjust as needed for production
 
   // Custom message for rate limit exceeded
   message: { error: 'Too many requests, please try again later.' },

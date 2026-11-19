@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { RefObject } from 'react';
 import useElementDimensions from '../useElementDimensions';
@@ -21,12 +21,24 @@ describe('useElementDimensions', () => {
     });
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it('initially returns dimensions as { width: 0, height: 0 }', () => {
     const { result } = renderHook(() => useElementDimensions({ elementRef }));
     expect(result.current).toEqual({ width: 0, height: 0 });
+  });
+
+  it('disconnects the ResizeObserver on unmount so it is not leaked', () => {
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    vi.stubGlobal(
+      'ResizeObserver',
+      vi.fn(() => ({ observe, disconnect, unobserve: vi.fn() }))
+    );
+
+    const { unmount } = renderHook(() => useElementDimensions({ elementRef }));
+    expect(observe).toHaveBeenCalledWith(elementRef.current);
+
+    unmount();
+
+    expect(disconnect).toHaveBeenCalledTimes(1);
   });
 });

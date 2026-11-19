@@ -1,12 +1,17 @@
-import { useNavigate } from 'react-router-dom';
-import { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { runtime$ } from '@core/stores';
+import { isTRPCClientError } from '@trpc/client';
 import Card from '@ui/components/Card';
+import { handleClientApplicationError } from '@ui/helpers';
 import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
+import CreateRoomWizard from '../CreateRoomWizard';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 /**
  * RoomJoinContainer Component
@@ -17,30 +22,55 @@ import JoinExistingRoom from '../JoinExistingRoom';
 const RoomJoinContainer = (): ReactElement => {
   const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const [createdSessionKey, setCreatedSessionKey] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleNewRoom = async () => {
-    const randomRoom = generateRoomName();
+    if (isCreating) return;
 
-    const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
+    setIsCreating(true);
 
-    void navigate(`/waiting-room/${sessionKey}`);
+    try {
+      const randomRoom = generateRoomName();
+      const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
+
+      setCreatedSessionKey(sessionKey);
+    } catch (error) {
+      const failure = isTRPCClientError(error) ? (error.shape ?? error) : error;
+      handleClientApplicationError(t('createRoomWizard.tryCreatingAgain'), failure);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
     <Card component="form" className="lg:max-w-125">
-      <h6 className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-4">
+      <h6
+        data-testid={testIds.createHeading}
+        className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4"
+      >
         {t('button.startNewRoom')}
       </h6>
-      <NewRoomButton handleNewRoom={handleNewRoom} />
+      <NewRoomButton handleNewRoom={handleNewRoom} isDisabled={isCreating} />
 
       <JoinContainerSeparator />
 
-      <h6 className="font-vera-plain text-vera-heading-4 text-vera-secondary mb-4">
-        {t('button.joinExistingMeeting')}
+      <h6
+        data-testid={testIds.joinHeading}
+        className="font-vera-plain text-vera-heading-4 text-vera-text-secondary mb-4"
+      >
+        {t('button.joinRoom')}
       </h6>
 
       <JoinExistingRoom />
+
+      {createdSessionKey && (
+        <CreateRoomWizard sessionKey={createdSessionKey} onClose={() => setCreatedSessionKey(null)}>
+          <CreateRoomWizard.Step step="share">
+            <CreateRoomWizard.ShareStep />
+          </CreateRoomWizard.Step>
+        </CreateRoomWizard>
+      )}
     </Card>
   );
 };

@@ -6,6 +6,7 @@ import { PreviewPublisherProvider } from '@Context/PreviewPublisherProvider';
 import backgroundEffectsDialog$ from '@Context/BackgroundEffectsDialog';
 import precallNetworkTestDialog$ from '@Context/PrecallNetworkTestDialog';
 import useWaitingRoom from '@hooks/useWaitingRoom';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
 import { Box } from '@mui/material';
 import DeviceAccessAlert from '@components/DeviceAccessAlert';
 import { DEVICE_ACCESS_STATUS } from '@utils/constants';
@@ -29,9 +30,10 @@ import { PageLayoutEmbed } from '@ui';
  * redirects to /waiting-room/:sessionIdentifier so useRoomName() resolves correctly.
  */
 const WaitingRoomStage: FC = () => {
+  const { sessionKey } = useSessionKeyParam();
   const sessionIdentifier = bridge$.use.select((state) => state.sessionIdentifier);
 
-  const missingRoomIdentifier = !sessionIdentifier;
+  const missingRoomIdentifier = !sessionKey;
   const canRedirect = missingRoomIdentifier && !!sessionIdentifier;
   const isConfigError = missingRoomIdentifier && !sessionIdentifier;
 
@@ -42,7 +44,7 @@ const WaitingRoomStage: FC = () => {
   if (isConfigError) {
     return (
       <div className="flex h-full w-full items-center justify-center p-6">
-        <Typography className="text-vera-tertiary text-center">
+        <Typography className="text-vera-text-tertiary text-center">
           Set the <code>session-identifier</code> attribute to specify the room to join.
         </Typography>
       </div>
@@ -67,6 +69,7 @@ function WaitingRoomStageContent() {
     accessStatus,
     isRoomReady,
     roomName,
+    sessionKey,
     handleAudioInputOpen,
     handleVideoInputOpen,
     handleAudioOutputOpen,
@@ -110,6 +113,7 @@ function WaitingRoomStageContent() {
                   username={username}
                   setUsername={setUsername}
                   roomName={roomName}
+                  sessionKey={sessionKey}
                 />
               )}
 

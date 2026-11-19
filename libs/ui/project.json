@@ -21,7 +21,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "libs/ui",
-        "command": "vitest run"
+        "command": "vitest run --reporter=dot"
       },
       "configurations": {
         "coverage": {

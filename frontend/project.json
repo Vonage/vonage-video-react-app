@@ -71,7 +71,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "frontend",
-        "command": "bash -c 'source ../env.sh && vitest run'"
+        "command": "bash -c 'source ../env.sh && vitest run --reporter=dot'"
       },
       "configurations": {
         "coverage": {

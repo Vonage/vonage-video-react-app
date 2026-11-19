@@ -10,7 +10,9 @@ import {
   useEffect,
   ReactElement,
 } from 'react';
-import { Connection, Publisher, Stream } from '@vonage/client-sdk-video';
+import { Connection, Publisher, Stream, Subscriber } from '@vonage/client-sdk-video';
+import { useTranslation } from 'react-i18next';
+import { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from '@common/constants';
 import useRightPanel, { RightPanelActiveTab } from '@hooks/useRightPanel';
 import useUserContext from '@hooks/useUserContext';
 import useChat from '@hooks/useChat';
@@ -18,7 +20,6 @@ import useEmoji, { EmojiWrapper } from '@hooks/useEmoji';
 import ActiveSpeakerTracker from '@utils/ActiveSpeakerTracker';
 import {
   Credential,
-  LocalCaptionReceived,
   SignalEvent,
   StreamPropertyChangedEvent,
   SubscriberAudioLevelUpdatedEvent,
@@ -34,10 +35,14 @@ import {
 } from '@utils/sessionStateOperations';
 import { MAX_PIN_COUNT_DESKTOP, MAX_PIN_COUNT_MOBILE } from '@utils/constants';
 import VonageVideoClient from '@utils/VonageVideoClient';
+import useStableCallback from '@web/hooks/useStableCallback';
 import wait from '@common/execution/wait';
+import idempotentCallbackWithRetry from '@common/execution/idempotentCallbackWithRetry';
+import { isTRPCClientError } from '@trpc/client';
+import useResubscribeFailureNotifier from './useResubscribeFailureNotifier';
 import { env } from '../../env';
 import frontendLogger from '../../logger';
-import { runtime$ } from '@core/stores';
+import { notifications$, runtime$ } from '@core/stores';
 import { decodeSessionKey } from '@common/helpers';
 import type { VideoSessionDetails } from '@common/types';
 
@@ -53,7 +58,7 @@ export type SessionContextType = {
   sessionDetails: VideoSessionDetails | null;
   unreadCount: number;
   messages: ChatMessageType[];
-  sendChatMessage: (text: string) => void;
+  sendChatMessage: (text: string) => Promise<void>;
   reconnecting: null | boolean;
   subscriberWrappers: SubscriberWrapper[];
   activeSpeakerId: string | undefined;
@@ -61,10 +66,16 @@ export type SessionContextType = {
   setLayoutMode: Dispatch<SetStateAction<LayoutMode>>;
   archiveId: string | null;
   archiveIdStartedBySelf: string | null;
+  recordingArchiveId: string | null;
+  setRecordingArchiveId: Dispatch<SetStateAction<string | null>>;
+  transcriptionArchiveId: string | null;
+  setTranscriptionArchiveId: Dispatch<SetStateAction<string | null>>;
   recordingAlreadyNotified: boolean;
   setRecordingAlreadyNotified: Dispatch<SetStateAction<boolean>>;
-  markArchiveStartRequestedBySelf: () => void;
-  resetArchiveStartRequestedBySelf: () => void;
+  markRecordingStartRequestedBySelf: () => void;
+  resetRecordingStartRequestedBySelf: () => void;
+  markTranscriptionStartRequestedBySelf: () => void;
+  resetTranscriptionStartRequestedBySelf: () => void;
   rightPanelActiveTab: RightPanelActiveTab;
   toggleParticipantList: () => void;
   toggleBackgroundEffects: () => void;
@@ -73,7 +84,7 @@ export type SessionContextType = {
   toggleReportIssue: () => void;
   pinSubscriber: (subscriberId: string) => void;
   isMaxPinned: boolean;
-  ownCaptions: string | null;
+  ownCaptionsSubscriber: Subscriber | null;
   sendEmoji: (emoji: string) => void;
   emojiQueue: EmojiWrapper[];
   publish: (publisher: Publisher) => Promise<void>;
@@ -95,7 +106,7 @@ export const SessionContext = createContext<SessionContextType>({
   sessionDetails: null,
   unreadCount: 0,
   messages: [],
-  sendChatMessage: () => {},
+  sendChatMessage: async () => Promise.resolve(),
   reconnecting: null,
   subscriberWrappers: [],
   activeSpeakerId: undefined,
@@ -103,10 +114,16 @@ export const SessionContext = createContext<SessionContextType>({
   setLayoutMode: () => {},
   archiveId: null,
   archiveIdStartedBySelf: null,
+  recordingArchiveId: null,
+  setRecordingArchiveId: () => {},
+  transcriptionArchiveId: null,
+  setTranscriptionArchiveId: () => {},
   recordingAlreadyNotified: false,
   setRecordingAlreadyNotified: () => {},
-  markArchiveStartRequestedBySelf: () => {},
-  resetArchiveStartRequestedBySelf: () => {},
+  markRecordingStartRequestedBySelf: () => {},
+  resetRecordingStartRequestedBySelf: () => {},
+  markTranscriptionStartRequestedBySelf: () => {},
+  resetTranscriptionStartRequestedBySelf: () => {},
   rightPanelActiveTab: 'closed',
   toggleParticipantList: () => {},
   toggleBackgroundEffects: () => {},
@@ -115,7 +132,7 @@ export const SessionContext = createContext<SessionContextType>({
   toggleReportIssue: () => {},
   pinSubscriber: () => {},
   isMaxPinned: false,
-  ownCaptions: null,
+  ownCaptionsSubscriber: null,
   sendEmoji: () => {},
   emojiQueue: [],
   publish: async () => Promise.resolve(),
@@ -135,7 +152,7 @@ export type SessionContextInitialValue = Partial<
     | 'subscriberWrappers'
     | 'lastStreamUpdate'
     | 'subscriptionError'
-    | 'ownCaptions'
+    | 'ownCaptionsSubscriber'
     | 'archiveId'
     | 'activeSpeakerId'
     | 'recordingAlreadyNotified'
@@ -173,6 +190,7 @@ const SessionProvider = ({
   skipBrowserUrlUpdate = false,
 }: SessionProviderProps): ReactElement => {
   const videoClient = runtime$.useVideoClient();
+  const { t } = useTranslation();
   const [lastStreamUpdate, setLastStreamUpdate] = useState<StreamPropertyChangedEvent | null>(
     initialValue?.lastStreamUpdate ?? null
   );
@@ -184,7 +202,9 @@ const SessionProvider = ({
   const [subscriptionError, setSubscriptionError] = useState<Error | null>(
     initialValue?.subscriptionError ?? null
   );
-  const [ownCaptions, setOwnCaptions] = useState<string | null>(initialValue?.ownCaptions ?? null);
+  const [ownCaptionsSubscriber, setOwnCaptionsSubscriber] = useState<Subscriber | null>(
+    initialValue?.ownCaptionsSubscriber ?? null
+  );
 
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     initialValue?.layoutMode ??
@@ -200,17 +220,31 @@ const SessionProvider = ({
   const [archiveIdStartedBySelf, setArchiveIdStartedBySelf] = useState<string | null>(
     initialValue?.archiveIdStartedBySelf ?? null
   );
+  const [recordingArchiveId, setRecordingArchiveId] = useState<string | null>(null);
+  const [transcriptionArchiveId, setTranscriptionArchiveId] = useState<string | null>(null);
   const [recordingAlreadyNotified, setRecordingAlreadyNotified] = useState<boolean>(
     initialValue?.recordingAlreadyNotified ?? false
   );
-  const archiveStartRequestedBySelfRef = useRef<boolean>(false);
 
-  const markArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = true;
+  const recordingStartRequestedBySelfRef = useRef<boolean>(false);
+  const transcriptionStartRequestedBySelfRef = useRef<boolean>(false);
+  const wasRecordingInitiatorRef = useRef<boolean>(false);
+  const wasTranscriptionInitiatorRef = useRef<boolean>(false);
+
+  const markRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = true;
   }, []);
 
-  const resetArchiveStartRequestedBySelf = useCallback(() => {
-    archiveStartRequestedBySelfRef.current = false;
+  const resetRecordingStartRequestedBySelf = useCallback(() => {
+    recordingStartRequestedBySelfRef.current = false;
+  }, []);
+
+  const markTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = true;
+  }, []);
+
+  const resetTranscriptionStartRequestedBySelf = useCallback(() => {
+    transcriptionStartRequestedBySelfRef.current = false;
   }, []);
   const activeSpeakerTracker = useRef<ActiveSpeakerTracker>(new ActiveSpeakerTracker());
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | undefined>(
@@ -238,21 +272,19 @@ const SessionProvider = ({
   } = useRightPanel();
 
   const handleChatSignal = ({ data }: SignalEvent) => {
+    if (!env.ALLOW_CHAT) {
+      throw new Error('Chat signal received while chat is disabled');
+    }
+
     if (data) {
       onChatMessage(data);
       incrementUnreadCount();
     }
   };
 
-  const handleEmoji = useCallback(
-    (emojiEvent: SignalEvent) => {
-      setSubscriberWrappers((currentSubscriberWrappers) => {
-        onEmoji(emojiEvent, currentSubscriberWrappers);
-        return [...currentSubscriberWrappers]; // Return unchanged state
-      });
-    },
-    [onEmoji]
-  );
+  const handleEmoji = useStableCallback((emojiEvent: SignalEvent) => {
+    onEmoji(emojiEvent, subscriberWrappers);
+  });
 
   const setActiveSpeakerIdAndRef = useCallback((id: string | undefined) => {
     // We store the current active speaker id in a ref so it can be accessed later when sorting the subscriberWrappers for display.
@@ -335,10 +367,14 @@ const SessionProvider = ({
   };
 
   // handle the disconnect from session and clean up of the session object
-  const handleSessionDisconnected = () => {
-    vonageVideoClient.current = null;
-    setConnected(false);
-  };
+  const handleSessionDisconnected = useStableCallback(({ reason }: { reason?: string }) => {
+    const isServerRotation = reason === 'serverRotation';
+
+    if (!isServerRotation) {
+      vonageVideoClient.current = null;
+      setConnected(false);
+    }
+  });
 
   // function to set reconnecting status and to increase the number of reconnections the user has had
   // this reconnection count can be then used in the UI to provide user feedback or for post-call analytics
@@ -354,22 +390,59 @@ const SessionProvider = ({
     setSubscriptionError(null);
   };
 
-  const handleArchiveStarted = (id: string) => {
+  const handleArchiveStarted = ({ id, name }: { id: string; name: string }) => {
     setArchiveId(id);
 
-    if (!archiveStartRequestedBySelfRef.current) {
-      return;
+    // Set the appropriate archive id based on archive name/type
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(id);
+
+      const isRecordingInitiatedBySelf =
+        recordingStartRequestedBySelfRef.current || wasRecordingInitiatorRef.current;
+
+      if (isRecordingInitiatedBySelf) {
+        setArchiveIdStartedBySelf(id);
+        wasRecordingInitiatorRef.current = true;
+        recordingStartRequestedBySelfRef.current = false;
+      }
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(id);
+
+      const isTranscriptionInitiatedBySelf =
+        transcriptionStartRequestedBySelfRef.current || wasTranscriptionInitiatorRef.current;
+
+      if (isTranscriptionInitiatedBySelf) {
+        // Also set archiveIdStartedBySelf for transcription — suppresses consent for the initiator
+        setArchiveIdStartedBySelf(id);
+        wasTranscriptionInitiatorRef.current = true;
+        transcriptionStartRequestedBySelfRef.current = false;
+      }
+    }
+  };
+
+  const handleArchiveStopped = useStableCallback(({ name }: { id: string; name: string }) => {
+    if (name === RECORDING_ARCHIVE_NAME) {
+      setRecordingArchiveId(null);
+      wasRecordingInitiatorRef.current = reconnecting && wasRecordingInitiatorRef.current;
+      recordingStartRequestedBySelfRef.current = false;
+
+      if (transcriptionArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
+    } else if (name === TRANSCRIPTION_ARCHIVE_NAME) {
+      setTranscriptionArchiveId(null);
+      wasTranscriptionInitiatorRef.current = reconnecting && wasTranscriptionInitiatorRef.current;
+      transcriptionStartRequestedBySelfRef.current = false;
+
+      if (recordingArchiveId === null) {
+        setArchiveIdStartedBySelf(null);
+        setRecordingAlreadyNotified(false);
+      }
     }
 
-    setArchiveIdStartedBySelf(id);
-    archiveStartRequestedBySelfRef.current = false;
-  };
-
-  const handleArchiveStopped = () => {
     setArchiveId(null);
-    setArchiveIdStartedBySelf(null);
-    archiveStartRequestedBySelfRef.current = false;
-  };
+  });
 
   const handleSubscriberVideoElementCreated = (subscriberWrapper: SubscriberWrapper) => {
     setSubscriberWrappers((previousSubscriberWrappers) =>
@@ -378,10 +451,6 @@ const SessionProvider = ({
         ...previousSubscriberWrappers.filter(({ id }) => id !== subscriberWrapper.id),
       ].toSorted(sortByDisplayPriority(activeSpeakerIdRef.current))
     );
-  };
-
-  const handleLocalCaptionReceived = (event: LocalCaptionReceived) => {
-    setOwnCaptions(event.caption);
   };
 
   const handleSubscriberDestroyed = async (streamId: string) => {
@@ -395,13 +464,13 @@ const SessionProvider = ({
       return vonageVideoClient.current.hasStream(streamId);
     })();
 
-    console.warn(`Subscriber with stream ID ${streamId} destroyed`, {
+    frontendLogger.log('Session:SubscriberDestroyed', {
+      streamId,
       doesStreamStillExistInSession,
     });
 
     if (doesStreamStillExistInSession) {
       void vonageVideoClient.current!.resubscribeToStreamId(streamId);
-      console.warn(`Subscriber with stream ID ${streamId} resubscribing`);
       return;
     }
     destroySubscriber(streamId);
@@ -431,7 +500,7 @@ const SessionProvider = ({
       })();
 
       if (reconnecting || isBrowserOnline === false) {
-        frontendLogger.log('Session: ignoring subscription error during reconnection/offline', {
+        frontendLogger.log('Session:SubscriptionErrorIgnoredInReconnection', {
           reconnecting,
           isBrowserOnline,
         });
@@ -445,6 +514,20 @@ const SessionProvider = ({
     [reconnecting]
   );
 
+  const { resubscribeFailureNotifier } = useResubscribeFailureNotifier();
+
+  /**
+   * Disconnects from the current session and cleans up session-related resources.
+   */
+  const disconnect = useCallback(() => {
+    if (vonageVideoClient.current) {
+      void vonageVideoClient.current.disconnect();
+      vonageVideoClient.current = null;
+
+      setConnected(false);
+    }
+  }, []);
+
   /**
    * Connects to the session using the provided credentials.
    * @param {Credential} credential - The sessionKey and token for the session.
@@ -454,6 +537,7 @@ const SessionProvider = ({
     if (vonageVideoClient.current) {
       return;
     }
+
     try {
       vonageVideoClient.current = new VonageVideoClient(credential);
       vonageVideoClient.current.on('streamPropertyChanged', handleStreamPropertyChanged);
@@ -462,7 +546,10 @@ const SessionProvider = ({
       vonageVideoClient.current.on('sessionDisconnected', handleSessionDisconnected);
       vonageVideoClient.current.on('archiveStarted', handleArchiveStarted);
       vonageVideoClient.current.on('archiveStopped', handleArchiveStopped);
-      vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      const isChatAllowed = env.ALLOW_CHAT;
+      if (isChatAllowed) {
+        vonageVideoClient.current.on('signal:chat', handleChatSignal);
+      }
       vonageVideoClient.current.on('signal:emoji', handleEmoji);
       vonageVideoClient.current.on(
         'subscriberAudioLevelUpdated',
@@ -473,13 +560,15 @@ const SessionProvider = ({
         handleSubscriberVideoElementCreated
       );
       vonageVideoClient.current.on('subscriberDestroyed', handleSubscriberDestroyed);
-      vonageVideoClient.current.on('localCaptionReceived', handleLocalCaptionReceived);
+      vonageVideoClient.current.on('ownCaptionsSubscriberChanged', setOwnCaptionsSubscriber);
       vonageVideoClient.current.on('subscriptionError', handleSubscriptionError);
+      vonageVideoClient.current.on('resubscribeFailed', resubscribeFailureNotifier);
 
       await vonageVideoClient.current.connect();
       setConnected(true);
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (error: unknown) {
+      disconnect();
+      throw error;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -491,17 +580,27 @@ const SessionProvider = ({
    */
   const joinRoom = useCallback(
     async (args: { sessionKey: string }) => {
-      const session = await videoClient.joinSession({
-        sessionKey: args.sessionKey,
-      });
+      const session = await idempotentCallbackWithRetry(
+        () =>
+          videoClient.joinSession({
+            sessionKey: args.sessionKey,
+          }),
+        {
+          retries: 2,
+          delayMs: 500,
+          onRetry: (error) => {
+            if (!isMeetingNotStartedError(error)) throw error;
+          },
+        }
+      );
 
-      setSessionKey(args.sessionKey);
+      setSessionKey(session.sessionKey);
       if (!skipBrowserUrlUpdate) {
-        window.history.replaceState(null, '', `/room/${args.sessionKey}`);
+        window.history.replaceState(null, '', `/room/${session.sessionKey}`);
       }
 
       return connect({
-        sessionKey: args.sessionKey,
+        sessionKey: session.sessionKey,
         token: session.token,
       });
     },
@@ -509,26 +608,27 @@ const SessionProvider = ({
   );
 
   /**
-   * Disconnects from the current session and cleans up session-related resources.
-   */
-  const disconnect = useCallback(() => {
-    if (vonageVideoClient.current) {
-      vonageVideoClient.current.disconnect();
-      vonageVideoClient.current = null;
-
-      setConnected(false);
-    }
-  }, []);
-
-  /**
    * Force mutes a participant.
    * @param {Stream} stream - The stream that is going to be muted.
    */
-  const forceMute = useCallback(async (stream: Stream) => {
-    if (vonageVideoClient.current) {
-      await vonageVideoClient.current.forceMuteStream(stream);
-    }
-  }, []);
+  const forceMute = useCallback(
+    async (stream: Stream) => {
+      if (!vonageVideoClient.current) return;
+
+      try {
+        await vonageVideoClient.current.forceMuteStream(stream);
+      } catch (error) {
+        frontendLogger.reportError(error, { eventSource: 'session.forceMute.error' });
+        notifications$.actions.push({
+          type: 'warning',
+          message: t('participants.mute.forceMuteFailed'),
+          expirationMs: env.NOTIFICATION_DURATION_MS,
+        });
+        throw error;
+      }
+    },
+    [t]
+  );
 
   /**
    * Publishes a stream to the session.
@@ -560,8 +660,14 @@ const SessionProvider = ({
       activeSpeakerId,
       archiveId,
       archiveIdStartedBySelf,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       vonageVideoClient: vonageVideoClient.current,
       disconnect,
       joinRoom,
@@ -586,7 +692,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,
@@ -598,8 +704,14 @@ const SessionProvider = ({
       activeSpeakerId,
       archiveId,
       archiveIdStartedBySelf,
-      markArchiveStartRequestedBySelf,
-      resetArchiveStartRequestedBySelf,
+      recordingArchiveId,
+      setRecordingArchiveId,
+      transcriptionArchiveId,
+      setTranscriptionArchiveId,
+      markRecordingStartRequestedBySelf,
+      resetRecordingStartRequestedBySelf,
+      markTranscriptionStartRequestedBySelf,
+      resetTranscriptionStartRequestedBySelf,
       setRecordingAlreadyNotified,
       recordingAlreadyNotified,
       vonageVideoClient,
@@ -624,7 +736,7 @@ const SessionProvider = ({
       toggleReportIssue,
       pinSubscriber,
       isMaxPinned,
-      ownCaptions,
+      ownCaptionsSubscriber,
       sendEmoji,
       emojiQueue,
       publish,
@@ -636,4 +748,9 @@ const SessionProvider = ({
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 };
+
+function isMeetingNotStartedError(error: unknown): boolean {
+  return isTRPCClientError(error) && error.shape?.name === 'MeetingNotStartedError';
+}
+
 export default SessionProvider;

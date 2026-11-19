@@ -216,18 +216,27 @@ describe('SmallViewportHeader component', () => {
 
 function render(
   component: React.ReactElement,
-  sessionContext?: { initialValue?: { sessionKey?: string; archiveId?: string | null } }
+  sessionContext?: {
+    initialValue?: {
+      sessionKey?: string;
+      archiveId?: string | null;
+    };
+  }
 ) {
-  const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
-    userContext: undefined,
-    sessionContext: {
-      initialValue: {
-        sessionKey: mockSessionKey,
-        ...sessionContext?.initialValue,
+  const { wrapper } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      userContext: undefined,
+      sessionContext: {
+        initialValue: {
+          sessionKey: mockSessionKey,
+          ...sessionContext?.initialValue,
+        },
       },
-    },
-    runtimeContext: undefined,
-  });
+      runtimeContext: undefined,
+    }
+  );
 
   return renderBase(component, { wrapper });
 }

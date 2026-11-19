@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement, useMemo, useRef } from 'react';
 import { Publisher as OTPublisher } from '@vonage/client-sdk-video';
 import useLayoutManager from '../../../hooks/useLayoutManager';
 import usePublisherContext from '../../../hooks/usePublisherContext';
@@ -56,10 +56,14 @@ const VideoTileCanvas = ({
   const { connected, reconnecting, subscriberWrappers, layoutMode } = useSessionContext();
 
   // Determine if we will display a large video tile based on current layout mode and screenshare presence
-  const pinnedSubscriberCount = subscriberWrappers.filter(
-    (subWrapper) => subWrapper.isPinned
-  ).length;
-  const isViewingScreenshare = subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare);
+  const pinnedSubscriberCount = useMemo(
+    () => subscriberWrappers.filter((subWrapper) => subWrapper.isPinned).length,
+    [subscriberWrappers]
+  );
+  const isViewingScreenshare = useMemo(
+    () => subscriberWrappers.some((subWrapper) => subWrapper.isScreenshare),
+    [subscriberWrappers]
+  );
   const sessionHasScreenshare = isViewingScreenshare || isSharingScreen;
   const isViewingLargeTile =
     sessionHasScreenshare || layoutMode === 'active-speaker' || !!pinnedSubscriberCount;
@@ -137,7 +141,7 @@ const VideoTileCanvas = ({
           <Subscriber
             key={subscriberWrapper.id}
             subscriberWrapper={subscriberWrapper}
-            isHidden={!subscribersInDisplayOrder.includes(subscriberWrapper)}
+            isHidden={index >= subscribersInDisplayOrder.length}
             box={layoutBoxes.subscriberBoxes?.[index]}
             isActiveSpeaker={activeSpeakerId === subscriberWrapper.id}
           />

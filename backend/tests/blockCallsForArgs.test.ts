@@ -1,11 +1,11 @@
 import util from 'util';
-import { describe, jest } from '@jest/globals';
+import { describe, expect, it, vi } from 'vitest';
 import blockCallsForArgs from '../helpers/blockCallsForArgs';
 import delay from '../helpers/delay';
 
 describe('blockCallsForArgs', () => {
   it('executes function with args', async () => {
-    const fn = jest.fn<() => Promise<string>>().mockResolvedValue('result');
+    const fn = vi.fn<[], Promise<string>>().mockResolvedValue('result');
     const blockedFn = blockCallsForArgs(fn);
     const result = await blockedFn('someKey');
     expect(result).toBe('result');
@@ -13,9 +13,9 @@ describe('blockCallsForArgs', () => {
 
   it('only executes 2nd call after 1st has resolved', async () => {
     const fn1Promise = Promise.withResolvers();
-    const mockInternalFn = jest.fn<() => number>().mockReturnValueOnce(1).mockReturnValueOnce(2);
+    const mockInternalFn = vi.fn<[], number>().mockReturnValueOnce(1).mockReturnValueOnce(2);
 
-    const fn = jest.fn<() => Promise<number>>().mockImplementation(async () => {
+    const fn = vi.fn<[], Promise<number>>().mockImplementation(async () => {
       await fn1Promise.promise;
       return mockInternalFn();
     });
@@ -44,9 +44,9 @@ describe('blockCallsForArgs', () => {
 
   it('executes all n>1 call after 1st has resolved', async () => {
     const fn1Promise = Promise.withResolvers();
-    const mockInternalFn = jest.fn<() => number>().mockReturnValueOnce(1).mockReturnValueOnce(2);
+    const mockInternalFn = vi.fn<[], number>().mockReturnValueOnce(1).mockReturnValueOnce(2);
 
-    const fn = jest.fn<() => Promise<number>>().mockImplementation(async () => {
+    const fn = vi.fn<[], Promise<number>>().mockImplementation(async () => {
       await fn1Promise.promise;
       return mockInternalFn();
     });
@@ -77,15 +77,13 @@ describe('blockCallsForArgs', () => {
 
   it('does not block calls for other keys', async () => {
     const fn1Promise = Promise.withResolvers();
-    const fn = jest
-      .fn<(key: string) => Promise<string>>()
-      .mockImplementation(async (key: string) => {
-        // In this mock function we make the fn wait if key is 'someKey'
-        if (key === 'someKey') {
-          await fn1Promise.promise;
-        }
-        return key;
-      });
+    const fn = vi.fn<[key: string], Promise<string>>().mockImplementation(async (key: string) => {
+      // In this mock function we make the fn wait if key is 'someKey'
+      if (key === 'someKey') {
+        await fn1Promise.promise;
+      }
+      return key;
+    });
     const blockedFn = blockCallsForArgs(fn);
     const asyncResult1 = blockedFn('someKey', 1);
     const result2 = await blockedFn('someOtherKey', 2);

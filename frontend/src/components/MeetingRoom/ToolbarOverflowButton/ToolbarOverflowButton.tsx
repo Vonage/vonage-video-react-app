@@ -6,6 +6,11 @@ import ToolbarButton from '../ToolbarButton';
 import ToolbarOverflowMenu from '../ToolbarOverflowMenu';
 import UnreadMessagesBadge from '../UnreadMessagesBadge';
 
+export const testIds = {
+  button: 'hidden-toolbar-items',
+  icon: 'MoreVertIcon',
+} as const;
+
 export type CaptionsState = {
   isUserCaptionsEnabled: boolean;
   setIsUserCaptionsEnabled: Dispatch<SetStateAction<boolean>>;
@@ -39,7 +44,7 @@ const ToolbarOverflowButton = ({
 }: ToolbarOverflowButtonProps): ReactElement => {
   const { t } = useTranslation();
   const [isToolbarOverflowMenuOpen, setIsToolbarOverflowMenuOpen] = useState<boolean>(false);
-  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(true);
+  const [openEmojiGridMobile, setOpenEmojiGridMobile] = useState<boolean>(false);
 
   const handleButtonToggle = () => {
     setIsToolbarOverflowMenuOpen((prevOpen) => !prevOpen);
@@ -60,25 +65,21 @@ const ToolbarOverflowButton = ({
       <Tooltip title={t('toolbar.tooltip.title')} aria-label={t('toolbar.tooltip.ariaLabel')}>
         <UnreadMessagesBadge isToolbarOverflowMenuOpen={isToolbarOverflowMenuOpen}>
           <ToolbarButton
-            data-testid="hidden-toolbar-items"
+            data-testid={testIds.button}
             id="hidden-toolbar-items"
             onClick={handleButtonToggle}
             icon={
               <VividIcon
                 name="more-vertical-solid"
                 customSize={-5}
-                data-testid="MoreVertIcon"
-                style={{
-                  color: isToolbarOverflowMenuOpen
-                    ? 'var(--vera-on-surface)'
-                    : 'var(--vera-surface)',
-                }}
+                data-testid={testIds.icon}
+                className={
+                  isToolbarOverflowMenuOpen
+                    ? 'text-vera-secondary-light'
+                    : 'text-vera-on-secondary-light'
+                }
               />
             }
-            sx={{
-              marginRight: '0px',
-              width: '48px',
-            }}
           />
         </UnreadMessagesBadge>
       </Tooltip>

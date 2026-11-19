@@ -6,15 +6,16 @@ import useSessionKeyParam from './useSessionKeyParam';
 import useDecodedSessionKey from './useDecodedSessionKey';
 import { getStorageItem, STORAGE_KEYS } from '../utils/storage';
 import { DEVICE_ACCESS_STATUS } from '../utils/constants';
-import { env } from '../env';
 
 const useWaitingRoom = () => {
   const { sessionKey, sessionKeyStatus } = useSessionKeyParam();
 
-  const { roomName } = useDecodedSessionKey({
+  const decodedSessionKey = useDecodedSessionKey({
     sessionKey,
     sessionKeyStatus,
   });
+
+  const { roomName } = decodedSessionKey;
 
   const { initLocalPublisher, publisher, accessStatus, destroyPublisher, isVideoLoading } =
     usePreviewPublisherContext();
@@ -45,10 +46,11 @@ const useWaitingRoom = () => {
   }, [publisher]);
 
   useEffect(() => {
-    if (!backgroundPublisher) {
-      initBackgroundLocalPublisher();
-    }
-  }, [initBackgroundLocalPublisher, backgroundPublisher]);
+    if (backgroundPublisher || !publisher || isVideoLoading) return;
+    // Clone so each publisher owns its own track
+    const previewTrack = publisher.getVideoSource()?.track;
+    initBackgroundLocalPublisher(previewTrack ? previewTrack.clone() : undefined);
+  }, [initBackgroundLocalPublisher, backgroundPublisher, publisher, isVideoLoading]);
 
   const handleAudioInputOpen = (
     event: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
@@ -78,10 +80,7 @@ const useWaitingRoom = () => {
     setOpenVideoInput(false);
   };
 
-  const isRoomReady =
-    env.WAITING_ROOM_ALLOW_DEVICE_SELECTION &&
-    accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED &&
-    !isVideoLoading;
+  const isRoomReady = accessStatus === DEVICE_ACCESS_STATUS.ACCEPTED && !isVideoLoading;
 
   return {
     anchorEl,
