@@ -1,0 +1,31 @@
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useAutoJoin.ts
+  s_20776229283099::t_ff9b43de58acb2 3,21-23,25-28
+frontend/src/locales/fr.json
+  s_20776229283099::t_91ac1d25c8b390 415-417
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_d50efe2a3c06ac::t_122e581eea8f0e 10,136,138-141,146,152,156,174,176-179,182-184,186,191-192,196-197,209,211-214,218,220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d337c4b18e8e7a38deb4ef2b25ff093c7d0e545e",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "s_d50efe2a3c06ac": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f42d-2148-7693-9b24-5cc58657751a",
+        "model": "unknown"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

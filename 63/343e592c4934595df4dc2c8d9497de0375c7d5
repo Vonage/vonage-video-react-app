@@ -1,0 +1,802 @@
+libs/api/src/routing/runExpressMiddleware/runExpressMiddleware.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-59
+backend/testSetup/setEnvVars.js
+  s_6531631c1725cf::t_7e913c16f8a398 15
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-2,7,22-26
+frontend/src/components/MeetingRoom/ArchivingButton/ArchivingButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 112
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-37
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 70-96
+libs/ui/src/components/Skeleton/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+AGENTS.md
+  s_6531631c1725cf::t_7e913c16f8a398 93-94,181,278-298,1287,1362
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleCopy.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-66
+frontend/src/pages/GoodBye/GoodBye.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-3,8-12,15-19,25,30-83,87,95,106-108
+backend/helpers/config.ts
+  s_6531631c1725cf::t_7e913c16f8a398 10,28,36,52,75,96
+frontend/src/components/GoodBye/useShouldShowReenterRoom.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-25
+libs/common/src/constants/SessionKeyClaim.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-5
+backend/routes/video/constants/enableCaptions.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2,16
+frontend/src/components/MeetingRoom/DeviceControlButton/DeviceControlButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,108,226
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 135-180
+frontend/src/test/providers/makeTestProvider.ts
+  s_6531631c1725cf::t_7e913c16f8a398 7-8,12,20,28,35,39,47,51,65,72,77,80,164-168,199-202
+libs/core/src/stores/serverSettings/serverSettings$.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-111
+frontend/src/Context/MiniMode/isMiniModeSupported.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-12
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/hooks/useNetworkTest.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 121-132
+frontend/src/components/WaitingRoom/UserNameInput/helpers/isToday.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-5
+frontend/src/components/MeetingRoom/MiniModeButton/index.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+app-config.json
+  s_6531631c1725cf::t_7e913c16f8a398 4,11,42
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/CreateRoomWizardDialog.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-81
+libs/common/web/documentPictureInPicture/isDocumentPictureInPictureSupported.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-25
+frontend/src/components/RoomJoinContainer/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+backend/routes/video/helpers/isAnonymousCaller.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-8
+docs/AUTHENTICATION.md
+  s_6531631c1725cf::t_7e913c16f8a398 145,156,171
+frontend/src/components/JoinWaitRoomButton/helpers/parseRoomIdInput.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-13
+backend/storage/vcrSessionStorage.ts
+  s_6531631c1725cf::t_7e913c16f8a398 13,52,56-60,159-176
+frontend/src/pages/MeetingRoom/MeetingRoom.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,21,69-70,73-77,147
+backend/routes/video/setup.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-330
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-91
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2,12-65,131-136,192-197
+README.md
+  s_6531631c1725cf::t_7e913c16f8a398 55-58
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-47
+frontend/src/components/AdvancedSettingsDialog/schemas/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-36
+scripts/lintFileNames.sh
+  s_6531631c1725cf::t_7e913c16f8a398 6-11
+backend/tests/anonymousReports.auth.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-89
+backend/middleware/anonymousRateLimitMiddleware.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-21
+backend/storage/sessionStorage.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4,17-19
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 6,15-16,42,45-46,54
+frontend/src/components/MeetingRoom/VideoTileCanvas/VideoTileCanvas.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,59-66,144
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-76
+frontend/src/Context/SessionProvider/session.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 17-18,20,71,81-91,127,377-403,414-447,459-476,670-696,705-745
+frontend/src/components/MeetingRoom/EmojiGridButton/EmojiGridButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,72
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/utils/VonageVideoClient/vonageVideoClient.ts
+  s_6531631c1725cf::t_7e913c16f8a398 46,48,141-144,164-165,231-232,236-242,283,488,491-492,494,496-497,499-505,511,518-527,530-538,545,578,611,622
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-5
+frontend/src/utils/generateRoomName/generateRoomName.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1,12-20
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 147-151
+frontend/src/Context/screenShare/screenShare$.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 108-118
+libs/common/src/constants/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4
+libs/common/src/types/SessionKeyPayload.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3,7
+frontend/src/components/CreateRoomWizard/types/CreateRoomWizardStepName.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+backend/testSetup/setEnvVars.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 64-66
+frontend/src/components/JoinWaitRoomButton/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+libs/common/web/documentPictureInPicture/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-9
+libs/common/web/documentPictureInPicture/waitForStylesheets.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-21
+libs/core/src/hooks/useArchives/useArchives.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4,60
+backend/routes/video/helpers/verifySessionKeySignature.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-32
+backend/routes/video/types/VideoRouteContext.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-7
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardStep/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-5
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniModeIcon.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-40
+integration-tests/tests/visualComparisons.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-13,15-21,31-48,87-440
+libs/api/src/handlers/createSessionAndJoin.ts
+  s_6531631c1725cf::t_7e913c16f8a398 10-13
+frontend/src/components/Subscriber/Subscriber.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 18,27-38,59,61,76,90,109
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/useResubscribeFailureNotifier.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-72
+frontend/src/components/MeetingRoom/ScreenshareVideoTile/ScreenshareVideoTile.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 11,57-68,113,117-124,126-130,132-135,137-147,151,156-159,161-165,207,226,239
+libs/core/src/constants/coreQueryKeys.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-23
+frontend/src/pages/GoodBye/GoodBye.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-2,6,13,27,29-30,42-54,72-79
+frontend/src/components/MeetingRoom/Chat/Chat.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 33,49
+libs/api/src/handlers/createSession.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4,15,21-29,33,42
+backend/tests/scheduledSession.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-64
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 3-7,11-13,21-36
+  s_6531631c1725cf::t_1675e642038059 37
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+libs/api/src/types/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 21
+libs/common/web/documentPictureInPicture/waitForStylesheets.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-26
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-51
+.github/workflows/check-base-branch.yml
+  s_6531631c1725cf::t_7e913c16f8a398 12,20,22-23,25-27
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,15-23,27-28,32-33,41,46,50,60-69,90,102,113-114,117-127,129-151,155,162,168-176,180,182,184-198,200
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-43
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,4-5,9-11,13-19,21-22
+integration-tests/tests/miniMode.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-53
+frontend/src/Context/screenShare/screenShare$.test.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 66-74,145,371,406,443
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-59
+libs/api/src/schedule/errors/MeetingEndedError.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-20
+libs/api/src/schedule/errors/MeetingNotStartedError.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-22
+backend/package.json
+  s_6531631c1725cf::t_7e913c16f8a398 3
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/hooks/useNetworkTest.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 10,130,143-148
+libs/common/src/schemas/Lang.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 11
+backend/routes/video/helpers/getCaptionsTranslationOptions.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-31
+libs/api/src/constants/maxDateMilliseconds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-6
+libs/core/src/stores/notifications/actions/pushNotification.ts
+  s_6531631c1725cf::t_7e913c16f8a398 25-26
+backend/types/config.ts
+  s_6531631c1725cf::t_7e913c16f8a398 43
+frontend/src/components/ScreenSharingButton/ScreenSharingButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,98
+frontend/src/locales/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 7,40-41
+  s_6531631c1725cf::t_d9383b9a3e7cbc 42
+frontend/src/components/AdvancedSettingsDialog/schemas/captionsTranslationLanguage.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-64
+backend/routes/auth/handlers/callbackHandler.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 14,35,122-124,141-143
+backend/routes/auth/handlers/signInHandler.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 28,39
+eslint.config.mjs
+  s_6531631c1725cf::t_7e913c16f8a398 41
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 13-14,26-30
+backend/routes/auth/constants.ts
+  s_6531631c1725cf::t_7e913c16f8a398 6
+frontend/src/Context/MiniMode/MiniModeContext.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-277
+frontend/src/test/setup.ts
+  s_6531631c1725cf::t_7e913c16f8a398 49-63
+frontend/src/VeraRoom/stages/MeetingRoomStage/MeetingRoomStage.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5,15-17
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsGeneralTab/AdvancedSettingsGeneralTab.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2-5,9-12,20-42
+frontend/src/components/MeetingRoom/MeetingTimer/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+libs/core/src/stores/serverSettings/types/ServerSettingsResult.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-10
+integration-tests/tests/postCallTranscription.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 19,55,87
+backend/routes/video/helpers/getCaptionsTranslationOptions.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-33
+integration-tests/tests-auth/signIn.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4,38-39
+frontend/src/components/WaitingRoom/PrecallNetworkTestDialog/PrecallNetworkTestDialog.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 36,57,65
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,14-24
+  s_6531631c1725cf::t_59a83726d6118c 25-26
+frontend/src/components/LanguageSelector/LanguageSelector.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 14-16,26,94,97
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 7-8,117-144,154-172,304-361,431-445,718-736
+  s_6531631c1725cf::t_fa3fe933fe56f2 737
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,3,19,22,25,31-32,35,38
+frontend/src/components/MeetingRoom/EmojiGrid/EmojiGrid.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 6,56,58,62,80,84-87,89,93
+libs/api/src/routing/runExpressMiddleware/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+libs/core/src/stores/serverSettings/hooks/useServerSettingsInitializer.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-42
+libs/core/src/stores/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5
+libs/core/src/stores/serverSettings/hooks/useScheduleStatus.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-92
+frontend/src/Context/MiniMode/UnavailableMiniModeProvider.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-27
+frontend/src/hooks/useToolbarButtons.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 110,113-115,121-122
+  s_6531631c1725cf::t_5c41bf64339760 123
+.claude/skills/configure/SKILL.md
+  s_6531631c1725cf::t_7e913c16f8a398 52
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/CaptionsBox.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,4-5,26-27,69-91
+  s_6531631c1725cf::t_00b909e7762997 92
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-186
+frontend/src/components/RoomNameInput/RoomNameInput.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2-3,6-8,10,13-15,17,19-20,23,25,28
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 85-96,138-154
+backend/routes/video/helpers/resignSessionKey.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-16
+integration-tests/tests/landing.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-18,29,31,37-38,45,47-48,50,52-64,68-69,86,96,111,113-114,116,119,121-122,124,127,129-130,132,135,137-138,140,143,145-146,148,153-172
+libs/common/src/types/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 19
+specs/app-config.schema.json
+  s_6531631c1725cf::t_7e913c16f8a398 171,205-209,231-232
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindow.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-106
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 179,184
+frontend/src/Context/MiniMode/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardStep/helpers/getStepPanels.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-11
+frontend/src/utils/formatMinutesAndSeconds/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+frontend/src/utils/getRoomShareUrl.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-9
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-28
+.claude/skills/setup/SKILL.md
+  s_6531631c1725cf::t_7e913c16f8a398 3,63,111
+frontend/src/components/LanguageSelector/LanguageSelector.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 248
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5,9-10,18,24,27,30,75
+frontend/src/components/NewRoomButton/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-75
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 10,61-124,131,134-147,151
+frontend/src/Context/MiniMode/helpers/resolveMiniModeParticipant.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-55
+backend/routes/video/helpers/hasVerifiedSessionKey.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-23
+frontend/src/Context/MiniMode/isMiniModeSupported.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-33
+frontend/src/hooks/useLeaveMeeting.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-27
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-205
+libs/common/web/documentPictureInPicture/documentPictureInPicture.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-69
+frontend/src/locales/en.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,106-108,167,191-200,290-299,307,322,339-341,350-352,365-368,379,396-414
+libs/common/web/documentPictureInPicture/useDocumentPictureInPicture.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-89
+package.json
+  s_6531631c1725cf::t_7e913c16f8a398 3,80,113
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardStep/CreateRoomWizardStep.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-16
+frontend/src/components/MeetingRoom/MeetingTimer/meetingTimerVariants.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-16
+frontend/src/components/CreateRoomWizard/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/components/MeetingRoom/PopupDialog/PopupDialog.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 8,23,44,62
+frontend/src/VeraRoom/VeraRoom.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,64-71,77-78
+frontend/src/components/MeetingRoom/FormattedMessageBody/FormattedMessageBody.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 19,25,33,40
+backend/routes/auth/handlers/signOutHandler.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 10,32,112
+  s_6531631c1725cf::t_10b6d466e15eee 113-114
+frontend/src/hooks/useElementDimensions.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 34-35
+libs/core/src/stores/serverSettings/selectors/getScheduleStatus/getScheduleStatus.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-51
+frontend/src/hooks/tests/useElementDimensions.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,28-42
+  s_6531631c1725cf::t_e7352a98a8eb8b 43
+libs/api/src/routing/videoRouter/createVideoRouter.ts
+  s_6531631c1725cf::t_7e913c16f8a398 34,216-222,423
+frontend/src/components/AdvancedSettingsDialog/helpers/isCaptionsTabAvailable.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-7
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useLeaveAtMeetingEnd.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-48
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 226-235,237-239
+env.sh
+  s_6531631c1725cf::t_7e913c16f8a398 12,36,39
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-33
+frontend/src/locales/fr.json
+  s_6531631c1725cf::t_7e913c16f8a398 1-424
+libs/core/src/stores/serverSettings/hooks/useServerSettings.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-38
+frontend/src/components/MeetingRoom/AdvancedSettingsButton/AdvancedSettingsButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,52
+backend/middleware/authMiddleware/authMiddleware.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2-3,8-10,15,24,44-46,48-50,59,67,69-79,81-83,85,87-88,90-92,94,99-205
+backend/helpers/assertSessionKeySecretMatchesAuth.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-23
+backend/helpers/getOrCreateSessionKeyFromRoomName.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-89
+integration-tests/tests/recording.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1,3,6-9,32,51-52,130-430
+libs/common/web/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5
+libs/core/src/stores/serverSettings/types/ServerSettingsAPI.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+frontend/src/locales/ja.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,114-116,177,201-210,300-309,317,332,349-351,360-362,375-378,389,406-424
+frontend/src/Context/RoomProvider.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-3,11-18
+frontend/src/pages/WaitingRoom/WaitingRoom.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,6,17,22,27-42,120-124,157-161,211-236,277-320,403,414,425,428-430,436
+integration-tests/package.json
+  s_6531631c1725cf::t_7e913c16f8a398 3
+backend/middleware/rateLimitMiddleware.ts
+  s_6531631c1725cf::t_7e913c16f8a398 14
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 87-96
+integration-tests/tests/captions.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 155-306
+libs/api/src/handlers/getServerSettings.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-7
+.github/workflows/check-pull-request-size.yml
+  s_6531631c1725cf::t_7e913c16f8a398 1-28
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,11-13,182-190,200-264,267-283
+frontend/src/components/WaitingRoom/UserNameInput/components/ScheduleCountdownPanel/ScheduleCountdownPanel.skeleton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-36
+frontend/src/utils/ActiveSpeakerTracker/activeSpeakerTracker.ts
+  s_6531631c1725cf::t_7e913c16f8a398 21-24,38-39,53,58,75-85,109,111-114,116-136
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/AdvancedSettingsCaptionsTab.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-72
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/LinkCopyField.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-80
+libs/core/src/hooks/usePublisherStats/usePublisherStats.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,65-68
+frontend/src/components/JoinWaitRoomButton/helpers/parseRoomIdInput.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-18
+frontend/src/components/MeetingRoom/ExitButton/ExitButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 17,30
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useShouldShowMeetingTimer.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-17
+frontend/src/components/RoomNameInput/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/Context/BackgroundPublisherProvider/useBackgroundPublisher/useBackgroundPublisher.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 24,36,89,112-116,181-183,186-194,196-211,213-222,224-230,232-237
+backend/services/loggerService.ts
+  s_6531631c1725cf::t_7e913c16f8a398 56
+backend/vitest.config.ts
+  s_6531631c1725cf::t_7e913c16f8a398 37
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/CreateRoomWizardFooterActions.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-48
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 13,57-59,66,69-80,82
+frontend/src/utils/formatMinutesAndSeconds/formatMinutesAndSeconds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-15
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettingsTab.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 8,17
+frontend/src/components/FooterLinks/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/components/MeetingRoom/SmallViewportHeader/SmallViewportHeader.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 14,51,66
+frontend/src/hooks/useEmoji.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,42-51,120-127,136-137,140
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 21,161-166
+  s_6531631c1725cf::t_57986b929573fe 167
+frontend/src/Context/PublisherProvider/usePublisher/usePublisher.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 587-605
+frontend/src/pages/MeetingRoom/MeetingRoom.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 561-562,565,579
+frontend/src/test/providers/makeMiniModeProviderWrapper.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-46
+backend/tests/session.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5,11,17-24,504-547
+  s_6531631c1725cf::t_ba5dd0dcd0d3cd 548-551
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 6,22,32-39
+frontend/src/components/MeetingRoom/PostCallTranscriptionButton/PostCallTranscriptionButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5,10,49-52,55-56,59-61,98,120-133,165,170
+frontend/src/hooks/useRoomShareUrl.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,10
+integration-tests/tests-auth/anonymousMeetingLink.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-57
+libs/api/src/schemas/GetServerSettingsPayload.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-10
+frontend/src/Context/PreviewPublisherProvider/usePreviewPublisher/usePreviewPublisher.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 23,204-216,219-225
+frontend/src/components/WaitingRoom/UserNameInput/helpers/getCountdownText.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-23
+libs/api/src/schemas/CaptionOptions.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,10-11
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-19
+libs/common/src/types/VideoSessionDetails.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,6-9
+frontend/src/locales/localeParity.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 8,21
+libs/core/src/stores/serverSettings/types/ScheduleStatus.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-16
+libs/core/src/constants/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+frontend/src/components/CreateRoomWizard/context/createRoomWizardContext.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-12
+libs/core/test/providers/makeTestProvider.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2-7,14,19,24,32,120-123
+  s_6531631c1725cf::t_a3e8dd566c1ea5 124
+libs/common/web/documentPictureInPicture/syncStylesToWindow.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-62
+backend/routes/video/video.ts
+  s_6531631c1725cf::t_7e913c16f8a398 16-17,23-27,36-38,118,129,131,152-165
+  s_6531631c1725cf::t_6af87e1c5cdf24 166-167
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 10,47-54
+frontend/src/components/NewRoomButton/NewRoomButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 6-8,12,23,27,33
+integration-tests/tests/emoji.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-231
+frontend/src/components/WaitingRoom/UserNameInput/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/components/MeetingRoom/MiniCallWindow/index.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+libs/common/web/documentPictureInPicture/syncStylesToWindow.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-72
+frontend/src/Context/SessionProvider/session.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 13-14,40-42,45,87,135,155,193,205-207,517-530,540,563,565,569-571,583-595,597,599,603,614-631,695,739,751-755
+libs/core/test/providers/makeServerSettingsProviderWrapper.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-13
+frontend/src/env.ts
+  s_6531631c1725cf::t_7e913c16f8a398 42,46,89,93
+libs/core/src/hooks/useSubscriberStats/useSubscriberStats.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,58
+.github/workflows/run-tests.yml
+  s_6531631c1725cf::t_7e913c16f8a398 128,163
+libs/api/src/schemas/CreateSessionPayload.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,9
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/UserCaption.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 10-12,14,32-33,57-59,63,67-68,72-74,78,82-83
+frontend/src/components/AdvancedSettingsDialog/schemas/advancedSettings.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 14,35,48
+frontend/src/pages/WaitingRoom/WaitingRoom.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 9,17-18,46,53-56,98-101
+frontend/src/components/JoinWaitRoomButton/JoinWaitRoomButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5-9,12,22,28,35,37-38,43,47-53
+backend/middleware/authMiddleware/authMiddleware.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 111
+libs/api/src/types/VideoAction.ts
+  s_6531631c1725cf::t_7e913c16f8a398 15
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-5,7,14-65,67-76
+libs/ui/src/layout/SplitPanel/SplitPanel.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-19
+frontend/src/components/LanguageSelector/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+frontend/src/components/MeetingRoom/MiniModeButton/MiniModeButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-50
+frontend/src/components/WaitingRoom/UserNameInput/hooks/useScheduleTabTitle.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-51
+libs/core/src/stores/serverSettings/selectors/getScheduleStatus/getScheduleStatus.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-32
+libs/ui/src/layout/SplitPanel/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 4-5,23-43
+  s_6531631c1725cf::t_da43525dbd5291 44-45
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-58
+frontend/src/VeraRoom/stores/bridge/constants/bridgeAttributesMap.ts
+  s_6531631c1725cf::t_7e913c16f8a398 15
+frontend/src/components/MeetingRoom/ToolbarOverflowMenu/ToolbarOverflowMenu.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 17-18,81,109-111
+libs/api/src/schemas/MeetingSchedule.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-21
+libs/api/src/routing/videoHandler/createVideoHandler.ts
+  s_6531631c1725cf::t_7e913c16f8a398 32,38-44
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-36
+docs/CONFIGURATION.md
+  s_6531631c1725cf::t_7e913c16f8a398 51-56,70-78,216,219
+frontend/src/components/MeetingRoom/AudioIndicator/AudioIndicator.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 11,60-67
+frontend/src/test/providers/makersIndex.ts
+  s_6531631c1725cf::t_7e913c16f8a398 35-44
+libs/common/src/types/ScheduleWindow.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-9
+frontend/src/VeraRoom/stages/GoodByeStage/GoodByeStage.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 15,32,37
+frontend/src/components/BackgroundEffects/BackgroundGallery/BackgroundGallery.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 8,102,110
+backend/routes/auth/helpers/clearSessionCookies.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,19-22
+frontend/src/VeraRoom/stages/WaitingRoomStage/WaitingRoomStage.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 9,33,36,72,116
+frontend/src/utils/movingAverageAudioLevelTracker.ts
+  s_6531631c1725cf::t_7e913c16f8a398 13-16,27,29-33,37-38
+frontend/src/utils/helpers/getSubscribersInDisplayOrder/getSubscribersInDisplayOrder.ts
+  s_6531631c1725cf::t_7e913c16f8a398 112-114
+frontend/src/components/CreateRoomWizard/components/ShareStep/ShareStep.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-45
+integration-tests/tests/multiparty.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1,272-409
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindow.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-126
+libs/api/src/core/VideoClient/VideoClient.ts
+  s_6531631c1725cf::t_7e913c16f8a398 18,178-182
+frontend/src/components/CreateRoomWizard/components/ShareStep/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+frontend/src/utils/constants.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 123-129
+  s_6531631c1725cf::t_78ef7f1ee0e70e 122
+libs/core/src/stores/serverSettings/types/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+libs/common/web/documentPictureInPicture/registerEnterPictureInPictureAction.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-33
+frontend/src/components/Banner/Banner.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 8,30
+libs/api/src/schemas/StartArchivePayload.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 8
+libs/core/src/stores/serverSettings/types/ServerSettingsState.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-28
+frontend/src/components/MeetingRoom/ToolbarOverflowButton/ToolbarOverflowButton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 100,105
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-44
+frontend/src/Context/MiniMode/MiniModeContext.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-144
+frontend/src/components/MeetingRoom/MutingDialog/MutingDialog.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2,56-58,69-73,78-97
+  s_6531631c1725cf::t_796937c07e7eaa 98-99
+frontend/src/components/MeetingRoom/Toolbar/Toolbar.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5-6,13,16,30-31,33,89-91,95-98,101-102,104-157,159-195,268,287
+frontend/src/components/MeetingRoom/CaptionsButton/CaptionsBox/UserCaption/hooks/useCaptionsTranslation.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-30
+frontend/src/components/WaitingRoom/UserNameInput/helpers/formatCountdown.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-8
+frontend/src/components/JoinExistingRoom/JoinExistingRoom.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 5-6,14,18,20-21,26
+libs/api/src/routing/runExpressMiddleware/runExpressMiddleware.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-26
+frontend/src/Context/AdvancedSettings/AdvancedSettings.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 7,50,63,184-188,249-253
+frontend/src/locales/de.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,106-108,167,191-200,290-299,307,322,339-341,350-352,365-368,379,396-414
+libs/api/src/schedule/assertScheduleOpen.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-21
+libs/core/src/stores/serverSettings/selectors/getScheduleStatus/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+frontend/src/components/MeetingRoom/MiniCallWindow/useHostedVideoElement.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-36
+libs/core/src/stores/serverSettings/actions/internalActions.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-15
+libs/common/manifest.json
+  s_6531631c1725cf::t_2f43cf82245bb5 4
+backend/tests/helpers/mockVonageVideoSdk.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3,50
+backend/routes/video/helpers/hasVerifiedSessionKey.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-29
+backend/storage/inMemorySessionStorage/inMemorySessionStorage.ts
+  s_6531631c1725cf::t_7e913c16f8a398 10,14-16,19,23,31,35-36,44,46-48,53-55,59,137-152,154
+docs/ARCHITECTURE.md
+  s_6531631c1725cf::t_7e913c16f8a398 61-64
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/JoinBlockerText.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-46
+frontend/src/hooks/tests/useMeetingRoom.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 9,55-59,139-205
+  s_6531631c1725cf::t_65c53046e2ea34 206
+libs/api/src/constants/schemasByAction.ts
+  s_6531631c1725cf::t_7e913c16f8a398 12,27
+libs/core/src/stores/serverSettings/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-3
+libs/core/test/providers/makersIndex.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5-8
+libs/api/src/schemas/CaptionsTranslationLevel.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-19
+libs/common/web/documentPictureInPicture/registerEnterPictureInPictureAction.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-51
+frontend/src/components/FooterLinks/FooterLinks.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 6-8,22,28
+backend/routes/video/helpers/restartArchivingAfterServerRotation.ts
+  s_6531631c1725cf::t_7e913c16f8a398 44-46,49,57
+frontend/src/locales/es-MX.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,106-108,167,191-200,290-299,307,322,339-341,350-352,365-368,379,396-414
+frontend/src/components/WaitingRoom/UserNameInput/components/JoinBlockerText/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+libs/ui/src/components/Skeleton/Skeleton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-27
+backend/middleware/anonymousSessionCreationLimiter.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-24
+backend/server.ts
+  s_6531631c1725cf::t_7e913c16f8a398 8-9,12,36-39,58-89,97-99
+frontend/src/utils/VonageVideoClient/vonageVideoClient.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2,35-36,38,63,76-77,85-86,114-117,120-128,247-307,310,314-379,391-405,484-500
+libs/common/web/documentPictureInPicture/copyStylesToDocument.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-69
+frontend/src/components/Banner/Banner.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 18,27-38,42
+libs/api/src/schedule/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-9
+backend/routes/video/setup.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2,5-14,18-65,69,72-80,82-87
+frontend/src/components/CreateRoomWizard/CreateRoomWizard.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-98
+integration-tests/tests/joiningAndRouting.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-322
+backend/routes/session.ts
+  s_6531631c1725cf::t_7e913c16f8a398 6,16-20
+frontend/src/components/Subscriber/Subscriber.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 2-4,181-189
+frontend/src/components/WaitingRoom/MicButton/MicButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 73
+libs/api/src/handlers/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 13
+frontend/src/Context/SessionProvider/useResubscribeFailureNotifier/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1
+libs/api/src/routing/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3
+frontend/src/locales/es.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,106-108,167,191-200,290-299,307,322,339-341,350-352,365-368,379,396-414
+frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+integration-tests/tests-auth/roomByName.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-34
+backend/middleware/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4
+scripts/generateEnv.ts
+  s_6531631c1725cf::t_7e913c16f8a398 140-144
+backend/routes/video/constants/startArchive.ts
+  s_6531631c1725cf::t_7e913c16f8a398 31-53
+frontend/src/components/MeetingRoom/MiniCallWindow/useIconSvg.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-135
+frontend/src/components/RoomNameInput/RoomNameInput.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 4-6,9-10,18,20-21,27-28,34-36,45-46,49-50
+backend/routes/auth/helpers/writeSessionCookies.ts
+  s_6531631c1725cf::t_7e913c16f8a398 6,8,54-60
+  s_6531631c1725cf::t_8f938847121653 61-62
+frontend/src/utils/isSignedIn.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-12
+libs/common/src/helpers/decodeSessionKey/decodeSessionKey.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-2,10-19
+frontend/vite.config.ts
+  s_6531631c1725cf::t_7e913c16f8a398 32,36,198-205,253-270
+frontend/src/App.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 26,57-59
+backend/.env.example
+  s_6531631c1725cf::t_7e913c16f8a398 28,31-35,42,44-48,69,115
+backend/helpers/config.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 110-118,143-151,208
+backend/routes/video/helpers/isLegacySessionKeyAllowed.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-11
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsCaptionsTab/index.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1
+frontend/src/components/GoodBye/ReenterRoomButton/ReenterRoomButton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 4,12,14,22,24-34
+frontend/src/components/MeetingRoom/MiniModeButton/MiniModeButton.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-66
+frontend/src/VeraRoom/vite.veraroom.config.ts
+  s_6531631c1725cf::t_7e913c16f8a398 8,35-39
+customWordList.mjs
+  s_6531631c1725cf::t_7e913c16f8a398 36
+frontend/src/hooks/useWaitingRoom.ts
+  s_6531631c1725cf::t_7e913c16f8a398 13,18-19,49-53
+integration-tests/tests/activeSpeaker.spec.ts
+  s_6531631c1725cf::t_7e913c16f8a398 4-28,74-130
+libs/api/src/schemas/CreateSessionAndJoinPayload.schema.ts
+  s_6531631c1725cf::t_7e913c16f8a398 2,6-8,10
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+libs/api/src/schemas/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 24,31-32
+backend/services/tests/loggerServiceWarnOnce.test.ts
+  s_6531631c1725cf::t_7e913c16f8a398 32,51
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,4,6,11-14,25-26,29-31,33-35,37-43,48-51,54,58-62,66-73
+libs/common/web/documentPictureInPicture/copyStylesToDocument.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-34
+libs/api/src/handlers/startArchive.ts
+  s_6531631c1725cf::t_7e913c16f8a398 3-5,15-18,21
+backend/helpers/getOrCreateSessionKeyFromRoomName.ts
+  s_6531631c1725cf::t_7e913c16f8a398 6-9,16,20,24-50
+frontend/src/VeraRoom/stages/MeetingRoomStage/MeetingRoomStage.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 10-24,67-69
+  s_6531631c1725cf::t_03e33facd342a4 70-71
+frontend/.env.example
+  s_6531631c1725cf::t_7e913c16f8a398 31,34
+frontend/src/components/WaitingRoom/UserNameInput/UserNameInput.skeleton.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,3,6-9,14-22,30-33,37-42,44-47,49
+frontend/src/locales/it.json
+  s_6531631c1725cf::t_7e913c16f8a398 23,26,106-108,167,191-200,290-299,307,322,339-341,350-352,365-368,379,396-414
+frontend/src/components/MeetingRoom/MiniCallWindow/MiniCallWindowStylesProvider.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-31
+frontend/src/components/Publisher/Publisher.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 13,35-36,41-44,46-51,53-54,60
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsSidebar/AdvancedSettingsSidebar.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 7,9-16,22,26,33
+frontend/src/components/RoomJoinContainer/RoomJoinContainer.spec.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,3-4,44-45,52-55
+libs/api/src/index.ts
+  s_6531631c1725cf::t_7e913c16f8a398 7
+libs/core/src/stores/serverSettings/actions/getSecondsUntilEnd.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-13
+frontend/src/hooks/useMeetingRoom.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1,15-16,74,102-103,118-119,123-132,135,179-182,186-193,317-347
+  s_6531631c1725cf::t_98dab93ad26923 348-349
+frontend/src/components/MeetingRoom/ParticipantList/ParticipantList.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1,72-79,86-87
+frontend/package.json
+  s_6531631c1725cf::t_7e913c16f8a398 3
+libs/api/src/handlers/createEphemeralToken.ts
+  s_6531631c1725cf::t_7e913c16f8a398 5-7,14-15,20-23,35-42,44
+libs/ui/src/layout/SplitPanel/SplitPanel.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-35
+vcr-gha.yml
+  s_6531631c1725cf::t_7e913c16f8a398 139-140
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/testIds.ts
+  s_6531631c1725cf::t_7e913c16f8a398 1-4
+libs/core/src/stores/serverSettings/serverSettings$.test.tsx
+  s_6531631c1725cf::t_7e913c16f8a398 1-148
+pnpm-lock.yaml
+  s_6531631c1725cf::t_eaaf5e450e18e1 155,157-158,161,164,170,233,236,256-257,260,266,269,272,275,278,281,284,341,347,1579-1581,1583-1597,1599-1604,1616-1626,1632-1634,4758-4760,4774-4776,4779-4787,4912-4914,4950-4952,5145-5147,9166,9171,9453,9455,9460-9476,9480-9481,9490,9492-9497,9510,9512-9520,9524,10046,10051-10053,10061,10073,10077,10204,10207,11255,11258,11260-11261,11263,11271,11278,11319,11323,11325,11331,11335,11337,11377,11379,11383,11388,11390,11394,13193,13195,13220,13223,13231,13235,13239-13240,13242,13246,13255,13257,13269,13275,13286,13295,13297,13303,13305,13309,13316,13318,13320,13328,13355,13366,13368,13370-13376,13378-13379,13385-13387,13391,13402-13403,13407-13412,13550,13552,13600,13818,16505,16507-16508,16510-16511,16725,16737
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "63343e592c4934595df4dc2c8d9497de0375c7d5",
+  "prompts": {},
+  "sessions": {
+    "s_6531631c1725cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f3d6-8b6c-7f73-b6d9-4fb2f14b5273",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

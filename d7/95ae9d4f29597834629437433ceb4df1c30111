@@ -1,0 +1,31 @@
+frontend/src/components/AdvancedSettingsDialog/AdvancedSettingsDialog.tsx
+  s_20776229283099::t_53d224c2f62176 16,23-24
+frontend/src/components/AdvancedSettingsDialog/components/AdvancedSettingsMeetingTab/components/MeetingProgress.tsx
+  s_20776229283099::t_20451ce3a2f048 5,18
+frontend/src/components/AdvancedSettingsDialog/hooks/useIsMeetingTabAvailable.ts
+  s_20776229283099::t_e192b6541afbbe 2,7-11
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.spec.tsx
+  s_20776229283099::t_0948a0db29887b 34,55,76,98,143-146,153
+frontend/src/components/MeetingRoom/MeetingTimer/MeetingTimer.tsx
+  s_20776229283099::t_4bea8f8c026b58 8,15,17
+frontend/src/components/MeetingRoom/MeetingTimer/hooks/useEndOfMeetingWarning.spec.tsx
+  s_20776229283099::t_1d17c4ad61c797 23-26,28-41,43-58,60-62,64-68
+frontend/src/locales/fr.json
+  s_20776229283099::t_e92a09cf868e89 423-436
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d795ae9d4f29597834629437433ceb4df1c30111",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
