@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent } from 'react';
 import isValidUserName from '@utils/isValidUserName';
-import type { ScheduleStatus } from '../types/ScheduleStatus';
+import type { ScheduleStatus } from '@core/stores/serverSettings';
 
 const useAutoJoin = ({
   isAutoJoinRequested,
@@ -18,11 +18,14 @@ const useAutoJoin = ({
 
   const joinOnStart = useEffectEvent(join);
 
-  useEffect(() => {
-    if (!shouldAutoJoin) return;
+  useEffect(
+    function joinWhenMeetingStarts() {
+      if (!shouldAutoJoin) return;
 
-    joinOnStart();
-  }, [shouldAutoJoin]);
+      joinOnStart();
+    },
+    [shouldAutoJoin]
+  );
 };
 
 export default useAutoJoin;
