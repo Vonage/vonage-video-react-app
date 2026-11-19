@@ -1,0 +1,36 @@
+backend/routes/video/setup.test.ts
+  h_737cf808c1c597 24-54,132-173
+backend/routes/video/setup.ts
+  h_737cf808c1c597 5,138-139
+backend/tests/helpers/mockVonageVideoSdk.ts
+  h_737cf808c1c597 5,16,20,59-63,71-75
+backend/tests/session.test.ts
+  h_737cf808c1c597 38-47
+integration-tests/test-api/apiIntegrity.test.ts
+  h_737cf808c1c597 39-44,62-67,87,91
+libs/api/src/core/VideoClient/VideoClient.test.ts
+  h_737cf808c1c597 480-492,635-647,713-714
+libs/api/src/handlers/assertCaptionsBelongToSession.ts
+  h_737cf808c1c597 1-26
+libs/api/src/handlers/disableCaptions.ts
+  h_737cf808c1c597 6,10-12
+libs/api/src/handlers/index.ts
+  h_737cf808c1c597 14
+libs/api/src/handlers/stopArchive.ts
+  h_737cf808c1c597 1-5,14,17-27
+libs/api/src/routing/videoHandler/createVideoHandler.test.ts
+  h_737cf808c1c597 4,21-24,41-42
+libs/api/src/routing/videoRouter/createVideoRouter.test.ts
+  h_737cf808c1c597 4-9,25-28,45-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cb1c28ed75ad9e98a14b5212dc442ec3ad79af61",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
