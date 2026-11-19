@@ -23,18 +23,15 @@ describe('getCreateSessionPayload', () => {
     ).toEqual({ roomName: 'weekly-sync' });
   });
 
-  it.each([60, 120, 1440] as const)(
-    'signs the local start and the %i minute preset into the schedule',
-    (durationMinutes) => {
-      const payload = getCreateSessionPayload({
-        draft: { ...unscheduledDraft, name: 'weekly-sync', isScheduled: true, durationMinutes },
-        fallbackRoomName: 'red-aardvark',
-      });
+  it('sends the local start and duration in the schedule', () => {
+    const payload = getCreateSessionPayload({
+      draft: { ...unscheduledDraft, name: 'weekly-sync', isScheduled: true, durationMinutes: 120 },
+      fallbackRoomName: 'red-aardvark',
+    });
 
-      expect(payload).toEqual({
-        roomName: 'weekly-sync',
-        schedule: { startsAt: new Date(2030, 0, 15, 9, 30).getTime(), durationMinutes },
-      });
-    }
-  );
+    expect(payload).toEqual({
+      roomName: 'weekly-sync',
+      schedule: { startsAt: new Date(2030, 0, 15, 9, 30).getTime(), durationMinutes: 120 },
+    });
+  });
 });

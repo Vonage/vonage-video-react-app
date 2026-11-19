@@ -38,10 +38,6 @@ const CreateRoomWizardDialog = ({
       ref={openDialog}
       data-testid={testIds.dialog}
       onCancel={onClose}
-      onClick={(event) => {
-        const isBackdropClick = event.target === event.currentTarget;
-        if (isBackdropClick) onClose();
-      }}
       aria-labelledby={titleId}
       className={paperClassName}
     >

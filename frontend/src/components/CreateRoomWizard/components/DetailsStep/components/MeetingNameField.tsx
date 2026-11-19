@@ -1,9 +1,9 @@
-import { useState, type ChangeEvent, type ReactElement } from 'react';
+import type { ChangeEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isValidRoomName } from '@common/assertions';
 import classNames from 'classnames';
 import Field from '@ui/components/Field';
 import createRoomWizard$ from '../../../context/createRoomWizardContext';
+import useIsMeetingNameValid from '../../../hooks/useIsMeetingNameValid';
 import { testIds } from './meetingNameFieldTestIds';
 
 export { testIds } from './meetingNameFieldTestIds';
@@ -15,14 +15,10 @@ const MeetingNameField = (): ReactElement => {
   const { t } = useTranslation();
   const name = createRoomWizard$.use.select((state) => state.name);
   const { setName } = createRoomWizard$.use.actions();
-  const [hasError, setHasError] = useState(false);
+  const hasError = !useIsMeetingNameValid();
 
   const handleChange = (changeEvent: ChangeEvent<HTMLInputElement>) => {
-    const newName = changeEvent.target.value.toLowerCase();
-    const isAccepted = newName === '' || isValidRoomName(newName);
-
-    setHasError(!isAccepted);
-    if (isAccepted) setName(newName);
+    setName(changeEvent.target.value.toLowerCase());
   };
 
   return (
@@ -42,7 +38,7 @@ const MeetingNameField = (): ReactElement => {
       />
       <Field.Description
         id="create-room-wizard-meeting-name-description"
-        className={classNames('text-vera-body-base!', { 'text-vera-error': hasError })}
+        className={classNames({ 'text-vera-error': hasError })}
       >
         {t('createRoomWizard.details.name.description')}
       </Field.Description>

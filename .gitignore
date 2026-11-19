@@ -44,8 +44,6 @@ sauce-connect.log
 
 .tern-project
 
-.vscode/settings.json
-
 build
 
 /scripts/allLicenseResults.json

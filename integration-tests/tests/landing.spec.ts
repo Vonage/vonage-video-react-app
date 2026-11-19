@@ -25,6 +25,8 @@ import { testIds as wizardFooterTestIds } from '../../frontend/src/components/Cr
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as linkCopyTestIds } from '../../frontend/src/components/CreateRoomWizard/components/ShareStep/components/LinkCopyField/testIds';
 import { expect } from '@playwright/test';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import assertNotEmptyString from '../../libs/common/src/assertions/assertNotEmptyString';
 import { test, baseURL } from '../fixtures/testWithLogging';
 
 test.beforeEach(async ({ page }) => {
@@ -61,6 +63,7 @@ test('should create a meeting, copy its link, then join and publish via Create r
   await expect(wizard).toContainText('the link never expires');
   await wizard.getByTestId(createMeetingButtonTestIds.button).click();
   const meetingLink = await wizard.getByTestId(linkCopyTestIds.link).textContent();
+  assertNotEmptyString(meetingLink, 'Expected the created meeting link');
 
   await wizard.getByTestId(linkCopyTestIds.copyButton).click();
   await expect(wizard.getByTestId(linkCopyTestIds.copyButton)).toHaveAccessibleName('Link copied');
@@ -71,7 +74,7 @@ test('should create a meeting, copy its link, then join and publish via Create r
 
   await wizard.getByTestId(wizardFooterTestIds.joinButton).click();
 
-  await expect(page).toHaveURL(meetingLink ?? '');
+  await expect(page).toHaveURL(meetingLink);
 
   await page.waitForSelector('.video__element', { state: 'visible' });
 
@@ -101,10 +104,11 @@ test('should create a named meeting scheduled for two hours and open its waiting
   await expect(wizard).toContainText('weekly-sync');
   await expect(wizard).toContainText(' · 2 hours');
   const meetingLink = await wizard.getByTestId(linkCopyTestIds.link).textContent();
+  assertNotEmptyString(meetingLink, 'Expected the created meeting link');
 
   await wizard.getByTestId(wizardFooterTestIds.joinButton).click();
 
-  await expect(page).toHaveURL(meetingLink ?? '');
+  await expect(page).toHaveURL(meetingLink);
 });
 
 test('GitHub Logo Redirect to Vonage GitHub URL in New Tab', async ({ page, context }) => {

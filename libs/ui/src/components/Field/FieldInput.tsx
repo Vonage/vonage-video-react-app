@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import { extendTailwindMerge } from 'tailwind-merge';
 import type { ComponentProps, ReactElement } from 'react';
-import { veraTypographyCssVariableNames } from '../../theme/helpers/veraUI.types';
+import mergeFieldClasses from './mergeFieldClasses';
 
 type BaseProps = ComponentProps<'input'>;
 
@@ -15,16 +14,6 @@ type SwitchInputProps = Omit<BaseProps, 'size' | 'type'> & {
 };
 
 export type FieldInputProps = SwitchInputProps | InputProps;
-
-const mergeInputClasses = extendTailwindMerge({
-  extend: {
-    classGroups: {
-      'font-size': [
-        { text: Object.keys(veraTypographyCssVariableNames).map((token) => `vera-${token}`) },
-      ],
-    },
-  },
-});
 
 const FieldInput = ({ className, ...props }: FieldInputProps): ReactElement => {
   if (props.variant === 'switch') {
@@ -58,9 +47,9 @@ const FieldInput = ({ className, ...props }: FieldInputProps): ReactElement => {
 
   return (
     <input
-      className={mergeInputClasses(
+      className={mergeFieldClasses(
         classNames(
-          'w-full rounded-vera-medium border bg-vera-surface px-3 py-2 font-vera-plain text-vera-body-base text-vera-text-secondary outline-none transition-colors scheme-light dark:scheme-dark',
+          'w-full rounded-vera-medium border bg-vera-surface px-3 py-2 font-vera-plain text-vera-body-base text-vera-text-secondary outline-none focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vera-primary transition-colors scheme-light dark:scheme-dark',
           {
             'border-vera-error': isInvalid,
             'border-vera-border focus:border-vera-primary': !isInvalid,

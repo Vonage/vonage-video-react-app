@@ -1,0 +1,10 @@
+{
+  "tailwindCSS.classFunctions": [
+    "tv",
+    "twMerge",
+    "cn",
+    "classNames",
+    "extendTailwindMerge",
+    "mergeFieldClasses"
+  ]
+}

@@ -7,12 +7,12 @@ export type ChoiceChipProps = ComponentProps<'button'> & {
 
 const choiceChip = tv(
   {
-    base: 'cursor-pointer rounded-full border px-4 py-1.5 font-vera-plain text-vera-body-base-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+    base: 'cursor-pointer rounded-full border px-4 py-1.5 font-vera-plain text-vera-body-base-semibold transition-colors disabled:cursor-not-allowed disabled:border-vera-border disabled:bg-vera-disabled disabled:text-vera-text-disabled',
     variants: {
       isSelected: {
         true: 'border-vera-primary bg-vera-primary text-vera-on-primary',
         false:
-          'border-vera-border bg-vera-surface text-vera-text-secondary hover:border-vera-primary',
+          'border-vera-border bg-vera-surface text-vera-text-secondary enabled:hover:border-vera-primary',
       },
     },
   },

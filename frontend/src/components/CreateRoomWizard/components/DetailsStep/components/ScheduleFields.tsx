@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChoiceChip from '@ui/components/ChoiceChip';
 import Field from '@ui/components/Field';
+import getLocalDateInputValue from '@common/helpers/getLocalDateInputValue';
 import createRoomWizard$ from '../../../context/createRoomWizardContext';
 import meetingDurationOptions from '../../../constants/meetingDurationOptions';
 import meetingDurationLabelKeys from '../../../constants/meetingDurationLabelKeys';
@@ -28,6 +29,7 @@ const ScheduleFields = (): ReactElement => {
             </Field.Label>
             <Field.Input
               type="date"
+              min={getLocalDateInputValue(new Date())}
               id="create-room-wizard-start-date"
               value={startDate}
               aria-invalid={!isStartValid}
