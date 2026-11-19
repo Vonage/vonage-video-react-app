@@ -13,17 +13,32 @@ on:
       - 'scripts/commonPackage/**'
       - '.github/workflows/video-common-publish.yml'
   workflow_dispatch:
+    inputs:
+      channel:
+        description: Package tag (manual runs publish a unique prerelease version)
+        required: true
+        default: beta
+        type: choice
+        options:
+          - beta
+          - latest
 
 permissions:
   contents: read
 
+env:
+  PUBLISH_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && (inputs.channel || 'beta') || 'latest' }}
+
 concurrency:
-  group: video-common-publish-${{ github.ref }}
+  group: video-common-publish-${{ github.event_name == 'workflow_dispatch' && (inputs.channel || 'beta') || 'latest' }}
   cancel-in-progress: false
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/develop'
+    if: >-
+      github.repository == 'Vonage/vonage-video-react-app' &&
+      github.ref_type == 'branch' &&
+      (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/develop')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,7 +61,9 @@ jobs:
         run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Verify hash, test, build and pack
-        run: npx tsx scripts/commonPackage/publish.ts pack "$RUNNER_TEMP/common-package"
+        run: |
+          node --test scripts/commonPackage/publishTarball.test.cjs
+          npx tsx scripts/commonPackage/publish.ts pack "$RUNNER_TEMP/common-package"
 
       - name: Upload package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -58,9 +75,15 @@ jobs:
 
   publish:
     needs: build
-    if: github.ref == 'refs/heads/develop'
+    if: >-
+      github.repository == 'Vonage/vonage-video-react-app' &&
+      github.ref_type == 'branch' &&
+      (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/develop')
     runs-on: ubuntu-latest
     environment: npm-publish
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout publish script
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -86,5 +109,5 @@ jobs:
 
       - name: Publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/commonPackage/publishTarball.cjs "$RUNNER_TEMP/common-package"

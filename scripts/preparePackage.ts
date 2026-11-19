@@ -20,7 +20,7 @@ const PACKAGE_SCRIPTS_BY_TARGET: Record<string, { versionCheck: string; publish:
  * Validates a package before publishing: quality checks, version bump against origin/develop, then
  * tests, build and `npm publish --dry-run`.
  * Usage: yarn prepare:package <target>
- * NPM_TOKEN is optional; when set, the dry run also checks the token and the published versions.
+ * NODE_AUTH_TOKEN is optional; when set, the dry run also checks the token and the published versions.
  */
 function main(): void {
   const [target] = process.argv.slice(2);

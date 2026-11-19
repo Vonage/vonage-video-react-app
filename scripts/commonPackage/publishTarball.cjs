@@ -3,28 +3,28 @@ const fs = require('node:fs');
 const path = require('node:path');
 const child_process = require('node:child_process');
 
-const REGISTRY = 'https://registry.npmjs.org';
+const REGISTRY = 'https://npm.pkg.github.com';
 const REGISTRY_AUTH_TOKEN_KEY = `npm_config_${REGISTRY.replace(/^https?:/, '')}/:_authToken`;
 const MANIFEST_PATH = path.resolve(__dirname, '../../libs/common/manifest.json');
 
 /**
  * Publishes the tarball written by `publish.ts pack <directory>`.
- * Usage: NPM_TOKEN=<token> node scripts/commonPackage/publishTarball.cjs <directory>
+ * Usage: NODE_AUTH_TOKEN=<token> node scripts/commonPackage/publishTarball.cjs <directory>
  */
 function main() {
   const [artifactDirectory] = process.argv.slice(2);
 
   if (!artifactDirectory) {
     console.error(
-      'Usage: NPM_TOKEN=<token> node scripts/commonPackage/publishTarball.cjs <directory>'
+      'Usage: NODE_AUTH_TOKEN=<token> node scripts/commonPackage/publishTarball.cjs <directory>'
     );
     process.exit(1);
   }
 
-  const token = process.env.NPM_TOKEN;
+  const token = process.env.NODE_AUTH_TOKEN;
 
   if (!token) {
-    console.log('::notice::NPM_TOKEN is not set. Skipping publish.');
+    console.log('::notice::NODE_AUTH_TOKEN is not set. Skipping publish.');
     return;
   }
 
@@ -34,9 +34,19 @@ function main() {
   );
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
   const tarballPath = path.resolve(artifactDirectory, tarball);
+  const isManualPublish = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
+  const expectedVersion = isManualPublish
+    ? `${manifest.version.split('-')[0]}-beta.${process.env.GITHUB_RUN_ID}`
+    : manifest.version;
+  const expectedChannel =
+    process.env.PUBLISH_CHANNEL ?? (isManualPublish ? 'beta' : manifest.channel);
 
   const isMetadataMatchingManifest =
-    version === manifest.version && channel === manifest.channel && sourceHash === manifest.hash;
+    version === expectedVersion &&
+    /^(\d+)\.(\d+)\.(\d+)(?:-beta\.\d+)?$/.test(version) &&
+    channel === expectedChannel &&
+    ['beta', 'latest'].includes(channel) &&
+    sourceHash === manifest.hash;
 
   if (!isMetadataMatchingManifest) {
     console.error(`::error::${metadataPath} does not match the committed ${MANIFEST_PATH}.`);
@@ -70,7 +80,7 @@ function main() {
   const whoami = runNpm({ npmArguments: ['whoami'], environment });
 
   if (whoami.status !== 0) {
-    console.error(`::error::NPM_TOKEN is not valid for ${REGISTRY}.`);
+    console.error(`::error::NODE_AUTH_TOKEN is not valid for ${REGISTRY}.`);
     console.error(whoami.stderr.trim());
     process.exit(1);
   }
@@ -94,6 +104,18 @@ function main() {
 
   if (isSameSource) {
     console.log(`::notice::${packageName}@${version} is already published with this source.`);
+    const tag = runNpm({
+      npmArguments: ['dist-tag', 'add', `${packageName}@${version}`, channel],
+      environment,
+    });
+
+    if (tag.status !== 0) {
+      console.error(`::error::Could not move ${channel} to ${packageName}@${version}.`);
+      console.error(tag.stderr.trim());
+      process.exit(1);
+    }
+
+    console.log(`${channel} now points to ${packageName}@${version}.`);
     return;
   }
 

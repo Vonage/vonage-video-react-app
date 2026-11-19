@@ -8,18 +8,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const MONOREPO_ROOT = path.resolve(__dirname, '../..');
 const DIST_PATH = path.join(MONOREPO_ROOT, 'libs/common/dist');
-const REGISTRY = 'https://registry.npmjs.org';
+const REGISTRY = 'https://npm.pkg.github.com';
 const REGISTRY_AUTH_TOKEN_KEY = `npm_config_${REGISTRY.replace(/^https?:/, '')}/:_authToken`;
 const CREDENTIAL_VARIABLE_PATTERN = /(^|:)_(authtoken|auth|password)$/;
 const USAGE =
-  'Usage: NPM_TOKEN=<token> npx tsx scripts/commonPackage/publish.ts [pack <directory>]';
+  'Usage: NODE_AUTH_TOKEN=<token> npx tsx scripts/commonPackage/publish.ts [pack <directory>]';
 const KEY_CTRL_C = '\u0003';
 const KEY_ENTER = ['\r', '\n'];
 const KEY_BACKSPACE = ['\u0008', '\u007f'];
 
 /**
- * Publishes libs/common to npm with the version and channel (dist-tag) committed in manifest.json.
- * Usage: NPM_TOKEN=<token> npx tsx scripts/commonPackage/publish.ts (PUBLISH_DRY_RUN=1 for a dry run),
+ * Publishes libs/common to GitHub Packages or packs a release artifact for CI.
+ * Usage: NODE_AUTH_TOKEN=<token> npx tsx scripts/commonPackage/publish.ts (PUBLISH_DRY_RUN=1 for a dry run),
  * or `npx tsx scripts/commonPackage/publish.ts pack <directory>` to write the tarball and metadata.json.
  */
 async function main(): Promise<void> {
@@ -31,7 +31,20 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const { packageName, version, channel, hash: sourceHash } = verifyPackageHash();
+  const manifest = verifyPackageHash();
+  const { packageName, hash: sourceHash } = manifest;
+  const isManualPublish = isPackMode && process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
+  const version = isManualPublish
+    ? `${manifest.version.split('-')[0]}-beta.${process.env.GITHUB_RUN_ID}`
+    : manifest.version;
+  const channel = process.env.PUBLISH_CHANNEL ?? (isManualPublish ? 'beta' : manifest.channel);
+  const isReleaseValid =
+    /^(\d+)\.(\d+)\.(\d+)(?:-beta\.\d+)?$/.test(version) && ['beta', 'latest'].includes(channel);
+
+  if (!isReleaseValid) {
+    console.error(`Invalid package release: ${version} (${channel}).`);
+    process.exit(1);
+  }
   const environmentWithoutToken = Object.fromEntries(
     Object.entries(process.env).filter(([name]) => !isCredentialVariable(name))
   );
@@ -39,6 +52,9 @@ async function main(): Promise<void> {
   if (isPackMode) {
     const packDirectory = path.resolve(outputDirectory);
     buildPackage({ sourceHash, environment: environmentWithoutToken });
+    const packageJsonPath = path.join(DIST_PATH, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    fs.writeFileSync(packageJsonPath, JSON.stringify({ ...packageJson, version }, null, 2) + '\n');
     fs.mkdirSync(packDirectory, { recursive: true });
 
     const packResult = child_process.spawnSync(
@@ -70,7 +86,7 @@ async function main(): Promise<void> {
 
   const isAlreadyPublished = (() => {
     if (!token) {
-      console.log('NPM_TOKEN not set: skipping registry checks.');
+      console.log('NODE_AUTH_TOKEN not set: skipping registry checks.');
       return false;
     }
     return isPublishedWithSameHash({
@@ -136,18 +152,20 @@ function buildPackage(args: { sourceHash: string; environment: NodeJS.ProcessEnv
 }
 
 async function resolveToken(args: { isDryRun: boolean }): Promise<string | null> {
-  const tokenFromEnvironment = process.env.NPM_TOKEN;
+  const tokenFromEnvironment = process.env.NODE_AUTH_TOKEN;
 
   if (tokenFromEnvironment) return tokenFromEnvironment;
   if (args.isDryRun) return null;
 
   if (!process.stdin.isTTY) {
-    console.error('Missing NPM_TOKEN, and stdin is not an interactive terminal to prompt for it.');
+    console.error(
+      'Missing NODE_AUTH_TOKEN, and stdin is not an interactive terminal to prompt for it.'
+    );
     console.error(USAGE);
     process.exit(1);
   }
 
-  process.stdout.write('npm token (input hidden): ');
+  process.stdout.write('GitHub personal access token (classic, input hidden): ');
 
   const token = await new Promise<string>((resolve) => {
     let input = '';
@@ -209,7 +227,7 @@ function isPublishedWithSameHash(args: {
   const whoami = runNpm(['whoami']);
 
   if (whoami.status !== 0) {
-    console.error(`NPM_TOKEN is not valid for ${REGISTRY}.`);
+    console.error(`NODE_AUTH_TOKEN is not valid for ${REGISTRY}.`);
     console.error(whoami.stderr.trim());
     process.exit(1);
   }
