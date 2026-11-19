@@ -2,3 +2,4 @@ export { default as frontFacingKeywords } from './frontFacingKeywords';
 export { default as rearFacingKeywords } from './rearFacingKeywords';
 export { RECORDING_ARCHIVE_NAME, TRANSCRIPTION_ARCHIVE_NAME } from './archiveNames';
 export { default as SessionKeyClaim } from './SessionKeyClaim';
+export { default as MAX_TOTAL_EXTENSION_MINUTES } from './maxTotalExtensionMinutes';

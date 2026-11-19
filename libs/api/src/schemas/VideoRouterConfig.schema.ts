@@ -6,6 +6,8 @@ import { Auth } from '@vonage/auth';
 import type { Any, Prettify } from '@common/types';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
 import { SessionSigningSchema } from './SessionSigning.schema';
+import { ExtensionConfigSchema } from './ExtensionConfig.schema';
+import { ExtensionStoreSchema } from './ExtensionStore.schema';
 import type { HandlersConfig, VideoClientConfig } from '@api-lib/types';
 import { TRPCRuntimeConfigOptions } from '@trpc/server';
 
@@ -25,6 +27,8 @@ export const VideoRouterConfigSchema = BaseVideoRouterConfigSchema.extend({
   auth: AuthParamsSchema.or(z.instanceof(Auth)),
   videoParams: ConfigParamsSchema.optional(),
   sessionSigning: SessionSigningSchema.optional(),
+  extension: ExtensionConfigSchema.optional(),
+  extensionStore: ExtensionStoreSchema.optional(),
 } satisfies IVideoClientConfigSchema) satisfies z.ZodType<VideoRouterConfig<Any, Any>>;
 
 export type VideoRouterConfig<TContext extends object, TMeta extends object> = Prettify<

@@ -102,6 +102,31 @@ Enables the in-call issue reporting tool to file tickets directly into Jira.
 
 See [Authentication](./AUTHENTICATION.md) for the full authentication guide including all env var details.
 
+#### Scheduled meeting extension (video handler option)
+
+A running scheduled meeting can be extended through the `extendSession` action. This is not an environment variable: it is the optional `extension` object passed to `createVideoHandler` (or `createVideoRouter`, or `new VideoClient`) from `libs/api`.
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `options` | `[20, 40, 60]` | Minutes a single extension may add. Each must be a positive integer no greater than 120. |
+
+```ts
+createVideoHandler({
+  auth,
+  extension: { options: [15, 30] },
+});
+```
+
+An invalid `extension` object stops the handler from being created. The public `getServerSettings` action returns the options in use, next to the server time.
+
+All extensions of one meeting add up to at most 120 minutes. This cap is fixed and cannot be configured.
+
+`extendSession` only accepts a sessionKey whose meeting is running, a value from `options`, and a total within 120 minutes. It returns a new sessionKey that ends later, a token that expires at the new end, and a grant valid for 10 minutes. Anyone else holding the meeting's sessionKey passes that grant to `renewSessionKey` to get the same new end. When two people extend from the same sessionKey at the same time, the longer extension is kept rather than both being added.
+
+Concurrent extensions are resolved in memory by default, per server process. To run several instances behind a load balancer, pass an `extensionStore` whose `commitExtension({ sessionId, extendedMinutes })` atomically keeps and returns the larger of the stored and the given value.
+
+In the Vera backend, when `AUTH_ENABLED` is `true`, only a signed-in user can call `extendSession`; anyone else gets a 401. `renewSessionKey` stays open to every holder of the meeting's sessionKey, anonymous callers included. With `AUTH_ENABLED='false'` everyone can extend. A request whose sessionKey is valid but older than the extended sessionKey the backend stored for the same meeting uses the stored one, so someone who joins later with the original link gets the extended end.
+
 ### Frontend (`app-config.json` → `env.sh`)
 
 Frontend settings control the browser application. They define which features are visible, which defaults are applied when a participant joins, and how the app connects to the backend.

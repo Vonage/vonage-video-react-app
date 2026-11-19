@@ -32,6 +32,8 @@ function createVideoHandler<
   sessionSigning,
   routerOptions,
   handlersConfig,
+  extension,
+  extensionStore,
   ...routerConfig
 }: VideoRouterConfig<Context, TMeta> &
   Omit<Parameters<typeof createExpressMiddleware>[0], 'router'>) {
@@ -41,6 +43,8 @@ function createVideoHandler<
     sessionSigning,
     routerOptions,
     handlersConfig,
+    extension,
+    extensionStore,
   });
   const {
     transform$,

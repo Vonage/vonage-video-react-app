@@ -23,7 +23,10 @@ describe('serverSettings$', () => {
       expect.assertions(5);
 
       const getServerSettings = vi.fn(function answerWithServerTime() {
-        return Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds });
+        return Promise.resolve({
+          serverTime: Date.now() + serverAheadMilliseconds,
+          extension: { options: [20, 40, 60] },
+        });
       });
       const renderStatus = vi.fn(serverSettings$.useServerTimeStatus);
       const { unmount, serverSettingsContext } = renderHook(renderStatus, {
@@ -76,7 +79,8 @@ describe('serverSettings$', () => {
     const { wrapper } = makeTestProvider([providers.runtime], {
       runtimeContext: {
         videoClient: makeVideoClientMock({
-          getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+          getServerSettings: () =>
+            Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
         }),
       },
     });
@@ -126,7 +130,8 @@ function renderHook<Result>(
   const { wrapper, ...context } = makeTestProvider([providers.runtime, providers.serverSettings], {
     runtimeContext: {
       videoClient: makeVideoClientMock({
-        getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+        getServerSettings: () =>
+          Promise.resolve({ serverTime: Date.now(), extension: { options: [20, 40, 60] } }),
       }),
       ...runtimeContext,
     },

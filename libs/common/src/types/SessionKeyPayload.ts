@@ -5,6 +5,10 @@ export type SessionKeyPayload = {
   sessionId: string;
   roomName?: string | null | undefined;
   [SessionKeyClaim.schedule]?: ScheduleWindow;
+  /**
+   * Minutes already added to the scheduled end by extensions.
+   */
+  [SessionKeyClaim.extended]?: number;
 };
 
 export default SessionKeyPayload;
