@@ -1,0 +1,19 @@
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  s_20776229283099::t_fb6944f3027339 25,29-34,37-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4b66df67f9e2bb91d2dcdb9563bb0998d69f7285",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

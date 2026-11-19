@@ -1,0 +1,38 @@
+frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/CreateMeetingButton.tsx
+  s_20776229283099::t_f8d6c7b8ce59d2 30-32,36
+  s_20776229283099::t_4bdbe088eabe3b 4-7,33,35,37-41
+frontend/src/components/CreateRoomWizard/components/CreateRoomWizardDialog/CreateRoomWizardDialog.tsx
+  s_20776229283099::t_4bdbe088eabe3b 5,75
+libs/ui/src/components/Field/FieldInput.tsx
+  s_20776229283099::t_4bdbe088eabe3b 62-68
+  s_20776229283099::t_f8d6c7b8ce59d2 19-28
+  s_20776229283099::t_ea75374977ed4a 2,4,61
+frontend/src/locales/de.json
+  s_20776229283099::t_e5539dd5e87cfe 217
+frontend/src/locales/en.json
+  s_20776229283099::t_af8d2b55cdbb41 217
+frontend/src/locales/es-MX.json
+  s_20776229283099::t_2c9c4c365b25ac 217
+frontend/src/locales/es.json
+  s_20776229283099::t_e6c7773c0fa2e4 217
+frontend/src/locales/it.json
+  s_20776229283099::t_23947fc8ac4ba6 217
+frontend/src/locales/ja.json
+  s_20776229283099::t_9a1273422fb369 227
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a9129889467185ae7bcc6bd476195d824acfe402",
+  "prompts": {},
+  "sessions": {
+    "s_20776229283099": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1cfa0-6859-7a12-ba53-c3c6293ca3c3",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
