@@ -80,7 +80,7 @@ describe('CreateRoomWizard', () => {
   });
 
   it('validates the name and start before creating a scheduled meeting with the chosen duration', async () => {
-    expect.assertions(10);
+    expect.assertions(12);
     const user = userEvent.setup();
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(new Date(2030, 0, 15, 9, 20));
@@ -110,12 +110,11 @@ describe('CreateRoomWizard', () => {
     vi.setSystemTime(new Date(2030, 0, 15, 10, 5));
     await user.click(createButton);
     expect(videoClient.createSession).not.toHaveBeenCalled();
-    expect([...notifications$.getState().notifications.values()]).toEqual([
-      expect.objectContaining({
-        type: 'warning',
-        message: 'Choose a start time that is not in the past.',
-      }),
-    ]);
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Choose a start time that is not in the past.'
+    );
+    expect(createButton).toBeDisabled();
+    expect(notifications$.getState().notifications.size).toBe(0);
 
     fireEvent.change(screen.getByTestId(scheduleFieldsTestIds.startTime), {
       target: { value: '11:00' },

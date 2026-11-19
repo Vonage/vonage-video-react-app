@@ -1,6 +1,6 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { notifications$, runtime$ } from '@core/stores';
+import { runtime$ } from '@core/stores';
 import { isTRPCClientError } from '@trpc/client';
 import { handleClientApplicationError } from '@ui/helpers';
 import generateRoomName from '../../../../utils/generateRoomName';
@@ -20,7 +20,7 @@ const CreateMeetingButton = (): ReactElement => {
   const draft = useMeetingDraft();
   const isStartValid = useIsMeetingStartValid();
   const isNameValid = useIsMeetingNameValid();
-  const { showShareStep } = createRoomWizard$.use.actions();
+  const { setStart, showShareStep } = createRoomWizard$.use.actions();
   const [isCreating, setIsCreating] = useState(false);
   const isCreateMeetingDisabled = !isNameValid || !isStartValid || isCreating;
 
@@ -33,11 +33,7 @@ const CreateMeetingButton = (): ReactElement => {
       const hasPastStart = draft.isScheduled && !isMeetingStartValid({ ...draft, now: Date.now() });
 
       if (hasPastStart) {
-        notifications$.actions.push({
-          type: 'warning',
-          message: t('createRoomWizard.details.schedule.startInPast'),
-          expirationMs: null,
-        });
+        setStart({ startDate: draft.startDate, startTime: draft.startTime });
         return;
       }
 

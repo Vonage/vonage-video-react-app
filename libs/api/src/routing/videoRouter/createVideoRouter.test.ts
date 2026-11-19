@@ -130,6 +130,47 @@ describe('createVideoHandler', () => {
 
       expect(response.status).toBeGreaterThanOrEqual(400);
     });
+
+    it('allows ongoing meetings by default and enforces the server setting without accepting client overrides', async () => {
+      expect.assertions(5);
+      const now = new Date('2030-01-15T10:05:00Z').getTime();
+      vi.spyOn(Date, 'now').mockReturnValue(now);
+      h.createSessionSpy.mockResolvedValue({ sessionId: mockSessionId });
+      const schedule = { startsAt: now - 5 * 60_000, durationMinutes: 60 };
+      const defaultApp = createTestApp();
+
+      const ongoingMeeting = await request(defaultApp)
+        .post('/video/createSession')
+        .send({ schedule });
+      expect(ongoingMeeting.status).toBe(200);
+
+      const endedMeeting = await request(defaultApp)
+        .post('/video/createSession')
+        .send({ schedule: { ...schedule, startsAt: now - 60 * 60_000 } });
+      expect(endedMeeting.status).toBe(400);
+
+      const strictApp = express();
+      strictApp.use(
+        '/video',
+        createVideoHandler({
+          auth: { authType: 'apiKey', apiKey: mockApiKey, apiSecret: 'test-api-secret' },
+          handlersConfig: {
+            createSession: { addDefaults: () => ({ isPastStartAllowed: false }) },
+          },
+        })
+      );
+
+      const disallowedMeeting = await request(strictApp)
+        .post('/video/createSession')
+        .send({ schedule, isPastStartAllowed: true });
+      expect(disallowedMeeting.status).toBe(400);
+
+      const futureMeeting = await request(strictApp)
+        .post('/video/createSession')
+        .send({ schedule: { ...schedule, startsAt: now + 5 * 60_000 } });
+      expect(futureMeeting.status).toBe(200);
+      expect(h.createSessionSpy).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('sessionSigning', () => {

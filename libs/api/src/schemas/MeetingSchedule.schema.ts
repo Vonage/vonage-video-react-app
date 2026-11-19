@@ -12,8 +12,8 @@ export const MeetingScheduleSchema = z
     durationMinutes: z.number().int().positive().max(1440),
   })
   .refine(
-    ({ startsAt }) => startsAt >= Math.floor(Date.now() / 60_000) * 60_000,
-    'Choose a start time in the current minute or later'
+    ({ startsAt, durationMinutes }) => startsAt + durationMinutes * 60_000 > Date.now(),
+    'The schedule has already ended, choose an end time in the future'
   );
 
 export type MeetingSchedule = z.infer<typeof MeetingScheduleSchema>;

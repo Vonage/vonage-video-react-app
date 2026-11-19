@@ -1,7 +1,12 @@
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
+import {
+  makeBadRequestErrorHandler,
+  makeInternalErrorHandler,
+  makeThirdPartyErrorHandler,
+} from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
-import type { IVideoClient, CreateSessionPayload } from '@api-lib/types';
+import type { IVideoClient, CreateSessionPayload, CreateSessionDefaults } from '@api-lib/types';
 import { SessionKeyClaim } from '@common/constants';
+import { isNotNil } from '@common/assertions';
 import type { SessionKeyPayload } from '@common/types';
 import { VideoSessionDetails } from '@common/types';
 import { removeUndefinedProps } from '@node/helpers';
@@ -9,10 +14,18 @@ import jwt from 'jsonwebtoken';
 
 async function createSession(
   this: IVideoClient,
-  payload?: CreateSessionPayload
+  payload?: CreateSessionPayload,
+  { isPastStartAllowed = true }: CreateSessionDefaults = {}
 ): Promise<VideoSessionDetails> {
   try {
     const { roomName, sessionOptions, schedule } = payload ?? {};
+
+    const isStartDisallowed =
+      !isPastStartAllowed && isNotNil(schedule) && schedule.startsAt <= Date.now();
+
+    if (isStartDisallowed) {
+      throw makeBadRequestErrorHandler('Choose a start time in the future')(null);
+    }
 
     const session = await assertResult(() => {
       return this.video.createSession(sessionOptions);
