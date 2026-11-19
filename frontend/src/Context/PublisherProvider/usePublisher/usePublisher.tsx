@@ -12,6 +12,7 @@ import { setStorageItem, STORAGE_KEYS } from '@utils/storage';
 import isDeviceEnabledOnJoin from '@utils/isDeviceEnabledOnJoin';
 import usePublisherQuality, { NetworkQuality } from '../usePublisherQuality/usePublisherQuality';
 import useSyncPublisherDevices from './hooks/useSyncPublisherDevices/useSyncPublisherDevices';
+import useCaptionsInputLanguage from './hooks/useCaptionsInputLanguage/useCaptionsInputLanguage';
 import usePublisherOptions from '../usePublisherOptions';
 import useApplyAdvancedSettings from '../useApplyAdvancedSettings';
 import useSessionContext from '../../../hooks/useSessionContext';
@@ -145,6 +146,7 @@ const usePublisher = (initialValue: PublisherContextInitialValue = {}): Publishe
   // Sync publisher with selected devices from store (handles device changes and disconnections)
   useSyncPublisherDevices(publisherRef, { setIsAudioEnabled, setIsVideoEnabled });
   useApplyAdvancedSettings(isPublishing ? publisherRef.current : null);
+  useCaptionsInputLanguage(publisherRef.current);
 
   // If we do not have audio input or video input access, we cannot publish.
   useEffect(() => {

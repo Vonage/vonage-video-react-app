@@ -11,6 +11,7 @@ import { customVideoBitrateSchema } from './customVideoBitrate.schema';
 import { customAudioBitrateSchema } from './customAudioBitrate.schema';
 import { frameRateSchema } from './frameRate.schema';
 import { screenShareSurfaceSchema } from './screenShareSurface.schema';
+import { captionsInputLanguageSchema } from './captionsInputLanguage.schema';
 import { captionsTranslationLanguageSchema } from './captionsTranslationLanguage.schema';
 
 export const advancedSettingsSchema = z.object({
@@ -46,6 +47,7 @@ export const advancedSettingsSchema = z.object({
   screenShareCustomVideoBitrate: customVideoBitrateSchema,
   screenShareSurface: screenShareSurfaceSchema,
   captionsTranslationLanguage: captionsTranslationLanguageSchema.nullable().catch(null),
+  captionsInputLanguage: captionsInputLanguageSchema.nullable().catch(null),
 });
 
 export type AdvancedSettings = z.infer<typeof advancedSettingsSchema>;

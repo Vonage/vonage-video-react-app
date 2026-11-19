@@ -4,6 +4,7 @@ import type {
   AdvancedSettings,
   AdvancedSettingsAudioBitrateMode,
   AdvancedSettingsBitrateMode,
+  AdvancedSettingsCaptionsInputLanguage,
   AdvancedSettingsCaptionsTranslationLanguage,
   AdvancedSettingsCodecMode,
   AdvancedSettingsCustomAudioBitrate,
@@ -61,6 +62,7 @@ const INITIAL_STATE = advancedSettingsSchema.parse({
   screenShareCustomVideoBitrate: 500_000,
   screenShareSurface: AdvancedSettingsScreenShareSurface.monitor,
   captionsTranslationLanguage: null,
+  captionsInputLanguage: null,
 });
 
 const advancedSettings$ = createGlobalState(INITIAL_STATE, {
@@ -249,6 +251,11 @@ const advancedSettings$ = createGlobalState(INITIAL_STATE, {
     setCaptionsTranslationLanguage(value: AdvancedSettingsCaptionsTranslationLanguage | null) {
       return () => {
         partialUpdate({ captionsTranslationLanguage: value });
+      };
+    },
+    setCaptionsInputLanguage(value: AdvancedSettingsCaptionsInputLanguage | null) {
+      return () => {
+        partialUpdate({ captionsInputLanguage: value });
       };
     },
   },

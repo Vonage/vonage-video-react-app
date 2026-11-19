@@ -76,6 +76,25 @@ Include the origin the app is served from when it differs from the backend's, an
 | `CAPTIONS_TRANSLATION_LEVEL` | `FINALS_ONLY` \| `CONFIDENT_PARTIALS` \| `WINDOWED_PARTIALS` \| `ALL_PARTIALS` | How often captions are translated. Higher levels translate more partial captions and cost more. |
 | `CAPTIONS_TARGET_LANGUAGE_CODE` | BCP-47 code, e.g. `es-ES` | Session-level translation language for every participant. A language picked in the Captions settings tab overrides it, and choosing "Original" there reverts to this language instead of the spoken one. |
 
+#### Live Captions Recognition Language (per-publisher)
+
+The speech-recognition language for live captions can be set per publisher, so each participant's captions are transcribed in their own spoken language. This requires `@vonage/client-sdk-video` `2.36.0` or later.
+
+By default, the recognition language follows the participant's UI language. An explicit BCP-47 code can be chosen in the Captions settings tab under **Spoken language**. Choosing "Follow UI language" reverts to the UI language.
+
+Changing the UI language immediately re-applies the recognition language to the local publisher. Other participants' language choices do not affect an existing publisher.
+
+| UI language | Recognition language |
+|-------------|----------------------|
+| `ja` | `ja-JP` |
+| `en` / `en-US` | `en-US` |
+| `de` | `de-DE` |
+| `it` | `it-IT` |
+| `es` | `es-ES` |
+| `es-MX` | `es-US` |
+
+The backend session-level `languageCode` / `CAPTIONS_LANGUAGE_CODE` is unchanged by this feature; it only applies to caption translation, not recognition.
+
 #### Vonage Cloud Runtime (VCR)
 
 | Variable | Required | Description |

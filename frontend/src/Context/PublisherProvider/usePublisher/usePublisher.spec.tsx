@@ -54,6 +54,8 @@ describe('usePublisher', () => {
       clearVideoFilter: vi.fn(),
       publishAudio: publishAudioSpy,
       publishVideo: publishVideoSpy,
+      getCaptionsInputLanguage: vi.fn().mockReturnValue(null),
+      setCaptionsInputLanguage: vi.fn().mockResolvedValue(undefined),
       setPreferredFrameRate: vi.fn().mockResolvedValue(undefined),
       setPreferredResolution: vi.fn().mockResolvedValue(undefined),
       setMaxVideoBitrate: vi.fn().mockResolvedValue(undefined),
