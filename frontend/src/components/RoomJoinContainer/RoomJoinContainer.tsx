@@ -1,10 +1,6 @@
 import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { runtime$ } from '@core/stores';
-import { isTRPCClientError } from '@trpc/client';
 import Card from '@ui/components/Card';
-import { handleClientApplicationError } from '@ui/helpers';
-import generateRoomName from '../../utils/generateRoomName';
 import NewRoomButton from '../NewRoomButton';
 import JoinContainerSeparator from '../JoinContainerSeparator';
 import JoinExistingRoom from '../JoinExistingRoom';
@@ -20,27 +16,11 @@ export { testIds } from './testIds';
  * @returns {ReactElement} The room join container component.
  */
 const RoomJoinContainer = (): ReactElement => {
-  const videoClient = runtime$.useVideoClient();
   const { t } = useTranslation();
-  const [createdSessionKey, setCreatedSessionKey] = useState<string | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [isCreateRoomWizardOpen, setIsCreateRoomWizardOpen] = useState(false);
 
-  const handleNewRoom = async () => {
-    if (isCreating) return;
-
-    setIsCreating(true);
-
-    try {
-      const randomRoom = generateRoomName();
-      const { sessionKey } = await videoClient.createSession({ roomName: randomRoom });
-
-      setCreatedSessionKey(sessionKey);
-    } catch (error) {
-      const failure = isTRPCClientError(error) ? (error.shape ?? error) : error;
-      handleClientApplicationError(t('createRoomWizard.tryCreatingAgain'), failure);
-    } finally {
-      setIsCreating(false);
-    }
+  const handleNewRoom = () => {
+    setIsCreateRoomWizardOpen(true);
   };
 
   return (
@@ -51,7 +31,7 @@ const RoomJoinContainer = (): ReactElement => {
       >
         {t('button.startNewRoom')}
       </h6>
-      <NewRoomButton handleNewRoom={handleNewRoom} isDisabled={isCreating} />
+      <NewRoomButton handleNewRoom={handleNewRoom} />
 
       <JoinContainerSeparator />
 
@@ -64,8 +44,11 @@ const RoomJoinContainer = (): ReactElement => {
 
       <JoinExistingRoom />
 
-      {createdSessionKey && (
-        <CreateRoomWizard sessionKey={createdSessionKey} onClose={() => setCreatedSessionKey(null)}>
+      {isCreateRoomWizardOpen && (
+        <CreateRoomWizard onClose={() => setIsCreateRoomWizardOpen(false)}>
+          <CreateRoomWizard.Step step="details">
+            <CreateRoomWizard.DetailsStep />
+          </CreateRoomWizard.Step>
           <CreateRoomWizard.Step step="share">
             <CreateRoomWizard.ShareStep />
           </CreateRoomWizard.Step>

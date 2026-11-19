@@ -70,5 +70,12 @@ describe('FieldInput', () => {
 
       expect(input.placeholder).toBe('Enter value');
     });
+
+    it('shows the error border when the input is invalid', () => {
+      const { getByRole } = render(<FieldInput type="text" aria-invalid />);
+
+      expect(getByRole('textbox')).toHaveClass('border-vera-error');
+      expect(getByRole('textbox')).not.toHaveClass('border-vera-border');
+    });
   });
 });

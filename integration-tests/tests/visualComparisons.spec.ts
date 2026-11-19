@@ -1,4 +1,12 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as scheduleFieldsTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/scheduleFieldsTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as detailsStepTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as meetingNameFieldTestIds } from '../../frontend/src/components/CreateRoomWizard/components/DetailsStep/components/meetingNameFieldTestIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as createMeetingButtonTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as roomNameInputTestIds } from '../../frontend/src/components/RoomNameInput/testIds';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
@@ -262,7 +270,7 @@ test.describe('Meeting room timer UI test', () => {
       await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
     }
     await serveStaticFilesFromCache(page);
-    const startsAt = Math.floor(Date.now() / 1000) * 1000 - 10 * minuteInMilliseconds;
+    const startsAt = Math.floor(Date.now() / 1000) * 1000;
     const durationMinutes = 60;
     const endsAt = startsAt + durationMinutes * minuteInMilliseconds;
     const clientNow = endsAt - minutesLeft * minuteInMilliseconds;
@@ -430,6 +438,7 @@ async function openCreateMeetingDialog({
   await page.getByTestId(newRoomButtonTestIds.button).click();
 
   const dialog = page.getByTestId(wizardDialogTestIds.dialog);
+  await dialog.getByTestId(createMeetingButtonTestIds.button).click();
   await expect(dialog.getByTestId(linkCopyTestIds.link)).toBeVisible();
 
   await page.addStyleTag({
@@ -438,3 +447,73 @@ async function openCreateMeetingDialog({
 
   return dialog;
 }
+
+test.describe('Create meeting dialog UI test', () => {
+  test.use({ timezoneId: 'UTC', locale: 'en-US' });
+
+  const dialogStates: { state: string; prepare: (wizard: Locator) => Promise<void> }[] = [
+    { state: 'details unscheduled', prepare: async () => {} },
+    {
+      state: 'details scheduled',
+      prepare: async (wizard) => {
+        await wizard.getByTestId(meetingNameFieldTestIds.input).fill('weekly-sync');
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+      },
+    },
+    {
+      state: 'details start in the past',
+      prepare: async (wizard) => {
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+        await wizard.getByTestId(scheduleFieldsTestIds.startTime).fill('09:00');
+        await wizard.getByTestId(scheduleFieldsTestIds.startTime).blur();
+      },
+    },
+    {
+      state: 'share scheduled',
+      prepare: async (wizard) => {
+        await wizard.getByTestId(meetingNameFieldTestIds.input).fill('weekly-sync');
+        await wizard.getByTestId(detailsStepTestIds.scheduleSwitch).check();
+        await wizard.getByTestId(scheduleFieldsTestIds.duration(120)).click();
+        await wizard.getByTestId(createMeetingButtonTestIds.button).click();
+        await wizard.getByTestId(linkCopyTestIds.copyButton).waitFor();
+      },
+    },
+  ];
+
+  const colorSchemes = ['light', 'dark'] as const;
+
+  for (const colorScheme of colorSchemes) {
+    test.describe(colorScheme, () => {
+      test.use({ colorScheme });
+
+      for (const { state, prepare } of dialogStates) {
+        test(state, async ({ page, isMobile }) => {
+          if (!isMobile) {
+            await page.setViewportSize({ width: VIEWPORT.WIDTH, height: VIEWPORT.HEIGHT });
+          }
+
+          await page.clock.setFixedTime(new Date('2057-02-02T10:20:00Z'));
+          await page.goto(baseURL, { waitUntil: 'networkidle' });
+          // Playwright 1.46 Firefox drops colorScheme emulation when it navigates to the app origin.
+          await page.emulateMedia({ colorScheme });
+          await page.waitForFunction(
+            (isDark) => document.documentElement.classList.contains('dark') === isDark,
+            colorScheme === 'dark'
+          );
+          await page.getByTestId(newRoomButtonTestIds.button).click();
+          const wizard = page.getByTestId(wizardDialogTestIds.dialog);
+          await prepare(wizard);
+          await page.addStyleTag({
+            content: `[data-testid="${linkCopyTestIds.link}"] { visibility: hidden; }`,
+          });
+
+          await expect(page).toHaveScreenshot({
+            mask: [page.getByTestId(footerLinksTestIds.version)],
+            maxDiffPixelRatio: SCREENSHOT.MAX_DIFF_PIXEL_RATIO,
+            timeout: TIMEOUTS.DEFAULT,
+          });
+        });
+      }
+    });
+  }
+});

@@ -4,10 +4,13 @@ import getRoomShareUrl from '@utils/getRoomShareUrl';
 import VividIcon from '@ui/components/VividIcon';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import LinkCopyField from './components/LinkCopyField';
+import MeetingScheduleSummary from './components/MeetingScheduleSummary';
 
 const ShareStep = (): ReactElement => {
   const { t } = useTranslation();
   const sessionKey = createRoomWizard$.use.select((state) => state.sessionKey);
+  const name = createRoomWizard$.use.select((state) => state.name);
+  const isScheduled = createRoomWizard$.use.select((state) => state.isScheduled);
   const meetingLink = getRoomShareUrl({ origin: window.location.origin, sessionKey });
 
   return (
@@ -22,10 +25,13 @@ const ShareStep = (): ReactElement => {
         </span>
         <div className="flex min-w-0 flex-col gap-1">
           <span className="font-vera-plain text-vera-body-extended-semibold text-vera-text-secondary">
-            {t('createRoomWizard.share.title')}
+            {name || t('createRoomWizard.share.title')}
           </span>
+          {isScheduled && <MeetingScheduleSummary />}
           <span className="font-vera-plain text-vera-caption text-vera-text-tertiary">
-            {t('createRoomWizard.share.description')}
+            {isScheduled
+              ? t('createRoomWizard.share.descriptionScheduled')
+              : t('createRoomWizard.share.description')}
           </span>
         </div>
       </div>

@@ -1,3 +1,6 @@
+import { testIds as linkCopyTestIds } from '../CreateRoomWizard/components/ShareStep/components/LinkCopyField/testIds';
+import { testIds as wizardDialogTestIds } from '../CreateRoomWizard/components/CreateRoomWizardDialog/testIds';
+import { testIds as createMeetingButtonTestIds } from '../CreateRoomWizard/components/CreateMeetingButton/testIds';
 import { testIds as newRoomButtonTestIds } from '../NewRoomButton/NewRoomButton';
 import { render as renderBase, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -41,8 +44,8 @@ describe('RoomJoinContainer', () => {
     expect(screen.getByTestId('join-existing-room')).toBeInTheDocument();
   });
 
-  it('creates a room and opens the wizard with its link when NewRoomButton is clicked', async () => {
-    expect.assertions(2);
+  it('opens the wizard when NewRoomButton is clicked and creates the room from it', async () => {
+    expect.assertions(3);
     render(
       <MemoryRouter>
         <RoomJoinContainer />
@@ -51,8 +54,14 @@ describe('RoomJoinContainer', () => {
 
     screen.getByTestId(newRoomButtonTestIds.button).click();
 
-    expect(await screen.findByRole('dialog')).toHaveTextContent('/waiting-room/mock-session-key');
-    expect(mockCreateSessionMutate).toHaveBeenCalledWith({ roomName: 'mocked-room' });
+    expect(await screen.findByTestId(wizardDialogTestIds.dialog)).toHaveTextContent('Step 1 of 2');
+    expect(mockCreateSessionMutate).not.toHaveBeenCalled();
+
+    screen.getByTestId(createMeetingButtonTestIds.button).click();
+
+    expect(await screen.findByTestId(linkCopyTestIds.link)).toHaveTextContent(
+      '/waiting-room/mock-session-key'
+    );
   });
 });
 

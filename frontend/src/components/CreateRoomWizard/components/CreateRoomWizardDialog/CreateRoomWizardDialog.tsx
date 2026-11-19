@@ -2,9 +2,11 @@ import { useId, type PropsWithChildren, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
 import VividIcon from '@ui/components/VividIcon';
+import NotificationsContainer from '@ui/components/NotificationsContainer';
 import createRoomWizard$ from '../../context/createRoomWizardContext';
 import { getStepPanels } from '../CreateRoomWizardStep';
 import CreateRoomWizardFooterActions from '../CreateRoomWizardFooterActions';
+import WizardStepProgress from '../WizardStepProgress';
 import { testIds } from './testIds';
 
 export { testIds } from './testIds';
@@ -12,12 +14,6 @@ export { testIds } from './testIds';
 export type CreateRoomWizardDialogProps = PropsWithChildren<{
   onClose: () => void;
 }>;
-
-const paperClassName = classNames(
-  'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
-  'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
-  'dark:border dark:border-vera-border'
-);
 
 /**
  * Compact dialog chrome of the wizard: full screen on phones, a rounded panel from `sm` up, showing the active step.
@@ -31,15 +27,17 @@ const CreateRoomWizardDialog = ({
   const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
   const activePanel = getStepPanels(children).find(({ props }) => props.step === activeStep);
 
+  const paperClassName = classNames(
+    'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
+    'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
+    'dark:border dark:border-vera-border'
+  );
+
   return (
     <dialog
       ref={openDialog}
       data-testid={testIds.dialog}
       onCancel={onClose}
-      onClick={(event) => {
-        const isBackdropClick = event.target === event.currentTarget;
-        if (isBackdropClick) onClose();
-      }}
       aria-labelledby={titleId}
       className={paperClassName}
     >
@@ -64,11 +62,13 @@ const CreateRoomWizardDialog = ({
             <VividIcon name="close-line" customSize={-5} />
           </button>
         </div>
+        <WizardStepProgress className="px-6 pt-4" />
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">{activePanel}</div>
         <div className="flex flex-wrap items-center justify-end gap-3 border-t border-vera-border px-6 py-4">
           <CreateRoomWizardFooterActions onClose={onClose} />
         </div>
       </div>
+      <NotificationsContainer />
     </dialog>
   );
 };

@@ -1,10 +1,13 @@
 import type { VideoAction } from './VideoAction';
 import type { IVideoClient } from './IVideoClient';
+import type CreateSessionDefaults from './CreateSessionDefaults';
 
 export type HandlerConfig<
   Action extends VideoAction,
   Input = Parameters<IVideoClient[Action]>[0],
-  Defaults = Partial<Omit<Input, 'sessionKey'>>,
+  Defaults = Action extends VideoAction.createSession
+    ? CreateSessionDefaults
+    : Partial<Omit<Input, 'sessionKey'>>,
 > = {
   /**
    * Optional function to transform the input before it's passed to the the videoClient instance.

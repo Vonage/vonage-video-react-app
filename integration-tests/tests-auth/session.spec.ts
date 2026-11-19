@@ -1,3 +1,7 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as createMeetingButtonTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds';
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/testWithLogging';
 import {
@@ -66,7 +70,8 @@ test('a tampered session cookie sends the user through sign-in without showing t
   const signInRequest = page.waitForRequest((request) =>
     request.url().startsWith(`${APP_URL}/auth/signin`)
   );
-  await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByTestId(newRoomButtonTestIds.button).click();
+  await page.getByTestId(createMeetingButtonTestIds.button).click();
   await signInRequest;
 
   await expect(page).toHaveURL(`${APP_URL}/`);
