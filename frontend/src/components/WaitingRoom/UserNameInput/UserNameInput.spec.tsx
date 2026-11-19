@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom';
 import { makeVideoClientMock } from '@core-test/fixtures';
 import { makeTestProvider, providers, type ProviderOptions } from '@test/providers';
-import UsernameInput from './UserNameInput';
+import UsernameInput, { testIds } from './UserNameInput';
 
 const startsAt = new Date(2026, 10, 4, 9, 30).getTime();
 const serverAheadMilliseconds = 60_000;
@@ -56,7 +56,7 @@ describe('UsernameInput', () => {
     );
 
     expect(await screen.findByText('Join opens in 1 min 5 sec')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Join meeting' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Join at start' })).toBeEnabled();
     expect(screen.getByRole('textbox', { name: 'Your name' })).toBeEnabled();
 
     for (let elapsedSeconds = 0; elapsedSeconds < 60; elapsedSeconds += 1) {
@@ -75,7 +75,7 @@ describe('UsernameInput', () => {
     expect(screen.getByTestId(roomStubTestIds.root(scheduledSessionKey))).toBeInTheDocument();
   });
 
-  it('keeps Join disabled past the start by the local clock until the server time is known', () => {
+  it('does not offer Join meeting past the start by the local clock until the server time is known', () => {
     vi.setSystemTime(startsAt + 5 * 60_000);
 
     const videoClient = makeVideoClientMock({
@@ -116,6 +116,108 @@ describe('UsernameInput', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Join meeting' }));
 
     expect(screen.getByTestId(roomStubTestIds.root('design-review'))).toBeInTheDocument();
+  });
+
+  it('joins at the start by server time after Join at start is pressed', async () => {
+    expect.assertions(4);
+
+    vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () =>
+        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+    });
+
+    render(
+      <UsernameInput
+        username="Ana"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey={scheduledSessionKey}
+      />,
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
+    );
+
+    expect(await screen.findByText('Join opens in 5 sec')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId(testIds.joinButton));
+
+    expect(screen.getByText("You'll join automatically at 9:30 AM")).toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(4_000));
+
+    expect(screen.queryByTestId(roomStubTestIds.root(scheduledSessionKey))).not.toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(1_000));
+
+    expect(screen.getByTestId(roomStubTestIds.root(scheduledSessionKey))).toBeInTheDocument();
+  });
+
+  it('cancels auto-join when the waiting button is pressed again', async () => {
+    expect.assertions(4);
+
+    vi.setSystemTime(startsAt - serverAheadMilliseconds - 5_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () =>
+        Promise.resolve({ serverTime: Date.now() + serverAheadMilliseconds }),
+    });
+
+    render(
+      <UsernameInput
+        username="Ana"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey={scheduledSessionKey}
+      />,
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
+    );
+
+    await screen.findByText('Join opens in 5 sec');
+    fireEvent.click(screen.getByTestId(testIds.joinButton));
+    fireEvent.click(screen.getByTestId(testIds.joinButton));
+
+    expect(screen.getByTestId(testIds.joinButton)).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByText('Join opens in 5 sec')).toBeInTheDocument();
+
+    await act(() => vi.advanceTimersByTimeAsync(5_000));
+
+    expect(screen.getByTestId(testIds.joinButton)).toBeEnabled();
+    expect(screen.queryByTestId(roomStubTestIds.root(scheduledSessionKey))).not.toBeInTheDocument();
+  });
+
+  it('disables Join at start and shows the reason while the name is invalid', async () => {
+    expect.assertions(2);
+
+    vi.setSystemTime(startsAt - 60 * 60_000);
+
+    const videoClient = makeVideoClientMock({
+      getServerSettings: () => Promise.resolve({ serverTime: Date.now() }),
+    });
+
+    render(
+      <UsernameInput
+        username="Ana!"
+        setUsername={vi.fn()}
+        roomName={undefined}
+        sessionKey={scheduledSessionKey}
+      />,
+      {
+        runtimeContext: { videoClient },
+        serverSettingsContext: { sessionKey: scheduledSessionKey },
+      }
+    );
+
+    expect(
+      await screen.findByText('Name cannot be empty or contain special characters.')
+    ).toBeInTheDocument();
+    expect(screen.getByTestId(testIds.joinButton)).toBeDisabled();
   });
 
   it('hides Join and keeps its children once the meeting has ended', async () => {
