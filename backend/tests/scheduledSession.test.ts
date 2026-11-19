@@ -43,7 +43,7 @@ describe('createSession with a room name and a schedule', () => {
 });
 
 describe('createSession with a start in the past and an end in the future', () => {
-  it('refuses it with a 400', async () => {
+  it('allows it and preserves the scheduled end', async () => {
     expect.assertions(2);
     const app = express();
     app.use(express.json());
@@ -55,11 +55,9 @@ describe('createSession with a start in the past and an end in the future', () =
       .post('/v2/createSession')
       .send({ schedule: { startsAt, durationMinutes: 60 } });
 
-    expect(response.statusCode).toEqual(400);
-    expect(response.body.error.issues).toEqual([
-      expect.objectContaining({
-        message: 'Choose a start time in the current minute or later',
-      }),
-    ]);
+    expect(response.statusCode).toEqual(200);
+    expect(decodeSessionKey({ sessionKey: response.body.result.data.sessionKey })).toMatchObject({
+      [SessionKeyClaim.schedule]: { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60 * 1000 },
+    });
   });
 });
