@@ -28,22 +28,40 @@ test('manual runs publish beta versions only when the beta tag is selected', (co
   }
 });
 
-test('manual and develop runs restore latest to a matching release without republishing', (context) => {
-  for (const isManual of [true, false]) {
-    const { result, commands } = runPublisher({ context, isManual, publishedHash: 'source-hash' });
+test('develop runs publish the committed version under its manifest channel', (context) => {
+  for (const { manifestVersion, manifestChannel } of [
+    { manifestVersion: '1.2.3-beta.0', manifestChannel: 'beta' },
+    { manifestVersion: '1.2.3', manifestChannel: 'latest' },
+  ]) {
+    const { result, commands } = runPublisher({ context, manifestVersion, manifestChannel });
     assert.equal(result.status, 0, result.stderr);
+    const publish = commands.find((command) => command[0] === 'publish');
+    assert.ok(publish);
+    assert.deepEqual(publish.slice(2, 5), ['--tag', manifestChannel, '--ignore-scripts']);
+    assert.ok(
+      result.stdout.includes(`Published @vonage/video-reference-apps-common@${manifestVersion}.`)
+    );
+  }
+});
+
+test('matching published versions are skipped without changing registry tags', (context) => {
+  for (const options of [
+    {},
+    { manifestVersion: '1.2.3-beta.0', manifestChannel: 'beta' },
+    { isManual: true },
+    { isManual: true, channel: 'beta', artifactVersion: '1.2.3-beta.123456' },
+  ]) {
+    const { result, commands } = runPublisher({
+      context,
+      ...options,
+      publishedHash: 'source-hash',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.ok(result.stdout.includes('Skipping publish.'));
     assert.equal(
-      commands.some((command) => command[0] === 'publish'),
+      commands.some((command) => ['publish', 'dist-tag'].includes(command[0])),
       false
     );
-    assert.deepEqual(commands.at(-1), [
-      'dist-tag',
-      'add',
-      '@vonage/video-reference-apps-common@1.2.3',
-      'latest',
-      '--registry',
-      'https://npm.pkg.github.com',
-    ]);
   }
 });
 
@@ -56,6 +74,10 @@ test('collisions and artifacts from a different manual run cannot change registr
   ]) {
     const { result, commands } = runPublisher({ context, ...options });
     assert.notEqual(result.status, 0);
+    assert.match(
+      result.stderr,
+      options.publishedHash ? /already published with different source/ : /does not match/
+    );
     assert.equal(
       commands.some((command) => ['publish', 'dist-tag'].includes(command[0])),
       false
@@ -65,10 +87,12 @@ test('collisions and artifacts from a different manual run cannot change registr
 
 function runPublisher({
   context,
-  channel = 'latest',
+  manifestVersion = '1.2.3',
+  manifestChannel = 'latest',
+  channel = manifestChannel,
   isManual = false,
   publishedHash = '',
-  artifactVersion = '1.2.3',
+  artifactVersion = manifestVersion,
 }) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'common-publish-'));
   context.after(() => fs.rmSync(directory, { recursive: true, force: true }));
@@ -87,7 +111,7 @@ function runPublisher({
   );
   fs.writeFileSync(
     directory + '/libs/common/manifest.json',
-    JSON.stringify({ version: '1.2.3', channel: 'latest', hash: 'source-hash' })
+    JSON.stringify({ version: manifestVersion, channel: manifestChannel, hash: 'source-hash' })
   );
   const metadata = {
     packageName: '@vonage/video-reference-apps-common',
@@ -127,8 +151,7 @@ if (arguments[0] === 'view') {
     NODE_AUTH_TOKEN: 'test-token',
     GITHUB_EVENT_NAME: isManual ? 'workflow_dispatch' : 'push',
     GITHUB_RUN_ID: '123456',
-    GITHUB_RUN_ATTEMPT: '2',
-    PUBLISH_CHANNEL: channel,
+    PUBLISH_CHANNEL: isManual ? channel : '',
     TEST_PUBLISHED_HASH: publishedHash,
     TEST_COMMANDS: directory + '/commands.jsonl',
   };

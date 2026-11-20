@@ -27,11 +27,7 @@ permissions:
   contents: read
 
 env:
-  PUBLISH_CHANNEL: ${{ github.event_name == 'workflow_dispatch' && (inputs.channel || 'beta') || 'latest' }}
-
-concurrency:
-  group: video-common-publish-${{ github.event_name == 'workflow_dispatch' && (inputs.channel || 'beta') || 'latest' }}
-  cancel-in-progress: false
+  PUBLISH_CHANNEL: ${{ inputs.channel }}
 
 jobs:
   build:
@@ -40,6 +36,8 @@ jobs:
       github.ref_type == 'branch' &&
       (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/develop')
     runs-on: ubuntu-latest
+    outputs:
+      channel: ${{ steps.package.outputs.channel }}
     steps:
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -61,9 +59,11 @@ jobs:
         run: pnpm install --ignore-scripts --frozen-lockfile
 
       - name: Verify hash, test, build and pack
+        id: package
         run: |
           node --test scripts/commonPackage/publishTarball.test.cjs
           npx tsx scripts/commonPackage/publish.ts pack "$RUNNER_TEMP/common-package"
+          echo "channel=$(node -p "require(process.argv[1]).channel" "$RUNNER_TEMP/common-package/metadata.json")" >> "$GITHUB_OUTPUT"
 
       - name: Upload package
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -80,6 +80,9 @@ jobs:
       github.ref_type == 'branch' &&
       (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/develop')
     runs-on: ubuntu-latest
+    concurrency:
+      group: video-common-publish-${{ needs.build.outputs.channel }}
+      cancel-in-progress: false
     environment: npm-publish
     permissions:
       contents: read

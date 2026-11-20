@@ -36,7 +36,7 @@ function main() {
   const tarballPath = path.resolve(artifactDirectory, tarball);
   const isManualPublish = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
   const expectedChannel =
-    process.env.PUBLISH_CHANNEL ?? (isManualPublish ? 'beta' : manifest.channel);
+    process.env.PUBLISH_CHANNEL || (isManualPublish ? 'beta' : manifest.channel);
   const expectedVersion = (() => {
     if (!isManualPublish) return manifest.version;
     const stableVersion = manifest.version.split('-')[0];
@@ -107,19 +107,9 @@ function main() {
   const isSameSource = !isUnpublished && viewOutput !== '' && JSON.parse(viewOutput) === sourceHash;
 
   if (isSameSource) {
-    console.log(`::notice::${packageName}@${version} is already published with this source.`);
-    const tag = runNpm({
-      npmArguments: ['dist-tag', 'add', `${packageName}@${version}`, channel],
-      environment,
-    });
-
-    if (tag.status !== 0) {
-      console.error(`::error::Could not move ${channel} to ${packageName}@${version}.`);
-      console.error(tag.stderr.trim());
-      process.exit(1);
-    }
-
-    console.log(`${channel} now points to ${packageName}@${version}.`);
+    console.log(
+      `::notice::${packageName}@${version} is already published with this source. Skipping publish.`
+    );
     return;
   }
 

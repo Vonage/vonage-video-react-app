@@ -2,7 +2,8 @@ name: video-common validation
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    paths:
+      - 'libs/common/**'
 
 permissions:
   contents: read
