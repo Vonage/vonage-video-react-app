@@ -2,7 +2,7 @@ import getSessionStorageService from '../../sessionStorageService';
 import { makeInternalErrorHandler, makeUnauthorizedErrorHandler } from '@api-lib/errors';
 import { videoHandler } from './video';
 import { getOrCreateSessionKeyFromRoomName } from '../../helpers';
-import { VideoAction } from '@api-lib';
+import { VideoAction, assertCaptionsBelongToSession } from '@api-lib';
 import { assertResult } from '@api-lib/executions';
 import { runExpressMiddleware } from '@api-lib/routing';
 import hasVerifiedSessionKey from './helpers/hasVerifiedSessionKey';
@@ -15,7 +15,6 @@ import { isNotNil, isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
-/** Only the sessionKey is checked: other IDs in the input (archiveId, captionsId) are not matched to its meeting. */
 videoHandler.use$(function requireSignedInUserOrVerifiedSessionKey(opts) {
   const { videoAction, ctx, input, next } = opts;
 
@@ -135,6 +134,8 @@ videoHandler.override$('disableCaptions', async (opts) => {
   try {
     const { assertInput, videoClient } = opts;
     const { captionsId, sessionKey } = assertInput(opts.input);
+
+    await assertCaptionsBelongToSession({ videoClient, sessionKey, captionsId });
 
     const count = await sessionService.decrementCaptionsUserCount({ sessionKey });
     const hasOtherUsers = count > 0;

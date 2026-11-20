@@ -35,6 +35,16 @@ await mockVonageVideoSdk({
 
       return Promise.resolve({ id: archiveId, status: 'stopped' });
     },
+    getArchive: (archiveId: string) => {
+      if (archiveId === 'b8-c9-d10') {
+        return Promise.reject(new Error('invalid archive'));
+      }
+      return Promise.resolve({
+        id: archiveId,
+        status: 'started',
+        sessionId: decodeSessionKey({ sessionKey: validSessionKey }).sessionId,
+      });
+    },
     searchArchives: () =>
       Promise.resolve({
         items: [{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[],

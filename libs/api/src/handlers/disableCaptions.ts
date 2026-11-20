@@ -3,10 +3,13 @@ import type { DisableCaptionsPayload } from '@api-lib/schemas';
 import type { IVideoClient } from '@api-lib/types';
 import { isErrorLike } from '@common/assertions';
 import { tryCatch } from '@common/execution';
+import assertCaptionsBelongToSession from './assertCaptionsBelongToSession';
 
 async function disableCaptions(this: IVideoClient, payload: DisableCaptionsPayload): Promise<void> {
   try {
-    const { captionsId } = payload;
+    const { captionsId, sessionKey } = payload;
+
+    await assertCaptionsBelongToSession({ videoClient: this, sessionKey, captionsId });
 
     const { error } = await tryCatch(() => this.video.disableCaptions(captionsId));
 

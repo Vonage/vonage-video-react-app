@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 
 type ArchiveResponse = { id: string; status: string; sessionId?: string };
 type CaptionsResponse = { captionsId: string };
+type CaptionsStatusResponse = { captionId: string; sessionId: string; status: string };
 
 // base64('2~vonageAppId~0.0.0.0~2024-01-01') — valid format for decodeSessionId
 export const DEFAULT_VALID_SESSION_ID = '1_Mn52b25hZ2VBcHBJZH4wLjAuMC4wfjIwMjQtMDEtMDE=';
@@ -12,9 +13,11 @@ type VideoSdkOverrides = Partial<{
   generateClientToken: () => string;
   startArchive: (sessionId: string) => Promise<ArchiveResponse>;
   stopArchive: (archiveId: string) => Promise<ArchiveResponse>;
+  getArchive: (archiveId: string) => Promise<ArchiveResponse>;
   searchArchives: () => Promise<{ items: unknown[]; count: number }>;
   enableCaptions: () => Promise<CaptionsResponse>;
   disableCaptions: (captionsId: string) => Promise<void>;
+  getCaptionStatus: (captionsId: string) => Promise<CaptionsStatusResponse>;
 }>;
 
 /**
@@ -53,6 +56,11 @@ async function mockVonageVideoSdk({
         .mockImplementation((archiveId: string) =>
           Promise.resolve({ id: archiveId, status: 'stopped' })
         ),
+      getArchive: vi
+        .fn<[archiveId: string], Promise<ArchiveResponse>>()
+        .mockImplementation((archiveId: string) =>
+          Promise.resolve({ id: archiveId, status: 'started', sessionId: validSessionId })
+        ),
       searchArchives: vi
         .fn<[], Promise<{ items: unknown[]; count: number }>>()
         .mockResolvedValue({ items: [], count: 0 }),
@@ -60,6 +68,11 @@ async function mockVonageVideoSdk({
         .fn<[], Promise<CaptionsResponse>>()
         .mockResolvedValue({ captionsId: DEFAULT_CAPTIONS_ID }),
       disableCaptions: vi.fn<[captionsId: string], Promise<void>>().mockResolvedValue(undefined),
+      getCaptionStatus: vi
+        .fn<[captionsId: string], Promise<CaptionsStatusResponse>>()
+        .mockImplementation((captionsId: string) =>
+          Promise.resolve({ captionId: captionsId, sessionId: validSessionId, status: 'started' })
+        ),
       ...videoOverrides,
     })),
   }));

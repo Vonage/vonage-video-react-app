@@ -1,7 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
-import { MediaMode, type SingleArchiveResponse, ArchiveMode } from '@vonage/video';
+import {
+  MediaMode,
+  type SingleArchiveResponse,
+  type CaptionStatusResponse,
+  ArchiveMode,
+} from '@vonage/video';
 import jwt from 'jsonwebtoken';
 import createVideoHandler from '../videoHandler/createVideoHandler';
 import { TokenRole } from '@api-lib/types';
@@ -17,6 +22,10 @@ const h = vi.hoisted(() => ({
   searchArchivesSpy: vi.fn(),
   enableCaptionsSpy: vi.fn(),
   disableCaptionsSpy: vi.fn(),
+  getArchiveSpy: vi.fn(() => Promise.resolve({ sessionId: mockSessionId } as never)),
+  getCaptionStatusSpy: vi.fn(() =>
+    Promise.resolve({ sessionId: mockSessionId } as CaptionStatusResponse)
+  ),
   generateClientTokenSpy: vi.fn(() => 'mock-token-12345'),
 }));
 
@@ -33,6 +42,8 @@ vi.mock('@vonage/video', async () => {
         searchArchives: h.searchArchivesSpy,
         enableCaptions: h.enableCaptionsSpy,
         disableCaptions: h.disableCaptionsSpy,
+        getArchive: h.getArchiveSpy,
+        getCaptionStatus: h.getCaptionStatusSpy,
         generateClientToken: h.generateClientTokenSpy,
       });
     },

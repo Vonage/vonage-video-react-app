@@ -21,7 +21,37 @@ const CURRENT_SIGNING_SECRET = process.env.SESSION_KEY_SECRET!;
 
 const LEGACY_SIGNING_SECRET = 'vonageAppId';
 
-await mockVonageVideoSdk();
+const ANOTHER_SESSION_ID = '1_another-session';
+const ARCHIVE_OF_ANOTHER_SESSION = 'archive-of-another-session';
+const CAPTIONS_OF_ANOTHER_SESSION = 'captions-of-another-session';
+
+const mockStopArchive = vi.fn((archiveId: string) =>
+  Promise.resolve({ id: archiveId, status: 'stopped' })
+);
+const mockDisableCaptions = vi.fn((_captionsId: string) => Promise.resolve());
+
+await mockVonageVideoSdk({
+  videoOverrides: {
+    stopArchive: mockStopArchive,
+    disableCaptions: mockDisableCaptions,
+    getArchive: (archiveId: string) =>
+      Promise.resolve({
+        id: archiveId,
+        status: 'started',
+        sessionId:
+          archiveId === ARCHIVE_OF_ANOTHER_SESSION ? ANOTHER_SESSION_ID : DEFAULT_VALID_SESSION_ID,
+      }),
+    getCaptionStatus: (captionsId: string) =>
+      Promise.resolve({
+        captionId: captionsId,
+        status: 'started',
+        sessionId:
+          captionsId === CAPTIONS_OF_ANOTHER_SESSION
+            ? ANOTHER_SESSION_ID
+            : DEFAULT_VALID_SESSION_ID,
+      }),
+  },
+});
 
 const videoRouter = (await import('.')).default;
 
@@ -97,6 +127,48 @@ describe('video route access policy', () => {
     }
 
     expect(statuses).toEqual([200, 200, 200, 200, 200, 200]);
+  });
+
+  describe('with a sessionKey of one room and an ID of another', () => {
+    async function createRoom(roomName: string): Promise<{ app: Express; sessionKey: string }> {
+      process.env = { ...originalEnv, AUTH_ENABLED: 'false' };
+      const app = buildApp();
+      const created = await request(app).post('/v2/createSession').send({ roomName });
+
+      return { app, sessionKey: (created.body.result.data as { sessionKey: string }).sessionKey };
+    }
+
+    it('stops an archive of the caller session, but not one of another session', async () => {
+      const { app, sessionKey } = await createRoom('archive-owner-room');
+
+      const foreign = await request(app)
+        .post('/v2/stopArchive')
+        .send({ sessionKey, archiveId: ARCHIVE_OF_ANOTHER_SESSION });
+
+      expect(foreign.statusCode).toEqual(404);
+      expect(mockStopArchive).not.toHaveBeenCalled();
+
+      const own = await request(app)
+        .post('/v2/stopArchive')
+        .send({ sessionKey, archiveId: 'archive-of-this-session' });
+
+      expect(own.statusCode).toEqual(200);
+      expect(mockStopArchive).toHaveBeenCalledWith('archive-of-this-session');
+    });
+
+    it('rejects disabling captions of another session without touching the caller count', async () => {
+      const { app, sessionKey } = await createRoom('captions-owner-room');
+      await sessionService.incrementCaptionsUserCount({ sessionKey });
+      await sessionService.incrementCaptionsUserCount({ sessionKey });
+
+      const foreign = await request(app)
+        .post('/v2/disableCaptions')
+        .send({ sessionKey, captionsId: CAPTIONS_OF_ANOTHER_SESSION });
+
+      expect(foreign.statusCode).toEqual(404);
+      expect(mockDisableCaptions).not.toHaveBeenCalled();
+      expect(await sessionService.decrementCaptionsUserCount({ sessionKey })).toEqual(1);
+    });
   });
 
   describe('with auth enabled', () => {
