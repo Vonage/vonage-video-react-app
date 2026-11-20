@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       channel:
-        description: Package tag (manual runs publish a unique prerelease version)
+        description: Package tag (beta creates a prerelease; latest publishes the stable version)
         required: true
         default: beta
         type: choice

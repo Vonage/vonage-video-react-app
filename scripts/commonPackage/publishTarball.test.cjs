@@ -6,39 +6,53 @@ const os = require('node:os');
 const path = require('node:path');
 const { test } = require('node:test');
 
-test('manual runs publish prerelease artifacts under the selected beta or latest tag', (context) => {
-  for (const channel of ['beta', 'latest']) {
-    const { result, commands } = runPublisher({ context, channel, isManual: true });
+test('manual runs publish beta versions only when the beta tag is selected', (context) => {
+  for (const { channel, artifactVersion } of [
+    { channel: 'beta', artifactVersion: '1.2.3-beta.123456' },
+    { channel: 'latest', artifactVersion: '1.2.3' },
+  ]) {
+    const { result, commands } = runPublisher({
+      context,
+      channel,
+      artifactVersion,
+      isManual: true,
+    });
     assert.equal(result.status, 0, result.stderr);
     const publish = commands.find((command) => command[0] === 'publish');
     assert.ok(publish);
     assert.deepEqual(publish.slice(2, 5), ['--tag', channel, '--ignore-scripts']);
-    assert.ok(result.stdout.includes('1.2.3-beta.123456'));
+    assert.ok(
+      result.stdout.includes(`Published @vonage/video-reference-apps-common@${artifactVersion}.`)
+    );
     assert.deepEqual(publish.slice(-2), ['--registry', 'https://npm.pkg.github.com']);
   }
 });
 
-test('develop restores latest to an existing matching release without republishing', (context) => {
-  const { result, commands } = runPublisher({ context, publishedHash: 'source-hash' });
-  assert.equal(result.status, 0, result.stderr);
-  assert.equal(
-    commands.some((command) => command[0] === 'publish'),
-    false
-  );
-  assert.deepEqual(commands.at(-1), [
-    'dist-tag',
-    'add',
-    '@vonage/video-reference-apps-common@1.2.3',
-    'latest',
-    '--registry',
-    'https://npm.pkg.github.com',
-  ]);
+test('manual and develop runs restore latest to a matching release without republishing', (context) => {
+  for (const isManual of [true, false]) {
+    const { result, commands } = runPublisher({ context, isManual, publishedHash: 'source-hash' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(
+      commands.some((command) => command[0] === 'publish'),
+      false
+    );
+    assert.deepEqual(commands.at(-1), [
+      'dist-tag',
+      'add',
+      '@vonage/video-reference-apps-common@1.2.3',
+      'latest',
+      '--registry',
+      'https://npm.pkg.github.com',
+    ]);
+  }
 });
 
 test('collisions and artifacts from a different manual run cannot change registry tags', (context) => {
   for (const options of [
     { publishedHash: 'different-source' },
-    { isManual: true, artifactVersion: '1.2.3-beta.123455' },
+    { isManual: true, publishedHash: 'different-source' },
+    { isManual: true, channel: 'beta', artifactVersion: '1.2.3-beta.123455' },
+    { isManual: true, channel: 'latest', artifactVersion: '1.2.3-beta.123456' },
   ]) {
     const { result, commands } = runPublisher({ context, ...options });
     assert.notEqual(result.status, 0);
@@ -54,7 +68,7 @@ function runPublisher({
   channel = 'latest',
   isManual = false,
   publishedHash = '',
-  artifactVersion,
+  artifactVersion = '1.2.3',
 }) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'common-publish-'));
   context.after(() => fs.rmSync(directory, { recursive: true, force: true }));
@@ -77,7 +91,7 @@ function runPublisher({
   );
   const metadata = {
     packageName: '@vonage/video-reference-apps-common',
-    version: artifactVersion ?? (isManual ? '1.2.3-beta.123456' : '1.2.3'),
+    version: artifactVersion,
     channel,
     sourceHash: 'source-hash',
     tarball: 'package.tgz',

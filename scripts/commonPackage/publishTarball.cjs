@@ -35,11 +35,15 @@ function main() {
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8'));
   const tarballPath = path.resolve(artifactDirectory, tarball);
   const isManualPublish = process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
-  const expectedVersion = isManualPublish
-    ? `${manifest.version.split('-')[0]}-beta.${process.env.GITHUB_RUN_ID}`
-    : manifest.version;
   const expectedChannel =
     process.env.PUBLISH_CHANNEL ?? (isManualPublish ? 'beta' : manifest.channel);
+  const expectedVersion = (() => {
+    if (!isManualPublish) return manifest.version;
+    const stableVersion = manifest.version.split('-')[0];
+    return expectedChannel === 'beta'
+      ? `${stableVersion}-beta.${process.env.GITHUB_RUN_ID}`
+      : stableVersion;
+  })();
 
   const isMetadataMatchingManifest =
     version === expectedVersion &&

@@ -34,10 +34,14 @@ async function main(): Promise<void> {
   const manifest = verifyPackageHash();
   const { packageName, hash: sourceHash } = manifest;
   const isManualPublish = isPackMode && process.env.GITHUB_EVENT_NAME === 'workflow_dispatch';
-  const version = isManualPublish
-    ? `${manifest.version.split('-')[0]}-beta.${process.env.GITHUB_RUN_ID}`
-    : manifest.version;
   const channel = process.env.PUBLISH_CHANNEL ?? (isManualPublish ? 'beta' : manifest.channel);
+  const version = (() => {
+    if (!isManualPublish) return manifest.version;
+    const stableVersion = manifest.version.split('-')[0];
+    return channel === 'beta'
+      ? `${stableVersion}-beta.${process.env.GITHUB_RUN_ID}`
+      : stableVersion;
+  })();
   const isReleaseValid =
     /^(\d+)\.(\d+)\.(\d+)(?:-beta\.\d+)?$/.test(version) && ['beta', 'latest'].includes(channel);
 
