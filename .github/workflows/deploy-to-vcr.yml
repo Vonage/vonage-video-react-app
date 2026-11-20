@@ -48,15 +48,6 @@ jobs:
             exit 1
           fi
 
-          sed -i "/name: AUTH_ENABLED/{n;s/value: .*/value: 'true'/;}" "${{ github.workspace }}/vcr-gha.yml"
-          if ! grep -A1 'name: AUTH_ENABLED' "${{ github.workspace }}/vcr-gha.yml" | grep -qF "value: 'true'"; then
-            echo "::error::Could not set AUTH_ENABLED to true; refusing to deploy."
-            exit 1
-          fi
-
-          # The frontend build reads AUTH_ENABLED for the logout button
-          export AUTH_ENABLED=true
-
           ./vcrBuild.sh
 
       - name: Install VCR CLI

@@ -4,6 +4,8 @@
 #
 # Public, safe-to-commit values only: never put secrets or per-environment values here
 
+export AUTH_ENABLED="${AUTH_ENABLED:-true}"
+
 # App (web only)
 # How long in-app notifications stay on screen.
 export NOTIFICATION_DURATION_MS="${NOTIFICATION_DURATION_MS:-4000}"
@@ -18,7 +20,7 @@ export MAX_CUSTOM_VIDEO_BITRATE_BPS="${MAX_CUSTOM_VIDEO_BITRATE_BPS:-10000000}"
 export SUPPORTED_FRAME_RATES="${SUPPORTED_FRAME_RATES:-30|15|7|1}"
 
 # OIDC authentication (backend only, never mapped into the frontend bundle).
-# AUTH_ENABLED, the client ID, provider endpoints, redirect URIs and AUTH_COOKIE_SECRET are per
+# The client ID, provider endpoints, redirect URIs and AUTH_COOKIE_SECRET are per
 # environment and live in backend/.env or the deployment config.
 # Cookie holding the encrypted access and refresh tokens.
 export AUTH_SESSION_COOKIE_NAME="${AUTH_SESSION_COOKIE_NAME:-vera-session}"
