@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const child_process = require('node:child_process');
 
@@ -104,7 +105,12 @@ function main() {
     process.exit(1);
   }
 
-  const isSameSource = !isUnpublished && viewOutput !== '' && JSON.parse(viewOutput) === sourceHash;
+  const publishedHash = (() => {
+    if (isUnpublished) return null;
+    if (viewOutput !== '') return JSON.parse(viewOutput);
+    return readPublishedSourceHash({ packageName, version, environment });
+  })();
+  const isSameSource = publishedHash === sourceHash;
 
   if (isSameSource) {
     console.log(
@@ -142,6 +148,54 @@ function runNpm({ npmArguments, environment }) {
     encoding: 'utf-8',
     env: environment,
   });
+}
+
+function readPublishedSourceHash({ packageName, version, environment }) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'common-published-'));
+
+  try {
+    const download = runNpm({
+      npmArguments: [
+        'pack',
+        `${packageName}@${version}`,
+        '--json',
+        '--ignore-scripts',
+        '--pack-destination',
+        directory,
+      ],
+      environment,
+    });
+
+    if (download.status !== 0) {
+      throw new Error(`Could not download ${packageName}@${version}: ${download.stderr.trim()}`);
+    }
+
+    const [{ filename }] = JSON.parse(download.stdout);
+    const manifest = child_process.spawnSync(
+      'tar',
+      ['-xzOf', path.join(directory, filename), 'package/package.json'],
+      { encoding: 'utf-8' }
+    );
+
+    if (manifest.status !== 0) {
+      throw new Error(`Could not read the published package manifest: ${manifest.stderr.trim()}`);
+    }
+
+    const publishedPackage = JSON.parse(manifest.stdout);
+    const isPublishedPackageValid =
+      publishedPackage.name === packageName &&
+      publishedPackage.version === version &&
+      typeof publishedPackage.sourceHash === 'string' &&
+      publishedPackage.sourceHash !== '';
+
+    if (!isPublishedPackageValid) {
+      throw new Error(`Could not verify the published source hash for ${packageName}@${version}.`);
+    }
+
+    return publishedPackage.sourceHash;
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 }
 
 main();

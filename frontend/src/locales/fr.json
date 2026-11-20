@@ -269,7 +269,7 @@
   "feedbackForm.field.title.label": "Que tentiez-vous de faire lorsque vous avez remarqué ce problème ?",
   "feedbackForm.field.title.type": "Titre",
   "feedbackForm.helperText.error": "{{field}} est obligatoire et doit comporter moins de {{limit}} caractères",
-  "feedbackForm.open": "Ouvrir le formulaire de signalement",
+  "feedbackForm.open": "Signaler un problème",
   "feedbackForm.submitted.content": "Nous apprécions grandement votre contribution, qui nous aide à améliorer l'application et à résoudre les problèmes.",
   "feedbackForm.submitted.error": "Une erreur s'est produite. Veuillez réessayer.",
   "feedbackForm.submitted.thanks": "Merci pour votre retour !",
