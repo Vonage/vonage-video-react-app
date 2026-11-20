@@ -67,6 +67,33 @@ describe('PostCallTranscriptionButton', () => {
     expect(mockVideoClient.startArchive).toHaveBeenCalledWith({
       sessionKey: mockedSessionKey,
       withTranscription: true,
+      withSummary: true,
+    });
+
+    vi.useRealTimers();
+  });
+
+  it('starts transcription with withSummary false when user turns off the summary switch', async () => {
+    vi.useFakeTimers();
+    (mockVideoClient.startArchive as Mock).mockResolvedValue({ id: testArchiveId });
+    render(<PostCallTranscriptionButton handleClick={mockHandleCloseMenu} />);
+
+    act(() => screen.getByTestId('post-call-transcription-button').click());
+    expect(screen.getByText('Start Transcription?')).toBeInTheDocument();
+
+    const summarySwitch = screen.getByRole('checkbox');
+    act(() => summarySwitch.click());
+
+    act(() => screen.getByTestId('popup-dialog-primary-button').click());
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    expect(mockVideoClient.startArchive).toHaveBeenCalledWith({
+      sessionKey: mockedSessionKey,
+      withTranscription: true,
+      withSummary: false,
     });
 
     vi.useRealTimers();

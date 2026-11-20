@@ -1,0 +1,81 @@
+import { useId, type PropsWithChildren, type ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
+import VividIcon from '@ui/components/VividIcon';
+import NotificationsContainer from '@ui/components/NotificationsContainer';
+import createRoomWizard$ from '../../context/createRoomWizardContext';
+import { getStepPanels } from '../CreateRoomWizardStep';
+import CreateRoomWizardFooterActions from '../CreateRoomWizardFooterActions';
+import WizardStepProgress from '../WizardStepProgress';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
+
+export type CreateRoomWizardDialogProps = PropsWithChildren<{
+  onClose: () => void;
+}>;
+
+/**
+ * Compact dialog chrome of the wizard: full screen on phones, a rounded panel from `sm` up, showing the active step.
+ */
+const CreateRoomWizardDialog = ({
+  onClose,
+  children,
+}: CreateRoomWizardDialogProps): ReactElement => {
+  const { t } = useTranslation();
+  const titleId = useId();
+  const activeStep = createRoomWizard$.use.select((state) => state.activeStep);
+  const activePanel = getStepPanels(children).find(({ props }) => props.step === activeStep);
+
+  const paperClassName = classNames(
+    'm-auto h-dvh max-h-dvh w-full max-w-none overflow-hidden rounded-none border-0 bg-vera-surface p-0 text-left shadow-2xl backdrop:bg-black/50',
+    'sm:h-fit sm:max-h-[calc(100dvh-4rem)] sm:w-[calc(100%-4rem)] sm:rounded-vera-large md:max-w-xl',
+    'dark:border dark:border-vera-border'
+  );
+
+  return (
+    <dialog
+      ref={openDialog}
+      data-testid={testIds.dialog}
+      onCancel={onClose}
+      aria-labelledby={titleId}
+      className={paperClassName}
+    >
+      <div className="flex h-full flex-col bg-vera-surface sm:h-auto sm:max-h-[calc(100dvh-4rem)]">
+        <div className="relative border-b border-vera-border bg-vera-surface px-6 pb-4 pt-6">
+          <h2
+            id={titleId}
+            className="pr-10 font-vera-plain text-vera-heading-2 text-vera-text-secondary"
+          >
+            {t('createRoomWizard.title')}
+          </h2>
+          <button
+            type="button"
+            data-testid={testIds.closeButton}
+            aria-label={t('button.close')}
+            onClick={onClose}
+            className={classNames(
+              'cursor-pointer absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full',
+              'text-vera-secondary transition-colors hover:bg-vera-background'
+            )}
+          >
+            <VividIcon name="close-line" customSize={-5} />
+          </button>
+        </div>
+        <WizardStepProgress className="px-6 pt-4" />
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">{activePanel}</div>
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-vera-border px-6 py-4">
+          <CreateRoomWizardFooterActions onClose={onClose} />
+        </div>
+      </div>
+      <NotificationsContainer />
+    </dialog>
+  );
+};
+
+function openDialog(dialog: HTMLDialogElement) {
+  dialog.showModal();
+  return () => dialog.close();
+}
+
+export default CreateRoomWizardDialog;

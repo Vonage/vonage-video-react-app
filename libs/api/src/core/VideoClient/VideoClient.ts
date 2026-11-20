@@ -15,12 +15,14 @@ import {
   joinSession,
   decodeSessionKey,
   createSessionAndJoin,
+  getServerSettings,
 } from '@api-lib/handlers';
 import {
   type HandlersDefaults,
   VideoAction,
   type VideoClientConfig,
   type SessionSigning,
+  type CreateSessionPayload,
 } from '@api-lib/types';
 import schemasByAction from '@api-lib/constants/schemasByAction';
 import { makeBadRequestErrorHandler } from '@api-lib/errors';
@@ -78,10 +80,9 @@ class VideoClient implements IVideoClient {
   /**
    * VideoClient instance should be used for one single session and requests
    */
-  protected createVideoHandler<Action extends (this: this, payload: Any) => unknown>(
-    videoAction: VideoAction,
-    action: Action
-  ): Action {
+  protected createVideoHandler<
+    Action extends (this: this, payload: Any, defaults?: Any) => unknown,
+  >(videoAction: VideoAction, action: Action): Action {
     const callback = action.bind(this);
 
     return ((payload: Any) => {
@@ -97,10 +98,13 @@ class VideoClient implements IVideoClient {
         isFunction(defaultsSrc) ? defaultsSrc(payload as unknown) : defaultsSrc
       ) as Record<string, unknown>;
 
-      return callback({
-        ...defaults,
-        ...payload,
-      });
+      return callback(
+        {
+          ...defaults,
+          ...payload,
+        },
+        defaults
+      );
     }) as Action;
   }
 
@@ -126,7 +130,8 @@ class VideoClient implements IVideoClient {
   /**
    * Creates or retrieves a session based on the provided sessionKey
    */
-  public createSession = this.createVideoHandler(VideoAction.createSession, createSession);
+  public createSession: (payload?: CreateSessionPayload) => ReturnType<typeof createSession> =
+    this.createVideoHandler(VideoAction.createSession, createSession);
 
   /**
    * Creates a session and generates a token to join it in one step. This is useful to avoid
@@ -174,6 +179,11 @@ class VideoClient implements IVideoClient {
    * Joins an existing session
    */
   public joinSession = this.createVideoHandler(VideoAction.joinSession, joinSession);
+
+  public getServerSettings = this.createVideoHandler(
+    VideoAction.getServerSettings,
+    getServerSettings
+  );
 }
 
 export default VideoClient;

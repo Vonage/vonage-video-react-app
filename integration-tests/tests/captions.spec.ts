@@ -152,3 +152,155 @@ test.describe('captions', () => {
     ).toBeVisible();
   });
 });
+
+test.describe('captions enable failure', () => {
+  const areCaptionsEnabled = process.env.ALLOW_CAPTIONS !== 'false';
+  test.skip(!areCaptionsEnabled, 'Skipping captions tests when captions are disabled');
+
+  test('should keep captions off when enabling them fails', async ({
+    page,
+    browserName,
+    isMobile,
+  }) => {
+    const ensureCaptionsEnabledRequests = await mockEnsureCaptionsEnabledFailure(page);
+    await joinMeetingRoom({ page, username: 'User One', browserName });
+
+    await toggleCaptions({ page, isMobile });
+
+    await expect.poll(() => ensureCaptionsEnabledRequests.count).toBe(1);
+    await expect(page.getByTestId('captions-box')).toHaveCount(0);
+    await expectCaptionsButtonState({ page, isMobile, isEnabled: false });
+  });
+
+  test('should show the captions error when enabling them fails', async ({
+    page,
+    browserName,
+    isMobile,
+  }) => {
+    test.fixme(
+      true,
+      'VIDSOL-TBD: CaptionsButton only reports AxiosError failures, but the tRPC video client throws TRPCClientError'
+    );
+
+    await mockEnsureCaptionsEnabledFailure(page);
+    await joinMeetingRoom({ page, username: 'User One', browserName });
+
+    await toggleCaptions({ page, isMobile });
+
+    await expect(page.getByTestId('captions-error')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId('captions-error')).toContainText('Captions error:');
+    await expectCaptionsButtonState({ page, isMobile, isEnabled: false });
+  });
+});
+
+test.describe('captions with multiple participants', () => {
+  const areCaptionsEnabled = process.env.ALLOW_CAPTIONS !== 'false';
+  test.skip(!areCaptionsEnabled, 'Skipping captions tests when captions are disabled');
+
+  test('should keep captions on for a participant after the other one turns them off', async ({
+    page: pageOne,
+    context,
+    browserName,
+    isMobile,
+  }) => {
+    const roomName = crypto.randomBytes(5).toString('hex');
+    await joinMeetingRoom({ page: pageOne, username: 'User One', roomName, browserName });
+    const pageTwo = await context.newPage();
+    await joinMeetingRoom({ page: pageTwo, username: 'User Two', roomName, browserName });
+    await expect(pageOne.locator('.subscriber').getByText('User Two')).toBeVisible({
+      timeout: 20_000,
+    });
+
+    for (const page of [pageOne, pageTwo]) {
+      await toggleCaptions({ page, isMobile });
+      await assertCaptionsBox(page);
+      await expectCaptionsButtonState({ page, isMobile, isEnabled: true });
+    }
+
+    await toggleCaptions({ page: pageOne, isMobile });
+
+    await expect(pageOne.getByTestId('captions-box')).toHaveCount(0);
+    await expectCaptionsButtonState({ page: pageOne, isMobile, isEnabled: false });
+    await expect(pageTwo.getByTestId('captions-box')).toBeVisible();
+    await expectCaptionsButtonState({ page: pageTwo, isMobile, isEnabled: true });
+
+    await toggleCaptions({ page: pageTwo, isMobile });
+
+    await expect(pageTwo.getByTestId('captions-box')).toHaveCount(0);
+    await expectCaptionsButtonState({ page: pageTwo, isMobile, isEnabled: false });
+  });
+});
+
+async function joinMeetingRoom({
+  page,
+  username,
+  roomName = crypto.randomBytes(5).toString('hex'),
+  browserName,
+}: {
+  page: Page;
+  username: string;
+  roomName?: string;
+  browserName: string;
+}): Promise<void> {
+  await openMeetingRoomWithSettings({ page, username, roomName, browserName });
+  await waitUntilReady(page, browserName);
+  await expect(page.locator('.publisher')).toBeVisible();
+  await expect(page.getByTestId('progress-spinner')).toHaveCount(0, { timeout: 20_000 });
+}
+
+async function toggleCaptions({ page, isMobile }: ClickCaptionsButtonArgs): Promise<void> {
+  await clickCaptionsButton({ page, isMobile });
+
+  if (isMobile) {
+    await expect(page.getByTestId('toolbar-overflow-menu')).toBeHidden();
+  }
+}
+
+async function expectCaptionsButtonState({
+  page,
+  isMobile,
+  isEnabled,
+}: ClickCaptionsButtonArgs & { isEnabled: boolean }): Promise<void> {
+  const overflowMenu = page.getByTestId('toolbar-overflow-menu');
+  const expectedIconTestId = isEnabled
+    ? 'vivid-icon-closed-captioning-off-solid'
+    : 'vivid-icon-closed-captioning-solid';
+
+  if (isMobile) {
+    await page.getByTestId('hidden-toolbar-items').click();
+    await page.mouse.move(0, 0);
+    await expect(overflowMenu).toBeVisible();
+  }
+
+  await expect(page.getByTestId('captions-button').getByTestId(expectedIconTestId)).toBeVisible();
+
+  if (isMobile) {
+    await page.getByTestId('hidden-toolbar-items').click();
+    await page.mouse.move(0, 0);
+    await expect(overflowMenu).toBeHidden();
+  }
+}
+
+async function mockEnsureCaptionsEnabledFailure(page: Page): Promise<{ count: number }> {
+  const requests = { count: 0 };
+
+  await page.route(/\/v2\/ensureCaptionsEnabled/, async (route) => {
+    requests.count++;
+    const errorPayload = {
+      error: {
+        message: 'Captions service unavailable',
+        code: -32603,
+        data: { code: 'INTERNAL_SERVER_ERROR', httpStatus: 500, path: 'ensureCaptionsEnabled' },
+      },
+    };
+    const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
+
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify(isBatchRequest ? [errorPayload] : errorPayload),
+    });
+  });
+
+  return requests;
+}

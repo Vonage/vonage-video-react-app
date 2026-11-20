@@ -38,6 +38,7 @@ export default [
     ignores: [
       'node_modules',
       'dist',
+      '**/dist',
       'coverage',
       '.nx',
       'tmp',

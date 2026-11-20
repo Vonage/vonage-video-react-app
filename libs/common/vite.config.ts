@@ -131,6 +131,7 @@ const buildConfig = defineConfig({
           type: sourcePackageJson.type,
           author: sourcePackageJson.author,
           license: sourcePackageJson.license,
+          repository: sourcePackageJson.repository,
           sideEffects: sourcePackageJson.sideEffects,
           types: rootExport?.types ?? sourcePackageJson.types,
           main: rootExport?.require ?? sourcePackageJson.main,

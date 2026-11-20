@@ -4,10 +4,10 @@ import type { Mock } from 'vitest';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { Server } from 'http';
-import { Archive } from 'opentok';
 import InMemorySessionStorage from '../storage/inMemorySessionStorage';
 import mockOpentokConfig from '../helpers/__mocks__/config';
 import getSessionStorageService from '../sessionStorageService';
+import { decodeSessionKey } from '@common/helpers';
 import mockVonageVideoSdk, {
   DEFAULT_CAPTIONS_ID as validCaptionsId,
   DEFAULT_VALID_SESSION_ID as validSessionId,
@@ -24,30 +24,7 @@ const validSessionKey = jwt.sign(
 
 vi.doMock('../helpers/config', mockOpentokConfig);
 
-await mockVonageVideoSdk({
-  validSessionId,
-  videoOverrides: {
-    stopArchive: (archiveId: string) => {
-      if (archiveId === 'b8-c9-d10') {
-        return Promise.reject(new Error('invalid archive'));
-      }
-
-      return Promise.resolve({ id: archiveId, status: 'stopped' });
-    },
-    searchArchives: () =>
-      Promise.resolve({
-        items: [{ id: 'archive1' }, { id: 'archive2' }] as unknown as Archive[],
-        count: 2,
-      }),
-    disableCaptions: (captionsId: string) => {
-      if (captionsId === 'wrongCaptionId') {
-        return Promise.reject(new Error('Invalid caption ID'));
-      }
-
-      return Promise.resolve(undefined);
-    },
-  },
-});
+await mockVonageVideoSdk({ validSessionId });
 
 const startServer = (await import('../server')).default;
 const sessionService = getSessionStorageService();
@@ -88,45 +65,10 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
         const res = await request(server).get(`/session/${roomName}`);
         expect(res.statusCode).toEqual(200);
       });
-
-      it('returns a 200 and a list of archives when getting archives', async () => {
-        await sessionStorage.setSession({
-          roomName: 'awesome-room-name',
-          sessionKey: validSessionKey,
-          sessionId: validSessionId,
-        });
-        const res = await request(server).get(`/session/${roomName}/archives`);
-        expect(res.statusCode).toEqual(200);
-        expect(res.body.archives).toEqual([{ id: 'archive1' }, { id: 'archive2' }]);
-      });
     });
 
     describe('POST requests', () => {
       describe('archiving', () => {
-        it('returns a 200 when starting an archive in a room', async () => {
-          const res = await request(server)
-            .post(`/session/${roomName}/startArchive`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(200);
-        });
-
-        it('returns a 404 when starting an archive in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/startArchive`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
-
-        it('returns a 502 when stopping an invalid archive in a room', async () => {
-          const archiveId = 'b8-c9-d10';
-          const res = await request(server)
-            .post(`/session/${roomName}/${archiveId}/stopArchive`)
-            .set('Content-Type', 'application/json')
-            .set('Accept', 'application/json');
-          expect(res.statusCode).toEqual(502);
-        });
-
         it('stops archive without archiveId when stored in session (server rotation scenario)', async () => {
           // Setup: Store an archiveId in session storage
           await sessionService.setArchiveIds({
@@ -144,50 +86,6 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
           expect(res.statusCode).toEqual(200);
           // The middleware successfully injected the archiveId and stopped the archive
           expect(res.body).toHaveProperty('result');
-        });
-      });
-
-      describe('captions', () => {
-        it('returns a 200 when enabling captions in a room', async () => {
-          const res = await request(server)
-            .post(`/session/${roomName}/enableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(200);
-        });
-
-        it('returns a 200 when disabling captions in a room', async () => {
-          const captionsId = validCaptionsId;
-          const res = await request(server)
-            .post(`/session/${roomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(200);
-        });
-
-        it('returns a 404 when enabling captions in a non-existent room', async () => {
-          const invalidRoomName = 'randomRoomName';
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/enableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
-        });
-
-        it('returns a 502 when disabling an invalid caption in a room', async () => {
-          const invalidCaptionId = 'wrongCaptionId';
-          const res = await request(server)
-            .post(`/session/${roomName}/${invalidCaptionId}/disableCaptions`)
-            .set('Content-Type', 'application/json')
-            .set('Accept', 'application/json');
-
-          expect(res.statusCode).toEqual(502);
-        });
-
-        it('returns a 404 when stopping captions in a non-existent room', async () => {
-          const invalidRoomName = 'nonExistingRoomName';
-          const captionsId = validCaptionsId;
-          const res = await request(server)
-            .post(`/session/${invalidRoomName}/${captionsId}/disableCaptions`)
-            .set('Content-Type', 'application/json');
-          expect(res.statusCode).toEqual(404);
         });
       });
 
@@ -496,6 +394,54 @@ describe.each([['InMemorySessionStorage', new InMemorySessionStorage()]])(
               expect.objectContaining({
                 hasTranscription: true,
                 name: 'transcription',
+              })
+            );
+          });
+
+          it('/hooks/archive stopped with name=transcription preserves withSummary=false chosen in /v2/startArchive', async () => {
+            const { sessionId } = decodeSessionKey({ sessionKey: validSessionKey });
+            await sessionService.setSession({ roomName, sessionKey: validSessionKey, sessionId });
+
+            await request(server)
+              .post('/v2/startArchive')
+              .set('Content-Type', 'application/json')
+              .send({ sessionKey: validSessionKey, withTranscription: true, withSummary: false })
+              .expect(200);
+
+            singletonVideoInstance.startArchive.mockClear();
+
+            await sessionService.setArchiveIds({
+              sessionId,
+              archiveIds: ['transcription-archive-id'],
+            });
+
+            await sessionService.setServerRotationPending({
+              sessionId,
+              pending: 1,
+            });
+
+            const response = await request(server)
+              .post('/v2/hooks/archive')
+              .set('Content-Type', 'application/json')
+              .send(
+                createArchiveHookPayload({
+                  sessionId,
+                  status: 'stopped',
+                  id: 'transcription-archive-id',
+                  name: 'transcription',
+                })
+              );
+
+            expect(response.statusCode).toEqual(200);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledTimes(1);
+            expect(singletonVideoInstance.startArchive).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                hasTranscription: true,
+                name: 'transcription',
+                transcriptionProperties: expect.objectContaining({
+                  hasSummary: false,
+                }),
               })
             );
           });

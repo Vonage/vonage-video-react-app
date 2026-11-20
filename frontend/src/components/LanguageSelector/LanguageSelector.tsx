@@ -11,6 +11,9 @@ import VividIcon from '@ui/components/VividIcon';
 import { env } from '../../env';
 import { assertLang, Lang } from '@common/schemas';
 import { isNil } from '@common/assertions';
+import { testIds } from './testIds';
+
+export { testIds } from './testIds';
 
 const languageOptions: LanguageOption[] = [
   { code: Lang.EN, name: 'English', flag: 'flag-united-kingdom' },
@@ -20,6 +23,7 @@ const languageOptions: LanguageOption[] = [
   { code: Lang.ES, name: 'Español', flag: 'flag-spain' },
   { code: Lang.ES_MX, name: 'Español (México)', flag: 'flag-mexico' },
   { code: Lang.JA, name: '日本語', flag: 'flag-japan' },
+  { code: Lang.FR, name: 'Français', flag: 'flag-france' },
 ];
 
 const ChevronIcon = ({ className, ...props }: { className?: string } & Record<string, unknown>) => (
@@ -87,14 +91,10 @@ const LanguageSelector = ({ showFlag = true }: LanguageSelectorProps): ReactElem
             </Box>
           );
         }}
-        data-testid="language-selector"
+        data-testid={testIds.selector}
       >
         {supportedLanguages.map((option) => (
-          <MenuItem
-            key={option.code}
-            value={option.code}
-            data-testid={`language-option-${option.code}`}
-          >
+          <MenuItem key={option.code} value={option.code} data-testid={testIds.option(option.code)}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {showFlag && <VividIcon name={option.flag} customSize={-2} />}
               <span>{option.name}</span>

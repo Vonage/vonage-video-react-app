@@ -29,7 +29,6 @@ const helmetHandler = helmet({
             // required for web assembly
             "'unsafe-eval'",
             'blob:',
-            'data:',
             'https://static.opentok.com',
           ],
 

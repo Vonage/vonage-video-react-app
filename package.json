@@ -1,6 +1,6 @@
 {
   "name": "vonage-video-react-app",
-  "version": "1.6.1",
+  "version": "1.7.1",
   "description": "React reference application for the Vonage Video web client SDK.",
   "private": true,
   "engines": {
@@ -31,10 +31,11 @@
     "test:ui": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/testLibs.ts ui",
     "test:common": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/testLibs.ts common",
     "ts-check": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/tsCheck.ts",
-    "common:hash:update": "node scripts/assertPnpmInstall.mjs && yarn nx run common:hash:update",
+    "common:hash:update": "node scripts/assertPnpmInstall.mjs && pnpm nx run common:hash:update",
     "vcr:dev": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/vcrDev.ts",
     "generate:secret": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/generateSecret.ts",
     "publish:package": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/publishPackage.ts",
+    "prepare:package": "node scripts/assertPnpmInstall.mjs && npx tsx scripts/preparePackage.ts",
     "migrate:yarn": "node scripts/migrateToYarn.mjs"
   },
   "scriptsInfo": {
@@ -53,6 +54,7 @@
     "generate:secret": "Print a random 32-byte base64 secret for SESSION_KEY_SECRET or AUTH_COOKIE_SECRET. Usage: 'yarn generate:secret' (run once per secret and per environment)",
     "vcr:dev": "Manage VCR dev instance. Usage: 'yarn vcr:dev' (deploy), 'yarn vcr:dev rm' or 'yarn vcr:dev --rm' (remove instance). Note: Copy vcr.yml.example as vcr-dev.yml and add your application ID before deploying",
     "publish:package": "Publish a personal dev package to GitHub Packages. Usage: 'yarn publish:package common' (prompts for token, hidden input), 'yarn publish:package common dry' (dry run, validates without publishing), 'GH_TOKEN=<token> yarn publish:package common' (recommended for CI)",
+    "prepare:package": "Validate a package before publishing to GitHub Packages: quality-check, version bump against origin/develop, tests, build and npm publish --dry-run. Usage: 'pnpm prepare:package common'. Optional NODE_AUTH_TOKEN=<token> also checks the token and the published versions.",
     "migrate:yarn": "Convert the repository back to yarn as its package manager. Usage: 'yarn migrate:yarn' (prints the plan), 'yarn migrate:yarn --yes' (applies it). Restores resolutions from pnpm overrides, removes the pnpm lockfile, workspace file and install guard, then runs yarn install to generate a fresh yarn.lock. CI workflows, git hooks and vcrBuild.sh must be reverted from git history separately."
   },
   "repository": {
@@ -75,7 +77,7 @@
   "homepage": "https://github.com/Vonage/vonage-video-react-app#readme",
   "devDependencies": {
     "@cspell/eslint-plugin": "9.6.4",
-    "@eslint/js": "9.39.2",
+    "@eslint/js": "9.39.5",
     "@nx/eslint": "22.5.1",
     "@nx/eslint-plugin": "22.5.1",
     "@nx/js": "22.5.1",
@@ -90,7 +92,6 @@
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
-    "@types/body-parser": "1.19.6",
     "@types/cors": "2.8.19",
     "@types/express": "4.17.25",
     "@types/jsonwebtoken": "9.0.10",
@@ -109,11 +110,10 @@
     "@vitest/ui": "1.6.1",
     "concurrently": "9.2.1",
     "copy-webpack-plugin": "13.0.1",
-    "eslint": "8.57.1",
+    "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-import-resolver-node": "0.3.9",
     "eslint-import-resolver-typescript": "4.4.4",
-    "eslint-plugin-filename-rules": "1.3.1",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.1",
     "eslint-plugin-prettier": "5.5.5",
@@ -176,7 +176,6 @@
     "@vonage/vivid": "^5.23.0",
     "autolinker": "4.1.5",
     "axios": "1.20.0",
-    "body-parser": "2.3.0",
     "classnames": "2.5.1",
     "cors": "2.8.6",
     "dotenv": "16.6.1",
@@ -206,7 +205,6 @@
     "tailwind-merge": "3.4.1",
     "tailwind-variants": "3.2.2",
     "ua-parser-js": "1.0.41",
-    "uuid": "9.0.1",
     "zod": "4.3.6"
   },
   "nx": {

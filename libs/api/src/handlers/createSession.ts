@@ -1,6 +1,12 @@
-import { makeInternalErrorHandler, makeThirdPartyErrorHandler } from '@api-lib/errors';
+import {
+  makeBadRequestErrorHandler,
+  makeInternalErrorHandler,
+  makeThirdPartyErrorHandler,
+} from '@api-lib/errors';
 import { assertResult } from '@api-lib/executions';
-import type { IVideoClient, CreateSessionPayload } from '@api-lib/types';
+import type { IVideoClient, CreateSessionPayload, CreateSessionDefaults } from '@api-lib/types';
+import { SessionKeyClaim } from '@common/constants';
+import { isNotNil } from '@common/assertions';
 import type { SessionKeyPayload } from '@common/types';
 import { VideoSessionDetails } from '@common/types';
 import { removeUndefinedProps } from '@node/helpers';
@@ -8,18 +14,36 @@ import jwt from 'jsonwebtoken';
 
 async function createSession(
   this: IVideoClient,
-  payload?: CreateSessionPayload
+  payload?: CreateSessionPayload,
+  { isPastStartAllowed = true }: CreateSessionDefaults = {}
 ): Promise<VideoSessionDetails> {
   try {
-    const { roomName, sessionOptions } = payload ?? {};
+    const { roomName, sessionOptions, schedule } = payload ?? {};
+
+    const isStartDisallowed =
+      !isPastStartAllowed && isNotNil(schedule) && schedule.startsAt <= Date.now();
+
+    if (isStartDisallowed) {
+      throw makeBadRequestErrorHandler('Choose a start time in the future')(null);
+    }
 
     const session = await assertResult(() => {
       return this.video.createSession(sessionOptions);
     }, makeThirdPartyErrorHandler('Failed to create session'));
 
+    const scheduleClaims = schedule
+      ? {
+          [SessionKeyClaim.schedule]: {
+            startsAtMs: schedule.startsAt,
+            endsAtMs: schedule.startsAt + schedule.durationMinutes * 60_000,
+          },
+        }
+      : {};
+
     const sessionKeyPayload = removeUndefinedProps({
       sessionId: session.sessionId,
       roomName,
+      ...scheduleClaims,
     }) satisfies SessionKeyPayload;
 
     const sessionKey = jwt.sign(sessionKeyPayload, this._sessionSigning.secret, {
@@ -28,7 +52,7 @@ async function createSession(
 
     const sessionMeta = this.decodeSessionId({ sessionId: session.sessionId });
 
-    return { ...session, ...sessionMeta, roomName, sessionKey };
+    return { ...session, ...sessionMeta, ...sessionKeyPayload, roomName, sessionKey };
   } catch (error) {
     throw makeInternalErrorHandler('Failed to create session')(error);
   }

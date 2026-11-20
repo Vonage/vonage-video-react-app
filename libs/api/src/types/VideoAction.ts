@@ -12,6 +12,7 @@ export enum VideoAction {
   disableCaptions = 'disableCaptions',
   joinSession = 'joinSession',
   ensureCaptionsEnabled = 'ensureCaptionsEnabled',
+  getServerSettings = 'getServerSettings',
 }
 
 export default VideoAction;

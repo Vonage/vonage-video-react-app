@@ -7,9 +7,9 @@ enum StorageResource {
   SessionKeyByRoomName = 'sessionKey',
   SessionKeyBySessionId = 'sessionKeyById',
   CaptionsId = 'captionsId',
-  CaptionsUserCount = 'captionsUserCount',
   ArchiveIds = 'archiveIds',
   ServerRotationPending = 'serverRotationPending',
+  TranscriptionWithSummary = 'transcriptionWithSummary',
 }
 
 function makeKey(resource: StorageResource, id: string): string {
@@ -48,13 +48,15 @@ class VcrSessionStorage implements SessionStorage {
     sessionKey,
     sessionId,
   }: {
-    roomName: string;
+    roomName?: string;
     sessionKey: string;
     sessionId: string;
   }): Promise<void> {
-    const roomKey = makeKey(StorageResource.SessionKeyByRoomName, roomName);
-    await this.dbState.set(roomKey, sessionKey);
-    await this.setKeyExpiry(roomKey);
+    if (roomName) {
+      const roomKey = makeKey(StorageResource.SessionKeyByRoomName, roomName);
+      await this.dbState.set(roomKey, sessionKey);
+      await this.setKeyExpiry(roomKey);
+    }
 
     const sessionIdKey = makeKey(StorageResource.SessionKeyBySessionId, sessionId);
     await this.dbState.set(sessionIdKey, sessionKey);
@@ -82,36 +84,6 @@ class VcrSessionStorage implements SessionStorage {
     const captionsId: string | null = await this.dbState.get(key);
 
     return captionsId ?? null;
-  }
-
-  async incrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
-    const key = makeKey(StorageResource.CaptionsUserCount, sessionKey);
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount + 1 : 1;
-    await this.dbState.set(key, newCaptionsUsersCount);
-    await this.setKeyExpiry(key);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return newCaptionsUsersCount;
-  }
-
-  async decrementCaptionsUserCount({ sessionKey }: { sessionKey: string }): Promise<number> {
-    const key = makeKey(StorageResource.CaptionsUserCount, sessionKey);
-    const currentCaptionsUsersCount = await this.dbState.get(key);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const newCaptionsUsersCount = currentCaptionsUsersCount ? currentCaptionsUsersCount - 1 : 0;
-    if (newCaptionsUsersCount < 0) {
-      await this.dbState.delete(key);
-      return 0;
-    }
-    await this.dbState.set(key, newCaptionsUsersCount);
-    await this.setKeyExpiry(key);
-
-    return newCaptionsUsersCount;
   }
 
   async setArchiveIds({
@@ -152,6 +124,24 @@ class VcrSessionStorage implements SessionStorage {
     const key = makeKey(StorageResource.ServerRotationPending, sessionId);
     const value: string | null = await this.dbState.get(key);
     return value ? Number.parseInt(value, 10) : 0;
+  }
+
+  async setTranscriptionWithSummary({
+    sessionId,
+    withSummary,
+  }: {
+    sessionId: string;
+    withSummary: boolean;
+  }): Promise<void> {
+    const key = makeKey(StorageResource.TranscriptionWithSummary, sessionId);
+    await this.dbState.set(key, String(withSummary));
+    await this.setKeyExpiry(key);
+  }
+
+  async getTranscriptionWithSummary({ sessionId }: { sessionId: string }): Promise<boolean> {
+    const key = makeKey(StorageResource.TranscriptionWithSummary, sessionId);
+    const value: string | null = await this.dbState.get(key);
+    return value !== 'false';
   }
 }
 export default VcrSessionStorage;

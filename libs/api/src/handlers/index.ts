@@ -10,3 +10,4 @@ export { default as stopArchive } from './stopArchive';
 export { default as joinSession } from './joinSession';
 export { default as decodeSessionKey } from './decodeSessionKey';
 export { default as createSessionAndJoin } from './createSessionAndJoin';
+export { default as getServerSettings } from './getServerSettings';

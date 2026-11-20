@@ -7,7 +7,10 @@ async function createSessionAndJoin(
   payload?: CreateSessionAndJoinPayload
 ): Promise<VideoSessionDetailsWithToken> {
   try {
-    const session = await this.createSession(payload);
+    const session = await this.createSession({
+      roomName: payload?.roomName,
+      sessionOptions: payload?.sessionOptions,
+    });
     const { token } = this.joinSession({
       sessionKey: session.sessionKey,
       clientTokenOptions: payload?.clientTokenOptions,

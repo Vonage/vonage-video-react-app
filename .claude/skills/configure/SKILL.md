@@ -49,7 +49,7 @@ Never edit `env.sh` by hand; the next sync overwrites it.
 | `meetingRoomSettings.allowPostCallTranscription` (the Transcribe button) | `ALLOW_POST_CALL_TRANSCRIPTION` |
 | `meetingRoomSettings.defaultLayoutMode` = `activeSpeaker` or `grid` | `DEFAULT_LAYOUT_MODE` = `active-speaker` or `grid` |
 
-- Allowed languages: `en`, `en-US`, `es`, `es-MX`, `it`, `de`, `ja`.
+- Allowed languages: `en`, `en-US`, `es`, `es-MX`, `it`, `de`, `ja`, `fr`.
 - Allowed resolutions: `1920x1080`, `1280x960`, `1280x720`, `640x480`, `640x360`, `320x240`, `320x180`.
 - These keys are only used by the mobile apps and do nothing on web: `audioSettings.allowAudioDiagnostics`, `meetingRoomSettings.allowFeedback`, `allowPictureInPicture`, `baseApiUrl`, `connectionSettings.*`.
 

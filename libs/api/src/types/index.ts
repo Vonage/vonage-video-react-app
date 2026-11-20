@@ -18,6 +18,7 @@ export type {
   VideoPayload,
   VideoRouterConfig,
   SessionSigning,
+  GetServerSettingsPayload,
 } from '../schemas';
 
 export type * from './IVideoRouter';
@@ -27,6 +28,7 @@ export * from './VideoAction';
 export type * from './HandlerConfig';
 export type * from './HandlersConfig';
 export type * from './HandlersDefaults';
+export type * from './CreateSessionDefaults';
 
 export type * from '@node/types/ApplicationErrorMiddleware';
 export type * from '@node/types/ApplicationHandler';

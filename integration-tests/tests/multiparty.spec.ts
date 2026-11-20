@@ -399,6 +399,7 @@ async function openRightPanelTab({
   }
 
   await visibleButton.first().click();
+  await expect(page.getByTestId('toolbar-overflow-menu')).toBeHidden();
   await page.mouse.move(0, 0);
 }
 

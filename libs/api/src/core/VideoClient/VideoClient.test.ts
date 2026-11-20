@@ -4,6 +4,8 @@ import { Auth } from '@vonage/auth';
 import jwt from 'jsonwebtoken';
 import VideoClient from '.';
 import { TokenRole, type VideoClientConfig } from '@api-lib/types';
+import { SessionKeyClaim } from '@common/constants';
+import { tryCatch } from '@common/execution';
 
 vi.mock('@vonage/video');
 vi.mock('@vonage/auth');
@@ -112,6 +114,34 @@ describe('VideoClient', () => {
       expect(decodedSessionKey.roomName).toBe('my-room');
     });
 
+    it('signs the schedule without nbf or exp, so the key decodes before its start', async () => {
+      expect.assertions(3);
+
+      const { videoClient, mocks } = createVideoClient();
+
+      mocks.video.createSession.mockResolvedValue({
+        sessionId: mockSessionId,
+      });
+
+      const startsAt = Date.now() + 60 * 60 * 1000;
+      const scheduleClaim = { startsAtMs: startsAt, endsAtMs: startsAt + 60 * 60 * 1000 };
+
+      const createdSession = await videoClient.createSession({
+        schedule: { startsAt, durationMinutes: 60 },
+      });
+      const { sessionKey } = createdSession;
+
+      expect(jwt.verify(sessionKey, mockApiKey)).toEqual({
+        sessionId: mockSessionId,
+        [SessionKeyClaim.schedule]: scheduleClaim,
+        iat: expect.any(Number),
+      });
+      expect(createdSession[SessionKeyClaim.schedule]).toEqual(scheduleClaim);
+      expect(videoClient.decodeSessionKey({ sessionKey })[SessionKeyClaim.schedule]).toEqual(
+        scheduleClaim
+      );
+    });
+
     it('should handle errors from Vonage API', async () => {
       const { videoClient, mocks } = createVideoClient();
 
@@ -119,6 +149,25 @@ describe('VideoClient', () => {
 
       await expect(videoClient.createSession()).rejects.toThrow('Failed to create session');
     });
+  });
+
+  it('createSessionAndJoin drops a schedule from the payload, so the key it signs has no schedule claim', async () => {
+    expect.assertions(1);
+
+    const { videoClient, mocks } = createVideoClient();
+
+    mocks.video.createSession.mockResolvedValue({
+      sessionId: mockSessionId,
+    });
+
+    const payloadFromLooseParse = {
+      roomName: 'my-room',
+      schedule: { startsAt: Date.now() + 60 * 60 * 1000, durationMinutes: 60 },
+    };
+
+    const { sessionKey } = await videoClient.createSessionAndJoin(payloadFromLooseParse);
+
+    expect(jwt.verify(sessionKey, mockApiKey)).not.toHaveProperty(SessionKeyClaim.schedule);
   });
 
   describe('decodeSessionId', () => {
@@ -252,6 +301,64 @@ describe('VideoClient', () => {
         videoClient.joinSession({ sessionKey: 'invalid' });
       }).toThrow();
     });
+
+    it('refuses a scheduled key before its start without issuing a token', () => {
+      const { videoClient, mocks } = createVideoClient();
+      const sessionKey = signScheduledSessionKey({
+        startsAt: Date.now() + 60 * 60 * 1000,
+        durationMinutes: 60,
+      });
+
+      const { error } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+
+      expect(error).toMatchObject({ name: 'MeetingNotStartedError', statusCode: 403 });
+      expect(mocks.video.generateClientToken).not.toHaveBeenCalled();
+    });
+
+    it('refuses a scheduled key after its end without issuing a token', () => {
+      const { videoClient, mocks } = createVideoClient();
+      const sessionKey = signScheduledSessionKey({
+        startsAt: Date.now() - 2 * 60 * 60 * 1000,
+        durationMinutes: 60,
+      });
+
+      const { error } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+
+      expect(error).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
+      expect(mocks.video.generateClientToken).not.toHaveBeenCalled();
+    });
+
+    it('allows a join exactly at the scheduled start and refuses one exactly at the scheduled end', () => {
+      const { videoClient } = createVideoClient();
+      const startsAt = Math.floor(Date.now() / 1000) * 1000 + 60 * 60 * 1000;
+      const sessionKey = signScheduledSessionKey({ startsAt, durationMinutes: 60 });
+
+      vi.useFakeTimers({ now: startsAt });
+      const { error: errorAtStart } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+      vi.setSystemTime(startsAt + 60 * 60 * 1000);
+      const { error: errorAtEnd } = tryCatch(() => videoClient.joinSession({ sessionKey }));
+      vi.useRealTimers();
+
+      expect(errorAtStart).toBeNull();
+      expect(errorAtEnd).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
+    });
+
+    it('never issues a token that outlives the scheduled end', () => {
+      const { videoClient, mocks } = createVideoClient();
+      const startsAt = Date.now() - 10 * 60 * 1000;
+      const sessionKey = signScheduledSessionKey({ startsAt, durationMinutes: 60 });
+      const scheduleEndInSeconds = Math.floor(startsAt / 1000) + 60 * 60;
+
+      videoClient.joinSession({
+        sessionKey,
+        clientTokenOptions: { expireTime: Math.floor(Date.now() / 1000) + 24 * 60 * 60 },
+      });
+
+      expect(mocks.video.generateClientToken).toHaveBeenCalledWith(
+        mockSessionId,
+        expect.objectContaining({ expireTime: scheduleEndInSeconds })
+      );
+    });
   });
 
   describe('startArchive', () => {
@@ -320,6 +427,21 @@ describe('VideoClient', () => {
           sessionKey: mockSessionKey,
         })
       ).rejects.toThrow();
+    });
+
+    it('refuses a scheduled key after its end without starting an archive', async () => {
+      const { videoClient, mocks } = createVideoClient();
+      const sessionKey = signScheduledSessionKey({
+        startsAt: Date.now() - 2 * 60 * 60 * 1000,
+        durationMinutes: 60,
+      });
+
+      const { error } = await tryCatch(() =>
+        videoClient.startArchive({ sessionKey, archiveOptions: {} })
+      );
+
+      expect(error).toMatchObject({ name: 'MeetingEndedError', statusCode: 403 });
+      expect(mocks.video.startArchive).not.toHaveBeenCalled();
     });
   });
 
@@ -592,5 +714,25 @@ describe('VideoClient', () => {
         auth: mockAuthInstance,
       },
     };
+  }
+
+  function signScheduledSessionKey({
+    startsAt,
+    durationMinutes,
+  }: {
+    startsAt: number;
+    durationMinutes: number;
+  }) {
+    return jwt.sign(
+      {
+        sessionId: mockSessionId,
+        [SessionKeyClaim.schedule]: {
+          startsAtMs: startsAt,
+          endsAtMs: startsAt + durationMinutes * 60 * 1000,
+        },
+      },
+      mockApiKey,
+      { algorithm: 'HS256' }
+    );
   }
 });

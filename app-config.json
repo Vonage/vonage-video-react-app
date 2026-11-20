@@ -8,7 +8,7 @@
   "baseApiUrl": "${API_URL}",
   "localizationSettings": {
     "fallbackLanguage": "en",
-    "supportedLanguages": ["en", "en-US", "es", "es-MX", "it", "de", "ja"]
+    "supportedLanguages": ["en", "en-US", "es", "es-MX", "it", "de", "ja", "fr"]
   },
   "appSettings": {
     "enableReportIssue": true,

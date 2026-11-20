@@ -3,7 +3,9 @@ import { SessionKeySchema } from '@node/schemas';
 import CreateSessionPayloadSchema from './CreateSessionPayload.schema';
 import ClientTokenOptionsSchema from './ClientTokenOptions.schema';
 
-export const CreateSessionAndJoinPayloadSchema = CreateSessionPayloadSchema.extend({
+export const CreateSessionAndJoinPayloadSchema = CreateSessionPayloadSchema.omit({
+  schedule: true,
+}).extend({
   clientTokenOptions: ClientTokenOptionsSchema.optional(),
   sessionKey: SessionKeySchema.optional(),
 });

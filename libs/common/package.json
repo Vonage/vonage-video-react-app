@@ -1,6 +1,6 @@
 {
   "name": "@vonage/video-reference-apps-common",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "author": {
     "name": "Vonage Video API",
@@ -10,8 +10,13 @@
   "types": "./index.d.ts",
   "main": "./index.cjs",
   "module": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vonage/vonage-video-react-app.git",
+    "directory": "libs/common"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
-    "access": "public"
+    "access": "restricted"
   }
 }

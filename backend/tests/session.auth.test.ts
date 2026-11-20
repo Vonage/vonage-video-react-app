@@ -5,7 +5,7 @@ import request from 'supertest';
 import { Server } from 'http';
 import { TEST_AUTH_COOKIE_SECRET } from './helpers/testAuthCookieSecret';
 import makeEncryptedCookieHeader from './helpers/makeEncryptedCookieHeader';
-import mockVonageVideoSdk, { DEFAULT_CAPTIONS_ID } from './helpers/mockVonageVideoSdk';
+import mockVonageVideoSdk from './helpers/mockVonageVideoSdk';
 
 const SESSION_COOKIE_NAME = 'test_session';
 const OIDC_CLIENT_ID = 'test-client-id';
@@ -44,32 +44,9 @@ const startServer = (await import('../server')).default;
 describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=true', () => {
   let server: Server;
   const roomName = 'auth-wired-room';
-  const captionsId = DEFAULT_CAPTIONS_ID;
-  const archiveId = 'archive-1';
 
   const routes: Array<{ name: string; method: 'get' | 'post'; path: string }> = [
     { name: 'GET /session/:room', method: 'get', path: `/session/${roomName}` },
-    {
-      name: 'POST /session/:room/startArchive',
-      method: 'post',
-      path: `/session/${roomName}/startArchive`,
-    },
-    {
-      name: 'POST /session/:room/:archiveId/stopArchive',
-      method: 'post',
-      path: `/session/${roomName}/${archiveId}/stopArchive`,
-    },
-    { name: 'GET /session/:room/archives', method: 'get', path: `/session/${roomName}/archives` },
-    {
-      name: 'POST /session/:room/enableCaptions',
-      method: 'post',
-      path: `/session/${roomName}/enableCaptions`,
-    },
-    {
-      name: 'POST /session/:room/:captionsId/disableCaptions',
-      method: 'post',
-      path: `/session/${roomName}/${captionsId}/disableCaptions`,
-    },
   ];
 
   beforeAll(async () => {
@@ -114,11 +91,11 @@ describe('v1 session routes are protected by authMiddleware when AUTH_ENABLED=tr
     }
   );
 
-  it('GET /session/:room/archives returns 200 with a valid session cookie (web path)', async () => {
+  it('GET /session/:room returns 200 with a valid session cookie (web path)', async () => {
     mockPost.mockResolvedValue(introspectionResponse);
 
     const res = await request(server)
-      .get(`/session/${roomName}/archives`)
+      .get(`/session/${roomName}`)
       .set(
         'Cookie',
         makeEncryptedCookieHeader({

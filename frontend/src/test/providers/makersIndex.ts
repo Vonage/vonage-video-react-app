@@ -37,3 +37,8 @@ export {
   default as makeMiniModeProviderWrapper,
   type MiniModeProviderWrapperOptions,
 } from './makeMiniModeProviderWrapper';
+
+export {
+  default as makeServerSettingsProviderWrapper,
+  type ServerSettingsProviderWrapperOptions,
+} from '@core-test/providers/makeServerSettingsProviderWrapper';

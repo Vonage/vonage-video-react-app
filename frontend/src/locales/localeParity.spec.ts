@@ -5,6 +5,7 @@ import es from './es.json';
 import esMX from './es-MX.json';
 import itLocale from './it.json';
 import ja from './ja.json';
+import fr from './fr.json';
 
 /**
  * Guards against locale key drift: every non-default locale must define exactly
@@ -17,6 +18,7 @@ const locales: Record<string, Record<string, string>> = {
   'es-MX': esMX,
   it: itLocale,
   ja,
+  fr,
 };
 
 const enKeys = Object.keys(en as Record<string, string>);

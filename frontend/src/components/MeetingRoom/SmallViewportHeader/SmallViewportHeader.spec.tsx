@@ -223,16 +223,20 @@ function render(
     };
   }
 ) {
-  const { wrapper } = makeTestProvider([providers.user, providers.session, providers.runtime], {
-    userContext: undefined,
-    sessionContext: {
-      initialValue: {
-        sessionKey: mockSessionKey,
-        ...sessionContext?.initialValue,
+  const { wrapper } = makeTestProvider(
+    [providers.user, providers.session, providers.runtime, providers.serverSettings],
+    {
+      serverSettingsContext: { sessionKey: null },
+      userContext: undefined,
+      sessionContext: {
+        initialValue: {
+          sessionKey: mockSessionKey,
+          ...sessionContext?.initialValue,
+        },
       },
-    },
-    runtimeContext: undefined,
-  });
+      runtimeContext: undefined,
+    }
+  );
 
   return renderBase(component, { wrapper });
 }

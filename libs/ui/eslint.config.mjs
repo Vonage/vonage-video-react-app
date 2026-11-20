@@ -15,7 +15,16 @@ export default [
     settings: {
       tailwindcss: {
         config: path.join(__dirname, 'src/styles.css'),
-        callees: ['twMerge', 'cn', 'classNames'],
+        callees: ['twMerge', 'cn', 'classNames', 'tv', 'extendTailwindMerge', 'mergeFieldClasses'],
+        ignoredKeys: ['compoundVariants', 'defaultVariants', 'classGroups'],
+        cssFiles: [
+          '**/*.css',
+          '!**/node_modules',
+          '!**/.*',
+          '!**/dist',
+          '!**/build',
+          '!.worktrees',
+        ],
       },
     },
     rules: {

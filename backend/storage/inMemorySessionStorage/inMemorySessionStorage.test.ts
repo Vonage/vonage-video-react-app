@@ -52,33 +52,15 @@ describe('InMemorySessionStorage', () => {
     });
   });
 
-  describe('incrementCaptionsUserCount / decrementCaptionsUserCount', () => {
-    it('should increment and decrement the count correctly', async () => {
-      await storage.setSession({ roomName: room, sessionKey, sessionId });
-      expect(await storage.incrementCaptionsUserCount({ sessionKey })).toBe(1);
-      expect(await storage.incrementCaptionsUserCount({ sessionKey })).toBe(2);
-      expect(await storage.decrementCaptionsUserCount({ sessionKey })).toBe(1);
-      expect(await storage.decrementCaptionsUserCount({ sessionKey })).toBe(0);
-    });
+  describe('setSession without a room name', () => {
+    it('keeps a separate captionsId for each session', async () => {
+      await storage.setSession({ sessionKey: 'key-a', sessionId: 'session-a' });
+      await storage.setSession({ sessionKey: 'key-b', sessionId: 'session-b' });
+      await storage.setCaptionsId({ sessionId: 'session-a', captionsId: 'captions-a' });
+      await storage.setCaptionsId({ sessionId: 'session-b', captionsId: 'captions-b' });
 
-    it('should not decrement below zero', async () => {
-      await storage.setSession({ roomName: room, sessionKey, sessionId });
-      await storage.incrementCaptionsUserCount({ sessionKey });
-      await storage.decrementCaptionsUserCount({ sessionKey });
-      const count = await storage.decrementCaptionsUserCount({ sessionKey });
-      expect(count).toBe(0);
-    });
-
-    it('should throw when incrementing on a non-existent session', async () => {
-      await expect(storage.incrementCaptionsUserCount({ sessionKey })).rejects.toThrow(
-        `Session for key: ${sessionKey} does not exist. Cannot add captions user.`
-      );
-    });
-
-    it('should throw when decrementing on a non-existent session', async () => {
-      await expect(storage.decrementCaptionsUserCount({ sessionKey })).rejects.toThrow(
-        `Session for key: ${sessionKey} does not exist. Cannot remove captions user.`
-      );
+      expect(await storage.getCaptionsId({ sessionId: 'session-a' })).toBe('captions-a');
+      expect(await storage.getCaptionsId({ sessionId: 'session-b' })).toBe('captions-b');
     });
   });
 
@@ -121,6 +103,23 @@ describe('InMemorySessionStorage', () => {
       await expect(
         storage.setServerRotationPending({ sessionId, pending: 1 })
       ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('setTranscriptionWithSummary / getTranscriptionWithSummary', () => {
+    it('should default to true and retrieve the preference once set', async () => {
+      await storage.setSession({ roomName: room, sessionKey, sessionId });
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(true);
+
+      await storage.setTranscriptionWithSummary({ sessionId, withSummary: false });
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(false);
+    });
+
+    it('should ignore writes and return true for an unknown sessionId', async () => {
+      await expect(
+        storage.setTranscriptionWithSummary({ sessionId, withSummary: false })
+      ).resolves.toBeUndefined();
+      expect(await storage.getTranscriptionWithSummary({ sessionId })).toBe(true);
     });
   });
 });

@@ -1,6 +1,7 @@
 #!/usr/bin/env npx tsx
 
 import { execSync } from 'child_process';
+import withDebuggerAutoAttach from './debugger/withDebuggerAutoAttach';
 
 const args = process.argv.slice(2);
 
@@ -18,11 +19,14 @@ const isFilePath = (str: string): boolean => {
  * Runs a command with env.sh loaded, with visible output. Uses bash, which env.sh needs to locate
  * env.defaults.sh.
  */
-const runCommandWithVcrEnv = (command: string) => {
+const runCommandWithVcrEnv = (
+  command: string,
+  { environment = process.env }: { environment?: NodeJS.ProcessEnv } = {}
+) => {
   const commandWithEnv = `source ./env.sh && ${command}`;
 
   console.log(`\n🚀 Running: ${commandWithEnv}\n`);
-  execSync(commandWithEnv, { stdio: 'inherit', shell: '/bin/bash' });
+  execSync(commandWithEnv, { stdio: 'inherit', shell: '/bin/bash', env: environment });
 };
 
 /**
@@ -67,7 +71,8 @@ const runDebug = (testNameOrPath?: string) => {
   console.log(`\n🐛 Debug mode activated for ${target}\n`);
   const testArg = testNameOrPath ? ` ${testNameOrPath}` : '';
   runCommandWithVcrEnv(
-    `vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage${testArg}`
+    `vitest --disableConsoleIntercept=true --silent=false --no-file-parallelism --inspect-brk --root frontend --config vite.config.ts --no-coverage${testArg}`,
+    { environment: withDebuggerAutoAttach(process.env) }
   );
 };
 

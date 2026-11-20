@@ -36,7 +36,7 @@ Mobile doesn't use any of this: it sends `Authorization: Bearer <token>` on ever
 
 ### 2.3 `authMiddleware`
 
-`authMiddleware` (`backend/middleware/authMiddleware/authMiddleware.ts`) runs app-wide in `server.ts`, ahead of the router, including the legacy `backend/routes/session.ts` routes that Android still calls.
+`authMiddleware` (`backend/middleware/authMiddleware/authMiddleware.ts`) runs app-wide in `server.ts`, ahead of the router, including the legacy `GET /session/:room` route in `backend/routes/session.ts`.
 
 1. **Bearer header** (`AUTH_HEADER_NAME` + `AUTH_SCHEME`, default `Authorization: Bearer`), checked first: introspected on every request.
 2. **Session cookie** otherwise: when the access token has less than `AUTH_REFRESH_WINDOW_SECONDS` left (or introspection reports it inactive) and a refresh token exists, the backend refreshes it and writes new cookies; otherwise it introspects.

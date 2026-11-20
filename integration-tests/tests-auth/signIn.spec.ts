@@ -1,3 +1,9 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as createMeetingButtonTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateMeetingButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as newRoomButtonTestIds } from '../../frontend/src/components/NewRoomButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as wizardFooterTestIds } from '../../frontend/src/components/CreateRoomWizard/components/CreateRoomWizardFooterActions/testIds';
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/testWithLogging';
 import { APP_URL, CALLBACK_URL, LOCAL_OIDC_URL, SESSION_COOKIE_NAME } from './constants';
@@ -31,7 +37,9 @@ test('an unauthenticated deep link goes through the provider and returns to the 
 test('a signed-in user can create a room through the authenticated API', async ({ page }) => {
   await page.goto(`${APP_URL}/`);
 
-  await page.getByRole('button', { name: 'Create a new room' }).click();
+  await page.getByTestId(newRoomButtonTestIds.button).click();
+  await page.getByTestId(createMeetingButtonTestIds.button).click();
+  await page.getByTestId(wizardFooterTestIds.joinButton).click();
 
   await expect(page).toHaveURL(new RegExp(`${APP_URL}/waiting-room/.+`));
 });

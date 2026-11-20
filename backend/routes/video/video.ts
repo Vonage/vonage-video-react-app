@@ -115,7 +115,7 @@ videoHandler.use$('stopArchive', async ({ input, next, videoClient }) => {
 });
 
 /**
- * Middleware for storing the sessionKey per SessionId and roomName.
+ * Middleware for storing the sessionKey per SessionId.
  */
 videoHandler.onSettled$(async ({ videoAction, error, result }) => {
   const isCreatingOrJoiningSession =
@@ -126,9 +126,9 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
 
   if (!isCreatingOrJoiningSession) return;
 
-  const { sessionId, sessionKey, roomName } = result as VideoSessionDetails;
+  const { sessionId, sessionKey } = result as VideoSessionDetails;
 
-  await sessionService.setSession({ sessionId, sessionKey, roomName: roomName! });
+  await sessionService.setSession({ sessionId, sessionKey });
 });
 
 /**
@@ -147,6 +147,22 @@ videoHandler.onSettled$(async ({ videoAction, error, result }) => {
     sessionId: archive.sessionId,
     archiveIds,
   });
+});
+
+videoHandler.use$('startArchive', async ({ input, assertInput, next }) => {
+  const { sessionKey, withTranscription, withSummary } = assertInput(input);
+
+  if (!withTranscription) return next();
+
+  const { decodeSessionKey } = await import('@common/helpers');
+  const { sessionId } = decodeSessionKey({ sessionKey });
+
+  await sessionService.setTranscriptionWithSummary({
+    sessionId,
+    withSummary: withSummary !== false,
+  });
+
+  return next();
 });
 
 /**
