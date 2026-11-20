@@ -1,0 +1,23 @@
+backend/testSetup/setEnvVars.js
+  s_21583de4d4f9bb::t_3d02d08705b784 17
+vcr-gha.yml
+  s_21583de4d4f9bb::t_c2c36bdfb8afa4 78
+env.defaults.sh
+  s_21583de4d4f9bb::t_c2c36bdfb8afa4 7-8,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "598775f523749eca6b479b68e288e5e9afa17f12",
+  "prompts": {},
+  "sessions": {
+    "s_21583de4d4f9bb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f902-558c-7df1-8e18-96ced5efe0fc",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
