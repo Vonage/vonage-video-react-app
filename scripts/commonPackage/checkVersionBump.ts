@@ -23,7 +23,8 @@ function main(): void {
     child_process.spawnSync('git', gitArguments, { cwd: MONOREPO_ROOT, encoding: 'utf-8' });
 
   const isBaseRefAvailable =
-    runGit(['rev-parse', '--verify', '--quiet', `${baseRef}^{commit}`]).status === 0;
+    runGit(['rev-parse', '--verify', '--quiet', '--end-of-options', `${baseRef}^{commit}`])
+      .status === 0;
 
   if (!isBaseRefAvailable) {
     console.error(
@@ -32,7 +33,11 @@ function main(): void {
     process.exit(1);
   }
 
-  const baseManifestResult = runGit(['show', `${baseRef}:${MANIFEST_REPOSITORY_PATH}`]);
+  const baseManifestResult = runGit([
+    'show',
+    '--end-of-options',
+    `${baseRef}:${MANIFEST_REPOSITORY_PATH}`,
+  ]);
 
   if (baseManifestResult.status !== 0) {
     console.log(`✅ ${MANIFEST_REPOSITORY_PATH} does not exist on ${baseRef}. Nothing to compare.`);
