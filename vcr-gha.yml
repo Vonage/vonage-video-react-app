@@ -75,7 +75,7 @@ instance:
       secret: AUTH_COOKIE_SECRET
     # 'true' requires a signed-in user on every route except the exclusion list in server.ts.
     - name: AUTH_ENABLED
-      value: 'false'
+      value: 'true'
     # Provider app the backend signs users in with.
     - name: OIDC_CLIENT_ID
       value: '0oa2sp68ck6PDehU40h8'

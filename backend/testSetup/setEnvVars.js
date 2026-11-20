@@ -14,3 +14,4 @@ process.env.OT_API_SECRET = 'opentokAPISecret';
 process.env.SESSION_KEY_SECRET = 'test-session-key-secret-for-jwt-signing';
 process.env.LOG_INGEST_URL = 'https://example.com';
 process.env.CORS_ALLOWED_ORIGINS = '*';
+process.env.AUTH_ENABLED = 'false';
