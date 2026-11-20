@@ -602,6 +602,9 @@ const SessionProvider = ({
       return connect({
         sessionKey: session.sessionKey,
         token: session.token,
+        // Added at runtime by the backend joinSession onSettled$ hook when rtcstats is configured,
+        // so it is not part of the statically inferred result type.
+        rtcStatsUrl: (session as { rtcStatsUrl?: string }).rtcStatsUrl,
       });
     },
     [connect, videoClient, skipBrowserUrlUpdate]
