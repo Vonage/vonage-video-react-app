@@ -4,11 +4,9 @@ import { useTranslation } from 'react-i18next';
 import ToolbarButton from '../MeetingRoom/ToolbarButton';
 import PopupDialog, { DialogTexts } from '../MeetingRoom/PopupDialog';
 import VividIcon from '@ui/components/VividIcon';
+import { testIds } from './testIds';
 
-export const testIds = {
-  button: 'screensharing-button',
-  icon: 'ScreenShareIcon',
-} as const;
+export { testIds } from './testIds';
 
 export type ScreenShareButtonProps = {
   toggleScreenShare: () => void;

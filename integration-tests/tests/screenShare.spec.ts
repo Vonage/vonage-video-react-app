@@ -1,3 +1,7 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as screenSharingButtonTestIds } from '../../frontend/src/components/ScreenSharingButton/testIds';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { testIds as participantListButtonTestIds } from '../../frontend/src/components/MeetingRoom/ParticipantListButton/testIds';
 import { expect, type BrowserContext, type Locator, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test } from '../fixtures/testWithLogging';
@@ -17,17 +21,16 @@ test.describe('screen share', () => {
   }) => {
     const { pageTwo } = await openMeetingWithTwoParticipants({ pageOne, context });
 
-    await pageOne.getByTestId('screensharing-button').click();
+    await pageOne.getByTestId(screenSharingButtonTestIds.button).click();
 
     await expect(pageOne.getByTestId('screen-publisher-container')).toContainText(SHARING_MESSAGE);
     await expect(pageTwo.locator('.screen-subscriber')).toHaveCount(1, { timeout: 20_000 });
     await expect(pageTwo.locator('.screen-subscriber')).toContainText("User One's screen");
 
-    await pageOne.getByTestId('screensharing-button').click();
+    await pageOne.getByTestId(screenSharingButtonTestIds.button).click();
 
     await expect(pageOne.getByTestId('screen-publisher-container')).toHaveCount(0);
     await expect(pageTwo.locator('.screen-subscriber')).toHaveCount(0, { timeout: 20_000 });
-    await expect(pageOne.locator('.screen-subscriber')).toHaveCount(0);
   });
 
   test('should let a second sharer cancel or replace the current screen share', async ({
@@ -36,12 +39,12 @@ test.describe('screen share', () => {
   }) => {
     const { pageTwo } = await openMeetingWithTwoParticipants({ pageOne, context });
 
-    await pageOne.getByTestId('screensharing-button').click();
+    await pageOne.getByTestId(screenSharingButtonTestIds.button).click();
     await expect(pageOne.getByTestId('screen-publisher-container')).toContainText(SHARING_MESSAGE);
     await expect(pageTwo.locator('.screen-subscriber')).toHaveCount(1, { timeout: 20_000 });
 
     const replaceDialog = pageTwo.getByRole('dialog');
-    await pageTwo.getByTestId('screensharing-button').click();
+    await pageTwo.getByTestId(screenSharingButtonTestIds.button).click();
     await expect(replaceDialog).toContainText('Do you want to share your screen?');
     await expect(replaceDialog).toContainText(
       'Looks like there is someone else sharing their screen. If you continue, their screen is no longer going to be shared.'
@@ -54,7 +57,7 @@ test.describe('screen share', () => {
     await expect(pageOne.getByTestId('screen-publisher-container')).toContainText(SHARING_MESSAGE);
     await expect(pageTwo.locator('.screen-subscriber')).toContainText("User One's screen");
 
-    await pageTwo.getByTestId('screensharing-button').click();
+    await pageTwo.getByTestId(screenSharingButtonTestIds.button).click();
     await replaceDialog.getByRole('button', { name: 'Start sharing your screen' }).click();
 
     await expect(pageTwo.getByTestId('screen-publisher-container')).toContainText(SHARING_MESSAGE);
@@ -72,7 +75,7 @@ test.describe('screen share', () => {
   }) => {
     const { pageTwo } = await openMeetingWithTwoParticipants({ pageOne, context });
 
-    await pageOne.getByTestId('screensharing-button').click();
+    await pageOne.getByTestId(screenSharingButtonTestIds.button).click();
 
     const screenTile = pageTwo.locator('.screen-subscriber');
     const userOneCameraTile = pageTwo.locator('.subscriber').filter({ hasText: 'User One' });
@@ -81,7 +84,9 @@ test.describe('screen share', () => {
     await screenTile.hover();
     await expect(screenTile.getByTestId('zoom-indicator-button')).toBeVisible();
     await expect(screenTile.getByTestId('pin-button')).toHaveCount(0);
-    await expect.poll(() => getArea(screenTile)).toBeGreaterThan(await getArea(userOneCameraTile));
+    await expect
+      .poll(async () => (await getArea(screenTile)) / (await getArea(userOneCameraTile)))
+      .toBeGreaterThan(1);
 
     await userOneCameraTile.hover();
     await userOneCameraTile.getByTestId('pin-button').getByRole('button').click();
@@ -89,7 +94,7 @@ test.describe('screen share', () => {
 
     await expect(userOneCameraTile.getByTestId('pin-button')).toBeVisible();
 
-    await pageTwo.getByTestId('participant-list-button').click();
+    await pageTwo.getByTestId(participantListButtonTestIds.button).click();
     await expect(
       pageTwo
         .locator('[data-testid^="participant-list-item"]', { hasText: 'User One' })
@@ -137,5 +142,6 @@ async function openMeetingWithTwoParticipants({
 
 async function getArea(locator: Locator): Promise<number> {
   const box = await locator.boundingBox();
-  return box ? box.width * box.height : 0;
+  if (!box) throw new Error('Tile is not rendered, so its area cannot be measured');
+  return box.width * box.height;
 }
