@@ -1,0 +1,30 @@
+package.json
+  s_1aa8f9e53cf72b::t_66e7bfd319d5c8 34,57
+.github/workflows/video-common-publish.yml
+  s_1aa8f9e53cf72b::t_66e7bfd319d5c8 30,39-40,62,66,83-85
+scripts/commonPackage/publishTarball.cjs
+  s_1aa8f9e53cf72b::t_66e7bfd319d5c8 39,110-112
+.github/workflows/video-common-integrity.yml
+  s_1aa8f9e53cf72b::t_66e7bfd319d5c8 5-6
+scripts/commonPackage/publishTarball.test.cjs
+  s_1aa8f9e53cf72b::t_ae45e2a48a17b5 77-80
+  s_1aa8f9e53cf72b::t_44c3e1ddd82b4b 31-58,60,62,90-92,95,114,154
+scripts/commonPackage/publish.ts
+  s_1aa8f9e53cf72b::t_66e7bfd319d5c8 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "94dafff08afa8aeafbbfb06d4fb929eddf370f1c",
+  "prompts": {},
+  "sessions": {
+    "s_1aa8f9e53cf72b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f86f-04d8-7e91-b7d8-454123aff8fb",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

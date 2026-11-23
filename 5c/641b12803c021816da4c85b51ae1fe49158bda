@@ -1,0 +1,19 @@
+scripts/commonPackage/checkVersionBump.ts
+  s_1aa8f9e53cf72b::t_db0d62c5d02ae5 26-27,36-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5c641b12803c021816da4c85b51ae1fe49158bda",
+  "prompts": {},
+  "sessions": {
+    "s_1aa8f9e53cf72b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f86f-04d8-7e91-b7d8-454123aff8fb",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+frontend/src/locales/fr.json
+  s_6531631c1725cf::t_84993a8e106dcd 272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5203e21f42f8bae3ef5cb5bc790beafac70f6df3",
+  "prompts": {},
+  "sessions": {
+    "s_6531631c1725cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f3d6-8b6c-7f73-b6d9-4fb2f14b5273",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}

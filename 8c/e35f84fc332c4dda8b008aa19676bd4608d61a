@@ -1,0 +1,23 @@
+scripts/commonPackage/publishTarball.cjs
+  s_6531631c1725cf::t_f4fde27a853b87 3,108-113,153-198
+  s_6531631c1725cf::t_2c86104b8f27f6 199-200
+scripts/commonPackage/publishTarball.test.cjs
+  s_6531631c1725cf::t_3aa4f28da772ab 68-99,127-128,168-170,176-181,186,191,195-200,212-214
+  s_6531631c1725cf::t_bbdd91ff703bf4 171-175
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8ce35f84fc332c4dda8b008aa19676bd4608d61a",
+  "prompts": {},
+  "sessions": {
+    "s_6531631c1725cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1f3d6-8b6c-7f73-b6d9-4fb2f14b5273",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  }
+}
