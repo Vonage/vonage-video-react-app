@@ -24,7 +24,17 @@ const validSessionKey = jwt.sign(
 
 vi.doMock('../helpers/config', mockOpentokConfig);
 
-await mockVonageVideoSdk({ validSessionId });
+await mockVonageVideoSdk({
+  validSessionId,
+  videoOverrides: {
+    getArchive: (archiveId: string) =>
+      Promise.resolve({
+        id: archiveId,
+        status: 'started',
+        sessionId: decodeSessionKey({ sessionKey: validSessionKey }).sessionId,
+      }),
+  },
+});
 
 const startServer = (await import('../server')).default;
 const sessionService = getSessionStorageService();

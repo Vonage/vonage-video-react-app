@@ -15,7 +15,7 @@ import { isNotNil, isRecord } from '@common/assertions';
 
 const sessionService = getSessionStorageService();
 
-/** Only the sessionKey is checked: other IDs in the input (archiveId, captionsId) are not matched to its meeting. */
+/** Only the sessionKey is checked: a captionsId in the input is not matched to its meeting. */
 videoHandler.use$(function requireSignedInUserOrVerifiedSessionKey(opts) {
   const { videoAction, ctx, input, next } = opts;
 

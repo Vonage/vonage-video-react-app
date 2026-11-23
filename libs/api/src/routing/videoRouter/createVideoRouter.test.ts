@@ -17,6 +17,7 @@ const h = vi.hoisted(() => ({
   searchArchivesSpy: vi.fn(),
   enableCaptionsSpy: vi.fn(),
   disableCaptionsSpy: vi.fn(),
+  getArchiveSpy: vi.fn(() => Promise.resolve({ sessionId: mockSessionId } as never)),
   generateClientTokenSpy: vi.fn(() => 'mock-token-12345'),
 }));
 
@@ -33,6 +34,7 @@ vi.mock('@vonage/video', async () => {
         searchArchives: h.searchArchivesSpy,
         enableCaptions: h.enableCaptionsSpy,
         disableCaptions: h.disableCaptionsSpy,
+        getArchive: h.getArchiveSpy,
         generateClientToken: h.generateClientTokenSpy,
       });
     },

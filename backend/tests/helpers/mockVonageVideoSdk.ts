@@ -12,6 +12,7 @@ type VideoSdkOverrides = Partial<{
   generateClientToken: () => string;
   startArchive: (sessionId: string) => Promise<ArchiveResponse>;
   stopArchive: (archiveId: string) => Promise<ArchiveResponse>;
+  getArchive: (archiveId: string) => Promise<ArchiveResponse>;
   searchArchives: () => Promise<{ items: unknown[]; count: number }>;
   enableCaptions: () => Promise<CaptionsResponse>;
   disableCaptions: (captionsId: string) => Promise<void>;
@@ -52,6 +53,11 @@ async function mockVonageVideoSdk({
         .fn<[archiveId: string], Promise<ArchiveResponse>>()
         .mockImplementation((archiveId: string) =>
           Promise.resolve({ id: archiveId, status: 'stopped' })
+        ),
+      getArchive: vi
+        .fn<[archiveId: string], Promise<ArchiveResponse>>()
+        .mockImplementation((archiveId: string) =>
+          Promise.resolve({ id: archiveId, status: 'started', sessionId: validSessionId })
         ),
       searchArchives: vi
         .fn<[], Promise<{ items: unknown[]; count: number }>>()
