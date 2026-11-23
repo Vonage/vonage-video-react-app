@@ -1,0 +1,19 @@
+backend/tests/session.test.ts
+  s_498d9b91b33ce7::t_2034e98453fba5 27-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0c5b3c64a9bcac2ea0718d5159f99c609063fe2f",
+  "prompts": {},
+  "sessions": {
+    "s_498d9b91b33ce7": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a250d77e-cf9a-4ae7-8f52-b1f11e40ba4e",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
