@@ -14,6 +14,7 @@ test.describe('Post-Call Transcription Feature', () => {
     const root = pageOne.locator('#root');
     const publisher = pageOne.locator('.publisher');
     const moreVertIcon = pageOne.getByTestId('MoreVertIcon');
+    const overflowMenu = pageOne.getByTestId('toolbar-overflow-menu');
     const transcriptionButton = pageOne.getByTestId('post-call-transcription-button');
     const confirmButton = pageOne.getByTestId('popup-dialog-primary-button');
     const summarySwitch = pageOne.getByRole('checkbox', { name: /include ai summary/i });
@@ -44,6 +45,7 @@ test.describe('Post-Call Transcription Feature', () => {
         await expect(moreVertIcon).toBeVisible();
         await moreVertIcon.click();
         await pageOne.mouse.move(0, 0);
+        await expect(overflowMenu).toBeVisible();
       });
     }
 
@@ -57,11 +59,8 @@ test.describe('Post-Call Transcription Feature', () => {
     });
 
     if (isMobile) {
-      await test.step('Close toolbar in small viewport', async () => {
-        await expect(transcriptionIndicator).toBeVisible();
-        await expect(moreVertIcon).toBeVisible();
-        await moreVertIcon.click();
-        await pageOne.mouse.move(0, 0);
+      await test.step('Toolbar closes after starting transcription', async () => {
+        await expect(overflowMenu).toBeHidden();
       });
     }
 
@@ -76,6 +75,7 @@ test.describe('Post-Call Transcription Feature', () => {
         await expect(moreVertIcon).toBeVisible();
         await moreVertIcon.click();
         await pageOne.mouse.move(0, 0);
+        await expect(overflowMenu).toBeVisible();
       });
     }
 
