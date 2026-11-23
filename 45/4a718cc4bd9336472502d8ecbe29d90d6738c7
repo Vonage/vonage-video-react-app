@@ -1,0 +1,14 @@
+integration-tests/tests/postCallTranscription.spec.ts
+  h_c939f8fae0de97 17,48,62-63,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "454a718cc4bd9336472502d8ecbe29d90d6738c7",
+  "prompts": {},
+  "humans": {
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
