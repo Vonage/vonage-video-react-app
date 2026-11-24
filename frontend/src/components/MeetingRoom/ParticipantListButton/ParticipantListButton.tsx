@@ -4,11 +4,9 @@ import ToolbarButton from '../ToolbarButton';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 import VividIcon from '@ui/components/VividIcon';
+import { testIds } from './testIds';
 
-export const testIds = {
-  button: 'participant-list-button',
-  icon: 'PeopleIcon',
-} as const;
+export { testIds } from './testIds';
 
 export type ParticipantListButtonProps = {
   handleClick: () => void;
