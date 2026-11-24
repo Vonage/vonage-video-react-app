@@ -167,9 +167,7 @@ export default defineConfig(({ mode }) => {
 
   const appEnvObject = {
     MODE: mode,
-    ...(isTest
-      ? {}
-      : Object.fromEntries(appEnvKeys.map((key) => [key, fileEnv[key] ?? env[key] ?? '']))),
+    ...(isTest ? {} : Object.fromEntries(appEnvKeys.map((key) => [key, fileEnv[key] ?? env[key]]))),
   };
 
   return mergeConfig(vitestConfig, {
