@@ -39,7 +39,7 @@ jobs:
           package-manager-cache: false
       - name: Install ajv-cli
         working-directory: ${{ runner.temp }}
-        run: npm install --no-save --no-package-lock ajv-cli@5.0.0 ajv-formats@3.0.1
+        run: npm install --ignore-scripts --no-save --no-package-lock ajv-cli@5.0.0 ajv-formats@3.0.1
       - name: Validate app-config.json
         run: >-
           "$RUNNER_TEMP/node_modules/.bin/ajv" validate --spec=draft2020 --strict=false
