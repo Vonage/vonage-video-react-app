@@ -31,15 +31,9 @@ In `specs/app-config.schema.json`, under the same group, add `"type"`, a short `
 
 The Android repo also checks its config against this schema (from `develop`). Adding an optional on/off key is safe. Making a key required, or changing a type, breaks their checks until they update.
 
-## 3. `scripts/generateEnv.ts`
+## 3. `env.sh`
 
-Add a line to the matching group in `envVariableGroups`:
-
-```ts
-{ name: 'ALLOW_RAISE_HAND', sourcePath: 'meetingRoomSettings.allowRaiseHand', format: 'raw' },
-```
-
-Use `format: 'raw'` for true/false and numbers, `'string'` for text, `join: '|'` for lists. Then:
+`scripts/generateEnv.ts` writes one export for every schema property with an `x-envVar`, so there is no list to edit. Without the `x-envVar`, the key never reaches `env.sh`. Text is quoted, true/false and numbers are not, and lists are joined with `|`. Then:
 
 ```bash
 pnpm sync:env
@@ -103,7 +97,7 @@ Do the same steps backwards, then search for the old name in `app-config.json`, 
 ## Checklist
 
 - [ ] `app-config.json` + schema entry with `x-envVar`
-- [ ] `generateEnv.ts` line (or `env.defaults.sh`), `pnpm sync:env`, one-line diff
+- [ ] `pnpm sync:env` (or a line in `env.defaults.sh`), one-line diff
 - [ ] `appEnvKeys` in `frontend/vite.config.ts`
 - [ ] schema **and** class field in `env.ts`
 - [ ] parent decides visibility; one test with `env.partialUpdate`

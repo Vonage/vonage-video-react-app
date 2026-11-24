@@ -38,7 +38,7 @@
         },
         "supportedLanguages": {
           "type": "array",
-          "description": "List of BCP-47 language tags the app offers. In the React .env this is a comma-separated string.",
+          "description": "List of BCP-47 language tags the app offers. In the React env.sh this is a pipe-separated (|) string.",
           "minItems": 1,
           "items": {
             "type": "string",
