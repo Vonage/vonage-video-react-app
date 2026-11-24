@@ -1,0 +1,24 @@
+env.sh
+  s_7232f15f632da2::t_797b6b5ff346e5 2-4,6,10-14,20,25,30,37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0e4e7c8414a179908c92f0c6d87a0d7573f2757b",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_7232f15f632da2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df322810-eddb-480b-a137-863456ca3d73",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}

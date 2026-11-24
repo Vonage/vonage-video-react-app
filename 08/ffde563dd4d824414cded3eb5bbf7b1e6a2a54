@@ -1,0 +1,17 @@
+frontend/vite.config.ts
+  h_c939f8fae0de97 170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08ffde563dd4d824414cded3eb5bbf7b1e6a2a54",
+  "prompts": {},
+  "humans": {
+    "h_6029769cf9ac60": {
+      "author": "Johnny Esteban Quesada <johnny.quesadachaves@vonage.com>"
+    },
+    "h_c939f8fae0de97": {
+      "author": "Hossein Movahed <hr.movahed6@gmail.com>"
+    }
+  }
+}
