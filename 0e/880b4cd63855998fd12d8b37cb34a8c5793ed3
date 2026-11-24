@@ -1,0 +1,19 @@
+.github/workflows/validate-config-schemas.yml
+  s_108d0e6aa35e33::t_d68543b7e4029e 42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0e880b4cd63855998fd12d8b37cb34a8c5793ed3",
+  "prompts": {},
+  "sessions": {
+    "s_108d0e6aa35e33": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_a64e09c6-6759-454e-bf9f-0e5bec11e8a1",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
