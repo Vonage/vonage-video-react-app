@@ -246,6 +246,12 @@ importers:
       '@vitest/ui':
         specifier: 1.6.1
         version: 1.6.1(vitest@1.6.1)
+      ajv:
+        specifier: 8.20.0
+        version: 8.20.0
+      ajv-formats:
+        specifier: 3.0.1
+        version: 3.0.1
       concurrently:
         specifier: 9.2.1
         version: 9.2.1

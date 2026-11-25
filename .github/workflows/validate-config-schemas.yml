@@ -9,6 +9,9 @@ on:
       - 'app-config.json'
       - 'theme.json'
       - 'theme.example.json'
+      - 'scripts/validateConfig.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/validate-config-schemas.yml'
   pull_request:
     paths:
@@ -16,6 +19,9 @@ on:
       - 'app-config.json'
       - 'theme.json'
       - 'theme.example.json'
+      - 'scripts/validateConfig.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
       - '.github/workflows/validate-config-schemas.yml'
   workflow_dispatch:
 permissions:
@@ -32,21 +38,16 @@ jobs:
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6
+        with:
+          version: 12.11.2
       - name: Setup node
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .nvmrc
-          package-manager-cache: false
-      - name: Install ajv-cli
-        working-directory: ${{ runner.temp }}
-        run: npm install --ignore-scripts --no-save --no-package-lock ajv-cli@5.0.0 ajv-formats@3.0.1
-      - name: Validate app-config.json
-        run: >-
-          "$RUNNER_TEMP/node_modules/.bin/ajv" validate --spec=draft2020 --strict=false
-          -c "$RUNNER_TEMP/node_modules/ajv-formats"
-          -s specs/app-config.schema.json -d app-config.json
-      - name: Validate theme.json
-        run: >-
-          "$RUNNER_TEMP/node_modules/.bin/ajv" validate --spec=draft2020 --strict=false
-          -c "$RUNNER_TEMP/node_modules/ajv-formats"
-          -s specs/theme.schema.json -d theme.json -d theme.example.json
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts --frozen-lockfile
+      - name: Validate app-config.json and theme.json
+        run: pnpm validate:config
