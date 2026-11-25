@@ -1,0 +1,34 @@
+scripts/validateConfig.ts
+  s_bbef7bee07b037::t_192a17a2e86560 1-47
+  s_bbef7bee07b037::t_c47a05b8fd45e5 48-50
+  h_737cf808c1c597 51
+package.json
+  h_737cf808c1c597 47
+  s_bbef7bee07b037::t_54655d072f6cac 113-114
+  s_bbef7bee07b037::t_eecdb2895ceed7 16
+.github/workflows/validate-config-schemas.yml
+  h_737cf808c1c597 12-14,22-24,41-44,49-53
+pnpm-lock.yaml
+  h_737cf808c1c597 249-254
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "22f04ef750c11ae265430af6419a8bf0109de29f",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  },
+  "sessions": {
+    "s_bbef7bee07b037": {
+      "agent_id": {
+        "tool": "kiro",
+        "id": "sess_863a7b76-f2c6-461e-83aa-36bb0045d085",
+        "model": "auto"
+      },
+      "human_author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
