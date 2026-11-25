@@ -60,3 +60,55 @@ export const openMeetingRoomWithSettings = async ({
   }
   await page.getByRole('button', { name: 'Join meeting' }).click();
 };
+
+type AdvancedSettingsTab = 'video' | 'screenSharing';
+
+export const openWaitingRoomAdvancedSettings = async ({
+  page,
+  tab,
+}: {
+  page: Page;
+  tab: AdvancedSettingsTab;
+}) => {
+  await page
+    .locator('button')
+    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') })
+    .click();
+  await expect(page.getByTestId('menu-more-options')).toBeVisible();
+
+  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
+  await expect(advancedSettingsOption).toBeVisible();
+  await advancedSettingsOption.click();
+
+  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
+  await page.getByTestId(`advanced-settings-tab-${tab}`).click();
+};
+
+export const openMeetingRoomAdvancedSettings = async ({
+  page,
+  tab,
+}: {
+  page: Page;
+  tab: AdvancedSettingsTab;
+}) => {
+  const visibleAdvancedSettingsButton = page
+    .locator('[data-testid="advanced-settings-button"]:visible')
+    .first();
+
+  const isButtonInToolbar = await visibleAdvancedSettingsButton.isVisible();
+  if (!isButtonInToolbar) {
+    await page.getByTestId('hidden-toolbar-items').click();
+    await expect(page.getByTestId('toolbar-overflow-menu')).toBeVisible();
+  }
+
+  await expect(visibleAdvancedSettingsButton).toBeVisible();
+  await visibleAdvancedSettingsButton.click();
+
+  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
+  await page.getByTestId(`advanced-settings-tab-${tab}`).click();
+};
+
+export const closeAdvancedSettings = async (page: Page) => {
+  await page.getByTestId('advanced-settings-dialog').getByRole('button', { name: 'Close' }).click();
+  await expect(page.getByTestId('advanced-settings-dialog')).toBeHidden();
+};

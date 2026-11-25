@@ -1,7 +1,13 @@
 import { expect, type BrowserContext, type Locator, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
 import { test, baseURL } from '../fixtures/testWithLogging';
-import { openMeetingRoomWithSettings, waitUntilReady } from './utils';
+import {
+  closeAdvancedSettings,
+  openMeetingRoomAdvancedSettings,
+  openMeetingRoomWithSettings,
+  openWaitingRoomAdvancedSettings,
+  waitUntilReady,
+} from './utils';
 
 const MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_DESKTOP = 5;
 const MAX_SUBSCRIBER_TILES_ACTIVE_SPEAKER_MOBILE = 2;
@@ -85,7 +91,7 @@ test.describe('self-view mirroring', () => {
     await expect(previewVideo).toBeVisible();
     await expect.poll(() => isMirrored(previewVideo)).toBe(true);
 
-    await openWaitingRoomAdvancedSettingsVideoTab(page);
+    await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
     const mirroringSwitch = page.getByTestId('advanced-settings-video-self-view-mirroring');
     await expect(mirroringSwitch).toBeChecked();
     await mirroringSwitch.uncheck();
@@ -101,7 +107,7 @@ test.describe('self-view mirroring', () => {
     const publisherVideo = page.locator('.publisher .video__element');
     await expect(publisherVideo).toHaveCSS('transform', 'none');
 
-    await openMeetingRoomAdvancedSettingsVideoTab(page);
+    await openMeetingRoomAdvancedSettings({ page, tab: 'video' });
     await expect(mirroringSwitch).not.toBeChecked();
     await mirroringSwitch.check();
     await expect(mirroringSwitch).toBeChecked();
@@ -120,13 +126,13 @@ test.describe('video stats overlay', () => {
     await waitUntilReady(page, browserName);
 
     const statsOverlay = page.getByTestId('video-stats-overlay');
-    await openWaitingRoomAdvancedSettingsVideoTab(page);
+    await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
     const statsOverlaySwitch = page.getByTestId('advanced-settings-video-stats-overlay');
     await statsOverlaySwitch.uncheck();
     await closeAdvancedSettings(page);
     await expect(statsOverlay).toHaveCount(0);
 
-    await openWaitingRoomAdvancedSettingsVideoTab(page);
+    await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
     await statsOverlaySwitch.check();
     await expect(statsOverlaySwitch).toBeChecked();
     await closeAdvancedSettings(page);
@@ -141,7 +147,7 @@ test.describe('video stats overlay', () => {
     await page.getByTestId('video-container-button').nth(1).click();
     await expect(statsOverlay).toBeVisible();
 
-    await openWaitingRoomAdvancedSettingsVideoTab(page);
+    await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
     await statsOverlaySwitch.uncheck();
     await expect(statsOverlaySwitch).not.toBeChecked();
     await closeAdvancedSettings(page);
@@ -361,49 +367,6 @@ async function joinMeetingRoom({
 }): Promise<void> {
   await openMeetingRoomWithSettings({ page, username, roomName, browserName, audioOff, videoOff });
   await page.waitForSelector('.publisher', { state: 'visible' });
-}
-
-async function openWaitingRoomAdvancedSettingsVideoTab(page: Page): Promise<void> {
-  await page
-    .locator('button')
-    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') })
-    .click();
-  await expect(page.getByTestId('menu-more-options')).toBeVisible();
-
-  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
-  test.skip(
-    (await advancedSettingsOption.count()) === 0,
-    'Advanced settings are disabled in the waiting room'
-  );
-
-  await advancedSettingsOption.click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
-  await page.getByTestId('advanced-settings-tab-video').click();
-}
-
-async function openMeetingRoomAdvancedSettingsVideoTab(page: Page): Promise<void> {
-  const visibleAdvancedSettingsButton = page.locator(
-    '[data-testid="advanced-settings-button"]:visible'
-  );
-
-  const isButtonInToolbar = (await visibleAdvancedSettingsButton.count()) > 0;
-  if (!isButtonInToolbar) {
-    await page.getByTestId('hidden-toolbar-items').click();
-  }
-
-  test.skip(
-    (await visibleAdvancedSettingsButton.count()) === 0,
-    'Advanced settings are disabled in the meeting room'
-  );
-
-  await visibleAdvancedSettingsButton.first().click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
-  await page.getByTestId('advanced-settings-tab-video').click();
-}
-
-async function closeAdvancedSettings(page: Page): Promise<void> {
-  await page.getByTestId('advanced-settings-dialog').getByRole('button', { name: 'Close' }).click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeHidden();
 }
 
 async function isMirrored(locator: Locator): Promise<boolean> {

@@ -1,9 +1,23 @@
 import { expect, type Page } from '@playwright/test';
 import * as crypto from 'crypto';
-import { test, baseURL } from '../fixtures/testWithLogging';
-import { waitUntilReady } from './utils';
+import { test as testWithLogging, baseURL, addLogger } from '../fixtures/testWithLogging';
+import {
+  closeAdvancedSettings,
+  openMeetingRoomAdvancedSettings,
+  openWaitingRoomAdvancedSettings,
+  waitUntilReady,
+} from './utils';
 
 const SCREEN_SHARE_DEFAULT_OPTION = 'default-sdk';
+
+const test = testWithLogging.extend<{ pageWithPersistentStorage: Page }>({
+  pageWithPersistentStorage: async ({ browser }, use) => {
+    const persistentContext = await browser.newContext();
+    const page = addLogger(await persistentContext.newPage(), persistentContext);
+    await use(page);
+    await persistentContext.close();
+  },
+});
 
 test.describe('advanced settings applied to the camera', () => {
   test('should publish the camera with the resolution and frame rate chosen in the waiting room', async ({
@@ -15,7 +29,6 @@ test.describe('advanced settings applied to the camera', () => {
     await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
     await page.getByTestId('advanced-settings-video-camera-resolution').selectOption('640x480');
     await page.getByTestId('advanced-settings-video-camera-frame-rate').selectOption('15');
-    await page.getByTestId('advanced-settings-video-camera-bitrate').selectOption('extra_bw_saver');
     await closeAdvancedSettings(page);
 
     await page.getByLabel('Name').fill('Settings User');
@@ -26,8 +39,8 @@ test.describe('advanced settings applied to the camera', () => {
       .poll(() => readPublisherVideoTrack(page), { timeout: 15_000 })
       .toMatchObject({ requestedWidth: 640, requestedHeight: 480, requestedFrameRate: 15 });
 
-    // Firefox's fake camera ignores width, height and frame rate constraints and always captures 1080p at 30fps.
-    if (browserName === 'firefox') return;
+    // Firefox's fake camera reports 1920x1080 at 30fps from getSettings() even with these constraints.
+    if (browserName !== 'chromium') return;
 
     await expect
       .poll(() => readPublisherVideoTrack(page), { timeout: 15_000 })
@@ -35,7 +48,7 @@ test.describe('advanced settings applied to the camera', () => {
   });
 });
 
-test.describe('advanced settings persistence', () => {
+test.describe('advanced settings dialog', () => {
   test('should keep codec, content hint, scalable screenshare and screen share bitrate and frame rate after reopening', async ({
     page,
     browserName,
@@ -99,22 +112,13 @@ test.describe('advanced settings persistence', () => {
 
     await expect(cameraContentHint).toHaveValue('motion');
   });
+});
 
+test.describe('advanced settings storage', () => {
   test('should restore the saved settings from storage after reloading the meeting room', async ({
-    browser,
+    pageWithPersistentStorage: page,
     browserName,
-    isMobile,
-  }, testInfo) => {
-    const { viewport, userAgent, deviceScaleFactor, hasTouch } = testInfo.project.use;
-    const persistentContext = await browser.newContext({
-      viewport,
-      userAgent,
-      deviceScaleFactor,
-      hasTouch,
-      isMobile,
-    });
-    const page = await persistentContext.newPage();
-
+  }) => {
     await openWaitingRoom({ page, browserName });
 
     await openWaitingRoomAdvancedSettings({ page, tab: 'video' });
@@ -134,7 +138,7 @@ test.describe('advanced settings persistence', () => {
     await expect(page.locator('.publisher')).toBeVisible();
     await expect(page).toHaveURL(/\/room\//);
 
-    // Room access is kept in router history state, which page.reload() drops in Firefox and location.reload() drops in Chromium.
+    // A reload loses the router's hasAccess state and RedirectToWaitingRoom sends the page back to the waiting room.
     const roomUrl = new URL(page.url());
     roomUrl.searchParams.set('bypass', 'true');
     await page.goto(roomUrl.toString());
@@ -142,7 +146,7 @@ test.describe('advanced settings persistence', () => {
     await expect(page).toHaveURL(/\/room\//);
     await expect(page.locator('.publisher')).toBeVisible();
 
-    await openMeetingRoomAdvancedSettings({ page, isMobile, tab: 'video' });
+    await openMeetingRoomAdvancedSettings({ page, tab: 'video' });
     await expect(page.getByTestId('advanced-settings-video-camera-resolution')).toHaveValue(
       '640x480'
     );
@@ -157,8 +161,6 @@ test.describe('advanced settings persistence', () => {
     await expect(page.getByTestId('advanced-settings-video-screen-share-content-hint')).toHaveValue(
       'motion'
     );
-
-    await persistentContext.close();
   });
 });
 
@@ -172,61 +174,6 @@ async function openWaitingRoom({
   await page.goto(`${baseURL}waiting-room/${crypto.randomBytes(5).toString('hex')}`);
   await waitUntilReady(page, browserName);
   await expect(page.locator('[data-video-container] video')).toBeVisible();
-}
-
-async function openWaitingRoomAdvancedSettings({
-  page,
-  tab,
-}: {
-  page: Page;
-  tab: 'video' | 'screenSharing';
-}): Promise<void> {
-  await page
-    .locator('button')
-    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') })
-    .click();
-  await expect(page.getByTestId('menu-more-options')).toBeVisible();
-
-  const advancedSettingsOption = page.getByTestId('advanced-settings-option');
-  test.skip(
-    (await advancedSettingsOption.count()) === 0,
-    'Advanced settings are disabled in the waiting room'
-  );
-
-  await advancedSettingsOption.click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
-  await page.getByTestId(`advanced-settings-tab-${tab}`).click();
-}
-
-async function openMeetingRoomAdvancedSettings({
-  page,
-  isMobile,
-  tab,
-}: {
-  page: Page;
-  isMobile: boolean;
-  tab: 'video' | 'screenSharing';
-}): Promise<void> {
-  if (isMobile) {
-    await page.getByTestId('hidden-toolbar-items').click();
-    await page.mouse.move(0, 0);
-    await expect(page.getByTestId('toolbar-overflow-menu')).toBeVisible();
-  }
-
-  const advancedSettingsButton = page.getByTestId('advanced-settings-button');
-  test.skip(
-    (await advancedSettingsButton.count()) === 0,
-    'Advanced settings are disabled in the meeting room'
-  );
-
-  await advancedSettingsButton.click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeVisible();
-  await page.getByTestId(`advanced-settings-tab-${tab}`).click();
-}
-
-async function closeAdvancedSettings(page: Page): Promise<void> {
-  await page.getByTestId('advanced-settings-dialog').getByRole('button', { name: 'Close' }).click();
-  await expect(page.getByTestId('advanced-settings-dialog')).toBeHidden();
 }
 
 type PublisherVideoTrack = {

@@ -41,4 +41,4 @@ const test = (() => {
   });
 })();
 
-export { test, baseURL };
+export { test, baseURL, addLogger };
