@@ -55,7 +55,7 @@ describe('usePreviewPublisher', () => {
     });
 
     it('should report initPublisher errors and leave no publisher behind', async () => {
-      expect.assertions(3);
+      expect.assertions(4);
       const reportErrorSpy = vi.spyOn(frontendLogger, 'reportError').mockImplementation(() => {});
       const error = new Error(
         "It hit me pretty hard, how there's no kind of sad in this world that will stop it turning."
@@ -77,6 +77,9 @@ describe('usePreviewPublisher', () => {
         })
       );
       expect(result.current.publisher).toBeNull();
+      await waitFor(() => {
+        expect(result.current.accessStatus).toBe(DEVICE_ACCESS_STATUS.REJECTED);
+      });
 
       result.current.initLocalPublisher();
       expect(initPublisher).toHaveBeenCalledTimes(2);

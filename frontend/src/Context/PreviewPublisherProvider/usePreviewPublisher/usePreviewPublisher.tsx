@@ -211,6 +211,11 @@ const usePreviewPublisher = (
         eventSource: 'usePreviewPublisher.initLocalPublisher.initPublisher',
       });
 
+      // SDK 2.35.1 reports getUserMedia denied at init only through this callback, without an accessDenied event.
+      if (error.name === 'OT_USER_MEDIA_ACCESS_DENIED') {
+        void handlePublisherAccessDenied({ message: error.message }, setAccessStatus);
+      }
+
       if (publisherRef.current !== publisher) return;
       publisherRef.current = null;
       attempt(() => publisher?.destroy());
