@@ -133,14 +133,14 @@ To change a setting:
 }
 ```
 
-The generator maps each key to its `env.sh` variable, joins lists with `|`, and serializes types into shell format. The tables below use the `env.sh` variable names.
+The generator maps each key that has an `x-envVar` in [`specs/app-config.schema.json`](../specs/app-config.schema.json) to that `env.sh` variable, joins lists with `|`, and serializes types into shell format. An optional key missing from `app-config.json` is left out of `env.sh`, so the app uses its default. The tables below use the `env.sh` variable names.
 
 > **Note:** Changes are applied at build time. After `yarn sync:env`, restart `yarn dev` locally or create a new build/deployment for them to take effect.
 
 #### Things to know about the mapping
 
 - **Layout mode value.** The shared schema uses `activeSpeaker` for `meetingRoomSettings.defaultLayoutMode`; the generator translates it to the web app's `active-speaker` in `env.sh`. Set `activeSpeaker` or `grid` in `app-config.json`.
-- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources: `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`.
+- **Web-only settings.** A few frontend variables are not part of the shared cross-platform schema (the schema only allows boolean feature toggles as extra keys), so they do not live in `app-config.json`. They live in the hand-maintained [`env.defaults.sh`](../env.defaults.sh), which `env.sh` sources: `PUBLISHER_MAX_RESOLUTION`, `NOTIFICATION_DURATION_MS`, `MIN_CUSTOM_VIDEO_BITRATE_BPS`, `MAX_CUSTOM_VIDEO_BITRATE_BPS`, and `SUPPORTED_FRAME_RATES`. Override any of them for your machine in [`frontend/.env`](../frontend/.env.example).
 - **Network settings.** `API_URL`, `TUNNEL_DOMAIN`, and `VONAGE_VIDEO_HOST` are **not** generated from `app-config.json` by `yarn sync:env`. They are runtime/environment values, so set them via [`frontend/.env`](../frontend/.env.example) (which layers over `env.sh`) or by exporting them in your shell before running the app. See the [Network](#network) table below.
 
 #### Value types

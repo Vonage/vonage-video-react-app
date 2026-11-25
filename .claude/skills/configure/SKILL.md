@@ -47,11 +47,12 @@ Never edit `env.sh` by hand; the next sync overwrites it.
 | `meetingRoomSettings.allowDeviceSelection` | `MEETING_ROOM_ALLOW_DEVICE_SELECTION` |
 | `meetingRoomSettings.allowSettings` | `MEETING_ROOM_ALLOW_ADVANCED_SETTINGS` |
 | `meetingRoomSettings.allowPostCallTranscription` (the Transcribe button) | `ALLOW_POST_CALL_TRANSCRIPTION` |
+| `meetingRoomSettings.allowPictureInPicture` (Mini Mode) | `ALLOW_MINI_MODE` |
 | `meetingRoomSettings.defaultLayoutMode` = `activeSpeaker` or `grid` | `DEFAULT_LAYOUT_MODE` = `active-speaker` or `grid` |
 
 - Allowed languages: `en`, `en-US`, `es`, `es-MX`, `it`, `de`, `ja`, `fr`.
 - Allowed resolutions: `1920x1080`, `1280x960`, `1280x720`, `640x480`, `640x360`, `320x240`, `320x180`.
-- These keys are only used by the mobile apps and do nothing on web: `audioSettings.allowAudioDiagnostics`, `meetingRoomSettings.allowFeedback`, `allowPictureInPicture`, `baseApiUrl`, `connectionSettings.*`.
+- These keys are only used by the mobile apps and do nothing on web: `audioSettings.allowAudioDiagnostics`, `meetingRoomSettings.allowFeedback`, `baseApiUrl`, `connectionSettings.*`.
 
 ## Change a setting only on your machine
 
@@ -70,7 +71,7 @@ Values here win over `env.sh`. This is also where these go:
 
 It holds public defaults only, never secrets.
 
-- `NOTIFICATION_DURATION_MS`, `PUBLISHER_MAX_RESOLUTION`, `MIN_/MAX_CUSTOM_VIDEO_BITRATE_BPS`, `SUPPORTED_FRAME_RATES`: **changing these does nothing in the app today.** They are missing from `appEnvKeys`, so the browser never gets them. Making one work needs a small code change (see `/feature-flag`).
+- `NOTIFICATION_DURATION_MS`, `PUBLISHER_MAX_RESOLUTION`, `MIN_/MAX_CUSTOM_VIDEO_BITRATE_BPS`, `SUPPORTED_FRAME_RATES`: web-only values. Override one for your machine in `frontend/.env`.
 - The auth settings (`AUTH_SESSION_COOKIE_NAME`, `OIDC_SCOPES`, …) reach tests and cloud builds, but not `pnpm dev`. With auth on, copy them into `backend/.env` (see `/setup`, step 4).
 
 ## Change colours and fonts
@@ -91,7 +92,7 @@ Credentials, secrets, CORS, auth and Jira live in `backend/.env`, not `app-confi
 1. Did you run `pnpm sync:env` after editing `app-config.json`?
 2. Did you restart `pnpm dev` (or rebuild, for `pnpm start`)?
 3. Does `frontend/.env` set the same name? It wins.
-4. Is it a mobile-only key, or one of the `env.defaults.sh` values that don't reach the browser?
+4. Is it a mobile-only key?
 5. Layout or "on when joining"? Leave and rejoin the room.
 6. Theme? That needs `pnpm sync:theme-tokens`, not `sync:env`.
 7. Deployed app? It uses the files as they were when it was built.
