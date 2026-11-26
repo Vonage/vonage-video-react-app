@@ -477,6 +477,19 @@ describe('VideoClient', () => {
         })
       ).rejects.toThrow();
     });
+
+    it('refuses to stop an archive of another session', async () => {
+      const { videoClient, mocks } = createVideoClient();
+
+      mocks.video.getArchive.mockResolvedValue({ sessionId: 'another-session-id' });
+
+      const { error } = await tryCatch(() =>
+        videoClient.stopArchive({ sessionKey: mockSessionKey, archiveId: 'archive-123' })
+      );
+
+      expect(error).toMatchObject({ statusCode: 404 });
+      expect(mocks.video.stopArchive).not.toHaveBeenCalled();
+    });
   });
 
   describe('searchArchives', () => {
@@ -684,6 +697,7 @@ describe('VideoClient', () => {
       startArchive: vi.fn(),
       stopArchive: vi.fn(),
       searchArchives: vi.fn(),
+      getArchive: vi.fn().mockResolvedValue({ sessionId: mockSessionId }),
       startCaptions: vi.fn(),
       stopCaptions: vi.fn(),
       enableCaptions: vi.fn(),

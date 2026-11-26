@@ -36,6 +36,12 @@ const mockStopArchive = vi
     return Promise.resolve({ id: archiveId, status: 'stopped' });
   });
 
+const mockGetArchive = vi
+  .fn<[archiveId: string], Promise<{ id: string; sessionId: string }>>()
+  .mockImplementation((archiveId: string) =>
+    Promise.resolve({ id: archiveId, sessionId: validSessionId })
+  );
+
 const mockSearchArchives = vi
   .fn<[], Promise<{ items: Array<{ id: string }>; count: number }>>()
   .mockResolvedValue({ items: [{ id: 'archive-1' }, { id: 'archive-2' }], count: 2 });
@@ -72,6 +78,7 @@ vi.doMock('@vonage/video', () => ({
     generateClientToken: vi.fn().mockReturnValue('some-token'),
     startArchive: mockStartArchive,
     stopArchive: mockStopArchive,
+    getArchive: mockGetArchive,
     searchArchives: mockSearchArchives,
     enableCaptions: mockEnableCaptions,
     disableCaptions: mockDisableCaptions,
