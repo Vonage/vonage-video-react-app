@@ -6,7 +6,7 @@ import { DEVICE_ACCESS_STATUS } from '../../utils/constants';
  * Monitors device permission changes and updates access status accordingly
  */
 const handlePublisherAccessDenied = async (
-  event: AccessDeniedEvent,
+  event: Pick<AccessDeniedEvent, 'message'>,
   setAccessStatus: (status: string) => void
 ) => {
   const deviceDeniedAccess = event.message?.startsWith('Microphone') ? 'microphone' : 'camera';

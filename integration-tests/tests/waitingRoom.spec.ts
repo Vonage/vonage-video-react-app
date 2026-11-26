@@ -1,7 +1,10 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { test, baseURL } from '../fixtures/testWithLogging';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import backgroundEffectsButtonTestIds from '../../frontend/src/components/WaitingRoom/BackgroundEffects/BackgroundEffectsButton/testIds';
+
+const NETWORK_TEST_SESSION_ERROR = 'Network test session unavailable';
+const NETWORK_TEST_SESSION_URL = /\/v2\/createSessionAndJoin/;
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`${baseURL}waiting-room/test-room`);
@@ -256,3 +259,91 @@ test('should carry username and initials to the meeting room publisher tile', as
 
   await expect(page.getByTestId('publisher-container').getByText('JD')).toBeVisible();
 });
+
+test('should show the pre-call network test error with a retry button when the test session cannot be created', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'firefox', 'The pre-call network test is not supported in Firefox');
+
+  const sessionRequests = await mockNetworkTestSessionFailure(page);
+  await openPrecallNetworkTest(page);
+
+  const dialog = page.getByRole('dialog');
+  const retryButton = dialog.getByRole('button', { name: 'Retry test' });
+  await expect(dialog.getByText('Test failed')).toBeVisible({ timeout: 15_000 });
+  await expect(dialog.getByText(NETWORK_TEST_SESSION_ERROR)).toBeVisible();
+  await expect(retryButton).toBeVisible();
+  expect(sessionRequests.count).toBe(1);
+
+  await retryButton.click();
+
+  await expect.poll(() => sessionRequests.count).toBe(2);
+  await expect(dialog.getByText('Test failed')).toBeVisible();
+  await expect(retryButton).toBeVisible();
+
+  await page.unroute(NETWORK_TEST_SESSION_URL);
+  await retryButton.click();
+
+  await expect(dialog.getByRole('progressbar')).toBeVisible();
+  await expect(dialog.getByText('Test failed')).toHaveCount(0);
+});
+
+test('should disable the pre-call network test in unsupported browsers', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName !== 'firefox',
+    'Only Firefox is reported as unsupported for the pre-call network test'
+  );
+
+  const moreOptionsMenu = page.getByTestId('menu-more-options');
+  await openMoreOptionsMenu(page);
+
+  const networkTestOption = moreOptionsMenu.getByRole('menuitem', {
+    name: 'Pre-call network test',
+  });
+  await expect(networkTestOption).toHaveAttribute('aria-disabled', 'true');
+
+  await networkTestOption.hover();
+  await expect(page.getByText('Your browser does not support this feature')).toBeVisible();
+});
+
+async function openMoreOptionsMenu(page: Page): Promise<void> {
+  await page
+    .locator('button')
+    .filter({ has: page.getByTestId('vivid-icon-more-vertical-solid') })
+    .click();
+  await expect(page.getByTestId('menu-more-options')).toBeVisible();
+}
+
+async function openPrecallNetworkTest(page: Page): Promise<void> {
+  await openMoreOptionsMenu(page);
+  await page.getByTestId('menu-more-options').getByText('Pre-call network test').click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+}
+
+async function mockNetworkTestSessionFailure(page: Page): Promise<{ count: number }> {
+  const requests = { count: 0 };
+
+  await page.route(NETWORK_TEST_SESSION_URL, async (route) => {
+    requests.count++;
+    const errorPayload = {
+      error: {
+        message: NETWORK_TEST_SESSION_ERROR,
+        code: -32603,
+        data: { code: 'INTERNAL_SERVER_ERROR', httpStatus: 500, path: 'createSessionAndJoin' },
+      },
+    };
+    const isBatchRequest = new URL(route.request().url()).searchParams.get('batch') === '1';
+
+    await route.fulfill({
+      status: 500,
+      contentType: 'application/json',
+      body: JSON.stringify(isBatchRequest ? [errorPayload] : errorPayload),
+    });
+  });
+
+  return requests;
+}
