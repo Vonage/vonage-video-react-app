@@ -16,6 +16,8 @@ import UsernameInputSkeleton from '@components/WaitingRoom/UserNameInput/UserNam
 import useWaitingRoom from '@hooks/useWaitingRoom';
 import isSignedIn from '@utils/isSignedIn';
 import { serverSettings$ } from '@core/stores';
+import useSessionKeyParam from '@hooks/useSessionKeyParam';
+import useAutoSaveMeeting from '@hooks/useAutoSaveMeeting';
 
 /**
  * WaitingRoom Component
@@ -53,6 +55,9 @@ const WaitingRoom: FC = () => {
   const scheduleStatus = serverSettings$.useScheduleStatus();
 
   const shouldShowLandingPageLink = scheduleStatus.kind === 'ended' && isSignedIn();
+  const { sessionKeyStatus } = useSessionKeyParam();
+
+  useAutoSaveMeeting({ sessionKey, sessionKeyStatus });
 
   return (
     <backgroundEffectsDialog$.Provider>
