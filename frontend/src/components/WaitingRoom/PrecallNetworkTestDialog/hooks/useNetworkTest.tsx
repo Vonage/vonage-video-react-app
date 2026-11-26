@@ -123,8 +123,17 @@ const useNetworkTest = () => {
   }, []);
 
   const stopTest = useCallback(() => {
-    void testPromiseRef.current?.cancel();
+    testPromiseRef.current?.cancel()?.catch(() => {});
   }, []);
+
+  const createTimeout = useCallback(
+    (reject: (error: Error) => void, timeoutMs: number) =>
+      setTimeout(
+        () => reject(new Error(t('waitingRoom.precallNetworkTest.error.timeout'))),
+        timeoutMs
+      ),
+    [t]
+  );
 
   const testQuality = useCallback(
     (sessionKey: string, options: NetworkTestOptions = {}): CancelablePromise<QualityResults> => {
@@ -139,6 +148,10 @@ const useNetworkTest = () => {
 
       return (testPromiseRef.current = new CancelablePromise<QualityResults>(
         async (resolve, reject, { isCanceled, reportProgress, onCancel }) => {
+          // Hoisted so the catch below can stop it on timeout/error too — otherwise the
+          // NetworkTest's OT session, publisher (camera/mic) and bandwidth probing keep
+          // running in the background after a failed test.
+          let networkTest: NetworkTest | undefined;
           try {
             const createSessionAndJoinPayload = isValidSessionKey(sessionKey)
               ? { sessionKey }
@@ -149,7 +162,7 @@ const useNetworkTest = () => {
 
             if (isCanceled()) return;
 
-            const networkTest = new NetworkTest(
+            networkTest = new NetworkTest(
               OT,
               {
                 applicationId,
@@ -160,9 +173,7 @@ const useNetworkTest = () => {
             );
 
             onCancel(() => {
-              void attempt(() => {
-                networkTest.stop();
-              });
+              stopNetworkTest(networkTest);
 
               setState((prev) => ({
                 ...prev,
@@ -173,12 +184,9 @@ const useNetworkTest = () => {
             // timeout after 60s
 
             const qualityResults = await new Promise<QualityTestResults>((res, rej) => {
-              const timeout = setTimeout(
-                () => rej(new Error(t('waitingRoom.precallNetworkTest.error.timeout'))),
-                options.timeout || 60000
-              );
+              const timeout = createTimeout(rej, options.timeout || 60000);
 
-              networkTest
+              networkTest!
                 .testQuality((qualityUpdateStats) => {
                   if (isCanceled()) return;
 
@@ -203,6 +211,10 @@ const useNetworkTest = () => {
           } catch (error) {
             if (isCanceled()) return;
 
+            // Stop the test on timeout/error too (mirrors the onCancel path), so the
+            // camera/mic and bandwidth probing don't keep running in the background.
+            stopNetworkTest(networkTest);
+
             const networkError: NetworkTestError = {
               message:
                 error instanceof Error ? error.message : t('waitingRoom.precallNetworkTest.error'),
@@ -220,7 +232,7 @@ const useNetworkTest = () => {
         }
       ));
     },
-    [t, videoClient]
+    [t, videoClient, createTimeout]
   );
 
   useMountEffect(() => {
@@ -236,6 +248,12 @@ const useNetworkTest = () => {
     clearResults,
   };
 };
+
+// Releases the NetworkTest's OT session, publisher (camera/mic) and bandwidth probing.
+// Kept at module scope so the call sites stay within Sonar's function-nesting limit.
+function stopNetworkTest(networkTest: NetworkTest | undefined) {
+  attempt(() => networkTest?.stop());
+}
 
 export { ErrorNames };
 export default useNetworkTest;
