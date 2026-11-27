@@ -1,0 +1,18 @@
+README.md
+  h_737cf808c1c597 57
+package.json
+  h_737cf808c1c597 174
+pnpm-lock.yaml
+  h_737cf808c1c597 39-40,3392-3393,11579
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d0a033d60a9fafcb1535f8a6409e6c0b129138f4",
+  "prompts": {},
+  "humans": {
+    "h_737cf808c1c597": {
+      "author": "OscarFava <Oscar.Fava@vonage.com>"
+    }
+  }
+}
