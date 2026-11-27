@@ -36,8 +36,8 @@ importers:
         specifier: 1.19.1
         version: 1.19.1(supports-color@5.5.0)
       '@vonage/client-sdk-video':
-        specifier: 2.35.1
-        version: 2.35.1
+        specifier: 2.36.0
+        version: 2.36.0
       '@vonage/server-sdk':
         specifier: 3.31.1
         version: 3.31.1(supports-color@5.5.0)
@@ -3389,8 +3389,8 @@ packages:
     resolution: {integrity: sha512-r8LzYnhbr4wDgwVik8w9s/KCzlQr0YTyMK5zqhZ7esAcQeZLc9PeJIQ3jn1HEjSViuONUZXR1iF4FhLZkvYNxg==}
     engines: {node: '>=22'}
 
-  '@vonage/client-sdk-video@2.35.1':
-    resolution: {integrity: sha512-XLGLw3+MtQi7V2L9N9ZE9kNL7JEsS4llkE6d1coZLS3NVFFunaVyRuzRVfzGcBCrt2EiqzZCEUcElm7NlIDFpw==}
+  '@vonage/client-sdk-video@2.36.0':
+    resolution: {integrity: sha512-5XGeoGxVBe6YO8AzdmzwWLpYTlLFDnV5u6zDD7GQd7ThRotzJOdc8Ka1XmBazqh945WuijJjj8BssHEuW1LBbw==}
 
   '@vonage/conversations@1.18.1':
     resolution: {integrity: sha512-7p0CJULZerHAbolXvogxu2WjRfloGhwg4qTQNTdVZYY2wwsG8Ts9LaflvzgqzpQgU1t+rbLjQNWUZdJbdZm48Q==}
@@ -11576,7 +11576,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vonage/client-sdk-video@2.35.1': {}
+  '@vonage/client-sdk-video@2.36.0': {}
 
   '@vonage/conversations@1.18.1(supports-color@5.5.0)':
     dependencies:

@@ -54,7 +54,7 @@ For details on the workspace structure, libraries, and module boundaries, see [A
 
 ### SDK 2.35 Promises Migration
 
-The app is pinned to `@vonage/client-sdk-video@2.35.1`. `publish` and `signal` use `async`/`await`, reporting failures through a central frontend logger and showing the user a visible error message. `subscribe` and `initPublisher` deliberately keep their callback-based call shape. For `subscribe`, `.promise()` only resolves after `streamCreated` (or an error) has already fired (confirmed in the SDK's bundled source, `opentok.js:68371`); for `initPublisher`, it only resolves after the access-granted/denied outcome has already fired (`opentok.js:65337-65349`). Either way, listeners attached after that resolution could miss events that already happened, which is why both keep the synchronous callback form instead. The `forceMuteStream` moderation call had the same silent-failure gap and is fixed the same way.
+The app is pinned to `@vonage/client-sdk-video@2.36.0`. `publish` and `signal` use `async`/`await`, reporting failures through a central frontend logger and showing the user a visible error message. `subscribe` and `initPublisher` deliberately keep their callback-based call shape. For `subscribe`, `.promise()` only resolves after `streamCreated` (or an error) has already fired (confirmed in the SDK's bundled source, `opentok.js:71575`); for `initPublisher`, it only resolves after the access-granted/denied outcome has already fired (`opentok.js:68445-68457`). Either way, listeners attached after that resolution could miss events that already happened, which is why both keep the synchronous callback form instead. The `forceMuteStream` moderation call had the same silent-failure gap and is fixed the same way.
 
 ## Features
 
